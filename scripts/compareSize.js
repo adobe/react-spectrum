@@ -3,13 +3,10 @@ const path = require('path');
 const https = require('https');
 const Octokit = require('@octokit/rest');
 const octokit = new Octokit();
-const oldAppStatsFile = 'old-build-stats.txt';
-const oldPublishStatsFile = 'old-publish.json';
-
-// TODO do we need creds?
-// const octokit = new Octokit({
-//   auth: `token ${process.env.GITHUB_TOKEN}`
-// });
+const currentAppStatsFile = 'build-stats.txt';
+const currentPublishStatsFile = 'publish.json';
+const lastAppStatsFile = 'old-build-stats.txt';
+const lastPublishStatsFile = 'old-publish.json';
 
 compareBuildAppSize().catch(err => {
   console.error(err.stack);
@@ -24,35 +21,41 @@ async function compareBuildAppSize() {
   let commit = items && items[0]?.parents[0]?.sha;
 
   if (commit) {
-    // TODO: enable this when we have some stats from last pull? Or maybe hard code the commit when this actually goes in
-    // let lastBuildStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/app-size/build-stats.txt`;
-    // let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/publish.json`;
-    // await download(lastBuildStatUrl, path.join(__dirname, '..', oldAppStatsFile));
-    // await download(lastPublishStatUrl, path.join(__dirname, '..', oldPublishStatsFile));
+    // Attempt to pull stats from last publish commit. If they don't exist, pull from a hardcoded commit (fallback until these records are generated for a first publish w/ this script)
+    let lastBuildStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/app-size/${currentAppStatsFile}`;
+    let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/${currentPublishStatsFile}`;
+    let lastBuildStatPath = path.join(__dirname, '..', lastAppStatsFile);
+    let lastPublishStatPath = path.join(__dirname, '..', lastPublishStatsFile);
+    await download(lastBuildStatUrl, lastBuildStatPath);
+    await download(lastPublishStatUrl, lastPublishStatPath);
 
-    // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
-    await download(
-      'https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/app-size/build-stats.txt',
-      path.join(__dirname, '..', oldAppStatsFile));
-    await download(
-      'https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/publish-stats/publish.json',
-      path.join(__dirname, '..', oldPublishStatsFile));
+    if (!fs.existsSync(lastBuildStatPath)) {
+      // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
+      await download(
+        `https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/app-size/${currentAppStatsFile}`,
+        lastBuildStatPath);
+    }
+
+    if (!fs.existsSync(lastPublishStatPath)) {
+      await download(
+        `https://reactspectrum.blob.core.windows.net/reactspectrum/1063dc7832a5d65b98c278f9ea93eec8fa9a0fb9/verdaccio/publish-stats/${currentPublishStatsFile}`,
+        lastPublishStatPath);
+    }
+
 
     // Extract the built example app size from the current commit and the last publish commit data
-    let lastAppStats = fs.readFileSync(oldAppStatsFile, 'utf8');
-    let currentAppStats = fs.readFileSync('build-stats.txt', 'utf8');
+    let lastAppStats = fs.readFileSync(lastAppStatsFile, 'utf8');
+    let currentAppStats = fs.readFileSync(currentAppStatsFile, 'utf8');
     let regex = /(.*)\tbuild\/\n$/;
     let lastAppSize = lastAppStats.match(regex)[1];
     let currentAppSize = currentAppStats.match(regex)[1];
-
     fs.writeFileSync('size-diff.txt', `Built app size diff from last publish: ${currentAppSize - lastAppSize} kB`);
 
-
-    let lastPackageStats = JSON.parse(fs.readFileSync(oldPublishStatsFile));
-    let currentPackageStats = JSON.parse(fs.readFileSync('publish.json'));
+    let lastPackageStats = JSON.parse(fs.readFileSync(lastPublishStatsFile));
+    let currentPackageStats = JSON.parse(fs.readFileSync(currentPublishStatsFile));
     let stream = fs.createWriteStream('size-diff.txt', {flags: 'a'});
     stream.write('\n Published package size differences in kB (old, new, diff)');
-    for (let pkg of currentPackageStats.keys) {
+    for (let pkg of Object.keys(currentPackageStats)) {
       // For each package grab the size from the last and current package stats data
       let currentSize = pkg in currentPackageStats && currentPackageStats[pkg];
       let lastSize = pkg in lastPackageStats && lastPackageStats[pkg];
@@ -65,38 +68,46 @@ async function compareBuildAppSize() {
 
     stream.end();
   } else {
-    // TODO throw error
     new Error('no commit found');
   }
 }
 
+// Resolve only so that we can attempt a hardcoded link download if the commit one fails. TODO: revert back to reject when we get some intial data from a publish.
 function download(url, dest) {
   return new Promise((resolve, reject) => {
     // Check file does not exist yet before hitting network
     fs.access(dest, fs.constants.F_OK, (err) => {
       if (err === null) {
-        reject(new Error('File already exists'));
+        console.error(`File already exists at ${dest}`);
+        resolve();
       }
       let request = https.get(url, response => {
         if (response.statusCode === 200) {
-          const file = fs.createWriteStream(dest, { flags: 'wx' });
+          const file = fs.createWriteStream(dest, {flags: 'wx'});
           file.on('finish', () => resolve());
           file.on('error', err => {
             file.close();
             if (err.code === 'EEXIST') {
-              reject(new Error('File already exists'));
+              console.error(`File was created during the request call at ${dest}`);
+              resolve();
             } else {
-              fs.unlink(dest, () => reject(err.message)); // Delete temp file
+              // Delete temp file
+              fs.unlink(dest, () => {
+                console.error(err.message);
+                resolve();
+              });
             }
           });
           response.pipe(file);
         } else {
-          reject(new Error(`Server responded with ${response.statusCode}: ${response.statusMessage}`));
+          console.error(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+          resolve();
         }
       });
 
       request.on('error', err => {
-        reject(new Error(err.message));
+        console.error(err);
+        resolve();
       });
     });
   });
