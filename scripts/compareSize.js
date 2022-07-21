@@ -48,7 +48,7 @@ async function compareBuildAppSize() {
     let regex = /(.*)\tbuild\/\n$/;
     let lastAppSize = lastAppStats.match(regex)[1];
     let currentAppSize = currentAppStats.match(regex)[1];
-    fs.writeFileSync('size-diff.txt', `Built app size diff from last publish: ${currentAppSize - lastAppSize} kB`);
+    fs.writeFileSync('size-diff.txt', `Built app size diff from last publish: ${(currentAppSize - lastAppSize).toFixed(2)} kB`);
 
     let lastPackageStats = JSON.parse(fs.readFileSync(lastPublishStatsFile));
     let currentPackageStats = JSON.parse(fs.readFileSync(currentPublishStatsFile));
