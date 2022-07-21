@@ -57,10 +57,11 @@ keywords: [toolbar, actiongroup, collections]
 ## Example
 
 ```tsx example sandpack=true
+import {useState} from 'react';
 import {ActionGroup, Item} from '@adobe/react-spectrum';
 
 function Example() {
-  let [action, setAction] = React.useState();
+  let [action, setAction] = useState();
 
   return (
     <>
