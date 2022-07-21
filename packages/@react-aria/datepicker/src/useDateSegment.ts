@@ -12,17 +12,18 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
+import {DOMAttributes} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
-import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
+import React, {RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: HTMLAttributes<HTMLDivElement>
+  segmentProps: DOMAttributes
 }
 
 /**

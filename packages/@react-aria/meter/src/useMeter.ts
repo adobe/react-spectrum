@@ -11,14 +11,14 @@
  */
 
 import {AriaMeterProps} from '@react-types/meter';
-import {HTMLAttributes} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
   /** Props for the meter container element. */
-  meterProps: HTMLAttributes<HTMLElement>,
+  meterProps: DOMAttributes,
   /** Props for the meter's visual label (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes
 }
 
 /**

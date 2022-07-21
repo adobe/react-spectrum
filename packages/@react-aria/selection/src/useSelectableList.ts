@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {Collection, DOMAttributes, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
@@ -81,7 +81,7 @@ interface SelectableListAria {
   /**
    * Props for the option element.
    */
-  listProps: HTMLAttributes<HTMLElement>
+  listProps: DOMAttributes
 }
 
 /**

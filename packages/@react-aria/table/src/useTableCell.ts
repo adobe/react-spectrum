@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {getCellId} from './utils';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject} from 'react';
+import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 
@@ -31,7 +32,7 @@ interface TableCellProps {
 
 interface TableCellAria {
   /** Props for the table cell element. */
-  gridCellProps: HTMLAttributes<HTMLElement>,
+  gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */
   isPressed: boolean
 }
@@ -42,7 +43,7 @@ interface TableCellAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the cell element.
  */
-export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref: RefObject<HTMLElement>): TableCellAria {
+export function useTableCell<T>(props: TableCellProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableCellAria {
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
 
   let columnKey = props.node.column.key;
