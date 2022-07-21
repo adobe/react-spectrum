@@ -17,10 +17,10 @@ import {RefObject, useEffect} from 'react';
 // it sets a close function here mapped from the trigger element. This way we can avoid
 // forcing users to pass an onClose function to useOverlayPosition which could be considered
 // a breaking change.
-export const onCloseMap: WeakMap<HTMLElement, () => void> = new WeakMap();
+export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 
 interface CloseOnScrollOptions {
-  triggerRef: RefObject<HTMLElement>,
+  triggerRef: RefObject<Element>,
   isOpen?: boolean,
   onClose?: () => void
 }
