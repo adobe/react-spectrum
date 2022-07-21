@@ -93,11 +93,11 @@ then
   cd ../..
 
   # Get the tarball size of each published package. Store into folder for azure.
-  node scripts/verdaccioPkgSize
+  node scripts/verdaccioPkgSize.js
   mv publish.json $verdaccio_path/publish-stats
 
   # Compare the size of the built app and the published packages. Store into folder for azure.
-  node scripts/compareSize
+  node scripts/compareSize.js
   mv stats-diff.txt $verdaccio_path/publish-stats
 else
   # Wait for user input to do cleanup
