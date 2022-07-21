@@ -11,3 +11,4 @@
  */
 /// <reference types="css-module-types" />
 export {Alert} from './Alert';
+export type {SpectrumAlertProps} from '@react-types/alert';
