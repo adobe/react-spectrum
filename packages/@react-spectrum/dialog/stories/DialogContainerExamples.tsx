@@ -5,7 +5,7 @@ import {Dialog, DialogContainer, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {useRef} from 'react';
+import React from 'react';
 
 export function DialogContainerExample(props) {
   let [isOpen, setOpen] = React.useState(false);
@@ -63,13 +63,12 @@ function ExampleDialog(props) {
 
 export function NestedDialogContainerExample() {
   let [dialog, setDialog] = React.useState(null);
-  let triggerRef = useRef();
   let dismiss = () => setDialog(null);
 
   return (
     <>
       <MenuTrigger>
-        <ActionButton aria-label="Actions" ref={triggerRef}>Open menu</ActionButton>
+        <ActionButton aria-label="Actions">Open menu</ActionButton>
         <Menu onAction={setDialog}>
           <Item key="doThis">Do this…</Item>
           <Item key="doThat">Do that…</Item>
