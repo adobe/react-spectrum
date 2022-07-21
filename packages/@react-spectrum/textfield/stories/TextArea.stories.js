@@ -216,6 +216,9 @@ storiesOf('TextArea', module)
   )
   .add('test: isReadOnly, with icon, value = icon',
     () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  )
+  .add('test: isReadOnly, no visible label',
+  () => render({isReadOnly: true, label: null, 'aria-label': 'Street address', value: 'foo  '.repeat(20)})
   );
 
 function render(props = {}) {

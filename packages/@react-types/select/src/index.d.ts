@@ -28,7 +28,6 @@ import {
   TextInputBase,
   Validation
 } from '@react-types/shared';
-import {InputHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
 
 export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
   /** Sets the open state of the menu. */
@@ -71,7 +70,5 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean,
-  isReadOnly?: boolean,
-  inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>
+  isReadOnly?: boolean
 }

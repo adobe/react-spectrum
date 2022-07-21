@@ -19,11 +19,12 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useTextField} from '@react-aria/textfield';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -43,8 +44,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     labelProps,
     readOnlyText,
     isReadOnly,
-    inputProps,
     inputRef, 
+    inputProps,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -57,6 +58,34 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let formatMessage = useMessageFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
+  let defaultInputRef = useRef<HTMLTextAreaElement>();
+  inputRef = inputRef || defaultInputRef;
+
+  // provide aria-label in non-readonly instances so that useLabel does not throw a warning (for combobox and numberfield)
+  let {labelProps: readOnlyLabelProps, inputProps: readOnlyInputProps} = useTextField({
+    'aria-label': !displayReadOnly && inputProps ? 'readOnly' : undefined, // a (hopefully??) temporary solution
+    ...props,
+    inputElementType: 'textarea'
+  }, inputRef as RefObject<HTMLTextAreaElement>);
+  labelProps = displayReadOnly ? readOnlyLabelProps : labelProps;
+  inputProps = displayReadOnly ? readOnlyInputProps : inputProps;
+
+  // moved readOnly code outside of conditional statement so it would render when there is no label
+  if (displayReadOnly) {
+    if (readOnlyText === '') {
+      readOnlyText = formatMessage('(None)');
+    }
+    children = (
+      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+        <ReadOnlyField
+          {...props} 
+          readOnlyText={readOnlyText}
+          inputProps={inputProps}
+          ref={inputRef as RefObject<HTMLTextAreaElement>} />
+      </Flex>
+    );
+  }
+
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -88,19 +117,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         showErrorIcon={showErrorIcon} />
     );
 
-    if (displayReadOnly) {
-      if (readOnlyText === '') {
-        readOnlyText = formatMessage('(None)');
-      }
-      children = (
-        <ReadOnlyField
-          {...props} 
-          readOnlyText={readOnlyText}
-          inputProps={inputProps} 
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />            
-      );
-    }
-
     let renderChildren = () => (
       <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
         {children}
@@ -130,7 +146,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
   }
 
-  return React.cloneElement(children, mergeProps(children.props, {
+  return displayReadOnly ? children : React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
     // @ts-ignore
     ref: mergeRefs(children.ref, ref)

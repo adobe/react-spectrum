@@ -25,8 +25,8 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
   let {
     isDisabled,
     readOnlyText,
-    inputProps,
-    autoFocus    
+    autoFocus,
+    inputProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   delete inputProps.defaultValue;
