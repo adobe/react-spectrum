@@ -99,7 +99,7 @@ then
   node scripts/compareSize.js
 
   # Store into folder for azure.
-  mv stats-diff.txt build-stats.txt publish.json $verdaccio_path/publish-stats
+  mv size-diff.txt build-stats.txt publish.json $verdaccio_path/publish-stats
 else
   # Wait for user input to do cleanup
   read -n 1 -p "Press a key to close server and cleanup"

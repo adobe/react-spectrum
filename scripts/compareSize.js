@@ -67,6 +67,7 @@ async function compareBuildAppSize() {
     }
 
     stream.end();
+    console.log('Finished writing size-diff.txt');
   } else {
     new Error('no commit found');
   }
