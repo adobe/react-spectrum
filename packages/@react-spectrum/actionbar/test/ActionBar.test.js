@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import userEvent from '@testing-library/user-event';
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import userEvent from '@testing-library/user-event';
 
 describe('ActionBar', () => {
   beforeAll(() => {
