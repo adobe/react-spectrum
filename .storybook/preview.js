@@ -2,6 +2,7 @@ import {configureActions} from '@storybook/addon-actions';
 import React from 'react';
 import {VerticalCenter} from './layout';
 import {withProviderSwitcher} from './custom-addons/provider';
+import {withStrictModeSwitcher} from './strictmode';
 
 // decorator order matters, the last one will be the outer most
 
@@ -23,5 +24,6 @@ export const decorators = [
       {story()}
     </VerticalCenter>
   ),
+  withStrictModeSwitcher,
   withProviderSwitcher
 ];
