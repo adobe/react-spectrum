@@ -399,6 +399,30 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as FocusableElement : null);
 
+  // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
+  // restoring-non-containing scopes should only care if they become active so they can perform the restore
+  useLayoutEffect(() => {
+    let scope = scopeRef.current;
+    if (!restoreFocus || contain) {
+      return;
+    }
+
+    let onFocus = () => {
+      // If focusing an element in a child scope of the currently active scope, the child becomes active.
+      // Moving out of the active scope to an ancestor is not allowed.
+      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
+        activeScope = scopeRef;
+      }
+    };
+
+    document.addEventListener('focusin', onFocus, false);
+    scope.forEach(element => element.addEventListener('focusin', onFocus, false));
+    return () => {
+      document.removeEventListener('focusin', onFocus, false);
+      scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
+    };
+  }, [scopeRef, contain]);
+
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
     let nodeToRestore = nodeToRestoreRef.current;
@@ -469,7 +493,15 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         document.removeEventListener('keydown', onKeyDown, true);
       }
 
-      if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
+      // if we already lost focus to the body and this was the active scope, then we should attempt to restore
+      if (
+        restoreFocus
+        && nodeToRestore
+        && (
+          isElementInScope(document.activeElement, scopeRef.current)
+          || (document.activeElement === document.body && activeScope === scopeRef)
+        )
+      ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
         let clonedTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
