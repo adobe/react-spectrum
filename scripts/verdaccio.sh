@@ -20,20 +20,23 @@ function cleanup {
     # Clean up generated dists if run locally
     rm -rf packages/**/dist
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
-    git tag -d $(git tag -l)
-    git fetch
-    git reset --hard $commit_to_revert
-    npm set registry $original_registry
-    return
+    if [ "$commit_to_revert" != "HEAD" ];
+    then
+      git tag -d $(git tag -l)
+      git fetch
+      git reset --hard $commit_to_revert
+      npm set registry $original_registry
+    fi
   else
     # lsof doesn't work in circleci
     netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
-    return
   fi
 }
 
-trap cleanup ERR EXIT
+trap cleanup EXIT
+trap "exit 1" INT ERR
 
+set -e
 # Generate dists for the packages
 yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
 
