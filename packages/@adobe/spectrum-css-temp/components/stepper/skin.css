@@ -245,3 +245,59 @@ governing permissions and limitations under the License.
     }
   }
 }
+@media (forced-colors: active) {
+  .spectrum-Stepper {
+    --spectrum-textfield-border-color-disabled: GrayText;
+    --spectrum-textfield-border-color-error: Highlight;
+    --spectrum-textfield-border-color-hover: Highlight;
+    --spectrum-textfield-border-color-key-focus: Highlight;
+    --spectrum-textfield-quiet-border-color-disabled: GrayText;
+    --spectrum-textfield-quiet-border-color-error: Highlight;
+    --spectrum-textfield-quiet-border-color-hover: Highlight;
+    --spectrum-textfield-quiet-border-color-key-focus: Highlight;
+    --spectrum-textfield-quiet-border-color: ButtonText;
+    --spectrum-textfield-quiet-text-color-disabled: GrayText;
+    --spectrum-textfield-text-color-disabled: GrayText;
+    &:not(.spectrum-Stepper--isQuiet) {
+      &.is-focused, &:focus {
+        outline: 2px solid Highlight;
+      }    
+    }
+    &.spectrum-Stepper--readonly {
+      &.spectrum-Stepper--isQuiet {
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-quiet-border-color);
+        }
+      }
+    }
+    &.spectrum-Stepper--isQuiet {
+      &.is-focused, 
+      &:focus,
+      &.focus-ring, 
+      &:focus-ring {
+        forced-color-adjust: none;
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-key-focus);
+        .spectrum-Stepper-input {
+          forced-color-adjust: auto;
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+        .spectrum-Stepper-button {
+          forced-color-adjust: auto;
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+      }
+      &.is-hovered, 
+      &:hover {
+        .spectrum-Stepper-input {
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+        .spectrum-Stepper-button {
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+      }
+    }
+
+   
+
+  }
+}

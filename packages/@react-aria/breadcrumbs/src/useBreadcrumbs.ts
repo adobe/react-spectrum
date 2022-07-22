@@ -11,15 +11,15 @@
  */
 
 import {AriaBreadcrumbsProps} from '@react-types/breadcrumbs';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface BreadcrumbsAria {
   /** Props for the breadcrumbs navigation element. */
-  navProps: HTMLAttributes<HTMLElement>
+  navProps: DOMAttributes
 }
 
 /**

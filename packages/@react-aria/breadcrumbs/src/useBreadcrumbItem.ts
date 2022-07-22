@@ -11,19 +11,20 @@
  */
 
 import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
-import {HTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {RefObject} from 'react';
 import {useLink} from '@react-aria/link';
 
 interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */
-  itemProps: HTMLAttributes<HTMLElement>
+  itemProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
  * See `useBreadcrumbs` for details about breadcrumbs.
  */
-export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<HTMLElement>): BreadcrumbItemAria {
+export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<FocusableElement>): BreadcrumbItemAria {
   let {
     isCurrent,
     isDisabled,
@@ -34,7 +35,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
 
   let {linkProps} = useLink({isDisabled: isDisabled || isCurrent, elementType, ...otherProps}, ref);
   let isHeading = /^h[1-6]$/.test(elementType);
-  let itemProps: HTMLAttributes<HTMLElement> = {};
+  let itemProps: DOMAttributes = {};
 
   if (!isHeading) {
     itemProps = linkProps;

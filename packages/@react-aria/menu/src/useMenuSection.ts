@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, ReactNode} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface AriaMenuSectionProps {
@@ -22,13 +23,13 @@ interface AriaMenuSectionProps {
 
 interface MenuSectionAria {
   /** Props for the wrapper list item. */
-  itemProps: HTMLAttributes<HTMLElement>,
+  itemProps: DOMAttributes,
 
   /** Props for the heading element, if any. */
-  headingProps: HTMLAttributes<HTMLElement>,
+  headingProps: DOMAttributes,
 
   /** Props for the group element. */
-  groupProps: HTMLAttributes<HTMLElement>
+  groupProps: DOMAttributes
 }
 
 /**

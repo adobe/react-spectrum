@@ -1,4 +1,4 @@
-/*
+/* 
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
@@ -205,5 +205,64 @@ governing permissions and limitations under the License.
     .spectrum-Checkbox-label {
       color: var(--spectrum-checkbox-text-color-error-down);
     }
+  }
+}
+@media (forced-colors: active) {
+  .spectrum-Checkbox {
+    forced-color-adjust: none;
+    --spectrum-checkbox-box-border-color: ButtonText;
+    --spectrum-checkbox-box-border-color-error: Highlight;
+    --spectrum-checkbox-box-border-color-error-down: Highlight;
+    --spectrum-checkbox-box-border-color-error-hover: Highlight;
+    --spectrum-checkbox-box-border-color-key-focus: Highlight;
+    --spectrum-checkbox-checkmark-color: HighlightText;
+    --spectrum-checkbox-emphasized-box-background-color: ButtonFace;
+    --spectrum-checkbox-emphasized-box-background-color-disabled: ButtonFace;
+    --spectrum-checkbox-emphasized-box-border-color: ButtonText;
+    --spectrum-checkbox-emphasized-box-border-color-disabled: GrayText;
+    --spectrum-checkbox-emphasized-box-border-color-down: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-hover: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-down: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-hover: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: Highlight;
+    --spectrum-checkbox-emphasized-text-color: FieldText;
+    --spectrum-checkbox-emphasized-text-color-down: FieldText;
+    --spectrum-checkbox-emphasized-text-color-hover: FieldText;
+    --spectrum-checkbox-emphasized-text-color-key-focus: FieldText;
+    --spectrum-checkbox-focus-ring-color-key-focus: ButtonText;
+    --spectrum-checkbox-quiet-box-border-color-selected: Highlight;
+    --spectrum-checkbox-quiet-box-border-color-selected-down: Highlight;
+    --spectrum-checkbox-quiet-box-border-color-selected-hover: Highlight;
+    --spectrum-checkbox-text-color: FieldText;
+    --spectrum-checkbox-text-color-disabled: GrayText;
+    --spectrum-checkbox-text-color-error: FieldText;
+    --spectrum-checkbox-text-color-error-down: FieldText;
+    --spectrum-checkbox-text-color-error-hover: FieldText;
+
+     &.is-invalid {
+      .spectrum-Checkbox-box {
+        &:before {
+          border-color: var(--spectrum-checkbox-box-border-color);
+        }
+      }
+      &.is-indeterminate .spectrum-Checkbox-box {
+          &:before {
+            border-color: var(--spectrum-checkbox-box-border-color-error);
+          }
+        }
+      &.is-disabled .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+        &:before {
+          border-color: GrayText;
+        }
+      }
+      /* Extra-specific selectors added here to handle checked state */
+      .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box
+      {
+        &:before {
+          border-color: var(--spectrum-checkbox-box-border-color-error);
+        }
+      }
+    } 
   }
 }

@@ -9,5 +9,5 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useSwitch';
+export type {SwitchAria} from './useSwitch';
+export {useSwitch} from './useSwitch';
