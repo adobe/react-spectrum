@@ -19,6 +19,8 @@ import statelyDocs from 'docs:@react-stately/menu';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindPreview from 'url:./tailwind.png';
 
 ---
 category: Overlays
@@ -218,6 +220,14 @@ function MenuItem({item, state, onAction, onClose}) {
   <Item key="paste">Paste</Item>
 </MenuButton>
 ```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/awesome-boyd-c0gbv5?file=/src/Menu.tsx"
+  preview={tailwindPreview}
+  title="Tailwind CSS"
+  description="An example of styling a Menu with Tailwind." />
 
 ## Internationalization
 

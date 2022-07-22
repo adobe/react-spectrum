@@ -15,21 +15,22 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
+import {RefObject, useMemo} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 
 export interface DateRangePickerAria {
   /** Props for the date range picker's visible label element, if any. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the grouping element containing the date fields and button. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the start date field. */
   startFieldProps: AriaDatePickerProps<DateValue>,
   /** Props for the end date field. */
@@ -37,9 +38,9 @@ export interface DateRangePickerAria {
   /** Props for the popover trigger button. */
   buttonProps: AriaButtonProps,
   /** Props for the description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>,
+  errorMessageProps: DOMAttributes,
   /** Props for the popover dialog. */
   dialogProps: AriaDialogProps,
   /** Props for the range calendar within the popover dialog. */
@@ -51,7 +52,7 @@ export interface DateRangePickerAria {
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<HTMLElement>): DateRangePickerAria {
+export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

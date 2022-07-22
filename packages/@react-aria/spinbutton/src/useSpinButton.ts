@@ -12,10 +12,10 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {useCallback, useEffect, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
@@ -31,7 +31,7 @@ export interface SpinButtonProps extends InputBase, Validation, ValueBase<number
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: HTMLAttributes<HTMLDivElement>,
+  spinButtonProps: DOMAttributes,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps
 }

@@ -11,15 +11,16 @@
  */
 
 import {ColumnResizeState, TableState} from '@react-stately/table';
+import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {RefObject, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 interface ResizerAria {
-  resizerProps: HTMLAttributes<HTMLElement>
+  resizerProps: DOMAttributes
 }
 
 interface ResizerProps<T> {

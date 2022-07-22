@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export * from './TextArea';
-export * from './TextField';
-export * from './TextFieldBase';
+export {TextArea} from './TextArea';
+export {TextField} from './TextField';
+export {TextFieldBase} from './TextFieldBase';
