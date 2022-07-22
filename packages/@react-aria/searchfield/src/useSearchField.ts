@@ -13,7 +13,8 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {chain} from '@react-aria/utils';
-import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SearchFieldState} from '@react-stately/searchfield';
@@ -28,9 +29,9 @@ interface SearchFieldAria {
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps,
   /** Props for the searchfield's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the searchfield's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**

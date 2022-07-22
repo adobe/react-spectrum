@@ -47,6 +47,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   return (
     <Element
       {...styleProps}
+      // @ts-ignore
       className={
         classNames(
           styles,

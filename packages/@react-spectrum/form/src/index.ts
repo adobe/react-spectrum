@@ -12,4 +12,4 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Form';
+export {useFormProps, Form} from './Form';

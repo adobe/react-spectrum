@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useColorArea';
-export * from './useColorSlider';
-export * from './useColorWheel';
-export * from './useColorField';
+export {useColorArea} from './useColorArea';
+export {useColorSlider} from './useColorSlider';
+export {useColorWheel} from './useColorWheel';
+export {useColorField} from './useColorField';

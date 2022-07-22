@@ -12,13 +12,14 @@
 
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
-import {HTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
+import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
@@ -33,9 +34,9 @@ export interface AriaCalendarCellProps {
 
 export interface CalendarCellAria {
   /** Props for the grid cell element (e.g. `<td>`). */
-  cellProps: HTMLAttributes<HTMLElement>,
+  cellProps: DOMAttributes,
   /** Props for the button element within the cell. */
-  buttonProps: HTMLAttributes<HTMLElement>,
+  buttonProps: DOMAttributes,
   /** Whether the cell is currently being pressed. */
   isPressed: boolean,
   /** Whether the cell is selected. */

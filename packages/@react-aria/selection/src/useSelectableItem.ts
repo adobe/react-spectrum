@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {LongPressEvent, PressEvent} from '@react-types/shared';
+import {Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
@@ -30,7 +30,7 @@ export interface SelectableItemOptions {
   /**
    * Ref to the item.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<FocusableElement>,
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).
@@ -89,7 +89,7 @@ export interface SelectableItemAria extends SelectableItemStates {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: HTMLAttributes<HTMLElement>
+  itemProps: DOMAttributes
 }
 
 /**

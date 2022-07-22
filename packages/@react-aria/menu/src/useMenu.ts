@@ -11,15 +11,15 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
 interface MenuAria {
   /** Props for the menu element. */
-  menuProps: HTMLAttributes<HTMLElement>
+  menuProps: DOMAttributes
 }
 
 export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
