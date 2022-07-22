@@ -17,11 +17,11 @@ import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
@@ -31,18 +31,18 @@ interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
-  popoverRef: RefObject<HTMLDivElement>,
+  popoverRef: RefObject<Element>,
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement>,
   /** The ref for the optional list box popup trigger button.  */
-  buttonRef?: RefObject<HTMLElement>,
+  buttonRef?: RefObject<Element>,
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface ComboBoxAria<T> {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
@@ -50,9 +50,9 @@ interface ComboBoxAria<T> {
   /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
   buttonProps: AriaButtonProps,
   /** Props for the combo box description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the combo box error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -136,7 +136,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   let onBlur = (e: FocusEvent) => {
     // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget as HTMLElement)) {
+    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget)) {
       return;
     }
 
@@ -211,7 +211,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       return;
     }
 
-    let rect = (e.target as HTMLElement).getBoundingClientRect();
+    let rect = (e.target as Element).getBoundingClientRect();
     let touch = e.changedTouches[0];
 
     let centerX = Math.ceil(rect.left + .5 * rect.width);

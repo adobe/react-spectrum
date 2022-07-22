@@ -19,6 +19,58 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
+const parameters = {
+  args: {
+    isReadOnly: true,
+    isQuiet: false,
+    isRequired: false,
+    isDisabled: false,
+    autoFocus: true,
+    validationState: '',
+    description: '',
+    errorMessage: '',
+    value: ''
+  },
+  argTypes: {
+    isQuiet: {
+      control: {type: 'boolean'}
+    },
+    isRequired: {
+      control: {type: 'boolean'}
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
+    },
+    autoFocus: {
+      control: {type: 'boolean'}
+    },
+    validationState: {
+      control: {
+        type: 'radio',
+        options: ['', 'invalid', 'valid', '']
+      }
+    },
+    description: {
+      control: {
+        type: 'radio',
+        options: ['', 'Please enter a street address']
+      }
+    },
+    errorMessage: {
+      control: {
+        type: 'radio',
+        options: ['', 'please enter a valid street address']
+      }
+    },
+    value: {
+      control: {
+        type: 'radio',
+        options: ['', 'foo  '.repeat(20)]
+      }
+    }
+  }
+};
+
 storiesOf('TextArea', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
@@ -156,6 +208,24 @@ storiesOf('TextArea', module)
     'resize with changeable helptext custom height',
     () => <ValidationExample height="175px" minHeight="100px" maxHeight="50vh" />,
     {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}});
+  )
+  .add('test: isReadOnly, with controls',
+    (args) => (   
+      <TextArea
+        label="Comments"
+        onChange={action('change')}
+        onFocus={action('focus')}
+        onBlur={action('blur')}
+        UNSAFE_className="custom_classname"
+        {...args} />
+    ), parameters
+  )
+  .add('test: isReadOnly, defaultValue',
+    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
+  );
 
 function render(props = {}) {
   return (
@@ -174,6 +244,7 @@ function ControlledTextArea(props) {
   return (
     <>
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+      <TextArea label="megatron" value={value} onChange={setValue} {...props} isReadOnly />
       <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
     </>
   );

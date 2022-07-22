@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {useEffect, useState} from 'react';
@@ -23,7 +23,7 @@ let dragSession: DragSession = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
-  element: HTMLElement,
+  element: FocusableElement,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
@@ -43,7 +43,7 @@ export function registerDropTarget(target: DropTarget) {
 }
 
 interface DroppableItem {
-  element: HTMLElement,
+  element: FocusableElement,
   target: DroppableCollectionTarget,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation
 }
@@ -56,7 +56,7 @@ export function registerDropItem(item: DroppableItem) {
 }
 
 interface DragTarget {
-  element: HTMLElement,
+  element: FocusableElement,
   items: DragItem[],
   allowedDropOperations: DropOperation[],
   onDragEnd?: (e: DragEndEvent) => void

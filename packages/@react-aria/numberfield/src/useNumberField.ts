@@ -12,9 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
 import {
-  HTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
@@ -25,7 +25,6 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {TextInputDOMProps} from '@react-types/shared';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
@@ -39,7 +38,7 @@ interface NumberFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
@@ -47,9 +46,9 @@ interface NumberFieldAria {
   /** Props for the decrement button, to be passed to [useButton](useButton.html). */
   decrementButtonProps: AriaButtonProps,
   /** Props for the number field's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the number field's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**

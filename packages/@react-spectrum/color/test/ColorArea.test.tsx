@@ -109,6 +109,10 @@ describe('ColorArea', () => {
           expect(ySlider).toHaveAttribute('aria-label', 'Color hue, Color picker');
           expect(xSlider).not.toHaveAttribute('aria-labelledby');
           expect(ySlider).not.toHaveAttribute('aria-labelledby');
+
+          let colorAreaGroup = xSlider.closest('[role="group"]');
+          expect(colorAreaGroup).toHaveAttribute('aria-label', 'Color hue, Color picker');
+          expect(colorAreaGroup).not.toHaveAttribute('aria-labelledby');
         });
 
         it('should support a custom aria-labelledby', () => {
@@ -119,6 +123,10 @@ describe('ColorArea', () => {
           expect(ySlider).toHaveAttribute('aria-label', 'Color picker');
           expect(xSlider).toHaveAttribute('aria-labelledby', `label-id ${xSlider.id}`);
           expect(ySlider).toHaveAttribute('aria-labelledby', `label-id ${ySlider.id}`);
+
+          let colorAreaGroup = xSlider.closest('[role="group"]');
+          expect(colorAreaGroup).toHaveAttribute('aria-labelledby', 'label-id');
+          expect(colorAreaGroup).not.toHaveAttribute('aria-label');
         });
       });
     });
