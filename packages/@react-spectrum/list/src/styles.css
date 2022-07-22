@@ -279,8 +279,8 @@
     grid-template-columns: auto auto auto auto 1fr auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
-      "draghandle checkbox icon image content actions actionmenu chevron"
-      "draghandle checkbox icon image description actions actionmenu chevron";
+      "draghandle checkbox thumbnail content actions actionmenu chevron"
+      "draghandle checkbox thumbnail description actions actionmenu chevron";
     align-items: center;
   }
 
@@ -326,9 +326,8 @@
     }
   }
 
-  .react-spectrum-ListViewItem-illustration,
-  .react-spectrum-ListViewItem-image {
-    grid-area: image;
+  .react-spectrum-ListViewItem-thumbnail {
+    grid-area: thumbnail;
     justify-items: center;
     padding-inline-end: var(--spectrum-global-dimension-size-100);
     display: flex;
@@ -338,10 +337,9 @@
     align-items: center;
     justify-content: center;
 
-    > img, svg {
+    > img, > svg {
       width: unset;
-      height: unset;
-      max-height: 100%;
+      height: 100%;
     }
   }
 
@@ -403,8 +401,8 @@
 
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
-        "icon image content     . badge"
-        "icon image description . badge";
+        "thumbnail content     . badge"
+        "thumbnail description . badge";
       grid-template-columns: auto auto auto 1fr;
     }
 

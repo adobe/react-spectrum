@@ -332,7 +332,8 @@ describe('Slider', function () {
 
   describe('mouse interactions', () => {
     beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      // @ts-ignore
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
     installMouseEvent();
@@ -464,7 +465,8 @@ describe('Slider', function () {
 
   describe('touch interactions', () => {
     beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      // @ts-ignore
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
     it('doesn\'t jump to second touch on track while already dragging', () => {

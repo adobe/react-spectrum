@@ -12,4 +12,4 @@
 
 /// <reference types="css-module-types" />
 
-export * from './IllustratedMessage';
+export {IllustratedMessage} from './IllustratedMessage';

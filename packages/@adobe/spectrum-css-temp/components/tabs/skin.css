@@ -213,5 +213,12 @@ governing permissions and limitations under the License.
         color: HighlightText;
       }
     }
+    &.spectrum-Tabs--isCollapsed {
+      :focus-ring {
+        /* FieldButton Picker focus ring override */
+        outline: none;
+      }
+      
+    }
   }
 }

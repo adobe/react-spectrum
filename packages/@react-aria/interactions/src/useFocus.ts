@@ -15,8 +15,8 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes, useCallback} from 'react';
-import {FocusEvents} from '@react-types/shared';
+import {DOMAttributes, FocusEvents} from '@react-types/shared';
+import {FocusEvent, useCallback} from 'react';
 import {useSyntheticBlurEvent} from './utils';
 
 interface FocusProps extends FocusEvents {
@@ -26,7 +26,7 @@ interface FocusProps extends FocusEvents {
 
 interface FocusResult {
   /** Props to spread onto the target element. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: DOMAttributes
 }
 
 /**
