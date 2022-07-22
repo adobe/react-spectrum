@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {isAndroid, mergeProps} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
+import {isAndroid, mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
