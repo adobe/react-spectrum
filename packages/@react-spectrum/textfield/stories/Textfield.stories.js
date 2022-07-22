@@ -16,6 +16,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
+// add label position?
 const parameters = {
   args: {
     isReadOnly: true,
@@ -212,6 +213,12 @@ storiesOf('TextField', module)
   )
   .add('test: isReadOnly, no visible label',
   () => render({isReadOnly: true, label: null, 'aria-label': 'Street address', value: 'foo  '.repeat(20)})
+  )
+  .add('test: isQuiet no visible label',
+  () => render({isQuiet: true, label: null, 'aria-label': 'Street address', value: 'foo  '.repeat(20)})
+  )
+  .add('test: isReadOnly, custom width, labelPosition: side',
+    () => render({isReadOnly: true, width: '500px', labelPosition: 'side'})
   );
 
 function render(props = {}) {

@@ -20,34 +20,41 @@ import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
 
-function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaElement>) {
+interface ReadOnlyFieldProps extends SpectrumFieldProps {
+  className?: string
+}
+
+function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>) {
   props = useFormProps(props);
   let {
     isDisabled,
     readOnlyText,
     autoFocus,
-    inputProps
+    inputProps,
+    inputRef,
+    className
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   delete inputProps.defaultValue;
 
   let onHeightChange = useCallback(() => {
-    let input = ref.current;
+    let input = inputRef.current;
     let prevAlignment = input.style.alignSelf;
     input.style.alignSelf = 'start';
     input.style.height = 'auto'; 
     input.style.height = `${input.scrollHeight}px`;
     input.style.alignSelf = prevAlignment;
-  }, [ref]);
+  }, [inputRef]);
 
   useLayoutEffect(() => {
-    if (ref.current) {
+    if (inputRef.current) {
       onHeightChange();
     }
-  }, [onHeightChange, readOnlyText, ref]);
+  }, [onHeightChange, readOnlyText, inputRef]);
 
   return (
     <div
+      ref={ref as RefObject<HTMLDivElement>}
       className={
         classNames(
           styles,
@@ -55,14 +62,15 @@ function ReadOnlyField(props: SpectrumFieldProps, ref: RefObject<HTMLTextAreaEle
           {
             'spectrum-Textfield--quiet': true,
             'spectrum-Textfield--readonly': true
-          }
+          },
+          className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
         <textarea
           {...mergeProps(inputProps, hoverProps)} 
           rows={1}
-          ref={ref}
+          ref={inputRef as RefObject<HTMLTextAreaElement>}
           value={readOnlyText}
           className={
             classNames(

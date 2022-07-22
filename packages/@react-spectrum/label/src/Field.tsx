@@ -58,7 +58,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let formatMessage = useMessageFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
-  let defaultInputRef = useRef<HTMLTextAreaElement>();
+  let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
   // provide aria-label in non-readonly instances so that useLabel does not throw a warning (for combobox and numberfield)
@@ -72,20 +72,21 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   // moved readOnly code outside of conditional statement so it would render when there is no label
   if (displayReadOnly) {
+    elementType = 'label';
+
     if (readOnlyText === '') {
       readOnlyText = formatMessage('(None)');
     }
+    
     children = (
-      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        <ReadOnlyField
-          {...props} 
-          readOnlyText={readOnlyText}
-          inputProps={inputProps}
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />
-      </Flex>
+      <ReadOnlyField
+        {...props} 
+        readOnlyText={readOnlyText}
+        inputProps={inputProps}
+        inputRef={inputRef as RefObject<HTMLTextAreaElement>} 
+        ref={ref as RefObject<HTMLDivElement>} />
     );
   }
-
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -146,7 +147,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
   }
 
-  return displayReadOnly ? children : React.cloneElement(children, mergeProps(children.props, {
+  return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
     // @ts-ignore
     ref: mergeRefs(children.ref, ref)
