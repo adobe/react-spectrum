@@ -9,10 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 /// <reference types="css-module-types" />
-
-export * from './View';
-export * from './Content';
-export * from './Footer';
-export * from './Header';
+export {View} from './View';
+export {Content} from './Content';
+export {Footer} from './Footer';
+export {Header} from './Header';

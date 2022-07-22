@@ -9,8 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 /// <reference types="css-module-types" />
-
-export * from './Accordion';
+export {Accordion} from './Accordion';
 export {Item} from '@react-stately/collections';

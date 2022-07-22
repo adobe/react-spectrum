@@ -11,9 +11,13 @@
  */
 
 import {
+  AriaAttributes,
+  AriaRole,
   ClipboardEventHandler,
   CompositionEventHandler,
+  CSSProperties,
   FormEventHandler,
+  DOMAttributes as ReactDOMAttributes,
   ReactEventHandler
 } from 'react';
 
@@ -159,4 +163,15 @@ export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
    * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
    */
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+}
+
+/** Any focusable element, including both HTML and SVG elements. */
+export interface FocusableElement extends Element, HTMLOrSVGElement {}
+
+/** All DOM attributes supported across both HTML and SVG elements. */
+export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, ReactDOMAttributes<T> {
+  id?: string | undefined,
+  role?: AriaRole | undefined,
+  tabIndex?: number | undefined,
+  style?: CSSProperties | undefined
 }

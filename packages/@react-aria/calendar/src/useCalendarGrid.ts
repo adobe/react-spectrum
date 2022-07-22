@@ -12,8 +12,9 @@
 
 import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
-import {HTMLAttributes, KeyboardEvent, useMemo} from 'react';
+import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
@@ -34,9 +35,9 @@ export interface AriaCalendarGridProps {
 
 export interface CalendarGridAria {
   /** Props for the date grid element (e.g. `<table>`). */
-  gridProps: HTMLAttributes<HTMLElement>,
+  gridProps: DOMAttributes,
   /** Props for the grid header element (e.g. `<thead>`). */
-  headerProps: HTMLAttributes<HTMLElement>,
+  headerProps: DOMAttributes,
   /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
   weekDays: string[]
 }

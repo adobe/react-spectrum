@@ -13,14 +13,24 @@
 /// <reference types="css-module-types" />
 /// <reference path="./ResizeObserver.d.ts" />
 
-export * from './classNames';
-export * from './getWrappedElement';
-export * from './useMediaQuery';
-export * from './useDOMRef';
-export * from './styleProps';
-export * from './Slots';
-export * from './useHasChild';
-export * from './useResizeObserver';
-export * from './useIsMobileDevice';
-export * from './useValueEffect';
-export * from './BreakpointProvider';
+export type {StyleHandlers} from './styleProps';
+export {shouldKeepSpectrumClassNames, keepSpectrumClassNames, classNames} from './classNames';
+export {getWrappedElement} from './getWrappedElement';
+export {useMediaQuery} from './useMediaQuery';
+export {createDOMRef, createFocusableRef, useDOMRef, useFocusableRef, unwrapDOMRef, useUnwrapDOMRef} from './useDOMRef';
+export {
+  baseStyleProps,
+  viewStyleProps,
+  dimensionValue,
+  responsiveDimensionValue,
+  convertStyleProps,
+  useStyleProps,
+  passthroughStyle,
+  getResponsiveProp
+} from './styleProps';
+export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from './Slots';
+export {useHasChild} from './useHasChild';
+export {useIsMobileDevice} from './useIsMobileDevice';
+export {useValueEffect} from './useValueEffect';
+export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from './BreakpointProvider';
+export {useResizeObserver} from '@react-aria/utils';
