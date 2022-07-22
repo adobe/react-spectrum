@@ -11,8 +11,7 @@
  */
 
 /// <reference types="css-module-types" />
-
-export * from './ColorArea';
-export * from './ColorWheel';
-export * from './ColorSlider';
-export * from './ColorField';
+export {ColorArea} from './ColorArea';
+export {ColorWheel} from './ColorWheel';
+export {ColorSlider} from './ColorSlider';
+export {ColorField} from './ColorField';

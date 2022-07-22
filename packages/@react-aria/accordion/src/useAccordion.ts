@@ -11,16 +11,16 @@
  */
 
 import {AriaAccordionProps} from '@react-types/accordion';
-import {ButtonHTMLAttributes, HTMLAttributes, RefObject} from 'react';
+import {ButtonHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, Node} from '@react-types/shared';
 import {mergeProps, useId} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
 interface AccordionAria {
   /** Props for the accordion container element. */
-  accordionProps: HTMLAttributes<HTMLElement>
+  accordionProps: DOMAttributes
 }
 interface AccordionItemAriaProps<T> {
   item: Node<T>
@@ -30,7 +30,7 @@ interface AccordionItemAria {
   /** Props for the accordion item button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
   /** Props for the accordion item content element. */
-  regionProps: HTMLAttributes<HTMLElement>
+  regionProps: DOMAttributes
 }
 
 export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement>): AccordionItemAria {
