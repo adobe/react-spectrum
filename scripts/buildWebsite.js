@@ -45,11 +45,14 @@ async function build() {
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
-          name === 'sharp'
+          name === 'sharp' ||
+          name === 'recast'
         )
     ),
     dependencies: {
-      '@adobe/react-spectrum': 'latest'
+      '@adobe/react-spectrum': 'latest',
+      'react-aria': 'latest',
+      'react-stately': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
