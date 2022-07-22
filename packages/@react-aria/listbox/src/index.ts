@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useListBox';
-export * from './useOption';
-export * from './useListBoxSection';
-export * from './utils';
+export type {AriaListBoxOptions} from './useListBox';
+export {useListBox} from './useListBox';
+export {useOption} from './useOption';
+export {useListBoxSection} from './useListBoxSection';
+export {listData, getItemId} from './utils';

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {Node as RSNode} from '@react-types/shared';
+import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
 
@@ -31,11 +31,11 @@ export interface AriaListItemOptions {
 
 export interface ListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
-  rowProps: HTMLAttributes<HTMLElement>,
+  rowProps: DOMAttributes,
   /** Props for the grid cell element within the list row. */
-  gridCellProps: HTMLAttributes<HTMLElement>,
+  gridCellProps: DOMAttributes,
   /** Props for the list item description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>
+  descriptionProps: DOMAttributes
 }
 
 /**
@@ -44,7 +44,7 @@ export interface ListItemAria extends SelectableItemStates {
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, ref: RefObject<HTMLElement>): ListItemAria {
+export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, ref: RefObject<FocusableElement>): ListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
@@ -74,7 +74,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+    if (!e.currentTarget.contains(e.target as Element)) {
       return;
     }
 
@@ -85,8 +85,8 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
       case 'ArrowLeft': {
         // Find the next focusable element within the row.
         let focusable = direction === 'rtl'
-          ? walker.nextNode() as HTMLElement
-          : walker.previousNode() as HTMLElement;
+          ? walker.nextNode() as FocusableElement
+          : walker.previousNode() as FocusableElement;
 
         if (focusable) {
           e.preventDefault();
@@ -110,8 +110,8 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
       }
       case 'ArrowRight': {
         let focusable = direction === 'rtl'
-          ? walker.previousNode() as HTMLElement
-          : walker.nextNode() as HTMLElement;
+          ? walker.previousNode() as FocusableElement
+          : walker.nextNode() as FocusableElement;
 
         if (focusable) {
           e.preventDefault();
@@ -137,7 +137,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as HTMLElement)) {
+        if (!e.altKey && ref.current.contains(e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement.dispatchEvent(
@@ -163,7 +163,7 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
     }
   };
 
-  let rowProps: HTMLAttributes<HTMLElement> = mergeProps(itemProps, {
+  let rowProps: DOMAttributes = mergeProps(itemProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
@@ -194,10 +194,10 @@ export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, 
 }
 
 function last(walker: TreeWalker) {
-  let next: HTMLElement;
-  let last: HTMLElement;
+  let next: FocusableElement;
+  let last: FocusableElement;
   do {
-    last = walker.lastChild() as HTMLElement;
+    last = walker.lastChild() as FocusableElement;
     if (last) {
       next = last;
     }

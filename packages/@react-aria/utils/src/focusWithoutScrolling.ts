@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
+
 // This is a polyfill for element.focus({preventScroll: true});
 // Currently necessary for Safari and old Edge:
 // https://caniuse.com/#feat=mdn-api_htmlelement_focus_preventscroll_option
@@ -26,7 +28,7 @@ interface ScrollableElement {
   scrollLeft: number
 }
 
-export function focusWithoutScrolling(element: HTMLElement) {
+export function focusWithoutScrolling(element: FocusableElement) {
   if (supportsPreventScroll()) {
     element.focus({preventScroll: true});
   } else {
@@ -56,7 +58,7 @@ function supportsPreventScroll() {
   return supportsPreventScrollCached;
 }
 
-function getScrollableElements(element: HTMLElement): ScrollableElement[] {
+function getScrollableElements(element: FocusableElement): ScrollableElement[] {
   var parent = element.parentNode;
   var scrollableElements: ScrollableElement[] = [];
   var rootScrollingElement = document.scrollingElement || document.documentElement;

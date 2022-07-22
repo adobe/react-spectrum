@@ -12,7 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export * from './MenuTrigger';
-export * from './Menu';
-export * from './ActionMenu';
+export {MenuTrigger} from './MenuTrigger';
+export {Menu} from './Menu';
+export {ActionMenu} from './ActionMenu';
 export {Item, Section} from '@react-stately/collections';

@@ -44,7 +44,7 @@ interface MenuTriggerAria<T> {
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  */
-export function useMenuTrigger<T>(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria<T> {
+export function useMenuTrigger<T>(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
   let {
     type = 'menu' as MenuTriggerAriaProps['type'],
     isDisabled,

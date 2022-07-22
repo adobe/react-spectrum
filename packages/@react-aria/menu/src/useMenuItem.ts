@@ -10,27 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
-import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {Key, RefObject} from 'react';
 import {menuData} from './useMenu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
   /** Props for the menu item element. */
-  menuItemProps: HTMLAttributes<HTMLElement>,
+  menuItemProps: DOMAttributes,
 
   /** Props for the main text element inside the menu item. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
 
   /** Props for the description text element inside the menu item, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
 
   /** Props for the keyboard shortcut text element inside the item, if any. */
-  keyboardShortcutProps: HTMLAttributes<HTMLElement>,
+  keyboardShortcutProps: DOMAttributes,
 
   /** Whether the item is currently focused. */
   isFocused: boolean,
@@ -89,7 +89,7 @@ interface AriaMenuItemProps {
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
   let {
     key,
     closeOnSelect,

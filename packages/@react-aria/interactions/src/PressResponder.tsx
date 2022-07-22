@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
@@ -19,7 +20,7 @@ interface PressResponderProps extends PressProps {
   children: ReactNode
 }
 
-export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: RefObject<HTMLElement>) => {
+export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: RefObject<FocusableElement>) => {
   let isRegistered = useRef(false);
   let prevContext = useContext(PressResponderContext);
   let context = mergeProps(prevContext || {}, {
