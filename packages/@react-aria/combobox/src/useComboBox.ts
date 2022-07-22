@@ -15,10 +15,9 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
