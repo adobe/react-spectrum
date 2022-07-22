@@ -18,7 +18,7 @@ interface DOMPropsResponderProps extends HoverProps {
   children: ReactNode
 }
 
-export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMPropsResponderProps, ref: RefObject<HTMLElement>) => {
+export const DOMPropsResponder = React.forwardRef(({children, ...props}: DOMPropsResponderProps, ref: RefObject<Element>) => {
   let isRegistered = useRef(false);
   let context = {
     ...props,

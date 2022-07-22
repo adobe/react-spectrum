@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling, runAfterTransition} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 
@@ -48,7 +49,8 @@ const intersectionObserver = (() => {
  * A utility function that focuses an element while avoiding undesired side effects such
  * as page scrolling and screen reader issues with CSS transitions.
  */
-export function focusSafely(element: HTMLElement) {
+
+export function focusSafely(element: FocusableElement) {
   const modality = getInteractionModality();
   const lastFocusedElement = document.activeElement;
 

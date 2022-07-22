@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, KeyboardEvent, useRef} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {Key, KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface TypeSelectOptions {
@@ -33,7 +33,7 @@ interface TypeSelectAria {
   /**
    * Props to be spread on the owner of the options.
    */
-  typeSelectProps: HTMLAttributes<HTMLElement>
+  typeSelectProps: DOMAttributes
 }
 
 /**

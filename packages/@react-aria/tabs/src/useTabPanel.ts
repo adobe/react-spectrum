@@ -11,15 +11,16 @@
  */
 
 import {AriaTabPanelProps} from '@react-types/tabs';
+import {DOMAttributes} from '@react-types/shared';
 import {generateId} from './utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useState} from 'react';
 import {mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {RefObject, useState} from 'react';
 import {TabListState} from '@react-stately/tabs';
 
 interface TabPanelAria {
   /** Props for the tab panel element. */
-  tabPanelProps: HTMLAttributes<HTMLElement>
+  tabPanelProps: DOMAttributes
 }
 
 
@@ -27,7 +28,7 @@ interface TabPanelAria {
  * Provides the behavior and accessibility implementation for a tab panel. A tab panel is a container for
  * the contents of a tab, and is shown when the tab is selected.
  */
-export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<HTMLElement>): TabPanelAria {
+export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<Element>): TabPanelAria {
   let [tabIndex, setTabIndex] = useState(0);
 
   // The tabpanel should have tabIndex=0 when there are no tabbable elements within it.
