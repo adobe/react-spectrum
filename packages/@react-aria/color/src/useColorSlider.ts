@@ -12,29 +12,30 @@
 
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
-import {HTMLAttributes, RefObject} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
 interface ColorSliderAriaOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
-  trackRef: RefObject<HTMLElement>,
+  trackRef: RefObject<Element>,
   /** A ref for the input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
 interface ColorSliderAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
+  trackProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden range input element. */
-  inputProps: HTMLAttributes<HTMLElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the output element, displaying the value of the color slider. */
-  outputProps: HTMLAttributes<HTMLElement>
+  outputProps: DOMAttributes
 }
 
 /**
@@ -99,16 +100,25 @@ export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSlider
     }
   };
 
+  let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),
       style: {
         ...trackProps.style,
+        ...forcedColorAdjustNoneStyle,
         background: generateBackground()
       }
     },
     inputProps,
-    thumbProps,
+    thumbProps: {
+      ...thumbProps,
+      style: {
+        ...thumbProps.style,
+        ...forcedColorAdjustNoneStyle
+      }
+    },
     labelProps,
     outputProps
   };

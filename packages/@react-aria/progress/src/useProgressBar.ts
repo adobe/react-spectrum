@@ -12,15 +12,15 @@
 
 import {AriaProgressBarProps} from '@react-types/progress';
 import {clamp, filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
   /** Props for the progress bar container element. */
-  progressBarProps: HTMLAttributes<HTMLElement>,
+  progressBarProps: DOMAttributes,
   /** Props for the progress bar's visual label element (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes
 }
 
 /**

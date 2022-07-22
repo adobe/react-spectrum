@@ -67,7 +67,7 @@ export function getRTLOffsetType(recalculate: boolean = false): RTLOffsetType {
   return cachedRTLResult;
 }
 
-export function getScrollLeft(node: HTMLElement, direction: Direction): number {
+export function getScrollLeft(node: Element, direction: Direction): number {
   let {scrollLeft} = node;
 
   // scrollLeft in rtl locales differs across browsers, so normalize.
@@ -87,7 +87,7 @@ export function getScrollLeft(node: HTMLElement, direction: Direction): number {
   return scrollLeft;
 }
 
-export function setScrollLeft(node: HTMLElement, direction: Direction, scrollLeft: number) {
+export function setScrollLeft(node: Element, direction: Direction, scrollLeft: number) {
   if (direction === 'rtl') {
     switch (getRTLOffsetType()) {
       case 'negative':

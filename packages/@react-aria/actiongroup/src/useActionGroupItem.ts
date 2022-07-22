@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {Key, RefObject, useEffect, useRef} from 'react';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
@@ -20,7 +21,7 @@ interface ActionGroupItemProps {
 }
 
 interface ActionGroupItemAria {
-  buttonProps: HTMLAttributes<HTMLElement> & PressProps
+  buttonProps: DOMAttributes & PressProps
 }
 
 const BUTTON_ROLES = {
@@ -30,7 +31,7 @@ const BUTTON_ROLES = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref?: RefObject<HTMLElement>): ActionGroupItemAria {
+export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement>): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]
