@@ -27,7 +27,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */

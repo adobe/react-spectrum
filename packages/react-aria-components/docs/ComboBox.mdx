@@ -10,32 +10,28 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/combobox';
+import docs from 'docs:../src/ComboBox.tsx';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
-import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {PropTable, FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
 import i18nDocs from 'docs:@react-aria/i18n';
 import listboxDocs from 'docs:@react-aria/listbox';
 import overlaysDocs from 'docs:@react-aria/overlays';
-import packageData from '@react-aria/combobox/package.json';
+import packageData from 'react-aria-components/package.json';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/combobox';
-import Anatomy from './anatomy.svg';
+import Anatomy from '/packages/@react-aria/combobox/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import examplePreview from 'url:./example.png';
-import searchExamplePreview from 'url:./search.png';
-import materialExamplePreview from 'url:./material.png';
-import styledExamplePreview from 'url:./styled-components.png';
-import chakraExamplePreview from 'url:./chakra.png';
 
 ---
 category: Pickers
 keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
+type: component
 ---
 
 # ComboBox
 
-<PageDescription>{docs.exports.useComboBox.description}</PageDescription>
+<PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -48,8 +44,10 @@ keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
 
 ## Example
 
-```tsx
+```tsx example
 import {ComboBox, Label, Input, Button, Popover, ListBox} from 'react-aria-components';
+import {Item} from 'react-stately';
+import clsx from 'clsx';
 
 <ComboBox>
   <Label style={{display: 'block'}}>Test</Label>
@@ -59,14 +57,45 @@ import {ComboBox, Label, Input, Button, Popover, ListBox} from 'react-aria-compo
       <span aria-hidden="true" style={{ padding: '0 2px' }}>▼</span>
     </Button>
   </div>
-  <Popover placement="bottom end">
+  <Popover>
     <ListBox className="menu">
-      <Item className={itemClass}>Foo</Item>
-      <Item className={itemClass}>Bar</Item>
-      <Item className={itemClass}>Baz</Item>
+      <Item className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})}>Foo</Item>
+      <Item className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})}>Bar</Item>
+      <Item className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})}>Baz</Item>
     </ListBox>
   </Popover>
 </ComboBox>
+```
+
+```css
+.menu {
+  display: block;
+  min-width: 150px;
+  width: fit-content;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background: lightgray;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+}
+
+.item.focused {
+  background: gray;
+  color: white;
+}
+
+.item.selected {
+  background: purple;
+  color: white;
+}
 ```
 
 ## Anatomy
@@ -103,7 +132,9 @@ For more customization options, React Aria hooks can be used to replace any of t
 
 ## Making it reusable
 
-```tsx
+```tsx example export=true
+import {Option} from 'react-aria-components';
+
 function MyComboBox({label, children, ...props}) {
   return (
     <ComboBox {...props}>
@@ -118,7 +149,7 @@ function MyComboBox({label, children, ...props}) {
         <ListBox
           className="menu"
           renderItem={item => (
-            <Option item={item} className={itemClass}>
+            <Option item={item} className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})}>
               {({isSelected}) => <>{item.rendered}{isSelected ? ' (selected)' : ''}</>}
             </Option>
           )}>
@@ -128,7 +159,17 @@ function MyComboBox({label, children, ...props}) {
     </ComboBox>
   );
 }
+
+<MyComboBox label="Test">
+  <Item>Foo</Item>
+  <Item>Bar</Item>
+  <Item>Baz</Item>
+</MyComboBox>
 ```
+
+## Props
+
+<PropTable component={docs.exports.ComboBox} links={docs.links} />
 
 ## Usage
 
@@ -165,5 +206,58 @@ function Example() {
       <p>Selected topic id: {majorId}</p>
     </>
   );
+}
+```
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `ComboBox`, such as `Input` or `ListBox`, in many cases you can create a wrapper
+component. This lets you customize the props passed to the component.
+
+```tsx
+function MyListBox(props) {
+  return <ListBox {...props} className="my-listbox" />
+}
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower
+level Hook-based API. `ComboBox` sends props to its child elements via public React contexts for each component. You can use this context to
+implement replacements for any component, using hooks from `react-aria`. This allows you to replace only the components you need to customize,
+and keep using the others.
+
+```tsx
+import {ListBoxContext} from 'react-aria-components';
+import {useListBox, mergeProps} from 'react-aria';
+
+function MyListBox(props) {
+  let {state, ...context} = useContext(ListBoxContext);
+  props = mergeProps(props, context);
+
+  let {listBoxProps} = useListBox(props, state, ref);
+
+  // ...
+}
+```
+
+This also works the other way. If you need to customize `ComboBox` itself, but want to reuse the components it contains, you can do so by providing
+the necessary contexts.
+
+```tsx
+import {useComboBox, LabelContext, ButtonContext, InputContext, PopoverContext, ListBoxContext} from 'react-aria';
+
+function MyComboBox(props) {
+  // ...
+  let {
+    buttonProps,
+    inputProps,
+    listBoxProps,
+    labelProps
+  } = useComboBox({ /* ... */ });
+
+
 }
 ```

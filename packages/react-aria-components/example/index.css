@@ -1,0 +1,73 @@
+html {
+  color-scheme: dark light;
+  font-family: system-ui;
+}
+
+.menu {
+  display: block;
+  min-width: 150px;
+  width: fit-content;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background: lightgray;
+}
+
+.menu, .group {
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+}
+
+.item.focused {
+  background: gray;
+  color: white;
+}
+
+.item.selected {
+  background: purple;
+  color: white;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.field {
+  display: inline-flex;
+  padding: 2px 4px;
+  border-radius: 2px;
+  border: 1px solid gray;
+  background: Field;
+  color: FieldText;
+}
+
+.field:focus-within {
+  border-color: blue;
+}
+
+.segment {
+  padding: 0 2px;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.segment.placeholder {
+  color: gray;
+}
+
+.segment:focus {
+  color: white;
+  background: blue;
+  outline: none;
+  border-radius: 2px;
+  caret-color: transparent;
+}
