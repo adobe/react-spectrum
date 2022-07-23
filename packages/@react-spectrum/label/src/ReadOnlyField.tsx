@@ -13,12 +13,14 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus'; 
 import {mergeProps} from '@react-aria/utils';
+import {OuterField} from './OuterField';
 import React, {RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useTextField} from '@react-aria/textfield';
 
 interface ReadOnlyFieldProps extends SpectrumFieldProps {
   className?: string
@@ -30,11 +32,15 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     isDisabled,
     readOnlyText,
     autoFocus,
-    inputProps,
     inputRef,
-    className
+    className,
+    label
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    inputElementType: 'textarea'
+  }, inputRef as RefObject<HTMLTextAreaElement>);
   delete inputProps.defaultValue;
 
   let onHeightChange = useCallback(() => {
@@ -52,9 +58,8 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     }
   }, [onHeightChange, readOnlyText, inputRef]);
 
-  return (
+  let textfield = (
     <div
-      ref={ref as RefObject<HTMLDivElement>}
       className={
         classNames(
           styles,
@@ -62,8 +67,7 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
           {
             'spectrum-Textfield--quiet': true,
             'spectrum-Textfield--readonly': true
-          },
-          className
+          }
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>        
@@ -82,7 +86,24 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
             )
         } />
       </FocusRing> 
-    </div>
+    </div>);
+
+  if (!label) {
+    return React.cloneElement(textfield, mergeProps(textfield.props, {
+      ref,
+      className
+    }));
+  }
+
+  return (
+    <OuterField 
+      {...props}
+      ref={ref}
+      labelProps={labelProps}
+      inputProps={inputProps}
+      elementType="label">
+      {textfield}
+    </OuterField>
   );
 }
 

@@ -10,47 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {Flex} from '@react-spectrum/layout';
-import {HelpText} from './HelpText';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Label} from './Label';
-import {LabelPosition} from '@react-types/shared';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
+import {OuterField} from './OuterField';
 import React, {RefObject, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useTextField} from '@react-aria/textfield';
+import {useStyleProps} from '@react-spectrum/utils';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
   let {
     label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
-    isRequired,
-    necessityIndicator,
-    includeNecessityIndicatorInAccessibilityName,
     validationState,
     description,
     errorMessage,
-    isDisabled,
-    showErrorIcon,
     children,
-    labelProps,
     readOnlyText,
     isReadOnly,
     inputRef, 
-    inputProps,
-    // Not every component that uses <Field> supports help text.
-    descriptionProps = {},
-    errorMessageProps = {},
-    elementType,
-    wrapperClassName,
 
     ...otherProps
   } = props;
@@ -61,18 +42,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
-  // provide aria-label in non-readonly instances so that useLabel does not throw a warning (for combobox and numberfield)
-  let {labelProps: readOnlyLabelProps, inputProps: readOnlyInputProps} = useTextField({
-    'aria-label': !displayReadOnly && inputProps ? 'readOnly' : undefined, // a (hopefully??) temporary solution
-    ...props,
-    inputElementType: 'textarea'
-  }, inputRef as RefObject<HTMLTextAreaElement>);
-  labelProps = displayReadOnly ? readOnlyLabelProps : labelProps;
-  inputProps = displayReadOnly ? readOnlyInputProps : inputProps;
-
   // moved readOnly code outside of conditional statement so it would render when there is no label
   if (displayReadOnly) {
-    elementType = 'label';
+    // elementType = 'label'; 
 
     if (readOnlyText === '') {
       readOnlyText = formatMessage('(None)');
@@ -82,69 +54,26 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       <ReadOnlyField
         {...props} 
         readOnlyText={readOnlyText}
-        inputProps={inputProps}
+        // inputProps={inputProps}
         inputRef={inputRef as RefObject<HTMLTextAreaElement>} 
         ref={ref as RefObject<HTMLDivElement>} />
     );
+
+    if (label) {
+      return children;
+    }
   }
 
-  if (label || hasHelpText) {
-    let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
-      styleProps.className,
-      wrapperClassName
-    );
-
-    children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(
-        labelStyles,
-        'spectrum-Field-field'
-      )
-    }));
-
-    let renderHelpText = () => (
-      <HelpText
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        description={description}
-        errorMessage={errorMessage}
-        validationState={validationState}
-        isDisabled={isDisabled}
-        showErrorIcon={showErrorIcon} />
-    );
-
-    let renderChildren = () => (
-      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        {children}
-        {hasHelpText && !displayReadOnly && renderHelpText()}
-      </Flex>
-    );
-
-    return (
-      <div
-        {...styleProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
-        {label && (
-          <Label
-            {...labelProps}
-            labelPosition={labelPosition}
-            labelAlign={labelAlign}
-            isRequired={isRequired}
-            necessityIndicator={necessityIndicator}
-            includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
-            elementType={elementType}>
-            {label}
-          </Label>
-        )}
-        {renderChildren()}
-      </div>
-    );
+  if (!displayReadOnly) {
+    if (label || hasHelpText) {
+      return (
+        <OuterField
+          ref={ref as RefObject<HTMLDivElement>}
+          {...props}>
+          {children}
+        </OuterField>
+      );
+    }
   }
 
   return React.cloneElement(children, mergeProps(children.props, {
