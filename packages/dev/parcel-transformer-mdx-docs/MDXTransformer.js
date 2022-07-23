@@ -151,6 +151,7 @@ module.exports = new Transformer({
     let title = '';
     let navigationTitle;
     let category = '';
+    let type = '';
     let keywords = [];
     let description = '';
     let date = '';
@@ -228,6 +229,7 @@ module.exports = new Transformer({
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          type = yamlData.type || '';
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -313,6 +315,7 @@ module.exports = new Transformer({
     asset.meta.order = order;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
+    asset.meta.type = type;
     asset.isBundleSplittable = false;
 
     // Generate the client bundle. We always need the client script,

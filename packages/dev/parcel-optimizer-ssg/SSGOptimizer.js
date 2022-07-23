@@ -48,7 +48,8 @@ module.exports = new Optimizer({
           author: meta.author,
           image: getImageURL(meta.image, bundleGraph, b),
           order: meta.order,
-          preRelease: meta.preRelease
+          preRelease: meta.preRelease,
+          type: meta.type
         });
       }
     }, null);
@@ -75,7 +76,8 @@ module.exports = new Optimizer({
           author: mainAsset.meta.author,
           image: getImageURL(mainAsset.meta.image, bundleGraph, bundle),
           order: mainAsset.meta.order,
-          preRelease: mainAsset.meta.preRelease
+          preRelease: mainAsset.meta.preRelease,
+          type: mainAsset.meta.type
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
