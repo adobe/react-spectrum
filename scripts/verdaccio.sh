@@ -38,7 +38,7 @@ trap "exit 1" INT ERR
 
 set -e
 # Generate dists for the packages
-yarn parcel build packages/@adobe/react-spectrum/ packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-optimize --log-level error
+make build
 
 # Start verdaccio and send it to the background
 yarn verdaccio --listen $port &>${output}&
