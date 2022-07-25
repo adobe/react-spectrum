@@ -23,7 +23,7 @@ import React, {RefObject} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -43,8 +43,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     labelProps,
     readOnlyText,
     isReadOnly,
-    inputProps, 
-    inputRef, 
+    inputProps,
+    inputRef,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -55,7 +55,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
 
   if (label || hasHelpText) {
@@ -90,14 +90,14 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
     if (displayReadOnly) {
       if (readOnlyText === '') {
-        readOnlyText = formatMessage('(None)');
+        readOnlyText = stringFormatter.format('(None)');
       }
       children = (
         <ReadOnlyField
-          {...props} 
+          {...props}
           readOnlyText={readOnlyText}
-          inputProps={inputProps} 
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />            
+          inputProps={inputProps}
+          ref={inputRef as RefObject<HTMLTextAreaElement>} />
       );
     }
 
