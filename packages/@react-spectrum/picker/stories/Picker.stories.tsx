@@ -634,12 +634,29 @@ storiesOf('Picker', module)
     )
   )
   .add(
-    'isReadOnly, ref',
+    'isReadOnly, custom widths',
     () => (
-      <Picker label="Test" isReadOnly selectedKey="One" ref={React.createRef()} onSelectionChange={action('selectionChange')}>
-        <Item key="One">One</Item>
-        <Item key="Two">Two</Item>
-        <Item key="Three">Three</Item>
+      <Flex direction="column">
+        <Picker label="Test" isReadOnly selectedKey="One" width="size-1200" onSelectionChange={action('selectionChange')}>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+        <Picker label="Test" isReadOnly selectedKey="Two" width="size-6000" onSelectionChange={action('selectionChange')}>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Flex>
+    )
+  )
+  .add(
+    'isReadOnly, no visible label',
+    () => (
+      <Picker aria-label="Test" isReadOnly selectedKey="One" width="size-1200" onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
       </Picker>
     )
   )

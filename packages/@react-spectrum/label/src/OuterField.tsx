@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {HTMLAttributes, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
 interface OuterFieldProps extends SpectrumFieldProps {
-  className?: string
+  displayReadOnly?: string | boolean,
+  hasHelpText?: boolean,
+  styleProps?: HTMLAttributes<HTMLElement>
 }
 function OuterField(props: OuterFieldProps, ref: RefObject<HTMLDivElement>) {
   let {
@@ -33,23 +35,20 @@ function OuterField(props: OuterFieldProps, ref: RefObject<HTMLDivElement>) {
     isDisabled,
     showErrorIcon,
     validationState,
-    isReadOnly,
-    readOnlyText,
+    displayReadOnly,
     labelProps,
     label,
     labelAlign,
     isRequired,
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
+    hasHelpText,
+    styleProps,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
-    elementType,
-    ...otherProps
+    elementType
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
 
   let labelWrapperClass = classNames(
     labelStyles,

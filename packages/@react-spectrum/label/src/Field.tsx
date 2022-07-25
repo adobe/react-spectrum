@@ -31,7 +31,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     children,
     readOnlyText,
     isReadOnly,
-    inputRef, 
+    inputRef,
 
     ...otherProps
   } = props;
@@ -42,10 +42,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
-  // moved readOnly code outside of conditional statement so it would render when there is no label
   if (displayReadOnly) {
-    // elementType = 'label'; 
-
     if (readOnlyText === '') {
       readOnlyText = formatMessage('(None)');
     }
@@ -54,7 +51,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       <ReadOnlyField
         {...props} 
         readOnlyText={readOnlyText}
-        // inputProps={inputProps}
+        displayReadOnly={displayReadOnly}
+        hasHelpText={hasHelpText}
+        styleProps={styleProps}
         inputRef={inputRef as RefObject<HTMLTextAreaElement>} 
         ref={ref as RefObject<HTMLDivElement>} />
     );
@@ -64,16 +63,17 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     }
   }
 
-  if (!displayReadOnly) {
-    if (label || hasHelpText) {
-      return (
-        <OuterField
-          ref={ref as RefObject<HTMLDivElement>}
-          {...props}>
-          {children}
-        </OuterField>
-      );
-    }
+  if (!displayReadOnly && (label || hasHelpText)) {
+    return (
+      <OuterField
+        {...props}
+        ref={ref as RefObject<HTMLDivElement>}
+        displayReadOnly={displayReadOnly}
+        styleProps={styleProps}
+        hasHelpText={hasHelpText}>
+        {children}
+      </OuterField>
+    );
   }
 
   return React.cloneElement(children, mergeProps(children.props, {

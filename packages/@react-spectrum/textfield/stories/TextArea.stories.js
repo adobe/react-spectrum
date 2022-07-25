@@ -19,14 +19,13 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
-// add label position?? 
 const parameters = {
   args: {
     isReadOnly: true,
     isQuiet: false,
     isRequired: false,
     isDisabled: false,
-    autoFocus: true,
+    autoFocus: false,
     validationState: '',
     description: '',
     errorMessage: '',

@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus'; 
 import {mergeProps} from '@react-aria/utils';
 import {OuterField} from './OuterField';
-import React, {RefObject, useCallback} from 'react';
+import React, {HTMLAttributes, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -23,7 +23,10 @@ import {useLayoutEffect} from '@react-aria/utils';
 import {useTextField} from '@react-aria/textfield';
 
 interface ReadOnlyFieldProps extends SpectrumFieldProps {
-  className?: string
+  className?: string,
+  displayReadOnly?: string | boolean,
+  hasHelpText?: boolean,
+  styleProps?: HTMLAttributes<HTMLElement>
 }
 
 function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>) {
@@ -34,7 +37,10 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     autoFocus,
     inputRef,
     className,
-    label
+    label,
+    displayReadOnly,
+    hasHelpText,
+    styleProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {labelProps, inputProps} = useTextField({
@@ -101,7 +107,10 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
       ref={ref}
       labelProps={labelProps}
       inputProps={inputProps}
-      elementType="label">
+      elementType="label"
+      displayReadOnly={displayReadOnly}
+      styleProps={styleProps}
+      hasHelpText={hasHelpText}>
       {textfield}
     </OuterField>
   );
