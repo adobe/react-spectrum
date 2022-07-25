@@ -44,7 +44,7 @@ import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';
 import {useFilter} from '@react-aria/i18n';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -138,11 +138,11 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     style,
     className
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
-    ? <AlertMedium id={invalidId} aria-label={formatMessage('invalid')} />
+    ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
     : <CheckmarkMedium />;
 
   let validation = React.cloneElement(validationIcon, {
@@ -296,7 +296,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let popoverRef = useRef<HTMLDivElement>();
   let listBoxRef = useRef<HTMLDivElement>();
   let layout = useListBoxLayout(state);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
@@ -340,7 +340,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let clearButton = (
     <ClearButton
       preventFocus
-      aria-label={formatMessage('clear')}
+      aria-label={stringFormatter.format('clear')}
       excludeFromTabOrder
       onPress={() => {
         state.setInputValue('');
@@ -357,7 +357,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={formatMessage('loading')}
+      aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -496,7 +496,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           shouldUseVirtualFocus
           renderEmptyState={() => loadingState !== 'loading' && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {formatMessage('noResults')}
+              {stringFormatter.format('noResults')}
             </span>
           )}
           UNSAFE_className={

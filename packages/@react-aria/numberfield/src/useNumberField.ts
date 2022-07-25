@@ -28,7 +28,7 @@ import {NumberFieldState} from '@react-stately/numberfield';
 import {useFocus, useFocusWithin} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
-  useMessageFormatter,
+  useLocalizedStringFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
 import {useScrollWheel} from '@react-aria/interactions';
@@ -88,7 +88,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     commit
   } = state;
 
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let inputId = useId(id);
 
@@ -209,7 +209,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       // override the spinbutton role, we can't focus a spin button with VO
       role: null,
       // ignore aria-roledescription on iOS so that required state will announce when it is present
-      'aria-roledescription': (!isIOS() ? formatMessage('numberField') : null),
+      'aria-roledescription': (!isIOS() ? stringFormatter.format('numberField') : null),
       'aria-valuemax': null,
       'aria-valuemin': null,
       'aria-valuenow': null,
@@ -256,7 +256,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let decrementId = useId();
 
   let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
-    'aria-label': incrementAriaLabel || formatMessage('increase', {fieldLabel}).trim(),
+    'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
     id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
     'aria-labelledby': ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : null,
     'aria-controls': inputId,
@@ -268,7 +268,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   });
 
   let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
-    'aria-label': decrementAriaLabel || formatMessage('decrease', {fieldLabel}).trim(),
+    'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
     id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
     'aria-labelledby': ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : null,
     'aria-controls': inputId,
