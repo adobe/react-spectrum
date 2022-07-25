@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 
-interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
+interface ModalProviderProps extends DOMAttributes {
   children: ReactNode
 }
 
@@ -112,7 +113,7 @@ interface OverlayContainerProps extends ModalProviderProps {
    * The container element in which the overlay portal will be placed.
    * @default document.body
    */
-  portalContainer?: HTMLElement
+  portalContainer?: Element
 }
 
 /**
@@ -140,7 +141,7 @@ export function OverlayContainer(props: OverlayContainerProps): React.ReactPorta
   return ReactDOM.createPortal(contents, portalContainer);
 }
 
-interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+interface ModalAriaProps extends DOMAttributes {
   /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
   'data-ismodal': boolean
 }

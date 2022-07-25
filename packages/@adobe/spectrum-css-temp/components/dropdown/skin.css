@@ -11,6 +11,9 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropdown {
+  /* Override to gray-800 to meet WCAG */
+  --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
+
   .spectrum-Dropdown-trigger:hover {
     .spectrum-Dropdown-chevron {
       color: var(--spectrum-dropdown-icon-color-hover);
@@ -62,8 +65,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropdown-label {
   &.is-placeholder {
-    /* Override to gray-800 to meet WCAG */
-    color: var(--spectrum-global-color-gray-800);
+    color: var(--spectrum-dropdown-placeholder-text-color);
   }
 }
 
@@ -83,5 +85,31 @@ governing permissions and limitations under the License.
   }
   .spectrum-Dropdown-chevron {
     color: var(--spectrum-dropdown-icon-color-key-focus)
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropdown {
+    --spectrum-dropdown-icon-color: ButtonText;
+    --spectrum-dropdown-icon-color-disabled: GrayText;
+    --spectrum-dropdown-icon-color-hover: ButtonText;
+    --spectrum-dropdown-icon-color-key-focus: ButtonText;
+    --spectrum-dropdown-placeholder-text-color: GrayText;
+    --spectrum-dropdown-placeholder-text-color-disabled: GrayText;
+    --spectrum-dropdown-placeholder-text-color-down: GrayText;
+    --spectrum-dropdown-placeholder-text-color-hover: GrayText;
+    --spectrum-dropdown-placeholder-text-color-key-focus: GrayText;
+    --spectrum-dropdown-placeholder-text-color-mouse-focus: GrayText;
+    --spectrum-dropdown-text-color-disabled: GrayText;
+    --spectrum-dropdown-validation-icon-color-error: ButtonText;
+  }
+  /*Override the label behaviour when NOT a placeholder*/
+  .spectrum-Dropdown-trigger {
+    &:hover .spectrum-Dropdown-label {
+      color: ButtonText;
+      &.is-placeholder {
+        color: GrayText;
+      }
+    }
   }
 }

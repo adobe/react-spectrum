@@ -11,9 +11,10 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
+import {RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface OverlayTriggerProps {
@@ -26,14 +27,14 @@ interface OverlayTriggerAria {
   triggerProps: AriaButtonProps,
 
   /** Props for the overlay container element. */
-  overlayProps: HTMLAttributes<HTMLElement>
+  overlayProps: DOMAttributes
 }
 
 /**
  * Handles the behavior and accessibility for an overlay trigger, e.g. a button
  * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
  */
-export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>): OverlayTriggerAria {
+export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref: RefObject<Element>): OverlayTriggerAria {
   let {type} = props;
   let {isOpen} = state;
 
