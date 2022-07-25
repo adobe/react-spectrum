@@ -118,6 +118,9 @@ export function useMenuTrigger<T>(props: MenuTriggerAriaProps, state: MenuTrigge
     }
   };
 
+  // omit onPress from triggerProps since we override it above.
+  delete triggerProps.onPress;
+
   return {
     menuTriggerProps: {
       ...triggerProps,
