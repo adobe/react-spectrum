@@ -9,6 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useGridState';
-export * from './GridCollection';
+export type {GridState} from './useGridState';
+export {useGridState} from './useGridState';
+export {GridCollection} from './GridCollection';

@@ -12,10 +12,11 @@
 
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
+import {DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
@@ -23,11 +24,11 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ColorAreaAria {
   /** Props for the color area container element. */
-  colorAreaProps: HTMLAttributes<HTMLElement>,
+  colorAreaProps: DOMAttributes,
   /** Props for the color area gradient foreground element. */
-  gradientProps: HTMLAttributes<HTMLElement>,
+  gradientProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden horizontal range input element. */
   xInputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the visually hidden vertical range input element. */
@@ -36,11 +37,11 @@ interface ColorAreaAria {
 
 interface ColorAreaAriaProps extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
-  inputXRef: RefObject<HTMLElement>,
+  inputXRef: RefObject<HTMLInputElement>,
   /** A ref to the input that represents the y axis of the color area. */
-  inputYRef: RefObject<HTMLElement>,
+  inputYRef: RefObject<HTMLInputElement>,
   /** A ref to the color area containing element. */
-  containerRef: RefObject<HTMLElement>
+  containerRef: RefObject<Element>
 }
 
 /**
@@ -61,9 +62,9 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
 
   let {direction, locale} = useLocale();
 
-  let focusedInputRef = useRef<HTMLElement>(null);
+  let focusedInputRef = useRef<HTMLInputElement>(null);
 
-  let focusInput = useCallback((inputRef:RefObject<HTMLElement> = inputXRef) => {
+  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }

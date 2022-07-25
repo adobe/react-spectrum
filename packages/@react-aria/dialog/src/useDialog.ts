@@ -11,23 +11,24 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 
 interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: HTMLAttributes<HTMLElement>,
+  dialogProps: DOMAttributes,
 
   /** Props for the dialog title element. */
-  titleProps: HTMLAttributes<HTMLElement>
+  titleProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): DialogAria {
+export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement>): DialogAria {
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;

@@ -17,6 +17,8 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/dialog/package.json';
 import Anatomy from './anatomy.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindPreview from 'url:./tailwind.png';
 
 ---
 category: Overlays
@@ -217,3 +219,11 @@ function Example() {
   <Example />
 </OverlayProvider>
 ```
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/delicate-hill-j4p5vs?file=/src/AlertDialog.tsx"
+  preview={tailwindPreview}
+  title="Tailwind CSS"
+  description="An animated alert dialog using Tailwind and react-transition-group." />

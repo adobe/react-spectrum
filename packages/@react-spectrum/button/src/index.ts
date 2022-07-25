@@ -9,12 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 /// <reference types="css-module-types" />
-
-export * from './Button';
-export * from './ActionButton';
-export * from './FieldButton';
-export * from './LogicButton';
-export * from './ClearButton';
-export * from './ToggleButton';
+export {Button} from './Button';
+export {ActionButton} from './ActionButton';
+export {FieldButton} from './FieldButton';
+export {LogicButton} from './LogicButton';
+export {ClearButton} from './ClearButton';
+export {ToggleButton} from './ToggleButton';

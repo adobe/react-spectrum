@@ -33,7 +33,8 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
-  isLoading?: boolean
+  isLoading?: boolean,
+  readOnlyText?: string
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -54,13 +55,14 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     isLoading,
     loadingIndicator,
-    validationIconClassName
+    validationIconClassName,
+    readOnlyText
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
-
+  
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -143,7 +145,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       className: multiLine ? 'spectrum-Field-field--multiline' : ''
     }));
   }
-
+  
   return (
     <Field
       {...props}
@@ -151,7 +153,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
-      ref={domRef}>
+      ref={domRef}
+      readOnlyText={readOnlyText}
+      inputProps={inputProps}>
       {textField}
     </Field>
   );
