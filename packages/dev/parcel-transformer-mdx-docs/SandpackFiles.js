@@ -124,13 +124,14 @@ function CustomSandpack(props) {
           }
         }}
       >
-        <SandpackCodeEditor readOnly showReadOnly={false} showTabs={false} wrapContent={true} style={{height: 'auto'}} />
+        <SandpackCodeEditor showTabs={false} wrapContent={true} style={{height: 'auto'}} />
         <SandpackPreview
           style={{display: 'block', background: 'none', border: 'none'}}
           actionsChildren={
             <ActionGroup
               isQuiet
               buttonLabelBehavior="hide"
+              density="compact"
               onAction={(key) => {
                 if (key === 'copy') {
                   navigator.clipboard.writeText(code.trim());
@@ -200,6 +201,7 @@ function ExampleActions(props) {
     <ActionGroup
       isQuiet
       buttonLabelBehavior="hide"
+      density="compact"
       onAction={(key) => {
         if (key === 'copy') {
           let code = document.querySelectorAll('.${id}')[0].textContent;
