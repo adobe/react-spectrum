@@ -77,11 +77,16 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
+              let actions = shouldUseSandpack ? getActions(id) : '';
+              let renderActions = shouldUseSandpack ? '<ExampleActions />' : '';
+              let renderSandpack = '';
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}\n${shouldUseSandpack ? getActions(id) : ''};\nReactDOM.render(<${provider}><${name} />${shouldUseSandpack ? '<ExampleActions />' : ''}</${provider}>, document.getElementById("${id}"));${shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, name, true) : ''}`;
+                renderSandpack = shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, name, true) : '';
+                code = `${code}\n${actions};\nReactDOM.render(<${provider}><${name} />${renderActions}</${provider}>, document.getElementById("${id}"));${renderSandpack}`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `${shouldUseSandpack ? getActions(id) : ''};\nReactDOM.render(<${provider}>$1${shouldUseSandpack ? '<ExampleActions />' : ''}</${provider}>, document.getElementById("${id}"));${shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, 'Example') : ''}`);
+                renderSandpack = shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, 'Example') : '';
+                code = code.replace(/^(<(.|\n)*>)$/m, `${actions};\nReactDOM.render(<${provider}>$1${renderActions}</${provider}>, document.getElementById("${id}"));${renderSandpack}`);
               }
             }
 
