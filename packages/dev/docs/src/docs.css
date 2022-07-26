@@ -437,12 +437,17 @@ div:global(.sandpack) {
 }
 
 div:global(.example-actions) {
-  padding-top: 5px;
-  padding-bottom: 5px;
   > div {
     justify-content: end;
   }
 }
+
+  @media (min-width: 1020px) {
+    div:global(.example-actions) {
+      margin-right: -30px;
+      margin-bottom: -16px;
+    }
+  }
 
 .snippet {
   background: none;
