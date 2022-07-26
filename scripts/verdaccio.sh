@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 port=4000
 original_registry=`npm get registry`
