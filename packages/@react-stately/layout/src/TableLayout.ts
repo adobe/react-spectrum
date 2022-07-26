@@ -298,9 +298,21 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
+        for (let h = 0; h < firstVisibleRow; h++) {
+          if (this.virtualizer.isPersistedKey(node.children[h])) {
+            res.push(node.children[h].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[h], rect);
+          }
+        }
         for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
+        }
+        for (let j = lastVisibleRow; j < node.children.length; j++) {
+          if (this.virtualizer.isPersistedKey(node.children[j])) {
+            res.push(node.children[j].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[j], rect);
+          }
         }
         break;
       }

@@ -663,7 +663,17 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   isPersistedKey(node) {
-    return this._persistedKeys.has(node.layoutInfo.key);
+    let keyFound = this._persistedKeys.has(node.layoutInfo.key);
+    if (!keyFound && node.children) {
+      for (let child of node.children) {
+        if (this._persistedKeys.has(child.layoutInfo.key)) {
+          console.log('persisted key is a child');
+          keyFound = true;
+          break;
+        }
+      }
+    }
+    return keyFound;
   }
 
   updateSubviews(forceUpdate = false) {
