@@ -95,7 +95,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
   let ctx = useContext(FocusContext);
-  let contextScope = ctx?.scopeRef;
+  let parentScope = ctx?.scopeRef;
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -107,16 +107,9 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-  }, [children]);
+  }, [children, parentScope]);
 
   useLayoutEffect(() => {
-    // If the active scope is within the scope coming from context, use that as the parent.
-    // This can happen if the useFocusScope hook is used, since that cannot write to context.
-    let parentScope = contextScope;
-    if (activeScope && (!parentScope || isAncestorScope(parentScope, activeScope))) {
-      parentScope = activeScope;
-    }
-
     scopes.set(scopeRef, parentScope);
     return () => {
       // Restore the active scope on unmount if this scope or a descendant scope is active.
@@ -130,7 +123,7 @@ export function FocusScope(props: FocusScopeProps) {
       }
       scopes.delete(scopeRef);
     };
-  }, [scopeRef, contextScope]);
+  }, [scopeRef, parentScope]);
 
   let focusManager = createFocusManagerForScope(scopeRef);
 
@@ -394,7 +387,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
-  }, [scopeRef, contain, focusManager]);
+  }, [scopeRef, contain]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
