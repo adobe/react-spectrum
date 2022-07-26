@@ -70,55 +70,54 @@ hook in `@react-stately/overlays`. The state object should be passed as an argum
 
 This example shows how to build a typical modal dialog, by combining `useModalOverlay` with [useDialog](useDialog.html). The `Dialog` component used in this example can also be reused within a [popover](usePopover.html) or other types of overlays.
 
-The `ModalTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to show the modal when a button is clicked. A close function is passed to the children, allowing the button within the dialog to close it.
+The `Modal` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the modal and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.useModalOverlay} /> handles preventing page scrolling while the modal is open, hiding content outside the modal from screen readers, and optionally closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
 
-The modal is rendered in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. This is handled by the <TypeLink links={docs.links} type={docs.exports.OverlayContainer} /> component, which also ensures that content outside the top-most modal is hidden from assistive technologies in combination with the <TypeLink links={docs.links} type={docs.exports.OverlayProvider} /> wrapping the whole application.
-
-**Note:** `useModalOverlay` only hides content within parent `OverlayProvider` components. However, if you have additional content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill` package to ensure that this content is hidden while modals are open as well. See the [watchModals docs](../react-aria/watchModals.html) for more information.
-
-```tsx example
-import {useOverlayTriggerState} from '@react-stately/overlays';
-import {
-  useOverlayTrigger,
-  useModalOverlay,
-  OverlayProvider,
-  OverlayContainer
-} from '@react-aria/overlays';
-
-// Reuse the Dialog and Button from your component library. See below for details.
-import {Dialog, Button} from 'your-component-library';
+```tsx example export=true render=false
+import {Overlay, useModalOverlay} from '@react-aria/overlays';
 
 function Modal({state, children, ...props}) {
   let ref = React.useRef();
   let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        zIndex: 100,
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-      {...underlayProps}>
+    <Overlay>
       <div
-        {...modalProps}
-        ref={ref}
         style={{
-          background: 'var(--page-background)',
-          border: '1px solid gray'
-        }}>
-        {children}
+          position: 'fixed',
+          zIndex: 100,
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        {...underlayProps}>
+        <div
+          {...modalProps}
+          ref={ref}
+          style={{
+            background: 'var(--page-background)',
+            border: '1px solid gray'
+          }}>
+          {children}
+        </div>
       </div>
-    </div>
+    </Overlay>
   );
 }
+```
+
+The below `ModalTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to show the modal when a button is pressed. It accepts a function as children, which is called with a callback that closes the modal. This can be used to implement a close button.
+
+```tsx example export=true render=false
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useOverlayTrigger} from '@react-aria/overlays';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function ModalTrigger({label, children, ...props}) {
   let state = useOverlayTriggerState(props);
@@ -127,36 +126,37 @@ function ModalTrigger({label, children, ...props}) {
   return <>
     <Button {...triggerProps}>Open Dialog</Button>
     {state.isOpen &&
-      <OverlayContainer>
-        <Modal state={state}>
-          {React.cloneElement(children(state.close), overlayProps)}
-        </Modal>
-      </OverlayContainer>
+      <Modal state={state}>
+        {React.cloneElement(children(state.close), overlayProps)}
+      </Modal>
     }
   </>;
 }
+```
 
-// Application must be wrapped in an OverlayProvider so that it can be
-// hidden from screen readers when a modal opens.
-<OverlayProvider>
-  <ModalTrigger label="Open Dialog">
-    {close =>
-      <Dialog title="Enter your name">
-        <form style={{display: 'flex', flexDirection: 'column'}}>
-          <label htmlFor="first-name">First Name:</label>
-          <input id="first-name" />
-          <label htmlFor="last-name">Last Name:</label>
-          <input id="last-name" />
-          <Button
-            onPress={close}
-            style={{marginTop: 10}}>
-            Submit
-          </Button>
-        </form>
-      </Dialog>
-    }
-  </ModalTrigger>
-</OverlayProvider>
+Now, we can render an example modal containing a dialog, with a button that closes it using the function provided by `ModalTrigger`.
+
+```tsx example
+// Reuse the Dialog from your component library. See below for details.
+import {Dialog} from 'your-component-library';
+
+<ModalTrigger label="Open Dialog">
+  {close =>
+    <Dialog title="Enter your name">
+      <form style={{display: 'flex', flexDirection: 'column'}}>
+        <label htmlFor="first-name">First Name:</label>
+        <input id="first-name" />
+        <label htmlFor="last-name">Last Name:</label>
+        <input id="last-name" />
+        <Button
+          onPress={close}
+          style={{marginTop: 10}}>
+          Submit
+        </Button>
+      </form>
+    </Dialog>
+  }
+</ModalTrigger>
 ```
 
 ### Dialog

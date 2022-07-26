@@ -73,58 +73,50 @@ hook in `@react-stately/overlays`. The state object should be passed as an argum
 
 This example shows how to build a typical popover overlay that is positioned relative to
 a trigger button. The content of the popover is a dialog, built
-with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](useModalOverlay.html) or other types of overlays.
+with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](useModalOverlay.html) or other types of overlays. The implementation is available below.
 
-The popover can be closed by clicking or interacting outside the popover, or by pressing the <Keyboard>Escape</Keyboard> key. Content outside the popover is hidden from screen readers,
-which improves the experience for screen reader users by ensuring that they don't
-navigate out of context. This is especially important when the popover is rendered
-into a portal at the end of the document, and the content just before it is
-unrelated to the original trigger.
+The `Popover` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the popover and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.usePopover} /> handles positioning the popover relative to the trigger element, and closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
 
-To allow screen reader users to more easily dismiss the popover even without a keyboard available, a visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; is added at the start and end of the popover.
+<TypeLink links={docs.links} type={docs.exports.usePopover} /> also hides content outside the popover from screen readers, which is important since the surrounding content won't be in context of the original trigger due to the portal. To allow screen reader users to dismiss the popover without a keyboard (e.g. on mobile), visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; elements are added at the start and end of the popover.
 
-The popover is rendered in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. This is handled by the <TypeLink links={docs.links} type={docs.exports.OverlayContainer} /> component, which also ensures that content outside the top-most overlay is hidden from assistive technologies in combination with the <TypeLink links={docs.links} type={docs.exports.OverlayProvider} /> wrapping the whole application.
-
-**Note:** `usePopover` only hides content within parent `OverlayProvider` components. However, if you have additional
-content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill`
-package to ensure that this content is hidden while modals are open as well. See the
-[watchModals docs](../react-aria/watchModals.html) for more information.
-
-```tsx example
-import {useOverlayTriggerState} from '@react-stately/overlays';
-import {
-  usePopover,
-  useOverlayTrigger,
-  OverlayProvider,
-  OverlayContainer,
-  DismissButton
-} from '@react-aria/overlays';
-
-// Reuse the Button and Dialog from your component library. See below for details.
-import {Button, Dialog} from 'your-component-library';
+```tsx example export=true render=false
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
 function Popover({children, state, ...props}) {
-  let popoverRef = React.useRef();
+  let ref = React.useRef();
+  let {popoverRef = ref} = props;
   let {popoverProps} = usePopover({
     ...props,
     popoverRef
   }, state);
 
   return (
-    <div
-      {...popoverProps}
-      ref={popoverRef}
-      style={{
-        ...popoverProps.style,
-        background: 'var(--page-background)',
-        border: '1px solid gray'
-      }}>
-      <DismissButton onDismiss={state.close} />
-      {children}
-      <DismissButton onDismiss={state.close} />
-    </div>
+    <Overlay>
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'var(--page-background)',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
   );
 }
+```
+
+The above `Popover` component can be used as part of many different patterns, such as [ComboBox](useComboBox.html), [Select](useSelect.html), and [DatePicker](useDatePicker.html). To use it standalone, we need a trigger element. The below `PopoverTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to trigger the popover when a button is pressed. This hook also ensures that the button and popover are semantically connected via ARIA.
+
+```tsx example export=true render=false
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useOverlayTrigger} from '@react-aria/overlays';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function PopoverTrigger({label, children, ...props}) {
   let ref = React.useRef();
@@ -134,24 +126,25 @@ function PopoverTrigger({label, children, ...props}) {
   return <>
     <Button {...triggerProps} buttonRef={ref}>{label}</Button>
     {state.isOpen &&
-      <OverlayContainer>
-        <Popover triggerRef={ref} state={state}>
-          {React.cloneElement(children, overlayProps)}
-        </Popover>
-      </OverlayContainer>
+      <Popover triggerRef={ref} state={state}>
+        {React.cloneElement(children, overlayProps)}
+      </Popover>
     }
   </>;
 }
+```
 
-// Application must be wrapped in an OverlayProvider so that it can be
-// hidden from screen readers when an overlay opens.
-<OverlayProvider>
-  <PopoverTrigger label="Open Popover">
-    <Dialog title="Popover title">
-      This is the content of the popover.
-    </Dialog>
-  </PopoverTrigger>
-</OverlayProvider>
+Now, we can render an example popover containing a dialog.
+
+```tsx example
+// Reuse the Dialog from your component library. See below for details.
+import {Dialog} from 'your-component-library';
+
+<PopoverTrigger label="Open Popover">
+  <Dialog title="Popover title">
+    This is the content of the popover.
+  </Dialog>
+</PopoverTrigger>
 ```
 
 ### Dialog

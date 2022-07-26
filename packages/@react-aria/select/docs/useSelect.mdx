@@ -208,36 +208,31 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {usePopover, OverlayContainer, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover(props) {
-  return (
-    <OverlayContainer>
-      <PopoverInner {...props} />
-    </OverlayContainer>
-  );
-}
-
-function PopoverInner({children, state, ...props}) {
-  let popoverRef = React.useRef();
+function Popover({children, state, ...props}) {
+  let ref = React.useRef();
+  let {popoverRef = ref} = props;
   let {popoverProps} = usePopover({
     ...props,
     popoverRef
   }, state);
 
   return (
-    <div
-      {...popoverProps}
-      ref={popoverRef}
-      style={{
-        ...popoverProps.style,
-        background: 'var(--page-background)',
-        border: '1px solid gray'
-      }}>
-      <DismissButton onDismiss={state.close} />
-      {children}
-      <DismissButton onDismiss={state.close} />
-    </div>
+    <Overlay>
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'var(--page-background)',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
   );
 }
 ```
