@@ -73,6 +73,11 @@ module.exports = () => {
         {
           test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,
           loader: 'url-loader?limit=8192'// limit inlining base64 URLs to <=8k images, direct URLs for the rest
+        },
+        {
+          test: /packages\/.*\/.*\/intl\/.*\.json$/,
+          loader: require.resolve('./intl-loader'),
+          type: 'javascript/auto'
         }
       ]
     }

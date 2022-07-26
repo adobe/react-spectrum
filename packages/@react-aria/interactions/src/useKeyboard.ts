@@ -11,8 +11,7 @@
  */
 
 import {createEventHandler} from './createEventHandler';
-import {HTMLAttributes} from 'react';
-import {KeyboardEvents} from '@react-types/shared';
+import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
 
 export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
@@ -21,7 +20,7 @@ export interface KeyboardProps extends KeyboardEvents {
 
 interface KeyboardResult {
   /** Props to spread onto the target element. */
-  keyboardProps: HTMLAttributes<HTMLElement>
+  keyboardProps: DOMAttributes
 }
 
 /**

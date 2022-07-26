@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
-import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
+import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
 interface ColumnHeaderProps {
@@ -33,7 +34,7 @@ interface ColumnHeaderProps {
 
 interface ColumnHeaderAria {
   /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
-  columnHeaderProps: HTMLAttributes<HTMLElement>
+  columnHeaderProps: DOMAttributes
 }
 
 /**
@@ -42,7 +43,7 @@ interface ColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<HTMLElement>): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): ColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
@@ -65,7 +66,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     pressProps = {};
   }
 
-  let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
+  let ariaSort: DOMAttributes['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
   // aria-sort not supported in Android Talkback
@@ -73,13 +74,13 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let sortDescription;
   if (allowsSorting) {
-    sortDescription = `${formatMessage('sortable')}`;
+    sortDescription = `${stringFormatter.format('sortable')}`;
     // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
     if (isSortedColumn && sortDirection && isAndroid()) {
-      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
+      sortDescription = `${sortDescription}, ${stringFormatter.format(sortDirection)}`;
     }
   }
 

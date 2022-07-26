@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Picker';
+export {Picker} from './Picker';
 export {Item, Section} from '@react-stately/collections';

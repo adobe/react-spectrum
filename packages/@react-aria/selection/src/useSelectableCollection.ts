@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -83,7 +83,7 @@ interface SelectableCollectionOptions {
 
 interface SelectableCollectionAria {
   /** Props for the collection element. */
-  collectionProps: HTMLAttributes<HTMLElement>
+  collectionProps: DOMAttributes
 }
 
 /**
@@ -117,7 +117,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current.contains(e.target as HTMLElement)) {
+    if (!ref.current.contains(e.target as Element)) {
       return;
     }
 
@@ -238,10 +238,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
             ref.current.focus();
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-            let next: HTMLElement;
-            let last: HTMLElement;
+            let next: FocusableElement;
+            let last: FocusableElement;
             do {
-              last = walker.lastChild() as HTMLElement;
+              last = walker.lastChild() as FocusableElement;
               if (last) {
                 next = last;
               }

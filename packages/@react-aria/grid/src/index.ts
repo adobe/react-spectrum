@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './GridKeyboardDelegate';
-export * from './useGrid';
-export * from './useGridRowGroup';
-export * from './useGridRow';
-export * from './useGridCell';
-export * from './useGridSelectionCheckbox';
-export * from './useHighlightSelectionDescription';
-export * from './useGridSelectionAnnouncement';
+export type {GridKeyboardDelegateOptions} from './GridKeyboardDelegate';
+export type {GridProps, GridAria} from './useGrid';
+export type {GridRowGroupAria} from './useGridRowGroup';
+export type {GridRowProps, GridRowAria} from './useGridRow';
+
+export {GridKeyboardDelegate} from './GridKeyboardDelegate';
+export {useGrid} from './useGrid';
+export {useGridRowGroup} from './useGridRowGroup';
+export {useGridRow} from './useGridRow';
+export {useGridCell} from './useGridCell';
+export {useGridSelectionCheckbox} from './useGridSelectionCheckbox';
+export {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
+export {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';

@@ -32,9 +32,8 @@ import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
   useTable,
@@ -124,7 +123,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
   let domRef = useDOMRef(ref);
   let bodyRef = useRef<HTMLDivElement>();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let density = props.density || 'regular';
   let layout = useMemo(() => new TableLayout({
@@ -274,7 +273,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           <CenteredWrapper>
             <ProgressCircle
               isIndeterminate
-              aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+              aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
           </CenteredWrapper>
         );
       case 'empty': {
@@ -532,7 +531,7 @@ function ResizableTableColumnHeader(props) {
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
   let {state, columnState, headerRowHovered} = useTableContext();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true,
@@ -565,15 +564,15 @@ function ResizableTableColumnHeader(props) {
   let items = useMemo(() => {
     let options = [
       allowsSorting ? {
-        label: formatMessage('sortAscending'),
+        label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
       } : undefined,
       allowsSorting ? {
-        label: formatMessage('sortDescending'),
+        label: stringFormatter.format('sortDescending'),
         id: 'sort-desc'
       } : undefined,
       {
-        label: formatMessage('resizeColumn'),
+        label: stringFormatter.format('resizeColumn'),
         id: 'resize'
       }
     ];

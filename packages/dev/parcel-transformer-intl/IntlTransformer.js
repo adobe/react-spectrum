@@ -10,6 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {useValueEffect} from '@react-aria/utils';
+const {Transformer} = require('@parcel/plugin');
+const {compileStrings} = require('@internationalized/string-compiler');
 
-export {useValueEffect};
+module.exports = new Transformer({
+  async transform({asset}) {
+    let code = await asset.getCode();
+    let json = JSON.parse(code);
+    let res = compileStrings(json);
+    asset.type = 'js';
+    asset.setCode(res);
+    return [asset];
+  }
+});

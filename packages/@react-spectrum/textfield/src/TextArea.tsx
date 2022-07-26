@@ -28,14 +28,14 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     onChange,
     ...otherProps
   } = props;
-
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
 
+  let inputText = props.value ?? props.defaultValue ?? ''; 
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
-    if (isQuiet) {
+    if (isQuiet && !isReadOnly) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
@@ -43,7 +43,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight}px`;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, inputRef]);
+  }, [isQuiet, isReadOnly, inputRef]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
@@ -74,7 +74,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired} />
+      isRequired={isRequired} 
+      readOnlyText={inputText} />
   );
 }
 

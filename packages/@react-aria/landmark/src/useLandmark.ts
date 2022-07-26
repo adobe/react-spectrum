@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
-import {HTMLAttributes, MutableRefObject, useCallback, useEffect, useState} from 'react';
+import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
+import {MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -21,14 +21,14 @@ export interface AriaLandmarkProps extends AriaLabelingProps {
 }
 
 interface LandmarkAria {
-  landmarkProps: HTMLAttributes<HTMLElement>
+  landmarkProps: DOMAttributes
 }
 
 type Landmark = {
-  ref: MutableRefObject<HTMLElement>,
+  ref: MutableRefObject<Element>,
   role: AriaLandmarkRole,
   label?: string,
-  lastFocused?: HTMLElement,
+  lastFocused?: FocusableElement,
   focus: () => void,
   blur: () => void
 };
@@ -66,7 +66,7 @@ class LandmarkManager {
     this.isListening = false;
   }
 
-  private focusLandmark(landmark: HTMLElement) {
+  private focusLandmark(landmark: Element) {
     this.landmarks.find(l => l.ref.current === landmark)?.focus();
   }
 
@@ -129,7 +129,7 @@ class LandmarkManager {
     }
   }
 
-  public removeLandmark(ref: MutableRefObject<HTMLElement>) {
+  public removeLandmark(ref: MutableRefObject<Element>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
     if (this.landmarks.length === 0) {
       this.teardown();
@@ -169,7 +169,7 @@ class LandmarkManager {
    * Get the landmark that is the closest parent in the DOM.
    * Returns undefined if no parent is a landmark.
    */
-  private closestLandmark(element: HTMLElement) {
+  private closestLandmark(element: Element) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
     while (!landmarkMap.has(currentElement) && currentElement !== document.body) {
@@ -184,7 +184,7 @@ class LandmarkManager {
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
    */
-  public getNextLandmark(element: HTMLElement, {backward}: {backward?: boolean }) {
+  public getNextLandmark(element: Element, {backward}: {backward?: boolean }) {
     if (this.landmarks.length === 0) {
       return undefined;
     }
@@ -216,7 +216,7 @@ class LandmarkManager {
       e.stopPropagation();
 
       let backward = e.shiftKey;
-      let nextLandmark = this.getNextLandmark(e.target as HTMLElement, {backward});
+      let nextLandmark = this.getNextLandmark(e.target as Element, {backward});
 
       // If no landmarks, return
       if (!nextLandmark) {
@@ -253,11 +253,11 @@ class LandmarkManager {
    * Lets the last focused landmark know it was blurred if something else is focused.
    */
   public focusinHandler(e: FocusEvent) {
-    let currentLandmark = this.closestLandmark(e.target as HTMLElement);
+    let currentLandmark = this.closestLandmark(e.target as Element);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
-      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as HTMLElement});
+      this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as FocusableElement});
     }
-    let previousFocusedElement = e.relatedTarget as HTMLElement;
+    let previousFocusedElement = e.relatedTarget as Element;
     if (previousFocusedElement) {
       let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
       if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
@@ -270,7 +270,7 @@ class LandmarkManager {
    * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
    */
   public focusoutHandler(e: FocusEvent) {
-    let previousFocusedElement = e.target as HTMLElement;
+    let previousFocusedElement = e.target as Element;
     let nextFocusedElement = e.relatedTarget;
     // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
     // browsers appear to send focus instead to document.body and the relatedTarget is null when that happens
@@ -288,7 +288,7 @@ class LandmarkManager {
  * @param props - Props for the landmark.
  * @param ref - Ref to the landmark.
  */
-export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<HTMLElement>): LandmarkAria {
+export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<FocusableElement>): LandmarkAria {
   const {
     role,
     'aria-label': ariaLabel,

@@ -21,6 +21,7 @@ import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -466,6 +467,23 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </Flex>
     )
+  )
+  .add(
+    'WHCM test',
+    () => (
+      <Flex direction="column" gap="size-200">
+        <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Combobox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+        {renderRow({placeholder: 'Type here...'})}
+        {renderRow()}
+        {renderRow({labelPosition: 'side'})}
+        {renderRow({isQuiet: true, placeholder: 'Type here...'})}
+        {renderRow({isQuiet: true})}
+        {renderRow({isRequired: true})}
+        {renderRow({isRequired: true, isQuiet: true})}
+        {renderRow({validationState: 'invalid'})}
+        {renderRow({validationState: 'invalid', isQuiet: true})}
+      </Flex>
+    )
   );
 
 
@@ -902,6 +920,29 @@ function render(props = {}) {
       </Item>
       <Item key="three">Item Three</Item>
     </ComboBox>
+  );
+}
+
+function renderRow(props = {}) {
+  return (
+    <Flex gap="size-200">
+      <ComboBox label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+      <ComboBox isDisabled label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+    </Flex>  
   );
 }
 

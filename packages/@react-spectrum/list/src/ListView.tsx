@@ -29,7 +29,7 @@ import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumListProps} from '@react-types/list';
-import {useCollator, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useList} from '@react-aria/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -111,7 +111,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let {collection, selectionManager} = state;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
@@ -284,7 +284,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                  aria-label={collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
               </CenteredWrapper>
             );
           } else if (type === 'placeholder') {

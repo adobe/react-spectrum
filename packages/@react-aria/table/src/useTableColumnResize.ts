@@ -11,19 +11,20 @@
  */
 
 import {ColumnResizeState, TableState} from '@react-stately/table';
+import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, HTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface ResizerAria {
-  inputProps: HTMLAttributes<HTMLInputElement>,
-  resizerProps: HTMLAttributes<HTMLDivElement>
+  inputProps: DOMAttributes,
+  resizerProps: DOMAttributes
 }
 
 interface ResizerProps<T> {
@@ -39,7 +40,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef<string | null>(null);
   stateRef.current = columnState;
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
   let id = useId();
 
@@ -96,7 +97,7 @@ export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableStat
     'aria-label': props.label,
     'aria-orientation': 'horizontal' as 'horizontal',
     'aria-labelledby': `${id} ${getColumnHeaderId(state, item.key)}`,
-    'aria-valuetext': formatMessage('columnSize', {value}),
+    'aria-valuetext': stringFormatter.format('columnSize', {value}),
     min,
     max,
     value
