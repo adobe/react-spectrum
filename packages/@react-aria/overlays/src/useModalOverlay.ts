@@ -13,9 +13,9 @@
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {useFocusScope} from '@react-aria/focus';
 import {useModal} from './useModal';
 import {useOverlay} from './useOverlay';
+import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
 
 interface ModalOverlayProps {
@@ -55,10 +55,7 @@ export function useModalOverlay(props: ModalOverlayProps, state: OverlayTriggerS
     isDisabled: !state.isOpen
   });
 
-  useFocusScope({
-    restoreFocus: state.isOpen,
-    contain: state.isOpen
-  }, ref);
+  useOverlayFocusContain();
 
   return {
     modalProps: mergeProps(overlayProps, modalProps),

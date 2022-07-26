@@ -14,7 +14,8 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
+import {useOverlayFocusContain} from '@react-aria/overlays';
 
 export interface DialogAria {
   /** Props for the dialog container element. */
@@ -58,10 +59,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
     }
   }, [ref]);
 
-  useFocusScope({
-    contain: true,
-    restoreFocus: true
-  }, ref);
+  useOverlayFocusContain();
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.

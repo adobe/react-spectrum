@@ -138,6 +138,24 @@ export function FocusScope(props: FocusScopeProps) {
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus, focusManager);
 
+  useLayoutEffect(() => {
+    let scope = scopeRef.current;
+    let onFocus = () => {
+      // If focusing an element in a child scope of the currently active scope, the child becomes active.
+      // Moving out of the active scope to an ancestor is not allowed.
+      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
+        activeScope = scopeRef;
+      }
+    };
+
+    document.addEventListener('focusin', onFocus, false);
+    scope.forEach(element => element.addEventListener('focusin', onFocus, false));
+    return () => {
+      document.removeEventListener('focusin', onFocus, false);
+      scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
+    };
+  }, [scopeRef, contain]);
+
   return (
     <FocusContext.Provider value={{scopeRef, focusManager}}>
       <span data-focus-scope-start hidden ref={startRef} />
@@ -478,7 +496,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
     // using portals for overlays, so that focus goes to the expected element when
     // tabbing out of the overlay.
     let onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented || scopeRef !== activeScope) {
         return;
       }
 
