@@ -10,15 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
 import {OuterField} from './OuterField';
 import React, {RefObject, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/utils';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
@@ -36,23 +33,17 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let formatMessage = useMessageFormatter(intlMessages);
-  let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
+  let hasHelpText = !!description || (errorMessage && validationState === 'invalid');
+  let displayReadOnly = isReadOnly && (!!readOnlyText || readOnlyText === '');
   let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
   if (displayReadOnly) {
-    if (readOnlyText === '') {
-      readOnlyText = formatMessage('(None)');
-    }
-    
+
     children = (
       <ReadOnlyField
         {...props} 
         readOnlyText={readOnlyText}
-        displayReadOnly={displayReadOnly}
-        hasHelpText={hasHelpText}
         styleProps={styleProps}
         inputRef={inputRef as RefObject<HTMLTextAreaElement>} 
         ref={ref as RefObject<HTMLDivElement>} />
@@ -76,6 +67,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
   }
 
+  /*
+  If a Field doesn't have a label, we need to merge the child ref with 
+  the DOM ref provided by the user since they point to the same DOM node
+  */ 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
     // @ts-ignore

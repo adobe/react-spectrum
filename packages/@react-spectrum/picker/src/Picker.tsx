@@ -135,6 +135,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let [buttonWidth, setButtonWidth] = useState(null);
   let {scale} = useProvider();
 
+  // In the case that the componet goes from isReadOnly is true to false, the width of the button needs to measured 
   let onResize = useCallback(() => {
     if ((!isMobile && unwrappedTriggerRef.current) && (!isReadOnly)) {
       let width = unwrappedTriggerRef.current.offsetWidth;

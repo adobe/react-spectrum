@@ -50,7 +50,7 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
 }
 
 export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps  {
-  /** Whether the textfield should be displayed with a quiet style. */
+  /** Whether the Picker should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
    * @default 'start'
@@ -70,5 +70,6 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean,
+  /** Whether the element can be selected but not changed by the user. */
   isReadOnly?: boolean
 }

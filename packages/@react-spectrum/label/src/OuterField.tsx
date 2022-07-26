@@ -21,7 +21,7 @@ import React, {HTMLAttributes, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
 interface OuterFieldProps extends SpectrumFieldProps {
-  displayReadOnly?: string | boolean,
+  displayReadOnly?: boolean,
   hasHelpText?: boolean,
   styleProps?: HTMLAttributes<HTMLElement>
 }
@@ -89,9 +89,9 @@ function OuterField(props: OuterFieldProps, ref: RefObject<HTMLDivElement>) {
   return (
     <div
       {...styleProps}
-      ref={ref as RefObject<HTMLDivElement>}
+      ref={ref}
       className={labelWrapperClass}>
-      {label && (
+      {label && ( // This part will render if the component has a label
         <Label
           {...labelProps}
           labelPosition={labelPosition}

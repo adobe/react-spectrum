@@ -12,6 +12,8 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus'; 
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {OuterField} from './OuterField';
 import React, {HTMLAttributes, RefObject, useCallback} from 'react';
@@ -20,12 +22,11 @@ import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 interface ReadOnlyFieldProps extends SpectrumFieldProps {
   className?: string,
-  displayReadOnly?: string | boolean,
-  hasHelpText?: boolean,
   styleProps?: HTMLAttributes<HTMLElement>
 }
 
@@ -38,11 +39,10 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     inputRef,
     className,
     label,
-    displayReadOnly,
-    hasHelpText,
     styleProps
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {labelProps, inputProps} = useTextField({
     ...props,
     inputElementType: 'textarea'
@@ -64,6 +64,10 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     }
   }, [onHeightChange, readOnlyText, inputRef]);
 
+  if (readOnlyText === '') {
+    readOnlyText = stringFormatter.format('(None)');
+  }
+  
   let textfield = (
     <div
       className={
@@ -108,9 +112,8 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
       labelProps={labelProps}
       inputProps={inputProps}
       elementType="label"
-      displayReadOnly={displayReadOnly}
-      styleProps={styleProps}
-      hasHelpText={hasHelpText}>
+      displayReadOnly
+      styleProps={styleProps}>
       {textfield}
     </OuterField>
   );
