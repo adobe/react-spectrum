@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageDictionary} from '@internationalized/message';
+import {LocalizedStringDictionary} from '@internationalized/string';
 
 // These placeholders are based on the strings used by the <input type="date">
 // implementations in Chrome and Firefox. Additional languages are supported
 // here than React Spectrum's typical translations.
-const placeholders = new MessageDictionary({
+const placeholders = new LocalizedStringDictionary({
   ach: {year: 'mwaka', month: 'dwe', day: 'nino'},
   af: {year: 'jjjj', month: 'mm', day: 'dd'},
   am: {year: 'ዓዓዓዓ', month: 'ሚሜ', day: 'ቀቀ'},

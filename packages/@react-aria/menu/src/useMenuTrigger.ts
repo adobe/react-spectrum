@@ -18,8 +18,8 @@ import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
 import {RefObject} from 'react';
 import {useId} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLongPress} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 export interface AriaMenuTriggerProps {
@@ -90,10 +90,10 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   };
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
-    accessibilityDescription: formatMessage('longPressMessage'),
+    accessibilityDescription: stringFormatter.format('longPressMessage'),
     onLongPressStart() {
       state.close();
     },
@@ -117,6 +117,9 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
       }
     }
   };
+
+  // omit onPress from triggerProps since we override it above.
+  delete triggerProps.onPress;
 
   return {
     menuTriggerProps: {

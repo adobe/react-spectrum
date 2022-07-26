@@ -3,7 +3,7 @@
   "dragDescriptionTouch": "Faça duplo toque para começar a arrastar.",
   "dragDescriptionVirtual": "Clique para iniciar o arrasto.",
   "dragItem": "Arrastar {itemText}",
-  "dragSelectedItems": "Arrastar {count, plural, one {# item selecionado} outro {# itens selecionados}}",
+  "dragSelectedItems": "Arrastar {count, plural, one {# item selecionado} other {# itens selecionados}}",
   "dragStartedKeyboard": "Arrasto iniciado. Prima a tecla de tabulação para navegar para um destino para largar, e em seguida prima Enter para largar ou prima Escape para cancelar.",
   "dragStartedTouch": "Arrasto iniciado. Navegue para um destino para largar, e em seguida faça duplo toque para largar.",
   "dragStartedVirtual": "Arrasto iniciado. Navegue para um destino para largar, e em seguida clique ou prima Enter para largar.",

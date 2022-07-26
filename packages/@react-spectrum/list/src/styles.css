@@ -276,7 +276,7 @@
 
   .react-spectrum-ListViewItem-grid {
     display: grid;
-    grid-template-columns: auto auto auto auto 1fr auto auto;
+    grid-template-columns: auto auto auto 1fr auto auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
       "draghandle checkbox thumbnail content actions actionmenu chevron"

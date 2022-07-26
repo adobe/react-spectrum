@@ -407,32 +407,42 @@ function transformExample(node, preRelease) {
   /* Replace individual package imports in the code
    * with monorepo imports if building for production and not a pre-release
    */
-  if (process.env.DOCS_ENV === 'production' && !preRelease && node.value.includes('@react-spectrum')) {
-    let specifiers = [];
-    let last;
+  if (!preRelease && /@react-spectrum|@react-aria|@react-stately/.test(node.value)) {
+    let specifiers = {};
+    const recast = require('recast');
     const traverse = require('@babel/traverse').default;
     const {parse} = require('@babel/parser');
-    const generate = require('@babel/generator').default;
-    let ast = parse(node.value, {
-      sourceType: 'module',
-      plugins: ['jsx', 'typescript']
+    let ast = recast.parse(node.value, {
+      parser: {
+        parse() {
+          return parse(node.value, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript'],
+            tokens: true
+          });
+        }
+      }
     });
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (path.node.source.value.startsWith('@react-spectrum') && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+          let lib = path.node.source.value.split('/')[0];
+          if (!specifiers[lib]) {
+            specifiers[lib] = [];
+          }
+
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
           for (let specifier of path.node.specifiers) {
             let mapped = mapping && mapping[specifier.imported.name];
             if (mapped && specifier.local.name === specifier.imported.name) {
               path.scope.rename(specifier.local.name, mapped);
-              specifiers.push(mapped);
+              specifiers[lib].push(mapped);
             } else {
-              specifiers.push(specifier.imported.name);
+              specifiers[lib].push(specifier.imported.name);
             }
           }
 
-          last = path.node;
           path.remove();
         }
       },
@@ -441,26 +451,25 @@ function transformExample(node, preRelease) {
       },
       Program: {
         exit(path) {
-          if (specifiers.length > 0) {
-            let literal =  t.stringLiteral('@adobe/react-spectrum');
-            literal.raw = "'@adobe/react-spectrum'";
+          for (let lib in specifiers) {
+            let names = specifiers[lib];
+            if (names.length > 0) {
+              let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
+              let literal =  t.stringLiteral(monopackage);
 
-            let decl = t.importDeclaration(
-              specifiers.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
-              literal
-            );
+              let decl = t.importDeclaration(
+                names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+                literal
+              );
 
-            decl.loc = last.loc;
-            decl.start = last.start;
-            decl.end = last.end;
-
-            path.unshiftContainer('body', [decl]);
+              path.unshiftContainer('body', [decl]);
+            }
           }
         }
       }
     });
 
-    node.value = generate(ast).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    node.value = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
     force = true;
   }
 
