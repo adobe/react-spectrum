@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject} from 'react';
+import {ariaHideOutside} from './ariaHideOutside';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {useModal} from './useModal';
 import {useOverlay} from './useOverlay';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
@@ -23,7 +23,7 @@ interface ModalOverlayProps {
    * Whether to close the modal when the user interacts outside it.
    * @default false
    */
-   isDismissable?: boolean,
+  isDismissable?: boolean,
   /**
    * Whether pressing the escape key to close the modal should be disabled.
    * @default false
@@ -47,18 +47,20 @@ export function useModalOverlay(props: ModalOverlayProps, state: OverlayTriggerS
     onClose: state.close
   }, ref);
 
-  let {modalProps} = useModal({
-    isDisabled: !state.isOpen
-  });
-
   usePreventScroll({
     isDisabled: !state.isOpen
   });
 
   useOverlayFocusContain();
 
+  useEffect(() => {
+    if (state.isOpen) {
+      return ariaHideOutside([ref.current]);
+    }
+  }, [state.isOpen, ref]);
+
   return {
-    modalProps: mergeProps(overlayProps, modalProps),
+    modalProps: mergeProps(overlayProps),
     underlayProps
   };
 }

@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject} from 'react';
+import {ariaHideOutside} from './ariaHideOutside';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PositionProps} from '@react-types/overlays';
-import {useFocusScope} from '@react-aria/focus';
-import {useModal} from './useModal';
 import {useOverlay} from './useOverlay';
 import {useOverlayPosition} from './useOverlayPosition';
 
@@ -70,17 +69,15 @@ export function usePopover(props: PopoverProps, state: OverlayTriggerState): Pop
     overlayRef: popoverRef,
     isOpen: state.isOpen
   });
-
-  let {modalProps} = useModal({
-    isDisabled: isNonModal || !state.isOpen
-  });
-
-  useFocusScope({
-    restoreFocus: state.isOpen
-  }, popoverRef);
+  
+  useEffect(() => {
+    if (state.isOpen && !isNonModal) {
+      return ariaHideOutside([popoverRef.current]);
+    }
+  }, [isNonModal, state.isOpen, popoverRef]);
 
   return {
-    popoverProps: mergeProps(overlayProps, positionProps, modalProps),
+    popoverProps: mergeProps(overlayProps, positionProps),
     arrowProps
   };
 }
