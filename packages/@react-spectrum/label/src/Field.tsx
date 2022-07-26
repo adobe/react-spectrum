@@ -18,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {RefObject, useCallback} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
@@ -142,20 +142,10 @@ let _SubField = (props, ref) => {
 };
 let SubField = React.forwardRef(_SubField);
 
-let useMergeRefs = (...refs) => {
-  return useCallback(
-    (value) => {
-      for (let ref of refs) {
-        if (typeof ref === 'function') {
-          ref(value);
-        } else if (ref != null) {
-          ref.current = value;
-        }
-      }
-    },
+let useMergeRefs = (...refs) => useCallback(
+    mergeRefs(...refs),
     [...refs]
-  );
-};
+);
 
 let _Field = React.forwardRef(Field);
 export {_Field as Field};
