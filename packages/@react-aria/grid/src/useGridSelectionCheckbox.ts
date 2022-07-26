@@ -5,7 +5,7 @@ import {GridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {useId} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface SelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -33,12 +33,12 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
 
   let onChange = () => manager.select(key);
 
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   return {
     checkboxProps: {
       id: checkboxId,
-      'aria-label': formatMessage('select'),
+      'aria-label': stringFormatter.format('select'),
       isSelected,
       isDisabled,
       onChange

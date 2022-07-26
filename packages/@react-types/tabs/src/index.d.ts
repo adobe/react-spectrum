@@ -28,7 +28,13 @@ export interface AriaTabProps {
   isDisabled?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
+  /**
+   * Whether the Tabs are disabled.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
+  isDisabled?: boolean
+}
 
 interface AriaTabListBase {
   /**
@@ -40,12 +46,7 @@ interface AriaTabListBase {
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
-  /**
-   * Whether the Tabs are disabled.
-   * Shows that a selection exists, but is not available in that circumstance.
-   */
-  isDisabled?: boolean
+  orientation?: Orientation
 }
 
 export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}

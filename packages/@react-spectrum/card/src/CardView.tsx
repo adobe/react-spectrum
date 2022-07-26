@@ -23,7 +23,7 @@ import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
@@ -47,7 +47,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
@@ -138,7 +138,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
               <CenteredWrapper>
                 <ProgressCircle
                   isIndeterminate
-                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                  aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
               </CenteredWrapper>
             );
           } else if (type === 'placeholder') {
