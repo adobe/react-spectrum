@@ -18,6 +18,7 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/overlays/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import Anatomy from './popover-anatomy.svg';
 
 ---
 category: Overlays
@@ -56,6 +57,8 @@ with [useDialog](useDialog.html) to create fully accessible popovers. Other over
 such as menus may also be placed in a popover.
 
 ## Anatomy
+
+<Anatomy />
 
 A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html).
 
@@ -163,7 +166,7 @@ function Dialog({title, children, ...props}) {
 
   return (
     <div {...dialogProps} ref={ref} style={{padding: 30}}>
-      {title && 
+      {title &&
         <h3 {...titleProps} style={{marginTop: 0}}>
           {title}
         </h3>
