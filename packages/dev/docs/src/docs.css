@@ -432,6 +432,19 @@ div:global(.sp-layout) {
   background: none;
 }
 
+div:global(.sandpack) {
+  display: none;
+}
+
+div:global(.example-actions) {
+  margin-bottom: -20px;
+  margin-right: -35px;
+
+  > div {
+    justify-content: end;
+  }
+}
+
 .snippet {
   background: none;
 }

@@ -35,9 +35,10 @@ const sandpackImports = `import {
   UnstyledOpenInCodeSandboxButton
 } from "@codesandbox/sandpack-react";
 import Copy from '@spectrum-icons/workflow/Copy';
+import Edit from '@spectrum-icons/workflow/Edit';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
-import {ActionButton, ButtonGroup, Tooltip, TooltipTrigger} from '@adobe/react-spectrum';`;
+import {ActionGroup, Item} from '@adobe/react-spectrum';`;
 
 const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.replace(/`/g, '\\`').replace(/\n/g, '\n    ').trim() : code.replace(/`/g, '\\`').trim();
 
@@ -123,44 +124,36 @@ function CustomSandpack(props) {
           }
         }}
       >
-        <SandpackCodeEditor showTabs={false} wrapContent={true} style={{height: 'auto'}} />
+        <SandpackCodeEditor readOnly showReadOnly={false} showTabs={false} wrapContent={true} style={{height: 'auto'}} />
         <SandpackPreview
           style={{display: 'block', background: 'none', border: 'none'}}
           actionsChildren={
-            <ButtonGroup>
-              <TooltipTrigger>
-                <ActionButton
-                  isQuiet
-                  aria-label="Copy example code"
-                  onPress={() => {
-                    navigator.clipboard.writeText(code.trim());
-                  }}
-                >
-                  <Copy size="S" />
-                </ActionButton>
-                <Tooltip>Copy code</Tooltip>
-              </TooltipTrigger>
-              <TooltipTrigger>
-                <ActionButton
-                  isQuiet
-                  aria-label="Refresh example"
-                  onPress={() => refresh()}
-                >
-                  <Refresh size="S" />
-                </ActionButton>
-                <Tooltip>Refresh</Tooltip>
-              </TooltipTrigger>
-              <TooltipTrigger>
-                <ActionButton
-                  isQuiet
-                  aria-label="Open example in CodeSandbox"
-                  onPress={() => openInCodeSandboxButtonRef.current.firstChild.click()}
-                >
-                  <LinkOut size="S" />
-                </ActionButton>
-                <Tooltip>Open in CodeSandbox</Tooltip>
-              </TooltipTrigger>
-            </ButtonGroup>
+            <ActionGroup
+              isQuiet
+              buttonLabelBehavior="hide"
+              onAction={(key) => {
+                if (key === 'copy') {
+                  navigator.clipboard.writeText(code.trim());
+                } else if (key === 'edit') {
+                  refresh()
+                } else if (key === 'open') {
+                  openInCodeSandboxButtonRef.current.firstChild.click();
+                }
+              }}
+              >
+              <Item key="copy">
+                <Copy size="S" />
+                <Text>Copy code</Text>
+              </Item>
+              <Item key="refresh">
+                <Refresh size="S" />
+                <Text>Refresh code</Text>
+              </Item>
+              <Item key="open">
+                <LinkOut size="S" />
+                <Text>Open in CodeSandbox</Text>
+              </Item>
+            </ActionGroup>
           }
           showRefreshButton={false}
           showOpenInCodeSandbox={false} />
@@ -199,7 +192,38 @@ ReactDOM.render(
       <CustomSandpack indexFiles={{light: \`${getIndexFile(componentName, 'light')}\`, dark: \`${getIndexFile(componentName, 'dark')}\` }} />
     </SandpackProvider>
   </${provider}>,
-  document.getElementById("${id}"));`; 
+  document.getElementById("sandpack-${id}"));`;
 
-module.exports = {getExampleSandpack, sandpackImports};
+const getActions = (id) => `
+function ExampleActions(props) {
+
+  return (
+    <ActionGroup
+      isQuiet
+      buttonLabelBehavior="hide"
+      onAction={(key) => {
+        if (key === 'copy') {
+          let code = document.querySelectorAll('.${id}')[0].textContent;
+          navigator.clipboard.writeText(code.trim());
+        } else if (key === 'edit') {
+          document.getElementById('sandpack-${id}').style.display = 'block';
+          document.querySelectorAll('.${id}').forEach(el => el.style.display = 'none');
+          document.getElementById('${id}').style.display = 'none';
+        }
+      }}
+      UNSAFE_className="example-actions"
+      >
+      <Item key="edit">
+        <Edit size="S" />
+        <Text>Edit code</Text>
+      </Item>
+      <Item key="copy">
+        <Copy size="S" />
+        <Text>Copy code</Text>
+      </Item>
+    </ActionGroup>
+  );
+}`; 
+
+module.exports = {getExampleSandpack, sandpackImports, getActions};
 

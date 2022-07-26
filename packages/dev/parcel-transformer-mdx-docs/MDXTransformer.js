@@ -17,7 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
-const {getExampleSandpack, sandpackImports} = require('./SandpackFiles');
+const {getExampleSandpack, sandpackImports, getActions} = require('./SandpackFiles');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -79,13 +79,9 @@ module.exports = new Transformer({
             if (!options.includes('render=false')) {
               if (/^\s*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = shouldUseSandpack ? 
-                  `${code}${getExampleSandpack(id, provider, code, exampleImports, name, true)}` :
-                  `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+                code = `${code}\n${shouldUseSandpack ? getActions(id) : ''};\nReactDOM.render(<${provider}><${name} />${shouldUseSandpack ? '<ExampleActions />' : ''}</${provider}>, document.getElementById("${id}"));${shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, name, true) : ''}`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = shouldUseSandpack ?
-                  code.replace(/^(<(.|\n)*>)$/m, getExampleSandpack(id, provider, code, exampleImports, 'Example')) :
-                  code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `${shouldUseSandpack ? getActions(id) : ''};\nReactDOM.render(<${provider}>$1${shouldUseSandpack ? '<ExampleActions />' : ''}</${provider}>, document.getElementById("${id}"));${shouldUseSandpack ? getExampleSandpack(id, provider, code, exampleImports, 'Example') : ''}`);
               }
             }
 
@@ -120,7 +116,7 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
-            node.meta = shouldUseSandpack ? 'sandpack' : 'example';
+            node.meta = `example ${id}`;
 
             return [
               ...transformExample(node, preRelease),
@@ -134,7 +130,26 @@ module.exports = new Transformer({
                     value: id
                   }
                 ]
-              }
+              },
+              ... shouldUseSandpack ? 
+              [
+                {
+                  type: 'mdxJsxFlowElement',
+                  name: 'div',
+                  attributes: [
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'id',
+                      value: `sandpack-${id}`
+                    },
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'className',
+                      value: 'sandpack'
+                    }
+                  ]
+                }
+              ] : []
             ];
           }
 
@@ -266,11 +281,6 @@ module.exports = new Transformer({
         flatMap(tree, node => {
           if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
             node.properties.className = node.children[0].data.meta.split(' ');
-            
-            // Don't render normal example if using sandpack 
-            if (node.children[0].data.meta.includes('sandpack')) {
-              return [];
-            }
           }
 
           return [node];
