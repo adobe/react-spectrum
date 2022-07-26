@@ -38,7 +38,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Edit from '@spectrum-icons/workflow/Edit';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
-import {ActionGroup, Item} from '@adobe/react-spectrum';`;
+import {ActionGroup, Item, Text} from '@adobe/react-spectrum';`;
 
 const formatExampleCode = (code, fixIndention = false) => fixIndention ? code.replace(/`/g, '\\`').replace(/\n/g, '\n    ').trim() : code.replace(/`/g, '\\`').trim();
 
@@ -196,7 +196,6 @@ ReactDOM.render(
 
 const getActions = (id) => `
 function ExampleActions(props) {
-
   return (
     <ActionGroup
       isQuiet
