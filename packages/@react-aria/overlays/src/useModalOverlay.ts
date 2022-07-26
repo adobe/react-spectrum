@@ -32,7 +32,9 @@ interface ModalOverlayProps {
 }
 
 interface ModalOverlayAria {
+  /** Props for the modal element. */
   modalProps: HTMLAttributes<HTMLElement>,
+  /** Props for the underlay element. */
   underlayProps: HTMLAttributes<HTMLElement>
 }
 
