@@ -15,6 +15,7 @@ import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
+import type {LocalizedStringFormatter} from '@internationalized/string';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -62,12 +63,12 @@ interface DragTarget {
   onDragEnd?: (e: DragEndEvent) => void
 }
 
-export function beginDragging(target: DragTarget, formatMessage: (key: string) => string) {
+export function beginDragging(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
   }
 
-  dragSession = new DragSession(target, formatMessage);
+  dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
     dragSession.setup();
     if (
@@ -157,13 +158,13 @@ class DragSession {
   dropOperation: DropOperation;
   private mutationObserver: MutationObserver;
   private restoreAriaHidden: () => void;
-  private formatMessage: (key: string) => string;
+  private stringFormatter: LocalizedStringFormatter;
   private isVirtualClick: boolean;
   private initialFocused: boolean;
 
-  constructor(target: DragTarget, formatMessage: (key: string) => string) {
+  constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
     this.dragTarget = target;
-    this.formatMessage = formatMessage;
+    this.stringFormatter = stringFormatter;
 
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onFocus = this.onFocus.bind(this);
@@ -190,7 +191,7 @@ class DragSession {
     );
     this.updateValidDropTargets();
 
-    announce(this.formatMessage(MESSAGES[getDragModality()]));
+    announce(this.stringFormatter.format(MESSAGES[getDragModality()]));
   }
 
   teardown() {
@@ -487,7 +488,7 @@ class DragSession {
       this.dragTarget.element.focus();
     }
 
-    announce(this.formatMessage('dropCanceled'));
+    announce(this.stringFormatter.format('dropCanceled'));
   }
 
   drop(item?: DroppableItem) {
@@ -525,7 +526,7 @@ class DragSession {
     }
 
     this.end();
-    announce(this.formatMessage('dropComplete'));
+    announce(this.stringFormatter.format('dropComplete'));
   }
 
   activate() {

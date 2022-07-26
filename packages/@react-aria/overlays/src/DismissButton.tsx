@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {useLabels} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface DismissButtonProps extends AriaLabelingProps, DOMProps {
@@ -30,9 +30,9 @@ interface DismissButtonProps extends AriaLabelingProps, DOMProps {
  */
 export function DismissButton(props: DismissButtonProps) {
   let {onDismiss, ...otherProps} = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let labels = useLabels(otherProps, formatMessage('dismiss'));
+  let labels = useLabels(otherProps, stringFormatter.format('dismiss'));
 
   let onClick = () => {
     if (onDismiss) {

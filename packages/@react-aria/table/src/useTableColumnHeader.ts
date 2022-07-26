@@ -20,7 +20,7 @@ import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
 interface ColumnHeaderProps {
@@ -70,13 +70,13 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let sortDescription;
   if (allowsSorting) {
-    sortDescription = `${formatMessage('sortable')}`;
+    sortDescription = `${stringFormatter.format('sortable')}`;
     // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
     if (isSortedColumn && sortDirection && isAndroid()) {
-      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
+      sortDescription = `${sortDescription}, ${stringFormatter.format(sortDirection)}`;
     }
   }
 

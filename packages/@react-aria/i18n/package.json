@@ -21,6 +21,7 @@
     "@internationalized/date": "^3.0.0",
     "@internationalized/message": "^3.0.8",
     "@internationalized/number": "^3.1.1",
+    "@internationalized/string": "^3.0.0",
     "@react-aria/ssr": "^3.2.0",
     "@react-aria/utils": "^3.13.1",
     "@react-types/shared": "^3.13.1"

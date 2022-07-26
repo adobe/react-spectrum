@@ -16,8 +16,8 @@ import intlMessages from '../intl/*.json';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useDescription} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
-import {useMessageFormatter} from '@react-aria/i18n';
 
 interface UseHighlightSelectionDescriptionProps {
   selectionManager: MultipleSelectionManager,
@@ -29,7 +29,7 @@ interface UseHighlightSelectionDescriptionProps {
  * @param props
  */
 export function useHighlightSelectionDescription(props: UseHighlightSelectionDescriptionProps): AriaLabelingProps {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page
   let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)
@@ -41,11 +41,11 @@ export function useHighlightSelectionDescription(props: UseHighlightSelectionDes
 
     let message = undefined;
     if (shouldLongPress) {
-      message = formatMessage('longPressToSelect');
+      message = stringFormatter.format('longPressToSelect');
     }
 
     return selectionBehavior === 'replace' && selectionMode !== 'none' && props.hasItemActions ? message : undefined;
-  }, [props.selectionManager.selectionMode, props.selectionManager.selectionBehavior, props.hasItemActions, formatMessage, shouldLongPress]);
+  }, [props.selectionManager.selectionMode, props.selectionManager.selectionBehavior, props.hasItemActions, stringFormatter, shouldLongPress]);
 
   let descriptionProps = useDescription(interactionDescription);
   return descriptionProps;
