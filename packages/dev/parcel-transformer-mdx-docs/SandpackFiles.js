@@ -176,7 +176,7 @@ ReactDOM.render(
             code: \`${named ? getNamedExampleFile(code, imports) : getExampleFile(code, imports)}\`,
             active: true
           },
-        "/index.js": localStorage.theme === 'dark' ? \`${getIndexFile(componentName, 'dark')}\` : \`${getIndexFile(componentName, 'light')}\`,
+        "/index.js": window.getComputedStyle(document.documentElement)['color-scheme'] === 'dark' ? \`${getIndexFile(componentName, 'dark')}\` : \`${getIndexFile(componentName, 'light')}\`,
         "/index.html": \`${indexHtml}\`
       }}
       customSetup={{
