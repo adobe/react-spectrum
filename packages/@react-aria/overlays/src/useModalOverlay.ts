@@ -11,9 +11,10 @@
  */
 
 import {ariaHideOutside} from './ariaHideOutside';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
+import {RefObject, useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
@@ -33,9 +34,9 @@ interface ModalOverlayProps {
 
 interface ModalOverlayAria {
   /** Props for the modal element. */
-  modalProps: HTMLAttributes<HTMLElement>,
+  modalProps: DOMAttributes,
   /** Props for the underlay element. */
-  underlayProps: HTMLAttributes<HTMLElement>
+  underlayProps: DOMAttributes
 }
 
 /**

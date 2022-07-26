@@ -11,10 +11,11 @@
  */
 
 import {ariaHideOutside} from './ariaHideOutside';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PositionProps} from '@react-types/overlays';
+import {RefObject, useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {useOverlayPosition} from './useOverlayPosition';
 
@@ -22,11 +23,11 @@ interface PopoverProps extends Omit<PositionProps, 'isOpen'> {
   /**
    * The ref for the element which the popover positions itself with respect to.
    */
-  triggerRef: RefObject<HTMLElement>,
+  triggerRef: RefObject<Element>,
   /**
    * The ref for the popover element.
    */
-  popoverRef: RefObject<HTMLElement>,
+  popoverRef: RefObject<Element>,
   /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.
@@ -36,9 +37,9 @@ interface PopoverProps extends Omit<PositionProps, 'isOpen'> {
 
 interface PopoverAria {
   /** Props for the popover element. */
-  popoverProps: HTMLAttributes<Element>,
+  popoverProps: DOMAttributes,
   /** Props for the popover tip arrow if any. */
-  arrowProps: HTMLAttributes<Element>
+  arrowProps: DOMAttributes
 }
 
 /**
@@ -69,7 +70,7 @@ export function usePopover(props: PopoverProps, state: OverlayTriggerState): Pop
     overlayRef: popoverRef,
     isOpen: state.isOpen
   });
-  
+
   useEffect(() => {
     if (state.isOpen && !isNonModal) {
       return ariaHideOutside([popoverRef.current]);
