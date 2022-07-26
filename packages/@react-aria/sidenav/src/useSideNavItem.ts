@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnchorHTMLAttributes, HTMLAttributes, RefObject} from 'react';
+import {AnchorHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface SideNavItemAria {
-  listItemProps: HTMLAttributes<HTMLDivElement>,
+  listItemProps: DOMAttributes,
   listItemLinkProps: AnchorHTMLAttributes<HTMLAnchorElement>
 }
 

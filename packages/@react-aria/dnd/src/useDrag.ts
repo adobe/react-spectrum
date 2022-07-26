@@ -19,7 +19,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 import intlMessages from '../intl/*.json';
 import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useDragModality} from './utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
 interface DragOptions {
@@ -53,7 +53,7 @@ const MESSAGES = {
 };
 
 export function useDrag(options: DragOptions): DragResult {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let state = useRef({
     options,
     x: 0,
@@ -189,14 +189,14 @@ export function useDrag(options: DragOptions): DragResult {
           state.options.onDragEnd(e);
         }
       }
-    }, formatMessage);
+    }, stringFormatter);
 
     setDragging(true);
   };
 
   let modality = useDragModality();
   let descriptionProps = useDescription(
-    formatMessage(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
+    stringFormatter.format(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
   );
 
   return {

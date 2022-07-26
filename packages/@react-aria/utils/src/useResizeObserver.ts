@@ -5,11 +5,11 @@ function hasResizeObserver() {
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: RefObject<T>,
+  ref: RefObject<T | undefined>,
   onResize: () => void
 }
 
-export function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
+export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
 
   useEffect(() => {

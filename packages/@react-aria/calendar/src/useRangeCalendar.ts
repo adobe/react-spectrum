@@ -12,6 +12,7 @@
 
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
+import {FocusableElement} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
 import {useEvent} from '@react-aria/utils';
@@ -20,7 +21,7 @@ import {useEvent} from '@react-aria/utils';
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<HTMLElement>): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
   let res = useCalendarBase(props, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
@@ -37,7 +38,7 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
 
   // Stop range selection when pressing or releasing a pointer outside the calendar body,
   // except when pressing the next or previous buttons to switch months.
-  let endDragging = e => {
+  let endDragging = (e: PointerEvent) => {
     if (isVirtualClick.current) {
       isVirtualClick.current = false;
       return;
@@ -48,7 +49,7 @@ export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<
       return;
     }
 
-    let target = e.target as HTMLElement;
+    let target = e.target as Element;
     let body = document.getElementById(res.calendarProps.id);
     if (
       body &&

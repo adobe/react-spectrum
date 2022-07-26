@@ -16,7 +16,7 @@ import {Collection, Node, Selection} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {Key, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useUpdateEffect} from '@react-aria/utils';
 
 interface UseGridSelectionAnnouncementProps {
@@ -40,7 +40,7 @@ export function useGridSelectionAnnouncement<T>(props: UseGridSelectionAnnouncem
   let {
     getRowText = (key) => state.collection.getItem(key)?.textValue
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   // Many screen readers do not announce when items in a grid are selected/deselected.
   // We do this using an ARIA live region.
@@ -64,19 +64,19 @@ export function useGridSelectionAnnouncement<T>(props: UseGridSelectionAnnouncem
       if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {
         let currentSelectionText = getRowText(state.selectionManager.selectedKeys.keys().next().value);
         if (currentSelectionText) {
-          messages.push(formatMessage('selectedItem', {item: currentSelectionText}));
+          messages.push(stringFormatter.format('selectedItem', {item: currentSelectionText}));
         }
       }
     } else if (addedKeys.size === 1 && removedKeys.size === 0) {
       let addedText = getRowText(addedKeys.keys().next().value);
       if (addedText) {
-        messages.push(formatMessage('selectedItem', {item: addedText}));
+        messages.push(stringFormatter.format('selectedItem', {item: addedText}));
       }
     } else if (removedKeys.size === 1 && addedKeys.size === 0) {
       if (state.collection.getItem(removedKeys.keys().next().value)) {
         let removedText = getRowText(removedKeys.keys().next().value);
         if (removedText) {
-          messages.push(formatMessage('deselectedItem', {item: removedText}));
+          messages.push(stringFormatter.format('deselectedItem', {item: removedText}));
         }
       }
     }
@@ -85,8 +85,8 @@ export function useGridSelectionAnnouncement<T>(props: UseGridSelectionAnnouncem
     if (state.selectionManager.selectionMode === 'multiple') {
       if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
         messages.push(selection === 'all'
-          ? formatMessage('selectedAll')
-          : formatMessage('selectedCount', {count: selection.size})
+          ? stringFormatter.format('selectedAll')
+          : stringFormatter.format('selectedCount', {count: selection.size})
         );
       }
     }

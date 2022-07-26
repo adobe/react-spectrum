@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, Key, ReactNode, useState} from 'react';
+import {Key, ReactNode, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
 interface AriaTagGroupProps extends DOMProps {
@@ -24,7 +24,7 @@ interface AriaTagGroupProps extends DOMProps {
 }
 
 interface TagGroupAria {
-  tagGroupProps: HTMLAttributes<HTMLElement>
+  tagGroupProps: DOMAttributes
 }
 
 export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
@@ -45,6 +45,6 @@ export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
       'aria-live': isFocusWithin ? 'polite' : 'off',
       'aria-disabled': isDisabled === true,
       ...focusWithinProps
-    } as HTMLAttributes<HTMLElement>)
+    } as DOMAttributes)
   };
 }

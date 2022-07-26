@@ -12,4 +12,4 @@
 
 /// <reference types="css-module-types" />
 
-export * from './StatusLight';
+export {StatusLight} from './StatusLight';

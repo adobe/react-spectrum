@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Grid';
-export * from './Flex';
+export {repeat, minmax, fitContent, Grid} from './Grid';
+export {Flex} from './Flex';

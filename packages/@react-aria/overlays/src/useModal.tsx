@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useIsSSR} from '@react-aria/ssr';
 
-interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
+interface ModalProviderProps extends DOMAttributes {
   children: ReactNode
 }
 
@@ -111,7 +113,7 @@ interface OverlayContainerProps extends ModalProviderProps {
    * The container element in which the overlay portal will be placed.
    * @default document.body
    */
-  portalContainer?: HTMLElement
+  portalContainer?: Element
 }
 
 /**
@@ -122,19 +124,24 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let {portalContainer = document.body, ...rest} = props;
+  let isSSR = useIsSSR();
+  let {portalContainer = isSSR ? null : document.body, ...rest} = props;
 
   React.useEffect(() => {
-    if (portalContainer.closest('[data-overlay-container]')) {
+    if (portalContainer?.closest('[data-overlay-container]')) {
       throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
     }
   }, [portalContainer]);
+
+  if (!portalContainer) {
+    return null;
+  }
 
   let contents = <OverlayProvider {...rest} />;
   return ReactDOM.createPortal(contents, portalContainer);
 }
 
-interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+interface ModalAriaProps extends DOMAttributes {
   /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
   'data-ismodal': boolean
 }

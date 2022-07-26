@@ -30,7 +30,7 @@ import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumListProps} from '@react-types/list';
-import {useCollator, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useList} from '@react-aria/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
@@ -87,8 +87,8 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
 function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
-    onLoadMore,
     loadingState,
+    onLoadMore,
     isQuiet,
     overflowMode = 'truncate',
     onAction,
@@ -112,7 +112,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let {collection, selectionManager} = state;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
   let {styleProps} = useStyleProps(props);
@@ -286,7 +286,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
                 <CenteredWrapper>
                   <ProgressCircle
                     isIndeterminate
-                    aria-label={collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+                    aria-label={collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
                 </CenteredWrapper>
               );
             } else if (type === 'placeholder') {
@@ -341,7 +341,7 @@ function CenteredWrapper({children}) {
 }
 
 /**
- * Lists display a linear collection of data. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ * Lists are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
 const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

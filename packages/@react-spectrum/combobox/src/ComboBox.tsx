@@ -50,7 +50,7 @@ import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -79,7 +79,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     onLoadMore
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -198,7 +198,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
+              {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
             </span>
           )} />
         <DismissButton onDismiss={() => state.close()} />
@@ -234,13 +234,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={formatMessage('loading')}
+      aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
