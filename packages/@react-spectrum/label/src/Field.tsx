@@ -18,8 +18,8 @@ import intlMessages from '../intl/*.json';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {RefObject, useCallback} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
@@ -43,8 +43,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     labelProps,
     readOnlyText,
     isReadOnly,
-    inputProps, 
-    inputRef, 
+    inputProps,
+    inputRef,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -94,10 +94,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       }
       children = (
         <ReadOnlyField
-          {...props} 
+          {...props}
           readOnlyText={readOnlyText}
-          inputProps={inputProps} 
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />            
+          inputProps={inputProps}
+          ref={inputRef as RefObject<HTMLTextAreaElement>} />
       );
     }
 
@@ -130,12 +130,32 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
   }
 
+  return <SubField ref={ref}>{children}</SubField>;
+}
+
+let _SubField = (props, ref) => {
+  let {children, styleProps} = props;
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    // @ts-ignore
-    ref: mergeRefs(children.ref, ref)
+    ref: useMergeRefs(children.ref, ref)
   }));
-}
+};
+let SubField = React.forwardRef(_SubField);
+
+let useMergeRefs = (...refs) => {
+  return useCallback(
+    (value) => {
+      for (let ref of refs) {
+        if (typeof ref === 'function') {
+          ref(value);
+        } else if (ref != null) {
+          ref.current = value;
+        }
+      }
+    },
+    [...refs]
+  );
+};
 
 let _Field = React.forwardRef(Field);
 export {_Field as Field};
