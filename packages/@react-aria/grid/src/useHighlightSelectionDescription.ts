@@ -19,7 +19,7 @@ import {useInteractionModality} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
-interface UseHighlightSelectionDescriptionProps {
+export interface HighlightSelectionDescriptionProps {
   selectionManager: MultipleSelectionManager,
   hasItemActions?: boolean
 }
@@ -28,7 +28,7 @@ interface UseHighlightSelectionDescriptionProps {
  * Computes the description for a grid selectable collection.
  * @param props
  */
-export function useHighlightSelectionDescription(props: UseHighlightSelectionDescriptionProps): AriaLabelingProps {
+export function useHighlightSelectionDescription(props: HighlightSelectionDescriptionProps): AriaLabelingProps {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page

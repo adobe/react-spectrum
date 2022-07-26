@@ -23,7 +23,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-interface AriaSelectOptions<T> extends AriaSelectProps<T> {
+export interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -31,7 +31,7 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface SelectAria<T> {
+export interface SelectAria<T> {
   /** Props for the label element. */
   labelProps: DOMAttributes,
 

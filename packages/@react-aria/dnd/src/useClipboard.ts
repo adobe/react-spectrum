@@ -16,14 +16,14 @@ import {readFromDataTransfer, writeToDataTransfer} from './utils';
 import {useEffect, useRef} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
-interface ClipboardProps {
+export interface ClipboardProps {
   getItems?: () => DragItem[],
   onCopy?: () => void,
   onCut?: () => void,
   onPaste?: (items: DropItem[]) => void
 }
 
-interface ClipboardResult {
+export interface ClipboardResult {
   clipboardProps: DOMAttributes
 }
 

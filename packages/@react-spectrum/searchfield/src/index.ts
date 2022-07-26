@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {SearchField} from './SearchField';
+export type {SpectrumSearchFieldProps} from '@react-types/searchfield';

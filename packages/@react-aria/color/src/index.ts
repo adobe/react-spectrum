@@ -13,3 +13,8 @@ export {useColorArea} from './useColorArea';
 export {useColorSlider} from './useColorSlider';
 export {useColorWheel} from './useColorWheel';
 export {useColorField} from './useColorField';
+export type {AriaColorAreaOptions, ColorAreaAria} from './useColorArea';
+export type {AriaColorSliderOptions, ColorSliderAria} from './useColorSlider';
+export type {AriaColorWheelOptions, ColorWheelAria} from './useColorWheel';
+export type {AriaColorFieldProps} from '@react-types/color';
+export type {ColorFieldAria} from './useColorField';

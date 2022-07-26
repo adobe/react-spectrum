@@ -34,7 +34,7 @@ import {
 import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface NumberFieldAria {
+export interface NumberFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
