@@ -198,33 +198,52 @@ storiesOf('DialogTrigger', module)
     )
   )
   .add(
-    'popover: placement and shouldFlip controls',
-    (args) => (
-      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-        <DialogTrigger type="popover" {...args} onOpenChange={action('open change')}>
-          <ActionButton>Trigger</ActionButton>
-          <Dialog>
-            <Heading>The Heading</Heading>
-            <Header>The Header</Header>
-            <Divider />
-            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-          </Dialog>
-        </DialogTrigger>
-      </div>
-    ),
-    {
-      args: {
-        placement: 'left',
-        shouldFlip: false
-      },
-      argTyps: {
-        placement: {
-          control: 'radio',
-          options: ['bottom', 'bottom left', 'bottom right', 'left', 'left top', 'left bottom', 'right', 'right top', 'right bottom', 'top', 'top left', 'top bottom']
-        },
-        shouldFlip: {type: 'boolean'}
-      }
-    }
+    'placement="left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false})
+  )
+  .add(
+    'placement="left top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left top', shouldFlip: false})
+  )
+  .add(
+    'placement="left bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left bottom', shouldFlip: false})
+  )
+  .add(
+    'placement="right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right', shouldFlip: false})
+  )
+  .add(
+    'placement="right top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right top', shouldFlip: false})
+  )
+  .add(
+    'placement="right bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right bottom', shouldFlip: false})
+  )
+  .add(
+    'placement="bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom', shouldFlip: false})
+  )
+  .add(
+    'placement="bottom left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom left', shouldFlip: false})
+  )
+  .add(
+    'placement="bottom right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom right', shouldFlip: false})
+  )
+  .add(
+    'placement="top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top', shouldFlip: false})
+  )
+  .add(
+    'placement="top left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top left', shouldFlip: false})
+  )
+  .add(
+    'placement="top right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top right', shouldFlip: false})
   )
   .add(
     'offset',
