@@ -10,28 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria, useGridSelectionCheckbox} from '@react-aria/grid';
 import {getRowId} from './utils';
-import {Key} from 'react';
 import type {ListState} from '@react-stately/list';
-import {useGridSelectionCheckbox} from '@react-aria/grid';
-
-export interface SelectionCheckboxProps {
-  /** A unique key for the checkbox. */
-  key: Key
-}
-
-export interface SelectionCheckboxAria {
-  /** Props for the row selection checkbox element. */
-  checkboxProps: AriaCheckboxProps
-}
 
 /**
- * Provides the behavior and accessibility implementation for a selection checkbox in a list.
+ * Provides the behavior and accessibility implementation for a selection checkbox in a grid list.
  * @param props - Props for the selection checkbox.
  * @param state - State of the list, as returned by `useListState`.
  */
-export function useListSelectionCheckbox<T>(props: SelectionCheckboxProps, state: ListState<T>): SelectionCheckboxAria {
+export function useGridListSelectionCheckbox<T>(props: AriaGridSelectionCheckboxProps, state: ListState<T>): GridSelectionCheckboxAria {
   let {key} = props;
   const {checkboxProps} = useGridSelectionCheckbox(props, state as any);
 
