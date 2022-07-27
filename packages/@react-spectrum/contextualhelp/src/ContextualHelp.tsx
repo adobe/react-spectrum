@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
@@ -31,7 +31,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     ...otherProps
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
 
@@ -42,7 +42,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
 
   let ariaLabel = otherProps['aria-label'];
   if (!ariaLabel && !otherProps['aria-labelledby']) {
-    ariaLabel = formatMessage(variant);
+    ariaLabel = stringFormatter.format(variant);
   }
 
   return (

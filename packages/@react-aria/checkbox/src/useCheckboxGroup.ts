@@ -17,7 +17,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 
-interface CheckboxGroupAria {
+export interface CheckboxGroupAria {
   /** Props for the checkbox group wrapper element. */
   groupProps: DOMAttributes,
   /** Props for the checkbox group's visible label (if any). */

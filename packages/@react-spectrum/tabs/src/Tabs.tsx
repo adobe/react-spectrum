@@ -15,7 +15,7 @@ import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
-import {ListCollection, SingleSelectListState} from '@react-stately/list';
+import {ListCollection} from '@react-stately/list';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import React, {Key, MutableRefObject, ReactElement, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
@@ -134,24 +134,22 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
 interface TabProps<T> extends DOMProps {
   item: Node<T>,
-  state: SingleSelectListState<T>,
+  state: TabListState<T>,
   isDisabled?: boolean,
   orientation?: Orientation
 }
 
 // @private
 function Tab<T>(props: TabProps<T>) {
-  let {item, state, isDisabled: propsDisabled} = props;
+  let {item, state} = props;
   let {key, rendered} = item;
-  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
-  let {tabProps} = useTab({key, isDisabled}, state, ref);
+  let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
     ...props
   });
-  let isSelected = state.selectedKey === key;
   let domProps = filterDOMProps(item.props);
   delete domProps.id;
 
@@ -241,7 +239,7 @@ function TabLine(props: TabLineProps) {
 export function TabList<T>(props: SpectrumTabListProps<T>) {
   const tabContext = useContext(TabContext);
   const {refs, tabState, tabProps, tabPanelProps} = tabContext;
-  const {isQuiet, density, isDisabled, isEmphasized, orientation} = tabProps;
+  const {isQuiet, density, isEmphasized, orientation} = tabProps;
   const {selectedTab, collapsed, setTabListState} = tabState;
   const {tablistRef, wrapperRef} = refs;
   // Pass original Tab props but override children to create the collection.
@@ -283,7 +281,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
       )
       }>
       {[...state.collection].map((item) => (
-        <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
+        <Tab key={item.key} item={item} state={state} orientation={orientation} />
       ))}
       <TabLine orientation={orientation} selectedTab={selectedTab} />
     </div>
@@ -352,7 +350,7 @@ function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
 interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   isEmphasized?: boolean,
-  state: SingleSelectListState<T>,
+  state: TabListState<T>,
   className?: string,
   visible: boolean
 }

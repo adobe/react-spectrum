@@ -16,3 +16,9 @@ export {usePreventScroll} from './usePreventScroll';
 export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from './useModal';
 export {DismissButton} from './DismissButton';
 export {ariaHideOutside} from './ariaHideOutside';
+
+export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
+export type {AriaOverlayProps, OverlayAria} from './useOverlay';
+export type {OverlayTriggerAria, OverlayTriggerProps} from './useOverlayTrigger';
+export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps, OverlayContainerProps} from './useModal';
+export type {DismissButtonProps} from './DismissButton';

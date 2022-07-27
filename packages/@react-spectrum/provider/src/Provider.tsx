@@ -43,6 +43,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
   } = props;
+  if (!theme) {
+    throw new Error('theme not found, the parent provider must have a theme provided');
+  }
   // Hooks must always be called.
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);

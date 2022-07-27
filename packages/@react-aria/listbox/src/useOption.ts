@@ -19,7 +19,7 @@ import {Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface OptionAria {
+export interface OptionAria {
   /** Props for the option element. */
   optionProps: DOMAttributes,
 
@@ -39,7 +39,7 @@ interface OptionAria {
   isDisabled: boolean
 }
 
-interface AriaOptionProps {
+export interface AriaOptionProps {
   /**
    * Whether the option is disabled.
    * @deprecated

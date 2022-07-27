@@ -23,7 +23,7 @@ import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -55,7 +55,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
   let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
 
@@ -91,7 +91,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
     if (displayReadOnly) {
       if (readOnlyText === '') {
-        readOnlyText = formatMessage('(None)');
+        readOnlyText = stringFormatter.format('(None)');
       }
       children = (
         <ReadOnlyField
