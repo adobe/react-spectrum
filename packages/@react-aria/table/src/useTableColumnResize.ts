@@ -22,19 +22,19 @@ import React, {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface ResizerAria {
+export interface TableColumnResizeAria {
   inputProps: DOMAttributes,
   resizerProps: DOMAttributes
 }
 
-interface ResizerProps<T> {
+export interface AriaTableColumnResizeProps<T> {
   column: GridNode<T>,
   label: string,
   triggerRef: RefObject<HTMLDivElement>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): ResizerAria {
+export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): AriaTableColumnResizeProps {
   let {column: item, triggerRef} = props;
   const stateRef = useRef<ColumnResizeState<T>>(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing

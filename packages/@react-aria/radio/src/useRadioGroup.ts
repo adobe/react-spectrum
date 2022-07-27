@@ -20,7 +20,7 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface RadioGroupAria {
+export interface RadioGroupAria {
   /** Props for the radio group wrapper element. */
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */

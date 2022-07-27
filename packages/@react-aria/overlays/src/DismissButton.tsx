@@ -18,7 +18,7 @@ import {useLabels} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface DismissButtonProps extends AriaLabelingProps, DOMProps {
+export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
   /** Called when the dismiss button is activated. */
   onDismiss?: () => void
 }

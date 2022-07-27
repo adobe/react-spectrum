@@ -27,7 +27,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+export interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
@@ -40,7 +40,7 @@ interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */

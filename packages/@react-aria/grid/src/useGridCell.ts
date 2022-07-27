@@ -21,7 +21,7 @@ import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface GridCellProps {
+export interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
   node: RSNode<unknown>,
   /** Whether the grid cell is contained in a virtual scroller. */
@@ -38,7 +38,7 @@ interface GridCellProps {
   onAction?: () => void
 }
 
-interface GridCellAria {
+export interface GridCellAria {
   /** Props for the grid cell element. */
   gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */

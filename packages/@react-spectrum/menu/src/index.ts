@@ -16,3 +16,5 @@ export {MenuTrigger} from './MenuTrigger';
 export {Menu} from './Menu';
 export {ActionMenu} from './ActionMenu';
 export {Item, Section} from '@react-stately/collections';
+export type {SpectrumMenuTriggerProps} from '@react-types/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps} from '@react-types/menu';

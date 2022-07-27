@@ -9,5 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {ToggleAria} from './useToggle';
+
 export {useToggle} from './useToggle';
+export type {AriaToggleProps} from '@react-types/checkbox';
+export type {ToggleAria} from './useToggle';

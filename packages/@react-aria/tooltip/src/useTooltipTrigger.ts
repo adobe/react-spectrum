@@ -19,7 +19,7 @@ import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
-interface TooltipTriggerAria {
+export interface TooltipTriggerAria {
   /**
    * Props for the trigger element.
    */

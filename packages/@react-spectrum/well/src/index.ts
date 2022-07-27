@@ -11,3 +11,4 @@
  */
 /// <reference types="css-module-types" />
 export {Well} from './Well';
+export type {SpectrumWellProps} from '@react-types/well';

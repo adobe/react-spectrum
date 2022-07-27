@@ -22,7 +22,7 @@ import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
-interface DragOptions {
+export interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
   onDragMove?: (e: DragMoveEvent) => void,
   onDragEnd?: (e: DragEndEvent) => void,
@@ -31,7 +31,7 @@ interface DragOptions {
   getAllowedDropOperations?: () => DropOperation[]
 }
 
-interface DragResult {
+export interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
   dragButtonProps: AriaButtonProps,
   isDragging: boolean

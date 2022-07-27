@@ -22,7 +22,7 @@ import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/intera
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface ColorAreaAria {
+export interface ColorAreaAria {
   /** Props for the color area container element. */
   colorAreaProps: DOMAttributes,
   /** Props for the color area gradient foreground element. */
@@ -35,7 +35,7 @@ interface ColorAreaAria {
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-interface ColorAreaAriaProps extends AriaColorAreaProps {
+export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
   inputXRef: RefObject<HTMLInputElement>,
   /** A ref to the input that represents the y axis of the color area. */
@@ -48,7 +48,7 @@ interface ColorAreaAriaProps extends AriaColorAreaProps {
  * Provides the behavior and accessibility implementation for a color area component.
  * Color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
-export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
+export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState): ColorAreaAria {
   let {
     isDisabled,
     inputXRef,
