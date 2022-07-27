@@ -10,3 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {SSRProvider, useSSRSafeId, useIsSSR} from './SSRProvider';
+export type {SSRProviderProps} from './SSRProvider';

@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {RadioGroupState} from './useRadioGroupState';
+
 export {useRadioGroupState} from './useRadioGroupState';
+
+export type {RadioGroupProps} from '@react-types/radio';
+export type {RadioGroupState} from './useRadioGroupState';

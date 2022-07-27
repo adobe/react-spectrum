@@ -17,7 +17,7 @@ import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
-interface MenuAria {
+export interface MenuAria {
   /** Props for the menu element. */
   menuProps: DOMAttributes
 }

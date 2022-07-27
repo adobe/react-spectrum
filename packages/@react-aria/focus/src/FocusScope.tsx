@@ -17,7 +17,7 @@ import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react'
 import {useLayoutEffect} from '@react-aria/utils';
 
 
-interface FocusScopeProps {
+export interface FocusScopeProps {
   /** The contents of the focus scope. */
   children: ReactNode,
 
@@ -37,7 +37,7 @@ interface FocusScopeProps {
   autoFocus?: boolean
 }
 
-interface FocusManagerOptions {
+export interface FocusManagerOptions {
   /** The element to start searching from. The currently focused element by default. */
   from?: Element,
   /** Whether to only include tabbable elements, or all focusable elements. */

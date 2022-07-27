@@ -15,7 +15,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import {useFocusRing} from './useFocusRing';
 
-interface FocusRingProps {
+export interface FocusRingProps {
   /** Child element to apply CSS classes to. */
   children: ReactElement,
   /** CSS class to apply when the element is focused. */

@@ -13,3 +13,5 @@
 /// <reference types="css-module-types" />
 
 export {Provider, useProvider, useProviderProps} from './Provider';
+export type {ProviderContext} from '@react-types/provider';
+export type {ProviderProps} from '@react-types/provider';

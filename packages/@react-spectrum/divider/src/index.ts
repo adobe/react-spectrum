@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {Divider} from './Divider';
+export type {SpectrumDividerProps} from '@react-types/divider';

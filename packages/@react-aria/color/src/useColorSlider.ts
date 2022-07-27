@@ -18,14 +18,14 @@ import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-interface ColorSliderAriaOptions extends AriaColorSliderProps {
+export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
   trackRef: RefObject<Element>,
   /** A ref for the input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
-interface ColorSliderAria {
+export interface ColorSliderAria {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the track element. */
@@ -42,7 +42,7 @@ interface ColorSliderAria {
  * Provides the behavior and accessibility implementation for a color slider component.
  * Color sliders allow users to adjust an individual channel of a color value.
  */
-export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
+export function useColorSlider(props: AriaColorSliderOptions, state: ColorSliderState): ColorSliderAria {
   let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel} = props;
 
   let {locale, direction} = useLocale();
