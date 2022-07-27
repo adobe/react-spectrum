@@ -664,10 +664,14 @@ export class Virtualizer<T extends object, V, W> {
 
   isPersistedKey(node) {
     let keyFound = this._persistedKeys.has(node.layoutInfo.key);
-    if (!keyFound && node.children) {
+
+    // for components like Table, where we have rows with cells as children,
+    // if the key isn't found at the top level (row in this example), check 
+    // the children of this node to see if a child is persisted. If a child
+    // of this node is a persisted key we consider this node as "persistable."
+    if (!keyFound && node.children && node.node.type !== 'section') {
       for (let child of node.children) {
         if (this._persistedKeys.has(child.layoutInfo.key)) {
-          console.log('persisted key is a child');
           keyFound = true;
           break;
         }

@@ -298,6 +298,7 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
+        // Check to see if a persisted key exists before the visible rows
         for (let h = 0; h < firstVisibleRow; h++) {
           if (this.virtualizer.isPersistedKey(node.children[h])) {
             res.push(node.children[h].layoutInfo);
@@ -308,6 +309,7 @@ export class TableLayout<T> extends ListLayout<T> {
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
+        // Check to see if a persisted key exists after the visible rows
         for (let j = lastVisibleRow; j < node.children.length; j++) {
           if (this.virtualizer.isPersistedKey(node.children[j])) {
             res.push(node.children[j].layoutInfo);
