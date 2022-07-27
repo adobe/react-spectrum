@@ -16,6 +16,58 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
+const parameters = {
+  args: {
+    isReadOnly: true,
+    isQuiet: false,
+    isRequired: false,
+    isDisabled: false,
+    autofocus: false,
+    validationState: '',
+    description: '',
+    errorMessage: '',
+    value: ''
+  },
+  argTypes: {
+    isQuiet: {
+      control: {type: 'boolean'}
+    },
+    isRequired: {
+      control: {type: 'boolean'}
+    },
+    isDisabled: {
+      control: {type: 'boolean'}
+    },
+    autofocus: {
+      control: {type: 'boolean'}
+    },
+    validationState: {
+      control: {
+        type: 'radio',
+        options: ['', 'invalid', 'valid']
+      }
+    },
+    description: {
+      control: {
+        type: 'radio',
+        options: ['', 'Please enter a street address']
+      }
+    },
+    errorMessage: {
+      control: {
+        type: 'radio',
+        options: ['', 'please enter a valid street address']
+      }
+    },
+    value: {
+      control: {
+        type: 'radio',
+        options: ['', 'foo  '.repeat(10)]
+      }
+    }
+  }
+};
+
 storiesOf('TextField', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
@@ -140,6 +192,23 @@ storiesOf('TextField', module)
   )
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
+  )
+  .add('test: isReadOnly, with controls', 
+    (args) => (   
+      <TextField
+        label="Street address"
+        onChange={action('change')}
+        onFocus={action('focus')}
+        onBlur={action('blur')}
+        UNSAFE_className="custom_classname"
+        {...args} />
+    ), parameters
+  )
+  .add('test: isReadOnly, defaultValue',
+    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add('test: isReadOnly, with icon, value = icon',
+    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
   );
 
 function render(props = {}) {

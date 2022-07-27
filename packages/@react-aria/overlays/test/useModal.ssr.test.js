@@ -10,6 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {useValueEffect} from '@react-aria/utils';
+import {testSSR} from '@react-spectrum/test-utils';
 
-export {useValueEffect};
+describe('OverlayContainer SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {OverlayContainer, OverlayProvider} from '..';
+      import React from 'react';
+
+      <OverlayProvider data-testid="root-provider">
+        <OverlayContainer data-testid="modal-provider">
+          <div data-testid="modal"></div>
+        </OverlayContainer>
+      </OverlayProvider>
+    `);
+  });
+});

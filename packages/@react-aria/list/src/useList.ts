@@ -11,9 +11,9 @@
  */
 
 import {AriaListProps} from '@react-types/list';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
@@ -36,7 +36,7 @@ export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
 
 export interface ListViewAria {
   /** Props for the grid element. */
-  gridProps: HTMLAttributes<HTMLElement>
+  gridProps: DOMAttributes
 }
 
 /**
@@ -77,7 +77,7 @@ export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: 
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(
+  let gridProps: DOMAttributes = mergeProps(
     domProps,
     {
       role: 'grid',

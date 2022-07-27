@@ -17,7 +17,7 @@ import {HTMLAttributes, Key} from 'react';
 import intlMessages from '../intl/*.json';
 import {getDraggedCollection, getDroppedCollection, setDraggedCollection, setDroppedCollection} from './utils';
 import {useDrag} from './useDrag';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface DraggableItemProps {
@@ -30,7 +30,7 @@ export interface DraggableItemResult {
 }
 
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);
@@ -59,9 +59,9 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
   let isSelected = state.selectionManager.isSelected(props.key);
   let message: string;
   if (isSelected && numKeysForDrag > 1) {
-    message = formatMessage('dragSelectedItems', {count: numKeysForDrag});
+    message = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});
   } else {
-    message = formatMessage('dragItem', {itemText: item?.textValue ?? ''});
+    message = stringFormatter.format('dragItem', {itemText: item?.textValue ?? ''});
   }
 
   return {

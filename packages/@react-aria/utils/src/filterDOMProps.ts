@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
 
 const DOMPropNames = new Set([
   'id'
@@ -44,7 +43,7 @@ const propRe = /^(data-.*)$/;
  */
 export function filterDOMProps(props: DOMProps & AriaLabelingProps, opts: Options = {}): DOMProps & AriaLabelingProps {
   let {labelable, propNames} = opts;
-  let filteredProps: HTMLAttributes<HTMLElement> = {};
+  let filteredProps = {};
 
   for (const prop in props) {
     if (

@@ -18,7 +18,7 @@ import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEve
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
-interface DropOptions {
+export interface DropOptions {
   ref: RefObject<HTMLElement>,
   // TODO: maybe it would be useful for getDropOperation to also get the dragged items/dragged keys so that users can
   // return 'cancel' if a dragged folder is being dropped on itself? Perhaps pass dragged items and target to isValidDropTarget
@@ -35,7 +35,7 @@ interface DropOptions {
   onDrop?: (e: DropEvent) => void
 }
 
-interface DropResult {
+export interface DropResult {
   dropProps: HTMLAttributes<HTMLElement>,
   isDropTarget: boolean // (??) whether the element is currently an active drop target
 }
