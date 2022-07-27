@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropEvent, DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
-import {DroppableCollectionState} from '@react-stately/dnd';
+import {DroppableCollectionState, getDnDState, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
 import {getTypes} from './utils';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
-import {getDraggedCollection,setDroppedCollection, useDroppableCollectionId} from './utils';
+import {useDroppableCollectionId} from './utils';
 
-export interface DroppableCollectionOptions extends DroppableCollectionProps {
+// TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity
+export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation'> {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
 }
@@ -48,6 +49,59 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   }).current;
   localState.props = props;
   localState.state = state;
+
+  // TODO: not entirely certain why localState.props is a thing here?
+  let {
+    acceptedDragTypes = 'all',
+    onInsert,
+    onRootDrop,
+    onItemDrop,
+    onReorder
+  } = localState.props;
+
+  let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
+    let {draggedCollection} = getDnDState();
+    let isInternalDrop = draggedCollection === localState.state.collection;
+    let dataList = [];
+    let {
+      target,
+      dropOperation
+    } = e;
+    for (let item of e.items) {
+      for (let acceptedType of acceptedDragTypes) {
+        // TODO: this assumes the item's kind is text and just pushes the data as is to the dataList
+        // Perhaps we can also add item.kind === 'file' and 'directory' checks and push the results of getFile/getText/getEntries into dataList? Not entirely sure
+        // when the item.kind would be a file/directory
+        // Or maybe we can just push the item as is to the user defined handlers?
+        // TBH this feels pretty unwieldy still since its all on the user to properly JSON.parse or w/e
+        if (item.kind === 'text' && item.types.has(acceptedType)) {
+          // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
+          let data = await item.getText(acceptedType);
+          dataList.push(data);
+        }
+
+        // if (item.kind === 'directory') {
+
+        // }
+
+        // if (item.kind === 'file') {
+
+        // }
+
+      }
+    }
+    // TODO: Probably need to check if onRootDrop and stuff are functions
+    if (target.type === 'root') {
+      onRootDrop(dataList, dropOperation);
+    } else if (target.dropPosition === 'on') {
+      onItemDrop(dataList, dropOperation, target.key);
+    } else if (isInternalDrop) {
+      onReorder(dataList, target.key, target.dropPosition);
+    } else {
+      onInsert(dataList, dropOperation, target.key, target.dropPosition);
+    }
+
+  }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState.state.collection]);
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
@@ -98,10 +152,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
     },
     onDrop(e) {
-      console.log('in onDrop, dragged collection', getDraggedCollection());
-      // TODO also track the droptarget
       setDroppedCollection(state.collection);
-      if (state.target && typeof props.onDrop === 'function') {
+      setDroppedTarget(state.target);
+      if (state.target) {
         onDrop(e, state.target);
       }
     }
@@ -123,7 +176,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       selectedKeys: state.selectionManager.selectedKeys
     };
 
-    localState.props.onDrop({
+    let onDropFn = localState.props.onDrop || defaultOnDrop;
+    onDropFn({
       type: 'drop',
       x: e.x, // todo
       y: e.y,
@@ -153,7 +207,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       droppingState.current = null;
     }, 50);
-  }, [localState]);
+  }, [localState, defaultOnDrop]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
@@ -405,9 +459,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       },
       onDrop(e, target) {
-        console.log('other ondrop, draggedCollection', getDraggedCollection());
-        setDroppedCollection(state.collection);
-        if (localState.state.target && typeof localState.props.onDrop === 'function') {
+        setDroppedCollection(localState.state.collection);
+        setDroppedTarget(localState.state.target);
+        if (localState.state.target) {
           onDrop(e, target || localState.state.target);
         }
       },

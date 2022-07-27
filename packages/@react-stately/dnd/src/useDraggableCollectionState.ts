@@ -11,6 +11,7 @@
  */
 
 import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, Node} from '@react-types/shared';
+import {getDnDState} from './utils';
 import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -33,8 +34,6 @@ export interface DraggableCollectionState {
   endDrag(event: DragEndEvent): void
 }
 
-// TODO: perhaps track draggingCollection in state and share it with useDroppalbeCollectionState? useDroppableColelctionState doesn't has onDrop though.
-// Should it be added?
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
   let {
     getItems,
@@ -101,10 +100,11 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     },
     endDrag(event) {
       if (typeof onDragEnd === 'function') {
+        let {draggedCollection, droppedCollection, droppedTarget} = getDnDState();
         onDragEnd({
           ...event,
           keys: draggingKeys.current
-        });
+        }, droppedTarget, droppedCollection === draggedCollection);
       }
 
       setDragging(false);

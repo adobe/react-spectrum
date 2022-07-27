@@ -134,7 +134,35 @@ export interface DroppableCollectionProps {
   /** Handler that is called when a valid drag element exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
   /** Handler that is called when a valid drag element is dropped on the drop target. */
-  onDrop?: (e: DroppableCollectionDropEvent) => void
+  onDrop?: (e: DroppableCollectionDropEvent) => void,
+  /**
+   * Handler called when external items are dropped "between" the droppable collection's items.
+   * TODO: need better typing for the "items" since it won't be an Array<string> for FileItem/DirectoryItems.
+   * DropOperation added to each of the below handlers so the user can do different things if the dropOperation is a move/copy/link operation (link operation in particular would probably need different logic).
+   */
+  onInsert?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition) => void,
+  /**
+   * Handler called when external items are dropped on the droppable collection's root.
+   */
+  onRootDrop?: (items: Array<string>, dropOperation: DropOperation) => void,
+  /**
+   * Handler called when items are dropped "on" a droppable collection's item.
+   */
+  onItemDrop?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key) => void,
+  /**
+   * Handler called when items are dropped "on" a droppable collection's item.
+   */
+  onReorder?: (items: Array<string>, targetKey: Key, dropPosition: DropPosition) => void,
+  /**
+   * The drag item types that the droppable collection accepts.
+   * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately.
+   */
+  acceptedDragTypes?: 'all' | Array<string>,
+  /**
+   * A function returning whether a given key in the droppable collection is a valid drop target.
+   * TODO: maybe takes in the types from getDropOperations so user can selectively determine if the drop target accepts drops.
+   */
+  isValidDropTarget?: (key: Key) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {

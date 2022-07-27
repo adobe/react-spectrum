@@ -11,8 +11,9 @@
  */
 
 import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {getDnDState} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 
 export interface DroppableCollectionStateOptions extends DroppableCollectionProps {
   collection: Collection<Node<unknown>>,
@@ -29,29 +30,67 @@ export interface DroppableCollectionState {
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
+  let {
+    acceptedDragTypes = 'all',
+    onInsert,
+    onRootDrop,
+    onItemDrop,
+    onReorder,
+    isValidDropTarget,
+    collection,
+    selectionManager,
+    onDropExit,
+    onDropEnter,
+    getDropOperation
+  } = props;
   let [target, setTarget] = useState<DropTarget>(null);
 
   let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget => {
     if (target.dropPosition === 'before') {
-      let key = props.collection.getKeyBefore(target.key);
+      let key = collection.getKeyBefore(target.key);
       return key != null ? {type: 'item', key, dropPosition: 'after'} : null;
     } else if (target.dropPosition === 'after') {
-      let key = props.collection.getKeyAfter(target.key);
+      let key = collection.getKeyAfter(target.key);
       return key != null ? {type: 'item', key, dropPosition: 'before'} : null;
     }
   };
 
+  // TODO: test if this returns allowedOperations[0] if the user doesn't provide any of these options to useDroppableCollectionState
+  let defaultGetDropOperation = useCallback((target, types, allowedOperations) => {
+    let typesSet = types.types ? types.types : types;
+    let draggedTypes = [...typesSet.values()];
+    let {draggedCollection} = getDnDState();
+    let isInternalDrop = draggedCollection === collection;
+
+    if (
+      (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
+      (
+        onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
+        onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
+        // Feedback was that internal root drop was weird so preventing that from happening
+        onRootDrop && target.type === 'root' && !isInternalDrop ||
+        // TODO: how to detect if it is a drop on a folder? Perhaps we have an option that the user provides to control this (e.g. droppableItems)?
+        // Also would be nice to prevent a folder from being dropped into itself but we don't have draggedKeys available here, maybe look into making that info available
+        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && (!isValidDropTarget || isValidDropTarget(target.key))
+      )
+    ) {
+      return allowedOperations[0];
+    }
+
+    return 'cancel';
+  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, collection]);
+
   return {
-    collection: props.collection,
-    selectionManager: props.selectionManager,
+    collection,
+    selectionManager,
     target,
     setTarget(newTarget) {
       if (this.isDropTarget(newTarget)) {
         return;
       }
 
-      if (target && typeof props.onDropExit === 'function') {
-        props.onDropExit({
+      if (target && typeof onDropExit === 'function') {
+        onDropExit({
           type: 'dropexit',
           x: 0, // todo
           y: 0,
@@ -59,8 +98,8 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         });
       }
 
-      if (newTarget && typeof props.onDropEnter === 'function') {
-        props.onDropEnter({
+      if (newTarget && typeof onDropEnter === 'function') {
+        onDropEnter({
           type: 'dropenter',
           x: 0, // todo
           y: 0,
@@ -91,9 +130,9 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       return false;
     },
     getDropOperation(target, types, allowedOperations) {
-      return typeof props.getDropOperation === 'function'
-        ? props.getDropOperation(target, types, allowedOperations)
-        : allowedOperations[0];
+      return typeof getDropOperation === 'function'
+        ? getDropOperation(target, types, allowedOperations)
+        : defaultGetDropOperation(target, types, allowedOperations);
     }
   };
 }

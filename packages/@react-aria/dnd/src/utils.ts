@@ -17,24 +17,6 @@ import {getInteractionModality, useInteractionModality} from '@react-aria/intera
 import {useId} from '@react-aria/utils';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
-let draggedCollection;
-let droppedCollection;
-// TODO: combine droppedCollection and lastDropTarget into a single object so we don't have to have too many getters/setters
-// let lastDropTarget;
-
-export function getDraggedCollection() {
-  return draggedCollection;
-}
-export function setDraggedCollection(collection) {
-  draggedCollection = collection;
-}
-
-export function getDroppedCollection() {
-  return droppedCollection;
-}
-export function setDroppedCollection(collection) {
-  droppedCollection = collection;
-}
 
 export function useDroppableCollectionId(state: DroppableCollectionState) {
   let id = useId();
