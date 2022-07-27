@@ -108,17 +108,6 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-border-color-disabled);
       }
     }
-    &.is-invalid {
-      &.focus-ring, &:focus-ring {
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
-      }
-      .spectrum-Stepper-input {
-        border-color: var(--spectrum-textfield-border-color-error);
-      }
-      .spectrum-Stepper-button {
-        border-color: var(--spectrum-textfield-border-color-error);
-      }
-    }
   }
 
   &.spectrum-Stepper--isQuiet {

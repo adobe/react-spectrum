@@ -41,13 +41,6 @@ governing permissions and limitations under the License.
   .spectrum-InputGroup-input {
     border-color: var(--spectrum-dropdown-border-color-key-focus);
   }
-
-  &.spectrum-InputGroup--invalid {
-    .spectrum-FieldButton,
-    .spectrum-InputGroup-input {
-      border-color: var(--spectrum-dropdown-border-color-error);
-    }
-  }
 }
 
 /* Only add the 2px ring for keyboard focus */
@@ -59,13 +52,6 @@ governing permissions and limitations under the License.
   .spectrum-FieldButton,
   .spectrum-InputGroup-input {
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
-  }
-
-  &.spectrum-InputGroup--invalid {
-    .spectrum-FieldButton,
-    .spectrum-InputGroup-input {
-      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
-    }
   }
 }
 
@@ -109,7 +95,9 @@ governing permissions and limitations under the License.
     &.spectrum-InputGroup--invalid {
       .spectrum-FieldButton,
       .spectrum-InputGroup-input {
-        border-color: var(--spectrum-textfield-border-color-error);
+        &:not(:focus) {
+          border-color: var(--spectrum-textfield-border-color-error);
+        }
       }
     }
 
