@@ -1,8 +1,9 @@
 import {AriaListBoxProps} from '@react-types/listbox';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
-import {Node, SelectionBehavior} from '@react-types/shared';
+import {Collection, CollectionBase, Node, SelectionBehavior} from '@react-types/shared';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, useContext, useEffect, useRef} from 'react';
 import {RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {useCollection} from './Collection';
 import {useListBox, useOption} from 'react-aria';
 
 interface OptionRenderProps {
@@ -18,7 +19,7 @@ interface ListBoxProps<T> extends AriaListBoxProps<T>, StyleProps {
 
 interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLElement> {
   state?: ListState<T> & OverlayTriggerState,
-  setListBoxProps?: (props: AriaListBoxProps<T>) => void
+  setListBoxProps?: (props: CollectionBase<T>) => void
 }
 
 export const ListBoxContext = createContext<ListBoxContextValue<unknown>>(null);
@@ -33,18 +34,31 @@ function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLElement>) {
   }, [setListBoxProps, props]);
 
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  return !state || state.isOpen ? <ListBoxInner state={state} props={props} listBoxRef={ref} /> : null;
+
+  if (state) {
+    return state.isOpen ? <ListBoxInner state={state} props={props} listBoxRef={ref} /> : null;
+  }
+  
+  return <ListBoxPortal props={props} listBoxRef={ref} />;
+}
+
+function ListBoxPortal({props, listBoxRef}) {
+  let {portal, collection} = useCollection(props);
+  props = {...props, collection, children: null, items: null};
+  let state = useListState(props);
+  return (
+    <>
+      {portal}
+      <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />
+    </>
+  );
 }
 
 const _ListBox = forwardRef(ListBox);
 export {_ListBox as ListBox};
 
 function ListBoxInner({state, props, listBoxRef}) {
-  // if a state is provided via context, it will always be there.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  state = state || useListState(props);
   let {listBoxProps} = useListBox(props, state, listBoxRef);
-
   let renderItem = props.renderItem || ((item) => <Option item={item} />);
 
   return (

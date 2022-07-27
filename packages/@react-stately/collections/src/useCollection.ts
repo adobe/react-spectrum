@@ -21,6 +21,10 @@ export function useCollection<T extends object, C extends Collection<Node<T>> = 
 
   let prev = useRef<C>(null);
   return useMemo(() => {
+    if (props.collection) {
+      return props.collection;
+    }
+    
     let nodes = builder.build(props, context);
     prev.current = factory(nodes, prev.current);
     return prev.current;

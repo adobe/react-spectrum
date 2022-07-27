@@ -8,21 +8,24 @@ import {Provider} from './utils';
 import React, {ReactNode, useRef, useState} from 'react';
 import {useComboBox, useFilter} from 'react-aria';
 import {useComboBoxState} from 'react-stately';
+import {useCollection} from './Collection';
+import { CollectionBase } from '@react-types/shared';
 
 interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
   children: ReactNode
 }
 
 export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
-  let [propsFromListBox, setListBoxProps] = useState(null);
+  let [propsFromListBox, setListBoxProps] = useState<CollectionBase<any>>({children: []});
 
   let {contains} = useFilter({sensitivity: 'base'});
+  let {portal, collection} = useCollection(propsFromListBox);
   let state = useComboBoxState({
     defaultFilter: contains,
     ...props,
     items: propsFromListBox ? props.items : [],
     children: () => {},
-    ...propsFromListBox
+    collection
   });
 
   let buttonRef = useRef(null);
@@ -54,6 +57,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
         [ListBoxContext, {state, setListBoxProps, ...listBoxProps, ref: listBoxRef}]
       ]}>
       {props.children}
+      {portal}
     </Provider>
   );
 }

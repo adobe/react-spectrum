@@ -1,6 +1,6 @@
-import {Button, ComboBox, Input, Label, ListBox, Menu, MenuTrigger, Option, Popover, Select, SelectValue, Separator} from 'react-aria-components';
+import {Button, ComboBox, Input, Item, Label, ListBox, Menu, MenuTrigger, Option, Popover, Select, SelectValue, Separator} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {Item, Section} from 'react-stately';
+// import {Item, Section} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
 
@@ -19,9 +19,9 @@ export const ComboBoxExample = () => (
     </div>
     <Popover placement="bottom end">
       <ListBox className={styles.menu}>
-        <Item className={itemClass}>Foo</Item>
-        <Item className={itemClass}>Bar</Item>
-        <Item className={itemClass}>Baz</Item>
+        <MyItem>Foo</MyItem>
+        <MyItem>Bar</MyItem>
+        <MyItem>Baz</MyItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -132,4 +132,8 @@ function itemClass({isFocused, isSelected}) {
     focused: isFocused,
     selected: isSelected
   });
+}
+
+function MyItem(props) {
+  return <Item {...props} className={itemClass} />;
 }

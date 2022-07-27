@@ -7,6 +7,7 @@ export {Dialog} from './Dialog';
 export {Group} from './Group';
 export {Heading} from './Heading';
 export {Input} from './Input';
+export {Item} from './Collection';
 export {Label} from './Label';
 export {ListBox, Option} from './ListBox';
 export {Menu, MenuTrigger, MenuItem, MenuSection} from './Menu';

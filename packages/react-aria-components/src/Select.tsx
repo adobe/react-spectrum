@@ -8,6 +8,8 @@ import {PopoverContext} from './Popover';
 import {Provider, RenderProps, useRenderProps} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
+import {useCollection} from './Collection';
+import { CollectionBase } from '@react-types/shared';
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -17,14 +19,14 @@ interface SelectValueContext {
 const SelectContext = createContext<SelectValueContext>(null);
 
 export function Select<T extends object>(props: AriaSelectProps<T>) {
-  let [listBoxProps, setListBoxProps] = useState(null);
+  let [listBoxProps, setListBoxProps] = useState<CollectionBase<any>>({children: []});
 
-  // Create state based on the incoming props
+  let {portal, collection} = useCollection(listBoxProps);
   let state = useSelectState({
     ...props,
     items: [],
     children: () => {},
-    ...listBoxProps
+    collection
   });
 
   // Get props for child elements from useSelect
@@ -46,6 +48,7 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
         [ListBoxContext, {state, setListBoxProps, ...menuProps}]
       ]}>
       {props.children}
+      {portal}
       <HiddenSelect
         state={state}
         triggerRef={ref}
