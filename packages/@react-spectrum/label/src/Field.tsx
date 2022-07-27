@@ -17,7 +17,7 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {RefObject, useCallback} from 'react';
+import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
@@ -47,6 +47,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
+  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
