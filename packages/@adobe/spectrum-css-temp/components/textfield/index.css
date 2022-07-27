@@ -35,12 +35,11 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
-  &:not(.spectrum-Textfield--quiet, .spectrum-Textfield--readonly).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled){
+  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
     resize: vertical;
   }
 
-  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input,
-  &.spectrum-Textfield--readonly .spectrum-Textfield-input {
+  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
     overflow-x: hidden;
@@ -259,6 +258,7 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
   }
 }
+
 
 /* same positioning as invalid icon */
 .spectrum-Textfield--loadable .spectrum-Textfield-circleLoader {
