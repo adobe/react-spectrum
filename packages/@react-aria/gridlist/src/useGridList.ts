@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListProps} from '@react-types/list';
+import {AriaGridListProps} from '@react-types/list';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
@@ -19,7 +19,7 @@ import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useSelectableList} from '@react-aria/selection';
 
-export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
+export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
@@ -34,19 +34,19 @@ export interface AriaListOptions<T> extends Omit<AriaListProps<T>, 'children'> {
   getRowText?: (key: Key) => string
 }
 
-export interface ListViewAria {
+export interface GridListAria {
   /** Props for the grid element. */
   gridProps: DOMAttributes
 }
 
 /**
- * Provides the behavior and accessibility implementation for a list component.
- * A list displays data in a single columns and enables a user to navigate its contents via directional navigation keys.
+ * Provides the behavior and accessibility implementation for a list component with interactive children.
+ * A grid list displays data in a single columns and enables a user to navigate its contents via directional navigation keys.
  * @param props - Props for the list.
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.
  */
-export function useList<T>(props: AriaListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListViewAria {
+export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): GridListAria {
   let {
     isVirtualized,
     keyboardDelegate,
