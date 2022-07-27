@@ -34,7 +34,7 @@ export interface AriaTableColumnResizeProps<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableColumnResize<T>(props: ResizerProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): AriaTableColumnResizeProps {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef} = props;
   const stateRef = useRef<ColumnResizeState<T>>(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
