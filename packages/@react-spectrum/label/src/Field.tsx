@@ -137,9 +137,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   }));
 }
 
-function useMergeRefs<T>(...refs: ForwardedRef<T>[]): ForwardedRef<T> {
+function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
   return useCallback(
-    mergeRefs(...refs),
+    mergeRefs(...refs) as (instance: (T | null)) => void,
     [...refs]
   );
 }
