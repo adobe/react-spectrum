@@ -89,6 +89,8 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     for (let layoutInfo of this.layoutInfos.values()) {
       if (this.isVisible(layoutInfo, rect)) {
         res.push(layoutInfo);
+      } else if (this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
+        res.push(layoutInfo);
       }
     }
 
