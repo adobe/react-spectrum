@@ -7,6 +7,7 @@ class BaseNode {
   lastChild: ElementNode | null;
   previousSibling: ElementNode | null;
   nextSibling: ElementNode | null;
+  parentNode: BaseNode | null;
   ownerDocument: Root;
 
   constructor(ownerDocument: Root) {
@@ -32,6 +33,8 @@ class BaseNode {
     } else {
       child.previousSibling = null;
     }
+
+    child.parentNode = this;
     child.nextSibling = null;
     this.lastChild = child;
 
@@ -50,6 +53,7 @@ class BaseNode {
     }
 
     referenceNode.previousSibling = newNode;
+    newNode.parentNode = referenceNode.parentNode;
 
     this.ownerDocument.addNode(newNode);
     this.ownerDocument.update();
@@ -72,6 +76,8 @@ class BaseNode {
       this.lastChild = child.previousSibling;
     }
 
+    child.parentNode = null;
+
     this.ownerDocument.removeNode(child);
     this.ownerDocument.update();
   }
@@ -91,11 +97,10 @@ class ElementNode extends BaseNode implements Node<unknown> {
   textValue: string;
   props: any;
   level: number;
-  hasChildNodes: boolean;
   
   constructor(type, ownerDocument) {
     super(ownerDocument);
-    this.type = type === 'optgroup' ? 'section' : 'item';
+    this.type = type === 'hr' ? 'separator' : type === 'optgroup' ? 'section' : 'item';
     this.key = ++id; // TODO
     this.value = null;
     this.rendered = null;
@@ -110,6 +115,18 @@ class ElementNode extends BaseNode implements Node<unknown> {
     };
   }
 
+  get hasChildNodes(): boolean {
+    return !!this.firstChild;
+  }
+
+  get nextKey() {
+    return this.nextSibling?.key;
+  }
+
+  get prevKey() {
+    return this.previousSibling?.key;
+  }
+
   set multiple(value) {
     // this.props = {...this.props, ...value};
     this.props = value;
@@ -117,6 +134,13 @@ class ElementNode extends BaseNode implements Node<unknown> {
     this.value = value.value;
     this.textValue = value.textValue || (typeof value.rendered === 'string' ? value.rendered : '') || value['aria-label'] || '';
     this.ownerDocument.update();
+  }
+
+  get style() {
+    if (!this.props.style) {
+      this.props.style = {};
+    }
+    return this.props.style;
   }
 
   hasAttribute() {}
@@ -128,7 +152,7 @@ class ElementNode extends BaseNode implements Node<unknown> {
 class Root extends BaseNode implements Collection<unknown> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
-  keyMap: Map<Key, BaseNode> = new Map();
+  keyMap: Map<Key, ElementNode> = new Map();
   update: () => void;
 
   constructor(update: () => void) {
@@ -137,7 +161,7 @@ class Root extends BaseNode implements Collection<unknown> {
   }
 
   createElement(type) {
-    if (type !== 'option' && type !== 'optgroup') {
+    if (type !== 'option' && type !== 'optgroup' && type !== 'hr') {
       throw new Error(`<${type}> is not allowed inside a ListBox. Please render an <Item> or <Section>.`);
     }
 
@@ -175,12 +199,46 @@ class Root extends BaseNode implements Collection<unknown> {
 
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.previousSibling?.key : null;
+    if (!node) {
+      return null;
+    }
+
+    if (node.previousSibling) {
+      node = node.previousSibling;
+
+      while (node.lastChild) {
+        node = node.lastChild;
+      }
+
+      return node.key;
+    }
+
+    if (node.parentNode instanceof ElementNode) {
+      return node.parentNode.key;
+    }
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.nextSibling?.key : null;
+    if (!node) {
+      return null;
+    }
+
+    if (node.firstChild) {
+      return node.firstChild.key;
+    }
+
+    while (node) {
+      if (node.nextSibling) {
+        return node.nextSibling.key;
+      }
+
+      if (node.parentNode instanceof ElementNode) {
+        node = node.parentNode;
+      } else {
+        return null;
+      }
+    }
   }
 
   getFirstKey() {
@@ -188,7 +246,12 @@ class Root extends BaseNode implements Collection<unknown> {
   }
 
   getLastKey() {
-    return this.lastChild?.key;
+    let node = this.lastChild;
+    while (node?.lastChild) {
+      node = node.lastChild;
+    }
+
+    return node?.key;
   }
 
   getItem(key: Key) {
@@ -259,4 +322,9 @@ export function Item(props) {
   // https://github.com/facebook/react/blob/82c64e1a49239158c0daa7f0d603d2ad2ee667a9/packages/react-dom/src/shared/DOMProperty.js#L386
   // @ts-ignore
   return <option multiple={{...props, rendered: props.children}} />;
+}
+
+export function Section(props) {
+  // @ts-ignore
+  return <optgroup multiple={{...props, rendered: props.title}}>{props.children}</optgroup>;
 }

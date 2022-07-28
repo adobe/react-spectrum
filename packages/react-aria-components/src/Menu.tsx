@@ -7,6 +7,7 @@ import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, With
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {useCollection} from './Collection';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
 interface InternalMenuContextValue {
@@ -35,7 +36,7 @@ export function MenuTrigger(props: MenuTriggerProps2) {
       values={[
         [MenuContext, menuProps],
         [ButtonContext, {...menuTriggerProps, ref}],
-        [PopoverContext, {state, triggerRef: ref}]
+        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
       ]}>
       {props.children}
     </Provider>
@@ -50,7 +51,11 @@ interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUListElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
-  let state = useTreeState(props);
+  let {portal, collection} = useCollection(props);
+  let state = useTreeState({
+    ...props,
+    collection
+  });
   let {menuProps} = useMenu(props, state, ref);
 
   let renderSection = props.renderSection || ((section) => <MenuSection section={section} />);
@@ -70,19 +75,22 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
   };
 
   return (
-    <ul
-      {...menuProps}
-      ref={ref}
-      style={props.style}
-      className={props.className}>
-      <Provider
-        values={[
-          [InternalMenuContext, {renderItem, state}],
-          [SeparatorContext, {elementType: 'li'}]
-        ]}>
-        {[...state.collection].map(item => cloneElement(render(item), {key: item.key}))}
-      </Provider>
-    </ul>
+    <>
+      <ul
+        {...menuProps}
+        ref={ref}
+        style={props.style}
+        className={props.className}>
+        <Provider
+          values={[
+            [InternalMenuContext, {renderItem, state}],
+            [SeparatorContext, {elementType: 'li'}]
+          ]}>
+          {[...state.collection].map(item => cloneElement(render(item), {key: item.key}))}
+        </Provider>
+      </ul>
+      {portal}
+    </>
   );
 }
 
