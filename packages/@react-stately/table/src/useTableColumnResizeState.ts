@@ -4,15 +4,15 @@ import {getContentWidth, getDynamicColumnWidths, getMaxWidth, getMinWidth, isSta
 import {GridNode} from '@react-types/grid';
 import {Key, MutableRefObject, useCallback, useRef, useState} from 'react';
 
-export interface AffectedColumnWidth {
+interface AffectedColumnWidth {
   /** The column key. */
   key: Key,
   /** The column width. */
   width: number
 }
-export interface AffectedColumnWidths extends Array<AffectedColumnWidth> {}
+interface AffectedColumnWidths extends Array<AffectedColumnWidth> {}
 
-export interface ColumnResizeState<T> {
+export interface TableColumnResizeState<T> {
   /** A ref whose current value is the state of all the column widths. */
   columnWidths: MutableRefObject<Map<Key, number>>,
   /** Setter for the table width. */
@@ -33,7 +33,7 @@ export interface ColumnResizeState<T> {
   currentlyResizingColumn: Key | null
 }
 
-export interface ColumnResizeStateProps {
+export interface TableColumnResizeStateProps {
   /** Callback to determine what the default width of a column should be. */
   getDefaultWidth?: (props) => string | number,
   /** Callback that is invoked during the entirety of the resize event. */
@@ -48,7 +48,7 @@ interface ColumnState<T> {
   columns: GridNode<T>[]
 }
 
-export function useTableColumnResizeState<T>(props: ColumnResizeStateProps, state: ColumnState<T>): ColumnResizeState<T> {
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps, state: ColumnState<T>): TableColumnResizeState<T> {
   const {getDefaultWidth, tableWidth: defaultTableWidth = null} = props;
   const {columns} = state;
   const columnsRef = useRef<GridNode<T>[]>([]);

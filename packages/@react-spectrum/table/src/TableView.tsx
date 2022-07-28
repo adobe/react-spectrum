@@ -14,7 +14,7 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
+import {TableColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -80,7 +80,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
-  columnState: ColumnResizeState<T>
+  columnState: TableColumnResizeState<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
