@@ -1,7 +1,8 @@
 {
-  "loading": "Učitavam...",
-  "loadingMore": "Učitavam još...",
+  "columnResizer": "Column resizer",
+  "loading": "Loading…",
+  "loadingMore": "Loading more…",
+  "resizeColumn": "Resize column",
   "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "sortDescending": "Sort Descending"
 }
