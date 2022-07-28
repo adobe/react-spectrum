@@ -55,7 +55,6 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
   };
 
-  // TODO: test if this returns allowedOperations[0] if the user doesn't provide any of these options to useDroppableCollectionState
   let defaultGetDropOperation = useCallback((target, types, allowedOperations) => {
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];

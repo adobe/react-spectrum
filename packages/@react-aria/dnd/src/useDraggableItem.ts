@@ -19,7 +19,6 @@ import {setDraggedCollection, setDroppedCollection} from '@react-stately/dnd';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-
 export interface DraggableItemProps {
   key: Key
 }

@@ -18,7 +18,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {ItemDropTarget} from '@react-types/shared';
+import {ItemDropTarget, TextItem} from '@react-types/shared';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -429,7 +429,12 @@ storiesOf('ListView/Drag and Drop', module)
     ), {description: {data: 'Folders are non-draggable.'}}
   ).add(
     'drag between two lists, complex, new hook',
-    () => <DragBetweenListsComplex />
+    () => <DragBetweenListsComplex />,
+    {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list.'}}
+  ).add(
+    'drag between two list, new hook with user overrides',
+    () => <DragBetweenListsOverride />,
+    {description: {data: 'The first list should be draggable, the second list should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}}
   );
 
 function renderActionsExample(renderActions, props?) {
@@ -1284,7 +1289,7 @@ function DragBetweenListsComplex() {
       let processedItems = items.map(item => JSON.parse(item));
       let targetItem = list1.getItem(targetKey);
       // Also check if the item is being dropped into itself
-      let draggedKeys = processedItems.map(item => item.identifier)
+      let draggedKeys = processedItems.map(item => item.identifier);
       if (targetItem.childNodes && !draggedKeys.includes(targetKey)) {
         list1.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
       }
@@ -1328,11 +1333,11 @@ function DragBetweenListsComplex() {
         list2.moveAfter(targetKey, keysToMove);
       }
     },
-    onRootDrop: (items, _) => {
+    onRootDrop: (items) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
       // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
       let processedItems = items.map(item => JSON.parse(item));
-      list2.append(...processedItems);
+      list2.prepend(...processedItems);
     },
     onItemDrop: (items, _, targetKey) => {
       // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
@@ -1340,7 +1345,7 @@ function DragBetweenListsComplex() {
       let processedItems = items.map(item => JSON.parse(item));
       let targetItem = list2.getItem(targetKey);
       // Also check if the item is being dropped into itself
-      let draggedKeys = processedItems.map(item => item.identifier)
+      let draggedKeys = processedItems.map(item => item.identifier);
       if (targetItem.childNodes && !draggedKeys.includes(targetKey)) {
         list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
       }
@@ -1388,6 +1393,116 @@ function DragBetweenListsComplex() {
         height="size-3600"
         items={list2.items}
         dragHooks={dragHooksList2}
+        dropHooks={dropHooksList2}>
+        {item => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+
+function DragBetweenListsOverride() {
+  let list1 = useListData({
+    initialItems: [
+      {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+      {identifier: '2', type: 'file', name: 'Adobe XD'},
+      {identifier: '3', type: 'file', name: 'Adobe InDesign'},
+      {identifier: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ],
+    getKey: (item) => item.identifier
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+      {identifier: '8', type: 'file', name: 'Adobe Fresco'},
+      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+      {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
+      {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+      {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
+    ],
+    getKey: (item) => item.identifier
+  });
+
+  let {dragHooks: dragHooksList1} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      let dragType = `list-1-adobe-${item.type}`;
+      return {
+        [`${dragType}`]: JSON.stringify(item)
+      };
+    }),
+    onDragEnd: (e) => {
+      if (e.dropOperation === 'move') {
+        list1.remove(...e.keys);
+      }
+    }
+  });
+
+  let {dropHooks: dropHooksList2} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item)
+      };
+    }),
+    getDropOperation: (target, types) => {
+      if (target.type !== 'root' || !(types.has('list-1-adobe-file'))) {
+        return 'cancel';
+      }
+
+      return 'move';
+    },
+    onDrop: async (e) => {
+      let itemsToAdd = await Promise.all(
+        e.items
+          .filter(item => item.kind === 'text')
+          .map(async (item: TextItem) => JSON.parse(await item.getText('list-1-adobe-file')))
+      );
+      list2.append(...itemsToAdd);
+    },
+    // the below utility handlers shouldn't be called because onDrop is defined
+    // isValidDropTarget and acceptedDragTypes shouldn't affect the behavior either
+    onInsert: () => action('onInsert'),
+    onReorder: () => action('onReorder'),
+    onRootDrop: () => action('onRootDrop'),
+    onItemDrop: () => action('onItemDrop'),
+    isValidDropTarget: (key) => !!list2.getItem(key).childNodes,
+    acceptedDragTypes: 'all'
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable listview"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        dragHooks={dragHooksList1}>
+        {item => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' && <Folder />}
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="droppable listview"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
         dropHooks={dropHooksList2}>
         {item => (
           <Item textValue={item.name} key={item.identifier}>
