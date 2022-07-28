@@ -58,8 +58,8 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
-    "@react-aria/dnd": "3.0.0-alpha.10",
-    "@react-stately/dnd": "3.0.0-alpha.8",
+    "@react-aria/dnd": "3.0.0-alpha.11",
+    "@react-stately/dnd": "3.0.0-alpha.9",
     "@react-spectrum/button": "^3.8.1"
   },
   "peerDependencies": {
