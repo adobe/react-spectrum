@@ -184,11 +184,10 @@ export interface DraggableCollectionProps {
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   /** Handler that is called when the dragged element is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
-  // TODO: adding isInternalDrop is fine for useDnDHooks but doesn't feel correct for cases where the user is just using the aria hooks themselves
-  // Might be an idea to have the DragManager track the current dragged collection and give all the drag and drop handlers a reference to the
-  // DragManager or the collection being dragged. Would need to figure out how to pass that to the handlers though...
+  // TODO: is dropTarget being a dropTarget or Element too broad? Would be best if it could just be one or the other, but Element will be a thing
+  // if dropping on a non-collection drop target
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
-  onDragEnd?: (e: DraggableCollectionEndEvent, dropTarget: DropTarget, isInternalDrop: boolean) => void,
+  onDragEnd?: (e: DraggableCollectionEndEvent, dropTarget: DropTarget | HTMLElement, isInternalDrop: boolean) => void,
   /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>) => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */

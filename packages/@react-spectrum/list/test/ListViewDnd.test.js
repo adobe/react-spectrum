@@ -198,7 +198,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move'
-        }, undefined, false);
+        }, droppable, false);
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -282,7 +282,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move'
-        }, undefined, false);
+        }, droppable, false);
       });
 
       it('should not allow drag operations on a disabled row', function () {
@@ -385,7 +385,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move'
-        }, undefined, false);
+        }, droppable, false);
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -447,7 +447,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move'
-        }, undefined, false);
+        }, droppable, false);
       });
     });
 

@@ -13,6 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
+import {getDnDState, setDroppedTarget} from '@react-stately/dnd';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import type {LocalizedStringFormatter} from '@internationalized/string';
@@ -523,6 +524,11 @@ class DragSession {
         items,
         dropOperation: this.dropOperation
       }, item?.target);
+    }
+
+    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
+    if (!getDnDState().droppedTarget) {
+      setDroppedTarget(this.currentDropTarget.element as HTMLElement);
     }
 
     this.end();

@@ -15,6 +15,7 @@ import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {getDnDState, setDroppedTarget} from '@react-stately/dnd';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -179,7 +180,7 @@ export function useDrop(options: DropOptions): DropResult {
       };
 
       // We want onDrop to fire before onDragEnd so that we can properly track if a drop operation is a reorder operation by checking the droppable collection's
-      // drag status and thus prevent the onDragEnd from removing the original item from the list
+      // drag status and thus allow the user to determine if the item should be removed from the original collection/list.
       options.onDrop(event);
     }
 
@@ -191,7 +192,11 @@ export function useDrop(options: DropOptions): DropResult {
         y: e.clientY - rect.y
       });
     }
-    // TODO: check if droppedTarget is null and call setDroppedTarget? Or maybe undefined is fine in that case?
+
+    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
+    if (!getDnDState().droppedTarget) {
+      setDroppedTarget(e.currentTarget as HTMLElement);
+    }
 
     state.dragEnterCount = 0;
     setDropTarget(false);
