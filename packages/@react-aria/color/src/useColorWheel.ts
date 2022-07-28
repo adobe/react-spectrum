@@ -18,14 +18,14 @@ import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef}
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-interface ColorWheelAriaProps extends AriaColorWheelProps {
+export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
   outerRadius: number,
   /** The inner radius of the color wheel. */
   innerRadius: number
 }
 
-interface ColorWheelAria {
+export interface ColorWheelAria {
   /** Props for the track element. */
   trackProps: DOMAttributes,
   /** Props for the thumb element. */
@@ -38,7 +38,7 @@ interface ColorWheelAria {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
   let {
     isDisabled,
     innerRadius,

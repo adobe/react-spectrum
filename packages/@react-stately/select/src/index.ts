@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {SelectState} from './useSelectState';
+
 export {useSelectState} from './useSelectState';
+
+export type {SelectProps} from '@react-types/select';
+export type {SelectState} from './useSelectState';

@@ -17,12 +17,12 @@ import {OverlayTriggerState} from '@react-stately/overlays';
 import {RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
-interface OverlayTriggerProps {
+export interface OverlayTriggerProps {
   /** Type of overlay that is opened by the trigger. */
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
 }
 
-interface OverlayTriggerAria {
+export interface OverlayTriggerAria {
   /** Props for the trigger element. */
   triggerProps: AriaButtonProps,
 

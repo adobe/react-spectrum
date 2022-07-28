@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export type {FieldAria} from './useField';
+export type {AriaFieldProps, FieldAria} from './useField';
 export type {LabelAriaProps, LabelAria} from './useLabel';
 
 export {useField} from './useField';

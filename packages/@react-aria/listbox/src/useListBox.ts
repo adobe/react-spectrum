@@ -21,7 +21,7 @@ import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
-interface ListBoxAria {
+export interface ListBoxAria {
   /** Props for the listbox element. */
   listBoxProps: DOMAttributes,
   /** Props for the listbox's visual label element (if any). */

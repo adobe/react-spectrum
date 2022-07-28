@@ -14,14 +14,14 @@ import {DOMAttributes} from '@react-types/shared';
 import {ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
-interface AriaMenuSectionProps {
+export interface AriaMenuSectionProps {
   /** The heading for the section. */
   heading?: ReactNode,
   /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string
 }
 
-interface MenuSectionAria {
+export interface MenuSectionAria {
   /** Props for the wrapper list item. */
   itemProps: DOMAttributes,
 

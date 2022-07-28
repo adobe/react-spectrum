@@ -18,7 +18,7 @@ import {GridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {TagProps} from '@react-types/tag';
 import {useGridCell, useGridRow} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
@@ -39,8 +39,8 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     tagRef,
     tagRowRef
   } = props;
-  const formatMessage = useMessageFormatter(intlMessages);
-  const removeString = formatMessage('remove');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const removeString = stringFormatter.format('remove');
   const labelId = useId();
   const buttonId = useId();
 
