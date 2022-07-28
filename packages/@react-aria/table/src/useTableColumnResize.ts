@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {TableColumnResizeState, TableState} from '@react-stately/table';
 import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject, useRef} from 'react';
+import {TableColumnResizeState, TableState} from '@react-stately/table';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
