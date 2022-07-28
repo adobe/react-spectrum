@@ -198,7 +198,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move'
-        });
+        }, undefined, false);
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -282,7 +282,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move'
-        });
+        }, undefined, false);
       });
 
       it('should not allow drag operations on a disabled row', function () {
@@ -385,7 +385,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move'
-        });
+        }, undefined, false);
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -447,7 +447,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move'
-        });
+        }, undefined, false);
       });
     });
 
@@ -684,6 +684,11 @@ describe('ListView', function () {
       act(() => jest.runAllTimers());
       let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
+      let expectedDropTarget = {
+        'dropPosition': 'on',
+        'key': '8',
+        'type': 'item'
+      };
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
       await act(async () => Promise.resolve());
@@ -698,7 +703,7 @@ describe('ListView', function () {
         x: 50,
         y: 25,
         dropOperation: 'move'
-      });
+      }, expectedDropTarget, true);
       onSelectionChange.mockClear();
       onDragStart.mockClear();
 

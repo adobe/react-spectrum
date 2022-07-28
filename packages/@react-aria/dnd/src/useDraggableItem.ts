@@ -15,7 +15,7 @@ import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {setDraggedCollection, setDroppedCollection} from '@react-stately/dnd';
+import {setDraggedCollection, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -44,8 +44,10 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     },
     onDragEnd(e) {
       state.endDrag(e);
-      setDraggedCollection(null);
-      setDroppedCollection(null);
+      // TODO: perhaps clear the global state tracker on drag start? Avoids any possible async problems when looking up the global drag info in a async call?
+      setDraggedCollection(undefined);
+      setDroppedCollection(undefined);
+      setDroppedTarget(undefined);
     }
   });
 

@@ -1300,7 +1300,7 @@ function DragBetweenListsComplex() {
       if (e.dropOperation === 'move' && (!isInternalDrop || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list1.getItem(dropTarget.key).childNodes))) {
         list1.remove(...e.keys);
       }
-      action('dragEndList1')(e, isInternalDrop);
+      action('dragEndList1')(e, dropTarget, isInternalDrop);
     },
     getAllowedDropOperations: () => ['move'],
     isValidDropTarget: (key) => !!list1.getItem(key).childNodes
@@ -1357,7 +1357,7 @@ function DragBetweenListsComplex() {
       if (e.dropOperation === 'move' && (!isInternalDrop || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes && !e.keys.has(dropTarget.key)))) {
         list2.remove(...e.keys);
       }
-      action('dragEndList2')(e, isInternalDrop);
+      action('dragEndList2')(e, dropTarget, isInternalDrop);
     },
     getAllowedDropOperations: () => ['move'],
     isValidDropTarget: (key) => !!list2.getItem(key).childNodes

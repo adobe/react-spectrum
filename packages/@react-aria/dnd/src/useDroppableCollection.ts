@@ -101,7 +101,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onInsert(dataList, dropOperation, target.key, target.dropPosition);
     }
 
-  }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState.state.collection]);
+  }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState]);
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({

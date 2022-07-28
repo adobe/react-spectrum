@@ -191,6 +191,7 @@ export function useDrop(options: DropOptions): DropResult {
         y: e.clientY - rect.y
       });
     }
+    // TODO: check if droppedTarget is null and call setDroppedTarget? Or maybe undefined is fine in that case?
 
     state.dragEnterCount = 0;
     setDropTarget(false);

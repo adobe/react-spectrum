@@ -119,7 +119,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -213,7 +213,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(1);
@@ -296,7 +296,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -384,7 +384,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -482,7 +482,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(1);
@@ -568,7 +568,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -651,7 +651,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -737,7 +737,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(1);
@@ -813,7 +813,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar'])
-      });
+      }, undefined, false);
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);

@@ -104,6 +104,12 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
         onDragEnd({
           ...event,
           keys: draggingKeys.current
+        // TODO: the droppedTarget and (droppedCollection === draggedCollection) are mainly used to let the user differentiate
+        // a drop outside the source collection (need to remove the item from the collection), a reorder drop inside the source collection (need to call a reorder operation),
+        // or a drop into a folder in the source collection (need to remove the item and relocate it into the folder)
+        // its kinda weird to return null as droppedTarget if the user is dropping on a non-collection target though, maybe call setDragTarget in useDrop?...
+        // evaluate if I really need droppedTarget, perhaps it can be up to the user to figure out where the drop ended? Technically they could track this in their own state via their own
+        // onDragStart (set the source collection) + onDrop/onItemDrop (set the destination collection/item)
         }, droppedTarget, droppedCollection === draggedCollection);
       }
 
