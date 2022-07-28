@@ -1297,7 +1297,7 @@ function DragBetweenListsComplex() {
     acceptedDragTypes: ['file', 'folder'],
     onDragStart: action('dragStartList1'),
     onDragEnd: (e, dropTarget, isInternalDrop) => {
-      if (e.dropOperation === 'move' && (!isInternalDrop || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list1.getItem(dropTarget.key).childNodes))) {
+      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list1.getItem(dropTarget.key).childNodes))) {
         list1.remove(...e.keys);
       }
       action('dragEndList1')(e, dropTarget, isInternalDrop);
@@ -1354,7 +1354,7 @@ function DragBetweenListsComplex() {
     onDragStart: action('dragStartList2'),
     onDragEnd: (e, dropTarget, isInternalDrop) => {
       // TODO: maybe we can simplify this by having getOperation automatically omit a dragged folder(s) from the list of valid drag targets
-      if (e.dropOperation === 'move' && (!isInternalDrop || (dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes && !e.keys.has(dropTarget.key)))) {
+      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes && !e.keys.has(dropTarget.key)))) {
         list2.remove(...e.keys);
       }
       action('dragEndList2')(e, dropTarget, isInternalDrop);
