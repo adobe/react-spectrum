@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export type {AffectedColumnWidth, AffectedColumnWidths, ColumnResizeState, ColumnResizeStateProps} from './useTableColumnResizeState';
+export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
 export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
 export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
 
 export {useTableColumnResizeState} from './useTableColumnResizeState';
-export {getContentWidth, isStatic, parseStaticWidth, getMaxWidth, getMinWidth, getDynamicColumnWidths} from './utils';
 export {useTableState} from './useTableState';
 export {TableHeader} from './TableHeader';
 export {TableBody} from './TableBody';
