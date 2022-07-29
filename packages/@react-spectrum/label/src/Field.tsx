@@ -48,10 +48,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         inputRef={inputRef as RefObject<HTMLTextAreaElement>} 
         ref={ref as RefObject<HTMLDivElement>} />
     );
-
-    if (label) {
-      return children;
-    }
   }
 
   if (!displayReadOnly && (label || hasHelpText)) {

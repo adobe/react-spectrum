@@ -122,12 +122,13 @@ describe('Shared TextField behavior', () => {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 TextField'}   | ${TextField}
-    ${'v3 TextArea'}    | ${TextArea}
-    ${'v3 SearchField'} | ${SearchField}
-  `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
-    let tree = renderComponent(Component, {onBlur, autoFocus: true, 'aria-label': 'mandatory label'});
+    Name                             | Component        | props
+    ${'v3 TextField'}                | ${TextField}     | ${{}}
+    ${'v3 TextArea'}                 | ${TextArea}      | ${{}}
+    ${'v3 SearchField'}              | ${SearchField}   | ${{}}
+    ${'ReadOnly TextField/Textarea'} | ${TextArea}      | ${{isReadOnly: true}}
+  `('$Name calls onBlur when the input field loses focus', ({Name, Component, props}) => {
+    let tree = renderComponent(Component, {onBlur, autoFocus: true, 'aria-label': 'mandatory label'}, {...props});
     let input = tree.getByTestId(testId);
     act(() => input.blur());
     expect(onBlur).toHaveBeenCalledTimes(1);
@@ -201,10 +202,11 @@ describe('Shared TextField behavior', () => {
   });
 
   it.each`
-    Name                | Component        | props                                                  | expected
-    ${'v3 TextField'}   | ${TextField}     | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
-    ${'v3 TextArea'}    | ${TextArea}      | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
-    ${'v3 SearchField'} | ${SearchField}   | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
+    Name                             | Component        | props                                                  | expected
+    ${'v3 TextField'}                | ${TextField}     | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
+    ${'v3 TextArea'}                 | ${TextArea}      | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
+    ${'v3 SearchField'}              | ${SearchField}   | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
+    ${'ReadOnly TextField/Textarea'} | ${TextArea}      | ${{isRequired: true, isReadOnly: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
   `('$Name supports a isRequired prop', ({Name, Component, props, expected}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
@@ -212,12 +214,13 @@ describe('Shared TextField behavior', () => {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 TextField'}   | ${TextField}
-    ${'v3 TextArea'}    | ${TextArea}
-    ${'v3 SearchField'} | ${SearchField}
-  `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component}) => {
-    let tree = renderComponent(Component, {autoFocus: true, onFocus, 'aria-label': 'mandatory label'});
+    Name                             | Component        | props
+    ${'v3 TextField'}                | ${TextField}     | ${{}}
+    ${'v3 TextArea'}                 | ${TextArea}      | ${{}}
+    ${'v3 SearchField'}              | ${SearchField}   | ${{}}
+    ${'ReadOnly TextField/Textarea'} | ${TextArea}      | ${{isReadOnly: true}}
+  `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component, props}) => {
+    let tree = renderComponent(Component, {autoFocus: true, onFocus, 'aria-label': 'mandatory label'}, {...props});
     let input = tree.getByTestId(testId);
 
     expect(document.activeElement).toEqual(input);
@@ -238,6 +241,111 @@ describe('Shared TextField behavior', () => {
 
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name ReadOnly will attach a ref to the input field if provided as a prop', ({Component}) => {
+    let ref = React.createRef();
+    let value = 'test';
+    let tree = renderComponent(Component, {isReadOnly: true, value, ref, 'aria-label': 'mandatory label'});
+    let input = tree.getByTestId(testId);
+    expect(input).toHaveAttribute('readonly');
+    userEvent.click(input);
+    expect(document.activeElement).toEqual(input);
+    expect(ref.current.getInputElement()).toEqual(input);
+  });
+
+  it.each`
+    Name                | Component        | props
+    ${'v3 TextField'}   | ${TextField}     | ${{isReadOnly: true, 'aria-label': 'mandatory label', label: 'test'}}
+    ${'v3 TextArea'}    | ${TextArea}      | ${{isReadOnly: true, 'aria-label': 'mandatory label', label: 'test'}}
+  `('$Name should have a label element tag if provided a label', ({Name, Component, props}) => {
+    let tree = renderComponent(Component, props);
+    let input = tree.getByTestId(testId);
+    expect(input).toHaveAttribute('readonly');
+    expect(tree.getByLabelText('test')).toBe(input); 
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name ReadOnly does not support descriptions', ({Component}) => {
+    function Example(props) {
+      return (
+        <Component
+          {...props}
+          isReadOnly
+          value=""
+          label="Favorite number"
+          maxLength={1}
+          description="Enter a single digit number.r" />
+      );
+    }
+    let tree = renderComponent(Example);
+    expect(tree.queryByText('Enter a single digit number.')).toBeNull();
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name isReadOnly does not support error message', async ({Component}) => {
+    function Example(props) {
+
+      return (
+        <Component
+          {...props}
+          isReadOnly
+          validationState="invalid"
+          value=""
+          label="Favorite number"
+          maxLength={1}
+          errorMessage="Empty input are not allowed" />
+      );
+    }
+    let tree = renderComponent(Example);
+    let input = tree.getByTestId(testId);
+    expect(input).not.toHaveAttribute('aria-invalid', 'true');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(tree.queryByRole('img', {hidden: true})).toBeNull();
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name ReadOnly does not have aria-invalid value and does not render a valid icon if validationState=valid', ({Name, Component}) => {
+    let tree = renderComponent(Component, {validationState: 'valid', 'aria-label': 'mandatory label', isReadOnly: true});
+    let input = tree.getByTestId(testId);
+    expect(input).not.toHaveAttribute('aria-invalid', 'true');
+    expect(tree.queryByRole('img', {hidden: true})).toBeNull();
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name ReadOnly does not have aria-invalid value and does not render a invalid icon if validationState=invalid', ({Name, Component}) => {
+    let tree = renderComponent(Component, {validationState: 'invalid', 'aria-label': 'mandatory label', isReadOnly: true});
+    let input = tree.getByTestId(testId);
+    expect(input).not.toHaveAttribute('aria-invalid', 'true');
+    expect(input).not.toHaveAttribute('aria-errormessage', 'error');
+    expect(tree.queryByRole('img', {hidden: true})).toBeNull();
+  });
+
+  it.each`
+  Name                | Component
+  ${'v3 TextField'}   | ${TextField}
+  ${'v3 TextArea'}    | ${TextArea}
+  `('$Name ReadOnly does not allow the user to render a custom icon', ({Component}) => {
+    let iconId = 'icon-yo';
+    let tree = renderComponent(Component, {icon: <Checkmark data-testid={iconId} />, 'aria-label': 'mandatory label', isReadOnly: true});
+    expect(tree.queryByTestId(iconId)).toBeNull();
   });
 
   it.each`

@@ -26,7 +26,8 @@ const parameters = {
     validationState: '',
     description: '',
     errorMessage: '',
-    value: ''
+    value: '',
+    width: null
   },
   argTypes: {
     isQuiet: {
@@ -63,6 +64,12 @@ const parameters = {
       control: {
         type: 'radio',
         options: ['', 'foo  '.repeat(10)]
+      }
+    },
+    width: {
+      control: {
+        type: 'radio',
+        options: [null, 'size-3000', 'size-6000']
       }
     }
   }
@@ -192,32 +199,37 @@ storiesOf('TextField', module)
   )
   .add('custom width small, labelPosition: side',
     () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
+  );
+
+storiesOf('TextField/ReadOnly', module)
+  .addParameters({providerSwitcher: {status: 'positive'}})
+  .add('isReadOnly, with controls', 
+  (args) => (   
+    <TextField
+      label="Street address"
+      onChange={action('change')}
+      onFocus={action('focus')}
+      onBlur={action('blur')}
+      UNSAFE_className="custom_classname"
+      {...args} />
+  ), parameters
   )
-  .add('test: isReadOnly, with controls', 
-    (args) => (   
-      <TextField
-        label="Street address"
-        onChange={action('change')}
-        onFocus={action('focus')}
-        onBlur={action('blur')}
-        UNSAFE_className="custom_classname"
-        {...args} />
-    ), parameters
+  .add('isReadOnly, no visible label, with controls', 
+  (args) => (   
+    <TextField
+      aria-label="Street Address"
+      onChange={action('change')}
+      onFocus={action('focus')}
+      onBlur={action('blur')}
+      UNSAFE_className="custom_classname"
+      {...args} />
+  ), parameters
   )
-  .add('test: isReadOnly, defaultValue',
-    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
+  .add('isReadOnly, defaultValue',
+  () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
   )
-  .add('test: isReadOnly, with icon, value = icon',
-    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  )
-  .add('test: isReadOnly, no visible label',
-  () => render({isReadOnly: true, label: null, 'aria-label': 'Street address', value: 'foo  '.repeat(20)})
-  )
-  .add('test: isQuiet no visible label',
-  () => render({isQuiet: true, label: null, 'aria-label': 'Street address', value: 'foo  '.repeat(20)})
-  )
-  .add('test: isReadOnly, custom width, labelPosition: side',
-    () => render({isReadOnly: true, width: '500px', labelPosition: 'side'})
+  .add('isReadOnly, with icon, value = icon',
+  () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
   );
 
 function render(props = {}) {

@@ -58,10 +58,11 @@ const parameters = {
     isQuiet: false,
     isRequired: false,
     isDisabled: false,
-    autoFocus: true,
+    autoFocus: false,
     validationState: '',
     description: '',
-    errorMessage: ''
+    errorMessage: '',
+    width: null
   },
   argTypes: {
     isQuiet: {
@@ -92,6 +93,12 @@ const parameters = {
       control: {
         type: 'radio',
         options: ['', 'please enter a valid street address']
+      }
+    },
+    width: {
+      control: {
+        type: 'radio',
+        options: [null, 'size-1200', 'size-6000']
       }
     }
   }
@@ -612,14 +619,26 @@ storiesOf('Picker', module)
         </Picker>
       </View>
     </View>
-  ))
+  ));
+
+storiesOf('Picker/ReadOnly', module)
   .add(
-    'isReadOnly',
+    'isReadOnly, with controls',
     (args) => (
       <Picker isReadOnly label="Test" onSelectionChange={action('selectionChange')} {...args}>
         <Item key="100">One hundred</Item>
         <Item key="2012">Two thousand and twelve</Item>
         <Item key="3">Three</Item>
+      </Picker>
+    ), parameters
+  )
+  .add(
+    'isReadOnly, no visible label, with controls',
+    (args) => (
+      <Picker aria-label="Test" isReadOnly selectedKey="One" onSelectionChange={action('selectionChange')} {...args}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
       </Picker>
     ), parameters
   )
@@ -630,33 +649,6 @@ storiesOf('Picker', module)
         <Item key="One">One</Item>
         <Item key="Two">Two</Item>
         <Item key="Three">Three</Item>
-      </Picker>
-    )
-  )
-  .add(
-    'isReadOnly, custom widths',
-    () => (
-      <Flex direction="column">
-        <Picker label="Test" isReadOnly selectedKey="One" width="size-1200" onSelectionChange={action('selectionChange')}>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
-        </Picker>
-        <Picker label="Test" isReadOnly selectedKey="Two" width="size-6000" onSelectionChange={action('selectionChange')}>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
-        </Picker>
-      </Flex>
-    )
-  )
-  .add(
-    'isReadOnly, no visible label',
-    () => (
-      <Picker aria-label="Test" isReadOnly selectedKey="One" width="size-1200" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
       </Picker>
     )
   )

@@ -14,6 +14,7 @@ import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Picker, Section} from '../src';
@@ -71,6 +72,211 @@ describe('Picker', function () {
     let value = getByText('Select an option…');
     expect(label).toBeVisible();
     expect(value).toBeVisible();
+  });
+
+  describe('ReadOnly behavior', () => {
+    let onBlur = jest.fn();
+    let onChange = jest.fn();
+    let onFocus = jest.fn();
+  
+    afterEach(() => {
+      onChange.mockClear();
+      onBlur.mockClear();
+      onFocus.mockClear();
+    });
+
+    it('should support isReadOnly', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+  
+      let select = getByRole('textbox');
+      expect(select).toHaveAttribute('readonly');
+      userEvent.click(select);
+      expect(document.activeElement).toEqual(select);
+    });  
+
+    it('renders a label in ReadOnly ', function () {
+      let {getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+  
+      let label = getAllByLabelText('Test')[0];
+      expect(label).toBeTruthy(); 
+      expect(label).toBeVisible();
+    });  
+
+    it('calls onBlur when the input field loses focus in ReadOnly ', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker onBlur={onBlur} isReadOnly autoFocus label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+  
+      let select = getByRole('textbox');
+      act(() => select.blur());
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });  
+
+    it('supports isRequired prop', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly isRequired label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+  
+      let select = getByRole('textbox');
+      expect(select).toHaveAttribute('aria-required');
+    });  
+
+    it('automatically focuses the input field if autoFocus=true', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker onFocus={onFocus} isReadOnly autoFocus label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+  
+      let select = getByRole('textbox');
+      expect(document.activeElement).toEqual(select);
+      expect(onFocus).toHaveBeenCalledTimes(1);
+    }); 
+
+    it('attaches a user provided ref to the outer div', function () {
+      let ref = React.createRef();
+      let {getByTestId} = render(
+        <Provider theme={theme} data-testid="ref-test">
+          <Picker isReadOnly ref={ref} aria-label="mandatory label" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let container = getByTestId('ref-test');
+      container = container.firstChild;
+      expect(ref.current.UNSAFE_getDOMNode()).toEqual(container);
+    }); 
+
+    it('attaches a user provided ref to the outer div with a label', function () {
+      let ref = React.createRef();
+      let {getByTestId} = render(
+        <Provider theme={theme} data-testid="ref-test">
+          <Picker isReadOnly label="Test" ref={ref} data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let container = getByTestId('ref-test');
+      container = container.firstChild;
+      expect(ref.current.UNSAFE_getDOMNode()).toEqual(container);
+    }); 
+
+    it('does not support descriptions', function () {
+      let {queryByText} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" description="Enter a single digit number" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(queryByText('Enter a single digit number.')).toBeNull();
+    }); 
+
+    it('does not support error message', function () {
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" validationState="invalid" errorMessage="Empty inputs are not allowed" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox');
+      expect(select).not.toHaveAttribute('aria-invalid', 'true');
+      expect(select).not.toHaveAttribute('aria-describedby');
+      expect(queryByRole('img', {hidden: true})).toBeNull();
+    }); 
+
+    it('does not have aria-invalid value and does not render a valid icon if validationState=valid', function () {
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" validationState="valid" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox');
+      expect(select).not.toHaveAttribute('aria-invalid', 'true');
+      expect(queryByRole('img', {hidden: true})).toBeNull();
+    }); 
+
+    it('does not have aria-invalid value and does not render a valid icon if validationState=invalid', function () {
+      let {getByRole, queryByRole} = render(
+        <Provider theme={theme}>
+          <Picker isReadOnly label="Test" validationState="invalid" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox');
+      expect(select).not.toHaveAttribute('aria-invalid', 'true');
+      expect(select).not.toHaveAttribute('aria-errormessage', 'error');
+      expect(queryByRole('img', {hidden: true})).toBeNull();
+    });
+
+    it('does not allow the user to render a custom icon', function () {
+      let iconId = 'icon-yo';
+      let {queryByTestId} = render(
+        <Provider theme={theme}>
+          <Picker  icon={<Checkmark data-testid={iconId} />} isReadOnly label="Test" validationState="invalid" data-testid="test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(queryByTestId(iconId)).toBeNull();
+    }); 
   });
 
   describe('opening', function () {

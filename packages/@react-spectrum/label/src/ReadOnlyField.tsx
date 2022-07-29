@@ -26,7 +26,6 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
 interface ReadOnlyFieldProps extends SpectrumFieldProps {
-  className?: string,
   styleProps?: HTMLAttributes<HTMLElement>
 }
 
@@ -37,7 +36,6 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     readOnlyText,
     autoFocus,
     inputRef,
-    className,
     label,
     styleProps
   } = props;
@@ -45,6 +43,7 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {labelProps, inputProps} = useTextField({
     ...props,
+    validationState: undefined,
     inputElementType: 'textarea'
   }, inputRef as RefObject<HTMLTextAreaElement>);
   delete inputProps.defaultValue;
@@ -62,7 +61,7 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
     if (inputRef.current) {
       onHeightChange();
     }
-  }, [onHeightChange, readOnlyText, inputRef]);
+  }, [onHeightChange, readOnlyText, inputRef, styleProps]);
 
   if (readOnlyText === '') {
     readOnlyText = stringFormatter.format('(None)');
@@ -100,8 +99,8 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
 
   if (!label) {
     return React.cloneElement(textfield, mergeProps(textfield.props, {
-      ref,
-      className
+      ...styleProps,
+      ref
     }));
   }
 
