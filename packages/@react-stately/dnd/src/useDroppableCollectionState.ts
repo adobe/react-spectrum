@@ -15,6 +15,7 @@ import {getDnDState} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useState} from 'react';
 
+// TODO: clean up these props if they aren't used in this hook, do so for the other dnd hooks
 export interface DroppableCollectionStateOptions extends DroppableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
@@ -41,7 +42,8 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     selectionManager,
     onDropExit,
     onDropEnter,
-    getDropOperation
+    getDropOperation,
+    onDrop
   } = props;
   let [target, setTarget] = useState<DropTarget>(null);
 
@@ -60,7 +62,6 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     let draggedTypes = [...typesSet.values()];
     let {draggedCollection} = getDnDState();
     let isInternalDrop = draggedCollection === collection;
-
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
       (
@@ -70,14 +71,15 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         onRootDrop && target.type === 'root' && !isInternalDrop ||
         // TODO: how to detect if it is a drop on a folder? Perhaps we have an option that the user provides to control this (e.g. droppableItems)?
         // Also would be nice to prevent a folder from being dropped into itself but we don't have draggedKeys available here, maybe look into making that info available
-        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && (!isValidDropTarget || isValidDropTarget(target.key))
+        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && (!isValidDropTarget || isValidDropTarget(target.key)) ||
+        !!onDrop
       )
     ) {
       return allowedOperations[0];
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, collection]);
+  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop, collection]);
 
   return {
     collection,
