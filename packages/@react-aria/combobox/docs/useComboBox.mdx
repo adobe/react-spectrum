@@ -129,8 +129,8 @@ is included within the `<button>` to display the dropdown arrow icon (hidden fro
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
 that the list box can be filtered based on the option text and the current input text.
 
-The list box popup should use the same `Popover` and `ListBox` components created with [useOverlay](useOverlay.html)
-and [useListBox](useListBox.html) that you may already have in your component library or application. These can be shared with other
+The same `Popover`, `ListBox`, and `Button` components created with [useOverlay](useOverlay.html), [useListBox](useListBox.html),
+and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
 components such as a `Select` created with [useSelect](useSelect.html) or a `Dialog` popover created with [useDialog](useDialog.html).
 The code for these components is also included below in the collapsed sections.
 
@@ -148,8 +148,8 @@ import {useComboBoxState} from '@react-stately/combobox'
 import {useComboBox} from '@react-aria/combobox';
 import {useFilter} from '@react-aria/i18n';
 
-// Reuse the ListBox and Popover from your component library. See below for details.
-import {ListBox, Popover} from 'your-component-library';
+// Reuse the ListBox, Popover, and Button from your component library. See below for details.
+import {ListBox, Popover, Button} from 'your-component-library';
 
 function ComboBox(props) {
   // Setup filter function and state.
@@ -162,7 +162,7 @@ function ComboBox(props) {
   let listBoxRef = React.useRef(null);
   let popoverRef = React.useRef(null);
 
-  let {buttonProps: triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       inputRef,
@@ -172,11 +172,6 @@ function ComboBox(props) {
     },
     state
   );
-
-  // Call useButton to get props for the button element. Alternatively, you can
-  // pass the triggerProps to a separate Button component using useButton
-  // that you might already have in your component library.
-  let {buttonProps} = useButton(triggerProps, buttonRef);
 
   return (
     <div style={{display: 'inline-flex', flexDirection: 'column'}}>
@@ -191,9 +186,9 @@ function ComboBox(props) {
             marginRight: 0,
             fontSize: 16
           }} />
-        <button
+        <Button
           {...buttonProps}
-          ref={buttonRef}
+          buttonRef={buttonRef}
           style={{
             height: 24,
             marginLeft: 0
@@ -203,7 +198,7 @@ function ComboBox(props) {
             style={{padding: '0 2px'}}>
             ▼
           </span>
-        </button>
+        </Button>
         {state.isOpen &&
           <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
             <ListBox
@@ -231,7 +226,7 @@ function ComboBox(props) {
 
 The `Popover` component is used to contain the popup listbox for the ComboBox.
 It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenuTrigger.html), [Dialog](useOverlayTrigger.html), and others.
+[Menu](useMenu.html), [Dialog](useOverlayTrigger.html), and others.
 See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
 
 <details>
@@ -352,6 +347,25 @@ function Option({item, state}) {
       {item.rendered}
     </li>
   );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
 }
 ```
 
