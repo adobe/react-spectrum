@@ -1,6 +1,9 @@
-import { Collection, CollectionBase, Node } from "@react-types/shared";
-import React, { cloneElement, Key, ReactNode, useLayoutEffect, useMemo, useReducer, useRef } from "react";
-import { createPortal } from "react-dom";
+import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-types/shared';
+import {createPortal} from 'react-dom';
+import React, {cloneElement, Key, ReactNode, useMemo, useReducer, useRef} from 'react';
+import {RenderProps} from './utils';
+import {SelectableItemStates} from '@react-aria/selection';
+import {useLayoutEffect} from '@react-aria/utils';
 
 class BaseNode {
   firstChild: ElementNode | null;
@@ -274,6 +277,7 @@ export function useCachedChildren<T extends object>(props: CollectionBase<T>) {
         if (!rendered) {
           rendered = children(item);
           if (rendered.key == null) {
+            // @ts-ignore
             let key = item.key ?? item.id;
             if (key == null) {
               throw new Error('Could not determine key for item');
@@ -314,7 +318,9 @@ export function useCollection<T extends object>(props: CollectionBase<T>) {
   return {portal, collection};
 }
 
-export function Item(props) {
+interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<SelectableItemStates> {}
+
+export function Item<T>(props: CollectionItemProps<T>) {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
   // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
   // the props as an object. Once React supports custom elements, we can switch to that instead.
@@ -324,7 +330,9 @@ export function Item(props) {
   return <option multiple={{...props, rendered: props.children}} />;
 }
 
-export function Section(props) {
+interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'>, RenderProps<SelectableItemStates> {}
+
+export function Section<T>(props: CollectionSectionProps<T>) {
   // @ts-ignore
   return <optgroup multiple={{...props, rendered: props.title}}>{props.children}</optgroup>;
 }

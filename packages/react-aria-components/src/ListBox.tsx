@@ -1,16 +1,11 @@
 import {AriaListBoxProps} from '@react-types/listbox';
+import {CollectionBase, Node, SelectionBehavior} from '@react-types/shared';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
-import {Collection, CollectionBase, Node, SelectionBehavior} from '@react-types/shared';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, useContext, useEffect, useRef} from 'react';
 import {RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {SelectableItemStates} from '@react-aria/selection';
 import {useCollection} from './Collection';
 import {useListBox, useOption} from 'react-aria';
-
-interface OptionRenderProps {
-  isFocused: boolean,
-  isSelected: boolean,
-  isDisabled: boolean
-}
 
 interface ListBoxProps<T> extends AriaListBoxProps<T>, StyleProps {
   /** How multiple selection should behave in the collection. */
@@ -74,14 +69,14 @@ function ListBoxInner({state, props, listBoxRef}) {
   );
 }
 
-interface OptionProps<T> extends RenderProps<OptionRenderProps> {
+interface OptionProps<T> extends RenderProps<SelectableItemStates> {
   item: Node<T>
 }
 
 export function Option<T>({item, className, style, children}: OptionProps<T>) {
   let ref = useRef();
   let {state} = useContext(InternalListBoxContext);
-  let {optionProps, isSelected, isDisabled, isFocused} = useOption(
+  let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
     state,
     ref
@@ -95,11 +90,7 @@ export function Option<T>({item, className, style, children}: OptionProps<T>) {
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
-    values: {
-      isFocused,
-      isSelected,
-      isDisabled
-    }
+    values: states
   });
 
   return <li {...optionProps} {...renderProps} ref={ref} />;

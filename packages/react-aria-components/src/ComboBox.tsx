@@ -1,15 +1,15 @@
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
+import {CollectionBase} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext} from './ListBox';
 import {PopoverContext} from './Popover';
 import {Provider} from './utils';
 import React, {ReactNode, useRef, useState} from 'react';
+import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
 import {useComboBoxState} from 'react-stately';
-import {useCollection} from './Collection';
-import { CollectionBase } from '@react-types/shared';
 
 interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
   children: ReactNode

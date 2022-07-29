@@ -37,9 +37,9 @@ export const ComboBoxReusable = () => (
 
 export const ListBoxExample = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
-    <Item className={itemClass}>Foo</Item>
-    <Item className={itemClass}>Bar</Item>
-    <Item className={itemClass}>Baz</Item>
+    <MyItem>Foo</MyItem>
+    <MyItem>Bar</MyItem>
+    <MyItem>Baz</MyItem>
   </ListBox>
 );
 
@@ -60,9 +60,9 @@ export const SelectExample = () => (
     </Button>
     <Popover>
       <ListBox className={styles.menu}>
-        <Item className={itemClass}>Foo</Item>
-        <Item className={itemClass}>Bar</Item>
-        <Item className={itemClass}>Baz</Item>
+        <MyItem>Foo</MyItem>
+        <MyItem>Bar</MyItem>
+        <MyItem>Baz</MyItem>
       </ListBox>
     </Popover>
   </Select>
@@ -74,15 +74,15 @@ export const MenuExample = () => (
     <Popover>
       <Menu className={styles.menu}>
         <Section title={<span style={{fontSize: '1.2em'}}>Section 1</span>} className={styles.group}>
-          <Item className={itemClass}>Foo</Item>
-          <Item className={itemClass}>Bar</Item>
-          <Item className={itemClass}>Baz</Item>
+          <MyItem>Foo</MyItem>
+          <MyItem>Bar</MyItem>
+          <MyItem>Baz</MyItem>
         </Section>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
         <Section title={<span style={{fontSize: '1.2em'}}>Section 2</span>} className={styles.group}>
-          <Item className={itemClass}>Foo</Item>
-          <Item className={itemClass}>Bar</Item>
-          <Item className={itemClass}>Baz</Item>
+          <MyItem>Foo</MyItem>
+          <MyItem>Bar</MyItem>
+          <MyItem>Baz</MyItem>
         </Section>
       </Menu>
     </Popover>
@@ -135,5 +135,12 @@ function itemClass({isFocused, isSelected}) {
 }
 
 function MyItem(props) {
-  return <Item {...props} className={itemClass} />;
+  return (
+    <Item 
+      {...props} 
+      className={({isFocused, isSelected}) => classNames(styles, 'item', {
+        focused: isFocused,
+        selected: isSelected
+      })} />
+  );
 }

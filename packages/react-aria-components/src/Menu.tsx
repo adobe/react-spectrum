@@ -5,6 +5,7 @@ import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {SelectableItemStates} from '@react-aria/selection';
 import {Separator, SeparatorContext} from './Separator';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useCollection} from './Collection';
@@ -129,30 +130,20 @@ export function MenuSection<T>({section, children, className, style}: MenuSectio
   );
 }
 
-interface MenuItemRenderProps {
-  isFocused: boolean,
-  isSelected: boolean,
-  isDisabled: boolean
-}
-
-interface MenuItemProps<T> extends RenderProps<MenuItemRenderProps> {
+interface MenuItemProps<T> extends RenderProps<SelectableItemStates> {
   item: Node<T>
 }
 
 export function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
   let {state} = useContext(InternalMenuContext);
   let ref = useRef();
-  let {menuItemProps, isDisabled, isSelected, isFocused} = useMenuItem({key: item.key}, state, ref);
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let renderProps = useRenderProps({
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
-    values: {
-      isFocused,
-      isSelected,
-      isDisabled
-    }
+    values: states
   });
 
   return (

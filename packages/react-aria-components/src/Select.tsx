@@ -1,5 +1,6 @@
 import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
+import {CollectionBase} from '@react-types/shared';
 import {createContext, HTMLAttributes, ReactNode, useContext, useRef, useState} from 'react';
 import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
@@ -9,7 +10,6 @@ import {Provider, RenderProps, useRenderProps} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {useCollection} from './Collection';
-import { CollectionBase } from '@react-types/shared';
 
 interface SelectValueContext {
   state: SelectState<unknown>,

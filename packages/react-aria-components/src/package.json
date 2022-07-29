@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.0.0",
+    "@react-aria/focus": "^3.6.1",
+    "@react-aria/selection": "^3.9.1",
     "@react-aria/utils": "^3.13.1",
     "@react-types/button": "^3.5.1",
     "@react-types/combobox": "^3.5.1",
