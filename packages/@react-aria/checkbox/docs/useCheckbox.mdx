@@ -95,8 +95,7 @@ function Checkbox(props) {
   );
 }
 
-<Checkbox>Test</Checkbox>
-<Checkbox isIndeterminate>Test</Checkbox>
+<Checkbox>Unsubscribe</Checkbox>
 ```
 
 ## Styling
@@ -113,7 +112,7 @@ hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG eleme
 rendered to indicate focus. The focus ring is only visible when the user is interacting
 with a keyboard, not with a mouse or touch.
 
-```tsx example
+```tsx example export=true
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
 
@@ -122,9 +121,10 @@ function Checkbox(props) {
   let ref = React.useRef();
   let {inputProps} = useCheckbox(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
+  let isSelected = state.isSelected && !props.isIndeterminate;
 
   return (
-    <label style={{display: 'flex', alignItems: 'center'}}>
+    <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
@@ -134,19 +134,22 @@ function Checkbox(props) {
         aria-hidden="true"
         style={{marginRight: 4}}>
         <rect
-          x={state.isSelected ? 4 : 5}
-          y={state.isSelected ? 4 : 5}
-          width={state.isSelected ? 16 : 14}
-          height={state.isSelected ? 16 : 14}
-          fill={state.isSelected ? 'orange' : 'none'}
-          stroke={state.isSelected ? 'none' : 'gray'}
-          strokeWidth={2} />
-        {state.isSelected &&
+          x={isSelected ? 4 : 5}
+          y={isSelected ? 4 : 5}
+          width={isSelected ? 16 : 14}
+          height={isSelected ? 16 : 14}
+          fill={isSelected ? 'orange' : 'none'}
+          stroke={isSelected ? 'none' : 'gray'}
+          strokeWidth={2}/>
+        {isSelected &&
           <path
             transform="translate(7 7)"
             d={`M3.788 9A.999.999 0 0 1 3 8.615l-2.288-3a1 1 0 1 1
             1.576-1.23l1.5 1.991 3.924-4.991a1 1 0 1 1 1.576 1.23l-4.712
             6A.999.999 0 0 1 3.788 9z`} />
+        }
+        {props.isIndeterminate &&
+          <rect x={7} y={11} width={10} height={2} fill="gray" />
         }
         {isFocusVisible &&
           <rect
@@ -164,7 +167,7 @@ function Checkbox(props) {
   );
 }
 
-<Checkbox>Foo</Checkbox>
+<Checkbox>Unsubscribe</Checkbox>
 ```
 
 ## Styled examples
@@ -174,6 +177,73 @@ function Checkbox(props) {
   preview={tailwindPreview}
   title="Tailwind CSS"
   description="An animated Checkbox built with Tailwind and React Aria." />
+
+## Usage
+
+The following examples show how to use the `Checkbox` component created in the above example.
+
+### Default value
+
+Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state.
+
+```tsx example
+<Checkbox defaultSelected>Subscribe</Checkbox>
+```
+
+### Controlled value
+
+The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the checkbox, and receives the new value.
+
+```tsx example
+function Example() {
+  let [selected, setSelection] = React.useState(false);
+
+  return (
+    <>
+      <Checkbox isSelected={selected} onChange={setSelection}>
+        Subscribe
+      </Checkbox>
+      <p>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</p>
+    </>
+  );
+ }
+```
+
+### Indeterminate
+
+A Checkbox can be in an indeterminate state, controlled using the `isIndeterminate` prop.
+This overrides the appearance of the Checkbox, whether selection is controlled or uncontrolled.
+The Checkbox will visually remain indeterminate until the `isIndeterminate` prop is set to false, regardless of user interaction.
+
+```tsx example
+<Checkbox isIndeterminate>Subscribe</Checkbox>
+```
+
+### Disabled
+
+Checkboxes can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Checkbox isDisabled>Subscribe</Checkbox>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Checkbox remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<Checkbox isSelected isReadOnly>Agree</Checkbox>
+```
+
+
+### HTML forms
+
+Checkbox supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<Checkbox name="newsletter" value="subscribe">Subscribe</Checkbox>
+```
 
 ## Internationalization
 
