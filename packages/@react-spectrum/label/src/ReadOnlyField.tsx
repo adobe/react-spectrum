@@ -109,7 +109,6 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
       {...props}
       ref={ref}
       labelProps={labelProps}
-      inputProps={inputProps}
       elementType="label"
       displayReadOnly
       styleProps={styleProps}>

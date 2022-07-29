@@ -154,8 +154,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       errorMessageProps={errorMessageProps}
       showErrorIcon={false}
       ref={domRef}
-      readOnlyText={readOnlyText}
-      inputProps={inputProps}>
+      readOnlyText={readOnlyText}>
       {textField}
     </Field>
   );
