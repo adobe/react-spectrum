@@ -84,12 +84,21 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getVisibleLayoutInfos(rect) {
+    return this._getVisibleLayoutInfos(rect);
+  }
+
+  // this is used by the up and down arrows which can't know about pesisted keys
+  _getClosetLayoutInfos(rect) {
+    return this._getVisibleLayoutInfos(rect, true);
+  }
+
+  _getVisibleLayoutInfos(rect, findClosetLayout = false) {
     let res: LayoutInfo[] = [];
 
     for (let layoutInfo of this.layoutInfos.values()) {
       if (this.isVisible(layoutInfo, rect)) {
         res.push(layoutInfo);
-      } else if (this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
+      } else if (!findClosetLayout && this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
         res.push(layoutInfo);
       }
     }
@@ -114,7 +123,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   _findClosestLayoutInfo(target: Rect, rect: Rect) {
-    let layoutInfos = this.getVisibleLayoutInfos(rect);
+    let layoutInfos = this._getClosetLayoutInfos(rect);
     let best = null;
     let bestDistance = Infinity;
 

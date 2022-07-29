@@ -147,6 +147,8 @@ export class GridLayout<T> extends BaseLayout<T> {
       // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
       let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
       let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
+      // Check to see if an item with a persisted key exists after the visible items
+      // This is for keeping focus on a item that is scrolled out of view
       for (let h = 0; h < firstVisibleItem; h++) {
         let keyFromIndex = this.collection.rows[h].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
@@ -161,6 +163,8 @@ export class GridLayout<T> extends BaseLayout<T> {
           res.push(layoutInfo);
         }
       }
+      // Check to see if an item with a persisted key exists after the visible items
+      // This is for keeping focus on a item that is scrolled out of view
       for (let j = lastVisibleItem; j < this.collection.size; j++) {
         let keyFromIndex = this.collection.rows[j].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
