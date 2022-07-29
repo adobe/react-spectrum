@@ -41,7 +41,7 @@ export interface GridListAria {
 
 /**
  * Provides the behavior and accessibility implementation for a list component with interactive children.
- * A grid list displays data in a single columns and enables a user to navigate its contents via directional navigation keys.
+ * A grid list displays data in a single column and enables a user to navigate its contents via directional navigation keys.
  * @param props - Props for the list.
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.
