@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {RefObject} from 'react';
@@ -21,7 +22,7 @@ import {TableState} from '@react-stately/table';
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridRowAria {
+export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): GridRowAria {
   let {node} = props;
   let {rowProps, isPressed} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
   return {

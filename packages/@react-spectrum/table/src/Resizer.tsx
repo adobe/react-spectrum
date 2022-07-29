@@ -5,7 +5,7 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext} from './TableView';
 
@@ -17,10 +17,10 @@ interface ResizerProps<T> {
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   let {column, showResizer} = props;
   let {state, columnState} = useTableContext();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {resizerProps} = useTableColumnResize({...props, label: formatMessage('columnResizer')}, {...state, ...columnState}, ref);
+  let {resizerProps} = useTableColumnResize({...props, label: stringFormatter.format('columnResizer')}, {...state, ...columnState}, ref);
 
   let style = {
     cursor: undefined,

@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import React, {ReactNode, RefObject} from 'react';
 import {SelectState} from '@react-stately/select';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface AriaHiddenSelectProps {
+export interface AriaHiddenSelectProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -31,12 +32,12 @@ interface AriaHiddenSelectProps {
   isDisabled?: boolean
 }
 
-interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
+export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
   /** State for the select. */
   state: SelectState<T>,
 
   /** A ref to the trigger element. */
-  triggerRef: RefObject<HTMLElement>
+  triggerRef: RefObject<FocusableElement>
 }
 
 /**
@@ -44,7 +45,7 @@ interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
+export function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
   let {autoComplete, name, isDisabled} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();

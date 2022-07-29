@@ -12,7 +12,7 @@
 
 import {mergeProps, mergeRefs} from '@react-aria/utils';
 import {OuterField} from './OuterField';
-import React, {RefObject, useRef} from 'react';
+import React, {ForwardedRef, ReactElement, RefObject, useCallback, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
@@ -35,6 +35,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || (errorMessage && validationState === 'invalid');
   let displayReadOnly = isReadOnly && (!!readOnlyText || readOnlyText === '');
+  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
   let defaultInputRef = useRef<HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
 
@@ -69,9 +70,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   */ 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    // @ts-ignore
-    ref: mergeRefs(children.ref, ref)
+    ref: mergedRefs
   }));
+}
+
+function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
+  return useCallback(
+    mergeRefs(...refs) as (instance: (T | null)) => void,
+    [...refs]
+  );
 }
 
 let _Field = React.forwardRef(Field);

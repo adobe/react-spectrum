@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/button';
-import {HeaderInfo, FunctionAPI, PageDescription} from '@react-spectrum/docs';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/button/package.json';
 
@@ -47,6 +48,8 @@ cross browser inconsistencies in interactions and accessibility features to cons
 * Keyboard focus management and cross browser normalization
 * Keyboard event support for <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys
 
+Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods.
+
 ## Anatomy
 
 Buttons consist of a clickable area usually containing a textual label or an icon
@@ -60,7 +63,7 @@ If a visual label is not provided (e.g. an icon only button), then an `aria-labe
 
 By default, `useButton` assumes that you are using it with a native `<button>` element.
 
-```tsx example
+```tsx example export=true
 import {useButton} from '@react-aria/button';
 import {useRef} from 'react';
 
@@ -119,3 +122,39 @@ function Button(props) {
 
 <Button onPress={() => alert('Button pressed!')}>Test</Button>
 ```
+
+## Usage
+
+The following examples show how to use the `Button` component created in the above example.
+
+### Events
+
+`useButton` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
+
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+
+```tsx example
+function Example() {
+  let [pointerType, setPointerType] = React.useState(null);
+
+  return (
+    <>
+      <Button
+        onPressStart={e => setPointerType(e.pointerType)}
+        onPressEnd={e => setPointerType(null)}>
+        Press me
+      </Button>
+      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
+    </>
+  )
+}
+```
+
+### Disabled
+
+A `Button` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Button isDisabled>Pin</Button>
+```
+

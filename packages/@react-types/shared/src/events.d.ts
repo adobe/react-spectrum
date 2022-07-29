@@ -34,7 +34,7 @@ export interface PressEvent {
   /** The pointer type that triggered the press event. */
   pointerType: PointerType,
   /** The target element of the press event. */
-  target: HTMLElement,
+  target: Element,
   /** Whether the shift keyboard modifier was held during the press event. */
   shiftKey: boolean,
   /** Whether the ctrl keyboard modifier was held during the press event. */

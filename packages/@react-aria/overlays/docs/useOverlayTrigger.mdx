@@ -17,6 +17,7 @@ import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/overlays/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Overlays
@@ -47,7 +48,7 @@ helps achieve accessible overlays that can be styled as needed.
 
 **Note: `useOverlayTrigger` only handles the overlay itself. It should be combined
 with [useDialog](useDialog.html) to create fully accessible popovers. For menus,
-see [useMenuTrigger](useMenuTrigger.html), which builds on `useOverlayTrigger` and provides
+see [useMenu](useMenu.html), which builds on `useOverlayTrigger` and provides
 additional functionality specific to menus.**
 
 * Exposes overlay trigger and connects trigger to overlay with ARIA
@@ -123,8 +124,10 @@ import {
 } from '@react-aria/overlays';
 import {useDialog} from '@react-aria/dialog';
 import {FocusScope} from '@react-aria/focus';
-import {useButton} from '@react-aria/button';
 import {mergeProps} from '@react-aria/utils';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 const Popover = React.forwardRef(({
   title,
@@ -191,20 +194,8 @@ function Example() {
     isOpen: state.isOpen
   });
 
-  // useButton ensures that focus management is handled correctly,
-  // across all browsers. Focus is restored to the button once the
-  // popover closes.
-  let {buttonProps} = useButton({
-    onPress: () => state.open()
-  }, triggerRef);
-
   return <>
-    <button
-      {...buttonProps}
-      {...triggerProps}
-      ref={triggerRef}>
-      Open Popover
-    </button>
+    <Button {...triggerProps} buttonRef={triggerRef}>Open Popover</Button>
     {state.isOpen &&
       <OverlayContainer>
         <Popover
@@ -227,3 +218,22 @@ function Example() {
   <Example />
 </OverlayProvider>
 ```
+
+### Button
+
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>

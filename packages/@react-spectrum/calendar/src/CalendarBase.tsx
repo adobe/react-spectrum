@@ -24,7 +24,7 @@ import {HelpText} from '@react-spectrum/label';
 import intlMessages from '../intl/*.json';
 import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
@@ -48,7 +48,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     visibleMonths = 1
   } = props;
   let {styleProps} = useStyleProps(props);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
   let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({
@@ -139,7 +139,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
       {state.validationState === 'invalid' &&
         <HelpText
           showErrorIcon
-          errorMessage={props.errorMessage || formatMessage('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
+          errorMessage={props.errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
           errorMessageProps={errorMessageProps}
           validationState="invalid"
           // Intentionally a global class name so it can be targeted in DatePicker CSS...

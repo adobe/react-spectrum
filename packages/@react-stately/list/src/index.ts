@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useListState';
-export * from './useSingleSelectListState';
-export * from './ListCollection';
+export type {ListProps, ListState} from './useListState';
+export type {SingleSelectListProps, SingleSelectListState} from './useSingleSelectListState';
+export {useListState} from './useListState';
+export {useSingleSelectListState} from './useSingleSelectListState';
+export {ListCollection} from './ListCollection';
