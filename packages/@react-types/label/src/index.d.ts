@@ -12,6 +12,7 @@
 
 import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
 import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {InputHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
 
 export interface LabelProps {
   children?: ReactNode,
@@ -36,5 +37,10 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   labelProps: HTMLAttributes<HTMLElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
-  wrapperClassName?: string
+  wrapperClassName?: string,
+  readOnlyText?: string,
+  isReadOnly?: boolean,
+  inputProps?: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  autoFocus?: boolean
 }
