@@ -23,6 +23,9 @@
       "includeNodeModules": false
     }
   },
+  "alias": {
+    "./src/useMessageFormatter.ts": false
+  },
   "scripts": {
     "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js && cp src/main.js dist",
     "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.cjs.js && cp src/module.js dist",
