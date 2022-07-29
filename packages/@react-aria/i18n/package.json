@@ -3,13 +3,36 @@
   "version": "3.5.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
+  "main": "main.js",
+  "module": "module.js",
+  "real-main": "dist/main.js",
+  "real-module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
+  "targets": {
+    "main": false,
+    "module": false,
+    "real-module": {
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "real-main": {
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    }
+  },
+  "scripts": {
+    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js",
+    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.cjs.js",
+    "prepublishOnly": "yarn build:module && yarn build:cjs"
+  },
   "files": [
     "dist",
-    "src"
+    "src",
+    "main.js",
+    "module.js"
   ],
   "sideEffects": false,
   "repository": {
