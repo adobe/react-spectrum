@@ -18,7 +18,6 @@ export interface DragDropEvent {
   y: number
 }
 
-// TODO: introduce another drop operation for reorder?
 export type DropOperation = 'copy' | 'link' | 'move' | 'cancel';
 
 export interface DragItem {

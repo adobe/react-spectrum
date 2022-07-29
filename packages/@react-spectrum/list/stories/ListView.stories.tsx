@@ -1229,9 +1229,6 @@ function ActionBarExample(props?) {
   );
 }
 
-// TODO test if overriding the onDrop and getDropOpeartion works (with or without onInsert and stuff)
-// test if not providing any values works (testing default getDropOperation)
-// TODO add description to the story so it is clear what behavior is expected
 function DragBetweenListsComplex() {
   let list1 = useListData({
     initialItems: [

@@ -21,7 +21,7 @@ import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
-// TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity
+// TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity (onDropEnter, onDropMove, onDropExit)
 export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation'> {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
@@ -50,7 +50,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   localState.props = props;
   localState.state = state;
 
-  // TODO: not entirely certain why localState.props is a thing here?
   let {
     acceptedDragTypes = 'all',
     onInsert,
@@ -90,7 +89,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       }
     }
-    // TODO: Probably need to check if onRootDrop and stuff are functions
+    // TODO: Probably need to check if onRootDrop and stuff are functions, aka getOperations is provided by user but onDrop isn't
     if (target.type === 'root') {
       onRootDrop(dataList, dropOperation);
     } else if (target.dropPosition === 'on') {

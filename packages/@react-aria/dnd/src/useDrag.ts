@@ -155,8 +155,6 @@ export function useDrag(options: DragOptions): DragResult {
         type: 'dragend',
         x: e.clientX,
         y: e.clientY,
-        // TODO figure out where this dropEffect is set. maybe can add the final drop target to the datatransfer as well? If not perhaps
-        // we also track this globally
         dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
       });
     }

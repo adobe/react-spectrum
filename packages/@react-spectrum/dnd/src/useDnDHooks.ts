@@ -55,8 +55,6 @@ export interface DnDHooks {
   dropHooks: DropHooks
 }
 
-// TODO: make getItems and getDropOperation optional? If they aren't provided then we add default functions that essentially make the collection non draggable/droppable
-// TODO: adjust DraggableCollectionProps to have getItems be optional instead? Or maybe skip the default for getItems and getDropOperations and just return null for dragHooks and dropHooks
 export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
    * A function that returns the items being dragged. If not specified, assumes that the collection is not draggable.
@@ -67,12 +65,6 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
   // itemProcessor?: (data: any) => any
 }
 
-// This hook is essentially useDropHooks and useDragHooks combined. By providing onInsert, onRootDrop, onItemDrop, onReorder, acceptedDragTypes the user doesn't have to
-// provide onDrop and getDropOperation since we'll handle that for them. Kinda feels non-intuative still...
-// TODO: potential issues/scenarios:
-// handling TextItem, FileItem, DirectoryItem in the premade onDrop (directoryItem doesn't have type, do we need to getEntries and check the type? or do we just accept directoryItems?)
-// handling internal drops where the user opens a internal (in collection) folder via hover and does a insert that way? Is `isDragging` inaccurate in that case since it could be the same ListView, just with different contents due to a collection update?
-// what if onDrop fires after onDragEnd? Then we can't determine if it is an internal drop event in onDrop because isDragging would get updated by onDragEnd. Perhaps we should track the collection ref or create a id for each draggable collection?
 export function useDnDHooks(options: DnDOptions): DnDHooks {
   let dragHooks = useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionOptions) {
