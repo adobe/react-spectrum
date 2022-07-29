@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/gridlist",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-rc.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.6.1",
-    "@react-aria/grid": "^3.3.1",
-    "@react-aria/i18n": "^3.4.1",
-    "@react-aria/interactions": "^3.9.1",
-    "@react-aria/selection": "^3.9.1",
-    "@react-aria/utils": "^3.13.1",
-    "@react-stately/list": "^3.5.1",
-    "@react-types/checkbox": "^3.3.1",
-    "@react-types/list": "3.0.0-alpha.1",
-    "@react-types/shared": "^3.13.1"
+    "@react-aria/focus": "^3.7.0",
+    "@react-aria/grid": "^3.4.0",
+    "@react-aria/i18n": "^3.5.0",
+    "@react-aria/interactions": "^3.10.0",
+    "@react-aria/selection": "^3.10.0",
+    "@react-aria/utils": "^3.13.2",
+    "@react-stately/list": "^3.5.2",
+    "@react-types/checkbox": "^3.3.2",
+    "@react-types/list": "3.0.0-rc.0",
+    "@react-types/shared": "^3.14.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
