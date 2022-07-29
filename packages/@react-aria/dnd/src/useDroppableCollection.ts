@@ -89,15 +89,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
       }
     }
-    // TODO: Probably need to check if onRootDrop and stuff are functions, aka getOperations is provided by user but onDrop isn't
+
+    // TODO: write tests for if onDrop is provided by user but getDropOperations isn't and vice versa
     if (target.type === 'root') {
-      onRootDrop(dataList, dropOperation);
+      onRootDrop && onRootDrop(dataList, dropOperation);
     } else if (target.dropPosition === 'on') {
-      onItemDrop(dataList, dropOperation, target.key);
+      onItemDrop && onItemDrop(dataList, dropOperation, target.key);
     } else if (isInternalDrop) {
-      onReorder(dataList, target.key, target.dropPosition);
+      onReorder && onReorder(dataList, target.key, target.dropPosition);
     } else {
-      onInsert(dataList, dropOperation, target.key, target.dropPosition);
+      onInsert && onInsert(dataList, dropOperation, target.key, target.dropPosition);
     }
 
   }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState]);
