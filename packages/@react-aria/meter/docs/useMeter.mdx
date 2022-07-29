@@ -72,7 +72,7 @@ to identify the element to screen readers.
 
 ## Example
 
-```tsx example
+```tsx example export=true
 import {useMeter} from '@react-aria/meter';
 
 function Meter(props) {
@@ -106,7 +106,7 @@ function Meter(props) {
           </span>
         }
       </div>
-      <div style={{height: 10, background: 'gray'}}>
+      <div style={{height: 10, background: 'lightgray'}}>
         <div style={{width: barWidth, height: 10, background: 'green'}} />
       </div>
     </div>
@@ -115,8 +115,46 @@ function Meter(props) {
 
 <Meter
   label="Storage space"
-  value={250}
-  maxValue={1000} />
+  value={25} />
+```
+
+## Usage
+
+The following examples show how to use the `Meter` component created in the above example.
+
+### Custom value scale
+
+By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<Meter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<Meter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<Meter
+  label="Space used"
+  valueLabel="54 of 60GB"
+  value={90} />
 ```
 
 ## Styled examples
