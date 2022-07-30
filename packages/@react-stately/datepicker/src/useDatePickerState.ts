@@ -14,8 +14,8 @@ import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
@@ -27,7 +27,7 @@ export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
   shouldCloseOnSelect?: boolean | (() => boolean)
 }
 
-export interface DatePickerState {
+export interface DatePickerState extends OverlayTriggerState {
   /** The currently selected date. */
   value: DateValue,
   /** Sets the selected date. */
@@ -132,7 +132,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     setTimeValue: selectTime,
     granularity,
     hasTime,
-    isOpen: overlayState.isOpen,
+    ...overlayState,
     setOpen(isOpen) {
       // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time was set and not the date, don't commit. The state will be preserved until

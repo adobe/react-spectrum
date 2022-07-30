@@ -3,8 +3,8 @@ import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {cloneElement, createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
+import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
 interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
@@ -68,10 +68,8 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
 
 const InternalDateInputContext = createContext<DateFieldState>(null);
 
-interface DateInputProps extends SlotProps {
-  children: (segment: IDateSegment) => ReactElement,
-  style?: CSSProperties,
-  className?: string
+interface DateInputProps extends SlotProps, StyleProps {
+  children: (segment: IDateSegment) => ReactElement
 }
 
 function DateInput({children, style, className, slot}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {

@@ -19,7 +19,6 @@ interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
 
 export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   let state = useDatePickerState(props);
-  state.close = () => state.setOpen(false);
   let groupRef = useRef();
   let {
     groupProps,
@@ -58,7 +57,6 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
 
 export function DateRangePicker(props) {
   let state = useDateRangePickerState(props);
-  state.close = () => state.setOpen(false);
   let groupRef = useRef();
   let {
     groupProps,

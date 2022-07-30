@@ -2,23 +2,27 @@ import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, getWeeksInMonth, isSameMonth} from '@internationalized/date';
 import {CalendarProps, useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {cloneElement, createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
+import {DOMProps, Provider, StyleProps, useContextProps, WithRef} from './utils';
 import {HeadingContext} from './Heading';
 import {mergeProps, useLocale, VisuallyHidden} from 'react-aria';
-import {Provider, useContextProps, WithRef} from './utils';
 import React from 'react';
 
-interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T> {
-  children: ReactNode,
-  style?: CSSProperties,
-  className?: string
+interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, DOMProps {
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
+  visibleDuration?: DateDuration
 }
 
-interface RangeCalendarComponentProps<T extends DateValue> extends RangeCalendarProps<T> {
-  children: ReactNode,
-  style?: CSSProperties,
-  className?: string
+interface RangeCalendarComponentProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps {
+  /**
+   * The amount of days that will be displayed at once. This affects how pagination works.
+   * @default {months: 1}
+   */
+  visibleDuration?: DateDuration
 }
 
 export const CalendarContext = createContext<WithRef<CalendarProps<any>, HTMLDivElement>>({});
@@ -46,17 +50,16 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
               next: nextButtonProps
             }
           }],
-          [HeadingContext, {'aria-hidden': true, level: 2, children: title}]
+          [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
+          [InternalCalendarContext, state]
         ]}>
-        <InternalCalendarContext.Provider value={state}>
-          <VisuallyHidden>
-            <h2>{calendarProps['aria-label']}</h2>
-          </VisuallyHidden>
-          {props.children}
-          <VisuallyHidden>
-            <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
-          </VisuallyHidden>
-        </InternalCalendarContext.Provider>
+        <VisuallyHidden>
+          <h2>{calendarProps['aria-label']}</h2>
+        </VisuallyHidden>
+        {props.children}
+        <VisuallyHidden>
+          <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
+        </VisuallyHidden>
       </Provider>
     </div>
   );
@@ -90,17 +93,16 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
               next: nextButtonProps
             }
           }],
-          [HeadingContext, {'aria-hidden': true, level: 2, children: title}]
+          [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
+          [InternalCalendarContext, state]
         ]}>
-        <InternalCalendarContext.Provider value={state}>
-          <VisuallyHidden>
-            <h2>{calendarProps['aria-label']}</h2>
-          </VisuallyHidden>
-          {props.children}
-          <VisuallyHidden>
-            <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
-          </VisuallyHidden>
-        </InternalCalendarContext.Provider>
+        <VisuallyHidden>
+          <h2>{calendarProps['aria-label']}</h2>
+        </VisuallyHidden>
+        {props.children}
+        <VisuallyHidden>
+          <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
+        </VisuallyHidden>
       </Provider>
     </div>
   );
@@ -121,11 +123,9 @@ interface CalendarCellRenderProps {
   isInvalid: boolean
 }
 
-interface CalendarGridProps {
+interface CalendarGridProps extends StyleProps {
   children: (values: CalendarCellRenderProps) => ReactElement,
-  offset?: DateDuration,
-  style?: CSSProperties,
-  className?: string
+  offset?: DateDuration
 }
 
 function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {

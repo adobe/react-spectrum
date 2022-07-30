@@ -13,9 +13,9 @@
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 
 export interface DateRangePickerStateOptions extends DateRangePickerProps<DateValue> {
@@ -27,7 +27,7 @@ export interface DateRangePickerStateOptions extends DateRangePickerProps<DateVa
 }
 
 type TimeRange = RangeValue<TimeValue>;
-export interface DateRangePickerState {
+export interface DateRangePickerState extends OverlayTriggerState {
   /** The currently selected date range. */
   value: DateRange,
   /** Sets the selected date range. */
@@ -173,7 +173,7 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
     },
     setDateRange,
     setTimeRange,
-    isOpen: overlayState.isOpen,
+    ...overlayState,
     setOpen(isOpen) {
       // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time range was set and not the date range, don't commit. The state will be preserved until
