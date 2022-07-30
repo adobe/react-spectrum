@@ -15,5 +15,5 @@ export {NumberField} from './NumberField';
 export {Popover} from './Popover';
 export {Select, SelectValue} from './Select';
 export {Separator} from './Separator';
-export {Slider} from './Slider';
+export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
 export {Tooltip} from './Tooltip';

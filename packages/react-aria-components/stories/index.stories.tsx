@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Group, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, NumberField, Option, Popover, RangeCalendar, Section, Select, SelectValue, Separator, TimeField} from 'react-aria-components';
+import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Group, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, NumberField, Option, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, TimeField} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -254,6 +254,47 @@ export const DateRangePickerExample = () => (
   </DateRangePicker>
 );
 
+export const SliderExample = () => (
+  <Slider
+    defaultValue={[30, 60]}
+    style={{
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: 300,
+      touchAction: 'none'
+    }}>
+    <div style={{display: 'flex', alignSelf: 'stretch'}}>
+      <Label>Test</Label>
+      <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
+        {state => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+      </SliderOutput>
+    </div>
+    <SliderTrack
+      style={{
+        position: 'relative',
+        height: 30,
+        width: '100%'
+      }}>
+      <div
+        style={{
+          position: 'absolute',
+          backgroundColor: 'gray',
+          height: 3,
+          top: 13,
+          width: '100%'
+        }} />
+      <CustomThumb index={0}>
+        <Label>A</Label>
+      </CustomThumb>
+      <CustomThumb index={1}>
+        <Label>B</Label>
+      </CustomThumb>
+    </SliderTrack>
+  </Slider>
+);
+
 function ReusableListBox(props) {
   return (
     <ListBox
@@ -307,5 +348,24 @@ function MyItem(props) {
         focused: isFocused,
         selected: isSelected
       })} />
+  );
+}
+
+function CustomThumb({index, children}) {
+  return (
+    <SliderThumb
+      index={index}
+      style={({isDragging, isFocusVisible}) => ({
+        width: 20,
+        height: 20,
+        borderRadius: '50%',
+        top: '50%',
+        // eslint-disable-next-line
+        backgroundColor: isFocusVisible ? 'orange' : isDragging
+          ? 'dimgrey'
+          : 'gray'
+      })}>
+      {children}
+    </SliderThumb>
   );
 }
