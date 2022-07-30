@@ -35,7 +35,7 @@ export interface StyleProps {
 }
 
 export interface DOMProps extends StyleProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 export interface RenderProps<T> {
@@ -83,6 +83,7 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
       throw new Error('A slot prop is required');
     }
     if (!contextProps.slots[props.slot]) {
+      // @ts-ignore
       throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(contextProps.slots).map(p => `"${p}"`)) + '.');
     }
     contextProps = contextProps.slots[props.slot];

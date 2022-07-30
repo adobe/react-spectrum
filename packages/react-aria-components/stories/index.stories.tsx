@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Group, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, NumberField, Option, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, TimeField} from 'react-aria-components';
+import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, DialogTrigger, Dialog, Group, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, ModalOverlay, Modal, NumberField, Option, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -195,20 +195,22 @@ export const DatePickerExample = () => (
         border: '1px solid gray',
         padding: 20
       }}>
-      <Calendar style={{width: 220}}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button slot="previous">&lt;</Button>
-          <Heading style={{flex: 1, textAlign: 'center'}} />
-          <Button slot="next">&gt;</Button>
-        </div>
-        <CalendarGrid style={{width: '100%'}}>
-          {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-            <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-              {formattedDate}
-            </div>
-          )}
-        </CalendarGrid>
-      </Calendar>
+      <Dialog>
+        <Calendar style={{width: 220}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Button slot="previous">&lt;</Button>
+            <Heading style={{flex: 1, textAlign: 'center'}} />
+            <Button slot="next">&gt;</Button>
+          </div>
+          <CalendarGrid style={{width: '100%'}}>
+            {({formattedDate, isSelected, isOutsideVisibleRange}) => (
+              <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
+                {formattedDate}
+              </div>
+            )}
+          </CalendarGrid>
+        </Calendar>
+      </Dialog>
     </Popover>
   </DatePicker>
 );
@@ -236,20 +238,22 @@ export const DateRangePickerExample = () => (
         border: '1px solid gray',
         padding: 20
       }}>
-      <RangeCalendar style={{width: 220}}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <Button slot="previous">&lt;</Button>
-          <Heading style={{flex: 1, textAlign: 'center'}} />
-          <Button slot="next">&gt;</Button>
-        </div>
-        <CalendarGrid style={{width: '100%'}}>
-          {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-            <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-              {formattedDate}
-            </div>
-          )}
-        </CalendarGrid>
-      </RangeCalendar>
+      <Dialog>
+        <RangeCalendar style={{width: 220}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Button slot="previous">&lt;</Button>
+            <Heading style={{flex: 1, textAlign: 'center'}} />
+            <Button slot="next">&gt;</Button>
+          </div>
+          <CalendarGrid style={{width: '100%'}}>
+            {({formattedDate, isSelected, isOutsideVisibleRange}) => (
+              <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
+                {formattedDate}
+              </div>
+            )}
+          </CalendarGrid>
+        </RangeCalendar>
+      </Dialog>
     </Popover>
   </DateRangePicker>
 );
@@ -293,6 +297,101 @@ export const SliderExample = () => (
       </CustomThumb>
     </SliderTrack>
   </Slider>
+);
+
+export const TooltipExample = () => (
+  <TooltipTrigger offset={5}>
+    <Button>Tooltip trigger</Button>
+    <Tooltip
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 5,
+        borderRadius: 4
+      }}>
+      <TooltipArrow style={{transform: 'translateX(-50%)'}}>
+        <svg width="8" height="8" style={{display: 'block'}}>
+          <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+        </svg>
+      </TooltipArrow>
+      I am a tooltip
+    </Tooltip>
+  </TooltipTrigger>
+);
+
+export const PopoverExample = () => (
+  <DialogTrigger>
+    <Button>Open popover</Button>
+    <Popover 
+      placement="bottom start"
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 30
+      }}>
+      <Dialog>
+        {({close}) => (
+          <form style={{display: 'flex', flexDirection: 'column'}}>
+            <label>
+              First Name: <input placeholder="John" />
+            </label>
+            <label>
+              Last Name: <input placeholder="Smith" />
+            </label>
+            <Button onPress={close} style={{marginTop: 10}}>
+              Submit
+            </Button>
+          </form>
+        )}
+      </Dialog>
+    </Popover>
+  </DialogTrigger>
+);
+
+export const ModalExample = () => (
+  <DialogTrigger>
+    <Button>Open modal</Button>
+    <ModalOverlay
+      style={{
+        position: 'fixed',
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+      <Modal
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          padding: 30
+        }}>
+        <Dialog>
+          {({close}) => (
+            <form style={{display: 'flex', flexDirection: 'column'}}>
+              <Heading style={{marginTop: 0}}>Sign up</Heading>
+              <label>
+                First Name: <input placeholder="John" />
+              </label>
+              <label>
+                Last Name: <input placeholder="Smith" />
+              </label>
+              <Button onPress={close} style={{marginTop: 10}}>
+                Submit
+              </Button>
+            </form>
+          )}
+        </Dialog>
+      </Modal>
+    </ModalOverlay>
+  </DialogTrigger>
 );
 
 function ReusableListBox(props) {

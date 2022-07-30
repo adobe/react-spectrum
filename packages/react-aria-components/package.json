@@ -28,6 +28,7 @@
     "@react-types/overlays": "^3.6.1",
     "@react-types/select": "^3.6.1",
     "@react-types/shared": "^3.13.1",
+    "@react-types/slider": "^3.2.0",
     "react-aria": "^3.17.0",
     "react-stately": "^3.15.0"
   },

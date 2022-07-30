@@ -38,8 +38,8 @@ export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
   return (
     <Provider
       values={[
-      [DateInputContext, {state, fieldProps, ref: fieldRef}],
-      [LabelContext, {...labelProps, ref: labelRef}]
+        [DateInputContext, {state, fieldProps, ref: fieldRef}],
+        [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       {props.children}
     </Provider>
@@ -60,8 +60,8 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
   return (
     <Provider
       values={[
-      [DateInputContext, {state, fieldProps, ref: fieldRef}],
-      [LabelContext, {...labelProps, ref: labelRef}]
+        [DateInputContext, {state, fieldProps, ref: fieldRef}],
+        [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       {props.children}
     </Provider>
@@ -75,7 +75,7 @@ interface DateInputProps extends SlotProps, StyleProps {
 }
 
 function DateInput({children, style, className, slot}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
-  let [{state, fieldProps}, fieldRef] = useContextProps({slot} as any, ref, DateInputContext);
+  let [{state, fieldProps}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
   return (
     <InternalDateInputContext.Provider value={state}>
       <div {...fieldProps} ref={fieldRef} style={style} className={className}>
