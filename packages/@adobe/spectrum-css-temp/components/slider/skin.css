@@ -9,12 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
+@media (forced-colors: none) {
+  :root {
+    --spectrum-slider-handle-border-color-key-focus: var(--spectrum-global-color-gray-800);
+  }
+}
 :root {
   --spectrum-slider-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
-
     /* todo: remove when fixed */
-  --spectrum-slider-handle-border-color-key-focus: var(--spectrum-global-color-gray-800);
   --spectrum-slider-handle-focus-ring-color-key-focus: var(--spectrum-alias-focus-color);
 }
 
@@ -325,5 +327,48 @@ governing permissions and limitations under the License.
 
   & .spectrum-Slider-label {
     margin-inline-end: var(--spectrum-slider-label-gap-x);
+  }
+}
+@media (forced-colors: active) {
+  :root {
+    --spectrum-slider-handle-border-color-key-focus: Highlight;
+  }
+  .spectrum-Dial {
+    --spectrum-dial-border-color-hover: Highlight;
+    --spectrum-dial-handle-marker-color: ButtonText;
+    --spectrum-dial-handle-marker-color-hover: Highlight;
+    --spectrum-dial-handle-marker-color-key-focus: Highlight;
+    --spectrum-dial-min-max-tick-color: GrayText;
+  }
+  .spectrum-Slider {
+    forced-color-adjust: none;
+    --spectrum-alias-background-color-default: ButtonFace;
+    --spectrum-alias-focus-color: ButtonText;
+    --spectrum-label-text-color: CanvasText;
+    --spectrum-label-text-color-disabled: GrayText;
+    --spectrum-slider-color-handle-border-color: ButtonText;
+    --spectrum-slider-color-handle-border-color-disabled: GrayText;
+    --spectrum-slider-color-handle-color: ButtonFace;
+    --spectrum-slider-color-handle-color-disabled: ButtonFace;
+    --spectrum-slider-color-handle-outset-border-color-key-focus: ButtonText;
+    --spectrum-slider-color-track-border-color: ButtonText;
+    --spectrum-slider-color-track-color-disabled: GrayText;
+    --spectrum-slider-fill-track-color: Highlight;
+    --spectrum-slider-fill-track-color-disabled: GrayText;
+    --spectrum-slider-handle-background-color: ButtonFace;
+    --spectrum-slider-handle-background-color-down: ButtonFace;
+    --spectrum-slider-handle-background-color-key-focus: Highlight;
+    --spectrum-slider-handle-border-color: ButtonText;
+    --spectrum-slider-handle-border-color-disabled: GrayText;
+    --spectrum-slider-handle-border-color-down: Highlight;
+    --spectrum-slider-handle-border-color-hover: Highlight;
+    --spectrum-slider-handle-border-color-key-focus: Highlight;
+    --spectrum-slider-handle-focus-ring-color-key-focus: ButtonText;
+    --spectrum-slider-player-track-buffer-color: ButtonText;
+    --spectrum-slider-player-track-buffer-color-disabled: GrayText;
+    --spectrum-slider-ramp-track-color-disabled: GrayText;
+    --spectrum-slider-tick-mark-color: ButtonText;
+    --spectrum-slider-track-color: ButtonText;
+    --spectrum-slider-track-color-disabled: GrayText;
   }
 }

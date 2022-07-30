@@ -416,7 +416,8 @@ For options that have more complex content (e.g. icons, multiple lines of text, 
 as needed to apply to the main text element of the option and its description. This improves screen
 reader announcement.
 
-**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.).**
+**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.).
+For these cases, see [useGridList](useGridList.html) instead.**
 
 To implement this, we'll update the `Option` component to apply the ARIA properties
 returned by <TypeLink links={docs.links} type={docs.exports.useOption} /> to the appropriate

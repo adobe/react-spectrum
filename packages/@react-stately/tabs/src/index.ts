@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTabListState';
+export {useTabListState} from './useTabListState';
+
+export type {TabListProps} from '@react-types/tabs';
+export type {TabListState} from './useTabListState';

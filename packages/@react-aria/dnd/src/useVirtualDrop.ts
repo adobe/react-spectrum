@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes} from '@react-types/shared';
 import * as DragManager from './DragManager';
-import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDescription} from '@react-aria/utils';
 import {useDragModality} from './utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface VirtualDropResult {
-  dropProps: HTMLAttributes<HTMLElement>
+  dropProps: DOMAttributes
 }
 
 const MESSAGES = {
@@ -29,10 +29,10 @@ const MESSAGES = {
 };
 
 export function useVirtualDrop(): VirtualDropResult {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let modality = useDragModality();
   let dragSession = DragManager.useDragSession();
-  let descriptionProps = useDescription(dragSession ? formatMessage(MESSAGES[modality]) : '');
+  let descriptionProps = useDescription(dragSession ? stringFormatter.format(MESSAGES[modality]) : '');
 
   return {
     dropProps: {

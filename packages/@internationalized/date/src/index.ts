@@ -10,6 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+export type {
+  AnyCalendarDate,
+  AnyTime,
+  AnyDateTime,
+  Calendar,
+  DateDuration,
+  TimeDuration,
+  DateTimeDuration,
+  DateFields,
+  TimeFields,
+  DateField,
+  TimeField,
+  Disambiguation,
+  CycleOptions,
+  CycleTimeOptions
+} from './types';
+
 export {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 export {GregorianCalendar} from './calendars/GregorianCalendar';
 export {JapaneseCalendar} from './calendars/JapaneseCalendar';
@@ -49,7 +66,6 @@ export {
   isWeekend,
   isWeekday
 } from './queries';
-export * from './types';
 export {
   parseDate,
   parseDateTime,

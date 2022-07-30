@@ -22,7 +22,7 @@ let refCountMap = new WeakMap<Element, number>();
  * @param root - Nothing will be hidden above this element.
  * @returns - A function to restore all hidden elements.
  */
-export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
+export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
   let walker = document.createTreeWalker(
@@ -31,7 +31,7 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
     {
       acceptNode(node) {
         // If this node is a live announcer, add it to the set of nodes to keep visible.
-        if ((node instanceof HTMLElement && node.dataset.liveAnnouncer === 'true')) {
+        if (((node instanceof HTMLElement || node instanceof SVGElement) && node.dataset.liveAnnouncer === 'true')) {
           visibleNodes.add(node);
         }
 
@@ -46,7 +46,7 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
 
         // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
         // https://bugs.webkit.org/show_bug.cgi?id=222623
-        if (node instanceof HTMLElement && node.getAttribute('role') === 'row') {
+        if (node instanceof Element && node.getAttribute('role') === 'row') {
           return NodeFilter.FILTER_SKIP;
         }
 
@@ -93,7 +93,7 @@ export function ariaHideOutside(targets: HTMLElement[], root = document.body) {
       // and not already inside a hidden node, hide all of the new children.
       if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
         for (let node of change.addedNodes) {
-          if ((node instanceof HTMLElement && node.dataset.liveAnnouncer === 'true')) {
+          if (((node instanceof HTMLElement || node instanceof SVGElement) && node.dataset.liveAnnouncer === 'true')) {
             visibleNodes.add(node);
           } else if (node instanceof Element) {
             hide(node);

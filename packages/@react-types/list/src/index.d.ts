@@ -23,17 +23,19 @@ import {
 } from '@react-types/shared';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
 
-export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: string) => void
+  onAction?: (key: string) => void,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior
 }
 
-export interface AriaListProps<T> extends ListProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
@@ -52,17 +54,17 @@ export interface SpectrumListProps<T> extends AriaListProps<T>, StyleProps, Spec
   renderEmptyState?: () => JSX.Element,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * the collection's `selectionStyle` prop and the interaction modality.
    */
   onAction?: (key: string) => void,
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   * @private
    */
   dragHooks?: DragHooks,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   * @private
    */
   dropHooks?: DropHooks
 }

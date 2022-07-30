@@ -14,7 +14,6 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -29,10 +28,11 @@ import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
+import {TableColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
@@ -80,7 +80,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
-  columnState: ColumnResizeState<T>
+  columnState: TableColumnResizeState<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -122,7 +122,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
   let domRef = useDOMRef(ref);
   let bodyRef = useRef<HTMLDivElement>();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let density = props.density || 'regular';
   let layout = useMemo(() => new TableLayout({
@@ -270,7 +270,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           <CenteredWrapper>
             <ProgressCircle
               isIndeterminate
-              aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
+              aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
           </CenteredWrapper>
         );
       case 'empty': {
@@ -517,7 +517,7 @@ function ResizableTableColumnHeader(props) {
   let {column} = props;
   let ref = useRef();
   let {state, columnState} = useTableContext();
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isHovered, setIsHovered] = useState(false);
 
   const onMenuSelect = (key) => {
@@ -537,15 +537,15 @@ function ResizableTableColumnHeader(props) {
   let items = useMemo(() => {
     let options = [
       allowsSorting ? {
-        label: formatMessage('sortAscending'),
+        label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
       } : undefined,
       allowsSorting ? {
-        label: formatMessage('sortDescending'),
+        label: stringFormatter.format('sortDescending'),
         id: 'sort-desc'
       } : undefined,
       {
-        label: formatMessage('resizeColumn'),
+        label: stringFormatter.format('resizeColumn'),
         id: 'resize'
       }
     ];
