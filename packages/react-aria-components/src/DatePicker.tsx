@@ -8,7 +8,7 @@ import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import {Provider} from './utils';
+import {Provider, useSlot} from './utils';
 import React, {ReactNode, useRef} from 'react';
 import {useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {useLocale} from 'react-aria';
@@ -20,6 +20,7 @@ interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
 export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   let state = useDatePickerState(props);
   let groupRef = useRef();
+  let [labelRef, label] = useSlot();
   let {
     groupProps,
     labelProps,
@@ -27,7 +28,7 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
     buttonProps,
     dialogProps,
     calendarProps
-  } = useDatePicker({...props, label: 's'}, state, groupRef);
+  } = useDatePicker({...props, label}, state, groupRef);
 
   let {locale} = useLocale();
   let fieldState = useDateFieldState({
@@ -37,7 +38,7 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   });
 
   let fieldRef = useRef();
-  let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label: 's'}, fieldState, fieldRef);
+  let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
   return (
     <Provider
@@ -45,7 +46,7 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
         [GroupContext, {...groupProps, ref: groupRef}],
         [DateInputContext, {state: fieldState, fieldProps: dateFieldProps, ref: fieldRef}],
         [ButtonContext, buttonProps],
-        [LabelContext, labelProps],
+        [LabelContext, {...labelProps, ref: labelRef}],
         [CalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef}],
         [DialogContext, dialogProps]
@@ -58,6 +59,7 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
 export function DateRangePicker(props) {
   let state = useDateRangePickerState(props);
   let groupRef = useRef();
+  let [labelRef, label] = useSlot();
   let {
     groupProps,
     labelProps,
@@ -66,7 +68,7 @@ export function DateRangePicker(props) {
     buttonProps,
     dialogProps,
     calendarProps
-  } = useDateRangePicker({...props, label: 's'}, state, groupRef);
+  } = useDateRangePicker({...props, label}, state, groupRef);
 
   let {locale} = useLocale();
   let startFieldState = useDateFieldState({
@@ -76,7 +78,7 @@ export function DateRangePicker(props) {
   });
 
   let startFieldRef = useRef();
-  let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label: 's'}, startFieldState, startFieldRef);
+  let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
     ...endFieldProps,
@@ -85,14 +87,14 @@ export function DateRangePicker(props) {
   });
 
   let endFieldRef = useRef();
-  let {fieldProps: endDateFieldProps} = useDateField({...startFieldProps, label: 's'}, endFieldState, endFieldRef);
+  let {fieldProps: endDateFieldProps} = useDateField({...startFieldProps, label}, endFieldState, endFieldRef);
 
   return (
     <Provider
       values={[
         [GroupContext, {...groupProps, ref: groupRef}],
         [ButtonContext, buttonProps],
-        [LabelContext, labelProps],
+        [LabelContext, {...labelProps, ref: labelRef}],
         [RangeCalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef}],
         [DialogContext, dialogProps],

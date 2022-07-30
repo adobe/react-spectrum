@@ -1,5 +1,5 @@
-import {mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, useContext} from 'react';
+import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import React, {CSSProperties, ReactNode, RefCallback, useCallback, useContext, useRef, useState} from 'react';
 
 interface SlottedValue<T> {
   slots: Record<string, T>
@@ -90,4 +90,26 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
   let mergedRef = useObjectRef(mergeRefs(ref, contextRef));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
   return [mergedProps, mergedRef];
+}
+
+export function useSlot(): [RefCallback<Element>, boolean] {
+  // Assume we do have the slot in the initial render.
+  let [hasSlot, setHasSlot] = useState(true);
+  let hasRun = useRef(false);
+
+  // A callback ref which will run when the slotted element mounts.
+  // This should happen before the useLayoutEffect below.
+  let ref = useCallback(el => {
+    hasRun.current = true;
+    setHasSlot(!!el);
+  }, []);
+
+  // If the callback hasn't been called, then reset to false.
+  useLayoutEffect(() => {
+    if (!hasRun.current) {
+      setHasSlot(false);
+    }
+  }, []);
+
+  return [ref, hasSlot];
 }

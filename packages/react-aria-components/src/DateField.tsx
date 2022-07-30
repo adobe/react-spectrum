@@ -3,7 +3,7 @@ import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
@@ -32,13 +32,14 @@ export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
   });
 
   let fieldRef = useRef();
-  let {labelProps, fieldProps} = useDateField({...props, label: 's'}, state, fieldRef);
+  let [labelRef, label] = useSlot();
+  let {labelProps, fieldProps} = useDateField({...props, label}, state, fieldRef);
 
   return (
     <Provider
       values={[
       [DateInputContext, {state, fieldProps, ref: fieldRef}],
-      [LabelContext, labelProps]
+      [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       {props.children}
     </Provider>
@@ -53,13 +54,14 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
   });
 
   let fieldRef = useRef();
-  let {labelProps, fieldProps} = useTimeField({...props, label: 's'}, state, fieldRef);
+  let [labelRef, label] = useSlot();
+  let {labelProps, fieldProps} = useTimeField({...props, label}, state, fieldRef);
 
   return (
     <Provider
       values={[
       [DateInputContext, {state, fieldProps, ref: fieldRef}],
-      [LabelContext, labelProps]
+      [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       {props.children}
     </Provider>

@@ -6,7 +6,7 @@ import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, useRenderProps} from './utils';
+import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {useCollection} from './Collection';
@@ -31,18 +31,19 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
 
   // Get props for child elements from useSelect
   let ref = useRef();
+  let [labelRef, label] = useSlot();
   let {
     labelProps,
     triggerProps,
     valueProps,
     menuProps
-  } = useSelect({...props, label: 's'}, state, ref);
+  } = useSelect({...props, label}, state, ref);
 
   return (
     <Provider
       values={[
         [SelectContext, {state, valueProps}],
-        [LabelContext, {...labelProps, elementType: 'span'}],
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [ButtonContext, {...triggerProps, ref}],
         [PopoverContext, {state, triggerRef: ref, preserveChildren: true}],
         [ListBoxContext, {state, setListBoxProps, ...menuProps}]

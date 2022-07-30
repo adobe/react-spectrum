@@ -5,7 +5,7 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider} from './utils';
+import {Provider, useSlot} from './utils';
 import React, {ReactNode, useRef, useState} from 'react';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
@@ -32,6 +32,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   let inputRef = useRef(null);
   let listBoxRef = useRef(null);
   let popoverRef = useRef(null);
+  let [labelRef, label] = useSlot();
   let {
     buttonProps,
     inputProps,
@@ -39,7 +40,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     labelProps
   } = useComboBox({
     ...props,
-    label: 'f',
+    label,
     inputRef,
     buttonRef,
     listBoxRef,
@@ -50,7 +51,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   return (
     <Provider
       values={[
-        [LabelContext, labelProps],
+        [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef}],
         [InputContext, {...inputProps, ref: inputRef}],
         [PopoverContext, {state, ref: popoverRef, triggerRef: inputRef, placement: 'bottom start', preserveChildren: true, isNonModal: true}],
