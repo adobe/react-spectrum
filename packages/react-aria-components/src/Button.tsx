@@ -1,11 +1,12 @@
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {useButton} from 'react-aria';
-import {useContextProps, WithRef} from './utils';
+import {SlotProps, useContextProps, WithRef} from './utils';
+
+interface ButtonProps extends AriaButtonProps, SlotProps {}
 
 export const ButtonContext = createContext<WithRef<AriaButtonProps, HTMLButtonElement>>({});
 
-function Button(props: AriaButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   let {buttonProps} = useButton(props, ref);
   return (

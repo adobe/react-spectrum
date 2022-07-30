@@ -1,8 +1,8 @@
 export {Button} from './Button';
-export {Calendar} from './Calendar';
+export {Calendar, RangeCalendar, CalendarGrid} from './Calendar';
 export {ComboBox} from './ComboBox';
-export {DateField} from './DateField';
-export {DatePicker} from './DatePicker';
+export {DateField, DateInput, DateSegment, TimeField} from './DateField';
+export {DatePicker, DateRangePicker} from './DatePicker';
 export {Dialog} from './Dialog';
 export {Group} from './Group';
 export {Heading} from './Heading';
