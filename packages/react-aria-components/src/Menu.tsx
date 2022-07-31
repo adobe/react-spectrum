@@ -2,23 +2,17 @@
 import {AriaMenuProps, MenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
 import {isFocusVisible} from '@react-aria/interactions';
+import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {SelectableItemStates} from '@react-aria/selection';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ItemStates, useCollection} from './Collection';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
-interface InternalMenuContextValue {
-  state: TreeState<unknown>,
-  renderItem?: (item: Node<unknown>) => JSX.Element
-}
-
 const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLUListElement>>(null);
-const InternalMenuContext = createContext<InternalMenuContextValue>(null);
+const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
 interface MenuTriggerProps2 extends MenuTriggerProps {
   children?: ReactNode
@@ -45,11 +39,7 @@ export function MenuTrigger(props: MenuTriggerProps2) {
   );
 }
 
-interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {
-  renderSection?: (section: Node<T>) => JSX.Element,
-  renderItem?: (item: Node<T>) => JSX.Element,
-  renderSeparator?: (item: Node<T>) => JSX.Element
-}
+interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUListElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
@@ -60,21 +50,21 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
   });
   let {menuProps} = useMenu(props, state, ref);
 
-  let renderSection = props.renderSection || ((section) => <MenuSection section={section} />);
-  let renderItem = props.renderItem || ((item) => <MenuItem item={item} />);
-  let renderSeparator = props.renderSeparator || ((separator) =>  <Separator {...separator.props} />);
-  let render = (item: Node<T>) => {
-    switch (item.type) {
-      case 'section':
-        return renderSection(item);
-      case 'separator':
-        return renderSeparator(item);
-      case 'item':
-        return renderItem(item);
-      default:
-        throw new Error('Unsupported node type in Menu: ' + item.type);
+  let children = useCachedChildren({
+    items: state.collection,
+    children: (item) => {
+      switch (item.type) {
+        case 'section':
+          return <MenuSection section={item} />;
+        case 'separator':
+          return <Separator {...item.props} />;
+        case 'item':
+          return <MenuItem item={item} />;
+        default:
+          throw new Error('Unsupported node type in Menu: ' + item.type);
+      }
     }
-  };
+  });
 
   return (
     <>
@@ -85,10 +75,10 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
         className={props.className}>
         <Provider
           values={[
-            [InternalMenuContext, {renderItem, state}],
+            [InternalMenuContext, state],
             [SeparatorContext, {elementType: 'li'}]
           ]}>
-          {[...state.collection].map(item => cloneElement(render(item), {key: item.key}))}
+          {children}
         </Provider>
       </ul>
       {portal}
@@ -99,33 +89,39 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
 const _Menu = forwardRef(Menu);
 export {_Menu as Menu};
 
-interface MenuSectionProps<T> extends RenderProps<{section: Node<T>}> {
+interface MenuSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-export function MenuSection<T>({section, children, className, style}: MenuSectionProps<T>) {
-  let {renderItem} = useContext(InternalMenuContext);
+function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
 
-  let renderProps = useRenderProps({
-    className: className || section.props?.className,
-    style: style || section.props?.style,
-    children: children || section.rendered,
-    values: section
+  let children = useCachedChildren({
+    items: section.childNodes,
+    children: item => {
+      if (item.type !== 'item') {
+        throw new Error('Only items are allowed within a section');
+      }
+
+      return <MenuItem item={item} />;
+    }
   });
 
   return (
     <li {...itemProps} style={{display: 'contents'}}>
-      {renderProps.children &&
+      {section.rendered &&
         <span {...headingProps} style={{display: 'contents'}}>
-          {renderProps.children}
+          {section.rendered}
         </span>
       }
-      <ul {...groupProps} {...renderProps}>
-        {[...section.childNodes].map(renderItem)}
+      <ul 
+        {...groupProps}
+        className={className || section.props?.className}
+        style={style || section.props?.style}>
+        {children}
       </ul>
     </li>
   );
@@ -135,8 +131,8 @@ interface MenuItemProps<T> extends RenderProps<ItemStates> {
   item: Node<T>
 }
 
-export function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
-  let {state} = useContext(InternalMenuContext);
+function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
+  let state = useContext(InternalMenuContext);
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 

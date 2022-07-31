@@ -27,14 +27,6 @@ export const ComboBoxExample = () => (
   </ComboBox>
 );
 
-export const ComboBoxReusable = () => (
-  <ReusableComboBox label="Test">
-    <Item>One</Item>
-    <Item>Two</Item>
-    <Item>Three</Item>
-  </ReusableComboBox>
-);
-
 export const ListBoxExample = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
     <MyItem>Foo</MyItem>
@@ -43,12 +35,20 @@ export const ListBoxExample = () => (
   </ListBox>
 );
 
-export const ListBoxResuable = () => (
-  <ReusableListBox selectionMode="multiple" selectionBehavior="replace">
-    <Item>One</Item>
-    <Item>Two</Item>
-    <Item>Three</Item>
-  </ReusableListBox>
+export const ListBoxSections = () => (
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+    <Section title={<span style={{fontSize: '1.2em'}}>Section 1</span>} className={styles.group}>
+      <MyItem>Foo</MyItem>
+      <MyItem>Bar</MyItem>
+      <MyItem>Baz</MyItem>
+    </Section>
+    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    <Section title={<span style={{fontSize: '1.2em'}}>Section 2</span>} className={styles.group}>
+      <MyItem>Foo</MyItem>
+      <MyItem>Bar</MyItem>
+      <MyItem>Baz</MyItem>
+    </Section>
+  </ListBox>
 );
 
 export const SelectExample = () => (
@@ -421,51 +421,6 @@ export const ModalExample = () => (
     </ModalOverlay>
   </DialogTrigger>
 );
-
-function ReusableListBox(props) {
-  return (
-    <ListBox
-      className={styles.menu}
-      {...props}
-      renderItem={item => (
-        <Option item={item} className={itemClass}>
-          {({isSelected}) => <>{item.rendered}{isSelected ? ' (selected)' : ''}</>}
-        </Option>
-      )} />
-  );
-}
-
-function ReusableComboBox({label, children, ...props}) {
-  return (
-    <ComboBox {...props}>
-      <Label style={{display: 'block'}}>{label}</Label>
-      <div style={{display: 'flex'}}>
-        <Input />
-        <Button>
-          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-        </Button>
-      </div>
-      <Popover placement="bottom end">
-        <ListBox
-          className={styles.menu}
-          renderItem={item => (
-            <Option item={item} className={itemClass}>
-              {({isSelected}) => <>{item.rendered}{isSelected ? ' (selected)' : ''}</>}
-            </Option>
-          )}>
-          {children}
-        </ListBox>
-      </Popover>
-    </ComboBox>
-  );
-}
-
-function itemClass({isFocused, isSelected}) {
-  return classNames(styles, 'item', {
-    focused: isFocused,
-    selected: isSelected
-  });
-}
 
 function MyItem(props) {
   return (

@@ -1,6 +1,6 @@
 import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import React, {cloneElement, Key, ReactNode, useMemo, useReducer, useRef} from 'react';
+import React, {cloneElement, Key, ReactElement, ReactNode, useMemo, useReducer, useRef} from 'react';
 import {RenderProps} from './utils';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -266,7 +266,11 @@ class Root extends BaseNode implements Collection<unknown> {
   }
 }
 
-export function useCachedChildren<T extends object>(props: CollectionBase<T>) {
+interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
+  children?: ReactNode | ((item: T) => ReactElement)
+}
+
+export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
   let {children, items} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
@@ -295,7 +299,7 @@ export function useCachedChildren<T extends object>(props: CollectionBase<T>) {
   }, [children, items, cache]);
 }
 
-export function useCollection<T extends object>(props: CollectionBase<T>) {
+export function useCollection<T extends object>(props: CollectionProps<T>) {
   let isMounted = useRef(false);
   let [, queueUpdate] = useReducer(c => c + 1, 0);
   let update = () => {
@@ -334,7 +338,9 @@ export function Item<T>(props: CollectionItemProps<T>) {
   return <option multiple={{...props, rendered: props.children}} />;
 }
 
-interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'> {}
+interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'> {
+  children: ReactNode
+}
 
 export function Section<T>(props: CollectionSectionProps<T>) {
   // @ts-ignore
