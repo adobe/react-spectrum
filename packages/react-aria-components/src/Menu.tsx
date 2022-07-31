@@ -1,6 +1,7 @@
 
 import {AriaMenuProps, MenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
+import {isFocusVisible} from '@react-aria/interactions';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
@@ -8,7 +9,7 @@ import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactNode,
 import {SelectableItemStates} from '@react-aria/selection';
 import {Separator, SeparatorContext} from './Separator';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {useCollection} from './Collection';
+import {ItemStates, useCollection} from './Collection';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
 interface InternalMenuContextValue {
@@ -130,7 +131,7 @@ export function MenuSection<T>({section, children, className, style}: MenuSectio
   );
 }
 
-interface MenuItemProps<T> extends RenderProps<SelectableItemStates> {
+interface MenuItemProps<T> extends RenderProps<ItemStates> {
   item: Node<T>
 }
 
@@ -139,17 +140,24 @@ export function MenuItem<T>({item, children, className, style}: MenuItemProps<T>
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
+  let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
-    values: states
+    values: {
+      ...states,
+      isFocusVisible: focusVisible
+    }
   });
 
   return (
     <li
       {...menuItemProps}
       {...renderProps}
-      ref={ref} />
+      ref={ref}
+      data-focused={states.isFocused || undefined}
+      data-focus-visible={focusVisible || undefined}
+      data-pressed={states.isPressed || undefined} />
   );
 }

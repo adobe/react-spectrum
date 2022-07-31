@@ -1,10 +1,9 @@
 import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
-import {CollectionBase} from '@react-types/shared';
 import {createContext, HTMLAttributes, ReactNode, useContext, useRef, useState} from 'react';
 import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
-import {ListBoxContext} from './ListBox';
+import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React from 'react';
@@ -19,7 +18,7 @@ interface SelectValueContext {
 const SelectContext = createContext<SelectValueContext>(null);
 
 export function Select<T extends object>(props: AriaSelectProps<T>) {
-  let [listBoxProps, setListBoxProps] = useState<CollectionBase<any>>({children: []});
+  let [listBoxProps, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
 
   let {portal, collection} = useCollection(listBoxProps);
   let state = useSelectState({

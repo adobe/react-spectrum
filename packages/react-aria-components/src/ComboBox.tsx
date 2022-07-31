@@ -1,9 +1,8 @@
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
-import {CollectionBase} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {ListBoxContext} from './ListBox';
+import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
 import {Provider, useSlot} from './utils';
 import React, {ReactNode, useRef, useState} from 'react';
@@ -11,19 +10,22 @@ import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
 import {useComboBoxState} from 'react-stately';
 
-interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
+interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label'> {
   children: ReactNode
 }
 
 export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
-  let [propsFromListBox, setListBoxProps] = useState<CollectionBase<any>>({children: []});
+  let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let {portal, collection} = useCollection(propsFromListBox);
+  let {portal, collection} = useCollection({
+    items: props.items ?? props.defaultItems ?? propsFromListBox.items,
+    children: propsFromListBox.children
+  });
   let state = useComboBoxState({
     defaultFilter: contains,
     ...props,
-    items: propsFromListBox ? props.items : [],
+    items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
     children: () => {},
     collection
   });

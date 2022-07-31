@@ -246,17 +246,19 @@ module.exports = new Transformer({
 
       if (path.isTSQualifiedName()) {
         let left = processExport(path.get('left'));
-        if (left.type === 'interface' || left.type === 'object') {
-          let property = left.properties[path.node.right.name];
-          if (property) {
-            return property.value;
+        if (left) {
+          if (left.type === 'interface' || left.type === 'object') {
+            let property = left.properties[path.node.right.name];
+            if (property) {
+              return property.value;
+            }
           }
-        }
 
-        return Object.assign(node, {
-          type: 'identifier',
-          name: left.name + '.' + path.node.right.name
-        });
+          return Object.assign(node, {
+            type: 'identifier',
+            name: left.name + '.' + path.node.right.name
+          });
+        }
       }
 
       if (path.isImportSpecifier()) {

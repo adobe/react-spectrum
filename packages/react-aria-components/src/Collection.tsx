@@ -318,7 +318,11 @@ export function useCollection<T extends object>(props: CollectionBase<T>) {
   return {portal, collection};
 }
 
-interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<SelectableItemStates> {}
+export interface ItemStates extends SelectableItemStates {
+  isFocusVisible: boolean
+}
+
+interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}
 
 export function Item<T>(props: CollectionItemProps<T>) {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
@@ -330,7 +334,7 @@ export function Item<T>(props: CollectionItemProps<T>) {
   return <option multiple={{...props, rendered: props.children}} />;
 }
 
-interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'>, RenderProps<SelectableItemStates> {}
+interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'> {}
 
 export function Section<T>(props: CollectionSectionProps<T>) {
   // @ts-ignore

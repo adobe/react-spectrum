@@ -266,8 +266,7 @@ export const SliderExample = () => (
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      width: 300,
-      touchAction: 'none'
+      width: 300
     }}>
     <div style={{display: 'flex', alignSelf: 'stretch'}}>
       <Label>Test</Label>
@@ -298,6 +297,35 @@ export const SliderExample = () => (
     </SliderTrack>
   </Slider>
 );
+
+export const SliderCSS = (props) => (
+  <Slider {...props} defaultValue={30} className={styles.slider}>
+    <div className={styles.label}>
+      <Label>Test</Label>
+      <SliderOutput />
+    </div>
+    <SliderTrack className={styles.track}>
+      <SliderThumb className={styles.thumb} />
+    </SliderTrack>
+  </Slider>
+);
+
+SliderCSS.args = {
+  orientation: 'horizontal',
+  isDisabled: false,
+  minValue: 0,
+  maxValue: 100,
+  step: 1
+};
+
+SliderCSS.argTypes = {
+  orientation: {
+    control: {
+      type: 'inline-radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
+};
 
 export const TooltipExample = () => (
   <TooltipTrigger offset={5}>

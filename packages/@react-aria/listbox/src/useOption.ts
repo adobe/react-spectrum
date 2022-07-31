@@ -98,7 +98,6 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
-  let isFocused = state.selectionManager.focusedKey === key;
   let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data.shouldSelectOnPressUp;
   let shouldFocusOnHover = props.shouldFocusOnHover ?? data.shouldFocusOnHover;
   let shouldUseVirtualFocus = props.shouldUseVirtualFocus ?? data.shouldUseVirtualFocus;
@@ -109,7 +108,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let optionProps = {
     role: 'option',
-    'aria-disabled': isDisabled,
+    'aria-disabled': isDisabled || undefined,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined
   };
 
@@ -127,7 +126,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, isPressed, isFocused} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
     ref,

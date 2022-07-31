@@ -45,7 +45,7 @@ export function useSliderThumb(
   state: SliderState
 ): SliderThumbAria {
   let {
-    index,
+    index = 0,
     isRequired,
     validationState,
     trackRef,

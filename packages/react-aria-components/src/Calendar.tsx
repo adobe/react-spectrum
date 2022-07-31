@@ -196,11 +196,16 @@ function CalendarCell({state, date, currentMonth, render}: CalendarCellProps) {
     ...states
   });
 
+  let dataAttrs = {
+    'data-pressed': states.isPressed || undefined,
+    'data-unavailable': states.isUnavailable || undefined
+  };
+
   // Bad idea to cloneElement here? What if element doesn't pass through DOM props?
   // Also, two DOM elements... impossible to style <td>
   return (
     <td {...cellProps}>
-      {cloneElement(button, mergeProps(button.props, buttonProps, {ref}))}
+      {cloneElement(button, mergeProps(button.props, buttonProps, {ref, ...dataAttrs}))}
     </td>
   );
 }

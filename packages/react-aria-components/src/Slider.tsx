@@ -1,13 +1,13 @@
 import {AriaSliderProps, mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {AriaSliderThumbProps} from '@react-types/slider';
 import {DOMAttributes} from '@react-types/shared';
-import {DOMProps, Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
+import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-interface SliderProps extends AriaSliderProps, DOMProps {
+interface SliderProps extends AriaSliderProps, RenderProps<SliderState> {
   /**
    * The display format of the value label.
    */
@@ -35,6 +35,11 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
     outputProps
   } = useSlider({...props, label}, state, trackRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state
+  });
+
   return (
     <Provider
       values={[
@@ -43,11 +48,10 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
       ]}>
       <div
         {...groupProps}
+        {...renderProps}
         ref={ref}
-        style={props.style}
-        className={props.className}>
-        {props.children}
-      </div>
+        data-orientation={state.orientation}
+        data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
 }
@@ -95,8 +99,8 @@ interface ThumbRenderProps {
   state: SliderState,
   isDragging: boolean,
   isFocused: boolean,
-  isDisabled: boolean,
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  isDisabled: boolean
 }
 
 interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<ThumbRenderProps> {}
@@ -105,12 +109,12 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   let {state, trackRef} = useContext(InternalSliderContext);
   let {index = 0} = props;
   let inputRef = useRef(null);
-  let [labelRef, hasLabel] = useSlot();
+  let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     index,
     trackRef,
     inputRef,
-    label: hasLabel ? 'd' : null
+    label
   }, state);
 
   let {focusProps, isFocusVisible} = useFocusRing();
@@ -119,11 +123,19 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
     className: props.className,
     style: props.style,
     children: props.children,
-    values: {state, isDragging, isFocused, isDisabled, isFocusVisible}
+    values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
   return (
-    <div {...thumbProps} {...renderProps} ref={ref} style={{...thumbProps.style, ...renderProps.style}}>
+    <div
+      {...thumbProps}
+      {...renderProps}
+      ref={ref}
+      style={{...thumbProps.style, ...renderProps.style}}
+      data-dragging={isDragging || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}>
       <VisuallyHidden>
         <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>

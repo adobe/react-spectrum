@@ -1,16 +1,36 @@
-import {AriaButtonProps, useButton} from 'react-aria';
+import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {SlotProps, StyleProps, useContextProps, WithRef} from './utils';
+import {RenderProps, SlotProps, useContextProps, useRenderProps, WithRef} from './utils';
 
-interface ButtonProps extends AriaButtonProps, SlotProps, StyleProps {}
+interface ButtonRenderProps {
+  isHovered: boolean,
+  isPressed: boolean,
+  isFocused: boolean,
+  isFocusVisible: boolean
+}
+
+interface ButtonProps extends Omit<AriaButtonProps, 'children'>, SlotProps, RenderProps<ButtonRenderProps> {}
 
 export const ButtonContext = createContext<WithRef<AriaButtonProps, HTMLButtonElement>>({});
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  let {buttonProps} = useButton(props, ref);
+  let {buttonProps, isPressed} = useButton(props, ref);
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
+  let {hoverProps, isHovered} = useHover(props);
+  let renderProps = useRenderProps({
+    ...props,
+    values: {isHovered, isPressed, isFocused, isFocusVisible}
+  });
+
   return (
-    <button {...buttonProps} ref={ref}>
+    <button
+      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      {...renderProps}
+      ref={ref}
+      data-pressed={isPressed || undefined}
+      data-hovered={isHovered || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
       {props.children}
     </button>
   );

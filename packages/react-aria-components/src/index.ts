@@ -18,3 +18,5 @@ export {Select, SelectValue} from './Select';
 export {Separator} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
+
+export type {ItemStates} from './Collection';

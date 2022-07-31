@@ -1,20 +1,21 @@
 import {AriaListBoxProps} from '@react-types/listbox';
-import {CollectionBase, Node, SelectionBehavior} from '@react-types/shared';
+import {DOMProps, RenderProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
+import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, useContext, useEffect, useRef} from 'react';
-import {RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {SelectableItemStates} from '@react-aria/selection';
-import {useCollection} from './Collection';
+import {ItemStates, useCollection} from './Collection';
 import {useListBox, useOption} from 'react-aria';
 
-interface ListBoxProps<T> extends AriaListBoxProps<T>, StyleProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, DOMProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior
 }
 
 interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLElement> {
   state?: ListState<T> & OverlayTriggerState,
-  setListBoxProps?: (props: CollectionBase<T>) => void
+  setListBoxProps?: (props: ListBoxProps<T>) => void
 }
 
 export const ListBoxContext = createContext<ListBoxContextValue<unknown>>(null);
@@ -69,7 +70,7 @@ function ListBoxInner({state, props, listBoxRef}) {
   );
 }
 
-interface OptionProps<T> extends RenderProps<SelectableItemStates> {
+interface OptionProps<T> extends RenderProps<ItemStates> {
   item: Node<T>
 }
 
@@ -82,16 +83,24 @@ export function Option<T>({item, className, style, children}: OptionProps<T>) {
     ref
   );
 
-  // Determine whether we should show a keyboard
-  // focus ring for accessibility
-  // let { isFocusVisible, focusProps } = useFocusRing();
-
+  let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
-    values: states
+    values: {
+      ...states,
+      isFocusVisible: focusVisible
+    }
   });
 
-  return <li {...optionProps} {...renderProps} ref={ref} />;
+  return (
+    <li 
+      {...optionProps}
+      {...renderProps}
+      ref={ref}
+      data-focused={states.isFocused || undefined}
+      data-focus-visible={focusVisible || undefined}
+      data-pressed={states.isPressed || undefined} />
+  );
 }

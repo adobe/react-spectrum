@@ -71,3 +71,89 @@ html {
   border-radius: 2px;
   caret-color: transparent;
 }
+
+.slider {
+  display: flex;
+
+  .label {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .track {
+    position: relative;
+  }
+
+  &[data-disabled] {
+    .track {
+      opacity: 0.4;
+    }
+  }
+
+  /* track line */
+  .track:before {
+    content: '';
+    display: block;
+    position: absolute;
+    background: gray;
+  }
+
+  .thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: gray;
+
+    &[data-dragging] {
+      background: dimgray;
+    }
+
+    &[data-focus-visible] {
+      background: orange;
+    }
+  }
+
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+    width: 300px;
+
+    .track {
+      height: 30px;
+      width: 100%;
+      &:before {
+        height: 3px;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+
+    .thumb {
+      top: 50%;
+    }
+  }
+
+  &[data-orientation=vertical] {
+    height: 150px;
+
+    .label {
+      display: none;
+    }
+
+    .track {
+      width: 30px;
+      height: 100%;
+
+      &:before {
+        width: 3px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .thumb {
+      left: 50%;
+    }
+  }
+}
