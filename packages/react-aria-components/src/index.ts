@@ -9,6 +9,7 @@ export {Group} from './Group';
 export {Heading} from './Heading';
 export {Input} from './Input';
 export {Item, Section} from './Collection';
+export {Keyboard} from './Keyboard';
 export {Label} from './Label';
 export {ListBox} from './ListBox';
 export {Menu, MenuTrigger} from './Menu';
@@ -17,6 +18,7 @@ export {Popover} from './Popover';
 export {Select, SelectValue} from './Select';
 export {Separator} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
+export {Text} from './Text';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
 
 export type {ItemStates} from './Collection';

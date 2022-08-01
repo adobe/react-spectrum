@@ -3,11 +3,13 @@ import {AriaMenuProps, MenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ItemStates, useCachedChildren, useCollection} from './Collection';
+import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
+import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
@@ -154,6 +156,19 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
       ref={ref}
       data-focused={states.isFocused || undefined}
       data-focus-visible={focusVisible || undefined}
-      data-pressed={states.isPressed || undefined} />
+      data-pressed={states.isPressed || undefined}>
+      <Provider
+        values={[
+          [TextContext, {
+            slots: {
+              label: labelProps,
+              description: descriptionProps
+            }
+          }],
+          [KeyboardContext, keyboardShortcutProps]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </li>
   );
 }

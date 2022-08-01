@@ -78,7 +78,7 @@ function DateInput({children, style, className, slot}: DateInputProps, ref: Forw
   let [{state, fieldProps}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
   return (
     <InternalDateInputContext.Provider value={state}>
-      <div {...fieldProps} ref={fieldRef} style={style} className={className}>
+      <div {...fieldProps} ref={fieldRef} slot={slot} style={style} className={className}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </div>
     </InternalDateInputContext.Provider>

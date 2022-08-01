@@ -1,7 +1,7 @@
 import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
+import {DOMProps, RenderProps} from './utils';
 import React, {cloneElement, Key, ReactElement, ReactNode, useMemo, useReducer, useRef} from 'react';
-import {RenderProps} from './utils';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useLayoutEffect} from '@react-aria/utils';
 
@@ -338,9 +338,7 @@ export function Item<T>(props: CollectionItemProps<T>) {
   return <option multiple={{...props, rendered: props.children}} />;
 }
 
-interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'> {
-  children: ReactNode
-}
+interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'>, DOMProps {}
 
 export function Section<T>(props: CollectionSectionProps<T>) {
   // @ts-ignore

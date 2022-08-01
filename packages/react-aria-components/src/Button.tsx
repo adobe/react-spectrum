@@ -28,6 +28,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      slot={props.slot}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}>

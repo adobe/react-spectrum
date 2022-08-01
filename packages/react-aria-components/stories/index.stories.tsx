@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, DialogTrigger, Dialog, Group, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, ModalOverlay, Modal, NumberField, Option, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, DialogTrigger, Dialog, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, ModalOverlay, Modal, NumberField, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -51,6 +51,23 @@ export const ListBoxSections = () => (
   </ListBox>
 );
 
+export const ListBoxComplex = () => (
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace">
+    <MyItem>
+      <Text slot="label">Item 1</Text>
+      <Text slot="description">Description</Text>
+    </MyItem>
+    <MyItem>
+      <Text slot="label">Item 2</Text>
+      <Text slot="description">Description</Text>
+    </MyItem>
+    <MyItem>
+      <Text slot="label">Item 3</Text>
+      <Text slot="description">Description</Text>
+    </MyItem>
+  </ListBox>
+);
+
 export const SelectExample = () => (
   <Select>
     <Label style={{display: 'block'}}>Test</Label>
@@ -84,6 +101,31 @@ export const MenuExample = () => (
           <MyItem>Bar</MyItem>
           <MyItem>Baz</MyItem>
         </Section>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const MenuComplex = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu}>
+        <MyItem>
+          <Text slot="label">Copy</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘C</Keyboard>
+        </MyItem>
+        <MyItem>
+          <Text slot="label">Cut</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘X</Keyboard>
+        </MyItem>
+        <MyItem>
+          <Text slot="label">Paste</Text>
+          <Text slot="description">Description</Text>
+          <Keyboard>⌘V</Keyboard>
+        </MyItem>
       </Menu>
     </Popover>
   </MenuTrigger>

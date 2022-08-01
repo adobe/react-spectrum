@@ -23,6 +23,24 @@ html {
   cursor: default;
   color: black;
   background: transparent;
+  display: grid;
+  grid-template-areas: "label       kbd"
+                       "description kbd";
+
+  [slot=label] {
+    grid-area: label;
+    font-weight: semibold;
+  }
+
+  [slot=description] {
+    grid-area: description;
+    font-size: small;
+  }
+
+  kbd {
+    grid-area: kbd;
+    place-self: center end;
+  }
 }
 
 .item.focused {

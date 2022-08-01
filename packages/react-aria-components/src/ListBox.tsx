@@ -6,6 +6,7 @@ import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useEffect, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
+import {TextContext} from './Text';
 import {useListBox, useListBoxSection, useOption} from 'react-aria';
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, DOMProps {
@@ -164,6 +165,18 @@ function Option<T>({item, className, style, children}: OptionProps<T>) {
       ref={ref}
       data-focused={states.isFocused || undefined}
       data-focus-visible={focusVisible || undefined}
-      data-pressed={states.isPressed || undefined} />
+      data-pressed={states.isPressed || undefined}>
+      <Provider
+        values={[
+          [TextContext, {
+            slots: {
+              label: labelProps,
+              description: descriptionProps
+            }
+          }]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </li>
   );
 }
