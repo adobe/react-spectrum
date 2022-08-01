@@ -19,7 +19,7 @@ import {RefObject, useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {useOverlayPosition} from './useOverlayPosition';
 
-interface PopoverProps extends Omit<PositionProps, 'isOpen'> {
+export interface AriaPopoverProps extends Omit<PositionProps, 'isOpen'> {
   /**
    * The ref for the element which the popover positions itself with respect to.
    */
@@ -35,7 +35,7 @@ interface PopoverProps extends Omit<PositionProps, 'isOpen'> {
   isNonModal?: boolean
 }
 
-interface PopoverAria {
+export interface PopoverAria {
   /** Props for the popover element. */
   popoverProps: DOMAttributes,
   /** Props for the popover tip arrow if any. */
@@ -46,7 +46,7 @@ interface PopoverAria {
  * Provides the behavior and accessibility implementation for a popover component.
  * A popover is an overlay element positioned relative to a trigger.
  */
-export function usePopover(props: PopoverProps, state: OverlayTriggerState): PopoverAria {
+export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState): PopoverAria {
   let {
     triggerRef,
     popoverRef,

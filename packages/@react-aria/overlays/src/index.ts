@@ -25,3 +25,6 @@ export type {AriaOverlayProps, OverlayAria} from './useOverlay';
 export type {OverlayTriggerAria, OverlayTriggerProps} from './useOverlayTrigger';
 export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps, OverlayContainerProps} from './useModal';
 export type {DismissButtonProps} from './DismissButton';
+export type {AriaPopoverProps, PopoverAria} from './usePopover';
+export type {AriaModalOverlayProps, ModalOverlayAria} from './useModalOverlay';
+export type {OverlayProps} from './Overlay';

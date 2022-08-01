@@ -16,7 +16,7 @@ import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
 
-interface OverlayProps {
+export interface OverlayProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
