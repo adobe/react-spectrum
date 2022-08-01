@@ -20,12 +20,12 @@ import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 
-interface OuterFieldProps extends SpectrumFieldProps {
+interface FieldWrapperProps extends SpectrumFieldProps {
   displayReadOnly?: boolean,
   hasHelpText?: boolean,
   styleProps?: HTMLAttributes<HTMLElement>
 }
-function OuterField(props: OuterFieldProps, ref: RefObject<HTMLDivElement>) {
+function FieldWrapper(props: FieldWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     labelPosition = 'top' as LabelPosition,
     wrapperClassName,
@@ -108,5 +108,5 @@ function OuterField(props: OuterFieldProps, ref: RefObject<HTMLDivElement>) {
   );
 }
 
-let _OuterField = React.forwardRef(OuterField);
-export {_OuterField as OuterField};
+let _FieldWrapper = React.forwardRef(FieldWrapper);
+export {_FieldWrapper as FieldWrapper};

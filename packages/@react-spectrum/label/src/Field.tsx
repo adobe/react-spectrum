@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {FieldWrapper} from './FieldWrapper';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import {OuterField} from './OuterField';
 import React, {ForwardedRef, ReactElement, RefObject, useCallback, useRef} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
@@ -53,14 +53,14 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   if (!displayReadOnly && (label || hasHelpText)) {
     return (
-      <OuterField
+      <FieldWrapper
         {...props}
         ref={ref as RefObject<HTMLDivElement>}
         displayReadOnly={displayReadOnly}
         styleProps={styleProps}
         hasHelpText={hasHelpText}>
         {children}
-      </OuterField>
+      </FieldWrapper>
     );
   }
 

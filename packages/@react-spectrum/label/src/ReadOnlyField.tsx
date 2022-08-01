@@ -11,11 +11,11 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {FieldWrapper} from './FieldWrapper';
 import {FocusRing} from '@react-aria/focus'; 
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import {OuterField} from './OuterField';
 import React, {HTMLAttributes, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
@@ -105,7 +105,7 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
   }
 
   return (
-    <OuterField 
+    <FieldWrapper 
       {...props}
       ref={ref}
       labelProps={labelProps}
@@ -113,7 +113,7 @@ function ReadOnlyField(props: ReadOnlyFieldProps, ref: RefObject<HTMLDivElement>
       displayReadOnly
       styleProps={styleProps}>
       {textfield}
-    </OuterField>
+    </FieldWrapper>
   );
 }
 
