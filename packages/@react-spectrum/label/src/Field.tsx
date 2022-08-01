@@ -19,7 +19,7 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
 import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
@@ -57,6 +57,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
+  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -132,9 +133,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    // @ts-ignore
-    ref: mergeRefs(children.ref, ref)
+    ref: mergedRefs
   }));
+}
+
+function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
+  return useCallback(
+    mergeRefs(...refs) as (instance: (T | null)) => void,
+    [...refs]
+  );
 }
 
 let _Field = React.forwardRef(Field);

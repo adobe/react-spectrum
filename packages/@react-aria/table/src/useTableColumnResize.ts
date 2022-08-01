@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnResizeState, TableState} from '@react-stately/table';
 import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
@@ -19,6 +18,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, RefObject, useCallback, useRef} from 'react';
+import {TableColumnResizeState, TableState} from '@react-stately/table';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -34,9 +34,9 @@ export interface AriaTableColumnResizeProps<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: ColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef} = props;
-  const stateRef = useRef<ColumnResizeState<T>>(null);
+  const stateRef = useRef<TableColumnResizeState<T>>(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef<string | null>(null);
   stateRef.current = columnState;
