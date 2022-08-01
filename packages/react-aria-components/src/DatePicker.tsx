@@ -1,4 +1,4 @@
-import {AriaDatePickerProps, useDateField, useDatePicker, useDateRangePicker} from 'react-aria';
+import {AriaDatePickerProps, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {createCalendar} from '@internationalized/date';
@@ -11,7 +11,6 @@ import {PopoverContext} from './Popover';
 import {Provider, useSlot} from './utils';
 import React, {ReactNode, useRef} from 'react';
 import {useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
-import {useLocale} from 'react-aria';
 
 interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
   children: ReactNode

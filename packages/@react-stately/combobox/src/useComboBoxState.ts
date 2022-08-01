@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
@@ -35,7 +35,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T> extends ComboBoxProps<T> {
+export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */

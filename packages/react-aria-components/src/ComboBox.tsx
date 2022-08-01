@@ -15,7 +15,7 @@ interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'ch
 }
 
 export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
-  let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
+  let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
 
   let {contains} = useFilter({sensitivity: 'base'});
   let {portal, collection} = useCollection({
@@ -26,7 +26,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     defaultFilter: contains,
     ...props,
     items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
-    children: () => {},
+    children: null,
     collection
   });
 

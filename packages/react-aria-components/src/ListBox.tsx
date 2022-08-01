@@ -16,7 +16,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
 
 interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLUListElement> {
   state?: ListState<T> & OverlayTriggerState,
-  setListBoxProps?: (props: ListBoxProps<T>) => void
+  setListBoxProps?: (props: ListBoxProps<any>) => void
 }
 
 export const ListBoxContext = createContext<ListBoxContextValue<unknown>>(null);

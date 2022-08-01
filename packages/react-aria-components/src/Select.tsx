@@ -23,8 +23,6 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
   let {portal, collection} = useCollection(listBoxProps);
   let state = useSelectState({
     ...props,
-    items: [],
-    children: () => {},
     collection
   });
 

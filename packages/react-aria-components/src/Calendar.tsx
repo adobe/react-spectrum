@@ -1,12 +1,11 @@
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, getWeeksInMonth, isSameMonth} from '@internationalized/date';
-import {CalendarProps, useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from 'react-aria';
+import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {DOMProps, Provider, StyleProps, useContextProps, WithRef} from './utils';
 import {HeadingContext} from './Heading';
-import {mergeProps, useLocale, VisuallyHidden} from 'react-aria';
 import React from 'react';
 
 interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, DOMProps {

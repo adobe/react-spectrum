@@ -1,19 +1,19 @@
 import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
-import React, {cloneElement, Key, ReactElement, ReactNode, useMemo, useReducer, useRef} from 'react';
+import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useLayoutEffect} from '@react-aria/utils';
 
-class BaseNode {
-  firstChild: ElementNode | null;
-  lastChild: ElementNode | null;
-  previousSibling: ElementNode | null;
-  nextSibling: ElementNode | null;
-  parentNode: BaseNode | null;
-  ownerDocument: Root;
+class BaseNode<T> {
+  firstChild: ElementNode<T> | null;
+  lastChild: ElementNode<T> | null;
+  previousSibling: ElementNode<T> | null;
+  nextSibling: ElementNode<T> | null;
+  parentNode: BaseNode<T> | null;
+  ownerDocument: Root<T>;
 
-  constructor(ownerDocument: Root) {
+  constructor(ownerDocument: Root<T>) {
     this.ownerDocument = ownerDocument;
   }
 
@@ -25,7 +25,7 @@ class BaseNode {
     }
   }
 
-  appendChild(child: ElementNode) {
+  appendChild(child: ElementNode<T>) {
     if (this.firstChild == null) {
       this.firstChild = child;
     }
@@ -45,7 +45,7 @@ class BaseNode {
     this.ownerDocument.update();
   }
 
-  insertBefore(newNode: ElementNode, referenceNode: ElementNode) {
+  insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
 
@@ -62,7 +62,7 @@ class BaseNode {
     this.ownerDocument.update();
   }
 
-  removeChild(child: ElementNode) {
+  removeChild(child: ElementNode<T>) {
     if (child.nextSibling) {
       child.nextSibling.previousSibling = child.previousSibling;
     }
@@ -90,12 +90,17 @@ class BaseNode {
 }
 
 let id = 0;
+const TYPE_MAP = {
+  hr: 'separator',
+  optgroup: 'section',
+  option: 'item'
+};
 
-class ElementNode extends BaseNode implements Node<unknown> {
+class ElementNode<T> extends BaseNode<T> implements Node<T> {
   nodeType = 1; // ELEMENT_NODE;
   type: string;
   key: Key;
-  value: unknown;
+  value: T;
   rendered: ReactNode;
   textValue: string;
   props: any;
@@ -103,7 +108,7 @@ class ElementNode extends BaseNode implements Node<unknown> {
   
   constructor(type, ownerDocument) {
     super(ownerDocument);
-    this.type = type === 'hr' ? 'separator' : type === 'optgroup' ? 'section' : 'item';
+    this.type = TYPE_MAP[type];
     this.key = ++id; // TODO
     this.value = null;
     this.rendered = null;
@@ -112,7 +117,7 @@ class ElementNode extends BaseNode implements Node<unknown> {
     // this.props = {id: ++id};
   }
 
-  get childNodes(): Iterable<ElementNode> {
+  get childNodes(): Iterable<ElementNode<T>> {
     return {
       [Symbol.iterator]: this[Symbol.iterator].bind(this)
     };
@@ -152,10 +157,10 @@ class ElementNode extends BaseNode implements Node<unknown> {
   removeAttribute() {}
 }
 
-class Root extends BaseNode implements Collection<unknown> {
+class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
-  keyMap: Map<Key, ElementNode> = new Map();
+  keyMap: Map<Key, ElementNode<T>> = new Map();
   update: () => void;
 
   constructor(update: () => void) {
@@ -174,7 +179,7 @@ class Root extends BaseNode implements Collection<unknown> {
   addEventListener() {}
   removeEventListener() {}
 
-  addNode(node: ElementNode) {
+  addNode(node: ElementNode<T>) {
     if (!this.keyMap.has(node.key)) {
       this.keyMap.set(node.key, node);
 
@@ -184,7 +189,7 @@ class Root extends BaseNode implements Collection<unknown> {
     }
   }
 
-  removeNode(node: ElementNode) {
+  removeNode(node: ElementNode<T>) {
     for (let child of node) {
       this.removeNode(child);
     }
@@ -261,7 +266,7 @@ class Root extends BaseNode implements Collection<unknown> {
     return this.keyMap.get(key);
   }
 
-  at() {
+  at(): Node<T> {
     throw new Error('Not implemented');
   }
 }
@@ -299,7 +304,12 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
   }, [children, items, cache]);
 }
 
-export function useCollection<T extends object>(props: CollectionProps<T>) {
+interface CollectionResult<T> {
+  portal: ReactPortal,
+  collection: Collection<Node<T>>
+}
+
+export function useCollection<T extends object>(props: CollectionProps<T>): CollectionResult<T> {
   let isMounted = useRef(false);
   let [, queueUpdate] = useReducer(c => c + 1, 0);
   let update = () => {
@@ -317,7 +327,7 @@ export function useCollection<T extends object>(props: CollectionProps<T>) {
   }, []);
 
   let children = useCachedChildren(props);
-  let collection = useMemo(() => new Root(update), []);
+  let collection = useMemo(() => new Root<T>(update), []);
   let portal = createPortal(children, collection as unknown as Element);
   return {portal, collection};
 }

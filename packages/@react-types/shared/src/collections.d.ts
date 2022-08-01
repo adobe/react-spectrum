@@ -62,6 +62,11 @@ export interface CollectionBase<T> {
   disabledKeys?: Iterable<Key>
 }
 
+export interface CollectionStateBase<T, C extends Collection<Node<T>> = Collection<Node<T>>> extends Partial<CollectionBase<T>> {
+  /** A pre-constructed collection to use instead of building one from items and children. */
+  collection?: C
+}
+
 export interface Expandable {
   /** The currently expanded keys in the collection (controlled). */
   expandedKeys?: Iterable<Key>,
