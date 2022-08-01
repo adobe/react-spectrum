@@ -159,6 +159,7 @@
     "react-axe": "^3.0.2",
     "react-dom": "^18.0.0",
     "react-test-renderer": "^16.9.0",
+    "recast": "^0.20",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",

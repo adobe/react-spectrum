@@ -12,42 +12,43 @@
 
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
+import {DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface ColorAreaAria {
+export interface ColorAreaAria {
   /** Props for the color area container element. */
-  colorAreaProps: HTMLAttributes<HTMLElement>,
+  colorAreaProps: DOMAttributes,
   /** Props for the color area gradient foreground element. */
-  gradientProps: HTMLAttributes<HTMLElement>,
+  gradientProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden horizontal range input element. */
   xInputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the visually hidden vertical range input element. */
   yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-interface ColorAreaAriaProps extends AriaColorAreaProps {
+export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the x axis of the color area. */
-  inputXRef: RefObject<HTMLElement>,
+  inputXRef: RefObject<HTMLInputElement>,
   /** A ref to the input that represents the y axis of the color area. */
-  inputYRef: RefObject<HTMLElement>,
+  inputYRef: RefObject<HTMLInputElement>,
   /** A ref to the color area containing element. */
-  containerRef: RefObject<HTMLElement>
+  containerRef: RefObject<Element>
 }
 
 /**
  * Provides the behavior and accessibility implementation for a color area component.
  * Color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
-export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): ColorAreaAria {
+export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState): ColorAreaAria {
   let {
     isDisabled,
     inputXRef,
@@ -55,15 +56,15 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     containerRef,
     'aria-label': ariaLabel
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let {direction, locale} = useLocale();
 
-  let focusedInputRef = useRef<HTMLElement>(null);
+  let focusedInputRef = useRef<HTMLInputElement>(null);
 
-  let focusInput = useCallback((inputRef:RefObject<HTMLElement> = inputXRef) => {
+  let focusInput = useCallback((inputRef:RefObject<HTMLInputElement> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
     }
@@ -330,25 +331,25 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
   function getAriaValueTextForChannel(channel:ColorChannel) {
     return (
       valueChangedViaKeyboard.current ?
-      formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
       :
       [
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}),
-        formatMessage('colorNameAndValue', {name: state.value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: state.value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)})
+        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}),
+        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: state.value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)})
       ].join(', ')
     );
   }
 
-  let colorPickerLabel = formatMessage('colorPicker');
+  let colorPickerLabel = stringFormatter.format('colorPicker');
 
   let xInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
+    'aria-label': ariaLabel ? stringFormatter.format('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
   });
 
   let yInputLabellingProps = useLabels({
     ...props,
-    'aria-label': ariaLabel ? formatMessage('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
+    'aria-label': ariaLabel ? stringFormatter.format('colorInputLabel', {label: ariaLabel, channelLabel: colorPickerLabel}) : colorPickerLabel
   });
 
   let colorAreaLabellingProps = useLabels(
@@ -359,7 +360,7 @@ export function useColorArea(props: ColorAreaAriaProps, state: ColorAreaState): 
     isMobile ? colorPickerLabel : undefined
   );
 
-  let ariaRoleDescription = formatMessage('twoDimensionalSlider');
+  let ariaRoleDescription = stringFormatter.format('twoDimensionalSlider');
 
   let {visuallyHiddenProps} = useVisuallyHidden({style: {
     opacity: '0.0001',

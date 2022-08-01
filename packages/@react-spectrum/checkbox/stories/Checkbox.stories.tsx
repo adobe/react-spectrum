@@ -12,6 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox} from '../';
+import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -89,6 +91,21 @@ storiesOf('Checkbox', module)
   .add(
     'no label',
     () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
+  )
+  .add(
+    'WHCM test',
+    () => (
+      <Flex direction="column" gap="size-200">
+        <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Checkbox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+        {renderRow()}
+        {renderRow({isSelected: true, isEmphasized: true})}
+        {renderRow({isIndeterminate: true, isEmphasized: true})}
+        {renderRow({isSelected: true, isEmphasized: false})}
+        {renderRow({isIndeterminate: true, isEmphasized: false})}
+        {renderRow({validationState: 'invalid'})}
+        {renderRow({isSelected: true, validationState: 'invalid'})}
+      </Flex>
+   )
   );
 
 function render(props = {}) {
@@ -116,5 +133,23 @@ function renderNoLabel(props = {}) {
     <Checkbox
       onChange={action('change')}
       {...props} />
+  );
+}
+
+function renderRow(props = {}) {
+  return (
+    <Flex gap="size-200">
+      <Checkbox
+        onChange={action('change')}
+        {...props}>
+        Option
+      </Checkbox>
+      <Checkbox 
+        isDisabled
+        onChange={action('change')}
+        {...props}>
+        Option
+      </Checkbox>
+    </Flex>  
   );
 }

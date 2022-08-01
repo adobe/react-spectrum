@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useSelectState';
+export {useSelectState} from './useSelectState';
+
+export type {SelectProps} from '@react-types/select';
+export type {SelectState} from './useSelectState';

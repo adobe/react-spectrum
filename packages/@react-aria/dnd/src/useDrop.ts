@@ -18,7 +18,7 @@ import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEve
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
-interface DropOptions {
+export interface DropOptions {
   ref: RefObject<HTMLElement>,
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation,
   getDropOperationForPoint?: (types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
@@ -31,7 +31,7 @@ interface DropOptions {
   onDrop?: (e: DropEvent) => void
 }
 
-interface DropResult {
+export interface DropResult {
   dropProps: HTMLAttributes<HTMLElement>,
   isDropTarget: boolean // (??) whether the element is currently an active drop target
 }

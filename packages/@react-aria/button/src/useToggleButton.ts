@@ -21,6 +21,7 @@ import {
 import {AriaToggleButtonProps} from '@react-types/button';
 import {ButtonAria, useButton} from './useButton';
 import {chain} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {ToggleState} from '@react-stately/toggle';
 
@@ -29,7 +30,7 @@ export function useToggleButton(props: AriaToggleButtonProps<'button'>, state: T
 export function useToggleButton(props: AriaToggleButtonProps<'div'>, state: ToggleState, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
 export function useToggleButton(props: AriaToggleButtonProps<'input'>, state: ToggleState, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
 export function useToggleButton(props: AriaToggleButtonProps<'span'>, state: ToggleState, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-export function useToggleButton(props: AriaToggleButtonProps<ElementType>, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
+export function useToggleButton(props: AriaToggleButtonProps<ElementType>, state: ToggleState, ref: RefObject<Element>): ButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a toggle button component.
  * ToggleButtons allow users to toggle a selection on or off, for example switching between two states or modes.

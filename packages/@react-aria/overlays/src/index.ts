@@ -9,11 +9,16 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+export {useOverlayPosition} from './useOverlayPosition';
+export {useOverlay} from './useOverlay';
+export {useOverlayTrigger} from './useOverlayTrigger';
+export {usePreventScroll} from './usePreventScroll';
+export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from './useModal';
+export {DismissButton} from './DismissButton';
+export {ariaHideOutside} from './ariaHideOutside';
 
-export * from './useOverlayPosition';
-export * from './useOverlay';
-export * from './useOverlayTrigger';
-export * from './usePreventScroll';
-export * from './useModal';
-export * from './DismissButton';
-export * from './ariaHideOutside';
+export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
+export type {AriaOverlayProps, OverlayAria} from './useOverlay';
+export type {OverlayTriggerAria, OverlayTriggerProps} from './useOverlayTrigger';
+export type {AriaModalOptions, ModalAria, ModalProviderAria, ModalProviderProps, OverlayContainerProps} from './useModal';
+export type {DismissButtonProps} from './DismissButton';

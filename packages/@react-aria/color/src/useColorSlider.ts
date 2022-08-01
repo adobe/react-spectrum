@@ -12,36 +12,37 @@
 
 import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
-import {HTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-interface ColorSliderAriaOptions extends AriaColorSliderProps {
+export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
-  trackRef: RefObject<HTMLElement>,
+  trackRef: RefObject<Element>,
   /** A ref for the input element. */
   inputRef: RefObject<HTMLInputElement>
 }
 
-interface ColorSliderAria {
+export interface ColorSliderAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
+  trackProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the output element, displaying the value of the color slider. */
-  outputProps: HTMLAttributes<HTMLElement>
+  outputProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for a color slider component.
  * Color sliders allow users to adjust an individual channel of a color value.
  */
-export function useColorSlider(props: ColorSliderAriaOptions, state: ColorSliderState): ColorSliderAria {
+export function useColorSlider(props: AriaColorSliderOptions, state: ColorSliderState): ColorSliderAria {
   let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel} = props;
 
   let {locale, direction} = useLocale();

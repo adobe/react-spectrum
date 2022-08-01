@@ -15,17 +15,18 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {DOMAttributes} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
   isDisabled?: boolean
 }
 
-interface HoverResult {
+export interface HoverResult {
   /** Props to spread on the target element. */
-  hoverProps: HTMLAttributes<HTMLElement>,
+  hoverProps: DOMAttributes,
   isHovered: boolean
 }
 
@@ -152,7 +153,7 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(false);
     };
 
-    let hoverProps: HTMLAttributes<HTMLElement> = {};
+    let hoverProps: DOMAttributes = {};
 
     if (typeof PointerEvent !== 'undefined') {
       hoverProps.onPointerEnter = (e) => {
@@ -164,7 +165,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       };
@@ -182,7 +183,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as HTMLElement)) {
+        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
           triggerHoverEnd(e, 'mouse');
         }
       };
