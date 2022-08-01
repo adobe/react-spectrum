@@ -73,7 +73,7 @@ values to assistive technologies.
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useColorAreaState} />
-hook from `@react-stately/color`. The state object should be passed as an option to `useColorArea`
+hook from `@react-stately/color`. The state object should be passed as an option to `useColorArea`.
 
 By default, `useColorArea` provides an `aria-label` for the localized string "Color Picker",
 which labels the visually hidden `<input>` elements for the two color channels, or on mobile devices,
@@ -86,9 +86,9 @@ channel.
 ## Example
 
 This example shows how to build a color area with a draggable thumb to adjust two color channel values of a color. Styling for
-the background gradient and positioning of the thumb are provided by `useColorArea` in the returned  prop for each element.
+the background gradient and positioning of the thumb are provided by `useColorArea` in the returned props for each element.
 The two `<input>` elements inside the thumb represent the color channel values to assistive technologies, and are hidden
-from view, within `useColorArea`, using the [useVisuallyHidden](VisuallyHidden.html#hook) hook. The thumb also uses the
+from view. The thumb also uses the
 [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
@@ -181,7 +181,7 @@ channel maps to the horizontal axis or `xChannel`, and the `saturation` color ch
 <label id="hsb-label-id">x: Hue, y: Saturation</label>
 <ColorArea
   aria-labelledby="hsb-label-id"
-  defaultValue={'hsb(219, 58%, 93%)'} />
+  defaultValue="hsb(219, 58%, 93%)" />
 ```
 
 ### Controlled
