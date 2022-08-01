@@ -101,7 +101,9 @@ describe('useDrag and useDrop', function () {
       expect(onDropEnter).toHaveBeenCalledWith({
         type: 'dropenter',
         x: 1,
-        y: 1
+        y: 1,
+        types: new DragTypes(dataTransfer),
+        allowedOperations: ['move', 'copy', 'link']
       });
 
       expect(dataTransfer.dropEffect).toBe('move');

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, DragTypes, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState, getDnDState, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
 import {getTypes} from './utils';
@@ -24,7 +24,7 @@ import {useDroppableCollectionId} from './utils';
 // TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity (onDropEnter, onDropMove, onDropExit)
 export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation'> {
   keyboardDelegate: KeyboardDelegate,
-  getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
+  getDropTargetFromPoint: (x: number, y: number, types: DragTypes, allowedOperations: DropOperation[]) => DropTarget | null
 }
 
 export interface DroppableCollectionResult {
@@ -107,7 +107,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   let {dropProps} = useDrop({
     ref,
     onDropEnter(e) {
-      let target = props.getDropTargetFromPoint(e.x, e.y);
+      let target = props.getDropTargetFromPoint(e.x, e.y, e.types, e.allowedOperations);
       state.setTarget(target);
     },
     onDropMove(e) {
@@ -115,7 +115,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
-      let target = props.getDropTargetFromPoint(x, y);
+      let target = props.getDropTargetFromPoint(x, y, types, allowedOperations);
       if (!target) {
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;

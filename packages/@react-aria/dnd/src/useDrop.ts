@@ -109,10 +109,10 @@ export function useDrop(options: DropOptions): DropResult {
     }
 
     let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
+    let types = new DragTypes(e.dataTransfer);
     let dropOperation = allowedOperations[0];
 
     if (typeof options.getDropOperation === 'function') {
-      let types = new DragTypes(e.dataTransfer);
       dropOperation = options.getDropOperation(types, allowedOperations);
     }
 
@@ -121,7 +121,6 @@ export function useDrop(options: DropOptions): DropResult {
     }
 
     if (typeof options.getDropOperationForPoint === 'function') {
-      let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       dropOperation = options.getDropOperationForPoint(types, allowedOperations, e.clientX - rect.x, e.clientY - rect.y);
     }
@@ -134,7 +133,9 @@ export function useDrop(options: DropOptions): DropResult {
       options.onDropEnter({
         type: 'dropenter',
         x: e.clientX - rect.x,
-        y: e.clientY - rect.y
+        y: e.clientY - rect.y,
+        types,
+        allowedOperations
       });
     }
 
