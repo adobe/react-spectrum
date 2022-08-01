@@ -18,7 +18,7 @@ import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface AriaPositionProps extends PositionProps {
+export interface AriaPositionProps extends PositionProps {
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
