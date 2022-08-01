@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {Collection, DOMAttributes, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
-interface SelectableListOptions {
+export interface AriaSelectableListOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -77,17 +77,17 @@ interface SelectableListOptions {
   allowsTabNavigation?: boolean
 }
 
-interface SelectableListAria {
+export interface SelectableListAria {
   /**
    * Props for the option element.
    */
-  listProps: HTMLAttributes<HTMLElement>
+  listProps: DOMAttributes
 }
 
 /**
  * Handles interactions with a selectable list.
  */
-export function useSelectableList(props: SelectableListOptions): SelectableListAria {
+export function useSelectableList(props: AriaSelectableListOptions): SelectableListAria {
   let {
     selectionManager,
     collection,
@@ -98,7 +98,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection,
-    selectOnFocus = false,
+    selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
     allowsTabNavigation

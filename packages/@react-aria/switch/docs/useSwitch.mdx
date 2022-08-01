@@ -87,7 +87,7 @@ hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG eleme
 indicate focus. The focus ring is only visible when the user is interacting with a keyboard,
 not with a mouse or touch.
 
-```tsx example
+```tsx example export=true
 import {useSwitch} from '@react-aria/switch';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useToggleState} from '@react-stately/toggle';
@@ -100,7 +100,7 @@ function Switch(props) {
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
-    <label style={{display: 'flex', alignItems: 'center'}}>
+    <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
@@ -138,7 +138,62 @@ function Switch(props) {
   );
 }
 
-<Switch>Test</Switch>
+<Switch>Low power mode</Switch>
+```
+
+## Usage
+
+The following examples show how to use the `Switch` component created in the above example.
+
+### Default value
+
+Switches are not selected by default. The `defaultSelected` prop can be used to set the default state.
+
+```tsx example
+<Switch defaultSelected>Wi-Fi</Switch>
+```
+
+### Controlled value
+
+The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the switch, and receives the new value.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(false);
+
+  return (
+    <>
+      <Switch onChange={setSelected}>Low power mode</Switch>
+      <p>{selected ? 'Low' : 'High'} power mode active.</p>
+    </>
+  );
+}
+```
+
+### Disabled
+
+Switches can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Switch isDisabled>Airplane Mode</Switch>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Switch remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<Switch isSelected isReadOnly>Bluetooth</Switch>
+```
+
+
+### HTML forms
+
+Switch supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<Switch name="power" value="low">Low power mode</Switch>
 ```
 
 ## Internationalization

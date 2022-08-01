@@ -175,7 +175,7 @@ function DraggableCollectionItem({item, state, dragState}) {
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...buttonProps}
               ref={buttonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />

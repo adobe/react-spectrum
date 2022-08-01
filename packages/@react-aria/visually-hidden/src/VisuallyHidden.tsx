@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {CSSProperties, HTMLAttributes, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
-interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
+export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
   children?: ReactNode,
 
@@ -41,8 +42,8 @@ const styles: CSSProperties = {
   whiteSpace: 'nowrap'
 };
 
-interface VisuallyHiddenAria {
-  visuallyHiddenProps: HTMLAttributes<HTMLElement>
+export interface VisuallyHiddenAria {
+  visuallyHiddenProps: DOMAttributes
 }
 
 /**
