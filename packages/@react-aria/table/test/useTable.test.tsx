@@ -148,8 +148,7 @@ describe('useTable', () => {
         <Table
           aria-label="Table with id"
           data-testid="test-id"
-          id="table-id"
-          >
+          id="table-id">
           <TableHeader columns={columns}>
             {column => (
               <Column key={column.uid}>
@@ -166,7 +165,7 @@ describe('useTable', () => {
           </TableBody>
         </Table>
       );
-      expect(getByTestId("test-id").id).toEqual('table-id');
-    })
-  })
+      expect(getByTestId('test-id').id).toEqual('table-id');
+    });
+  });
 });
