@@ -97,7 +97,7 @@ import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 
 const SIZE = 192;
-const TRACK_THICKNESS = 28;
+const FOCUSED_THUMB_SIZE = 28;
 const THUMB_SIZE = 20;
 const BORDER_RADIUS = 4;
 
@@ -151,9 +151,9 @@ function ColorArea(props) {
           borderRadius: '50%',
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           boxSizing: 'border-box',
-          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
           transform: 'translate(-50%, -50%)',
-          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE
+          width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
         }}>
         <input ref={inputXRef} {...xInputProps} {...focusProps} />
         <input ref={inputYRef} {...yInputProps} {...focusProps} />
