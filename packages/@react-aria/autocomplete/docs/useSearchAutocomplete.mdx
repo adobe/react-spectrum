@@ -113,14 +113,10 @@ This example uses an `<input>` element for the search field.
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
 that the list box can be filtered based on the option text and the current input text.
 
-The list box popup should use the same `Popover` and `ListBox` components created with [useOverlay](useOverlay.html)
+The list box popup should use the same `Popover` and `ListBox` components created with [usePopover](usePopover.html)
 and [useListBox](useListBox.html) that you may already have in your component library or application. These can be shared with other
 components such as a `Select` created with [useSelect](useSelect.html) or a `Dialog` popover created with [useDialog](useDialog.html).
 The code for these components is also included below in the collapsed sections.
-
-This example does not do any advanced popover positioning or portaling to escape its visual container.
-See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
-using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
 options.

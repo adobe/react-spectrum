@@ -35,7 +35,7 @@ module.exports = new Optimizer({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       let mainAsset = b.getMainEntry();
-      if (mainAsset && mainAsset.meta.isMDX) {
+      if (mainAsset && mainAsset.meta.isMDX && !mainAsset.meta.hidden) {
         let meta = mainAsset.meta;
         pages.push({
           url: urlJoin(b.target.publicUrl, rename(b)),
@@ -48,7 +48,7 @@ module.exports = new Optimizer({
           author: meta.author,
           image: getImageURL(meta.image, bundleGraph, b),
           order: meta.order,
-          preRelease: meta.preRelease
+          preRelease: meta.preRelease,
         });
       }
     }, null);
