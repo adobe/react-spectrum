@@ -890,7 +890,7 @@ h2.sectionHeader {
   @mixin small-propTable;
 }
 
-.cardGroup {
+.index {
   h3 {
     margin-bottom: var(--spectrum-global-dimension-size-200) !important;
   }
