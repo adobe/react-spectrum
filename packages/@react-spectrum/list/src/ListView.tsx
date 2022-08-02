@@ -173,10 +173,8 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
               closestDir = dir;
             }
           }
-          // TODO: This actually breaks ListView if items and folders are droppable OR if two droppable folders are vertically adjacent OR if trying to drop above a folder that is the
-          // top most item since it makes it so we can't do in-between drops.
-          // We still need the +- 10
-          if (y >= r.y + 10 && y <= r.maxY - 10 && dropState.getDropOperation({type: 'item', key: closest.key, dropPosition: 'on'}, types, allowedOperations) !== 'cancel') {
+
+          if (dropState.getDropOperation({type: 'item', key: closest.key, dropPosition: 'on'}, types, allowedOperations) !== 'cancel') {
             closestDir = 'on';
           }
         }
