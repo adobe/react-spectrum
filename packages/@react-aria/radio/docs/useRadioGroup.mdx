@@ -76,7 +76,7 @@ onto the appropriate element:
   <InterfaceType properties={docs.links[docs.exports.useRadioGroup.return.id].properties} />
 </TypeContext.Provider>
 
-`useRadio` returns props for an individual radio:
+`useRadio` returns props for an individual radio, along with states that can be used for styling:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useRadio.return.id].properties} />
@@ -150,7 +150,7 @@ hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG eleme
 indicate focus. The focus ring is only visible when the user is interacting with a keyboard,
 not with a mouse or touch.
 
-```tsx example
+```tsx example export=true
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
 
@@ -176,14 +176,12 @@ function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
   let ref = React.useRef(null);
-  let {inputProps} = useRadio(props, state, ref);
+  let {inputProps, isSelected, isDisabled} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
-
-  let isSelected = state.selectedValue === props.value;
   let strokeWidth = isSelected ? 6 : 2;
 
   return (
-    <label style={{display: 'flex', alignItems: 'center'}}>
+    <label style={{display: 'flex', alignItems: 'center', opacity: isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
@@ -239,6 +237,87 @@ function Radio(props) {
   preview={buttongroupPreview}
   title="Button Group"
   description="A single-selectable segmented button group." />
+
+## Usage
+
+The following examples show how to use the `RadioGroup` component created in the above example.
+
+### Default value
+
+An initial, uncontrolled value can be provided to the RadioGroup using the `defaultValue` prop, which accepts a value corresponding with the `value` prop of each Radio.
+
+```tsx example
+<RadioGroup label="Are you a wizard?" defaultValue="yes">
+  <Radio value="yes">Yes</Radio>
+  <Radio value="no">No</Radio>
+</RadioGroup>
+```
+
+### Controlled value
+
+A controlled value can be provided using the `value` prop, which accepts a value corresponding with the `value` prop of each Radio.
+The `onChange` event is fired when the user selects a radio.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('');
+
+  return (
+    <>
+      <RadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
+        <Radio value="wizard">Wizard</Radio>
+        <Radio value="dragon">Dragon</Radio>
+      </RadioGroup>
+      <p>You have selected: {selected}</p>
+    </>
+  );
+}
+```
+
+### Disabled
+
+The entire RadioGroup can be disabled with the `isDisabled` prop.
+
+```tsx example
+<RadioGroup label="Favorite sport" isDisabled>
+  <Radio value="soccer">Soccer</Radio>
+  <Radio value="baseball">Baseball</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</RadioGroup>
+```
+
+To disable an individual radio, pass `isDisabled` to the `Radio` instead.
+
+```tsx example
+<RadioGroup label="Favorite sport">
+  <Radio value="soccer">Soccer</Radio>
+  <Radio value="baseball" isDisabled>Baseball</Radio>
+  <Radio value="basketball">Basketball</Radio>
+</RadioGroup>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the RadioGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<RadioGroup label="Favorite avatar" defaultValue="wizard" isReadOnly>
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<RadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
 
 ## Internationalization
 

@@ -16,7 +16,7 @@ import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {RefObject, useEffect} from 'react';
 
-interface DialogAria {
+export interface DialogAria {
   /** Props for the dialog container element. */
   dialogProps: DOMAttributes,
 

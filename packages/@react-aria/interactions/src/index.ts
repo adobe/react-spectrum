@@ -10,11 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export type {HoverProps} from './useHover';
-export type {KeyboardProps} from './useKeyboard';
-export type {PressProps, PressHookProps, PressResult} from './usePress';
-export type {ScrollWheelProps} from './useScrollWheel';
-
 export {Pressable} from './Pressable';
 export {PressResponder} from './PressResponder';
 export {useFocus} from './useFocus';
@@ -34,3 +29,15 @@ export {useMove} from './useMove';
 export {usePress} from './usePress';
 export {useScrollWheel} from './useScrollWheel';
 export {useLongPress} from './useLongPress';
+
+export type {FocusProps, FocusResult} from './useFocus';
+export type {FocusVisibleHandler, FocusVisibleResult, Modality} from './useFocusVisible';
+export type {FocusWithinProps, FocusWithinResult} from './useFocusWithin';
+export type {HoverProps, HoverResult} from './useHover';
+export type {InteractOutsideProps} from './useInteractOutside';
+export type {KeyboardProps, KeyboardResult} from './useKeyboard';
+export type {PressProps, PressHookProps, PressResult} from './usePress';
+export type {MoveEvents} from '@react-types/shared';
+export type {MoveResult} from './useMove';
+export type {LongPressProps, LongPressResult} from './useLongPress';
+export type {ScrollWheelProps} from './useScrollWheel';

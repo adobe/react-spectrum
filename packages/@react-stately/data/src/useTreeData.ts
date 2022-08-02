@@ -12,7 +12,7 @@
 
 import {Key, useMemo, useState} from 'react';
 
-interface TreeOptions<T extends object> {
+export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
@@ -34,7 +34,7 @@ interface TreeNode<T extends object> {
   children: TreeNode<T>[]
 }
 
-interface TreeData<T extends object> {
+export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
   items: TreeNode<T>[],
 

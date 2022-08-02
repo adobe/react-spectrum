@@ -18,7 +18,7 @@ import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAria {
+export interface RadioAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Whether the radio is disabled. */

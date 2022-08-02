@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {ToggleState} from './useToggleState';
+
 export {useToggleState} from './useToggleState';
+
+export type {ToggleProps} from '@react-types/checkbox';
+export type {ToggleState} from './useToggleState';

@@ -14,3 +14,4 @@
 
 export {Picker} from './Picker';
 export {Item, Section} from '@react-stately/collections';
+export type {SpectrumPickerProps} from '@react-types/select';

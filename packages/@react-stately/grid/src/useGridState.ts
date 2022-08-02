@@ -12,7 +12,7 @@ export interface GridState<T, C extends GridCollection<T>> {
   isKeyboardNavigationDisabled: boolean
 }
 
-interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
+export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
   focusMode?: 'row' | 'cell'
