@@ -593,6 +593,7 @@ function EmptyTest() {
 
 export function DragExample(props?) {
   let {listViewProps, dragHookOptions} = props;
+  let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
@@ -602,6 +603,10 @@ export function DragExample(props?) {
 
   let dragHooks = useDragHooks({
     getItems,
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
     ...dragHookOptions
   });
 
@@ -659,6 +664,7 @@ let itemList2 = [
 
 export function ReorderExample(props) {
   let {onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
+  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
   let list = useListData({
     initialItems: props.items || itemList1
   });
@@ -683,6 +689,10 @@ export function ReorderExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: onDragStart,
     onDragEnd: onDragEnd
@@ -748,6 +758,7 @@ export function DragIntoItemExample(props) {
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
+  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list = useListData({
     initialItems: [
@@ -783,6 +794,10 @@ export function DragIntoItemExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)
@@ -848,6 +863,7 @@ export function DragIntoItemExample(props) {
 
 export function DragBetweenListsExample(props) {
   let onDropAction = action('onDrop');
+  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -888,6 +904,10 @@ export function DragBetweenListsExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -978,6 +998,7 @@ export function DragBetweenListsRootOnlyExample(props) {
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
+  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -1005,6 +1026,10 @@ export function DragBetweenListsRootOnlyExample(props) {
         };
       });
     },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
@@ -1018,6 +1043,10 @@ export function DragBetweenListsRootOnlyExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)
