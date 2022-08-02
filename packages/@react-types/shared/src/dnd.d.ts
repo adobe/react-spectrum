@@ -38,11 +38,7 @@ export interface DragEndEvent extends DragDropEvent {
 }
 
 export interface DropEnterEvent extends DragDropEvent {
-  type: 'dropenter',
-  // TODO: should the below be common to the other Drop events? Technically only needed for onDropEnter in useDroppableCollection
-  // but type is added here for useDrop's onDropEnter. Set to optional so DragManager's DropTarget's onDropEnter doesn't have to add types and allowedDropOperation
-  types?: DragTypes,
-  allowedOperations?: DropOperation[]
+  type: 'dropenter'
 }
 
 export interface DropMoveEvent extends DragDropEvent {
