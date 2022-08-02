@@ -24,7 +24,18 @@ import {useDroppableCollectionId} from './utils';
 // TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity (onDropEnter, onDropMove, onDropExit)
 export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation'> {
   keyboardDelegate: KeyboardDelegate,
-  getDropTargetFromPoint: (x: number, y: number, types: DragTypes, allowedOperations: DropOperation[]) => DropTarget | null
+  // TODO: provide default
+  getDropTargetFromPoint?: (x: number, y: number, types: DragTypes, allowedOperations: DropOperation[]) => DropTarget | null,
+  // TODO keep in this interface because useDnDhooks won't need this? Will rely on components to define isVirtualized when passing options to useDroppableCollection
+  isVirtualized?: boolean,
+  // TODO this returns an array of layout rects in the vicinity of x,y? For non-virtualized, the user can either return ALL children of their list or return a subset of collection items by
+  // using the scrollTop of their list and the height of each item. Virtualized list would just call getVisibleLayoutInfos and return the list of items
+  // Each info returned should have the x, y, maxX, maxY, and key of the list item
+  getVisibleLayouts?: () => any,
+  // TODO: the number of pixels that a drop needs to be off center vertically to be considered a inbetween drop
+  onDropTargetOffsetY?: number,
+  // TODO: the number of pixels that a drop needs to be off center horizontal to be considered a inbetween drop
+  onDropTargetOffsetX?: number
 }
 
 export interface DroppableCollectionResult {
@@ -55,7 +66,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     onInsert,
     onRootDrop,
     onItemDrop,
-    onReorder
+    onReorder,
+    getVisibleLayouts,
+    isVirtualized,
+    onDropTargetOffsetY,
+    onDropTargetOffsetX
   } = localState.props;
 
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
@@ -102,6 +117,67 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     }
 
   }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState]);
+
+  let defaultGetDropTargetFromPoint = (x, y, types, allowedOperations) => {
+    // TODO: High level case:
+    // - User provides visible items with x,y info
+    // - We go through those items and determine what the closest item is
+    // - Determine if it is an "on" drop or a "insert between" drop
+    //     (may need to ask the user to provide logic to determine this since they are the ones who specify the "target" for the insertion indicators and decide the offset to differentiate between a insertion and a on drop)
+    // - Return the drop target (may need to ask the user to provide this logic since they specify what the target value is for the insertion indicator)
+
+    // Tentative implementation outline
+    let closestKey = null;
+    let closestDistance = Infinity;
+    let closestDir = null;
+    if (!isVirtualized) {
+      let rect = ref.current.getBoundingClientRect();
+      x += rect.x;
+      y += rect.y;
+    } else {
+      x += ref.current.scrollLeft;
+      y += ref.current.scrollTop;
+    }
+    let infos = getVisibleLayouts();
+    for (let info of infos) {
+      // TODO: will need to allow the user customize the before/after strings? What about a grid implementation where we drop between columns? DropPosition on has on, before, and after
+      let points: [number, number, string][] = [
+        [info.x, info.y, 'before'],
+        [info.maxX, info.y, 'before'],
+        [info.x, info.maxY, 'after'],
+        [info.maxX, info.maxY, 'after']
+      ];
+
+      for (let [px, py, dir] of points) {
+        let dx = px - x;
+        let dy = py - y;
+        let d = dx * dx + dy * dy;
+        if (d < closestDistance) {
+          closestDistance = d;
+          closestKey = info.key;
+          closestDir = dir;
+        }
+      }
+
+      // If the x,y of the dragged item is close enough to the center of the drop target, then check if it should be a "on" drop
+      // Additional checks for x position in case we are inserting into a table/grid (aka between columns)
+      if (
+        ((y >= info.y + onDropTargetOffsetY && y <= info.maxY - onDropTargetOffsetY) ||
+          (x >= info.x + onDropTargetOffsetX && x <= info.maxX - onDropTargetOffsetX)) &&
+        localState.state.getDropOperation({type: 'item', key: closestKey, dropPosition: 'on'}, types, allowedOperations) !== 'cancel') {
+        closestDir = 'on';
+      }
+    }
+
+    if (closestKey) {
+      return {
+        type: 'item',
+        key: closestKey,
+        // TODO: will need to get closest from the user
+        dropPosition: closestDir
+      };
+    }
+  };
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
