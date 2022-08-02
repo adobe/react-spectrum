@@ -48,7 +48,7 @@ HTML. <TypeLink links={docs.links} type={docs.exports.usePopover} />,
 helps achieve accessible popovers that can be styled as needed.
 
 * Exposes overlay trigger and connects trigger to overlay with ARIA
-* Positions the overlay relative to the trigger
+* Positions the overlay relative to the trigger, automatically flipping when needed
 * Hides content behind the overlay from assistive technology while open
 * Handles closing the overlay when interacting outside and pressing the <Keyboard>Escape</Keyboard> key
 * Restores focus to the triggering element on unmount
@@ -87,8 +87,7 @@ The `Popover` component uses an &lt;<TypeLink links={docs.links} type={docs.expo
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
 function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
+  let popoverRef = React.useRef();
   let {popoverProps} = usePopover({
     ...props,
     popoverRef
