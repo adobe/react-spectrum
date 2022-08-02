@@ -129,7 +129,7 @@ function ModalTrigger({label, children, ...props}) {
   return <>
     <Button {...triggerProps}>Open Dialog</Button>
     {state.isOpen &&
-      <Modal state={state}>
+      <Modal {...props} state={state}>
         {React.cloneElement(children(state.close), overlayProps)}
       </Modal>
     }
@@ -209,3 +209,37 @@ function Button(props) {
 ```
 
 </details>
+
+## Usage
+
+The following examples show how to use the `Modal` and `ModalTrigger` components created in the above example.
+
+### Dismissable
+
+If your modal doesn't require the user to make a confirmation, you can set `isDismissable`
+on the `Modal`. This allows the user to click outside to close the dialog.
+
+```tsx example
+<ModalTrigger isDismissable label="Open Dialog">
+  {() =>
+    <Dialog title="Notice">
+      Click outside to close this dialog.
+    </Dialog>
+  }
+</ModalTrigger>
+```
+
+### Keyboard dismiss disabled
+
+By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key. This can be disabled with the `isKeyboardDismissDisabled` prop.
+
+```tsx example
+<ModalTrigger isKeyboardDismissDisabled label="Open Dialog">
+  {close =>
+    <Dialog title="Notice">
+      <p>You must close this dialog using the button below.</p>
+      <Button onPress={close}>Close</Button>
+    </Dialog>
+  }
+</ModalTrigger>
+```

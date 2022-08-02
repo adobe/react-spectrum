@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import dialogDocs from 'docs:@react-aria/dialog';
 import statelyDocs from 'docs:@react-stately/overlays';
+import typesDocs from 'docs:@react-types/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/overlays/package.json';
@@ -129,7 +130,7 @@ function PopoverTrigger({label, children, ...props}) {
   return <>
     <Button {...triggerProps} buttonRef={ref}>{label}</Button>
     {state.isOpen &&
-      <Popover triggerRef={ref} state={state}>
+      <Popover {...props} triggerRef={ref} state={state}>
         {React.cloneElement(children, overlayProps)}
       </Popover>
     }
@@ -165,7 +166,7 @@ function Dialog({title, children, ...props}) {
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
-    <div {...dialogProps} ref={ref} style={{padding: 30}}>
+    <div {...dialogProps} ref={ref} style={{padding: 30, maxWidth: 200}}>
       {title &&
         <h3 {...titleProps} style={{marginTop: 0}}>
           {title}
@@ -197,3 +198,82 @@ function Button(props) {
 ```
 
 </details>
+
+## Usage
+
+The following examples show how to use the `Popover` and `PopoverTrigger` components created in the above example.
+
+### Placement
+
+The popover's placement with respect to its anchor element can be adjusted using the `placement`
+prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.exports.Placement.id]} /> for a full list of available placement combinations.
+
+```tsx example
+<PopoverTrigger placement="right top" label="Trigger">
+  <Dialog>
+    This is a popover placed to the right of its trigger and aligned to its top edge.
+  </Dialog>
+</PopoverTrigger>
+```
+
+### Offset and cross offset
+
+The popover's offset with respect to its anchor element can be adjusted using the `offset` and
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis.
+
+Below is a popover offset by an additional 50px above the trigger.
+
+```tsx example
+<PopoverTrigger placement="top" offset={50} label="Trigger">
+  <Dialog>
+    Offset by an additional 50px.
+  </Dialog>
+</PopoverTrigger>
+```
+
+Below is a popover cross offset by an additional 100px to the right of the trigger.
+
+```tsx example
+<PopoverTrigger placement="top" crossOffset={100} label="Trigger">
+  <Dialog>
+    Offset by an additional 100px.
+  </Dialog>
+</PopoverTrigger>
+```
+
+### Flipping
+
+By default, `usePopover` attempts to flip popovers on the main axis in situations where the original placement
+would cause it to render out of view. This can be overridden by setting `shouldFlip={false}`.
+To see the difference between the two options, scroll this page so that the example below is near the bottom of the window.
+
+```tsx example
+<PopoverTrigger placement="bottom" label="Default">
+  <Dialog>
+    This is a popover that will flip if it can't fully render below the button.
+  </Dialog>
+</PopoverTrigger>
+
+<PopoverTrigger placement="bottom" shouldFlip={false} label="shouldFlip=false">
+  <Dialog>
+    This is a popover that won't flip if it can't fully render below the button.
+  </Dialog>
+</PopoverTrigger>
+```
+
+### Container padding
+
+You can control the minimum padding required between the popover and the
+surrounding container via the `containerPadding` prop. This affects the positioning
+breakpoints that determine when it will attempt to flip.
+
+The example below will maintain at least 50px between the popover and the edge of the browser window.
+
+```tsx example
+<PopoverTrigger placement="top" containerPadding={50} label="Trigger">
+  <Dialog>
+    This is a popover.
+  </Dialog>
+</PopoverTrigger>
+```
