@@ -1,6 +1,6 @@
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, getWeeksInMonth, isSameMonth} from '@internationalized/date';
-import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
+import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
@@ -116,6 +116,7 @@ interface CalendarCellRenderProps {
   isPressed: boolean,
   isSelected: boolean,
   isFocused: boolean,
+  isFocusVisible: boolean,
   isOutsideVisibleRange: boolean,
   isOutsideMonth: boolean,
   isUnavailable: boolean,
@@ -189,22 +190,29 @@ function CalendarCell({state, date, currentMonth, render}: CalendarCellProps) {
     ref
   );
 
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let isOutsideMonth = !isSameMonth(currentMonth, date);
   let button = render({
     date,
-    isOutsideMonth: !isSameMonth(currentMonth, date),
+    isOutsideMonth,
+    isFocusVisible,
     ...states
   });
 
   let dataAttrs = {
     'data-pressed': states.isPressed || undefined,
-    'data-unavailable': states.isUnavailable || undefined
+    'data-unavailable': states.isUnavailable || undefined,
+    'data-focus-visible': isFocusVisible || undefined,
+    'data-outside-visible-range': states.isOutsideVisibleRange || undefined,
+    'data-outside-month': isOutsideMonth || undefined,
+    'data-selected': states.isSelected || undefined
   };
 
   // Bad idea to cloneElement here? What if element doesn't pass through DOM props?
   // Also, two DOM elements... impossible to style <td>
   return (
     <td {...cellProps}>
-      {cloneElement(button, mergeProps(button.props, buttonProps, {ref, ...dataAttrs}))}
+      {cloneElement(button, mergeProps(button.props, buttonProps, focusProps, {ref, ...dataAttrs}))}
     </td>
   );
 }
