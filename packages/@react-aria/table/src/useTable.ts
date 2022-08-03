@@ -56,8 +56,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     collator,
     layout
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
-
-  let id = useId();
+  let id = useId(props.id);
   gridIds.set(state, id);
 
   let {gridProps} = useGrid({
