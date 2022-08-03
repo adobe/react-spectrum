@@ -170,9 +170,6 @@ governing permissions and limitations under the License.
       .spectrum-Stepper-button {
         border-color: var(--spectrum-textfield-quiet-border-color-error);
       }
-      .spectrum-Stepper-button--stepDown {
-        box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-error);
-      }
     }
   }
 }
