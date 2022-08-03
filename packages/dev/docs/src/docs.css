@@ -899,3 +899,23 @@ h2.sectionHeader {
     margin-top: var(--spectrum-global-dimension-size-400);
   }
 }
+
+.cardGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  justify-content: space-between;
+  justify-items: center;
+  gap: 16px;
+
+  a {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1440px) {
+  .cardGroup {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
+}
