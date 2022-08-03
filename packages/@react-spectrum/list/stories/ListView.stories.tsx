@@ -157,6 +157,8 @@ let decorator = (storyFn, context) => {
   );
 };
 
+let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
+
 storiesOf('ListView', module)
   .addDecorator(decorator)
   .addParameters(parameters)
@@ -427,6 +429,16 @@ storiesOf('ListView/Drag and Drop', module)
         <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
+  )
+  .add(
+    'draggable rows, allow copy and link',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd'), getAllowedDropOperations: () => { getAllowedDropOperationsAction(); return ['copy', 'link', 'cancel'];}}} />
+      </Flex>
+    ), {description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}}
   );
 
 function renderActionsExample(renderActions, props?) {
@@ -593,7 +605,6 @@ function EmptyTest() {
 
 export function DragExample(props?) {
   let {listViewProps, dragHookOptions} = props;
-  let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
   let getItems = (keys) => [...keys].map(key => {
     let item = items.find(item => item.key === key);
     return {
@@ -664,7 +675,6 @@ let itemList2 = [
 
 export function ReorderExample(props) {
   let {onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
-  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
   let list = useListData({
     initialItems: props.items || itemList1
   });
@@ -863,7 +873,6 @@ export function DragIntoItemExample(props) {
 
 export function DragBetweenListsExample(props) {
   let onDropAction = action('onDrop');
-  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -998,7 +1007,6 @@ export function DragBetweenListsRootOnlyExample(props) {
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
-  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
