@@ -11,16 +11,16 @@
  */
 
 import {AriaTooltipProps} from '@react-types/tooltip';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useHover} from '@react-aria/interactions';
 
-interface TooltipAria {
+export interface TooltipAria {
   /**
    * Props for the tooltip element.
    */
-  tooltipProps: HTMLAttributes<HTMLElement>
+  tooltipProps: DOMAttributes
 }
 
 /**

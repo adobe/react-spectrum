@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, Key, ReactNode, useState} from 'react';
+import {Key, ReactNode, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
-interface AriaTagGroupProps extends DOMProps {
+export interface AriaTagGroupProps extends DOMProps {
   children: ReactNode,
   disabledKeys?: Iterable<Key>,
   isDisabled?: boolean,
@@ -23,8 +23,8 @@ interface AriaTagGroupProps extends DOMProps {
   validationState?: 'valid' | 'invalid'
 }
 
-interface TagGroupAria {
-  tagGroupProps: HTMLAttributes<HTMLElement>
+export interface TagGroupAria {
+  tagGroupProps: DOMAttributes
 }
 
 export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
@@ -45,6 +45,6 @@ export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
       'aria-live': isFocusWithin ? 'polite' : 'off',
       'aria-disabled': isDisabled === true,
       ...focusWithinProps
-    } as HTMLAttributes<HTMLElement>)
+    } as DOMAttributes)
   };
 }

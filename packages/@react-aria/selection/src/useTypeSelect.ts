@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, KeyboardEvent, useRef} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {Key, KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-interface TypeSelectOptions {
+export interface AriaTypeSelectOptions {
   /**
    * A delegate that returns collection item keys with respect to visual layout.
    */
@@ -29,17 +29,17 @@ interface TypeSelectOptions {
   onTypeSelect?: (key: Key) => void
 }
 
-interface TypeSelectAria {
+export interface TypeSelectAria {
   /**
    * Props to be spread on the owner of the options.
    */
-  typeSelectProps: HTMLAttributes<HTMLElement>
+  typeSelectProps: DOMAttributes
 }
 
 /**
  * Handles typeahead interactions with collections.
  */
-export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
+export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef({
     search: '',

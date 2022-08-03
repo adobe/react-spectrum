@@ -38,7 +38,7 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
-import {useFilter, useMessageFormatter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLabel} from '@react-aria/label';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -154,12 +154,12 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     children,
     style,
     className
-  } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
-    ? <AlertMedium id={invalidId} aria-label={formatMessage('invalid')} />
+    ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
     : <CheckmarkMedium />;
 
   if (icon) {
@@ -179,7 +179,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
         props.onPress(e);
       }}
       preventFocus
-      aria-label={formatMessage('clear')}
+      aria-label={stringFormatter.format('clear')}
       excludeFromTabOrder
       UNSAFE_className={
         classNames(
@@ -333,7 +333,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
   let popoverRef = useRef<HTMLDivElement>();
   let listBoxRef = useRef<HTMLDivElement>();
   let layout = useListBoxLayout(state);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
@@ -376,7 +376,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     <ClearButton
       {...clearButtonProps}
       preventFocus
-      aria-label={formatMessage('clear')}
+      aria-label={stringFormatter.format('clear')}
       excludeFromTabOrder
       UNSAFE_className={
         classNames(
@@ -389,7 +389,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={formatMessage('loading')}
+      aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -535,7 +535,7 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           shouldUseVirtualFocus
           renderEmptyState={() => loadingState !== 'loading' && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>
-              {formatMessage('noResults')}
+              {stringFormatter.format('noResults')}
             </span>
           )}
           UNSAFE_className={

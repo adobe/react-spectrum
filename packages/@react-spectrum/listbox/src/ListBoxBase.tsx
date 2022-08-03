@@ -25,7 +25,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useCollator, useMessageFormatter} from '@react-aria/i18n';
+import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
@@ -75,7 +75,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     isVirtualized: true
   }, state, ref);
   let {styleProps} = useStyleProps(props);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   // Sync loading state into the layout.
   layout.isLoading = props.isLoading;
@@ -144,7 +144,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                 <ProgressCircle
                   isIndeterminate
                   size="S"
-                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}
+                  aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
                   UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
               </div>
             );

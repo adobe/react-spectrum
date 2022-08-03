@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useProgressBar';
+export {useProgressBar} from './useProgressBar';
+export type {AriaProgressBarProps} from '@react-types/progress';
+export type {ProgressBarAria} from './useProgressBar';

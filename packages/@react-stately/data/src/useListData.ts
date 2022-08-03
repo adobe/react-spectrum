@@ -13,7 +13,7 @@
 import {Key, useMemo, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
-interface ListOptions<T> {
+export interface ListOptions<T> {
   /** Initial items in the list. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
