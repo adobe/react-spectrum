@@ -160,7 +160,7 @@ governing permissions and limitations under the License.
         border-color: var(--spectrum-textfield-quiet-border-color-disabled);
       }
     }
-    &.is-invalid {
+    &.is-invalid:not(.is-focused) {
       &.focus-ring, &:focus-ring {
         box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-error);
       }
@@ -169,6 +169,9 @@ governing permissions and limitations under the License.
       }
       .spectrum-Stepper-button {
         border-color: var(--spectrum-textfield-quiet-border-color-error);
+      }
+      .spectrum-Stepper-button--stepDown {
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-error);
       }
     }
   }
