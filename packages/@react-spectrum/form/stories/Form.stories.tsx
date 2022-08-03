@@ -181,6 +181,14 @@ storiesOf('Form', module)
     'validationState: valid',
     () => render({validationState: 'valid'})
   )
+    .add(
+    'validationState: invalid, isQuiet: true',
+    () => render({validationState: 'invalid', isQuiet: true})
+  )
+  .add(
+    'validationState: valid, isQuiet: true',
+    () => render({validationState: 'valid', isQuiet: true})
+  )
   .add(
     'form with reset',
     () => <FormWithControls />
