@@ -19,7 +19,7 @@ import {SelectionManager} from '@react-stately/selection';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useUpdateEffect} from '@react-aria/utils';
 
-interface UseGridSelectionAnnouncementProps {
+export interface GridSelectionAnnouncementProps {
   /**
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
@@ -36,7 +36,7 @@ interface GridSelectionState<T> {
   selectionManager: SelectionManager
 }
 
-export function useGridSelectionAnnouncement<T>(props: UseGridSelectionAnnouncementProps, state: GridSelectionState<T>) {
+export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>) {
   let {
     getRowText = (key) => state.collection.getItem(key)?.textValue
   } = props;

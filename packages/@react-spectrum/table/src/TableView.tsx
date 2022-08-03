@@ -14,7 +14,6 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {ColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -29,6 +28,7 @@ import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
+import {TableColumnResizeState, TableState, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
@@ -80,7 +80,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
-  columnState: ColumnResizeState<T>
+  columnState: TableColumnResizeState<T>
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);

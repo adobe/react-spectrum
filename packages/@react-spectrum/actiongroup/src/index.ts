@@ -12,3 +12,4 @@
 /// <reference types="css-module-types" />
 export {ActionGroup} from './ActionGroup';
 export {Item} from '@react-stately/collections';
+export type {SpectrumActionGroupProps} from '@react-types/actiongroup';

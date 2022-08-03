@@ -10,3 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {useSearchAutocomplete} from './useSearchAutocomplete';
+export type {AriaSearchAutocompleteProps, SearchAutocompleteAria} from './useSearchAutocomplete';

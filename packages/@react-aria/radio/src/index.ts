@@ -11,3 +11,6 @@
  */
 export {useRadio} from './useRadio';
 export {useRadioGroup} from './useRadioGroup';
+export type {AriaRadioGroupProps, AriaRadioProps} from '@react-types/radio';
+export type {RadioAria} from './useRadio';
+export type {RadioGroupAria} from './useRadioGroup';

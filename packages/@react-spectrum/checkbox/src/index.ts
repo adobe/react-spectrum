@@ -12,3 +12,4 @@
 /// <reference types="css-module-types" />
 export {Checkbox} from './Checkbox';
 export {CheckboxGroup} from './CheckboxGroup';
+export type {SpectrumCheckboxProps, SpectrumCheckboxGroupProps} from '@react-types/checkbox';

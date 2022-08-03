@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {NumberFieldState} from './useNumberFieldState';
+
 export {useNumberFieldState} from './useNumberFieldState';
+
+export type {NumberFieldStateOptions} from './useNumberFieldState';
+export type {NumberFieldState} from './useNumberFieldState';
