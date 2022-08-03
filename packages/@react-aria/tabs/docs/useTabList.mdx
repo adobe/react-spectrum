@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/tabs';
 import statelyDocs from 'docs:@react-stately/tabs';
+import collectionsDocs from 'docs:@react-stately/collections';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/tabs/package.json';
@@ -40,9 +41,7 @@ after_version: 3.0.0-rc.0
 ## API
 
 <FunctionAPI function={docs.exports.useTabList} links={docs.links} />
-
 <FunctionAPI function={docs.exports.useTab} links={docs.links} />
-
 <FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
 
 ## Features
@@ -68,7 +67,7 @@ Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
   <InterfaceType properties={docs.links[docs.exports.useTabList.return.id].properties} />
 </TypeContext.Provider>
 
-`useTab` returns props to be spread onto each individual tab:
+`useTab` returns props to be spread onto each individual tab, along with states that can be used for styling:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useTab.return.id].properties} />
@@ -82,7 +81,8 @@ Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTabListState} />
 hook in `@react-stately/tabs`. The state object should be passed as an option to `useTabList`, `useTab`,
-and `useTabPanel`.
+and `useTabPanel`. The <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> component
+is used to represent each tab, following the [Collections API](../react-stately/collections.html) used by many other components.
 
 ## Example
 
@@ -98,10 +98,10 @@ function Tabs(props) {
   let ref = React.useRef();
   let {tabListProps} = useTabList(props, state, ref);
   return (
-    <div style={{height: '150px'}}>
-      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey'}}>
+    <div class={`tabs ${props.orientation || ''}`}>
+      <div {...tabListProps} ref={ref}>
         {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} />
+          <Tab key={item.key} item={item} state={state} orientation={props.orientation} />
         ))}
       </div>
       <TabPanel key={state.selectedItem?.key} state={state} />
@@ -109,21 +109,12 @@ function Tabs(props) {
   );
 }
 
-function Tab({item, state}) {
+function Tab({item, state, orientation}) {
   let {key, rendered} = item;
   let ref = React.useRef();
-  let {tabProps} = useTab({key}, state, ref);
-  let isSelected = state.selectedKey === key;
-  let isDisabled = state.disabledKeys.has(key);
+  let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
   return (
-    <div
-      {...tabProps}
-      ref={ref}
-      style={{
-        padding: '10px',
-        borderBottom: isSelected ? '3px solid var(--blue)' : undefined,
-        opacity: isDisabled ? '0.5' : undefined
-      }}>
+    <div {...tabProps} ref={ref}>
       {rendered}
     </div>
   );
@@ -133,20 +124,127 @@ function TabPanel({state, ...props}) {
   let ref = React.useRef();
   let {tabPanelProps} = useTabPanel(props, state, ref);
   return (
-    <div {...tabPanelProps} ref={ref} style={{padding: '10px'}}>
+    <div {...tabPanelProps} ref={ref}>
       {state.selectedItem?.props.children}
     </div>
   );
 }
 
-<Tabs aria-label="History of Ancient Rome" disabledKeys={['Emp']}>
+<Tabs aria-label="History of Ancient Rome">
   <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
   <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
   <Item key="Emp" title="Empire">Alea jacta est.</Item>
 </Tabs>
 ```
 
-## With focusable content
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.tabs {
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs.vertical {
+  flex-direction: row;
+}
+
+[role=tablist] {
+  display: flex;
+}
+
+[role=tablist][aria-orientation=horizontal] {
+  border-bottom: 1px solid gray;
+}
+
+[role=tablist][aria-orientation=vertical] {
+  flex-direction: column;
+  border-right: 1px solid gray;
+}
+
+[role=tab] {
+  padding: 10px;
+}
+
+[role=tablist][aria-orientation=horizontal] [role=tab] {
+  border-bottom: 3px solid transparent;
+}
+
+[role=tablist][aria-orientation=vertical] [role=tab] {
+  border-right: 3px solid transparent;
+}
+
+[role=tablist] [role=tab][aria-selected=true] {
+  border-color: var(--blue);
+}
+
+[role=tab][aria-disabled] {
+  opacity: 0.5;
+}
+
+[role=tabpanel] {
+  padding: 10px;
+}
+```
+
+</details>
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/practical-monad-punzo?file=/src/Tabs.js"
+  preview={animatedPreview}
+  title="Animated Selection"
+  description="A TabList component with an animated selection indicator." />
+
+## Usage
+
+The following examples show how to use the `Tabs` component created in the above example.
+
+### Default selection
+
+A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `key` prop provided to each item.
+When `Tabs` is used with dynamic items as described below, the key of each item is derived from the data.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+
+```tsx example
+<Tabs aria-label="Keyboard Settings" defaultSelectedKey="keyboard">
+  <Item key="mouse">Mouse Settings</Item>
+  <Item key="keyboard">Keyboard Settings</Item>
+  <Item key="gamepad">Gamepad Settings</Item>
+</Tabs>
+```
+
+### Controlled selection
+
+Selection can be controlled using the `selectedKey` prop, paired with the `onSelectionChange` event. The `key` prop from the selected tab will be passed into the callback when the tab is selected, allowing you to update state accordingly.
+
+```tsx example
+function Example() {
+  let [timePeriod, setTimePeriod] = React.useState('triassic');
+
+  return (
+    <>
+      <p>Selected time period: {timePeriod}</p>
+      <Tabs aria-label="Mesozoic time periods" selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
+        <Item key="triassic" title="Triassic">
+          The Triassic ranges roughly from 252 million to 201 million years ago, preceding the Jurassic Period.
+        </Item>
+        <Item key="jurassic" title="Jurassic">
+          The Jurassic ranges from 200 million years to 145 million years ago.
+        </Item>
+        <Item key="cretaceous" title="Cretaceous">
+          The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.
+        </Item>
+      </Tabs>
+    </>
+  );
+}
+```
+
+### Focusable content
 
 When the tab panel doesn't contain any focusable content, the entire panel is given a `tabIndex=0` so that the content can be navigated to with the keyboard. When the tab panel contains focusable content, such as a textfield, then the `tabIndex` is omitted because the content itself can receive focus.
 
@@ -162,13 +260,106 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 </Tabs>
 ```
 
-## Styled examples
+### Dynamic items
 
-<ExampleCard
-  url="https://codesandbox.io/s/practical-monad-punzo?file=/src/Tabs.js"
-  preview={animatedPreview}
-  title="Animated Selection"
-  description="A TabList component with an animated selection indicator." />
+The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `Tabs` component is called for each item in the list, and returns an `<Item>` representing the tab.
+
+Each item accepts a `key` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
+
+```tsx example
+function Example() {
+  let [tabs, setTabs] = React.useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab Body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <>
+      <button onClick={addTab}>Add tab</button>
+      <button onClick={removeTab}>Remove tab</button>
+      <Tabs aria-label="Dynamic tabs" items={tabs}>
+        {item => <Item title={item.title}>{item.content}</Item>}
+      </Tabs>
+    </>
+  );
+}
+```
+
+### Keyboard Activation
+
+By default, pressing the arrow keys while focus is on a Tab will switch selection to the adjacent Tab in that direction, updating the content displayed accordingly. If you would like to prevent selection change
+from happening automatically you can set the `keyboardActivation` prop to "manual". This will prevent tab selection from changing on arrow key press, requiring a subsequent `Enter` or `Space` key press to confirm
+tab selection.
+
+```tsx example
+<Tabs aria-label="Input settings" keyboardActivation="manual">
+  <Item key="mouse">Mouse Settings</Item>
+  <Item key="keyboard">Keyboard Settings</Item>
+  <Item key="gamepad">Gamepad Settings</Item>
+</Tabs>
+```
+
+### Orientation
+
+By default, tabs are horizontally oriented. The `orientation` prop can be set to `vertical` to change this. This affects keyboard navigation. You are responsible for styling your tabs accordingly.
+
+```tsx example
+<Tabs aria-label="Chat log orientation example" orientation="vertical">
+  <Item key="item1" title="John Doe">
+    There is no prior chat history with John Doe.
+  </Item>
+  <Item key="item2" title="Jane Doe">
+    There is no prior chat history with Jane Doe.
+  </Item>
+  <Item key="item3" title="Joe Bloggs">
+    There is no prior chat history with Joe Bloggs.
+  </Item>
+</Tabs>
+```
+
+### Disabled
+
+All tabs can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Tabs aria-label="Mesozoic time periods" isDisabled>
+  <Item key="mouse">Mouse Settings</Item>
+  <Item key="keyboard">Keyboard Settings</Item>
+  <Item key="gamepad">Gamepad Settings</Item>
+</Tabs>
+```
+
+### Disabled items
+
+Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
+
+```tsx example
+<Tabs aria-label="Input settings" disabledKeys={['gamepad']}>
+  <Item key="mouse">Mouse Settings</Item>
+  <Item key="keyboard">Keyboard Settings</Item>
+  <Item key="gamepad">Gamepad Settings</Item>
+</Tabs>
+```
 
 ## Internationalization
 

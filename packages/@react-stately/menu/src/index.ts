@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {MenuTriggerState} from './useMenuTriggerState';
+
 export {useMenuTriggerState} from './useMenuTriggerState';
+
+export type {MenuTriggerProps} from '@react-types/menu';
+export type {MenuTriggerState} from './useMenuTriggerState';

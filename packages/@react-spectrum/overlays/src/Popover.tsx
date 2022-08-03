@@ -11,6 +11,7 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DEFAULT_MODAL_PADDING, useModal, useOverlay} from '@react-aria/overlays';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
@@ -18,7 +19,6 @@ import overrideStyles from './overlays.css';
 import {PlacementAxis, PopoverProps} from '@react-types/overlays';
 import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useModal, useOverlay} from '@react-aria/overlays';
 
 interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -102,6 +102,39 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
+  let [isHideArrow, setIsHideArrow] = useState(hideArrow);
+
+  useLayoutEffect(() => {
+    // check position of arrow and popover boundries
+    if (ref.current && arrowProps) {
+      let propsHideArrow = hideArrow;
+
+      // figure out the location of the offset and which popover dimension to use
+      let offset = arrowProps.style.left ? 'left' : 'top';
+      let overlayCrossSize = offset === 'left' ? ref.current.offsetWidth : ref.current.offsetHeight;
+
+      // for the start and top, no change is made to arrowPosition not caught in a condiational below
+      if (DEFAULT_MODAL_PADDING > arrowProps.style[offset] && arrowProps.style[offset] > 0) {
+        // using the default padding for proper arrow placement
+        let arrowStyle = {...arrowProps.style};
+        arrowStyle[offset] = DEFAULT_MODAL_PADDING;
+        arrowProps.style = arrowStyle;
+      } else if (arrowProps.style[offset] > overlayCrossSize - DEFAULT_MODAL_PADDING && arrowProps.style[offset] + 2 <= overlayCrossSize) {
+        // for the end and bottom, keep the arrow pointing at the button and within the popover
+        let arrowStyle = {...arrowProps.style};
+        arrowStyle[offset] = overlayCrossSize - DEFAULT_MODAL_PADDING;
+        arrowProps.style = arrowStyle;
+      } else if (arrowProps.style[offset] <= 0 || arrowProps.style[offset] + 2 > overlayCrossSize) {
+        // trigger is too far off the page, hiding the arrow per Spectrum
+        propsHideArrow = true;
+        ref.current.style.margin = '0';
+      }
+
+      if (propsHideArrow !== isHideArrow) {
+        setIsHideArrow(propsHideArrow);
+      }
+    }
+  }, [arrowProps]);
 
   return (
     <div
@@ -127,7 +160,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
       role="presentation"
       data-testid="popover">
       {children}
-      {hideArrow ? null : (
+      {isHideArrow ? null : (
         <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
       )}
     </div>
@@ -193,6 +226,7 @@ function Arrow(props) {
       style={props.style}
       className={classNames(styles, 'spectrum-Popover-tip')}
       ref={ref}
+      data-testid="arrow"
       {...arrowProps}>
       <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
     </svg>

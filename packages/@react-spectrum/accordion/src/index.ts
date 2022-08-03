@@ -12,3 +12,4 @@
 /// <reference types="css-module-types" />
 export {Accordion} from './Accordion';
 export {Item} from '@react-stately/collections';
+export type {SpectrumAccordionProps} from '@react-types/accordion';

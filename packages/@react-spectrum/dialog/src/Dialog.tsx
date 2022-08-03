@@ -25,7 +25,7 @@ import React, {useContext, useMemo, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog} from '@react-aria/dialog';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 let sizeMap = {
   S: 'small',
@@ -47,7 +47,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');
@@ -103,7 +103,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
             <ActionButton
               UNSAFE_className={styles['spectrum-Dialog-closeButton']}
               isQuiet
-              aria-label={formatMessage('dismiss')}
+              aria-label={stringFormatter.format('dismiss')}
               onPress={onDismiss}>
               <CrossLarge />
             </ActionButton>

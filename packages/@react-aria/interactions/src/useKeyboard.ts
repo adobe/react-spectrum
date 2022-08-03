@@ -18,7 +18,7 @@ export interface KeyboardProps extends KeyboardEvents {
   isDisabled?: boolean
 }
 
-interface KeyboardResult {
+export interface KeyboardResult {
   /** Props to spread onto the target element. */
   keyboardProps: DOMAttributes
 }

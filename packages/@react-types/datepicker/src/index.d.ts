@@ -127,10 +127,13 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
 
 export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps {}
 
-export interface SpectrumTimePickerProps<T extends TimeValue> extends AriaTimeFieldProps<T>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, SpectrumLabelableProps, StyleProps {
   /**
    * Whether the time field should be displayed with a quiet style.
    * @default false
    */
   isQuiet?: boolean
 }
+
+// backward compatibility
+export type SpectrumTimePickerProps<T extends TimeValue> = SpectrumTimeFieldProps<T>;
