@@ -201,7 +201,7 @@ class DragSession {
     this.updateValidDropTargets();
 
     let dragModality = getDragModality();
-    announce(this.formatMessage(MESSAGES[dragModality]));
+    announce(this.stringFormatter.format(MESSAGES[dragModality]));
 
     if (dragModality === 'virtual') {
       this.genericAncestor = findGenericAncestor(this.dragTarget, this.validDropTargets);
@@ -210,11 +210,9 @@ class DragSession {
         if (this.genericAncestor.hasAttribute('aria-label')) {
           this.genericAncestor.dataset.ariaLabel = this.genericAncestor.getAttribute('aria-label');
         }
-        this.genericAncestor.setAttribute('aria-label', this.formatMessage('dragApplicationLabel'));
+        this.genericAncestor.setAttribute('aria-label', this.stringFormatter.format('dragApplicationLabel'));
       }
     }
-
-    announce(this.stringFormatter.format(MESSAGES[getDragModality()]));
   }
 
   teardown() {
