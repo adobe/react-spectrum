@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {AriaLabelingProps, DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
