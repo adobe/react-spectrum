@@ -11,7 +11,7 @@
  */
 
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
-import {DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
@@ -65,7 +65,7 @@ export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBa
   allowsNonContiguousRanges?: boolean
 }
 
-export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps {
+export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, StyleProps, AriaLabelingProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
@@ -73,7 +73,7 @@ export interface SpectrumCalendarProps<T extends DateValue> extends CalendarProp
   visibleMonths?: number
 }
 
-export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps {
+export interface SpectrumRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, StyleProps, AriaLabelingProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
