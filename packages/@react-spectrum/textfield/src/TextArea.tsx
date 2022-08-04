@@ -35,12 +35,15 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
-    if (isQuiet) {
+    // Quiet textareas always grow based on their text content.
+    // Standard textareas also grow by default, unless an explicit height is set.
+    if (isQuiet || !props.height) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       input.style.alignSelf = 'start';
       input.style.height = 'auto';
-      input.style.height = `${input.scrollHeight}px`;
+      // offsetHeight - clientHeight accounts for the border/padding.
+      input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.alignSelf = prevAlignment;
     }
   }, [isQuiet, inputRef]);
