@@ -105,6 +105,48 @@ function Example({usePortal, contain}: StoryProps) {
   );
 }
 
+function FocusableFirstInScopeExample() {
+  let [contentIndex, setContentIndex] = useState(0);
+  let [buttonRemoved, setButtonRemoved] = useState(false);
+  function DialogContent(index = 0) {
+    const nextIndex = index === 2 ? 0 : index + 1;
+    return (
+      <>
+        <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
+        {index === 2 ?
+          (
+            <>
+              <p>The end of the road.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
+              {buttonRemoved &&
+                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+              }
+            </>
+          ) :
+          (
+            <>
+              <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+            </>
+          )
+        }
+
+      </>
+    );
+  }
+  const contents = [];
+  for (let i = 0; i < 3; i++) {
+    contents.push(DialogContent(i));
+  }
+  return (
+    <FocusScope contain>
+      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem', width: '15rem'}}>
+        {contents[contentIndex]}
+      </div>
+    </FocusScope>
+  );
+}
+
 export const KeyboardNavigation = Template().bind({});
 KeyboardNavigation.args = {usePortal: false};
 
@@ -116,3 +158,7 @@ KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
 
 export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
 KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
+
+const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
+
+export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});

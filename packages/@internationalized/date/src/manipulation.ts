@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyDateTime, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -22,8 +22,8 @@ export function add(date: CalendarDateTime, duration: DateTimeDuration): Calenda
 export function add(date: CalendarDate, duration: DateDuration): CalendarDate;
 export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime;
 export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration) {
-  let mutableDate: Mutable<AnyCalendarDate> = date.copy();
-  let days = 'hour' in date ? addTimeFields(date, duration) : 0;
+  let mutableDate: Mutable<AnyCalendarDate | AnyDateTime> = date.copy();
+  let days = 'hour' in mutableDate ? addTimeFields(mutableDate, duration) : 0;
 
   addYears(mutableDate, duration.years || 0);
   if (mutableDate.calendar.balanceYearMonth) {

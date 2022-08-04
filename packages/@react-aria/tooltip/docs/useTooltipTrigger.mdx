@@ -77,7 +77,7 @@ This example implements a Tooltip that renders in an absolute position next to i
 
 Two instances of the example are rendered to demonstrate the behavior of the delay on hover. If you hover over the first button, the tooltip will be shown after a delay. Hovering over the second button shows the tooltip immediately. If you wait for a delay before hovering another element, the delay restarts.
 
-```tsx example
+```tsx example export=true
 import {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {mergeProps} from '@react-aria/utils';
@@ -91,10 +91,12 @@ function Tooltip({state, ...props}) {
         position: 'absolute',
         left: '5px',
         top: '100%',
+        maxWidth: 150,
         marginTop: '10px',
         backgroundColor: 'white',
         color: 'black',
-        padding: '5px'
+        padding: '5px',
+        border: '1px solid gray'
       }}
       {...mergeProps(props, tooltipProps)} >
       {props.children}
@@ -102,7 +104,7 @@ function Tooltip({state, ...props}) {
   );
 }
 
-function Example(props) {
+function TooltipButton(props) {
   let state = useTooltipTriggerState(props);
   let ref = React.useRef();
 
@@ -111,18 +113,62 @@ function Example(props) {
 
   return (
     <span style={{position: 'relative'}}>
-      <button ref={ref} {...triggerProps}>I have a tooltip</button>
+      <button ref={ref} {...triggerProps} style={{fontSize: 18}} onClick={() => alert('Pressed button')}>{props.children}</button>
       {state.isOpen && (
-        <Tooltip state={state} {...tooltipProps}>
-          And the tooltip tells you more information.
-        </Tooltip>
+        <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>
       )}
     </span>
   );
 }
 
-<Example />
-<Example />
+<TooltipButton tooltip="Edit">✏️</TooltipButton>
+<TooltipButton tooltip="Delete">🚮</TooltipButton>
+```
+
+## Usage
+
+The following examples show how to use the `TooltipButton` component created in the above example.
+
+### Delay
+
+Tooltips appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover using the `delay` prop.
+
+```tsx example
+<TooltipButton tooltip="Save" delay={0}>💾</TooltipButton>
+```
+
+### Trigger
+
+By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.
+
+```tsx example
+<TooltipButton tooltip="Burn CD" trigger="focus">💿</TooltipButton>
+```
+
+### Controlled open state
+
+The open state of the tooltip can be controlled via the `defaultOpen` and `isOpen` props.
+
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
+      <TooltipButton tooltip="Notifications" isOpen={isOpen} onOpenChange={setOpen}>📣</TooltipButton>
+    </>
+  );
+}
+```
+
+### Disabled
+
+The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip, without disabling the trigger it displays on.
+
+```tsx example
+<TooltipButton tooltip="Print" isDisabled>🖨</TooltipButton>
 ```
 
 ## Internationalization

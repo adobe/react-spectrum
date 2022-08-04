@@ -12,4 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Switch';
+export {Switch} from './Switch';
+export type {SpectrumSwitchProps} from '@react-types/switch';

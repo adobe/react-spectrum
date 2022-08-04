@@ -11,31 +11,32 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface AriaPositionProps extends PositionProps {
+export interface AriaPositionProps extends PositionProps {
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
    */
-  boundaryElement?: HTMLElement,
+  boundaryElement?: Element,
   /**
    * The ref for the element which the overlay positions itself with respect to.
    */
-  targetRef: RefObject<HTMLElement>,
+  targetRef: RefObject<Element>,
   /**
    * The ref for the overlay element.
    */
-  overlayRef: RefObject<HTMLElement>,
+  overlayRef: RefObject<Element>,
   /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<Element>,
   /**
    * Whether the overlay should update its position automatically.
    * @default true
@@ -50,11 +51,11 @@ interface AriaPositionProps extends PositionProps {
   maxHeight?: number
 }
 
-interface PositionAria {
+export interface PositionAria {
   /** Props for the overlay container element. */
-  overlayProps: HTMLAttributes<Element>,
+  overlayProps: DOMAttributes,
   /** Props for the overlay tip arrow if any. */
-  arrowProps: HTMLAttributes<Element>,
+  arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
   /** Updates the position of the overlay. */
@@ -63,6 +64,8 @@ interface PositionAria {
 
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+
+export const DEFAULT_MODAL_PADDING = 12;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -75,7 +78,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlayRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 12,
+    containerPadding = DEFAULT_MODAL_PADDING,
     shouldFlip = true,
     boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,
