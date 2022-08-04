@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {act, render, triggerPress, typeText} from '@react-spectrum/test-utils';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -64,6 +65,18 @@ describe('SearchWithin', function () {
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('should support custom icon', function () {
+    let {getByTestId} = renderSearchWithin({}, {icon: <Filter data-testid="filtericon" />});
+
+    expect(getByTestId('filtericon')).toBeTruthy();
+  });
+
+  it('should support no icon', function () {
+    let {queryByTestId} = renderSearchWithin({}, {icon: null});
+
+    expect(queryByTestId('searchicon')).toBeNull();
   });
 
   it('can type in search and get onChange', function () {

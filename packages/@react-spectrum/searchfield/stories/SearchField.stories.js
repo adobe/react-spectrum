@@ -74,8 +74,18 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'icon: null',
+    () => renderSearchLandmark(render({defaultValue: 'React', icon: null})),
+    {info}
+  )
+  .add(
     'isQuiet, icon: refresh',
     () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})),
+    {info}
+  )
+  .add(
+    'isQuiet, icon: null',
+    () => renderSearchLandmark(render({defaultValue: 'React', icon: null, isQuiet: true})),
     {info}
   )
   .add(
