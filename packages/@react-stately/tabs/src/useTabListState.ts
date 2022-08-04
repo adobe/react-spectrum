@@ -15,7 +15,10 @@ import {TabListProps} from '@react-types/tabs';
 import {useRef} from 'react';
 
 
-export interface TabListState<T> extends SingleSelectListState<T> {}
+export interface TabListState<T> extends SingleSelectListState<T> {
+  /** Whether the tab list is disabled. */
+  isDisabled: boolean
+}
 
 /**
  * Provides state management for a Tabs component. Tabs include a TabList which tracks
@@ -56,5 +59,8 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
   }
   lastSelectedKey.current = selectedKey;
 
-  return state;
+  return {
+    ...state,
+    isDisabled: props.isDisabled || false
+  };
 }

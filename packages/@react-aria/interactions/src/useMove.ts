@@ -15,7 +15,7 @@ import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import React, {useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
-interface MoveResult {
+export interface MoveResult {
   /** Props to spread on the target element. */
   moveProps: DOMAttributes
 }

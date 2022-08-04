@@ -20,7 +20,7 @@ export interface AriaLandmarkProps extends AriaLabelingProps {
   role: AriaLandmarkRole
 }
 
-interface LandmarkAria {
+export interface LandmarkAria {
   landmarkProps: DOMAttributes
 }
 

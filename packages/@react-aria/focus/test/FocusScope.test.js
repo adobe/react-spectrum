@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -598,6 +598,57 @@ describe('FocusScope', function () {
       userEvent.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
+
+    describe('focusable first in scope', function () {
+      beforeEach(() => {
+        jest.useFakeTimers();
+      });
+      afterEach(() => {
+        jest.runAllTimers();
+        jest.useRealTimers();
+      });
+      it('should restore focus to the first focusable or tabbable element within the scope when focus is lost within the scope', async function () {
+        let {getByTestId} = render(
+          <div>
+            <FocusScope contain>
+              <div role="dialog" data-testid="focusable" tabIndex={-1}>
+                <Item data-testid="tabbable1" autoFocus tabIndex={null}>Remove me!</Item>
+                <Item data-testid="item1" tabIndex={0}>Remove me, too!</Item>
+                <Item data-testid="item2" tabIndex={-1}>Remove me, three!</Item>
+              </div>
+            </FocusScope>
+          </div>
+        );
+
+        function Item(props) {
+          let focusManager = useFocusManager();
+          let onClick = e => {
+            focusManager.focusNext();
+            act(() => {
+              // remove fails to fire blur event in jest-dom
+              e.target.blur();
+              e.target.remove();
+              jest.runAllTimers();
+            });
+          };
+          return <button tabIndex={-1} {...props} onClick={onClick} />;
+        }
+        let focusable = getByTestId('focusable');
+        let tabbable1 = getByTestId('tabbable1');
+        let item1 = getByTestId('item1');
+        let item2 = getByTestId('item2');
+        expect(document.activeElement).toBe(tabbable1);
+        fireEvent.click(tabbable1);
+        expect(tabbable1).not.toBeInTheDocument();
+        await waitFor(() => expect(document.activeElement).toBe(item1));
+        fireEvent.click(item1);
+        expect(item1).not.toBeInTheDocument();
+        await waitFor(() => expect(document.activeElement).toBe(item2));
+        fireEvent.click(item2);
+        expect(item2).not.toBeInTheDocument();
+        await waitFor(() => expect(document.activeElement).toBe(focusable));
+      });
+    });
   });
 
   describe('auto focus', function () {
@@ -610,6 +661,8 @@ describe('FocusScope', function () {
           <input data-testid="input3" />
         </FocusScope>
       );
+
+      act(() => {jest.runAllTimers();});
 
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
