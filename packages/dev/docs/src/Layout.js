@@ -102,8 +102,7 @@ function isBlogSection(section) {
 function Page({children, currentPage, publicUrl, styles, scripts}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
-  let isIndex = INDEX_RE.test(currentPage.name);
-  let isSubpage = parts.length > 1 && !isIndex;
+  let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
     pageSection = sectionTitles[parts[0]];
@@ -111,7 +110,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
 
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!isIndex || isBlog ? ` – ${pageSection}` : '');
+  let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
 
@@ -127,9 +126,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         theme.medium['spectrum--medium'],
         typographyStyles.spectrum,
         docStyles.provider,
-        highlightCss.spectrum,
-        {[docStyles.index]: isIndex}
-      )}>
+        highlightCss.spectrum)}>
       <head>
         <title>{title}</title>
         <meta charset="utf-8" />
