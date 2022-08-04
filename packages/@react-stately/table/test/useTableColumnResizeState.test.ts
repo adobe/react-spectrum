@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {getContentWidth, useTableColumnResizeState} from '../';
+import {getContentWidth} from '../src/utils';
 import {GridNode} from '@react-types/grid';
 import {renderHook} from '@react-spectrum/test-utils';
+import {useTableColumnResizeState} from '../';
 
 const createColumn = (key, columnProps) => ({
   type: 'column',

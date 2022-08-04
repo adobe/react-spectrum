@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Změna velikosti sloupce",
   "loading": "Načítání...",
   "loadingMore": "Načítání dalších...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Změnit velikost sloupce",
+  "sortAscending": "Seřadit vzestupně",
+  "sortDescending": "Seřadit sestupně"
 }

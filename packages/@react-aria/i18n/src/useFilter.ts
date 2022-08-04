@@ -12,7 +12,7 @@
 
 import {useCollator} from './useCollator';
 
-interface Filter {
+export interface Filter {
   /** Returns whether a string starts with a given substring. */
   startsWith(string: string, substring: string): boolean,
   /** Returns whether a string ends with a given substring. */

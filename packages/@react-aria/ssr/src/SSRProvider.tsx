@@ -38,7 +38,7 @@ const defaultContext: SSRContextValue = {
 
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
 
-interface SSRProviderProps {
+export interface SSRProviderProps {
   /** Your application here. */
   children: ReactNode
 }

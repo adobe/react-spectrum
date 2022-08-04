@@ -42,7 +42,9 @@ export interface ColorWheelState {
   setDragging(value: boolean): void,
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
   getDisplayColor(): Color,
+  /** The step value of the hue channel, used when incrementing and decrementing. */
   step: number,
+  /** The page step value of the hue channel, used when incrementing and decrementing. */
   pageStep: number
 }
 

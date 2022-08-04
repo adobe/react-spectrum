@@ -14,10 +14,10 @@ import {clamp, toFixedNumber} from '@react-stately/utils';
 import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MessageDictionary} from '@internationalized/message';
+import {LocalizedStringDictionary} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';
 
-const messages = new MessageDictionary(intlMessages);
+const strings = new LocalizedStringDictionary(intlMessages);
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
@@ -67,7 +67,7 @@ abstract class Color implements IColor {
   }
 
   getChannelName(channel: ColorChannel, locale: string) {
-    return messages.getStringForLocale(channel, locale);
+    return strings.getStringForLocale(channel, locale);
   }
 
   abstract getColorSpace(): ColorFormat
@@ -88,7 +88,7 @@ class RGBColor extends Color {
 
   static parse(value: string) {
     let colors = [];
-    // matching #rgb, #rgba, #rrggbb, #rrggbbaa 
+    // matching #rgb, #rgba, #rrggbb, #rrggbbaa
     if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
       const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
       while (values.length > 0) {
