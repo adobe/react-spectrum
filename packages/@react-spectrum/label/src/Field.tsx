@@ -13,17 +13,13 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
 import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
-import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   props = useFormProps(props);
@@ -41,10 +37,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     showErrorIcon,
     children,
     labelProps,
-    readOnlyText,
-    isReadOnly,
-    inputProps,
-    inputRef,
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -55,8 +47,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
   let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
 
   if (label || hasHelpText) {
@@ -89,23 +79,10 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         showErrorIcon={showErrorIcon} />
     );
 
-    if (displayReadOnly) {
-      if (readOnlyText === '') {
-        readOnlyText = stringFormatter.format('(None)');
-      }
-      children = (
-        <ReadOnlyField
-          {...props}
-          readOnlyText={readOnlyText}
-          inputProps={inputProps}
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />
-      );
-    }
-
     let renderChildren = () => (
       <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
         {children}
-        {hasHelpText && !displayReadOnly && renderHelpText()}
+        {hasHelpText && renderHelpText()}
       </Flex>
     );
 
