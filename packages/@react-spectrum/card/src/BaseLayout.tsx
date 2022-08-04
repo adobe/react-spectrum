@@ -87,7 +87,11 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return this._getVisibleLayoutInfos(rect);
   }
 
-  // this is used by the up and down arrows which can't know about pesisted keys
+  // getKeyBelow and getKeyAbove request layouts to find the row above or
+  // below the focused item. If persistedKeys are added to that collection
+  // of layoutInfos, it always find the current row because the focused item
+  // is a persistedKey. We call this instead which looks for the closest row
+  // while excluding any persistedKeys.
   _getClosetLayoutInfos(rect) {
     return this._getVisibleLayoutInfos(rect, true);
   }
