@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@internationalized/date": "^3.0.1",
     "@react-aria/i18n": "^3.5.0",
     "@react-aria/label": "^3.4.0",
     "@react-aria/utils": "^3.13.2",
@@ -40,7 +41,8 @@
     "@react-spectrum/utils": "^3.7.2",
     "@react-types/label": "^3.6.2",
     "@react-types/shared": "^3.14.0",
-    "@spectrum-icons/ui": "^3.3.1"
+    "@spectrum-icons/ui": "^3.3.1",
+    "@spectrum-icons/workflow": "^4.0.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
