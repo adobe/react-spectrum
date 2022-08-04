@@ -62,7 +62,7 @@ const MIN_COLOR_INT_ALPHA = MIN_COLOR_ALPHA.toHexInt();
 const MAX_COLOR_INT_ALPHA = MAX_COLOR_ALPHA.toHexInt();
 
 const RGB_REGEX = /^#?[0-9a-f]{0,6}$/i;
-const RGBA_REGEX = /^#?[0-9a-f]{0,8}$/i
+const RGBA_REGEX = /^#?[0-9a-f]{0,8}$/i;
 
 /**
  * Provides state management for a color field component. Color fields allow

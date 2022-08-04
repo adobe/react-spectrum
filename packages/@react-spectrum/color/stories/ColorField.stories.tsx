@@ -29,7 +29,7 @@ const parameters = {
       control: {type: 'boolean'}
     }
   }
-}
+};
 
 storiesOf('ColorField', module)
   .addParameters(parameters)
