@@ -34,7 +34,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Aria
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction,
-  onSubmit?: (value: string, key: Key | null) => void
+  onSubmit?: (value: string, key: Key | null) => void,
   /** An icon to display at the start of the input. */
   icon?: ReactElement
 }
