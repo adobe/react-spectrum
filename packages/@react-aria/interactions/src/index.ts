@@ -10,15 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Pressable';
-export * from './PressResponder';
-export * from './useFocus';
-export * from './useFocusVisible';
-export * from './useFocusWithin';
-export * from './useHover';
-export * from './useInteractOutside';
-export * from './useKeyboard';
-export * from './useMove';
-export * from './usePress';
-export * from './useScrollWheel';
-export * from './useLongPress';
+export {Pressable} from './Pressable';
+export {PressResponder} from './PressResponder';
+export {useFocus} from './useFocus';
+export {
+  isFocusVisible,
+  getInteractionModality,
+  setInteractionModality,
+  useInteractionModality,
+  useFocusVisible,
+  useFocusVisibleListener
+} from './useFocusVisible';
+export {useFocusWithin} from './useFocusWithin';
+export {useHover} from './useHover';
+export {useInteractOutside} from './useInteractOutside';
+export {useKeyboard} from './useKeyboard';
+export {useMove} from './useMove';
+export {usePress} from './usePress';
+export {useScrollWheel} from './useScrollWheel';
+export {useLongPress} from './useLongPress';
+
+export type {FocusProps, FocusResult} from './useFocus';
+export type {FocusVisibleHandler, FocusVisibleResult, Modality} from './useFocusVisible';
+export type {FocusWithinProps, FocusWithinResult} from './useFocusWithin';
+export type {HoverProps, HoverResult} from './useHover';
+export type {InteractOutsideProps} from './useInteractOutside';
+export type {KeyboardProps, KeyboardResult} from './useKeyboard';
+export type {PressProps, PressHookProps, PressResult} from './usePress';
+export type {MoveEvents} from '@react-types/shared';
+export type {MoveResult} from './useMove';
+export type {LongPressProps, LongPressResult} from './useLongPress';
+export type {ScrollWheelProps} from './useScrollWheel';

@@ -59,7 +59,7 @@ export interface NumberFieldState {
   decrementToMin(): void
 }
 
-interface NumberFieldStateProps extends NumberFieldProps {
+export interface NumberFieldStateOptions extends NumberFieldProps {
   /**
    * The locale that should be used for parsing.
    * @default 'en-US'
@@ -72,7 +72,7 @@ interface NumberFieldStateProps extends NumberFieldProps {
  * and increment or decrement the value using stepper buttons.
  */
 export function useNumberFieldState(
-  props: NumberFieldStateProps
+  props: NumberFieldStateOptions
 ): NumberFieldState {
   let {
     minValue,

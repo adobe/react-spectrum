@@ -17,7 +17,7 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
-interface SelectableListOptions {
+export interface AriaSelectableListOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -77,7 +77,7 @@ interface SelectableListOptions {
   allowsTabNavigation?: boolean
 }
 
-interface SelectableListAria {
+export interface SelectableListAria {
   /**
    * Props for the option element.
    */
@@ -87,7 +87,7 @@ interface SelectableListAria {
 /**
  * Handles interactions with a selectable list.
  */
-export function useSelectableList(props: SelectableListOptions): SelectableListAria {
+export function useSelectableList(props: AriaSelectableListOptions): SelectableListAria {
   let {
     selectionManager,
     collection,

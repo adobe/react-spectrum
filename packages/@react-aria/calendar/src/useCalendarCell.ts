@@ -20,7 +20,7 @@ import {getInteractionModality, usePress} from '@react-aria/interactions';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject, useEffect, useMemo, useRef} from 'react';
-import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
   /** The date that this cell represents. */
@@ -76,7 +76,7 @@ export interface CalendarCellAria {
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let dateFormatter = useDateFormatter({
     weekday: 'long',
     day: 'numeric',
@@ -130,24 +130,24 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     label += dateFormatter.format(nativeDate);
     if (isDateToday) {
       // If date is today, set appropriate string depending on selected state:
-      label = formatMessage(isSelected ? 'todayDateSelected' : 'todayDate', {
+      label = stringFormatter.format(isSelected ? 'todayDateSelected' : 'todayDate', {
         date: label
       });
     } else if (isSelected) {
       // If date is selected but not today:
-      label = formatMessage('dateSelected', {
+      label = stringFormatter.format('dateSelected', {
         date: label
       });
     }
 
     if (state.minValue && isSameDay(date, state.minValue)) {
-      label += ', ' + formatMessage('minimumDate');
+      label += ', ' + stringFormatter.format('minimumDate');
     } else if (state.maxValue && isSameDay(date, state.maxValue)) {
-      label += ', ' + formatMessage('maximumDate');
+      label += ', ' + stringFormatter.format('maximumDate');
     }
 
     return label;
-  }, [dateFormatter, nativeDate, formatMessage, isSelected, isDateToday, date, state, selectedDateDescription]);
+  }, [dateFormatter, nativeDate, stringFormatter, isSelected, isDateToday, date, state, selectedDateDescription]);
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
@@ -155,10 +155,10 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   if ('anchorDate' in state && isFocused && !state.isReadOnly && isSelectable) {
     // If selection has started add "click to finish selecting range"
     if (state.anchorDate) {
-      rangeSelectionPrompt = formatMessage('finishRangeSelectionPrompt');
+      rangeSelectionPrompt = stringFormatter.format('finishRangeSelectionPrompt');
     // Otherwise, add "click to start selecting range" prompt
     } else {
-      rangeSelectionPrompt = formatMessage('startRangeSelectionPrompt');
+      rangeSelectionPrompt = stringFormatter.format('startRangeSelectionPrompt');
     }
   }
 

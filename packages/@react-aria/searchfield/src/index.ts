@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './useSearchField';
+export {useSearchField} from './useSearchField';
+export type {AriaSearchFieldProps} from '@react-types/searchfield';
+export type {SearchFieldAria} from './useSearchField';

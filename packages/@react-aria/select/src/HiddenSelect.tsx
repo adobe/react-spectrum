@@ -16,7 +16,7 @@ import {SelectState} from '@react-stately/select';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface AriaHiddenSelectProps {
+export interface AriaHiddenSelectProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -32,7 +32,7 @@ interface AriaHiddenSelectProps {
   isDisabled?: boolean
 }
 
-interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
+export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
   /** State for the select. */
   state: SelectState<T>,
 

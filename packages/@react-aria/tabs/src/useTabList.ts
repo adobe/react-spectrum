@@ -20,7 +20,7 @@ import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface TabListAria {
+export interface TabListAria {
   /** Props for the tablist container. */
   tabListProps: DOMAttributes
 }

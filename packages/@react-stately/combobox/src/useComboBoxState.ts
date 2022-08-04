@@ -34,7 +34,8 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
-interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
+
+export interface ComboBoxStateOptions<T> extends ComboBoxProps<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
@@ -48,7 +49,7 @@ interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>): ComboBoxState<T> {
+export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T>): ComboBoxState<T> {
   let {
     defaultFilter,
     menuTrigger = 'input',

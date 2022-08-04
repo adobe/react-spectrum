@@ -1,0 +1,616 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/color/package.json';
+import Anatomy from './ColorAreaAnatomy.svg';
+
+---
+category: Color
+keywords: [color area, color picker, aria]
+---
+
+# useColorArea
+
+<PageDescription>{docs.exports.useColorArea.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useColorArea']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useColorArea} links={docs.links} />
+
+## Features
+
+The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
+can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
+of a complete color picker rather than a color area. `useColorArea` helps achieve accessible and
+touch-friendly color areas that can be styled as needed.
+
+* Support for adjusting two-channel values of an HSL, HSB or RGB color value
+* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Multi-touch support
+* Pressing on the color area background moves the thumb to that position
+* Supports using the arrow keys, for changing value by step, as well as shift + arrow key, page up/down, home, and end keys, for changing the value by page step.
+* Support for disabling the color area
+* Prevents text selection while dragging
+* Exposed to assistive technology as a `2D slider` element via ARIA
+* Uses two hidden native input elements within a group to support touch screen readers
+* Automatic ARIA labeling using the localized channel names by default
+* Support for mirroring in RTL locales
+
+## Anatomy
+
+<Anatomy
+  role="img"
+  aria-label="Color area anatomy diagram: Shows a color area component with labels pointing to its parts, including the area, and thumb elements." />
+
+A color area consists of a rectangular background area that provides, using a two-dimensional gradient,
+a visual representation of the range of color values from which a user can select, and a thumb that the user can drag
+to change the selected color value. Two visually hidden `<input>` elements are used to represent the color channel
+values to assistive technologies.
+
+`useColorArea` returns five sets of props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useColorArea.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useColorAreaState} />
+hook from `@react-stately/color`. The state object should be passed as an option to `useColorArea`.
+
+By default, `useColorArea` provides an `aria-label` for the localized string "Color Picker",
+which labels the visually hidden `<input>` elements for the two color channels, or on mobile devices,
+the group containing them. If you wish to override this with a more specific label, an `aria-label` or
+`aria-labelledby` prop may be passed to further to identify the element to assistive technologies.
+
+The `aria-valuetext` for each `<input>` will include the localized color channel name and current value for each
+channel.
+
+## Example
+
+This example shows how to build a color area with a draggable thumb to adjust two color channel values of a color. Styling for
+the background gradient and positioning of the thumb are provided by `useColorArea` in the returned props for each element.
+The two `<input>` elements inside the thumb represent the color channel values to assistive technologies, and are hidden
+from view. The thumb also uses the
+[useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+
+```tsx example export=true
+import {useColorArea} from '@react-aria/color';
+import {useColorAreaState} from '@react-stately/color';
+import {useFocusRing} from '@react-aria/focus';
+
+const SIZE = 192;
+const FOCUSED_THUMB_SIZE = 28;
+const THUMB_SIZE = 20;
+const BORDER_RADIUS = 4;
+
+
+function ColorArea(props) {
+  let inputXRef = React.useRef(null);
+  let inputYRef = React.useRef(null);
+  let containerRef = React.useRef(null);
+
+  let state = useColorAreaState(props);
+
+  let {isDisabled} = props;
+
+  let {
+    colorAreaProps,
+    gradientProps,
+    xInputProps,
+    yInputProps,
+    thumbProps
+  } = useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
+
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      ref={containerRef}
+      {...colorAreaProps}
+      style={{
+        ...colorAreaProps.style,
+        width: SIZE,
+        height: SIZE,
+        borderRadius: BORDER_RADIUS,
+        opacity: isDisabled ? 0.3 : undefined
+      }}>
+      <div
+        {...gradientProps}
+        style={{
+        backgroundColor: isDisabled ? 'rgb(142, 142, 142)' : undefined,
+        ...gradientProps.style,
+        borderRadius: BORDER_RADIUS,
+        height: SIZE,
+        width: SIZE,
+      }}
+         />
+      <div
+        {...thumbProps}
+        style={{
+          ...thumbProps.style,
+          background: isDisabled ? 'rgb(142, 142, 142)' : state.getDisplayColor().toString('css'),
+          border: `2px solid ${isDisabled ? 'rgb(142, 142, 142)' : 'white'}`,
+          borderRadius: '50%',
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          boxSizing: 'border-box',
+          height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
+          transform: 'translate(-50%, -50%)',
+          width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
+        }}>
+        <input ref={inputXRef} {...xInputProps} {...focusProps} />
+        <input ref={inputYRef} {...yInputProps} {...focusProps} />
+      </div>
+    </div>
+  );
+};
+
+<ColorArea />
+```
+
+## Usage
+
+The following examples show how to use the `ColorArea` component created in the above example.
+
+### Uncontrolled
+
+By default, color area is uncontrolled, with a default value of white using the RGB color space (`rgb(255, 255, 255)`).
+You can change the default value using the `defaultValue` prop, and the color area will use the color space of the provided value.
+If no `xChannel` or `yChannel` is provided, for the RGB color space, the `red` color channel maps to the horizontal axis or `xChannel`,
+and the `green` color channel maps to the vertical axis or `yChannel`. Similarly, for the HSL and HSB color spaces, the `hue` color
+channel maps to the horizontal axis or `xChannel`, and the `saturation` color channel maps to the vertical axis or `yChannel`.
+
+```tsx example
+<label id="hsb-label-id">x: Hue, y: Saturation</label>
+<ColorArea
+  aria-labelledby="hsb-label-id"
+  defaultValue="hsb(219, 58%, 93%)" />
+```
+
+### Controlled
+
+A color area can be made controlled using the `value` prop. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
+function is used to parse the initial color from an RGB, HSL or HSB string, stored in state. The `onChange` prop
+is used to update the value in the state when the user drags the thumb. This is the more common usage because it allows to adjust the third
+color channel using a separate control, like a color slider using the [useColorSlider](useColorSlider.html) hook or a color wheel using the
+[useColorWheel](useColorWheel.html) hook.
+
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [
+    color,
+    setColor
+  ] = React.useState(parseColor('hsb(219, 58%, 93%)'));
+  let [
+    xChannel,
+    yChannel,
+    zChannel
+  ] = color.getColorChannels();
+  return (
+    <>
+      <label id="hsb-label-id-1">x: {color.getChannelName(xChannel, 'en-US')}, y: {color.getChannelName(yChannel, 'en-US')}</label>
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem'}}>
+          <ColorArea
+            aria-labelledby="hsb-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={xChannel}
+            yChannel={yChannel} />
+        </div>
+        <div
+          role="img"
+          aria-label={`color swatch: ${color.toString('hsl')}`}
+          style={{
+            backgroundColor: color.toString('css'),
+            forcedColorAdjust: 'none',
+            height: 96,
+            marginRight: '2rem',
+            width: 96
+          }}></div>
+      </div>
+      <label>
+        {color.getChannelName(zChannel, 'en-US')}<br/>
+        <input
+          type="range"
+          min={color.getChannelRange(zChannel).minValue}
+          max={color.getChannelRange(zChannel).maxValue}
+          value={color.getChannelValue(zChannel)}
+          onChange={e => setColor(color.withChannelValue(zChannel, e.target.value))}
+          style={{
+            width: 192
+          }} />
+      </label>
+      <p>Current color value: {color.toString('hsb')}</p>
+    </>
+  );
+}
+```
+
+### onChangeEnd
+
+The `onChangeEnd` prop can be used to handle when a user stops dragging the color area, whereas the `onChange`
+prop is called as the user drags.
+
+```tsx example
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  let [swatchColor, setSwatchColor] = React.useState(color);
+  let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
+  return (
+    <>
+      <label id="slh-label-id-2">x: {color.getChannelName(saturationChannel, 'en-US')}, y: {color.getChannelName(lightnessChannel, 'en-US')}</label>
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem'}}>
+          <ColorArea
+            aria-labelledby="slh-label-id-2"
+            value={color}
+            onChange={setColor}
+            onChangeEnd={setSwatchColor}
+            xChannel={saturationChannel}
+            yChannel={lightnessChannel} />
+        </div>
+        <div
+          role="img"
+          aria-label={`color swatch: ${swatchColor.toString('hsl')}`}
+          style={{
+            backgroundColor: swatchColor.toString('css'),
+            forcedColorAdjust: 'none',
+            height: 96,
+            marginRight: '2rem',
+            width: 96
+          }}></div>
+      </div>
+      <label>
+        {color.getChannelName(hueChannel, 'en-US')}
+        <br />
+        <input
+          type="range"
+          min={color.getChannelRange(hueChannel).minValue}
+          max={color.getChannelRange(hueChannel).maxValue}
+          value={color.getChannelValue(hueChannel)}
+          onChange={(e) => {
+            setColor(color.withChannelValue(hueChannel, e.target.value));
+            setSwatchColor(color);
+          }}
+          style={{
+            width: 192
+          }}
+        />
+      </label>
+      <p>Current color value: {swatchColor.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+### xChannel and yChannel
+
+The color channel for each axis of a color area can be specified using the `xChannel` and `yChannel` props.
+An array of channel names for a color can be returned using the `color.getColorChannels` method.
+To get a localized channel name to use as a label, you can use the `color.getChannelName` method.
+
+#### RGB
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [
+    color,
+    setColor
+  ] = React.useState(parseColor('rgb(100, 149, 237)'));
+  let [
+    rChannel,
+    gChannel,
+    bChannel
+  ] = color.getColorChannels();
+  return (
+    <>
+      <div style={{display: 'inline-flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="gbr-label-id-1">x: {color.getChannelName(gChannel, 'en-US')}, y: {color.getChannelName(bChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="gbr-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={gChannel}
+            yChannel={bChannel} />
+          <label>
+            {color.getChannelName(rChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(rChannel).minValue}
+              max={color.getChannelRange(rChannel).maxValue}
+              value={color.getChannelValue(rChannel)}
+              onChange={e => setColor(color.withChannelValue(rChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="brg-label-id-1">x: {color.getChannelName(bChannel, 'en-US')}, y: {color.getChannelName(rChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="brg-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={bChannel}
+            yChannel={rChannel} />
+          <label>
+            {color.getChannelName(gChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(gChannel).minValue}
+              max={color.getChannelRange(gChannel).maxValue}
+              value={color.getChannelValue(gChannel)}
+              onChange={e => setColor(color.withChannelValue(gChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="rgb-label-id-1">x: {color.getChannelName(rChannel, 'en-US')}, y: {color.getChannelName(gChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="rgb-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={rChannel}
+            yChannel={gChannel} />
+          <label>
+            {color.getChannelName(bChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(bChannel).minValue}
+              max={color.getChannelRange(bChannel).maxValue}
+              value={color.getChannelValue(bChannel)}
+              onChange={e => setColor(color.withChannelValue(bChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+      </div>
+      <p>Current RGB color value: {color.toString('rgb')}</p>
+    </>
+  );
+}
+```
+#### HSL
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [
+    color,
+    setColor
+  ] = React.useState(parseColor('hsl(219, 79%, 66%)'));
+  let [
+    hChannel,
+    sChannel,
+    lChannel
+  ] = color.getColorChannels();
+  return (
+    <>
+      <div style={{display: 'inline-flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="slh-label-id-1">x: {color.getChannelName(sChannel, 'en-US')}, y: {color.getChannelName(lChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="slh-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={sChannel}
+            yChannel={lChannel} />
+          <label>
+            {color.getChannelName(hChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(hChannel).minValue}
+              max={color.getChannelRange(hChannel).maxValue}
+              value={color.getChannelValue(hChannel)}
+              onChange={e => setColor(color.withChannelValue(hChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="lhs-label-id-1">x: {color.getChannelName(hChannel, 'en-US')}, y: {color.getChannelName(lChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="lhs-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={hChannel}
+            yChannel={lChannel} />
+          <label>
+            {color.getChannelName(sChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(sChannel).minValue}
+              max={color.getChannelRange(sChannel).maxValue}
+              value={color.getChannelValue(sChannel)}
+              onChange={e => setColor(color.withChannelValue(sChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="hsl-label-id-1">x: {color.getChannelName(hChannel, 'en-US')}, y: {color.getChannelName(sChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="hsl-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={hChannel}
+            yChannel={sChannel} />
+          <label>
+            {color.getChannelName(lChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(lChannel).minValue}
+              max={color.getChannelRange(lChannel).maxValue}
+              value={color.getChannelValue(lChannel)}
+              onChange={e => setColor(color.withChannelValue(lChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+      </div>
+      <p>Current HSL color value: {color.toString('hsl')}</p>
+    </>
+  );
+}
+```
+#### HSB
+```tsx example
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [
+    color,
+    setColor
+  ] = React.useState(parseColor('hsb(219, 58%, 93%)'));
+  let [
+    hChannel,
+    sChannel,
+    bChannel
+  ] = color.getColorChannels();
+  return (
+    <>
+      <div style={{display: 'inline-flex', flexWrap: 'wrap'}}>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="sbh-label-id-1">x: {color.getChannelName(sChannel, 'en-US')}, y: {color.getChannelName(bChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="sbh-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={sChannel}
+            yChannel={bChannel} />
+          <label>
+            {color.getChannelName(hChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(hChannel).minValue}
+              max={color.getChannelRange(hChannel).maxValue}
+              value={color.getChannelValue(hChannel)}
+              onChange={e => setColor(color.withChannelValue(hChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="bhs-label-id-1">x: {color.getChannelName(hChannel, 'en-US')}, y: {color.getChannelName(bChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="bhs-label-id-1"
+            value={color}
+            onChange={setColor}
+            xChannel={hChannel}
+            yChannel={bChannel} />
+          <label>
+            {color.getChannelName(sChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(sChannel).minValue}
+              max={color.getChannelRange(sChannel).maxValue}
+              value={color.getChannelValue(sChannel)}
+              onChange={e => setColor(color.withChannelValue(sChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+        <div style={{marginRight: '2rem', marginBottom: '2rem'}}>
+          <label id="hsb-label-id-2">x: {color.getChannelName(hChannel, 'en-US')}, y: {color.getChannelName(sChannel, 'en-US')}</label>
+          <ColorArea
+            aria-labelledby="hsb-label-id-2"
+            value={color}
+            onChange={setColor}
+            xChannel={hChannel}
+            yChannel={sChannel} />
+          <label>
+            {color.getChannelName(bChannel, 'en-US')}<br/>
+            <input
+              type="range"
+              min={color.getChannelRange(bChannel).minValue}
+              max={color.getChannelRange(bChannel).maxValue}
+              value={color.getChannelValue(bChannel)}
+              onChange={e => setColor(color.withChannelValue(bChannel, e.target.value))}
+              style={{
+                width: 192
+              }} />
+          </label>
+        </div>
+      </div>
+      <p>Current HSB color value: {color.toString('hsb')}</p>
+    </>
+  );
+}
+```
+
+### Disabled
+
+A color area can be disabled using the `isDisabled` prop. This prevents the thumb from being focused or dragged.
+It's up to you to style your color area to appear disabled accordingly.
+
+```tsx example
+<ColorArea
+  defaultValue="hsl(0, 100%, 50%)"
+  xChannel="saturation"
+  yChannel="lightness"
+  isDisabled />
+```
+
+## Internationalization
+
+### Labeling
+
+By default, `useColorArea` provides an `aria-label` for the localized string "Color Picker",
+which labels the visually hidden `<input>` elements for the two color channels, or on mobile devices,
+the group containing them. If you wish to override this with a more specific label, an `aria-label` or
+`aria-labelledby` prop may be passed to further to identify the element to assistive technologies.
+For example, for a color area that adjusts a text color you might pass the `aria-label` prop,
+"Text color",  which `useColorArea` will return as the `aria-label` prop "Text color, Color picker". When a custom `aria-label`
+is provided, it should be localized accordingly.
+
+### Role description
+
+In order to communicate to a screen reader user that the color area adjusts in two dimensions,
+`useColorArea` provides an `aria-roledescription`, using the localized string "2D Slider", on each of the
+visually hidden `<input>` elements.
+
+### Value formatting
+
+The `aria-valuetext` of each `<input>` element is formatted according to the user's locale automatically.
+It includes the localized color channel name and current value for each channel, with the channel name
+and value that the `<input>` element controls coming before the channel name and value for the adjacent
+`<input>` element. For example, for an RGB color area where the `xChannel` is "blue", the `yChannel`
+is "green", when the current selected color is yellow (`rgb(255, 255, 0)`), the `<input>` representing the
+blue channel will have `aria-valuetext` to announce as "Blue: 0, Green: 255", and the `<input>`
+representing the green channel will have `aria-valuetext` to announce as "Green: 255, Blue: 0".
+
+### RTL
+
+In right-to-left languages, color areas should be mirrored.
+Orientation of the gradient background, positioning of the thumb,
+and dragging behavior is automatically mirrored by `useColorArea`.

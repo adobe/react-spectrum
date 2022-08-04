@@ -17,7 +17,7 @@ import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface TabAria {
+export interface TabAria {
   /** Props for the tab element. */
   tabProps: DOMAttributes,
   /** Whether the tab is currently selected. */
@@ -40,7 +40,7 @@ export function useTab<T>(
 
   let isSelected = key === selectedKey;
 
-  let isDisabled = propsDisabled || state.disabledKeys.has(key);
+  let isDisabled = propsDisabled || state.isDisabled || state.disabledKeys.has(key);
   let {itemProps} = useSelectableItem({
     selectionManager: manager,
     key,

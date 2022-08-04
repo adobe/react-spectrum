@@ -25,7 +25,7 @@ import React, {useContext, useMemo, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog} from '@react-aria/dialog';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 let sizeMap = {
   S: 'small',
@@ -47,7 +47,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');
@@ -71,7 +71,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
-  }), [hasFooter, hasHeader, hasHeading, hasTypeIcon, titleProps]);
+  }), [hasFooter, hasHeader, titleProps]);
 
   // If rendered in a popover or tray there won't be a visible dismiss button,
   // so we render a hidden one for screen readers.
@@ -103,7 +103,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
             <ActionButton
               UNSAFE_className={styles['spectrum-Dialog-closeButton']}
               isQuiet
-              aria-label={formatMessage('dismiss')}
+              aria-label={stringFormatter.format('dismiss')}
               onPress={onDismiss}>
               <CrossLarge />
             </ActionButton>

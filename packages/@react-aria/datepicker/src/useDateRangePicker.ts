@@ -24,7 +24,7 @@ import {RangeCalendarProps} from '@react-types/calendar';
 import {RefObject, useMemo} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DateRangePickerAria {
   /** Props for the date range picker's visible label element, if any. */
@@ -53,7 +53,7 @@ export interface DateRangePickerAria {
  * users to enter or select a date and time range.
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
@@ -63,16 +63,16 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let {locale} = useLocale();
   let range = state.formatValue(locale, {month: 'long'});
-  let description = range ? formatMessage('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
+  let description = range ? stringFormatter.format('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
   let descProps = useDescription(description);
 
   let startFieldProps = {
-    'aria-label': formatMessage('startDate'),
+    'aria-label': stringFormatter.format('startDate'),
     'aria-labelledby': labelledBy
   };
 
   let endFieldProps = {
-    'aria-label': formatMessage('endDate'),
+    'aria-label': stringFormatter.format('endDate'),
     'aria-labelledby': labelledBy
   };
 
@@ -121,7 +121,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       ...descProps,
       id: buttonId,
       'aria-haspopup': 'dialog',
-      'aria-label': formatMessage('calendar'),
+      'aria-label': stringFormatter.format('calendar'),
       'aria-labelledby': `${labelledBy} ${buttonId}`,
       'aria-describedby': ariaDescribedBy,
       onPress: () => state.setOpen(true)

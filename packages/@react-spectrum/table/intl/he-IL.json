@@ -1,7 +1,8 @@
 {
+  "columnResizer": "שינוי גודל עמודה",
   "loading": "טוען...",
   "loadingMore": "טוען עוד...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "שנה את גודל העמודה",
+  "sortAscending": "מיין בסדר עולה",
+  "sortDescending": "מיין בסדר יורד"
 }
