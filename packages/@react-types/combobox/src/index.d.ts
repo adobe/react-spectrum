@@ -14,7 +14,7 @@ import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusablePro
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, AriaLabelingProps, Validation, FocusableProps, LabelableProps, HelpTextProps {
+export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -45,7 +45,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelectio
   name?: string
 }
 
-export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps {
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, AriaLabelingProps {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean
 }
