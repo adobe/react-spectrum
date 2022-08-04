@@ -117,7 +117,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       nextValue = currentWidth + 10;
     } else {
       nextValue = currentWidth - 10;
-
     }
     stateRef.current.onColumnResize(item, nextValue);
   };
