@@ -16,7 +16,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useHover} from '@react-aria/interactions';
 
-interface TooltipAria {
+export interface TooltipAria {
   /**
    * Props for the tooltip element.
    */

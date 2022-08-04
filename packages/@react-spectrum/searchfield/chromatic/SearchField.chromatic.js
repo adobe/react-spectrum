@@ -45,6 +45,11 @@ storiesOf('SearchField', module)
     () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
     {info}
   )
+  .add(
+    'icon: null',
+    () => renderSearchLandmark(render({defaultValue: 'React', icon: null})),
+    {info}
+  )
   .add('custom width',
     () => render({defaultValue: 'React', width: 275})
   );

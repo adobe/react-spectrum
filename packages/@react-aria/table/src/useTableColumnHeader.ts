@@ -20,17 +20,17 @@ import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-interface ColumnHeaderProps {
+export interface AriaTableColumnHeaderProps {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   node: GridNode<unknown>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
   isVirtualized?: boolean
 }
 
-interface ColumnHeaderAria {
+export interface TableColumnHeaderAria {
   /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
   columnHeaderProps: DOMAttributes
 }
@@ -41,7 +41,7 @@ interface ColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
   let {node} = props;
   let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
@@ -70,13 +70,13 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let sortDescription;
   if (allowsSorting) {
-    sortDescription = `${formatMessage('sortable')}`;
+    sortDescription = `${stringFormatter.format('sortable')}`;
     // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
     if (isSortedColumn && sortDirection && isAndroid()) {
-      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
+      sortDescription = `${sortDescription}, ${stringFormatter.format(sortDirection)}`;
     }
   }
 

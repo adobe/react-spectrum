@@ -13,12 +13,12 @@
 import {DialogContext} from './context';
 import {useContext} from 'react';
 
-interface DialogContainer {
+export interface DialogContainerValue {
   type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   dismiss(): void
 }
 
-export function useDialogContainer(): DialogContainer {
+export function useDialogContainer(): DialogContainerValue {
   let context = useContext(DialogContext);
   if (!context) {
     throw new Error('Cannot call useDialogContext outside a <DialogTrigger> or <DialogContainer>.');

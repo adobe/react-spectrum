@@ -16,7 +16,7 @@ import {focusSafely} from '@react-aria/focus';
 import {RefObject, useEffect} from 'react';
 import {useLink} from '@react-aria/link';
 
-interface BreadcrumbItemAria {
+export interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */
   itemProps: DOMAttributes
 }

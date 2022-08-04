@@ -31,7 +31,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-quiet .spectrum-Search-input {
-    padding-inline-start: var(--spectrum-search-quiet-padding-left);
     padding-inline-end: var(--spectrum-search-quiet-padding-right);
   }
 
