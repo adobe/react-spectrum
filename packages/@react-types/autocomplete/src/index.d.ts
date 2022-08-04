@@ -14,7 +14,7 @@ import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState
 import {Key} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
 import {SearchFieldProps} from '@react-types/searchfield';
-export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'>, TextInputBase {
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit'>, TextInputBase, DOMProps, AriaLabelingProps {
   /** The list of SearchAutocomplete items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of SearchAutocomplete items (controlled). */
@@ -35,7 +35,7 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
   onSubmit?: (value: string, key: Key | null) => void
 }
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, DOMProps, StyleProps, AriaLabelingProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
