@@ -1317,25 +1317,36 @@ function DragBetweenListsComplex() {
         [`${item.type}`]: JSON.stringify(item)
       };
     }),
-    onInsert: async (items, _, targetKey, dropPosition) => {
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      if (dropPosition === 'before') {
-        list1.insertBefore(targetKey, ...processedItems);
-      } else if (dropPosition === 'after') {
-        list1.insertAfter(targetKey, ...processedItems);
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
       }
     },
-    onRootDrop: async (items) => {
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       list1.append(...processedItems);
     },
-    onItemDrop: async (items, _, targetKey) => {
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(targetKey);
+      let targetItem = list1.getItem(target.key);
       // Also check if the item is being dropped into itself
       let draggedKeys = processedItems.map(item => item.identifier);
-      if (targetItem.childNodes && !draggedKeys.includes(targetKey)) {
-        list1.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      if (targetItem.childNodes && !draggedKeys.includes(target.key)) {
+        list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
       }
     },
     acceptedDragTypes,
@@ -1358,33 +1369,44 @@ function DragBetweenListsComplex() {
         [`${item.type}`]: JSON.stringify(item)
       };
     }),
-    onInsert: async (items, _, targetKey, dropPosition) => {
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      if (dropPosition === 'before') {
-        list2.insertBefore(targetKey, ...processedItems);
-      } else if (dropPosition === 'after') {
-        list2.insertAfter(targetKey, ...processedItems);
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
       }
     },
-    onReorder: async (keysToMove, targetKey, dropPosition) => {
-      if (dropPosition === 'before') {
-        list2.moveBefore(targetKey, [...keysToMove]);
-      } else if (dropPosition === 'after') {
-        list2.moveAfter(targetKey, [...keysToMove]);
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+      if (target.dropPosition === 'before') {
+        list2.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list2.moveAfter(target.key, [...keys]);
       }
     },
-    onRootDrop: async (items) => {
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
-    onItemDrop: async (items, _, targetKey) => {
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(targetKey);
-      // Also check if the item is being dropped into itself
-      let draggedKeys = processedItems.map(item => item.identifier);
-      if (targetItem.childNodes && !draggedKeys.includes(targetKey)) {
-        list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-      }
+      let targetItem = list2.getItem(target.key);
+      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
     },
     acceptedDragTypes,
     onDragStart: action('dragStartList2'),

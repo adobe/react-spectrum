@@ -114,6 +114,38 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
+// TODO: I could extend DropEvent but it feels like I'm just bloating the information these utility handler have
+interface DroppableCollectionInsertDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
+interface DroppableCollectionRootDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation
+}
+
+interface DroppableCollectionOnItemDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: 'on'
+  }
+}
+
+interface DroppableCollectionReorderEvent {
+  keys: Set<Key>,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
 export interface DragTypes {
   has(type: string): boolean
 }
@@ -137,19 +169,19 @@ export interface DroppableCollectionProps {
   /**
    * Handler called when external items are dropped "between" the droppable collection's items.
    */
-  onInsert?: (items: DropItem[], dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition) => void,
+  onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
   /**
    * Handler called when external items are dropped on the droppable collection's root.
    */
-  onRootDrop?: (items: DropItem[], dropOperation: DropOperation) => void,
+  onRootDrop?: (e: DroppableCollectionRootDropEvent) => void,
   /**
    * Handler called when items are dropped "on" a droppable collection's item.
    */
-  onItemDrop?: (items: DropItem[], dropOperation: DropOperation, targetKey: Key) => void,
+  onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
   /**
    * Handler called when items are reordered via drag in the source collection.
    */
-  onReorder?: (keysToMove: Set<Key>, targetKey: Key, dropPosition: DropPosition) => void,
+  onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
    * The drag item types that the droppable collection accepts.
    * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately.

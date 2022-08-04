@@ -68,13 +68,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     // TODO: write tests for if onDrop is provided by user but getDropOperations isn't and vice versa
     if (target.type === 'root') {
-      onRootDrop && await onRootDrop(items, dropOperation);
+      onRootDrop && await onRootDrop({items, dropOperation});
     } else if (target.dropPosition === 'on') {
-      onItemDrop && await onItemDrop(items, dropOperation, target.key);
+      onItemDrop && await onItemDrop({items, dropOperation, target: {key: target.key, dropPosition: 'on'}});
     } else if (isInternalDrop && draggingKeys.size > 0) {
-      onReorder && await onReorder(draggingKeys, target.key, target.dropPosition);
+      onReorder && await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
     } else {
-      onInsert && await onInsert(items, dropOperation, target.key, target.dropPosition);
+      onInsert && await onInsert({items, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
     }
 
   }, [onRootDrop, onItemDrop, onInsert, onReorder, localState]);
