@@ -1366,13 +1366,11 @@ function DragBetweenListsComplex() {
         list2.insertAfter(targetKey, ...processedItems);
       }
     },
-    onReorder: async (items, targetKey, dropPosition) => {
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let keysToMove = processedItems.map(item => item.identifier);
+    onReorder: async (keysToMove, targetKey, dropPosition) => {
       if (dropPosition === 'before') {
-        list2.moveBefore(targetKey, keysToMove);
+        list2.moveBefore(targetKey, [...keysToMove]);
       } else if (dropPosition === 'after') {
-        list2.moveAfter(targetKey, keysToMove);
+        list2.moveAfter(targetKey, [...keysToMove]);
       }
     },
     onRootDrop: async (items) => {
@@ -1391,8 +1389,7 @@ function DragBetweenListsComplex() {
     acceptedDragTypes,
     onDragStart: action('dragStartList2'),
     onDragEnd: (e, dropTarget, isInternalDrop) => {
-      // TODO: maybe we can simplify this by having getOperation automatically omit a dragged folder(s) from the list of valid drag targets
-      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes && !e.keys.has(dropTarget.key)))) {
+      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes))) {
         list2.remove(...e.keys);
       }
       action('dragEndList2')(e, dropTarget, isInternalDrop);

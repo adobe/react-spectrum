@@ -21,10 +21,6 @@ import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
   ref: RefObject<HTMLElement>,
-  // TODO: maybe it would be useful for getDropOperation to also get the dragged items/dragged keys so that users can
-  // return 'cancel' if a dragged folder is being dropped on itself? Perhaps pass dragged items and target to isValidDropTarget
-  // Will need to look at useDroppalbeCollection's getDropOperationForPoint since that is the the one that calls state.getDropOperation.
-  // However, we only have access to e.datatransfer at this point so getDropOpeartion would have to process the items to get access to the keys
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation,
   getDropOperationForPoint?: (types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
   onDropEnter?: (e: DropEnterEvent) => void,
@@ -69,9 +65,6 @@ export function useDrop(options: DropOptions): DropResult {
       let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
       let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      // TODO could possibly let items = readFromDataTransfer(e.dataTransfer); so we can get the items
-      // but we would then need to do item.getText and stuff. Perhaps just track the dragged keys somewhere
-      // and have it as a default check in the default getDropOperation?
       let dropOperation = options.getDropOperationForPoint(types, allowedOperations, state.x - rect.x, state.y - rect.y);
       state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     }

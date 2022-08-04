@@ -11,7 +11,7 @@
  */
 
 import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
-import {getDnDState} from './utils';
+import {getDnDState, setDraggingKeys} from './utils';
 import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -47,7 +47,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     getAllowedDropOperations
   } = props;
   let [, setDragging] = useState(false);
-  let draggingKeys = useRef(new Set<Key>());
+  // TODO: maybe track draggedKey in global DnD state?
   let draggedKey = useRef(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
@@ -70,10 +70,10 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       return draggedKey.current;
     },
     get draggingKeys() {
-      return draggingKeys.current;
+      return getDnDState().draggingKeys;
     },
     isDragging(key) {
-      return draggingKeys.current.has(key);
+      return getDnDState().draggingKeys.has(key);
     },
     getKeysForDrag: getKeys,
     getItems(key) {
@@ -84,7 +84,9 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     startDrag(key, event) {
       setDragging(true);
       let keys = getKeys(key);
-      draggingKeys.current = keys;
+      // TODO: two sources of truth, one in the global DnD state and one tracked in here...
+      // I think it is important for the state to still return draggingKeys and stuff, and tracking global drag is for the droppable collections
+      setDraggingKeys(keys);
       draggedKey.current = key;
       if (typeof onDragStart === 'function') {
         onDragStart({
@@ -97,27 +99,26 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       if (typeof onDragMove === 'function') {
         onDragMove({
           ...event,
-          keys: draggingKeys.current
+          keys: getDnDState().draggingKeys
         });
       }
     },
     endDrag(event) {
       if (typeof onDragEnd === 'function') {
-        let {draggedCollection, droppedCollection, droppedTarget} = getDnDState();
+        let {draggingCollection, droppedCollection, droppedTarget} = getDnDState();
         onDragEnd({
           ...event,
-          keys: draggingKeys.current
-        // TODO: the droppedTarget and (droppedCollection === draggedCollection) are mainly used to let the user differentiate
+          keys: getDnDState().draggingKeys
+        // TODO: the droppedTarget and (droppedCollection === draggingCollection) are mainly used to let the user differentiate
         // a drop outside the source collection (need to remove the item from the collection), a reorder drop inside the source collection (need to call a reorder operation),
         // or a drop into a folder in the source collection (need to remove the item and relocate it into the folder)
         // its kinda weird to return null as droppedTarget if the user is dropping on a non-collection target though, maybe call setDragTarget in useDrop?...
         // evaluate if I really need droppedTarget, perhaps it can be up to the user to figure out where the drop ended? Technically they could track this in their own state via their own
         // onDragStart (set the source collection) + onDrop/onItemDrop (set the destination collection/item)
-        }, droppedTarget, droppedCollection === draggedCollection);
+        }, droppedTarget, droppedCollection === draggingCollection);
       }
 
       setDragging(false);
-      draggingKeys.current = new Set();
       draggedKey.current = null;
     }
   };

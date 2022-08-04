@@ -11,11 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DraggableCollectionState} from '@react-stately/dnd';
+import {DraggableCollectionState, setDraggingKeys} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {setDraggedCollection, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
+import {setDraggingCollection, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -37,7 +37,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
     onDragStart(e) {
-      setDraggedCollection(state.collection);
+      setDraggingCollection(state.collection);
       state.startDrag(props.key, e);
     },
     onDragMove(e) {
@@ -46,9 +46,11 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     onDragEnd(e) {
       state.endDrag(e);
       // TODO: perhaps clear the global state tracker on drag start? Avoids any possible async problems when looking up the global drag info in a async call?
-      setDraggedCollection(undefined);
+      // TODO: perhaps also clear the drag stuff in useDraggableCollectionState instead
+      setDraggingCollection(undefined);
       setDroppedCollection(undefined);
       setDroppedTarget(undefined);
+      setDraggingKeys(new Set());
     }
   });
 

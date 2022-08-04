@@ -12,6 +12,7 @@
 
 export type {DraggableCollectionOptions, DraggableCollectionState} from './useDraggableCollectionState';
 export type {DroppableCollectionStateOptions, DroppableCollectionState} from './useDroppableCollectionState';
+export type {DnDState} from './utils';
 export {useDraggableCollectionState} from './useDraggableCollectionState';
 export {useDroppableCollectionState} from './useDroppableCollectionState';
-export {getDnDState, setDraggedCollection, setDroppedCollection, setDroppedTarget} from './utils';
+export {getDnDState, setDraggingCollection, setDraggingKeys, setDroppedCollection, setDroppedTarget} from './utils';

@@ -147,9 +147,9 @@ export interface DroppableCollectionProps {
    */
   onItemDrop?: (items: DropItem[], dropOperation: DropOperation, targetKey: Key) => void,
   /**
-   * Handler called when items are dropped "on" a droppable collection's item.
+   * Handler called when items are reordered via drag in the source collection.
    */
-  onReorder?: (items: DropItem[], targetKey: Key, dropPosition: DropPosition) => void,
+  onReorder?: (keysToMove: Set<Key>, targetKey: Key, dropPosition: DropPosition) => void,
   /**
    * The drag item types that the droppable collection accepts.
    * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately.

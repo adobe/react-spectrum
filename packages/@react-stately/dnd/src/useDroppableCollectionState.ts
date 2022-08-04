@@ -57,11 +57,14 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
   };
 
-  let defaultGetDropOperation = useCallback((target, types, allowedOperations) => {
+  let defaultGetDropOperation = useCallback((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => {
+    // TODO: will be covered in a separate PR (issue in board), for now ignore the typescript error
+    // @ts-ignore
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];
-    let {draggedCollection} = getDnDState();
-    let isInternalDrop = draggedCollection === collection;
+    let {draggingCollection, draggingKeys} = getDnDState();
+    let isInternalDrop = draggingCollection === collection;
+
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
       (
@@ -69,9 +72,9 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
         // Feedback was that internal root drop was weird so preventing that from happening
         onRootDrop && target.type === 'root' && !isInternalDrop ||
-        // TODO: how to detect if it is a drop on a folder? Perhaps we have an option that the user provides to control this (e.g. droppableItems)?
-        // Also would be nice to prevent a folder from being dropped into itself but we don't have draggedKeys available here, maybe look into making that info available
-        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && (!isValidDropTarget || isValidDropTarget(target.key)) ||
+        // Automatically prevent items (i.e. folders) from being dropped on themselves.
+        // TODO: this also prevents non-folder items from being dropped on themseleves as well, is that too restrictive? Can't really think of a reason to allow that
+        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target.key)) ||
         !!onDrop
       )
     ) {
@@ -80,6 +83,19 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
     return 'cancel';
   }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop, collection]);
+
+  let propsGetDropOperation = useCallback((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]): DropOperation => {
+    let {draggingCollection, draggingKeys} = getDnDState();
+    let isInternalDrop = draggingCollection === collection;
+
+    // Even if user provides their own getDropOperation, automatically prevent items (i.e. folders) from being dropped on themselves
+    // TODO: is the below overkill? Should we grant full freedom to the end user by not including this instead?
+    if (isInternalDrop && target.type === 'item' && target.dropPosition === 'on' && draggingKeys.has(target.key)) {
+      return 'cancel';
+    }
+
+    return getDropOperation(target, types, allowedOperations);
+  }, [getDropOperation, collection]);
 
   return {
     collection,
@@ -132,7 +148,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     },
     getDropOperation(target, types, allowedOperations) {
       return typeof getDropOperation === 'function'
-        ? getDropOperation(target, types, allowedOperations)
+        ? propsGetDropOperation(target, types, allowedOperations)
         : defaultGetDropOperation(target, types, allowedOperations);
     }
   };
