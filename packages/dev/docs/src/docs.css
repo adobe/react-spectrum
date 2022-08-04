@@ -608,6 +608,7 @@ h2.sectionHeader {
 }
 
 .pageHeader {
+  gap: var(--spectrum-global-dimension-size-100);
   position: fixed;
   top: 0;
   display: inline-flex;
@@ -622,6 +623,22 @@ h2.sectionHeader {
   [dir='rtl'] & {
     left: 0;
   }
+
+  z-index: 1;
+}
+
+.docSearchBox {
+  margin-inline-start: auto;
+  width: var(--spectrum-global-dimension-size-3600);
+  > div {
+    width: 100%;
+  }
+}
+
+.docSearchBoxMark {
+  font-weight: bold;
+  background: var(--spectrum-alias-text-highlight-color);
+  color: var(--spectrum-global-color-blue-700);
 }
 
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
@@ -703,6 +720,12 @@ h2.sectionHeader {
     margin-left: auto;
     margin-right: auto;
     width: auto
+  }
+}
+
+@media (max-width: 569px) {
+  .docSearchBox {
+    width: var(--spectrum-global-dimension-size-2400);
   }
 }
 

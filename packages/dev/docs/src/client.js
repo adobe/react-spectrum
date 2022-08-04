@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, defaultTheme, Provider, Text} from '@adobe/react-spectrum';
+import algoliasearch from 'algoliasearch/lite';
 import docsStyle from './docs.css';
+import {Item, SearchAutocomplete, Section} from '@react-spectrum/autocomplete';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -183,8 +185,100 @@ function Hamburger() {
   );
 }
 
+function DocSearch() {
+  const client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
+  const searchIndex = client.initIndex('react-spectrum');
+  const searchOptions = {
+    highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
+    highlightPostTag: '</mark>'
+  };
+
+  const [searchValue, setSearchValue] = useState('');
+  const [predictions, setPredictions] = useState(null);
+  const [suggestions, setSuggestions] = useState(null);
+
+  let updatePredictions = ({hits}) => {
+    setPredictions(hits);
+    let sections = [];
+    hits.forEach(prediction => {
+      let hierarchy = prediction.hierarchy;
+      let objectID = prediction.objectID;
+      let lvl0 = hierarchy.lvl0;
+      let section = sections.find(section => section.title === lvl0);
+      if (!section) {
+        section = {title: lvl0, items: []};
+        sections.push(section);
+      }
+      let text = [];
+      let textValue = [];
+      for (let i = 1; i < 6; i++) {
+        if (hierarchy[`lvl${i}`]) {
+          text.push(prediction._highlightResult.hierarchy[`lvl${i}`].value);
+          textValue.push(hierarchy[`lvl${i}`]);
+        }
+      }
+      section.items.push(
+        <Item key={objectID} textValue={textValue.join(' | ')}>
+          <Text><span dangerouslySetInnerHTML={{__html: text.join(' | ')}} /></Text>
+          {
+            prediction.content &&
+            <Text slot="description">
+              <span dangerouslySetInnerHTML={{__html: prediction._snippetResult.content.value}} />
+            </Text>
+          }
+        </Item>
+      );
+    });
+    let suggestions = sections.map((section, index) => <Section key={`${index}-lvl0-${section.title}`} title={section.title}>{section.items}</Section>);
+    setSuggestions(suggestions);
+  };
+
+  let onInputChange = (query) => {
+    if (!query && predictions) {
+      setPredictions(null);
+      setSuggestions(null);
+    }
+    setSearchValue(query);
+    searchIndex
+      .search(
+        query,
+        searchOptions
+      )
+      .then(updatePredictions);
+  };
+
+  let onSubmit = (value, key) => {
+    if (key) {
+      let prediction = predictions.find(prediction => key === prediction.objectID);
+      let url = prediction.url;
+      if (
+        url.includes('https://react-spectrum.adobe.com') &&
+        window.location.hostname === 'localhost') {
+        url = url.replace('https://react-spectrum.adobe.com', window.location.origin);
+      }
+      window.location.href = url;
+    }
+  };
+
+  return (
+    <Provider theme={defaultTheme} role="search">
+      <SearchAutocomplete
+        aria-label="Search"
+        placeholder="Search"
+        UNSAFE_className={docsStyle.docSearchBox}
+        id="algolia-doc-search"
+        value={searchValue}
+        onInputChange={onInputChange}
+        onSubmit={onSubmit}>
+        {suggestions}
+      </SearchAutocomplete>
+    </Provider>
+  );
+}
+
 ReactDOM.render(<>
   <Hamburger />
+  <DocSearch />
   <ThemeSwitcher />
 </>, document.querySelector('.' + docsStyle.pageHeader));
 
