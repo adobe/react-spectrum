@@ -19,7 +19,7 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
-interface SelectableCollectionOptions {
+export interface AriaSelectableCollectionOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -81,7 +81,7 @@ interface SelectableCollectionOptions {
   scrollRef?: RefObject<HTMLElement>
 }
 
-interface SelectableCollectionAria {
+export interface SelectableCollectionAria {
   /** Props for the collection element. */
   collectionProps: DOMAttributes
 }
@@ -89,7 +89,7 @@ interface SelectableCollectionAria {
 /**
  * Handles interactions with selectable collections.
  */
-export function useSelectableCollection(options: SelectableCollectionOptions): SelectableCollectionAria {
+export function useSelectableCollection(options: AriaSelectableCollectionOptions): SelectableCollectionAria {
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,

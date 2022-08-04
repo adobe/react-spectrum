@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {SideNav} from './SideNav';
+export type {SpectrumSideNavProps} from '@react-types/sidenav';

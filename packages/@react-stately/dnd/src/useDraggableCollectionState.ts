@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, Node} from '@react-types/shared';
+import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
 import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -28,6 +28,7 @@ export interface DraggableCollectionState {
   getKeysForDrag(key: Key): Set<Key>,
   getItems(key: Key): DragItem[],
   preview?: RefObject<DragPreviewRenderer>,
+  getAllowedDropOperations?: () => DropOperation[],
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
   endDrag(event: DragEndEvent): void
@@ -41,7 +42,8 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     onDragStart,
     onDragMove,
     onDragEnd,
-    preview
+    preview,
+    getAllowedDropOperations
   } = props;
   let [, setDragging] = useState(false);
   let draggingKeys = useRef(new Set<Key>());
@@ -77,6 +79,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       return getItems(getKeys(key));
     },
     preview,
+    getAllowedDropOperations,
     startDrag(key, event) {
       setDragging(true);
       let keys = getKeys(key);

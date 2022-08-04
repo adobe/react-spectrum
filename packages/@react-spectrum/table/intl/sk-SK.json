@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Nástroj na zmenu veľkosti stĺpcov",
   "loading": "Načítava sa...",
   "loadingMore": "Načítava sa viac...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Zmeniť veľkosť stĺpca",
+  "sortAscending": "Zoradiť vzostupne",
+  "sortDescending": "Zoradiť zostupne"
 }

@@ -18,7 +18,7 @@ import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface AriaPositionProps extends PositionProps {
+export interface AriaPositionProps extends PositionProps {
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
@@ -51,7 +51,7 @@ interface AriaPositionProps extends PositionProps {
   maxHeight?: number
 }
 
-interface PositionAria {
+export interface PositionAria {
   /** Props for the overlay container element. */
   overlayProps: DOMAttributes,
   /** Props for the overlay tip arrow if any. */
@@ -65,6 +65,8 @@ interface PositionAria {
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
+export const DEFAULT_MODAL_PADDING = 12;
+
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
  * element, and updating the position when the window resizes.
@@ -76,7 +78,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlayRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 12,
+    containerPadding = DEFAULT_MODAL_PADDING,
     shouldFlip = true,
     boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,

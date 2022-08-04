@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Средство изменения размера столбцов",
   "loading": "Загрузка...",
   "loadingMore": "Дополнительная загрузка...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Изменить размер столбца",
+  "sortAscending": "Сортировать по возрастанию",
+  "sortDescending": "Сортировать по убыванию"
 }

@@ -15,7 +15,7 @@ import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
-interface VisuallyHiddenProps extends DOMAttributes {
+export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
   children?: ReactNode,
 
@@ -42,7 +42,7 @@ const styles: CSSProperties = {
   whiteSpace: 'nowrap'
 };
 
-interface VisuallyHiddenAria {
+export interface VisuallyHiddenAria {
   visuallyHiddenProps: DOMAttributes
 }
 

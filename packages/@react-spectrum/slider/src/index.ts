@@ -14,3 +14,4 @@
 
 export {Slider} from './Slider';
 export {RangeSlider} from './RangeSlider';
+export type {SpectrumRangeSliderProps, SpectrumSliderProps} from '@react-types/slider';

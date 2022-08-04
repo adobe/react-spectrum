@@ -21,7 +21,7 @@ import {SearchAutocompleteProps} from '@react-types/autocomplete';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
 
-interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
@@ -32,7 +32,7 @@ interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface SearchAutocompleteAria<T> {
+export interface SearchAutocompleteAria<T> {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the search input element. */

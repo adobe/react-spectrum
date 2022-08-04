@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar} from '..';
 
 describe('CalendarDate manipulation', function () {
   describe('add', function () {
@@ -679,6 +679,34 @@ describe('CalendarDate manipulation', function () {
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 1, 12, 25);
         expect(date.cycle('day', -1)).toEqual(new CalendarDate(new JapaneseCalendar(), 'taisho', 15, 12, 24));
       });
+    });
+  });
+});
+
+describe('CalendarDateTime manipulation', function () {
+  describe('add', function () {
+    it.each`
+      Unit              | Expected
+      ${'hours'}        | ${new CalendarDateTime(2020, 1, 1, 5, 0, 0, 0)}
+      ${'minutes'}      | ${new CalendarDateTime(2020, 1, 1, 0, 5, 0, 0)}
+      ${'seconds'}      | ${new CalendarDateTime(2020, 1, 1, 0, 0, 5, 0)}
+      ${'milliseconds'} | ${new CalendarDateTime(2020, 1, 1, 0, 0, 0, 5)}
+    `('should add $Unit', ({Unit, Expected}) => {
+      let date = new CalendarDateTime(2020, 1, 1, 0, 0, 0, 0);
+      expect(date.add({[`${Unit}`]: 5})).toEqual(Expected);
+    });
+  });
+
+  describe('subtract', function () {
+    it.each`
+      Unit              | Expected
+      ${'hours'}        | ${new CalendarDateTime(2020, 1, 1, 0, 5, 5, 5)}
+      ${'minutes'}      | ${new CalendarDateTime(2020, 1, 1, 5, 0, 5, 5)}
+      ${'seconds'}      | ${new CalendarDateTime(2020, 1, 1, 5, 5, 0, 5)}
+      ${'milliseconds'} | ${new CalendarDateTime(2020, 1, 1, 5, 5, 5, 0)}
+    `('should subtract $Unit', ({Unit, Expected}) => {
+      let date = new CalendarDateTime(2020, 1, 1, 5, 5, 5, 5);
+      expect(date.subtract({[`${Unit}`]: 5})).toEqual(Expected);
     });
   });
 });
