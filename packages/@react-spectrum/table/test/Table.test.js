@@ -1822,6 +1822,54 @@ describe('TableView', function () {
         let checkbox = tree.getByLabelText('Select All');
         expect(checkbox.checked).toBeFalsy();
       });
+
+      describe('Space key with focus on a link within a cell', () => {
+        it('should toggle selection and prevent scrolling of the table', () => {
+          let tree = render(
+            <TableView aria-label="Table" selectionMode="multiple">
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+
+          let row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'false');
+
+          let link = within(row).getAllByRole('link')[0];
+          expect(link.textContent).toBe('Foo 1');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'true');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          link = within(row).getAllByRole('link')[0];
+
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(link.textContent).toBe('Foo 1');
+        });
+      });
     });
 
     describe('range selection', function () {
