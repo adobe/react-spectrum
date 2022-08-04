@@ -161,11 +161,14 @@ export class GridLayout<T> extends BaseLayout<T> {
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (layoutInfo && this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
+        } else if (layoutInfo && this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
+          // item may be guessed at as in the range of being visibile, but isn't isVisible and is a persistedKey
+          res.push(layoutInfo);
         }
       }
       // Check to see if an item with a persisted key exists after the visible items
       // This is for keeping focus on a item that is scrolled out of view
-      for (let j = lastVisibleItem; j < this.collection.size; j++) {
+      for (let j = lastVisibleItem + 1; j < this.collection.size; j++) {
         let keyFromIndex = this.collection.rows[j].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
         if (layoutInfo && this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
