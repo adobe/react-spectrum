@@ -19,10 +19,10 @@ import {isMac} from '@react-aria/utils';
 import {isVirtualClick} from './utils';
 import {useEffect, useState} from 'react';
 
-type Modality = 'keyboard' | 'pointer' | 'virtual';
+export type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
-type FocusVisibleHandler = (isFocusVisible: boolean) => void;
+export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -30,7 +30,7 @@ interface FocusVisibleProps {
   autoFocus?: boolean
 }
 
-interface FocusVisibleResult {
+export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
   isFocusVisible: boolean
 }

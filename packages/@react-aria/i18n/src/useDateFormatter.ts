@@ -14,7 +14,7 @@ import {DateFormatter} from '@internationalized/date';
 import {useLocale} from './context';
 import {useMemo, useRef} from 'react';
 
-interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
+export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
   calendar?: string
 }
 

@@ -15,9 +15,9 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
@@ -27,7 +27,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+export interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
@@ -40,7 +40,7 @@ interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
@@ -107,7 +107,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   });
 
   // For textfield specific keydown operations
-  let onKeyDown = (e: KeyboardEvent) => {
+  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
     switch (e.key) {
       case 'Enter':
       case 'Tab':
@@ -119,6 +119,13 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         state.commit();
         break;
       case 'Escape':
+        if (
+          state.selectedKey !== null ||
+          state.inputValue === '' ||
+          props.allowsCustomValue
+        ) {
+          e.continuePropagation();
+        }
         state.revert();
         break;
       case 'ArrowDown':

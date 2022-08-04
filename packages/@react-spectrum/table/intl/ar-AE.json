@@ -1,8 +1,8 @@
 {
+  "columnResizer": "أداة تغيير حجم العمود",
   "loading": "جارٍ التحميل...",
   "loadingMore": "جارٍ تحميل المزيد...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column",
-  "columnResizer": "Column resizer"
+  "resizeColumn": "تغيير حجم العمود",
+  "sortAscending": "فرز بترتيب تصاعدي",
+  "sortDescending": "فرز بترتيب تنازلي"
 }

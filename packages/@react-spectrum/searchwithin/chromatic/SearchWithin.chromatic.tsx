@@ -115,4 +115,3 @@ PropNoLabel.args = {...PropDefaults.args, label: undefined, 'aria-label': 'Aria 
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 300};
-

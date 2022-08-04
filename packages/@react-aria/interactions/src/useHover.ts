@@ -24,7 +24,7 @@ export interface HoverProps extends HoverEvents {
   isDisabled?: boolean
 }
 
-interface HoverResult {
+export interface HoverResult {
   /** Props to spread on the target element. */
   hoverProps: DOMAttributes,
   isHovered: boolean

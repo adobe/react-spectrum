@@ -18,15 +18,16 @@ import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
-interface AccordionAria {
+export interface AccordionAria {
   /** Props for the accordion container element. */
   accordionProps: DOMAttributes
 }
-interface AccordionItemAriaProps<T> {
+
+export interface AccordionItemAriaProps<T> {
   item: Node<T>
 }
 
-interface AccordionItemAria {
+export interface AccordionItemAria {
   /** Props for the accordion item button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
   /** Props for the accordion item content element. */

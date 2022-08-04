@@ -14,7 +14,7 @@ import {isRTL} from './utils';
 import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {ReactNode, useContext} from 'react';
 
-interface ProviderProps {
+export interface I18nProviderProps {
   /** Contents that should have the locale applied. */
   children: ReactNode,
   /** The locale to apply to the children. */
@@ -26,7 +26,7 @@ const I18nContext = React.createContext<Locale>(null);
 /**
  * Provides the locale for the application to all child components.
  */
-export function I18nProvider(props: ProviderProps) {
+export function I18nProvider(props: I18nProviderProps) {
   let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
 

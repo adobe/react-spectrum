@@ -17,7 +17,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface BreadcrumbsAria {
+export interface BreadcrumbsAria {
   /** Props for the breadcrumbs navigation element. */
   navProps: DOMAttributes
 }

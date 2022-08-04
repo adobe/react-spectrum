@@ -25,7 +25,7 @@ export interface ColorSliderState extends SliderState {
 }
 
 
-interface ColorSliderStateOptions extends ColorSliderProps {
+export interface ColorSliderStateOptions extends ColorSliderProps {
   /** The locale to use for formatting the color channel value. */
   locale: string
 }

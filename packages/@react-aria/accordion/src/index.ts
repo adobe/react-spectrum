@@ -10,3 +10,5 @@
  * governing permissions and limitations under the License.
  */
 export {useAccordionItem, useAccordion} from './useAccordion';
+export type {AccordionAria, AccordionItemAria, AccordionItemAriaProps} from './useAccordion';
+export type {AriaAccordionProps} from '@react-types/accordion';
