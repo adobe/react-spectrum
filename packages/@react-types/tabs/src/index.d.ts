@@ -36,7 +36,7 @@ export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection
   isDisabled?: boolean
 }
 
-interface AriaTabListBase {
+interface AriaTabListBase extends AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -53,7 +53,7 @@ export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, D
 
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
-export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps, AriaLabelingProps {
+export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
   /** The children of the <Tabs> element. Should include `<TabList>` and `<TabPanels>` elements. */
   children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
