@@ -296,8 +296,12 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
         if (scopeRef === activeScope && !isElementInChildScope(document.activeElement, scopeRef)) {
           activeScope = scopeRef;
-          focusedNode.current = e.target;
-          focusedNode.current.focus();
+          if (document.body.contains(e.target)) {
+            focusedNode.current = e.target;
+            focusedNode.current.focus();
+          } else if (activeScope) {
+            focusFirstInScope(activeScope.current);
+          }
         }
       });
     };
@@ -378,11 +382,20 @@ function focusElement(element: FocusableElement | null, scroll = false) {
   }
 }
 
-function focusFirstInScope(scope: Element[]) {
+function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
   let sentinel = scope[0].previousElementSibling;
-  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: true}, scope);
+  let walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable}, scope);
   walker.currentNode = sentinel;
-  focusElement(walker.nextNode() as FocusableElement);
+  let nextNode = walker.nextNode();
+
+  // If the scope does not contain a tabbable element, use the first focusable element.
+  if (tabbable && !nextNode) {
+    walker = getFocusableTreeWalker(getScopeRoot(scope), {tabbable: false}, scope);
+    walker.currentNode = sentinel;
+    nextNode = walker.nextNode();
+  }
+
+  focusElement(nextNode as FocusableElement);
 }
 
 function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus: boolean) {
@@ -395,7 +408,7 @@ function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus: boolean) {
       }
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [scopeRef]);
 }
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {

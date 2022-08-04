@@ -28,9 +28,9 @@ import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'r
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
-import {SpectrumListProps} from '@react-types/list';
+import {SpectrumListViewProps} from '@react-types/list';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useList} from '@react-aria/list';
+import {useGridList} from '@react-aria/gridlist';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
 
@@ -64,7 +64,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['density'], overflowMode: SpectrumListProps<T>['overflowMode']) {
+function useListLayout<T>(state: ListState<T>, density: SpectrumListViewProps<T>['density'], overflowMode: SpectrumListViewProps<T>['overflowMode']) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isEmpty = state.collection.size === 0;
@@ -83,7 +83,7 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListProps<T>['de
   return layout;
 }
 
-function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     loadingState,
@@ -196,7 +196,7 @@ function ListView<T extends object>(props: SpectrumListProps<T>, ref: DOMRef<HTM
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
-  let {gridProps} = useList({
+  let {gridProps} = useGridList({
     ...props,
     isVirtualized: true,
     keyboardDelegate: layout,
@@ -340,5 +340,5 @@ function CenteredWrapper({children}) {
 /**
  * Lists are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
  */
-const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};

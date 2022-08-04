@@ -157,6 +157,8 @@ let decorator = (storyFn, context) => {
   );
 };
 
+let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
+
 storiesOf('ListView', module)
   .addDecorator(decorator)
   .addParameters(parameters)
@@ -427,11 +429,24 @@ storiesOf('ListView/Drag and Drop', module)
         <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
       </Flex>
     ), {description: {data: 'Folders are non-draggable.'}}
-  ).add(
+  )
+  .add(
+    'draggable rows, allow copy and link',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd'), getAllowedDropOperations: () => { getAllowedDropOperationsAction(); return ['copy', 'link', 'cancel'];}}} />
+      </Flex>
+    ), {description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}}
+  )
+  // TODO: add args
+  .add(
     'drag between two lists, complex, new hook',
     () => <DragBetweenListsComplex />,
     {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list.'}}
-  ).add(
+  )
+  .add(
     'drag between two list, new hook with user overrides',
     () => <DragBetweenListsOverride />,
     {description: {data: 'The first list should be draggable, the second list should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}}
@@ -610,6 +625,10 @@ export function DragExample(props?) {
 
   let dragHooks = useDragHooks({
     getItems,
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
     ...dragHookOptions
   });
 
@@ -692,6 +711,10 @@ export function ReorderExample(props) {
         };
       });
     },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
     onDragStart: onDragStart,
     onDragEnd: onDragEnd
   });
@@ -756,6 +779,7 @@ export function DragIntoItemExample(props) {
   let {onDragStart, onDragEnd} = dragHookOptions;
   let {onDrop} = dropHookOptions;
   let onDropAction = chain(action('onDrop'), onDrop);
+  let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let list = useListData({
     initialItems: [
@@ -791,6 +815,10 @@ export function DragIntoItemExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)
@@ -896,6 +924,10 @@ export function DragBetweenListsExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: action('dragStart'),
     onDragEnd: action('dragEnd')
@@ -1014,6 +1046,10 @@ export function DragBetweenListsRootOnlyExample(props) {
         };
       });
     },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
@@ -1027,6 +1063,10 @@ export function DragBetweenListsRootOnlyExample(props) {
           'text/plain': key
         };
       });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd)

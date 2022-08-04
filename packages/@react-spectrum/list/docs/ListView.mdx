@@ -24,7 +24,6 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
-import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
@@ -156,7 +155,6 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
 ```tsx example
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
-    <Folder />
     <Text>Utilities</Text>
     <Text slot="description">16 items</Text>
     <ActionMenu>
@@ -597,7 +595,6 @@ function DragIntoListFilesOnly() {
         dragHooks={dragHooks}>
         {item => (
           <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
           </Item>
         )}
@@ -612,10 +609,7 @@ function DragIntoListFilesOnly() {
           <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
             <Text>{item.name}</Text>
             {item.type === 'folder' &&
-              <>
-                <Folder />
-                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-              </>
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
             }
           </Item>
         )}
@@ -727,10 +721,7 @@ function ReorderableList() {
         <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
           <Text>{item.name}</Text>
           {item.type === 'folder' &&
-            <>
-              <Folder />
-              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-            </>
+            <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
           }
         </Item>
       )}
@@ -896,7 +887,6 @@ function DragBetweenListsExample() {
         dropHooks={dropHooksList1}>
         {item => (
           <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
           </Item>
         )}
@@ -911,7 +901,6 @@ function DragBetweenListsExample() {
         dropHooks={dropHooksList2}>
         {item => (
           <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
           </Item>
         )}
