@@ -51,7 +51,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   localState.state = state;
 
   let {
-    acceptedDragTypes = 'all',
     onInsert,
     onRootDrop,
     onItemDrop,
@@ -61,47 +60,24 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
     let {draggedCollection} = getDnDState();
     let isInternalDrop = draggedCollection === localState.state.collection;
-    let dataList = [];
     let {
       target,
-      dropOperation
+      dropOperation,
+      items
     } = e;
-    for (let item of e.items) {
-      for (let acceptedType of acceptedDragTypes) {
-        // TODO: this assumes the item's kind is text and just pushes the data as is to the dataList
-        // Perhaps we can also add item.kind === 'file' and 'directory' checks and push the results of getFile/getText/getEntries into dataList? Not entirely sure
-        // when the item.kind would be a file/directory
-        // Or maybe we can just push the item as is to the user defined handlers?
-        // TBH this feels pretty unwieldy still since its all on the user to properly JSON.parse or w/e
-        if (item.kind === 'text' && item.types.has(acceptedType)) {
-          // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
-          let data = await item.getText(acceptedType);
-          dataList.push(data);
-        }
-
-        // if (item.kind === 'directory') {
-
-        // }
-
-        // if (item.kind === 'file') {
-
-        // }
-
-      }
-    }
 
     // TODO: write tests for if onDrop is provided by user but getDropOperations isn't and vice versa
     if (target.type === 'root') {
-      onRootDrop && onRootDrop(dataList, dropOperation);
+      onRootDrop && await onRootDrop(items, dropOperation);
     } else if (target.dropPosition === 'on') {
-      onItemDrop && onItemDrop(dataList, dropOperation, target.key);
+      onItemDrop && await onItemDrop(items, dropOperation, target.key);
     } else if (isInternalDrop) {
-      onReorder && onReorder(dataList, target.key, target.dropPosition);
+      onReorder && await onReorder(items, target.key, target.dropPosition);
     } else {
-      onInsert && onInsert(dataList, dropOperation, target.key, target.dropPosition);
+      onInsert && await onInsert(items, dropOperation, target.key, target.dropPosition);
     }
 
-  }, [acceptedDragTypes, onRootDrop, onItemDrop, onInsert, onReorder, localState]);
+  }, [onRootDrop, onItemDrop, onInsert, onReorder, localState]);
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({

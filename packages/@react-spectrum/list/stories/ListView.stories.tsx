@@ -1253,6 +1253,21 @@ function DragBetweenListsComplex() {
     ],
     getKey: (item) => item.identifier
   });
+  let acceptedDragTypes = ['file', 'folder'];
+
+  let itemProcessor = async (items, acceptedDragTypes) => {
+    let processedItems = [];
+    for (let item of items) {
+      for (let type of acceptedDragTypes) {
+        if (item.kind === 'text' && item.types.has(type)) {
+          let text = await item.getText(type);
+          let data = JSON.parse(text);
+          processedItems.push(data);
+        }
+      }
+    }
+    return processedItems;
+  };
 
   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
@@ -1262,28 +1277,20 @@ function DragBetweenListsComplex() {
         [`${item.type}`]: JSON.stringify(item)
       };
     }),
-    onInsert: (items, _, targetKey, dropPosition) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
-      // items
-      let processedItems = items.map(item => JSON.parse(item));
+    onInsert: async (items, _, targetKey, dropPosition) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       if (dropPosition === 'before') {
         list1.insertBefore(targetKey, ...processedItems);
       } else if (dropPosition === 'after') {
         list1.insertAfter(targetKey, ...processedItems);
       }
     },
-    onRootDrop: (items) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the
-      // items
-      let processedItems = items.map(item => JSON.parse(item));
+    onRootDrop: async (items) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       list1.append(...processedItems);
     },
-    onItemDrop: (items, _, targetKey) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
-      let processedItems = items.map(item => JSON.parse(item));
+    onItemDrop: async (items, _, targetKey) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list1.getItem(targetKey);
       // Also check if the item is being dropped into itself
       let draggedKeys = processedItems.map(item => item.identifier);
@@ -1291,7 +1298,7 @@ function DragBetweenListsComplex() {
         list1.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
       }
     },
-    acceptedDragTypes: ['file', 'folder'],
+    acceptedDragTypes,
     onDragStart: action('dragStartList1'),
     onDragEnd: (e, dropTarget, isInternalDrop) => {
       if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list1.getItem(dropTarget.key).childNodes))) {
@@ -1311,18 +1318,16 @@ function DragBetweenListsComplex() {
         [`${item.type}`]: JSON.stringify(item)
       };
     }),
-    onInsert: (items, _, targetKey, dropPosition) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
-      let processedItems = items.map(item => JSON.parse(item));
+    onInsert: async (items, _, targetKey, dropPosition) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       if (dropPosition === 'before') {
         list2.insertBefore(targetKey, ...processedItems);
       } else if (dropPosition === 'after') {
         list2.insertAfter(targetKey, ...processedItems);
       }
     },
-    onReorder: (items, targetKey, dropPosition) => {
-      let processedItems = items.map(item => JSON.parse(item));
+    onReorder: async (items, targetKey, dropPosition) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       let keysToMove = processedItems.map(item => item.identifier);
       if (dropPosition === 'before') {
         list2.moveBefore(targetKey, keysToMove);
@@ -1330,16 +1335,12 @@ function DragBetweenListsComplex() {
         list2.moveAfter(targetKey, keysToMove);
       }
     },
-    onRootDrop: (items) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
-      let processedItems = items.map(item => JSON.parse(item));
+    onRootDrop: async (items) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
-    onItemDrop: (items, _, targetKey) => {
-      // This processing is up to the user since they may not have JSON.stringified their stuff in getItems
-      // TODO: perhaps we should add a "processor" prop that the user provides so that our onDrop can handle processing the items
-      let processedItems = items.map(item => JSON.parse(item));
+    onItemDrop: async (items, _, targetKey) => {
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(targetKey);
       // Also check if the item is being dropped into itself
       let draggedKeys = processedItems.map(item => item.identifier);
@@ -1347,7 +1348,7 @@ function DragBetweenListsComplex() {
         list2.update(targetKey, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
       }
     },
-    acceptedDragTypes: ['file', 'folder'],
+    acceptedDragTypes,
     onDragStart: action('dragStartList2'),
     onDragEnd: (e, dropTarget, isInternalDrop) => {
       // TODO: maybe we can simplify this by having getOperation automatically omit a dragged folder(s) from the list of valid drag targets

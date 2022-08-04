@@ -136,22 +136,20 @@ export interface DroppableCollectionProps {
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**
    * Handler called when external items are dropped "between" the droppable collection's items.
-   * TODO: need better typing for the "items" since it won't be an Array<string> for FileItem/DirectoryItems.
-   * DropOperation added to each of the below handlers so the user can do different things if the dropOperation is a move/copy/link operation (link operation in particular would probably need different logic).
    */
-  onInsert?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition) => void,
+  onInsert?: (items: DropItem[], dropOperation: DropOperation, targetKey: Key, dropPosition: DropPosition) => void,
   /**
    * Handler called when external items are dropped on the droppable collection's root.
    */
-  onRootDrop?: (items: Array<string>, dropOperation: DropOperation) => void,
+  onRootDrop?: (items: DropItem[], dropOperation: DropOperation) => void,
   /**
    * Handler called when items are dropped "on" a droppable collection's item.
    */
-  onItemDrop?: (items: Array<string>, dropOperation: DropOperation, targetKey: Key) => void,
+  onItemDrop?: (items: DropItem[], dropOperation: DropOperation, targetKey: Key) => void,
   /**
    * Handler called when items are dropped "on" a droppable collection's item.
    */
-  onReorder?: (items: Array<string>, targetKey: Key, dropPosition: DropPosition) => void,
+  onReorder?: (items: DropItem[], targetKey: Key, dropPosition: DropPosition) => void,
   /**
    * The drag item types that the droppable collection accepts.
    * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately.
