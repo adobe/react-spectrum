@@ -82,13 +82,13 @@ abstract class Color implements IColor {
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 class RGBColor extends Color {
-  constructor(private red: number, private green: number, private blue: number, private alpha: number) {
+  constructor(private red: number, private green: number, private blue: number, private alpha: number = 1) {
     super();
   }
 
   static parse(value: string) {
     let colors = [];
-    // matching #rgb, #rgba, #rrggbb, #rrggbbaa 
+    // matching #rgb, #rgba, #rrggbb, #rrggbbaa
     if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
       const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
       while (values.length > 0) {
@@ -143,7 +143,8 @@ class RGBColor extends Color {
   }
 
   toHexInt(): number {
-    return this.red << 16 | this.green << 8 | this.blue;
+    // can't do bitwise operations including alpha because bitwise operations drop out of 64 to 32 bits
+    return (this.red * 0x1000000) + (this.green * 0x10000) + (this.blue * 0x100) + Math.round(this.alpha * 255);
   }
 
   /**

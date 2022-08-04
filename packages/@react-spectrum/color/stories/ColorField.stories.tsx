@@ -20,100 +20,114 @@ import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
+const parameters = {
+  args: {
+    allowsAlpha: false
+  },
+  argTypes: {
+    allowsAlpha: {
+      control: {type: 'boolean'}
+    }
+  }
+}
+
 storiesOf('ColorField', module)
+  .addParameters(parameters)
   .add(
     'Default',
-    () => render()
+    (args) => render(args)
   )
   .add(
     'has default value',
-    () => render({defaultValue: '#abcdef'})
+    (args) => render({...args, defaultValue: '#abcdef'})
   )
   .add(
     'value',
-    () => render({
+    (args) => render({
+      ...args,
       value: '#FF00AA',
       onChange: action('change')
     })
   )
   .add(
     'isQuiet',
-    () => render({isQuiet: true})
+    (args) => render({...args, isQuiet: true})
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true, defaultValue: '#abcdef'})
+    (args) => render({...args, isReadOnly: true, defaultValue: '#abcdef'})
   )
   .add(
     'isDisabled',
-    () => render({isDisabled: true, defaultValue: '#abcdef'})
+    (args) => render({...args, isDisabled: true, defaultValue: '#abcdef'})
   )
   .add(
     'validationState valid',
-    () => render({validationState: 'valid'})
+    (args) => render({...args, validationState: 'valid'})
   )
   .add(
     'validationState invalid',
-    () => render({validationState: 'invalid'})
+    (args) => render({...args, validationState: 'invalid'})
   )
   .add(
     'required, label, optional',
-    () => (
+    (args) => (
       <Flex direction="column" gap="size-100">
-        {render({isRequired: 'true'})}
-        {render({isRequired: 'true', necessityIndicator: 'label'})}
-        {render({necessityIndicator: 'label'})}
+        {render({...args, isRequired: 'true'})}
+        {render({...args, isRequired: 'true', necessityIndicator: 'label'})}
+        {render({...args, necessityIndicator: 'label'})}
       </Flex>
     )
   )
   .add(
     'controlled value',
-    () => (
+    (args) => (
       <ControlledColorField
+        {...args}
         value="#FF00AA"
         onChange={action('change')} />
     )
   )
   .add(
     'autofocus',
-    () => render({autoFocus: true})
+    (args) => render({...args, autoFocus: true})
   )
   .add(
     'label side',
-    () => render({labelPosition: 'side'})
+    (args) => render({...args, labelPosition: 'side'})
   )
   .add(
     'no visible label',
-    () => renderNoLabel({isRequired: true, 'aria-label': 'Primary Color'})
+    (args) => renderNoLabel({...args, isRequired: true, 'aria-label': 'Primary Color'})
   )
   .add(
     'aria-labelledby',
-    () => (
+    (args) => (
       <>
         <label htmlFor="colorfield" id="label">Primary Color</label>
-        {renderNoLabel({isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
+        {renderNoLabel({...args, isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
       </>
     )
   )
   .add(
     'custom width',
-    () => render({width: 'size-3000'})
+    (args) => render({...args, width: 'size-3000'})
   )
   .add(
     'custom width no visible label',
-    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Primary Color'})
+    (args) => renderNoLabel({...args, width: 'size-3000', isRequired: true, 'aria-label': 'Primary Color'})
   )
   .add(
     'custom width, labelPosition=side',
-    () => render({width: 'size-3000', labelPosition: 'side'})
+    (args) => render({...args, width: 'size-3000', labelPosition: 'side'})
   )
   .add(
     'custom width, 10px for min-width',
-    () => (
+    (args) => (
       <Flex direction="column" gap="size-100">
-        {render({width: '10px'})}
+        {render({...args, width: '10px'})}
         <div style={{width: '10px'}}>
-          {render()}
+          {render(args)}
         </div>
       </Flex>
     )
