@@ -40,10 +40,13 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     if (isQuiet || !props.height) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
+      let prevOverflow = input.style.overflow;
       input.style.alignSelf = 'start';
+      input.style.overflow = 'hidden';
       input.style.height = 'auto';
       // offsetHeight - clientHeight accounts for the border/padding.
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
+      input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
   }, [isQuiet, inputRef]);
