@@ -11,16 +11,17 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DraggableCollectionState, setDraggingKeys} from '@react-stately/dnd';
-import {HTMLAttributes, Key} from 'react';
+import {DraggableCollectionState, setCurrentDropCollectionRef, setDraggingCollectionRef, setDraggingKeys, setDroppedCollectionRef, setDroppedTarget} from '@react-stately/dnd';
+import {HTMLAttributes, Key, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {setDraggingCollection, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
+import {} from '@react-stately/dnd';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DraggableItemProps {
-  key: Key
+  key: Key,
+  parentRef: RefObject<HTMLElement>
 }
 
 export interface DraggableItemResult {
@@ -37,7 +38,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
     onDragStart(e) {
-      setDraggingCollection(state.collection);
+      setDraggingCollectionRef(props.parentRef);
       state.startDrag(props.key, e);
     },
     onDragMove(e) {
@@ -47,10 +48,13 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       state.endDrag(e);
       // TODO: perhaps clear the global state tracker on drag start? Avoids any possible async problems when looking up the global drag info in a async call?
       // TODO: perhaps also clear the drag stuff in useDraggableCollectionState instead
-      setDraggingCollection(undefined);
-      setDroppedCollection(undefined);
+      // TODO: when to clear setCurrentDropCollectionRef? perhaps keep in onDragEnd, but make sure to only clear it after onDrop finishes? Or have onDrop
+      // store a snapshot of the global DnD state since onDrop will be delayed via setTimeout
+      setDraggingCollectionRef(undefined);
+      setDroppedCollectionRef(undefined);
       setDroppedTarget(undefined);
       setDraggingKeys(new Set());
+      setCurrentDropCollectionRef(undefined);
     }
   });
 

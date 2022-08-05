@@ -225,7 +225,8 @@ function ReorderableGrid(props) {
             item={item}
             state={gridState}
             dragState={dragState}
-            dropState={dropState} />
+            dropState={dropState}
+            parentRef={ref} />
           {gridState.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
@@ -255,7 +256,7 @@ function ReorderableGrid(props) {
   );
 }
 
-function CollectionItem({item, state, dragState, dropState}) {
+function CollectionItem({item, state, dragState, dropState, parentRef}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -267,7 +268,7 @@ function CollectionItem({item, state, dragState, dropState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, parentRef}, dragState);
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({

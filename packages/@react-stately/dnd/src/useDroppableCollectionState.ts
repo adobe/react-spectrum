@@ -62,8 +62,9 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     // @ts-ignore
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];
-    let {draggingCollection, draggingKeys} = getDnDState();
-    let isInternalDrop = draggingCollection === collection;
+    let {draggingCollectionRef, currentDropCollectionRef, draggingKeys} = getDnDState();
+    // Compare draggingCollectionRef to currentDropCollectionRef since droppedCollectionRef hasn't been set yet (drop hasn't happened)
+    let isInternalDrop = draggingCollectionRef?.current === currentDropCollectionRef?.current;
 
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
@@ -82,11 +83,11 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop, collection]);
+  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop]);
 
   let propsGetDropOperation = useCallback((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]): DropOperation => {
-    let {draggingCollection, draggingKeys} = getDnDState();
-    let isInternalDrop = draggingCollection === collection;
+    let {draggingCollectionRef, currentDropCollectionRef, draggingKeys} = getDnDState();
+    let isInternalDrop = draggingCollectionRef?.current === currentDropCollectionRef?.current;
 
     // Even if user provides their own getDropOperation, automatically prevent items (i.e. folders) from being dropped on themselves
     // TODO: is the below overkill? Should we grant full freedom to the end user by not including this instead?
@@ -95,7 +96,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return getDropOperation(target, types, allowedOperations);
-  }, [getDropOperation, collection]);
+  }, [getDropOperation]);
 
   return {
     collection,

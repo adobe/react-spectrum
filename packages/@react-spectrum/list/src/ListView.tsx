@@ -24,7 +24,7 @@ import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, RefObject, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
@@ -44,7 +44,8 @@ interface ListViewContextValue<T> {
   isListDraggable: boolean,
   isListDroppable: boolean,
   layout: ListLayout<T>,
-  loadingState: LoadingState
+  loadingState: LoadingState,
+  parentRef: RefObject<HTMLDivElement>
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -225,7 +226,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState, parentRef: domRef}}>
       <Virtualizer
         {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}
         {...filterDOMProps(otherProps)}

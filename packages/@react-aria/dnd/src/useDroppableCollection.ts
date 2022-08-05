@@ -12,7 +12,7 @@
 
 import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
-import {DroppableCollectionState, getDnDState, setDroppedCollection, setDroppedTarget} from '@react-stately/dnd';
+import {DroppableCollectionState, getDnDState, setCurrentDropCollectionRef, setDroppedCollectionRef, setDroppedTarget} from '@react-stately/dnd';
 import {getTypes} from './utils';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
@@ -58,8 +58,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   } = localState.props;
 
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
-    let {draggingCollection, draggingKeys} = getDnDState();
-    let isInternalDrop = draggingCollection === localState.state.collection;
+    let {draggingCollectionRef, draggingKeys} = getDnDState();
+    let isInternalDrop = draggingCollectionRef?.current === ref?.current;
     let {
       target,
       dropOperation,
@@ -77,7 +77,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onInsert && await onInsert({items, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
     }
 
-  }, [onRootDrop, onItemDrop, onInsert, onReorder, localState]);
+  }, [onRootDrop, onItemDrop, onInsert, onReorder, ref]);
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
@@ -98,6 +98,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         return 'cancel';
       }
 
+      // Update the current collection ref tracker so getDropOperation can do its internal drop filtering.
+      // This will happen before onDropEnter when integrated w/ Devon's PR
+      setCurrentDropCollectionRef(ref);
       localState.dropOperation = state.getDropOperation(target, types, allowedOperations);
 
       // If the target doesn't accept the drop, see if the root accepts it instead.
@@ -128,7 +131,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
     },
     onDrop(e) {
-      setDroppedCollection(state.collection);
+      setDroppedCollectionRef(ref);
       setDroppedTarget(state.target);
       if (state.target) {
         onDrop(e, state.target);
@@ -368,6 +371,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let types = getTypes(drag.items);
         let selectionManager = localState.state.selectionManager;
         let target: DropTarget;
+        // Update the current collection ref tracker so getDropOperation can do its internal drop filtering
+        setCurrentDropCollectionRef(ref);
 
         // When entering the droppable collection for the first time, the default drop target
         // is after the focused key.
@@ -435,7 +440,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       },
       onDrop(e, target) {
-        setDroppedCollection(localState.state.collection);
+        setDroppedCollectionRef(ref);
         setDroppedTarget(localState.state.target);
         if (localState.state.target) {
           onDrop(e, target || localState.state.target);

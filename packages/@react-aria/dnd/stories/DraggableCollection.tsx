@@ -118,7 +118,8 @@ function DraggableCollection(props) {
           key={item.key}
           item={item}
           state={gridState}
-          dragState={dragState} />
+          dragState={dragState}
+          parentRef={ref} />
       ))}
       <DragPreview ref={preview}>
         {() => {
@@ -140,7 +141,7 @@ function DraggableCollection(props) {
   );
 }
 
-function DraggableCollectionItem({item, state, dragState}) {
+function DraggableCollectionItem({item, state, dragState, parentRef}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -153,7 +154,7 @@ function DraggableCollectionItem({item, state, dragState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, parentRef}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({

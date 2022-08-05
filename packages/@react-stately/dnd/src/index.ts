@@ -15,4 +15,4 @@ export type {DroppableCollectionStateOptions, DroppableCollectionState} from './
 export type {DnDState} from './utils';
 export {useDraggableCollectionState} from './useDraggableCollectionState';
 export {useDroppableCollectionState} from './useDroppableCollectionState';
-export {getDnDState, setDraggingCollection, setDraggingKeys, setDroppedCollection, setDroppedTarget} from './utils';
+export {getDnDState, setDraggingCollectionRef, setDraggingKeys, setCurrentDropCollectionRef, setDroppedCollectionRef, setDroppedTarget} from './utils';

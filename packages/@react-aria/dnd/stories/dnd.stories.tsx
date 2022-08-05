@@ -382,7 +382,8 @@ function DraggableCollection(props) {
           item={item}
           state={gridState}
           dragState={dragState}
-          onCut={props.onCut} />
+          onCut={props.onCut}
+          parentRef={ref} />
       ))}
       <DragPreview ref={preview}>
         {() => {
@@ -406,7 +407,7 @@ function DraggableCollection(props) {
   );
 }
 
-function DraggableCollectionItem({item, state, dragState, onCut}) {
+function DraggableCollectionItem({item, state, dragState, onCut, parentRef}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -421,7 +422,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     focusMode: 'cell'
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, parentRef}, dragState);
 
   let {clipboardProps} = useClipboard({
     getItems: () => dragState.getItems(item.key),
