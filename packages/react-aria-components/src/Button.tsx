@@ -3,9 +3,25 @@ import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {RenderProps, SlotProps, useContextProps, useRenderProps, WithRef} from './utils';
 
 export interface ButtonRenderProps {
+  /**
+   * Whether the button is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
   isHovered: boolean,
+  /**
+   * Whether the button is currently in a pressed state.
+   * @selector [data-pressed]
+   */
   isPressed: boolean,
+  /**
+   * Whether the button is focused, either via a mouse or keyboard.
+   * @selector :focus
+   */
   isFocused: boolean,
+  /**
+   * Whether the button is keyboard focused.
+   * @selector [data-focus-visible]
+   */
   isFocusVisible: boolean
 }
 

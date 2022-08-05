@@ -2,7 +2,6 @@ import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
-import {SelectableItemStates} from '@react-aria/selection';
 import {useLayoutEffect} from '@react-aria/utils';
 
 class BaseNode<T> {
@@ -105,7 +104,7 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
   textValue: string;
   props: any;
   level: number;
-  
+
   constructor(type, ownerDocument) {
     super(ownerDocument);
     this.type = TYPE_MAP[type];
@@ -300,7 +299,7 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
       return res;
     } else {
       return children;
-    }  
+    }
   }, [children, items, cache]);
 }
 
@@ -332,8 +331,33 @@ export function useCollection<T extends object>(props: CollectionProps<T>): Coll
   return {portal, collection};
 }
 
-export interface ItemStates extends SelectableItemStates {
-  isFocusVisible: boolean
+export interface ItemStates {
+  /**
+   * Whether the item is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the item is currently selected.
+   * @selector [aria-selected=true]
+   */
+  isSelected: boolean,
+  /**
+   * Whether the item is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the item is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
+   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   * @selector [aria-disabled]
+   */
+  isDisabled: boolean
 }
 
 interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}

@@ -611,6 +611,8 @@ module.exports = new Transformer({
             }
 
             result.params[tag.name] = tag.description;
+          } else if (tag.title === 'selector') {
+            result.selector = tag.description;
           }
         }
 
@@ -650,6 +652,10 @@ module.exports = new Transformer({
 
       if (docs.access) {
         value.access = docs.access;
+      }
+
+      if (docs.selector) {
+        value.selector = docs.selector;
       }
 
       if (value.type === 'property' || value.type === 'method') {
