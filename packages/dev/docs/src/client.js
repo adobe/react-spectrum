@@ -251,7 +251,7 @@ function DocSearch() {
     if (key) {
       let prediction = predictions.find(prediction => key === prediction.objectID);
       let url = prediction.url;
-      window.location.href = `..${window.location.hostname === 'reactspectrum.blob.core.windows.net' ? '/docs' : ''}${url.replace('https://react-spectrum.adobe.com', '')}`;
+      window.location.href = `/${window.location.hostname === 'reactspectrum.blob.core.windows.net' ? 'docs' : ''}${url.replace('https://react-spectrum.adobe.com/', '')}`;
     }
   };
 
