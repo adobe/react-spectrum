@@ -58,12 +58,12 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    */
   onAction?: (key: string) => void,
   /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   * The drag hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
    * @private
    */
   dragHooks?: DragHooks,
   /**
-   * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
+   * The drag hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
    * @private
    */
   dropHooks?: DropHooks

@@ -23,7 +23,7 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useDnDHooks, useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDnDHooks} from '@react-spectrum/dnd';
 import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 const parameters = {
@@ -623,7 +623,7 @@ export function DragExample(props?) {
     };
   });
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems,
     getAllowedDropOperations() {
       getAllowedDropOperationsAction();
@@ -701,7 +701,7 @@ export function ReorderExample(props) {
     }
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -719,7 +719,7 @@ export function ReorderExample(props) {
     onDragEnd: onDragEnd
   });
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     async onDrop(e) {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
@@ -806,7 +806,7 @@ export function DragIntoItemExample(props) {
     list.remove(...keys);
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -824,7 +824,7 @@ export function DragIntoItemExample(props) {
     onDragEnd: chain(action('dragEnd'), onDragEnd)
   });
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     onDrop: async e => {
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
         let keys = [];
@@ -915,7 +915,7 @@ export function DragBetweenListsExample(props) {
     }
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -936,7 +936,7 @@ export function DragBetweenListsExample(props) {
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     onDrop: async e => {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
@@ -1036,7 +1036,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     destinationList.append(...items);
   };
 
-  let dragHooksFirst = useDragHooks({
+  let {dragHooks: dragHooksFirst, dropHooks: dropHooksFirst} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1051,28 +1051,7 @@ export function DragBetweenListsRootOnlyExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let dragHooksSecond = useDragHooks({
-    getItems(keys) {
-      return [...keys].map(key => {
-        key = JSON.stringify(key);
-        return {
-          'list2': key,
-          'text/plain': key
-        };
-      });
-    },
-    getAllowedDropOperations() {
-      getAllowedDropOperationsAction();
-      return ['move', 'cancel'];
-    },
-    onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let dropHooksFirst = useDropHooks({
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
       if (e.target.type === 'root') {
         let keys = [];
@@ -1103,7 +1082,22 @@ export function DragBetweenListsRootOnlyExample(props) {
     }
   });
 
-  let dropHooksSecond = useDropHooks({
+  let {dragHooks: dragHooksSecond, dropHooks: dropHooksSecond} = useDnDHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list2': key,
+          'text/plain': key
+        };
+      });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
       if (e.target.type === 'root') {
         let keys = [];

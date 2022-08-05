@@ -61,8 +61,6 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
    * @default () => []
    */
   getItems?: (keys: Set<Key>) => DragItem[]
-  // Tentative prop. Handles converting the items from the drop operation's dataTransfer to the actual data format that the user can use
-  // itemProcessor?: (data: any) => any
 }
 
 export function useDnDHooks(options: DnDOptions): DnDHooks {
