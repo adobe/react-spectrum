@@ -1330,10 +1330,7 @@ function DragBetweenListsComplex() {
       }
     },
     onRootDrop: async (e) => {
-      let {
-        items
-      } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list1.append(...processedItems);
     },
     onItemDrop: async (e) => {
@@ -1351,12 +1348,10 @@ function DragBetweenListsComplex() {
     },
     acceptedDragTypes,
     onDragStart: action('dragStartList1'),
-    onDragEnd: (e, dropTarget, isInternalDrop) => {
-      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list1.getItem(dropTarget.key).childNodes))) {
-        list1.remove(...e.keys);
-      }
-      action('dragEndList1')(e, dropTarget, isInternalDrop);
+    onRemove: (e) => {
+      list1.remove(...e.keys);
     },
+    onDragEnd: action('dragEndList1'),
     getAllowedDropOperations: () => ['move'],
     isValidDropTarget: (key) => !!list1.getItem(key).childNodes
   });
@@ -1393,10 +1388,7 @@ function DragBetweenListsComplex() {
       }
     },
     onRootDrop: async (e) => {
-      let {
-        items
-      } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
     onItemDrop: async (e) => {
@@ -1410,12 +1402,10 @@ function DragBetweenListsComplex() {
     },
     acceptedDragTypes,
     onDragStart: action('dragStartList2'),
-    onDragEnd: (e, dropTarget, isInternalDrop) => {
-      if (e.dropOperation === 'move' && (!isInternalDrop || (!(dropTarget instanceof HTMLElement) && dropTarget.type === 'item' && dropTarget.dropPosition === 'on' && list2.getItem(dropTarget.key).childNodes))) {
-        list2.remove(...e.keys);
-      }
-      action('dragEndList2')(e, dropTarget, isInternalDrop);
+    onRemove: (e) => {
+      list2.remove(...e.keys);
     },
+    onDragEnd: action('dragEndList2'),
     getAllowedDropOperations: () => ['move'],
     isValidDropTarget: (key) => !!list2.getItem(key).childNodes
   });
