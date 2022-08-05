@@ -328,28 +328,40 @@ level Hook-based API. `ComboBox` sends props to its child elements via public Re
 implement replacements for any component, using hooks from `react-aria`. This allows you to replace only the components you need to customize,
 and keep using the others.
 
+The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook accepts local props and ref, and merges them with the props and
+ref sent via context by `ComboBox`. This example shows how you could implement a custom `ListBox` component that works with `ComboBox`.
+
 ```tsx
-import {ListBoxContext} from 'react-aria-components';
-import {useListBox, mergeProps} from 'react-aria';
+import {ListBoxContext, useContextProps} from 'react-aria-components';
+import {useListBox} from 'react-aria';
 
 function MyListBox(props) {
-  let {state, ...context} = useContext(ListBoxContext);
-  props = mergeProps(props, context);
+  // Merge local props and ref with props from context.
+  let ref = React.useRef();
+  [props, ref] = useContextProps(props, ref, ListBoxContext);
 
+  // Get state sent from ComboBox via context, and call useListBox.
+  let {state} = React.useContext(ListBoxContext);
   let {listBoxProps} = useListBox(props, state, ref);
 
+  // Render stuff
   // ...
 }
 ```
 
 This also works the other way. If you need to customize `ComboBox` itself, but want to reuse the components it contains, you can do so by providing
-the necessary contexts.
+the necessary contexts. The `Provider` component is an easier way to send multiple contexts at once.
 
 ```tsx
 import {useComboBox, LabelContext, ButtonContext, InputContext, PopoverContext, ListBoxContext} from 'react-aria';
+import {Provider} from 'react-aria-components';
 
 function MyComboBox(props) {
   // ...
+  let buttonRef = useRef(null);
+  let inputRef = useRef(null);
+  let listBoxRef = useRef(null);
+  let popoverRef = useRef(null);
   let {
     buttonProps,
     inputProps,
@@ -357,6 +369,17 @@ function MyComboBox(props) {
     labelProps
   } = useComboBox({ /* ... */ });
 
-
+  return (
+    <Provider
+      values={[
+        [LabelContext, {...labelProps, ref: labelRef}],
+        [ButtonContext, {...buttonProps, ref: buttonRef}],
+        [InputContext, {...inputProps, ref: inputRef}],
+        [PopoverContext, {ref: popoverRef}],
+        [ListBoxContext, {...listBoxProps, ref: listBoxRef}]
+      ]}>
+      {props.children}
+    </Provider>
+  );
 }
 ```

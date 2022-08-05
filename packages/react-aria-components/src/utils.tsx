@@ -1,8 +1,11 @@
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, RefCallback, useCallback, useContext, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, RefCallback, useCallback, useContext, useEffect, useRef, useState} from 'react';
+
+export const slotCallbackSymbol = Symbol('callback');
 
 interface SlottedValue<T> {
-  slots: Record<string, T>
+  slots?: Record<string, T>,
+  [slotCallbackSymbol]?: (value: T) => void
 }
 
 type ProviderValue<T> = [React.Context<T>, SlottedValue<T> | T];
@@ -77,19 +80,29 @@ export interface SlotProps {
 }
 
 export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<WithRef<SlottedValue<U> | U, E>>): [T, React.RefObject<E>] {
-  let {ref: contextRef, ...contextProps} = useContext(context) || {};
-  if ('slots' in contextProps) {
+  let ctx = useContext(context) || {};
+  if ('slots' in ctx) {
     if (!props.slot) {
       throw new Error('A slot prop is required');
     }
-    if (!contextProps.slots[props.slot]) {
+    if (!ctx.slots[props.slot]) {
       // @ts-ignore
       throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(contextProps.slots).map(p => `"${p}"`)) + '.');
     }
-    contextProps = contextProps.slots[props.slot];
+    ctx = ctx.slots[props.slot];
   }
+  // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
+  let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
   let mergedRef = useObjectRef(mergeRefs(ref, contextRef));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
+
+  // A parent component might need the props from a child, so call slot callback if needed.
+  useEffect(() => {
+    if (callback) {
+      callback(props);
+    }
+  }, [callback, props]);
+
   return [mergedProps, mergedRef];
 }
 

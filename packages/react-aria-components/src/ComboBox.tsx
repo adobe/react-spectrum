@@ -4,7 +4,7 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, useSlot} from './utils';
+import {Provider, slotCallbackSymbol, useSlot} from './utils';
 import React, {ReactNode, useRef, useState} from 'react';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
@@ -57,7 +57,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
         [ButtonContext, {...buttonProps, ref: buttonRef}],
         [InputContext, {...inputProps, ref: inputRef}],
         [PopoverContext, {state, ref: popoverRef, triggerRef: inputRef, placement: 'bottom start', preserveChildren: true, isNonModal: true}],
-        [ListBoxContext, {state, setListBoxProps, ...listBoxProps, ref: listBoxRef}]
+        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}]
       ]}>
       {props.children}
       {portal}

@@ -20,6 +20,7 @@ export {Separator} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
 export {Text} from './Text';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
+export {useContextProps} from './utils';
 
 export type {ItemStates} from './Collection';
 export type {ButtonRenderProps} from './Button';

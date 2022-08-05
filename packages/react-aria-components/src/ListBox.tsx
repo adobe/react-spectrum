@@ -4,7 +4,7 @@ import {isFocusVisible} from '@react-aria/interactions';
 import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {useListBox, useListBoxSection, useOption} from 'react-aria';
@@ -15,21 +15,14 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
 }
 
 interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLUListElement> {
-  state?: ListState<T> & OverlayTriggerState,
-  setListBoxProps?: (props: ListBoxProps<any>) => void
+  state?: ListState<T> & OverlayTriggerState
 }
 
-export const ListBoxContext = createContext<ListBoxContextValue<unknown>>(null);
+export const ListBoxContext = createContext<ListBoxContextValue<any>>(null);
 const InternalListBoxContext = createContext<ListState<unknown>>(null);
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLUListElement>) {
-  let {state, setListBoxProps} = useContext(ListBoxContext) || {};
-  useEffect(() => {
-    if (setListBoxProps) {
-      setListBoxProps(props);
-    }
-  }, [setListBoxProps, props]);
-
+  let {state} = useContext(ListBoxContext) || {};
   [props, ref] = useContextProps(props, ref, ListBoxContext);
 
   if (state) {

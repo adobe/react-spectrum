@@ -5,7 +5,7 @@ import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
+import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {useCollection} from './Collection';
@@ -43,7 +43,7 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [ButtonContext, {...triggerProps, ref}],
         [PopoverContext, {state, triggerRef: ref, preserveChildren: true}],
-        [ListBoxContext, {state, setListBoxProps, ...menuProps}]
+        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}]
       ]}>
       {props.children}
       {portal}
