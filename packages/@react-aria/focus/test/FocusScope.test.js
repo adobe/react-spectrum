@@ -13,10 +13,13 @@
 import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
-import React from 'react';
+import React, {createRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
+import {DialogContainer} from '@react-spectrum/dialog';
+import {Provider} from '@react-spectrum/provider';
+import {defaultTheme} from '@adobe/react-spectrum';
 
 describe('FocusScope', function () {
   beforeEach(() => {
@@ -1418,6 +1421,69 @@ describe('FocusScope', function () {
       act(() => {inScope.focus();});
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(beforeScope);
+    });
+  });
+  describe('name', () => {
+    it('foo', () => {
+      function Test() {
+        let [showMenu, setShowMenu] = useState(false);
+        let [showDialog, setShowDialog] = useState(false);
+        let onClick = () => {
+          setShowMenu(false);
+          setShowDialog(true);
+        };
+        return (
+          <Provider theme={defaultTheme}>
+            <input />
+            <FocusScope>
+              <button onKeyDown={() => setShowMenu(true)}>Open Menu</button>
+              <DialogContainer onDismiss={() => {}}>
+                {showMenu && (
+                  <FocusScope contain restoreFocus autoFocus>
+                    <button onKeyDown={onClick}>Open Dialog</button>
+                  </FocusScope>
+                )}
+              </DialogContainer>
+            </FocusScope>
+            <DialogContainer onDismiss={() => {}}>
+              {showDialog && (
+                <FocusScope contain restoreFocus autoFocus>
+                  <button onKeyDown={() => setShowDialog(false)}>Close</button>
+                </FocusScope>
+              )}
+            </DialogContainer>
+          </Provider>
+        );
+      }
+
+      render(<Test/>);
+      act(() => {
+        jest.runAllTimers();
+      });
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement.textContent).toBe('Open Menu');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Open Dialog');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Close');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Open Menu');
     });
   });
 });

@@ -705,19 +705,17 @@ class Tree {
     let parentNode = node.parent;
     // when we remove a scope, check if any sibling scopes are trying to restore focus to something inside the scope we're removing
     // if we are, then replace the siblings restore with the restore from the scope we're removing
-    parentNode.children.forEach(
-      sibling => {
-        if (
-          sibling !== node &&
-          node.nodeToRestore &&
-          sibling.nodeToRestore &&
-          node.scopeRef.current &&
-          isElementInScope(sibling.nodeToRestore, node.scopeRef.current)
-        ) {
-          sibling.nodeToRestore = node.nodeToRestore;
-        }
+    for (let current of this.traverse()) {
+      if (
+        current !== node &&
+        node.nodeToRestore &&
+        current.nodeToRestore &&
+        node.scopeRef.current &&
+        isElementInScope(current.nodeToRestore, node.scopeRef.current)
+      ) {
+        current.nodeToRestore = node.nodeToRestore;
       }
-    );
+    }
     let children = node.children;
     parentNode.removeChild(node);
     if (children.length > 0) {
