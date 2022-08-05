@@ -90,7 +90,7 @@ export function FocusScope(props: FocusScopeProps) {
   // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
   // we want the parent scope to be the active scope instead.
   let ctxParent = ctx?.scopeRef ?? null;
-  let parentScope = useMemo(() => activeScope && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
+  let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
