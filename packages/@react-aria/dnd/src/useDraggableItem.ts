@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DraggableCollectionState, setCurrentDropCollectionRef, setDraggingCollectionRef, setDraggingKeys, setDroppedCollectionRef, setDroppedTarget} from '@react-stately/dnd';
+import {DraggableCollectionState, setDraggingCollectionRef} from '@react-stately/dnd';
 import {HTMLAttributes, Key, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -46,15 +46,6 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     },
     onDragEnd(e) {
       state.endDrag(e);
-      // TODO: perhaps clear the global state tracker on drag start? Avoids any possible async problems when looking up the global drag info in a async call?
-      // TODO: perhaps also clear the drag stuff in useDraggableCollectionState instead
-      // TODO: when to clear setCurrentDropCollectionRef? perhaps keep in onDragEnd, but make sure to only clear it after onDrop finishes? Or have onDrop
-      // store a snapshot of the global DnD state since onDrop will be delayed via setTimeout
-      setDraggingCollectionRef(undefined);
-      setDroppedCollectionRef(undefined);
-      setDroppedTarget(undefined);
-      setDraggingKeys(new Set());
-      setCurrentDropCollectionRef(undefined);
     }
   });
 

@@ -444,7 +444,7 @@ storiesOf('ListView/Drag and Drop', module)
   .add(
     'drag between two lists, complex, new hook',
     () => <DragBetweenListsComplex />,
-    {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list.'}}
+    {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed'}}
   )
   .add(
     'drag between two list, new hook with user overrides',

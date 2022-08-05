@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {clearDnDState, getDnDState, setDraggingCollectionRef, setDraggingKeys, setDroppedTarget} from '@react-stately/dnd';
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
-import {getDnDState, setDroppedTarget} from '@react-stately/dnd';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -172,9 +172,19 @@ export function useDrop(options: DropOptions): DropResult {
         dropOperation
       };
 
-      // We want onDrop to fire before onDragEnd so that we can properly track if a drop operation is a reorder operation by checking the droppable collection's
-      // drag status and thus allow the user to determine if the item should be removed from the original collection/list.
-      options.onDrop(event);
+      let dndStateSnapshot = getDnDState();
+      // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
+      // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
+      // This behavior is consistent across browsers, but see this issue for details:
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+      setTimeout(() => {
+        setDraggingCollectionRef(dndStateSnapshot?.draggingCollectionRef);
+        setDraggingKeys(dndStateSnapshot?.draggingKeys);
+        options.onDrop(event);
+        // Clear global DnD state since this deferred onDrop is the last call in a DnD cycle. If options.onDrop
+        // isn't a function, then onDragEnd will be responsible for clearing the global DnD state
+        clearDnDState();
+      }, 0);
     }
 
     if (typeof options.onDropExit === 'function') {

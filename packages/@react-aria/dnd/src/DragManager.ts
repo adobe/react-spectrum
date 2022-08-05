@@ -13,10 +13,10 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
-import {getDnDState, setDroppedTarget} from '@react-stately/dnd';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import type {LocalizedStringFormatter} from '@internationalized/string';
+import {setDroppedTarget} from '@react-stately/dnd';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -509,6 +509,9 @@ class DragSession {
       this.dropOperation = this.dragTarget.allowedDropOperations[0];
     }
 
+    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
+    setDroppedTarget(this.currentDropTarget.element as HTMLElement);
+
     if (typeof this.currentDropTarget.onDrop === 'function') {
       let items: DropItem[] = this.dragTarget.items.map(item => ({
         kind: 'text',
@@ -524,11 +527,6 @@ class DragSession {
         items,
         dropOperation: this.dropOperation
       }, item?.target);
-    }
-
-    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
-    if (!getDnDState().droppedTarget) {
-      setDroppedTarget(this.currentDropTarget.element as HTMLElement);
     }
 
     this.end();

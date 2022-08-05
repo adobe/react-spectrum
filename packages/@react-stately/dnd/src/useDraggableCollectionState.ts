@@ -48,7 +48,8 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     onRemove
   } = props;
   let [, setDragging] = useState(false);
-  // TODO: maybe track draggedKey in global DnD state?
+  // Retain a local tracker for draggingKeys since the global DnD state is briefly inaccurate during useDrop's deferred onDrop
+  let draggingKeys = useRef(new Set<Key>());
   let draggedKey = useRef(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
@@ -71,10 +72,10 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       return draggedKey.current;
     },
     get draggingKeys() {
-      return getDnDState().draggingKeys;
+      return draggingKeys.current;
     },
     isDragging(key) {
-      return getDnDState().draggingKeys.has(key);
+      return draggingKeys.current.has(key);
     },
     getKeysForDrag: getKeys,
     getItems(key) {
@@ -85,6 +86,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
     startDrag(key, event) {
       setDragging(true);
       let keys = getKeys(key);
+      draggingKeys.current = keys;
       setDraggingKeys(keys);
       draggedKey.current = key;
       if (typeof onDragStart === 'function') {
@@ -98,7 +100,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       if (typeof onDragMove === 'function') {
         onDragMove({
           ...event,
-          keys: getDnDState().draggingKeys
+          keys: draggingKeys.current
         });
       }
     },
@@ -107,16 +109,15 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
         let {draggingCollectionRef, droppedCollectionRef, droppedTarget} = getDnDState();
         let isInternalDrop = droppedCollectionRef?.current === draggingCollectionRef?.current;
         let isInternalFolderDrop = isInternalDrop && !(droppedTarget instanceof HTMLElement) && droppedTarget?.type === 'item' && droppedTarget?.dropPosition === 'on' && collection.getItem(droppedTarget.key).childNodes;
-        let draggingKeys = getDnDState().draggingKeys;
         // If it is a 'move' drop operatation to a drop target outside the collection or a folder within the dragged collection, we can assume the user wants to remove the items from the source collection
         // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
         if (typeof onRemove === 'function' && event.dropOperation === 'move' && (!isInternalDrop || isInternalFolderDrop)) {
-          onRemove({keys: draggingKeys});
+          onRemove({keys: draggingKeys.current});
         }
 
         onDragEnd({
           ...event,
-          keys: getDnDState().draggingKeys,
+          keys: draggingKeys.current,
           // TODO: Pass dropTarget and isInternalDrop in case user needs said information in onDragEnd? Or overkill?
           dropTarget: droppedTarget,
           isInternalDrop

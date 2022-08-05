@@ -11,6 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {clearDnDState} from '@react-stately/dnd';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
@@ -159,6 +160,7 @@ export function useDrag(options: DragOptions): DragResult {
       });
     }
 
+    clearDnDState();
     setDragging(false);
     removeAllGlobalListeners();
   };
@@ -188,6 +190,7 @@ export function useDrag(options: DragOptions): DragResult {
         if (typeof state.options.onDragEnd === 'function') {
           state.options.onDragEnd(e);
         }
+        clearDnDState();
       }
     }, stringFormatter);
 

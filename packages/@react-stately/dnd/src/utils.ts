@@ -40,3 +40,7 @@ export function setDroppedCollectionRef(ref: RefObject<HTMLElement>) {
 export function setDroppedTarget(dropTarget: DropTarget | HTMLElement) {
   dndState.droppedTarget = dropTarget;
 }
+
+export function clearDnDState() {
+  dndState = {draggingKeys: new Set()};
+}
