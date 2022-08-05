@@ -71,10 +71,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop && await onRootDrop({items, dropOperation});
     } else if (target.dropPosition === 'on') {
       onItemDrop && await onItemDrop({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}});
-    } else if (isInternalDrop && draggingKeys.size > 0) {
+    } else if (isInternalDrop && draggingKeys.size > 0 && e.dropOperation === 'move') {
       onReorder && await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
     } else {
-      onInsert && await onInsert({items, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
+      onInsert && await onInsert({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: target.dropPosition}});
     }
 
   }, [onRootDrop, onItemDrop, onInsert, onReorder, ref]);

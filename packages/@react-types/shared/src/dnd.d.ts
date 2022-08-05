@@ -118,6 +118,7 @@ interface DroppableCollectionDropEvent extends DropEvent {
 interface DroppableCollectionInsertDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
+  isInternalDrop: boolean,
   target: {
     key: Key,
     dropPosition: Omit<DropPosition, 'on'>

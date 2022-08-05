@@ -1352,7 +1352,7 @@ function DragBetweenListsComplex() {
       list1.remove(...e.keys);
     },
     onDragEnd: action('dragEndList1'),
-    getAllowedDropOperations: () => ['move'],
+    getAllowedDropOperations: () => ['move', 'copy'],
     isValidDropTarget: (key) => !!list1.getItem(key).childNodes
   });
 
@@ -1367,9 +1367,15 @@ function DragBetweenListsComplex() {
     onInsert: async (e) => {
       let {
         items,
-        target
+        target,
+        dropOperation,
+        isInternalDrop
       } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
+      if (dropOperation === 'copy' && isInternalDrop) {
+        processedItems = processedItems.map(item => ({...item, identifier: item.identifier + 'copy'}));
+      }
+
       if (target.dropPosition === 'before') {
         list2.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
@@ -1406,7 +1412,7 @@ function DragBetweenListsComplex() {
       list2.remove(...e.keys);
     },
     onDragEnd: action('dragEndList2'),
-    getAllowedDropOperations: () => ['move'],
+    getAllowedDropOperations: () => ['move', 'copy'],
     isValidDropTarget: (key) => !!list2.getItem(key).childNodes
   });
 
