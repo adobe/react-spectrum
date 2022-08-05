@@ -84,17 +84,22 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-textfield-border-color-error);
 
     &:hover {
-      border-color: var(--spectrum-textfield-border-color-error-hover);
+      border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
     &:active {
-      border-color: var(--spectrum-textfield-border-color-error-down);
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
+    &:focus,
+    &.is-focused {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
     &:focus-ring { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        border-color: var(--spectrum-textfield-border-color-error);
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
       }
     }
   }
@@ -133,10 +138,14 @@ governing permissions and limitations under the License.
   .spectrum-Textfield.spectrum-Textfield--invalid & {
     border-color: var(--spectrum-textfield-border-color-error);
 
+    &:focus {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
     &:focus-ring { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        border-color: var(--spectrum-textfield-border-color-error);
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
       }
     }
   }
@@ -144,7 +153,7 @@ governing permissions and limitations under the License.
   .spectrum-Textfield--quiet.spectrum-Textfield--invalid & {
     &:focus-ring { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+        box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
   }
