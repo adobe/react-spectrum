@@ -171,6 +171,20 @@ describe('ListView', function () {
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set('a'),
+          x: 1,
+          y: 1,
+          dropOperation: 'move',
+          dropTarget: droppable,
+          isInternalDrop: false
+        });
+
+        // onDrop is delayed via setTimeout in useDrop in a mouse drag and drop case
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
         expect(onDrop).toHaveBeenCalledWith({
@@ -188,17 +202,6 @@ describe('ListView', function () {
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
-
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
-        expect(onDragEnd).toHaveBeenCalledWith({
-          type: 'dragend',
-          keys: new Set('a'),
-          x: 1,
-          y: 1,
-          dropOperation: 'move'
-        }, droppable, false);
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -264,15 +267,6 @@ describe('ListView', function () {
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
-        expect(onDrop).toHaveBeenCalledTimes(1);
-
-        expect(await onDrop.mock.calls[0][0].items).toHaveLength(4);
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
-        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
-        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
-        expect(await onDrop.mock.calls[0][0].items[3].getText('text/plain')).toBe('Adobe InDesign');
-
         fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -281,8 +275,20 @@ describe('ListView', function () {
           keys: new Set(['a', 'b', 'c', 'd']),
           x: 1,
           y: 1,
-          dropOperation: 'move'
-        }, droppable, false);
+          dropOperation: 'move',
+          dropTarget: droppable,
+          isInternalDrop: false
+        });
+
+        // onDrop is delayed via setTimeout in useDrop in a mouse drag and drop case
+        act(() => jest.runAllTimers());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        expect(await onDrop.mock.calls[0][0].items).toHaveLength(4);
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
+        expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
+        expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
+        expect(await onDrop.mock.calls[0][0].items[3].getText('text/plain')).toBe('Adobe InDesign');
       });
 
       it('should not allow drag operations on a disabled row', function () {
@@ -384,8 +390,10 @@ describe('ListView', function () {
           keys: new Set('a'),
           x: 50,
           y: 25,
-          dropOperation: 'move'
-        }, droppable, false);
+          dropOperation: 'move',
+          dropTarget: droppable,
+          isInternalDrop: false
+        });
       });
 
       it('should allow drag and drop of multiple rows', async function () {
@@ -446,8 +454,10 @@ describe('ListView', function () {
           keys: new Set(['a', 'b', 'c', 'd']),
           x: 50,
           y: 25,
-          dropOperation: 'move'
-        }, droppable, false);
+          dropOperation: 'move',
+          dropTarget: droppable,
+          isInternalDrop: false
+        });
       });
     });
 
@@ -702,8 +712,10 @@ describe('ListView', function () {
         keys: new Set(['1', '2', '3']),
         x: 50,
         y: 25,
-        dropOperation: 'move'
-      }, expectedDropTarget, true);
+        dropOperation: 'move',
+        dropTarget: expectedDropTarget,
+        isInternalDrop: true
+      });
       onSelectionChange.mockClear();
       onDragStart.mockClear();
 
