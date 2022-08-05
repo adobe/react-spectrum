@@ -251,12 +251,7 @@ function DocSearch() {
     if (key) {
       let prediction = predictions.find(prediction => key === prediction.objectID);
       let url = prediction.url;
-      if (
-        url.includes('https://react-spectrum.adobe.com') &&
-        window.location.hostname === 'localhost') {
-        url = url.replace('https://react-spectrum.adobe.com', window.location.origin);
-      }
-      window.location.href = url;
+      window.location.href = `..${url.replace('https://react-spectrum.adobe.com', '')}`;
     }
   };
 
