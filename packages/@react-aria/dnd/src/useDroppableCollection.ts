@@ -70,7 +70,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     if (target.type === 'root') {
       onRootDrop && await onRootDrop({items, dropOperation});
     } else if (target.dropPosition === 'on') {
-      onItemDrop && await onItemDrop({items, dropOperation, target: {key: target.key, dropPosition: 'on'}});
+      onItemDrop && await onItemDrop({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}});
     } else if (isInternalDrop && draggingKeys.size > 0) {
       onReorder && await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
     } else {

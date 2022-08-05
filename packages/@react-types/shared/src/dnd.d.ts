@@ -132,6 +132,7 @@ interface DroppableCollectionRootDropEvent {
 interface DroppableCollectionOnItemDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
+  isInternalDrop: boolean,
   target: {
     key: Key,
     dropPosition: 'on'
