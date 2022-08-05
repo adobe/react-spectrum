@@ -22,6 +22,7 @@ import statelyDocs from 'docs:@react-stately/combobox';
 import Anatomy from '/packages/@react-aria/combobox/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Divider} from '@react-spectrum/divider';
 
 ---
 category: Pickers
@@ -63,6 +64,9 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 </ComboBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
 ```css
 [role=listbox] {
   display: block;
@@ -93,6 +97,8 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   color: white;
 }
 ```
+
+</details>
 
 ## Anatomy
 
@@ -126,52 +132,30 @@ For more customization options, React Aria hooks can be used to replace any of t
 
 * [useComboBox](useComboBox.html)
 
-## Making it reusable
-
-```tsx example export=true
-import clsx from 'clsx';
-
-function MyComboBox({label, children, ...props}) {
-  return (
-    <ComboBox {...props}>
-      <Label>{label}</Label>
-      <div>
-        <Input />
-        <Button>▼</Button>
-      </div>
-      <Popover>
-        <ListBox className="menu">
-          {children}
-        </ListBox>
-      </Popover>
-    </ComboBox>
-  );
-}
-
-function MyItem(props) {
-  return <Item {...props} className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})} />
-}
-
-<MyComboBox label="Test">
-  <MyItem>Foo</MyItem>
-  <MyItem>Bar</MyItem>
-  <MyItem>Baz</MyItem>
-</MyComboBox>
-```
-
 ## Props
 
 ### ComboBox
 
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
 
+<Divider />
+
 ### ListBox
 
 <PropTable component={docs.exports.ListBox} links={docs.links} />
 
+<Divider />
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" />
+
 ### Item
 
+</summary>
+
 <PropTable component={docs.exports.Item} links={docs.links} />
+
+</details>
 
 ## Styling
 
@@ -218,9 +202,56 @@ The `className` and `style` props also accept functions which receive states for
 
 The following states are passed to render props functions:
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Item</summary>
+
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.exports.ItemStates.properties} hideType />
 </TypeContext.Provider>
+
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Button</summary>
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.exports.ButtonRenderProps.properties} hideType />
+</TypeContext.Provider>
+
+</details>
+
+## Making it reusable
+
+```tsx example export=true
+import clsx from 'clsx';
+
+function MyComboBox({label, children, ...props}) {
+  return (
+    <ComboBox {...props}>
+      <Label>{label}</Label>
+      <div>
+        <Input />
+        <Button>▼</Button>
+      </div>
+      <Popover>
+        <ListBox className="menu">
+          {children}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}
+
+function MyItem(props) {
+  return <Item {...props} className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})} />
+}
+
+<MyComboBox label="Test">
+  <MyItem>Foo</MyItem>
+  <MyItem>Bar</MyItem>
+  <MyItem>Baz</MyItem>
+</MyComboBox>
+```
 
 ## Usage
 

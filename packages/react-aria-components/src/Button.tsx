@@ -2,7 +2,7 @@ import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 're
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {RenderProps, SlotProps, useContextProps, useRenderProps, WithRef} from './utils';
 
-interface ButtonRenderProps {
+export interface ButtonRenderProps {
   isHovered: boolean,
   isPressed: boolean,
   isFocused: boolean,

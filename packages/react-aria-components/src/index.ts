@@ -22,3 +22,4 @@ export {Text} from './Text';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
 
 export type {ItemStates} from './Collection';
+export type {ButtonRenderProps} from './Button';
