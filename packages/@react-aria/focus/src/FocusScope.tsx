@@ -110,6 +110,9 @@ export function FocusScope(props: FocusScopeProps) {
     focusScopeTree.addTreeNode(scopeRef, parentScope);
   }
 
+  let node = focusScopeTree.getTreeNode(scopeRef);
+  node.contain = contain;
+
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
@@ -241,6 +244,19 @@ function getScopeRoot(scope: Element[]) {
   return scope[0].parentElement;
 }
 
+function shouldContainFocus(scopeRef: ScopeRef) {
+  let scope = focusScopeTree.getTreeNode(activeScope);
+  while (scope && scope.scopeRef !== scopeRef) {
+    if (scope.contain) {
+      return false;
+    }
+
+    scope = scope.parent;
+  }
+
+  return true;
+}
+
 function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
   let focusedNode = useRef<FocusableElement>();
 
@@ -258,7 +274,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = (e) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || scopeRef !== activeScope) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef)) {
         return;
       }
 
@@ -288,7 +304,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       if ((!activeScope || isAncestorScope(activeScope, scopeRef)) && isElementInScope(e.target, scopeRef.current)) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-      } else if (scopeRef === activeScope && !isElementInChildScope(e.target, scopeRef)) {
+      } else if (shouldContainFocus(scopeRef) && !isElementInChildScope(e.target, scopeRef)) {
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
         if (focusedNode.current) {
@@ -296,7 +312,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
         } else if (activeScope) {
           focusFirstInScope(activeScope.current);
         }
-      } else if (scopeRef === activeScope) {
+      } else if (shouldContainFocus(scopeRef)) {
         focusedNode.current = e.target;
       }
     };
@@ -305,7 +321,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       // Firefox doesn't shift focus back to the Dialog properly without this
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (scopeRef === activeScope && !isElementInChildScope(document.activeElement, scopeRef)) {
+        if (shouldContainFocus(scopeRef) && !isElementInChildScope(document.activeElement, scopeRef)) {
           activeScope = scopeRef;
           if (document.body.contains(e.target)) {
             focusedNode.current = e.target;
@@ -769,6 +785,7 @@ class TreeNode {
   public nodeToRestore: FocusableElement;
   public parent: TreeNode;
   public children: TreeNode[] = [];
+  public contain = false;
 
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
