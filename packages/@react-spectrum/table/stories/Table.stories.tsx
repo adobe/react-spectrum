@@ -34,7 +34,7 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
@@ -867,6 +867,12 @@ storiesOf('TableView', module)
     'CRUD',
     () => (
       <CRUDExample />
+    )
+  )
+  .add(
+    'Inline delete buttons',
+    () => (
+      <DeletableRowsTable />
     )
   )
   .add(
@@ -1707,5 +1713,39 @@ export function TableWithBreadcrumbs() {
       </TableView>
       <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
     </Flex>
+  );
+}
+
+function DeletableRowsTable() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
+      {id: 2, firstName: 'Julia', lastName: 'Jones', birthday: 'February 10'}
+    ]
+  });
+
+  return (
+    <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableHeader>
+        <Column isRowHeader key="firstName">First Name</Column>
+        <Column isRowHeader key="lastName">Last Name</Column>
+        <Column key="birthday">Birthday</Column>
+        <Column key="actions" align="end">Actions</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item =>
+          (<Row>
+            {column =>
+              (<Cell>
+                {column === 'actions'
+                  ? <ActionButton onPress={() => list.remove(item.id)}>Delete</ActionButton>
+                  : item[column]
+                }
+              </Cell>)
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
   );
 }

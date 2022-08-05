@@ -15,7 +15,7 @@ import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {FocusRing, focusSafely, useFocusRing} from '@react-aria/focus';
+import {FocusRing, focusSafely, FocusScope, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -411,37 +411,39 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
   return (
-    <div
-      {...mergeProps(otherProps, virtualizerProps)}
-      ref={domRef}>
+    <FocusScope>
       <div
-        role="presentation"
-        className={classNames(styles, 'spectrum-Table-headWrapper')}
-        style={{
-          width: visibleRect.width,
-          height: headerHeight,
-          overflow: 'hidden',
-          position: 'relative',
-          willChange: state.isScrolling ? 'scroll-position' : '',
-          transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
-        }}
-        ref={headerRef}>
-        {state.visibleViews[0]}
+        {...mergeProps(otherProps, virtualizerProps)}
+        ref={domRef}>
+        <div
+          role="presentation"
+          className={classNames(styles, 'spectrum-Table-headWrapper')}
+          style={{
+            width: visibleRect.width,
+            height: headerHeight,
+            overflow: 'hidden',
+            position: 'relative',
+            willChange: state.isScrolling ? 'scroll-position' : '',
+            transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+          }}
+          ref={headerRef}>
+          {state.visibleViews[0]}
+        </div>
+        <ScrollView
+          role="presentation"
+          className={classNames(styles, 'spectrum-Table-body')}
+          style={{flex: 1}}
+          innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
+          ref={bodyRef}
+          contentSize={state.contentSize}
+          onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
+          onScrollStart={state.startScrolling}
+          onScrollEnd={state.endScrolling}
+          onScroll={onScroll}>
+          {state.visibleViews[1]}
+        </ScrollView>
       </div>
-      <ScrollView
-        role="presentation"
-        className={classNames(styles, 'spectrum-Table-body')}
-        style={{flex: 1}}
-        innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
-        ref={bodyRef}
-        contentSize={state.contentSize}
-        onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
-        onScrollStart={state.startScrolling}
-        onScrollEnd={state.endScrolling}
-        onScroll={onScroll}>
-        {state.visibleViews[1]}
-      </ScrollView>
-    </div>
+    </FocusScope>
   );
 }
 
