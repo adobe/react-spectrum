@@ -13,7 +13,7 @@
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 
@@ -85,8 +85,12 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
   let ctx = useContext(FocusContext);
-  // if there is no scopeRef on the context, then the parent is the focusScopeTree's root, represented by null
-  let parentScope = ctx?.scopeRef ?? null;
+
+  // The parent scope is based on the JSX tree, using context.
+  // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
+  // we want the parent scope to be the active scope instead.
+  let ctxParent = ctx?.scopeRef ?? null;
+  let parentScope = useMemo(() => activeScope && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -112,8 +116,11 @@ export function FocusScope(props: FocusScopeProps) {
 
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useLayoutEffect(() => {
-    if (scopeRef && (parentScope || parentScope == null)) {
+    if (scopeRef) {
       return () => {
+        // Scope may have been re-parented.
+        let parentScope = focusScopeTree.getTreeNode(scopeRef).parent.scopeRef;
+
         // Restore the active scope on unmount if this scope or a descendant scope is active.
         // Parent effect cleanups run before children, so we need to check if the
         // parent scope actually still exists before restoring the active scope to it.
@@ -278,7 +285,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     let onFocus = (e) => {
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
-      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
+      if ((!activeScope || isAncestorScope(activeScope, scopeRef)) && isElementInScope(e.target, scopeRef.current)) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
       } else if (scopeRef === activeScope && !isElementInChildScope(e.target, scopeRef)) {
@@ -438,10 +445,11 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
 
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
-    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
     if (!restoreFocus) {
       return;
     }
+
+    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
@@ -526,6 +534,17 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             while (treeNode) {
               if (treeNode.nodeToRestore && document.body.contains(treeNode.nodeToRestore)) {
                 focusElement(treeNode.nodeToRestore);
+                return;
+              }
+              treeNode = treeNode.parent;
+            }
+
+            // If no nodeToRestore was found, focus the first element in the nearest
+            // ancestor scope that is still in the tree.
+            treeNode = clonedTree.getTreeNode(scopeRef);
+            while (treeNode) {
+              if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
+                focusFirstInScope(treeNode.scopeRef.current, true);
                 return;
               }
               treeNode = treeNode.parent;
