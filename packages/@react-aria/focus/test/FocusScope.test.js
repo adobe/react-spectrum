@@ -1263,6 +1263,46 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child3);
     });
 
+    it('should not lock tab navigation inside a nested focus scope with restore and not contain', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <div>
+                  <FocusScope restoreFocus>
+                    <input data-testid="child1" />
+                    <input data-testid="child2" />
+                    <input data-testid="child3" />
+                  </FocusScope>
+                </div>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child1 = getByTestId('child1');
+      let child2 = getByTestId('child2');
+      let child3 = getByTestId('child3');
+
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+      userEvent.tab();
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(child3);
+    });
+
     it('should restore to the correct scope on unmount', function () {
       function Test({show1, show2, show3}) {
         return (
