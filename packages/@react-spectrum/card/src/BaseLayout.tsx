@@ -84,25 +84,24 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getVisibleLayoutInfos(rect) {
-    return this._getVisibleLayoutInfos(rect);
+    return this._getLayoutInfosByRectangle(rect, true);
   }
 
-  // getKeyBelow and getKeyAbove request layouts to find the row above or
-  // below the focused item. If persistedKeys are added to that collection
-  // of layoutInfos, it always find the current row because the focused item
-  // is a persistedKey. We call this instead which looks for the closest row
-  // while excluding any persistedKeys.
-  _getClosetLayoutInfos(rect) {
-    return this._getVisibleLayoutInfos(rect, true);
-  }
-
-  _getVisibleLayoutInfos(rect, findClosetLayout = false) {
+  // This is used in two cases, one is to get all the layoutInfos to show
+  // in the DOM and the other is by getKeyBelow or getKeyAbove to find the row
+  // above or below the focused item. If persistedKeys are added to the key
+  // above or below request for layout infos, it always find the current row
+  // because the focused item is a persistedKey, thefore this is called with
+  // includePesistedKeys=false in the key above or below case. This is called
+  // with includePesistedKeys=true for the case of finding layoutInfos to
+  // include in the DOM, i.e. getVisibleLayoutInfos().
+  _getLayoutInfosByRectangle(rect, includePesistedKeys = false) {
     let res: LayoutInfo[] = [];
 
     for (let layoutInfo of this.layoutInfos.values()) {
       if (this.isVisible(layoutInfo, rect)) {
         res.push(layoutInfo);
-      } else if (!findClosetLayout && this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
+      } else if (includePesistedKeys && this.virtualizer.isPersistedKey({layoutInfo: layoutInfo})) {
         res.push(layoutInfo);
       }
     }
@@ -127,7 +126,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   _findClosestLayoutInfo(target: Rect, rect: Rect) {
-    let layoutInfos = this._getClosetLayoutInfos(rect);
+    let layoutInfos = this._getLayoutInfosByRectangle(rect, false);
     let best = null;
     let bestDistance = Infinity;
 
