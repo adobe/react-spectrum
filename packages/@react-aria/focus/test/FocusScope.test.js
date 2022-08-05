@@ -11,19 +11,24 @@
  */
 
 import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {defaultTheme} from '@adobe/react-spectrum';
+import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
-import React, {createRef, useState} from 'react';
+import {Provider} from '@react-spectrum/provider';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
-import {DialogContainer} from '@react-spectrum/dialog';
-import {Provider} from '@react-spectrum/provider';
-import {defaultTheme} from '@adobe/react-spectrum';
+
 
 describe('FocusScope', function () {
   beforeEach(() => {
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    // make sure to clean up any raf's that may be running to restore focus on unmount
+    act(() => {jest.runAllTimers();});
   });
 
   describe('focus containment', function () {
@@ -1423,8 +1428,8 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(beforeScope);
     });
   });
-  describe('name', () => {
-    it('foo', () => {
+  describe('node to restore edge cases', () => {
+    it('tracks node to restore if the node to restore was removed in another part of the tree', () => {
       function Test() {
         let [showMenu, setShowMenu] = useState(false);
         let [showDialog, setShowDialog] = useState(false);
@@ -1434,7 +1439,8 @@ describe('FocusScope', function () {
         };
         return (
           <Provider theme={defaultTheme}>
-            <input />
+            <label htmlFor="foo">Extra input to disambiguate focus</label>
+            <input id="foo" />
             <FocusScope>
               <button onKeyDown={() => setShowMenu(true)}>Open Menu</button>
               <DialogContainer onDismiss={() => {}}>
@@ -1456,7 +1462,8 @@ describe('FocusScope', function () {
         );
       }
 
-      render(<Test/>);
+      render(<Test />);
+      expect(document.activeElement).toBe(document.body);
       act(() => {
         jest.runAllTimers();
       });
@@ -1465,6 +1472,7 @@ describe('FocusScope', function () {
       expect(document.activeElement.textContent).toBe('Open Menu');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       act(() => {
         jest.runAllTimers();
       });
@@ -1472,6 +1480,7 @@ describe('FocusScope', function () {
       expect(document.activeElement.textContent).toBe('Open Dialog');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       act(() => {
         jest.runAllTimers();
       });
@@ -1479,10 +1488,15 @@ describe('FocusScope', function () {
       expect(document.activeElement.textContent).toBe('Close');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
       act(() => {
         jest.runAllTimers();
       });
 
+      expect(document.activeElement).not.toBe(document.body);
       expect(document.activeElement.textContent).toBe('Open Menu');
     });
   });
