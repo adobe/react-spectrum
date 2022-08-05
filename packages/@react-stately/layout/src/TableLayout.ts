@@ -311,7 +311,7 @@ export class TableLayout<T> extends ListLayout<T> {
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
         // Check to see if a persisted key exists after the visible rows
-        for (let j = lastVisibleRow; j < node.children.length; j++) {
+        for (let j = lastVisibleRow + 1; j < node.children.length; j++) {
           if (this.virtualizer.isPersistedKey(node.children[j])) {
             res.push(node.children[j].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[j], rect);
