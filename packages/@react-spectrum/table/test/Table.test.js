@@ -1552,13 +1552,14 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should move to the table itself
+        // When scrolling the focused item out of view, focus should remaind on the item,
+        // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(tree.queryByText('Baz 5')).toBeNull();
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('Baz 5')).toBe(cell.firstElementChild);
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -1569,6 +1570,7 @@ describe('TableView', function () {
       it('should not scroll when a column header receives focus', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
+        let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
 
@@ -1576,7 +1578,7 @@ describe('TableView', function () {
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
@@ -1821,6 +1823,54 @@ describe('TableView', function () {
 
         let checkbox = tree.getByLabelText('Select All');
         expect(checkbox.checked).toBeFalsy();
+      });
+
+      describe('Space key with focus on a link within a cell', () => {
+        it('should toggle selection and prevent scrolling of the table', () => {
+          let tree = render(
+            <TableView aria-label="Table" selectionMode="multiple">
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+
+          let row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'false');
+
+          let link = within(row).getAllByRole('link')[0];
+          expect(link.textContent).toBe('Foo 1');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'true');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          link = within(row).getAllByRole('link')[0];
+
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(link.textContent).toBe('Foo 1');
+        });
       });
     });
 
