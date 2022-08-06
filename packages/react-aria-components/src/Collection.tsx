@@ -362,7 +362,7 @@ export interface ItemStates {
 
 interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}
 
-export function Item<T>(props: CollectionItemProps<T>) {
+export function Item<T extends object>(props: CollectionItemProps<T>) {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
   // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
   // the props as an object. Once React supports custom elements, we can switch to that instead.
@@ -374,7 +374,9 @@ export function Item<T>(props: CollectionItemProps<T>) {
 
 interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'>, DOMProps {}
 
-export function Section<T>(props: CollectionSectionProps<T>) {
+export function Section<T extends object>(props: CollectionSectionProps<T>) {
+  let children = useCachedChildren(props);
+
   // @ts-ignore
-  return <optgroup multiple={{...props, rendered: props.title}}>{props.children}</optgroup>;
+  return <optgroup multiple={{...props, rendered: props.title}}>{children}</optgroup>;
 }

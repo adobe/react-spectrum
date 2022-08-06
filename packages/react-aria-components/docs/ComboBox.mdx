@@ -77,6 +77,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 [role=listbox] {
   display: block;
   min-width: 150px;
+  max-width: 300px;
   width: fit-content;
   margin: 4px 0 0 0;
   border: 1px solid gray;
@@ -91,6 +92,8 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   cursor: default;
   color: black;
   background: transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 [role=option][data-focused] {
@@ -101,6 +104,19 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 [role=option][aria-selected=true] {
   background: purple;
   color: white;
+}
+
+[role=option] [slot=label] {
+  font-weight: bold;
+}
+
+[role=option] [slot=description] {
+  font-size: small;
+}
+
+[role=group] {
+  padding: 0;
+  list-style: none;
 }
 ```
 
@@ -337,6 +353,333 @@ function Example() {
       </MyComboBox>
       <p>Selected topic id: {majorId}</p>
     </>
+  );
+}
+```
+
+### Allow custom values
+
+By default, `useComboBoxState` doesn't allow users to specify a value that doesn't exist in the list of options and will revert the input value to
+the current selected value on blur. By specifying `allowsCustomValue`, this behavior is suppressed and the user is free to enter
+any value within the field.
+
+```tsx example
+<MyComboBox label="Favorite Animal" allowsCustomValue>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</MyComboBox>
+```
+
+### Sections
+
+ComboBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
+
+#### Static items
+
+```tsx example
+import {Section} from 'react-aria-components';
+
+<MyComboBox label="Preferred fruit or vegetable">
+  <Section title="Fruit">
+    <Item key="Apple">Apple</Item>
+    <Item key="Banana">Banana</Item>
+    <Item key="Orange">Orange</Item>
+    <Item key="Honeydew">Honeydew</Item>
+    <Item key="Grapes">Grapes</Item>
+    <Item key="Watermelon">Watermelon</Item>
+    <Item key="Cantaloupe">Cantaloupe</Item>
+    <Item key="Pear">Pear</Item>
+  </Section>
+  <Section title="Vegetable">
+    <Item key="Cabbage">Cabbage</Item>
+    <Item key="Broccoli">Broccoli</Item>
+    <Item key="Carrots">Carrots</Item>
+    <Item key="Lettuce">Lettuce</Item>
+    <Item key="Spinach">Spinach</Item>
+    <Item key="Bok Choy">Bok Choy</Item>
+    <Item key="Cauliflower">Cauliflower</Item>
+    <Item key="Potatoes">Potatoes</Item>
+  </Section>
+</MyComboBox>
+```
+
+#### Dynamic items
+
+Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+
+  return (
+    <MyComboBox label="Preferred fruit or vegetable" defaultItems={options}>
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item key={item.name}>{item.name}</Item>}
+        </Section>
+      )}
+    </MyComboBox>
+  );
+}
+```
+
+### Complex items
+
+Items within ComboBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+<MyComboBox label="Select action">
+  <Item textValue="Add to queue">
+    <Text slot="label">Add to queue</Text>
+    <Text slot="description">Add to current watch queue.</Text>
+  </Item>
+  <Item textValue="Add review">
+    <Text slot="label">Add review</Text>
+    <Text slot="description">Post a review for the episode.</Text>
+  </Item>
+  <Item textValue="Subscribe to series">
+    <Text slot="label">Subscribe to series</Text>
+    <Text slot="description">Add series to your subscription list and be notified when a new episode airs.</Text>
+  </Item>
+  <Item textValue="Report">
+    <Text slot="label">Report</Text>
+    <Text slot="description">Report an issue/violation.</Text>
+  </Item>
+</MyComboBox>
+```
+
+### Custom filtering
+
+By default, `useComboBoxState` uses the filter function passed to the `defaultFilter` prop (in the above example, a
+"contains" function from `useFilter`). The filter function can be overridden by users of the `ComboBox` component by
+using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, `useComboBoxState`
+does no filtering of its own.
+
+The following example makes the `inputValue` controlled, and updates the filtered list that is passed to the `items`
+prop when the input changes value.
+
+```tsx example
+import {useFilter} from '@react-aria/i18n';
+
+function Example() {
+  let options = [
+    {id: 1, email: 'fake@email.com'},
+    {id: 2, email: 'anotherfake@email.com'},
+    {id: 3, email: 'bob@email.com'},
+    {id: 4, email: 'joe@email.com'},
+    {id: 5, email: 'yourEmail@email.com'},
+    {id: 6, email: 'valid@email.com'},
+    {id: 7, email: 'spam@email.com'},
+    {id: 8, email: 'newsletter@email.com'},
+    {id: 9, email: 'subscribe@email.com'}
+  ];
+
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  let [filterValue, setFilterValue] = React.useState('');
+  let filteredItems = React.useMemo(
+    () => options.filter((item) => startsWith(item.email, filterValue)),
+    [options, filterValue]
+  );
+
+  return (
+    <MyComboBox
+      label="To:"
+      items={filteredItems}
+      inputValue={filterValue}
+      onInputChange={setFilterValue}
+      allowsCustomValue>
+      {(item) => <Item>{item.email}</Item>}
+    </MyComboBox>
+  );
+}
+```
+
+### Fully controlled
+
+The following example shows how you would create a controlled ComboBox, controlling everything from the selected value (`selectedKey`)
+to the combobox options (`items`). By passing in `inputValue`, `selectedKey`, and `items` to the `ComboBox` you can control
+exactly what your ComboBox should display. For example, note that the item filtering for the controlled ComboBox below now follows a "starts with"
+filter strategy, accomplished by controlling the exact set of items available to the ComboBox whenever the input value updates.
+
+It is important to note that you don't have to control every single aspect of a ComboBox. If you decide to only control a single property of the
+ComboBox, be sure to provide the change handler for that prop as well e.g. controlling `selectedKey` would require `onSelectionChange` to be passed to `useComboBox` as well.
+
+```tsx example
+function ControlledComboBox() {
+  let optionList = [
+    {name: 'Red Panda', id: '1'},
+    {name: 'Cat', id: '2'},
+    {name: 'Dog', id: '3'},
+    {name: 'Aardvark', id: '4'},
+    {name: 'Kangaroo', id: '5'},
+    {name: 'Snake', id: '6'}
+  ];
+
+  // Store ComboBox input value, selected option, open state, and items
+  // in a state tracker
+  let [fieldState, setFieldState] = React.useState({
+    selectedKey: '',
+    inputValue: '',
+    items: optionList
+  });
+
+  // Implement custom filtering logic and control what items are
+  // available to the ComboBox.
+  let {startsWith} = useFilter({sensitivity: 'base'});
+
+  // Specify how each of the ComboBox values should change when an
+  // option is selected from the list box
+  let onSelectionChange = (key) => {
+    setFieldState(prevState => {
+      let selectedItem = prevState.items.find(option => option.id === key);
+      return ({
+        inputValue: selectedItem?.name ?? '',
+        selectedKey: key,
+        items: optionList.filter(item => startsWith(item.name, selectedItem?.name ?? ''))
+      })
+    });
+  };
+
+  // Specify how each of the ComboBox values should change when the input
+  // field is altered by the user
+  let onInputChange = (value) => {
+    setFieldState(prevState => ({
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey,
+      items: optionList.filter(item => startsWith(item.name, value))
+    }));
+  };
+
+  // Show entire list if user opens the menu manually
+  let onOpenChange = (isOpen, menuTrigger) => {
+    if (menuTrigger === 'manual' && isOpen) {
+      setFieldState(prevState => ({
+        inputValue: prevState.inputValue,
+        selectedKey: prevState.selectedKey,
+        items: optionList
+      }));
+    }
+  };
+
+  // Pass each controlled prop to useComboBox along with their
+  // change handlers
+  return (
+    <MyComboBox
+      label="Favorite Animal"
+      items={fieldState.items}
+      selectedKey={fieldState.selectedKey}
+      inputValue={fieldState.inputValue}
+      onOpenChange={onOpenChange}
+      onSelectionChange={onSelectionChange}
+      onInputChange={onInputChange}>
+      {item => <Item>{item.name}</Item>}
+    </MyComboBox>
+  )
+}
+
+<ControlledComboBox />
+```
+
+### Menu trigger behavior
+
+`useComboBoxState` supports three different `menuTrigger` prop values:
+
+* `input` (default): ComboBox menu opens when the user edits the input text.
+* `focus`: ComboBox menu opens when the user focuses the ComboBox input.
+* `manual`: ComboBox menu only opens when the user presses the trigger button or uses the arrow keys.
+
+The example below has `menuTrigger` set to `focus`.
+
+```tsx example
+<MyComboBox label="Favorite Animal" menuTrigger="focus">
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</MyComboBox>
+```
+
+### Disabled options
+
+You can disable specific options by providing an array of keys to `useComboBoxState`
+via the `disabledKeys` prop. This will prevent options with matching keys from being pressable and
+receiving keyboard focus as shown in the example below. Note that you are responsible for the styling of disabled options.
+
+```tsx example
+<MyComboBox label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</MyComboBox>
+```
+
+### Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data. See
+[this CodeSandbox](https://codesandbox.io/s/dreamy-burnell-3i2jy?file=/src/Autocomplete.tsx) for an example
+of a ComboBox supporting those features.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <MyComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      {(item) => <Item key={item.name}>{item.name}</Item>}
+    </MyComboBox>
   );
 }
 ```
