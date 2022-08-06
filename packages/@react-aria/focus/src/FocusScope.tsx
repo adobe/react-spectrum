@@ -113,6 +113,7 @@ export function FocusScope(props: FocusScopeProps) {
   let node = focusScopeTree.getTreeNode(scopeRef);
   node.contain = contain;
 
+  useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
@@ -431,6 +432,47 @@ function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus: boolean) {
   }, [scopeRef]);
 }
 
+function useActiveScopeTracker(scopeRef: RefObject<Element[]>, restore: boolean, contain: boolean) {
+  // tracks the active scope, in case restore and contain are both false.
+  // if either are true, this is tracked in useRestoreFocus or useFocusContainment.
+  useLayoutEffect(() => {
+    if (restore || contain) {
+      return;
+    }
+
+    let scope = scopeRef.current;
+
+    let onFocus = (e: FocusEvent) => {
+      let target = e.target as Element;
+      if (isElementInScope(target, scopeRef.current)) {
+        activeScope = scopeRef;
+      } else if (!isElementInAnyScope(target)) {
+        activeScope = null;
+      }
+    };
+
+    document.addEventListener('focusin', onFocus, false);
+    scope.forEach(element => element.addEventListener('focusin', onFocus, false));
+    return () => {
+      document.removeEventListener('focusin', onFocus, false);
+      scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
+    };
+  }, [scopeRef, restore, contain]);
+}
+
+function shouldRestoreFocus(scopeRef: ScopeRef) {
+  let scope = focusScopeTree.getTreeNode(activeScope);
+  while (scope && scope.scopeRef !== scopeRef) {
+    if (scope.nodeToRestore) {
+      return false;
+    }
+
+    scope = scope.parent;
+  }
+
+  return true;
+}
+
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? document.activeElement as FocusableElement : null);
@@ -537,7 +579,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         && nodeToRestore
         && (
           isElementInScope(document.activeElement, scopeRef.current)
-          || (document.activeElement === document.body && activeScope === scopeRef)
+          || (document.activeElement === document.body && shouldRestoreFocus(scopeRef))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it

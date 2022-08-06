@@ -3301,7 +3301,7 @@ describe('TableView', function () {
       expect(cells[1]).toHaveTextContent('Feb 3');
     });
 
-    it('can remove items', function () {
+    it.only('can remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -3336,9 +3336,6 @@ describe('TableView', function () {
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
-
-      // focus gets reset
-      act(() => table.focus());
       expect(document.activeElement).toBe(rows[1]);
     });
 
