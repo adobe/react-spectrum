@@ -915,3 +915,9 @@ h2.sectionHeader {
     gap: 24px;
   }
 }
+
+.cardGroup[data-size=small] {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 800px;
+}
