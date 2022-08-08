@@ -403,7 +403,7 @@
       grid-template-areas:
         "thumbnail content     . badge"
         "thumbnail description . badge";
-      grid-template-columns: auto auto auto 1fr;
+      grid-template-columns: auto auto 1fr auto;
     }
 
     .react-spectrum-ListViewItem-badge {

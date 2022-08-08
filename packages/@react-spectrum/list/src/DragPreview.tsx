@@ -36,11 +36,10 @@ export function DragPreview(props: DragPreviewProps) {
       <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
         <SlotProvider
           slots={{
-            content: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
             text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
             description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description']},
-            illustration: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-illustration']},
-            image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+            illustration: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
+            image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
             actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
             actionGroup: {
               UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],
