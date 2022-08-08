@@ -392,7 +392,7 @@ storiesOf('DialogTrigger', module)
           </DialogTrigger>
           <DialogTrigger type="popover" placement="start" shouldFlip={false}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog><Content>Placement End</Content></Dialog>
+            <Dialog><Content>Placement Start</Content></Dialog>
           </DialogTrigger>
           <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
             <ActionButton>Trigger</ActionButton>
@@ -502,11 +502,11 @@ storiesOf('DialogTrigger', module)
           </DialogTrigger>
           <DialogTrigger type="popover" placement="start top" shouldFlip={false}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog><Content>Placement Start top</Content></Dialog>
+            <Dialog><Content>Placement Start Top</Content></Dialog>
           </DialogTrigger>
           <DialogTrigger type="popover" placement="top" shouldFlip={false}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog><Content>Placement top</Content></Dialog>
+            <Dialog><Content>Placement Top</Content></Dialog>
           </DialogTrigger>
         </View>
       </Grid>
