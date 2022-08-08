@@ -1552,13 +1552,14 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should move to the table itself
+        // When scrolling the focused item out of view, focus should remaind on the item,
+        // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(tree.queryByText('Baz 5')).toBeNull();
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('Baz 5')).toBe(cell.firstElementChild);
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -1569,6 +1570,7 @@ describe('TableView', function () {
       it('should not scroll when a column header receives focus', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
+        let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
 
@@ -1576,7 +1578,7 @@ describe('TableView', function () {
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
