@@ -1552,13 +1552,14 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should move to the table itself
+        // When scrolling the focused item out of view, focus should remaind on the item,
+        // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(tree.queryByText('Baz 5')).toBeNull();
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('Baz 5')).toBe(cell.firstElementChild);
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
@@ -1569,6 +1570,7 @@ describe('TableView', function () {
       it('should not scroll when a column header receives focus', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
+        let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
 
@@ -1576,7 +1578,7 @@ describe('TableView', function () {
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
@@ -3444,6 +3446,7 @@ describe('TableView', function () {
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
+      expect(document.activeElement).toBe(button);
     });
 
     it('keyboard navigation works as expected with menu buttons', function () {
@@ -3455,7 +3458,8 @@ describe('TableView', function () {
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      let button = within(rows[1]).getByRole('button');
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
@@ -3464,15 +3468,38 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
       expect(tree.queryByRole('menu')).toBeNull();
 
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(tree.getAllByRole('button')[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+
+      expect(document.activeElement).toBe(button);
     });
 
     it('menu buttons can be opened with Alt + ArrowDown', function () {
