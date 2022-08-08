@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+
 import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, ZonedDateTime} from '@internationalized/date';
 import {Label} from './Label';
 import React, {ForwardedRef, ReactElement, RefObject, useCallback, useRef} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useStyleProps} from '@react-spectrum/utils';
+
 
 interface StaticFieldBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
 
@@ -48,6 +51,14 @@ type StaticFieldProps<T> =
 
 type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
+  // TODO: logic can be as follows, maybe can simplifiy or rearrange:
+  // 1. If value is an array -> it is a string array so format appropriately (aka format with stringlistformatter)
+  // 2. else if value is a object with start and end -> it is either a number range or date range so handle appropriately (extract start and end and format with numberformatter or dateformatter,
+  //    then concat the string? Double check with how we format range calendar)
+  // 3. else if value is a number -> it is a number so format with numberformatter
+  // 4. else it is some DateValue (except DateValue Range) -> figure out what kind of DateValue via attribtues specific to each DateValue and format accordingly
+  // 5. caveat to the above is Time. For Time, we will need to get the current date and create a CalendarDateTime so we can use toDate to make it a Date object. See useTimeFieldState for how to do this
+
 // will this need a ref ?? also so many typescript issues 
 function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
   let {
@@ -61,39 +72,56 @@ function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLE
   let dateFormatter = useDateFormatter(formatOptions);
   let stringFormatter = useListFormatter(formatOptions);
 
-  if (typeof value === 'number') {
-    value = numberFormatter.format(value); // doesn't think value is type number
+  let final;
+
+  // is a string array
+  if (Array.isArray(value)) {
+    final = stringFormatter.format(value);
+  } else if (typeof value === 'object' && 'start' in value) {
+    let start = value.start;
+    let end = value.end;
+
+    // number range
+    if (typeof start === 'number' && typeof end === 'number') {
+      final = numberFormatter.formatRange(start, end);
+    } else if (start instanceof Date && end instanceof Date) { // date range
+      final = dateFormatter.formatRange(start, end);
+    }
+  } else if (typeof value === 'number') {
+    final = numberFormatter.format(value); 
+  } else if (typeof value === 'object' && 'timeZone' in value) { // zoned date time
+    final = dateFormatter.format(value.toDate());
+  } else if (typeof value === 'object' && 'calendar' in value && 'hour' in value) {  // calendar date time
+    let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
+    final = dateFormatter.format(value.toDate(timezone));
+  } else if (typeof value === 'object' && 'calendar' in value) { // calendar date
+    let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
+    final = dateFormatter.format(value.toDate(timezone));
   }
 
-  
-  // did (value as ZonedDateTime) because value gave a warning which said ' The right-hand side of an 'in' expression must not be a primitive.'
-  if ('timeZone' in (value as ZonedDateTime)) {
-    // let TIMEZONE = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone(); // do we actually need timezone if toDate does not take any parameters
-    value = value.toDate();
-  }
-
-  if ('start' in (value as RangeValue<DateValue>)) {
-    value = numberFormatter.formatRange(value.start, value.end);
-  }
-
+  // format date
   if (value instanceof Date) {
-    value = dateFormatter.format(value);
+    final = dateFormatter.format(value);
   }
 
-  // thinking it might be possible to distinguish CalendarDate and CalendarDateTime if we first check they both have calendar and then for CalendarDateTime check if it has the property 'hour', if it does whoo it's CalendarDateTime, if not, we know it has to be CalendarDate -> this way we wouldn't need to add any unqiue properties but also not sure if this will even work considering the other examples
-
+  // format string
   if (typeof value === 'string') {
-    value = stringFormatter.format(value);
+    final = stringFormatter.format(value);
   }
+
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <Label
-      {...props}
-      elementType="span">
-      <span>
-        {value}
-      </span>
-    </Label>
+    <div
+      {...styleProps}
+      ref={ref as RefObject<HTMLDivElement>}>
+      <Label
+        elementType="span">
+        <span>
+          {final}
+        </span>
+      </Label>
+    </div>
   );
 }
 
