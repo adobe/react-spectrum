@@ -12,4 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Link';
+export {Link} from './Link';
+export type {SpectrumLinkProps} from '@react-types/link';

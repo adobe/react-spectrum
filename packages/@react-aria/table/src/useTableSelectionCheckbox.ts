@@ -17,19 +17,19 @@ import intlMessages from '../intl/*.json';
 import {Key} from 'react';
 import {TableState} from '@react-stately/table';
 import {useGridSelectionCheckbox} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface SelectionCheckboxProps {
+export interface AriaTableSelectionCheckboxProps {
   /** A unique key for the checkbox. */
   key: Key
 }
 
-interface SelectionCheckboxAria {
+export interface TableSelectionCheckboxAria {
   /** Props for the row selection checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
 
-interface SelectAllCheckboxAria {
+export interface TableSelectAllCheckboxAria {
   /** Props for the select all checkbox element. */
   checkboxProps: AriaCheckboxProps
 }
@@ -39,7 +39,7 @@ interface SelectAllCheckboxAria {
  * @param props - Props for the selection checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
+export function useTableSelectionCheckbox<T>(props: AriaTableSelectionCheckboxProps, state: TableState<T>): TableSelectionCheckboxAria {
   let {key} = props;
   const {checkboxProps} = useGridSelectionCheckbox(props, state);
 
@@ -56,13 +56,13 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
  * @param props - Props for the select all checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */
-export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectAllCheckboxAria {
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   return {
     checkboxProps: {
-      'aria-label': formatMessage(selectionMode === 'single' ? 'select' : 'selectAll'),
+      'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
       isDisabled: selectionMode !== 'multiple',
       isIndeterminate: !isEmpty && !isSelectAll,

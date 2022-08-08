@@ -10,14 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDrag';
-export * from './useDrop';
-export * from './useDroppableCollection';
-export * from './useDroppableItem';
-export * from './useDropIndicator';
-export * from './useDraggableItem';
-export * from './useClipboard';
+export type {DroppableCollectionOptions, DroppableCollectionResult} from './useDroppableCollection';
+export type {DroppableItemOptions, DroppableItemResult} from './useDroppableItem';
+export type {DropIndicatorProps, DropIndicatorAria} from './useDropIndicator';
+export type {DraggableItemProps, DraggableItemResult} from './useDraggableItem';
+export type {DragPreviewProps} from './DragPreview';
+export type {DragOptions, DragResult} from './useDrag';
+export type {DropOptions, DropResult} from './useDrop';
+export type {ClipboardProps, ClipboardResult} from './useClipboard';
+export type {DropTargetDelegate} from '@react-types/shared';
+
+export {useDrag} from './useDrag';
+export {useDrop} from './useDrop';
+export {useDroppableCollection} from './useDroppableCollection';
+export {useDroppableItem} from './useDroppableItem';
+export {useDropIndicator} from './useDropIndicator';
+export {useDraggableItem} from './useDraggableItem';
+export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
 
-export type {DragPreviewProps} from './DragPreview';

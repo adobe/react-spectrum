@@ -9,9 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 /// <reference types="css-module-types" />
-
-export * from './ActionBar';
-export * from './ActionBarContainer';
+export {ActionBar} from './ActionBar';
+export {ActionBarContainer} from './ActionBarContainer';
 export {Item} from '@react-stately/collections';
+export type {SpectrumActionBarContainerProps} from '@react-types/actionbar';
+export type {SpectrumActionBarProps} from '@react-types/actionbar';

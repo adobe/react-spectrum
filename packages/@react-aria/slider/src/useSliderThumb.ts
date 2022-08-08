@@ -1,16 +1,17 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface SliderThumbAria {
+export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
 
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
@@ -26,9 +27,9 @@ interface SliderThumbAria {
   isDisabled: boolean
 }
 
-interface SliderThumbOptions extends AriaSliderThumbProps {
+export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
-  trackRef: RefObject<HTMLElement>,
+  trackRef: RefObject<Element>,
   /** A ref to the thumb input element. */
   inputRef: RefObject<HTMLInputElement>
 }
@@ -40,7 +41,7 @@ interface SliderThumbOptions extends AriaSliderThumbProps {
  * @param state Slider state, created via `useSliderState`.
  */
 export function useSliderThumb(
-  opts: SliderThumbOptions,
+  opts: AriaSliderThumbOptions,
   state: SliderState
 ): SliderThumbAria {
   let {
@@ -138,7 +139,8 @@ export function useSliderThumb(
         step,
         pageSize
       } = stateRef.current;
-      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+      let {width, height} = trackRef.current.getBoundingClientRect();
+      let size = isVertical ? height : width;
 
       if (currentPosition.current == null) {
         currentPosition.current = getThumbPercent(index) * size;
@@ -207,19 +209,19 @@ export function useSliderThumb(
     keyboardProps,
     moveProps,
     {
-      onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
+      onMouseDown: (e: React.MouseEvent) => {
         if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
           return;
         }
         onDown();
       },
-      onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      onPointerDown: (e: React.PointerEvent) => {
         if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
           return;
         }
         onDown(e.pointerId);
       },
-      onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
+      onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
     }
   ) : {};
 

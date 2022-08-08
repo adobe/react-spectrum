@@ -13,15 +13,15 @@
 import {AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
 import {useLabel} from '@react-aria/label';
 
-interface CheckboxGroupAria {
+export interface CheckboxGroupAria {
   /** Props for the checkbox group wrapper element. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the checkbox group's visible label (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes
 }
 
 /**

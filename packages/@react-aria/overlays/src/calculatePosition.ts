@@ -45,12 +45,12 @@ interface Offset {
 
 interface PositionOpts {
   placement: Placement,
-  targetNode: HTMLElement,
-  overlayNode: HTMLElement,
-  scrollNode: HTMLElement,
+  targetNode: Element,
+  overlayNode: Element,
+  scrollNode: Element,
   padding: number,
   shouldFlip: boolean,
-  boundaryElement: HTMLElement,
+  boundaryElement: Element,
   offset: number,
   crossOffset: number,
   maxHeight?: number
@@ -93,7 +93,7 @@ const PARSED_PLACEMENT_CACHE = {};
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
-function getContainerDimensions(containerNode: HTMLElement): Dimensions {
+function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
@@ -113,7 +113,7 @@ function getContainerDimensions(containerNode: HTMLElement): Dimensions {
   return {width, height, scroll, top, left};
 }
 
-function getScroll(node: HTMLElement): Offset {
+function getScroll(node: Element): Offset {
   return {
     top: node.scrollTop,
     left: node.scrollLeft,
@@ -144,7 +144,7 @@ function getDelta(
   }
 }
 
-function getMargins(node: HTMLElement): Position {
+function getMargins(node: Element): Position {
   let style = window.getComputedStyle(node);
   return {
     top: parseInt(style.marginTop, 10) || 0,
@@ -313,6 +313,27 @@ export function calculatePositionInternal(
     }
   }
 
+  let boundaryLimits = {
+    top: boundaryDimensions.top + boundaryDimensions.scroll.top,
+    bottom: boundaryDimensions.top + boundaryDimensions.scroll.top + boundaryDimensions.height,
+    left: boundaryDimensions.left + boundaryDimensions.scroll.left,
+    right: boundaryDimensions.left + boundaryDimensions.scroll.left + boundaryDimensions.width
+  };
+
+  // for popover triggers close to the edge decrease the padding
+  if (placementInfo.placement === 'left' || placementInfo.placement === 'right') {
+    let centerOfButtonVertical = childOffset.top + childOffset.height / 2;
+    // Really it should be center of button center + padding + half of arrow width > boundary but we don't have access to arrow dimensions
+    if (centerOfButtonVertical + padding * 2 > boundaryLimits.bottom || centerOfButtonVertical - padding * 2 < boundaryLimits.top) {
+      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
+    }
+  } else if (placementInfo.placement === 'top' || placementInfo.placement === 'bottom') {
+    let centerOfButtonHorizontal = childOffset.left + childOffset.width / 2;
+    if (centerOfButtonHorizontal + padding * 2 > boundaryLimits.right || centerOfButtonHorizontal - padding * 2 < boundaryLimits.left) {
+      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
+    }
+  }
+
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
@@ -364,7 +385,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     maxHeight
   } = opts;
 
-  let container = (overlayNode.offsetParent || document.body) as HTMLElement;
+  let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
   let isBodyContainer = container.tagName === 'BODY';
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';

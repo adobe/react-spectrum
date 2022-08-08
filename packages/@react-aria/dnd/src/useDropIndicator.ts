@@ -19,7 +19,7 @@ import {HTMLAttributes, Key, RefObject} from 'react';
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
 import {useId} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   target: DropTarget
@@ -35,7 +35,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let {target} = props;
   let {collection} = state;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
@@ -44,10 +44,10 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let label = '';
   let labelledBy: string;
   if (target.type === 'root') {
-    label = formatMessage('dropOnRoot');
+    label = stringFormatter.format('dropOnRoot');
     labelledBy = `${id} ${getDroppableCollectionId(state)}`;
   } else if (target.dropPosition === 'on') {
-    label = formatMessage('dropOnItem', {
+    label = stringFormatter.format('dropOnItem', {
       itemText: getText(target.key)
     });
   } else {
@@ -59,16 +59,16 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       : target.key;
 
     if (before && after) {
-      label = formatMessage('insertBetween', {
+      label = stringFormatter.format('insertBetween', {
         beforeItemText: getText(before),
         afterItemText: getText(after)
       });
     } else if (before) {
-      label = formatMessage('insertAfter', {
+      label = stringFormatter.format('insertAfter', {
         itemText: getText(before)
       });
     } else if (after) {
-      label = formatMessage('insertBefore', {
+      label = stringFormatter.format('insertBefore', {
         itemText: getText(after)
       });
     }
@@ -80,7 +80,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
     dropIndicatorProps: {
       ...dropProps,
       id,
-      'aria-roledescription': formatMessage('dropIndicator'),
+      'aria-roledescription': stringFormatter.format('dropIndicator'),
       'aria-label': label,
       'aria-labelledby': labelledBy,
       'aria-hidden': ariaHidden,

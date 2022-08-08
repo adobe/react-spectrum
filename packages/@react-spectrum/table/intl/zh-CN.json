@@ -1,7 +1,8 @@
 {
+  "columnResizer": "列尺寸调整器",
   "loading": "正在加载...",
   "loadingMore": "正在加载更多...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "调整列大小",
+  "sortAscending": "升序排序",
+  "sortDescending": "降序排序"
 }

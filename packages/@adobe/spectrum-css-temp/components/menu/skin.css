@@ -69,3 +69,49 @@ governing permissions and limitations under the License.
 .spectrum-Menu-description {
   color: var(--spectrum-global-color-gray-700);
 }
+@media (forced-colors: active) {
+  .spectrum-Menu-divider {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  .spectrum-Menu-item {
+    forced-color-adjust: none;
+    --spectrum-heading-subtitle3-text-color: ButtonText;
+    --spectrum-selectlist-background-color: ButtonFace;
+    --spectrum-selectlist-divider-color: ButtonText;
+    --spectrum-selectlist-option-background-color: ButtonFace;
+    --spectrum-selectlist-option-background-color-disabled: ButtonFace;
+    --spectrum-selectlist-option-background-color-down: ButtonFace;
+    --spectrum-selectlist-option-background-color-hover: Highlight;
+    --spectrum-selectlist-option-background-color-key-focus: Highlight;
+    --spectrum-selectlist-option-focus-indicator-color: Highlight;
+    --spectrum-selectlist-option-icon-color-selected: Highlight;
+    --spectrum-selectlist-option-text-color: ButtonText;
+    --spectrum-selectlist-option-text-color-disabled: GrayText;
+    --spectrum-selectlist-option-text-color-hover: HighlightText;
+    --spectrum-selectlist-option-text-color-key-focus: HighlightText;    
+    --spectrum-alias-border-color-focus: Highlight; 
+    /* Overriding menu descriptions which were hardcoded to gray-700 */
+    .spectrum-Menu-description {
+      color: var(--spectrum-selectlist-option-text-color);
+    }
+    &:hover,
+    &:focus,
+    &.is-highlighted,
+    &.is-open,
+    &:focus-ring, 
+    &.is-focused {
+      &.is-selected {
+        .spectrum-Menu-checkmark {
+          color: HighlightText;
+        }
+      }
+      .spectrum-Menu-description {
+        color: var(--spectrum-selectlist-option-text-color-key-focus);
+        background-color: var(--spectrum-selectlist-option-background-color-key-focus);
+      }
+      background-color: var(--spectrum-selectlist-option-background-color-key-focus);
+      color: var(--spectrum-selectlist-option-text-color-key-focus);
+    }
+  }
+}
