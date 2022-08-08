@@ -186,14 +186,12 @@ export interface DroppableCollectionProps {
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
    * The drag item types that the droppable collection accepts.
-   * TODO: this assumes that the dragged items are Text/File items. Directory items don't have types and will need to be handled separately.
    */
   acceptedDragTypes?: 'all' | Array<string>,
   /**
    * A function returning whether a given key in the droppable collection is a valid drop target.
-   * TODO: maybe takes in the types from getDropOperations so user can selectively determine if the drop target accepts drops.
    */
-  isValidDropTarget?: (key: Key) => boolean
+  isValidDropTarget?: (target: DropTarget, types: DragTypes) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {

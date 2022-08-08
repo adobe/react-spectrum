@@ -21,8 +21,7 @@ import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useDroppableCollectionId} from './utils';
 
-// TODO omit getDropOperation since it isn't used here in useDroppableCollection? Find any other props that aren't used and omit for clarity (onDropEnter, onDropMove, onDropExit)
-export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation'> {
+export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation' | 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'acceptedDragTypes' | 'isValidDropTarget'> {
   keyboardDelegate: KeyboardDelegate,
   getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
 }

@@ -15,8 +15,7 @@ import {getDnDState} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useState} from 'react';
 
-// TODO: clean up these props if they aren't used in this hook, do so for the other dnd hooks
-export interface DroppableCollectionStateOptions extends DroppableCollectionProps {
+export interface DroppableCollectionStateOptions extends Omit<DroppableCollectionProps, 'onDropMove' | 'onDropActivate'> {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
@@ -75,7 +74,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         onRootDrop && target.type === 'root' && !isInternalDrop ||
         // Automatically prevent items (i.e. folders) from being dropped on themselves.
         // TODO: this also prevents non-folder items from being dropped on themseleves as well, is that too restrictive? Can't really think of a reason to allow that
-        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target.key)) ||
+        onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target, types)) ||
         !!onDrop
       )
     ) {

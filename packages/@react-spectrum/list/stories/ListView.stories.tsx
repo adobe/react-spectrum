@@ -1347,7 +1347,7 @@ function DragBetweenListsComplex() {
     },
     onDragEnd: action('dragEndList1'),
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (key) => !!list1.getItem(key).childNodes
+    isValidDropTarget: (target) => target.type === 'root' || !!list1.getItem(target.key).childNodes
   });
 
   // List 2 should allow reordering, on folder drops, and on root drops
@@ -1407,7 +1407,7 @@ function DragBetweenListsComplex() {
     },
     onDragEnd: action('dragEndList2'),
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (key) => !!list2.getItem(key).childNodes
+    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes
   });
 
 
@@ -1523,7 +1523,7 @@ function DragBetweenListsOverride() {
     onReorder: () => action('onReorder'),
     onRootDrop: () => action('onRootDrop'),
     onItemDrop: () => action('onItemDrop'),
-    isValidDropTarget: (key) => !!list2.getItem(key).childNodes,
+    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes,
     acceptedDragTypes: 'all'
   });
 
