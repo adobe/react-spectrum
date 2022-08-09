@@ -153,7 +153,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
       return 'move';
     }
 
-    if (target.key === '2') {
+    if (target.key === '2' && target.dropPosition === 'on') {
       return 'cancel';
     }
 
