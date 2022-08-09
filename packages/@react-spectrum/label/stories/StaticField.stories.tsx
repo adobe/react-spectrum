@@ -11,11 +11,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, Time, today, ZonedDateTime} from '@internationalized/date';
 import React from 'react';
 import {StaticField} from '../src/StaticField';
 import {storiesOf} from '@storybook/react';
-
 
 storiesOf('StaticField', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -29,9 +28,36 @@ storiesOf('StaticField', module)
   )
   .add(
     'test: CalendarDate',
-    () => render({value: new CalendarDate(2019, 6, 5)})
+    () => render({value: new CalendarDate(2019, 6, 5), formatOptions: 'dateStyle'})
+  )
+  .add(
+    'test: RangeValue<DateValue>',
+    () => render({value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}})
+  )
+  .add(
+    'test: ZonedDateTime',
+    () => render({value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}})
+  )
+  .add(
+    'test: CalendarDateTime',
+    () => render({value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}})
+  )
+  .add(
+    'test: Date',
+    () => render({value: new Date(2000, 5, 5)})
+  )
+  .add(
+    'test: Time',
+    () => render({value: new Time(9, 45), formatOptions: {timeStyle: 'long'}})
+  )
+  .add(
+    'test: RangeValue<NumberValue>',
+    () => render({value: {start: 10, end: 20}})
+  )
+  .add(
+    'test: number',
+    () => render({value: 10})
   );
-
 
 function render(props = {}) {
   return (
