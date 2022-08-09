@@ -14,14 +14,14 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
   selectionBehavior?: SelectionBehavior
 }
 
-interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLUListElement> {
+interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLDivElement> {
   state?: ListState<T> & OverlayTriggerState
 }
 
 export const ListBoxContext = createContext<ListBoxContextValue<any>>(null);
 const InternalListBoxContext = createContext<ListState<unknown>>(null);
 
-function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLUListElement>) {
+function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let {state} = useContext(ListBoxContext) || {};
   [props, ref] = useContextProps(props, ref, ListBoxContext);
 
@@ -50,7 +50,7 @@ export {_ListBox as ListBox};
 interface ListBoxInnerProps<T> {
   state: ListState<T>,
   props: ListBoxProps<T>,
-  listBoxRef: RefObject<HTMLUListElement>
+  listBoxRef: RefObject<HTMLDivElement>
 }
 
 function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
@@ -73,7 +73,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   });
 
   return (
-    <ul
+    <div
       {...listBoxProps}
       ref={listBoxRef}
       style={props.style}
@@ -85,7 +85,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         ]}>
         {children}
       </Provider>
-    </ul>
+    </div>
   );
 }
 
@@ -94,7 +94,7 @@ interface ListBoxSectionProps<T> extends StyleProps {
 }
 
 function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
-  let {itemProps, headingProps, groupProps} = useListBoxSection({
+  let {headingProps, groupProps} = useListBoxSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
@@ -111,19 +111,17 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   });
 
   return (
-    <li {...itemProps} style={{display: 'contents'}}>
+    <section 
+      {...groupProps}
+      className={className || section.props?.className}
+      style={style || section.props?.style}>
       {section.rendered &&
-        <span {...headingProps} style={{display: 'contents'}}>
+        <header {...headingProps}>
           {section.rendered}
-        </span>
+        </header>
       }
-      <ul 
-        {...groupProps}
-        className={className || section.props?.className}
-        style={style || section.props?.style}>
-        {children}
-      </ul>
-    </li>
+      {children}
+    </section>
   );
 }
 
@@ -152,7 +150,7 @@ function Option<T>({item, className, style, children}: OptionProps<T>) {
   });
 
   return (
-    <li 
+    <div
       {...optionProps}
       {...renderProps}
       ref={ref}
@@ -170,6 +168,6 @@ function Option<T>({item, className, style, children}: OptionProps<T>) {
         ]}>
         {renderProps.children}
       </Provider>
-    </li>
+    </div>
   );
 }

@@ -75,22 +75,21 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 
 ```css
 [role=listbox] {
-  display: block;
   min-width: 150px;
   max-width: 300px;
   width: fit-content;
+  max-height: inherit;
+  overflow: auto;
   margin: 4px 0 0 0;
   border: 1px solid gray;
   background: lightgray;
-  padding: 0;
-  list-style: none;
+  color: black;
 }
 
 [role=option] {
   padding: 2px 5px;
   outline: none;
   cursor: default;
-  color: black;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -114,9 +113,10 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   font-size: small;
 }
 
-[role=group] {
-  padding: 0;
-  list-style: none;
+[role=group] header {
+  font-size: large;
+  font-weight: bold;
+  padding: 0 5px;
 }
 ```
 
@@ -274,11 +274,19 @@ The `Popover` component can be targeted with a custom `className`. Note that it 
 
 A `ListBox` can be targeted with the `[role=listbox]` CSS selector, or by adding a custom `className`.
 
+### Section
+
+A `Section` can be targeted with the `[role=group]` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+
 ### Item
 
 An `Item` can be targeted with the `[role=option]` CSS selector, or by adding a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ItemStates.properties} />
+
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+
+Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
 ### Button
 
