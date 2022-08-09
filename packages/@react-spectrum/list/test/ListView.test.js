@@ -139,6 +139,8 @@ describe('ListView', function () {
     fireEvent.keyUp(document.activeElement, {key, ...opts});
   };
 
+  let focusRow = (tree, text) => act(() => getRow(tree, text).focus());
+
   it('renders a static listview', function () {
     let {getByRole, getAllByRole} = render(
       <ListView aria-label="List" data-testid="test">
@@ -1310,6 +1312,74 @@ describe('ListView', function () {
       moveFocus('ArrowUp');
       expect(document.activeElement).toBe(getRow(tree, 'Item 0'));
       expect(grid.scrollTop).toBe(0);
+    });
+
+    it('should scroll to a row when it is focused', function () {
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          selectionStyle="highlight"
+          selectionMode="multiple"
+          onSelectionChange={onSelectionChange}
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let grid = tree.getByRole('grid');
+      Object.defineProperty(grid, 'clientHeight', {
+        get() {
+          return 60;
+        }
+      });
+      // fire resize so the new clientHeight is requested
+      act(() => {
+        fireEvent(window, new Event('resize'));
+      });
+      expect(grid.scrollTop).toBe(0);
+
+      focusRow(tree, 'Item 10');
+      expect(document.activeElement).toBe(getRow(tree, 'Item 10'));
+
+      expect(grid.scrollTop).toBe(380);
+    });
+
+    it('should scroll to a row when it is focused off screen', function () {
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          selectionStyle="highlight"
+          selectionMode="multiple"
+          onSelectionChange={onSelectionChange}
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let body = tree.getByRole('grid');
+
+      let row = getRow(tree, 'Item 0');
+      act(() => row.focus());
+      expect(document.activeElement).toBe(row);
+      expect(body.scrollTop).toBe(0);
+
+      // When scrolling the focused item out of view, focus should remain on the item
+      body.scrollTop = 1000;
+      fireEvent.scroll(body);
+
+      expect(body.scrollTop).toBe(1000);
+      expect(document.activeElement).toBe(row);
+      // item isn't reused by virutalizer
+      expect(tree.queryByText('Item 0')).toBe(row.firstElementChild.firstElementChild.firstElementChild);
+
+      // Moving focus should scroll the new focused item into view
+      moveFocus('ArrowDown');
+      expect(body.scrollTop).toBe(0);
+      expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
   });
 });

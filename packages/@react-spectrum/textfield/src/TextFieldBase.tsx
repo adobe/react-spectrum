@@ -38,7 +38,6 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {
-    label,
     validationState,
     icon,
     isQuiet = false,
@@ -138,18 +137,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     </div>
   );
 
-  if (label) {
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
-    }));
-  }
-
   return (
     <Field
       {...props}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      wrapperClassName={classNames(styles, 'spectrum-Textfield-wrapper')}
       showErrorIcon={false}
       ref={domRef}>
       {textField}
