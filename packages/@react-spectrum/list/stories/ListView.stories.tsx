@@ -440,15 +440,14 @@ storiesOf('ListView/Drag and Drop', module)
       </Flex>
     ), {description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}}
   )
-  // TODO: add args
   .add(
     'drag between two lists, complex, new hook',
-    () => <DragBetweenListsComplex />,
+    args => <DragBetweenListsComplex {...args} />,
     {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed'}}
   )
   .add(
     'drag between two list, new hook with user overrides',
-    () => <DragBetweenListsOverride />,
+    args => <DragBetweenListsOverride {...args} />,
     {description: {data: 'The first list should be draggable, the second list should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}}
   );
 
@@ -1263,7 +1262,7 @@ function ActionBarExample(props?) {
   );
 }
 
-function DragBetweenListsComplex() {
+function DragBetweenListsComplex(props) {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1287,16 +1286,20 @@ function DragBetweenListsComplex() {
     ],
     getKey: (item) => item.identifier
   });
-  let acceptedDragTypes = ['file', 'folder'];
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
   let itemProcessor = async (items, acceptedDragTypes) => {
     let processedItems = [];
+    let text;
     for (let item of items) {
       for (let type of acceptedDragTypes) {
         if (item.kind === 'text' && item.types.has(type)) {
-          let text = await item.getText(type);
-          let data = JSON.parse(text);
-          processedItems.push(data);
+          text = await item.getText(type);
+          processedItems.push(JSON.parse(text));
+        } else {
+          text = await item.getText('text/plain');
+          processedItems = text.split('\n').map(val => JSON.parse(val));
+          break;
         }
       }
     }
@@ -1308,7 +1311,8 @@ function DragBetweenListsComplex() {
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
-        [`${item.type}`]: JSON.stringify(item)
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
       };
     }),
     onInsert: async (e) => {
@@ -1355,7 +1359,8 @@ function DragBetweenListsComplex() {
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
       return {
-        [`${item.type}`]: JSON.stringify(item)
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
       };
     }),
     onInsert: async (e) => {
@@ -1420,8 +1425,9 @@ function DragBetweenListsComplex() {
         height="size-3600"
         items={list1.items}
         dragHooks={dragHooksList1}
-        dropHooks={dropHooksList1}>
-        {item => (
+        dropHooks={dropHooksList1}
+        {...props}>
+        {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
             {item.type === 'folder' &&
@@ -1440,8 +1446,9 @@ function DragBetweenListsComplex() {
         height="size-3600"
         items={list2.items}
         dragHooks={dragHooksList2}
-        dropHooks={dropHooksList2}>
-        {item => (
+        dropHooks={dropHooksList2}
+        {...props}>
+        {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
             {item.type === 'folder' &&
@@ -1457,7 +1464,7 @@ function DragBetweenListsComplex() {
   );
 }
 
-function DragBetweenListsOverride() {
+function DragBetweenListsOverride(props) {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1536,8 +1543,9 @@ function DragBetweenListsOverride() {
         width="size-3600"
         height="size-3600"
         items={list1.items}
-        dragHooks={dragHooksList1}>
-        {item => (
+        dragHooks={dragHooksList1}
+        {...props}>
+        {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
             {item.type === 'folder' && <Folder />}
@@ -1550,8 +1558,9 @@ function DragBetweenListsOverride() {
         width="size-3600"
         height="size-3600"
         items={list2.items}
-        dropHooks={dropHooksList2}>
-        {item => (
+        dropHooks={dropHooksList2}
+        {...props}>
+        {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
             {item.type === 'folder' &&

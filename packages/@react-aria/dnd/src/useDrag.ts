@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearDnDState} from '@react-stately/dnd';
+import {clearDnDState, getDnDState} from '@react-stately/dnd';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
@@ -154,14 +154,22 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
+    let event: DragEndEvent = {
+      type: 'dragend',
+      x: e.clientX,
+      y: e.clientY,
+      dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
+    };
+
     setTimeout(() => {
       if (typeof options.onDragEnd === 'function') {
-        options.onDragEnd({
-          type: 'dragend',
-          x: e.clientX,
-          y: e.clientY,
-          dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
-        });
+        let {dropEffect} = getDnDState();
+        // Chrome Android always returns none as its dropEffect so we use the drop effect from onDrop instead
+        // TODO file browser bug
+        if (dropEffect) {
+          event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
+        }
+        options.onDragEnd(event);
       }
       clearDnDState();
     }, 0);

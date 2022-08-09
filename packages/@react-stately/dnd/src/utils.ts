@@ -1,6 +1,8 @@
 import {DropTarget} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 
+type DropEffect = 'none' | 'copy' | 'link' | 'move';
+
 export interface DnDState {
   /** A ref for the  of the drag items in the current drag session if any. */
   draggingCollectionRef?: RefObject<HTMLElement>,
@@ -11,7 +13,9 @@ export interface DnDState {
   /** A ref for the collection the dragged items were dropped into, if any. */
   droppedCollectionRef?: RefObject<HTMLElement>,
   /** The specific drop target the dragged items were dropped into, if any. */
-  droppedTarget?: DropTarget | HTMLElement
+  droppedTarget?: DropTarget | HTMLElement,
+  /** The dropEffect of the drop event if any. */
+  dropEffect?: DropEffect
 }
 
 let dndState: DnDState = {draggingKeys: new Set()};
@@ -39,6 +43,10 @@ export function setDroppedCollectionRef(ref: RefObject<HTMLElement>) {
 
 export function setDroppedTarget(dropTarget: DropTarget | HTMLElement) {
   dndState.droppedTarget = dropTarget;
+}
+
+export function setDropEffect(dropEffect: DropEffect) {
+  dndState.dropEffect = dropEffect;
 }
 
 export function clearDnDState() {
