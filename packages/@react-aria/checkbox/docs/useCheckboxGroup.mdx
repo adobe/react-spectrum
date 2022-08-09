@@ -98,7 +98,7 @@ This example uses native input elements for the checkboxes, and React context to
 to each checkbox. An HTML `<label>` element wraps the native input and the text to provide an implicit label
 for the radio.
 
-```tsx example
+```tsx example export=true
 import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {useCheckboxGroupState} from '@react-stately/checkbox';
 
@@ -158,3 +158,87 @@ See the [useCheckbox](useCheckbox.html#styling) docs for details on how to custo
   preview={buttongroupPreview}
   title="Button Group"
   description="A multi-selectable segmented ButtonGroup component." />
+
+## Usage
+
+The following examples show how to use the `CheckboxGroup` component created in the above example.
+
+### Default value
+
+An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop, which accepts an array of selected items that map to the
+`value` prop on each Checkbox.
+
+```tsx example
+<CheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Controlled value
+
+A controlled value can be provided using the `value` prop, which accepts an array of selected items, which map to the
+`value` prop on each Checkbox. The `onChange` event is fired when the user checks or unchecks an option. It receives a new array
+containing the updated selected values.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(['soccer', 'baseball']);
+
+  return (
+    <CheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
+      <Checkbox value="soccer">Soccer</Checkbox>
+      <Checkbox value="baseball">Baseball</Checkbox>
+      <Checkbox value="basketball">Basketball</Checkbox>
+    </CheckboxGroup>
+  );
+}
+```
+
+### Disabled
+
+The entire CheckboxGroup can be disabled with the `isDisabled` prop.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" isDisabled>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+To disable an individual checkbox, pass `isDisabled` to the `Checkbox` instead.
+
+```tsx example
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball" isDisabled>Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the CheckboxGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" name="sports">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```

@@ -17,6 +17,7 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/dialog/package.json';
 import Anatomy from './anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import tailwindPreview from 'url:./tailwind.png';
 
@@ -114,7 +115,9 @@ import {
 } from '@react-aria/overlays';
 import {useDialog} from '@react-aria/dialog';
 import {FocusScope} from '@react-aria/focus';
-import {useButton} from '@react-aria/button';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function ModalDialog(props) {
   let {title, children} = props;
@@ -172,22 +175,9 @@ function ModalDialog(props) {
 
 function Example() {
   let state = useOverlayTriggerState({});
-  let openButtonRef = React.useRef();
-  let closeButtonRef = React.useRef();
-
-  // useButton ensures that focus management is handled correctly,
-  // across all browsers. Focus is restored to the button once the
-  // dialog closes.
-  let {buttonProps: openButtonProps} = useButton({
-    onPress: () => state.open()
-  }, openButtonRef);
-
-  let {buttonProps: closeButtonProps} = useButton({
-    onPress: () => state.close()
-  }, closeButtonRef);
 
   return <>
-    <button {...openButtonProps} ref={openButtonRef}>Open Dialog</button>
+    <Button onPress={state.open}>Open Dialog</Button>
     {state.isOpen &&
       <OverlayContainer>
         <ModalDialog
@@ -200,12 +190,11 @@ function Example() {
             <input id="first-name" />
             <label htmlFor="last-name">Last Name:</label>
             <input id="last-name" />
-            <button
-              {...closeButtonProps}
-              ref={closeButtonRef}
+            <Button
+              onPress={state.close}
               style={{marginTop: 10}}>
               Submit
-            </button>
+            </Button>
           </form>
         </ModalDialog>
       </OverlayContainer>
@@ -219,6 +208,25 @@ function Example() {
   <Example />
 </OverlayProvider>
 ```
+
+### Button
+
+The `Button` component is used in the above example to open and close the dialog. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef();
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
 
 ## Styled examples
 

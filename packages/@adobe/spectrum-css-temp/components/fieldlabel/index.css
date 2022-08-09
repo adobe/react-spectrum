@@ -74,10 +74,6 @@ governing permissions and limitations under the License.
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
     }
-
-    .spectrum-Field-field--multiline {
-      flex: 1 1 auto;
-    }
   }
 
   /* The side label variant of Field is inline, and fills as much space as needed
@@ -97,6 +93,9 @@ governing permissions and limitations under the License.
        * Should default to form field's default width and and allow users to override with custom width. */
       width: var(--spectrum-field-default-width);
 
+      /* If the user overrides the height of the field, propagate to the inner wrapper element */
+      height: 100%;
+
       .spectrum-Field-field {
         /* If the user overrides the width of the field, propagate to the inner component */
         width: 100%;
@@ -106,10 +105,6 @@ governing permissions and limitations under the License.
     .spectrum-Field-field {
       flex: 1;
       min-width: 0;
-    }
-
-    .spectrum-Field-field--multiline {
-      height: 100%;
     }
   }
 }
