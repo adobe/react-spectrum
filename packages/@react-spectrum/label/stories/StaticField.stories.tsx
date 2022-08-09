@@ -11,7 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, Time, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import React from 'react';
 import {StaticField} from '../src/StaticField';
 import {storiesOf} from '@storybook/react';
@@ -31,8 +31,12 @@ storiesOf('StaticField', module)
     () => render({value: new CalendarDate(2019, 6, 5), formatOptions: 'dateStyle'})
   )
   .add(
-    'test: RangeValue<DateValue>',
+    'test: RangeValue<Date>',
     () => render({value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}})
+  )
+  .add(
+    'test: RangeValue<ZonedDateTime>',
+    () => render({value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}})
   )
   .add(
     'test: ZonedDateTime',

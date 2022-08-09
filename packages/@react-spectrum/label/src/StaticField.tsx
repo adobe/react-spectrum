@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-
 import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, startOfMonth, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
+import type {DateValue, TimeValue} from '@react-types/datepicker';
 import {Label} from './Label';
-import React, {ForwardedRef, ReactElement, ReactNode, RefObject, useCallback, useMemo, useRef} from 'react';
-import {TimeValue} from '@react-types/datepicker';
+import React, {RefObject} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/utils';
-import { isNonContiguousSelectionModifier } from '@react-aria/selection/src/utils';
-
 
 interface StaticFieldBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
 
@@ -29,8 +26,10 @@ interface NumberProps<T extends NumberValue> {
     formatOptions?: Intl.NumberFormatOptions
 }
 
-type DateValue = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | RangeValue<DateValue>;
-interface DateProps<T extends DateValue> {
+type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
+type RangeDateTime = RangeValue<DateTime>;
+type DateTimeValue = DateTime | RangeDateTime;
+interface DateProps<T extends DateTimeValue> {
     value: T,
     formatOptions?: Intl.DateTimeFormatOptions
 }
@@ -46,85 +45,21 @@ interface StringListProps<T extends string[]> {
 
 type StaticFieldProps<T> =
     T extends NumberValue ? NumberProps<T> :
-    T extends DateValue ? DateProps<T> :
+    T extends DateTimeValue ? DateProps<T> :
     T extends string[] ? StringListProps<T> :
     T extends string ? StringProps<T> :
     never;
 
 type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
-  // TODO: logic can be as follows, maybe can simplifiy or rearrange:
-  // 1. If value is an array -> it is a string array so format appropriately (aka format with stringlistformatter)
-  // 2. else if value is a object with start and end -> it is either a number range or date range so handle appropriately (extract start and end and format with numberformatter or dateformatter,
-  //    then concat the string? Double check with how we format range calendar)
-  // 3. else if value is a number -> it is a number so format with numberformatter
-  // 4. else it is some DateValue (except DateValue Range) -> figure out what kind of DateValue via attribtues specific to each DateValue and format accordingly
-
-// will this need a ref ?? also so many typescript issues 
 function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
   let {
     value, 
-    formatOptions, // again another issue here because it doesn't formatOption exists on SpectrumStaticFieldProps
+    formatOptions,
 
     ...otherProps
   } = props;
-
-  // let numberFormatter = useNumberFormatter(formatOptions);
-  // let dateFormatter = useDateFormatter(formatOptions);
-  // let stringFormatter = useListFormatter(formatOptions); // this is tripping things up so you might need to comment it out
-
-  // let final;
-
-  // is a string array
-  // if (Array.isArray(value)) {
-  //   final = stringFormatter.format(value);
-  // } else if (typeof value === 'object' && 'start' in (value as any)) {
-  //   let start = value.start;
-  //   let end = value.end;
-
-  //   // number range
-  //   if (typeof start === 'number' && typeof end === 'number') {
-  //     final = numberFormatter.formatRange(start, end);
-  //   } else if (start instanceof Date && end instanceof Date) { // date range
-  //     final = dateFormatter.formatRange(start, end);
-  //     console.log('date range: ' + final);
-  //   }
-  // } else if (typeof value === 'number') {
-  //   final = numberFormatter.format(value); 
-  // } 
-  
-  
-  // else if (typeof value === 'object' && 'timeZone' in value) { // zoned date time
-  //   final = dateFormatter.format(value.toDate());
-  //   console.log('zone date time: ' + final);
-  //   console.log('zone date time value:' + value);
-  // } else if (typeof value === 'object' && 'calendar' in value && 'hour' in value) {  // calendar date time
-  //   let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
-  //   final = dateFormatter.format(value.toDate(timezone));
-  // } else if (typeof value === 'object' && 'calendar' in value) { // calendar date
-  //   let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
-  //   final = dateFormatter.format(value.toDate(timezone));
-  //   console.log('calendar date: ' + final);
-  // } else  if (value instanceof Date) { // date
-  //   final = dateFormatter.format(value);
-  // } else if (typeof value === 'string') { // string
-  //   final = stringFormatter.format(value);
-  // } else if (value instanceof Time) { // time
-  //   console.log('time value: ' + value);
-
-    // let date = today(getLocalTimeZone());
-    // let v = toCalendarDateTime(date, value);
-    // let d = v.toDate();
-
-    // 5. caveat to the above is Time. For Time, we will need to get the current date and create a CalendarDateTime so we can use toDate to make it a Date object. See useTimeFieldState for how to do this
-
-  //   let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
-  //   final = dateFormatter.format(convertValue((v), [value]).toDate(timezone));
-  //   console.log('time: ' + final);
-  // }
-
   let {styleProps} = useStyleProps(otherProps);
-
 
   return (
     <div
@@ -133,25 +68,29 @@ function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLE
       <Label
         elementType="span">
         <span>
-          {Array.isArray(props.value) && <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />}
+          {Array.isArray(props.value) && 
+            <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />}
 
-          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<NumberValue>).start === 'number' && <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
+          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<NumberValue>).start === 'number' && 
+            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
 
-          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<DateValue>).start !== 'number' && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<DateTimeValue>).start !== 'number' && 
+            <FormattedDateRange value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {typeof value === 'number' && <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
+          {typeof value === 'number' && 
+            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
 
-          {/* {typeof value === 'object' && 'timeZone' in (value as any) && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />} */}
+          {typeof value === 'object' && 'calendar' in (value as any) && 
+            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {/* {typeof value === 'object' && 'calendar' in (value as any) && 'hour' in (value as any) && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />} */}
-
-          {typeof value === 'object' && 'calendar' in (value as any) && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-
-          {value instanceof Date && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+          {value instanceof Date && 
+            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
           
-          {value instanceof Time && <FormattedDate value={value as DateValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+          {value instanceof Time && 
+            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {typeof value === 'string' && props.value}
+          {typeof value === 'string' && 
+            props.value}
         </span>
       </Label>
     </div>
@@ -177,21 +116,37 @@ function FormattedNumber<T extends NumberValue>(props: NumberProps<T>) {
   }
 
   return <>{numberFormatter.format(value as number)}</>;
-
 }
 
-function FormattedDate<T extends DateValue>(props: DateProps<T>) {
+function FormattedDateRange<T extends DateTimeValue>(props: DateProps<T>) {
   let dateFormatter = useDateFormatter(props.formatOptions);
-
   let value = props.value;
-  let timezone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
-  if (typeof value === 'object' && (value as RangeValue<DateValue>).start instanceof Date && (value as RangeValue<DateValue>).end instanceof Date) {
+  let timeZone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
+  let start;
+  let end;
 
-    let s = (value as RangeValue<DateValue>).start;
-    let e = (value as RangeValue<DateValue>).end;
-  
-    return <>{dateFormatter.formatRange(s.toDate(timezone), e.toDate(timezone))}</>;
+  if (typeof value === 'object' && 'start' in value) {
+    start = value.start;
+    end = value.end;
+
+    if (!(start instanceof Date) && !(end instanceof Date)) {
+      if (start instanceof Time && end instanceof Time) {
+        start = dateFormatter.format(convertValue(start).toDate(timeZone));
+        end = dateFormatter.format(convertValue(end).toDate(timeZone));
+      } else if (!(start instanceof Time) && !(end instanceof Time)) {
+        start = start.toDate(timeZone);
+        end = end.toDate(timeZone);
+      }
+    } 
   }
+  
+  return <>{dateFormatter.formatRange(start, end)}</>;
+}
+
+function FormattedDate<T extends DateTimeValue>(props: DateProps<T>) {
+  let dateFormatter = useDateFormatter(props.formatOptions);
+  let value = props.value;
+  let timeZone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
 
   if (typeof value === 'object' && 'timeZone' in value) {
     console.log(value.toDate());
@@ -199,11 +154,11 @@ function FormattedDate<T extends DateValue>(props: DateProps<T>) {
   }
 
   if (typeof value === 'object' && 'calendar' in value) {
-    return <>{dateFormatter.format(value.toDate(timezone))}</>;
+    return <>{dateFormatter.format(value.toDate(timeZone))}</>;
   }
 
   if (value instanceof Time) {    
-    return <>{dateFormatter.format(convertValue(value).toDate(timezone))}</>;
+    return <>{dateFormatter.format(convertValue(value).toDate(timeZone))}</>;
   }
 
   return <>{dateFormatter.format(value as Date)}</>;
@@ -223,5 +178,3 @@ function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone
 
 let _StaticField = React.forwardRef(StaticField);
 export {_StaticField as StaticField};
-
-// not sure if this forward ref will work just because if you look at StaticField stories both the props come up with warnings 
