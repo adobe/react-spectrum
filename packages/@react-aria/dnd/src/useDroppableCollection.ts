@@ -111,7 +111,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     // Focus the collection.
     state.selectionManager.setFocused(true);
 
-    // Save some state of the collection/selection before the drop occuers so we can compare later.
+    // Save some state of the collection/selection before the drop occurs so we can compare later.
     let focusedKey = state.selectionManager.focusedKey;
     droppingState.current = {
       timeout: null,
