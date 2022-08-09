@@ -15,7 +15,6 @@ import {DraggableCollectionState, setDraggingCollectionRef} from '@react-stately
 import {HTMLAttributes, Key, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {} from '@react-stately/dnd';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

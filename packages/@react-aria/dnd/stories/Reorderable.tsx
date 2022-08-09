@@ -121,9 +121,7 @@ function ReorderableGrid(props) {
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log),
     // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {

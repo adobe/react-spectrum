@@ -138,6 +138,7 @@ describe('useDrag and useDrop', function () {
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
 
       fireEvent(draggable, new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
         type: 'dragend',
@@ -934,6 +935,7 @@ describe('useDrag and useDrop', function () {
         });
 
         fireEvent(draggable, new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+        act(() => jest.runAllTimers());
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
@@ -983,6 +985,7 @@ describe('useDrag and useDrop', function () {
         });
 
         fireEvent(draggable, new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+        act(() => jest.runAllTimers());
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',

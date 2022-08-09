@@ -56,23 +56,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     onReorder
   } = localState.props;
 
-  useEffect(() => {
-    // Update the global DnD state via a capturing drop listener since the onDrop passed
-    // to useDrop happens after onDragEnd (mouse drag and drop only). onDragEnd needs droppedCollectionRef
-    // and droppedTarget to be set so we can check if it is an internal drop for onRemove
-    let onDrop = (e) => {
-      if (ref?.current && ref.current.contains(e.target)) {
-        setDroppedCollectionRef(ref);
-        setDroppedTarget(state.target);
-      }
-    };
-
-    document.addEventListener('drop', onDrop, true);
-    return () => {
-      document.removeEventListener('drop', onDrop, true);
-    };
-  }, [ref, state.target]);
-
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
     let {draggingCollectionRef, draggingKeys} = getDnDState();
     let isInternalDrop = draggingCollectionRef?.current === ref?.current;
@@ -147,7 +130,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
     },
     onDrop(e) {
+      setDroppedCollectionRef(ref);
       if (state.target) {
+        setDroppedTarget(state.target);
         onDrop(e, state.target);
       }
     }
@@ -455,8 +440,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       },
       onDrop(e, target) {
         setDroppedCollectionRef(ref);
-        setDroppedTarget(localState.state.target);
         if (localState.state.target) {
+          setDroppedTarget(localState.state.target);
           onDrop(e, target || localState.state.target);
         }
       },

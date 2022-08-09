@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearDnDState, getDnDState, setDraggingCollectionRef, setDraggingKeys, setDroppedTarget} from '@react-stately/dnd';
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
+import {getDnDState, setDnDState, setDroppedTarget} from '@react-stately/dnd';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -159,46 +159,45 @@ export function useDrop(options: DropOptions): DropResult {
     e.preventDefault();
     e.stopPropagation();
 
-    if (typeof options.onDrop === 'function') {
-      let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
-      let items = readFromDataTransfer(e.dataTransfer);
+    let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
+    let items = readFromDataTransfer(e.dataTransfer);
 
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      let event: DropEvent = {
-        type: 'drop',
-        x: e.clientX - rect.x,
-        y: e.clientY - rect.y,
-        items,
-        dropOperation
-      };
+    let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    let event: DropEvent = {
+      type: 'drop',
+      x: e.clientX - rect.x,
+      y: e.clientY - rect.y,
+      items,
+      dropOperation
+    };
 
-      let dndStateSnapshot = getDnDState();
-      // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
-      // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
-      // This behavior is consistent across browsers, but see this issue for details:
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-      setTimeout(() => {
-        setDraggingCollectionRef(dndStateSnapshot?.draggingCollectionRef);
-        setDraggingKeys(dndStateSnapshot?.draggingKeys);
+    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
+    setDroppedTarget(e.currentTarget as HTMLElement);
+
+    let dndStateSnapshot = {...getDnDState()};
+    // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
+    // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
+    // This behavior is consistent across browsers, but see this issue for details:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+    setTimeout(() => {
+      setDnDState(dndStateSnapshot);
+      if (typeof options.onDrop === 'function') {
         options.onDrop(event);
-        // Clear global DnD state since this deferred onDrop is the last call in a DnD cycle. If options.onDrop
-        // isn't a function, then onDragEnd will be responsible for clearing the global DnD state
-        clearDnDState();
-      }, 0);
-    }
+      }
+      // TODO: for now don't clear global DnD state since useDrag's deferred onDragEnd needs the values
+      // set in options.onDrop (aka droppedTarget and droppedCollection). I'm a bit wary about a case where the
+      // user performs a drop from a non RSP collection into a RSP droppable collection and thus our onDragEnd won't fire
+      // and clear the global DnD state. Luckily it might not be that big of an issue if we clear on our drag start? Can't clear on
+      // document dragend listener since that occurs before our deffered onDrop/onDragEnd
+    }, 0);
 
     if (typeof options.onDropExit === 'function') {
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       options.onDropExit({
         type: 'dropexit',
         x: e.clientX - rect.x,
         y: e.clientY - rect.y
       });
-    }
-
-    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
-    if (!getDnDState().droppedTarget) {
-      setDroppedTarget(e.currentTarget as HTMLElement);
     }
 
     state.dragEnterCount = 0;

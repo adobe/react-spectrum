@@ -92,19 +92,7 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
-      expect(onDragEnd).toHaveBeenCalledTimes(1);
-      expect(onDragEnd).toHaveBeenCalledWith({
-        type: 'dragend',
-        x: 2,
-        y: 2,
-        dropOperation: 'move',
-        keys: new Set(['bar']),
-        dropTarget: droppable,
-        isInternalDrop: false
-      });
-
-      // onDrop is delayed via setTimeout in useDrop in a mouse drag and drop case
+      // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -123,6 +111,19 @@ describe('useDraggableCollection', () => {
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
+
+      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 2,
+        y: 2,
+        dropOperation: 'move',
+        keys: new Set(['bar']),
+        dropTarget: droppable,
+        isInternalDrop: false
+      });
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
@@ -181,19 +182,8 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
-      expect(onDragEnd).toHaveBeenCalledTimes(1);
-      expect(onDragEnd).toHaveBeenCalledWith({
-        type: 'dragend',
-        x: 2,
-        y: 2,
-        dropOperation: 'move',
-        keys: new Set(['foo', 'bar']),
-        dropTarget: droppable,
-        isInternalDrop: false
-      });
 
-       // onDrop is delayed via setTimeout in useDrop in a mouse drag and drop case
+      // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -220,6 +210,19 @@ describe('useDraggableCollection', () => {
 
       expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
       expect(await onDrop.mock.calls[0][0].items[1].getText('folder')).toBe('Bar');
+
+      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 2,
+        y: 2,
+        dropOperation: 'move',
+        keys: new Set(['foo', 'bar']),
+        dropTarget: droppable,
+        isInternalDrop: false
+      });
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(1);
@@ -276,19 +279,7 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
 
-      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
-      expect(onDragEnd).toHaveBeenCalledTimes(1);
-      expect(onDragEnd).toHaveBeenCalledWith({
-        type: 'dragend',
-        x: 2,
-        y: 2,
-        dropOperation: 'move',
-        keys: new Set(['bar']),
-        dropTarget: droppable,
-        isInternalDrop: false
-      });
-
-      // onDrop is delayed via setTimeout in useDrop in a mouse drag and drop case
+      // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -307,6 +298,19 @@ describe('useDraggableCollection', () => {
 
       expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Bar');
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
+
+      fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 2,
+        y: 2,
+        dropOperation: 'move',
+        keys: new Set(['bar']),
+        dropTarget: droppable,
+        isInternalDrop: false
+      });
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);

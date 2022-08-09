@@ -118,9 +118,6 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log),
-    // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       onDrop(e);

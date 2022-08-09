@@ -65,6 +65,9 @@ export function useDrag(options: DragOptions): DragResult {
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
+    // Clear global DnD state in case it wasn't cleared via drag end
+    // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
+    clearDnDState();
     if (e.defaultPrevented) {
       return;
     }
@@ -151,16 +154,18 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
-    if (typeof options.onDragEnd === 'function') {
-      options.onDragEnd({
-        type: 'dragend',
-        x: e.clientX,
-        y: e.clientY,
-        dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
-      });
-    }
+    setTimeout(() => {
+      if (typeof options.onDragEnd === 'function') {
+        options.onDragEnd({
+          type: 'dragend',
+          x: e.clientX,
+          y: e.clientY,
+          dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
+        });
+      }
+      clearDnDState();
+    }, 0);
 
-    clearDnDState();
     setDragging(false);
     removeAllGlobalListeners();
   };
@@ -169,6 +174,10 @@ export function useDrag(options: DragOptions): DragResult {
     if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
       return;
     }
+
+    // Clear global DnD state in case it wasn't cleared via drag end
+    // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
+    clearDnDState();
 
     if (typeof state.options.onDragStart === 'function') {
       let rect = (e.target as HTMLElement).getBoundingClientRect();

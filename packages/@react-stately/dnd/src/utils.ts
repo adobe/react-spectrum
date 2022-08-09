@@ -44,3 +44,7 @@ export function setDroppedTarget(dropTarget: DropTarget | HTMLElement) {
 export function clearDnDState() {
   dndState = {draggingKeys: new Set()};
 }
+
+export function setDnDState(state: DnDState) {
+  dndState = state;
+}
