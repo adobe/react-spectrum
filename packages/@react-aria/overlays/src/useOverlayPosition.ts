@@ -65,6 +65,8 @@ export interface PositionAria {
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
+export const DEFAULT_MODAL_PADDING = 12;
+
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
  * element, and updating the position when the window resizes.
@@ -76,7 +78,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlayRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 12,
+    containerPadding = DEFAULT_MODAL_PADDING,
     shouldFlip = true,
     boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,

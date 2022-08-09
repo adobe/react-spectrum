@@ -28,22 +28,28 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     onChange,
     ...otherProps
   } = props;
+
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
 
-  let inputText = props.value ?? props.defaultValue ?? ''; 
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
-    if (isQuiet && !isReadOnly) {
+    // Quiet textareas always grow based on their text content.
+    // Standard textareas also grow by default, unless an explicit height is set.
+    if (isQuiet || !props.height) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
+      let prevOverflow = input.style.overflow;
       input.style.alignSelf = 'start';
+      input.style.overflow = 'hidden';
       input.style.height = 'auto';
-      input.style.height = `${input.scrollHeight}px`;
+      // offsetHeight - clientHeight accounts for the border/padding.
+      input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
+      input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, isReadOnly, inputRef]);
+  }, [isQuiet, inputRef]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
@@ -74,8 +80,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired} 
-      readOnlyText={inputText} />
+      isRequired={isRequired} />
   );
 }
 
