@@ -35,8 +35,7 @@ describe('Picker', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(function () {
@@ -576,6 +575,7 @@ describe('Picker', function () {
 
       act(() => {document.activeElement.blur();});
       act(() => jest.runAllTimers());
+      act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
       expect(picker).toHaveAttribute('aria-expanded', 'false');
@@ -583,7 +583,7 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
-      expect(document.activeElement).not.toBe(picker);
+      expect(document.activeElement).toBe(picker);
     });
 
     it('closes on scroll on a parent element', function () {

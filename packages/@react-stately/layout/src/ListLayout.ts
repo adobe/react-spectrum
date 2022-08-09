@@ -112,6 +112,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
           if (node.children) {
             addNodes(node.children);
           }
+        } else if (this.virtualizer.isPersistedKey(node)) {
+          res.push(node.layoutInfo);
+
+          if (node.children) {
+            addNodes(node.children);
+          }
         }
       }
     };

@@ -35,10 +35,6 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
-  &:not(.spectrum-Textfield--quiet).spectrum-Textfield--multiline .spectrum-Textfield-input:not(:disabled) {
-    resize: vertical;
-  }
-
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
@@ -164,6 +160,7 @@ governing permissions and limitations under the License.
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
     padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
+    resize: none;
 
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
@@ -176,10 +173,6 @@ governing permissions and limitations under the License.
     /* removes the side padding to align the text properly */
     padding-inline-start: var(--spectrum-textfield-quiet-padding-x);
     padding-inline-end: var(--spectrum-textfield-quiet-padding-x);
-
-    /* Treat all quiet inputs and textareas the same */
-    resize: none;
-    overflow-y: hidden;
   }
 
   .spectrum-Textfield--valid & {
@@ -192,6 +185,24 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield--loadable & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+}
+
+.spectrum-Textfield-wrapper .spectrum-Textfield--multiline {
+  /* when textarea is inside a label wrapper, make it flex to take up remaining height. */
+  flex: 1 1 auto;
+  min-height: 0;
+
+  &.spectrum-Textfield--quiet {
+    /* quiet textfields grow based on text content, up to the height of the container. */
+    /* but we need to keep help text next to input */
+    flex: 0 1 auto;
+    max-height: 100%;
+
+    .spectrum-Textfield-input {
+      /* make textarea scroll when reaching height of container */
+      max-height: 100%;
+    }
   }
 }
 
