@@ -11,14 +11,24 @@
  */
 
 import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {defaultTheme} from '@adobe/react-spectrum';
+import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
-import React from 'react';
+import {focusScopeTree} from '../src/FocusScope';
+import {Provider} from '@react-spectrum/provider';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
+import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
+
 
 describe('FocusScope', function () {
   beforeEach(() => {
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    // make sure to clean up any raf's that may be running to restore focus on unmount
+    act(() => {jest.runAllTimers();});
   });
 
   describe('focus containment', function () {
@@ -599,14 +609,48 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
+    it.each`
+      contain  | isPortaled
+      ${false} | ${false}
+      ${true}  | ${false}
+      ${false} | ${true}
+      ${true}  | ${true}
+    `('contain=$contain, isPortaled=$isPortaled should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM',
+    function ({contain, isPortaled}) {
+      expect(focusScopeTree.size).toBe(1);
+      let {getAllByText, getAllByRole} = render(<StorybookExample contain={contain} isPortaled={isPortaled} />);
+      expect(focusScopeTree.size).toBe(1);
+      act(() => {getAllByText('Open dialog')[0].focus();});
+      fireEvent.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
+      act(() => {getAllByText('Open dialog')[1].focus();});
+      fireEvent.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
+      act(() => {getAllByText('Open dialog')[2].focus();});
+      fireEvent.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
+      expect(focusScopeTree.size).toBe(4);
+      if (!contain) {
+        act(() => {
+          getAllByText('close')[1].focus();
+        });
+        fireEvent.click(document.activeElement);
+      } else {
+        fireEvent.click(getAllByText('close')[1]);
+      }
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
+      act(() => {getAllByText('close')[0].focus();});
+      fireEvent.click(document.activeElement);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
+      expect(focusScopeTree.size).toBe(1);
+    });
+
     describe('focusable first in scope', function () {
-      beforeEach(() => {
-        jest.useFakeTimers();
-      });
-      afterEach(() => {
-        jest.runAllTimers();
-        jest.useRealTimers();
-      });
       it('should restore focus to the first focusable or tabbable element within the scope when focus is lost within the scope', async function () {
         let {getByTestId} = render(
           <div>
@@ -1219,6 +1263,46 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child3);
     });
 
+    it('should not lock tab navigation inside a nested focus scope with restore and not contain', function () {
+      function Test() {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope autoFocus restoreFocus contain>
+              <input data-testid="parent" />
+              <div>
+                <div>
+                  <FocusScope restoreFocus>
+                    <input data-testid="child1" />
+                    <input data-testid="child2" />
+                    <input data-testid="child3" />
+                  </FocusScope>
+                </div>
+              </div>
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let parent = getByTestId('parent');
+      let child1 = getByTestId('child1');
+      let child2 = getByTestId('child2');
+      let child3 = getByTestId('child3');
+
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child1);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child2);
+      userEvent.tab();
+      expect(document.activeElement).toBe(child3);
+      userEvent.tab();
+      expect(document.activeElement).toBe(parent);
+      userEvent.tab({shift: true});
+      expect(document.activeElement).toBe(child3);
+    });
+
     it('should restore to the correct scope on unmount', function () {
       function Test({show1, show2, show3}) {
         return (
@@ -1382,6 +1466,78 @@ describe('FocusScope', function () {
       act(() => {inScope.focus();});
       userEvent.tab({shift: true});
       expect(document.activeElement).toBe(beforeScope);
+    });
+  });
+  describe('node to restore edge cases', () => {
+    it('tracks node to restore if the node to restore was removed in another part of the tree', () => {
+      function Test() {
+        let [showMenu, setShowMenu] = useState(false);
+        let [showDialog, setShowDialog] = useState(false);
+        let onClick = () => {
+          setShowMenu(false);
+          setShowDialog(true);
+        };
+        return (
+          <Provider theme={defaultTheme}>
+            <label htmlFor="foo">Extra input to disambiguate focus</label>
+            <input id="foo" />
+            <FocusScope>
+              <button onKeyDown={() => setShowMenu(true)}>Open Menu</button>
+              <DialogContainer onDismiss={() => {}}>
+                {showMenu && (
+                  <FocusScope contain restoreFocus autoFocus>
+                    <button onKeyDown={onClick}>Open Dialog</button>
+                  </FocusScope>
+                )}
+              </DialogContainer>
+            </FocusScope>
+            <DialogContainer onDismiss={() => {}}>
+              {showDialog && (
+                <FocusScope contain restoreFocus autoFocus>
+                  <button onKeyDown={() => setShowDialog(false)}>Close</button>
+                </FocusScope>
+              )}
+            </DialogContainer>
+          </Provider>
+        );
+      }
+
+      render(<Test />);
+      expect(document.activeElement).toBe(document.body);
+      act(() => {
+        jest.runAllTimers();
+      });
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement.textContent).toBe('Open Menu');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Open Dialog');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Close');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).not.toBe(document.body);
+      expect(document.activeElement.textContent).toBe('Open Menu');
     });
   });
 });
