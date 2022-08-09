@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '@react-spectrum/button';
 import {FocusScope} from '../';
 import {Meta, Story} from '@storybook/react';
 import React, {ReactNode, useState} from 'react';
@@ -107,31 +108,26 @@ export function Example({isPortaled, contain}: StoryProps) {
 
 function FocusableFirstInScopeExample() {
   let [contentIndex, setContentIndex] = useState(0);
-  let [buttonRemoved, setButtonRemoved] = useState(false);
   function DialogContent(index = 0) {
-    const nextIndex = index === 2 ? 0 : index + 1;
+    const nextIndex = index + 1;
     return (
-      <>
+      <div key={index}>
         <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
-        {index === 2 ?
+        {index > 2 ?
           (
             <>
               <p>The end of the road.</p>
-              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
-              {buttonRemoved &&
-                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
-              }
+              <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
             </>
           ) :
           (
             <>
               <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
-              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+              <Button variant="primary" id={`button-${index}`} onPress={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</Button>
             </>
           )
         }
-
-      </>
+      </div>
     );
   }
   const contents = [];

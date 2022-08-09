@@ -85,7 +85,8 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   let stateRef = useRef({
     isFocused: false,
     onBlur,
-    observer: null as MutationObserver
+    observer: null as MutationObserver,
+    removalObserver: null as MutationObserver
   });
   stateRef.current.onBlur = onBlur;
 
@@ -97,6 +98,8 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       if (state.observer) {
         state.observer.disconnect();
         state.observer = null;
+        state.removalObserver.disconnect();
+        state.removalObserver = null;
       }
     };
   }, []);
@@ -129,6 +132,12 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
           stateRef.current.observer.disconnect();
           stateRef.current.observer = null;
         }
+
+        // We no longer need the MutationObserver once the target is blurred.
+        if (stateRef.current.removalObserver) {
+          stateRef.current.removalObserver.disconnect();
+          stateRef.current.removalObserver = null;
+        }
       };
 
       target.addEventListener('focusout', onBlurHandler, {once: true});
@@ -141,7 +150,30 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
         }
       });
 
+      // Some browsers do not fire onBlur when the document.activeElement is removed from the dom.
+      // Firefox has had a bug open about it for 13 years https://bugzilla.mozilla.org/show_bug.cgi?id=559561
+      // A Safari bug has been logged for it as well https://bugs.webkit.org/show_bug.cgi?id=243749
+      stateRef.current.removalObserver = new MutationObserver((mutationList) => {
+        if (stateRef.current.isFocused) {
+          for (const mutation of mutationList) {
+            for (const node of mutation.removedNodes) {
+              if (node === target || node.contains(target)) {
+                stateRef.current.removalObserver.disconnect();
+                // For backward compatibility, dispatch a (fake) React synthetic event.
+                let blurEvent = new SyntheticFocusEvent('blur', new FocusEvent('blur'));
+                blurEvent.target = target;
+                stateRef.current.onBlur?.(blurEvent);
+                stateRef.current.observer = null;
+                // early return so we don't look at the rest of the DOM
+                return;
+              }
+            }
+          }
+        }
+      });
+
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
+      stateRef.current.removalObserver.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
     }
   }, []);
 }

@@ -13,8 +13,9 @@
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useCallback, useContext, useEffect, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useSyntheticBlurEvent} from '@react-aria/interactions/src/utils';
 
 
 export interface FocusScopeProps {
@@ -254,6 +255,23 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
   let focusedNode = useRef<FocusableElement>();
 
   let raf = useRef(null);
+
+  let onBlur = useCallback((e) => {
+    // Firefox doesn't shift focus back to the Dialog properly without this
+    raf.current = requestAnimationFrame(() => {
+      // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+      if (shouldContainFocus(scopeRef) && !isElementInChildScope(document.activeElement, scopeRef)) {
+        activeScope = scopeRef;
+        if (document.body.contains(e.target)) {
+          focusedNode.current = e.target;
+          focusedNode.current.focus();
+        } else if (activeScope) {
+          focusFirstInScope(activeScope.current);
+        }
+      }
+    });
+  }, [scopeRef, focusedNode]);
+  let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   useLayoutEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
@@ -297,6 +315,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
+        onSyntheticFocus(e);
       } else if (shouldContainFocus(scopeRef) && !isElementInChildScope(e.target, scopeRef)) {
         // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
         // restore focus to the previously focused node or the first tabbable element in the active scope.
@@ -307,23 +326,8 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
         }
       } else if (shouldContainFocus(scopeRef)) {
         focusedNode.current = e.target;
+        onSyntheticFocus(e);
       }
-    };
-
-    let onBlur = (e) => {
-      // Firefox doesn't shift focus back to the Dialog properly without this
-      raf.current = requestAnimationFrame(() => {
-        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (shouldContainFocus(scopeRef) && !isElementInChildScope(document.activeElement, scopeRef)) {
-          activeScope = scopeRef;
-          if (document.body.contains(e.target)) {
-            focusedNode.current = e.target;
-            focusedNode.current.focus();
-          } else if (activeScope) {
-            focusFirstInScope(activeScope.current);
-          }
-        }
-      });
     };
 
     document.addEventListener('keydown', onKeyDown, false);
@@ -336,7 +340,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
-  }, [scopeRef, contain]);
+  }, [scopeRef, contain, onBlur]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
