@@ -19,7 +19,7 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {TableColumnResizeState, TableState} from '@react-stately/table';
-import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TableColumnResizeAria {
@@ -33,7 +33,6 @@ export interface AriaTableColumnResizeProps<T> {
   triggerRef: RefObject<HTMLDivElement>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef} = props;
   const stateRef = useRef<TableColumnResizeState<T>>(null);
@@ -147,25 +146,20 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     removeGlobalListener(window, 'pointerup', onPointerUp, false);
   };
 
+  let {pressProps} = usePress({
+    onPressStart: (e) => {
+      if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
+        return;
+      }
+      onDown();
+    }
+  });
+
   return {
     resizerProps: mergeProps(
       keyboardProps,
       moveProps,
-      {
-        onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onDown();
-        },
-        onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onDown();
-        },
-        onTouchStart: () => {onDown();}
-      }
+      pressProps
     ),
     inputProps: mergeProps(
       {
