@@ -582,7 +582,10 @@ function ResizableTableColumnHeader(props) {
   useEffect(() => {
     if (columnState.currentlyResizingColumn === column.key) {
       // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
-      resizingRef.current.focus();
+      // without the immediate timeout, Android Chrome doesn't move focus to the resizer
+      setTimeout(() => {
+        resizingRef.current.focus();
+      }, 0);
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
