@@ -151,6 +151,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
+      if (e.pointerType === 'virtual' && columnState.currentlyResizingColumn != null) {
+        stateRef.current.onColumnResizeEnd(item);
+      }
       onDown();
     }
   });
