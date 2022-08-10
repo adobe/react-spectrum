@@ -411,7 +411,7 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
-        if (collectionNode.type === 'item') {
+        if (layoutInfo.parentKey === 'body') {
           index -= this.collection.headerRows.length;
         }
 
