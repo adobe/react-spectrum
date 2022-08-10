@@ -298,9 +298,24 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
+        // Check to see if a persisted key exists before the visible rows
+        // This is for keeping focus on a row that scrolls out of view
+        for (let h = 0; h < firstVisibleRow; h++) {
+          if (this.virtualizer.isPersistedKey(node.children[h])) {
+            res.push(node.children[h].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[h], rect);
+          }
+        }
         for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
+        }
+        // Check to see if a persisted key exists after the visible rows
+        for (let j = lastVisibleRow + 1; j < node.children.length; j++) {
+          if (this.virtualizer.isPersistedKey(node.children[j])) {
+            res.push(node.children[j].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[j], rect);
+          }
         }
         break;
       }
@@ -309,6 +324,13 @@ export class TableLayout<T> extends ListLayout<T> {
         let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
         let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
         let stickyIndex = 0;
+        // Check to see if a persisted key exists before the visible cells
+        // This is for keeping focus on a cell that scrolls out of view
+        for (let h = 0; h < firstVisibleCell; h++) {
+          if (this.virtualizer.isPersistedKey(node.children[h])) {
+            res.push(node.children[h].layoutInfo);
+          }
+        }
         for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
           // Sticky columns and row headers are always in the DOM. Interleave these
           // with the visible range so that they are in the right order.
@@ -321,6 +343,12 @@ export class TableLayout<T> extends ListLayout<T> {
           }
 
           res.push(node.children[i].layoutInfo);
+        }
+        // Check to see if a persisted key exists after the visible cells
+        for (let j = lastVisibleCell; j < node.children.length; j++) {
+          if (this.virtualizer.isPersistedKey(node.children[j])) {
+            res.push(node.children[j].layoutInfo);
+          }
         }
 
         while (stickyIndex < this.stickyColumnIndices.length) {

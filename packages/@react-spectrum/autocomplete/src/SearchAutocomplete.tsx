@@ -198,7 +198,12 @@ interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<u
 }
 
 const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: SearchAutocompleteInputProps, ref: RefObject<HTMLElement>) {
+  let searchIcon = (
+    <Magnifier data-testid="searchicon" />
+  );
+
   let {
+    icon = searchIcon,
     isQuiet,
     isDisabled,
     isReadOnly,
@@ -231,10 +236,6 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           'spectrum-InputGroup-input-circleLoader'
         )
       )} />
-  );
-
-  let searchIcon = (
-    <Magnifier data-testid="searchicon" />
   );
 
   let clearButton = (
@@ -324,7 +325,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle}
-          icon={searchIcon}
+          icon={icon}
           wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
       </div>
     </FocusRing>

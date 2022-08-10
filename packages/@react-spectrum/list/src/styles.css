@@ -403,7 +403,7 @@
       grid-template-areas:
         "thumbnail content     . badge"
         "thumbnail description . badge";
-      grid-template-columns: auto auto auto 1fr;
+      grid-template-columns: auto auto 1fr auto;
     }
 
     .react-spectrum-ListViewItem-badge {
@@ -585,4 +585,11 @@
 .react-spectrum-ListViewItem-checkbox--exitActive {
   opacity: 0.01;
   max-width: 0px;
+}
+
+.react-spectrum-ListView {
+  &:focus-ring {
+    border-color: var(--spectrum-global-color-blue-500);
+    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+  }
 }

@@ -98,7 +98,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     scrollRef
   });
 
-  let id = useId();
+  let id = useId(props.id);
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
