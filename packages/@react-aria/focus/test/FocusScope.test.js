@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
