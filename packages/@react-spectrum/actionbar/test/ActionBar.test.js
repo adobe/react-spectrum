@@ -10,13 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('ActionBar', () => {
   beforeAll(() => {
@@ -123,6 +126,45 @@ describe('ActionBar', () => {
 
     expect(tree.queryByRole('toolbar')).toBeNull();
     expect(document.activeElement).toBe(checkbox);
+  });
+
+  it('should restore focus where it came from after being closed via escape if no elements are removed', () => {
+    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+    let checkbox = within(rows[1]).getByRole('checkbox');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(rows[1]);
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    expect(checkbox).toBeChecked();
+    act(() => jest.runAllTimers());
+
+    let toolbar = tree.getByRole('toolbar');
+    expect(toolbar).toBeVisible();
+    expect(document.activeElement).toBe(rows[1]);
+
+    // Simulate tabbing within the table
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.nextNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    // jsdom doesn't blur to body like a browser, so it was being placed on the first focusable element, conveniently our table row
+    // emulate browser behavior and blur
+    act(() => document.activeElement.blur());
+    act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
+
+    expect(toolbar).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(rows[1]);
   });
 
   it('should fire onAction when clicking on an action', () => {

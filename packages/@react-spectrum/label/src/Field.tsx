@@ -79,12 +79,23 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         showErrorIcon={showErrorIcon} />
     );
 
-    let renderChildren = () => (
-      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        {children}
-        {hasHelpText && renderHelpText()}
-      </Flex>
-    );
+    let renderChildren = () => {
+      if (labelPosition === 'side') {
+        return (
+          <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+            {children}
+            {hasHelpText && renderHelpText()}
+          </Flex>
+        );
+      }
+
+      return (
+        <>
+          {children}
+          {hasHelpText && renderHelpText()}
+        </>
+      );
+    };
 
     return (
       <div
