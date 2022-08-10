@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
@@ -17,7 +18,6 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {TableColumnResizeState, TableState} from '@react-stately/table';
 import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
