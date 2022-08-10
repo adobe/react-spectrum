@@ -23,51 +23,71 @@ storiesOf('StaticField', module)
     () => render()
   )
   .add(
-    'value: Test (controlled)',
-    () => render({value: 'Test'})
-  )
-  .add(
-    'test: CalendarDate',
+    'CalendarDate',
     () => render({value: new CalendarDate(2019, 6, 5), formatOptions: 'dateStyle'})
   )
   .add(
-    'test: RangeValue<Date>',
+    'RangeValue<Date>',
     () => render({value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}})
   )
   .add(
-    'test: RangeValue<ZonedDateTime>',
+    'RangeValue<ZonedDateTime>',
     () => render({value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}})
   )
   .add(
-    'test: ZonedDateTime',
+    'RangeValue<Time>',
+    () => render({value: {start: new Time(9, 45), end: new Time(10, 50)}, formatOptions: {timeStyle: 'medium'}})
+  )
+  .add(
+    'RangeValue<CalendarDateTime>',
+    () => render({value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {timeStyle: 'medium'}})
+  )
+  .add(
+    'RangeValue<CalendarTime>',
+    () => render({value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'long'}})
+  )
+  .add(
+    'ZonedDateTime',
     () => render({value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}})
   )
   .add(
-    'test: CalendarDateTime',
+    'CalendarDateTime',
     () => render({value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}})
   )
   .add(
-    'test: Date',
-    () => render({value: new Date(2000, 5, 5)})
+    'Date',
+    () => render({value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'medium'}})
   )
   .add(
-    'test: Time',
+    'Time',
     () => render({value: new Time(9, 45), formatOptions: {timeStyle: 'long'}})
   )
   .add(
-    'test: RangeValue<NumberValue>',
+    'RangeValue<NumberValue>',
     () => render({value: {start: 10, end: 20}})
   )
   .add(
-    'test: number',
+    'number',
     () => render({value: 10})
+  )
+  .add(
+    'with no visible label',
+    () => render({value: 10, label: null, 'aria-label': 'label'})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({value: 10, labelPosition: 'side'})
+  )
+  .add(
+    'labelAlign: end>',
+    () => render({value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {timeStyle: 'medium'}, labelAlign: 'end'})
   );
 
 function render(props = {}) {
   return (
     <StaticField
       value="test"
-      label="test"
+      label="Display StaticField"
       {...props} />
   );
 }

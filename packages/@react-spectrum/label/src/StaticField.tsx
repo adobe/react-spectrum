@@ -12,8 +12,10 @@
 
 import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {classNames} from '@react-spectrum/utils';
 import type {DateValue, TimeValue} from '@react-types/datepicker';
 import {Label} from './Label';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {RefObject} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/utils';
@@ -50,9 +52,10 @@ type StaticFieldProps<T> =
     T extends string ? StringProps<T> :
     never;
 
+type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
 type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
-function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
+function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
   let {
     value, 
     formatOptions,
@@ -60,39 +63,60 @@ function StaticField<T>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLE
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let labelWrapperClass = classNames(
+    labelStyles,
+    'spectrum-Field',
+    {
+      'spectrum-Field--positionTop': props.labelPosition === 'top',
+      'spectrum-Field--positionSide': props.labelPosition === 'side'
+    },
+    styleProps.className
+  );
+
+  /* 
+  What should be done in the case of no label? based on what we've with Field, we wouldn't want to render <Label />. 
+  
+  Right now I have {...otherProps} on span but this is really only needed in the case that there aren't any labels. Otherwise, it doesn't make sense to have it here. For example, if the label is visble, you'll still label="blah" on the span for whatever reason. 
+
+  Another thing to note is the spacing when the labelPosition is on the side...just looks a bit strange. Not sure how I should center that besides adding a css class
+  */
 
   return (
     <div
       {...styleProps}
+      className={props.label && labelWrapperClass}
       ref={ref as RefObject<HTMLDivElement>}>
-      <Label
-        elementType="span">
-        <span>
-          {Array.isArray(props.value) && 
-            <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />}
+      {props.label &&
+        <Label
+          {...otherProps}
+          elementType="span">
+          {props.label}
+        </Label>}
+      <span>
+        {Array.isArray(props.value) && 
+          <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />}
 
-          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<NumberValue>).start === 'number' && 
-            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
+        {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<NumberValue>).start === 'number' && 
+          <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
 
-          {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<DateTimeValue>).start !== 'number' && 
-            <FormattedDateRange value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+        {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<DateTimeValue>).start !== 'number' && 
+          <FormattedDateRange value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {typeof value === 'number' && 
-            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
+        {typeof value === 'number' && 
+          <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
 
-          {typeof value === 'object' && 'calendar' in (value as any) && 
-            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+        {typeof value === 'object' && 'calendar' in (value as any) && 
+          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {value instanceof Date && 
-            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-          
-          {value instanceof Time && 
-            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+        {value instanceof Date && 
+          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+        
+        {value instanceof Time && 
+          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-          {typeof value === 'string' && 
-            props.value}
-        </span>
-      </Label>
+        {typeof value === 'string' && 
+          props.value}
+      </span>
     </div>
   );
 }
@@ -107,7 +131,6 @@ function FormattedStringList<T extends string[]>(props: StringListProps<T>) {
 
 function FormattedNumber<T extends NumberValue>(props: NumberProps<T>) {
   let numberFormatter = useNumberFormatter(props.formatOptions); 
-
   let value = props.value;
 
   if (typeof value === 'object' && typeof (value as RangeValue<NumberValue>).start === 'number' && typeof (value as RangeValue<NumberValue>).end === 'number') {
@@ -131,8 +154,8 @@ function FormattedDateRange<T extends DateTimeValue>(props: DateProps<T>) {
 
     if (!(start instanceof Date) && !(end instanceof Date)) {
       if (start instanceof Time && end instanceof Time) {
-        start = dateFormatter.format(convertValue(start).toDate(timeZone));
-        end = dateFormatter.format(convertValue(end).toDate(timeZone));
+        start = convertValue(start).toDate(timeZone);
+        end = convertValue(end).toDate(timeZone);
       } else if (!(start instanceof Time) && !(end instanceof Time)) {
         start = start.toDate(timeZone);
         end = end.toDate(timeZone);
