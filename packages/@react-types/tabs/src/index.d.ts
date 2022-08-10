@@ -21,7 +21,7 @@ import {
 } from '@react-types/shared';
 import {Key, ReactNode} from 'react';
 
-export interface AriaTabProps {
+export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
   key: Key,
   /** Whether the tab should be disabled. */
@@ -36,7 +36,7 @@ export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection
   isDisabled?: boolean
 }
 
-interface AriaTabListBase {
+interface AriaTabListBase extends AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'

@@ -1,0 +1,10 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 40px) / 2) 10px" height="40" viewBox="0 0 80 40">
+  <g id="useFocusRing" transform="translate(4 4)">
+    <rect id="Placement_Area" data-name="Placement Area" width="72" height="32" fill="red" opacity="0"/>
+    <rect id="Background" width="72" height="32" rx="16" fill="var(--anatomy-gray-900)"/>
+    <g id="Focus_Ring_Background" data-name="Focus Ring Background" transform="translate(-4 -4)" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+      <rect width="80" height="40" rx="20" stroke="none"/>
+      <rect x="1" y="1" width="78" height="38" rx="19" fill="none"/>
+    </g>
+  </g>
+</svg>
