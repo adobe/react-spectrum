@@ -373,12 +373,12 @@ any value within the field.
 
 ```tsx example
 <MyComboBox label="Favorite Animal" allowsCustomValue>
-  <Item key="red panda">Red Panda</Item>
-  <Item key="cat">Cat</Item>
-  <Item key="dog">Dog</Item>
-  <Item key="aardvark">Aardvark</Item>
-  <Item key="kangaroo">Kangaroo</Item>
-  <Item key="snake">Snake</Item>
+  <Item id="red panda">Red Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+  <Item id="aardvark">Aardvark</Item>
+  <Item id="kangaroo">Kangaroo</Item>
+  <Item id="snake">Snake</Item>
 </MyComboBox>
 ```
 
@@ -393,24 +393,24 @@ import {Section} from 'react-aria-components';
 
 <MyComboBox label="Preferred fruit or vegetable">
   <Section title="Fruit">
-    <Item key="Apple">Apple</Item>
-    <Item key="Banana">Banana</Item>
-    <Item key="Orange">Orange</Item>
-    <Item key="Honeydew">Honeydew</Item>
-    <Item key="Grapes">Grapes</Item>
-    <Item key="Watermelon">Watermelon</Item>
-    <Item key="Cantaloupe">Cantaloupe</Item>
-    <Item key="Pear">Pear</Item>
+    <Item id="Apple">Apple</Item>
+    <Item id="Banana">Banana</Item>
+    <Item id="Orange">Orange</Item>
+    <Item id="Honeydew">Honeydew</Item>
+    <Item id="Grapes">Grapes</Item>
+    <Item id="Watermelon">Watermelon</Item>
+    <Item id="Cantaloupe">Cantaloupe</Item>
+    <Item id="Pear">Pear</Item>
   </Section>
   <Section title="Vegetable">
-    <Item key="Cabbage">Cabbage</Item>
-    <Item key="Broccoli">Broccoli</Item>
-    <Item key="Carrots">Carrots</Item>
-    <Item key="Lettuce">Lettuce</Item>
-    <Item key="Spinach">Spinach</Item>
-    <Item key="Bok Choy">Bok Choy</Item>
-    <Item key="Cauliflower">Cauliflower</Item>
-    <Item key="Potatoes">Potatoes</Item>
+    <Item id="Cabbage">Cabbage</Item>
+    <Item id="Broccoli">Broccoli</Item>
+    <Item id="Carrots">Carrots</Item>
+    <Item id="Lettuce">Lettuce</Item>
+    <Item id="Spinach">Spinach</Item>
+    <Item id="Bok Choy">Bok Choy</Item>
+    <Item id="Cauliflower">Cauliflower</Item>
+    <Item id="Potatoes">Potatoes</Item>
   </Section>
 </MyComboBox>
 ```
@@ -628,12 +628,12 @@ The example below has `menuTrigger` set to `focus`.
 
 ```tsx example
 <MyComboBox label="Favorite Animal" menuTrigger="focus">
-  <Item key="red panda">Red Panda</Item>
-  <Item key="cat">Cat</Item>
-  <Item key="dog">Dog</Item>
-  <Item key="aardvark">Aardvark</Item>
-  <Item key="kangaroo">Kangaroo</Item>
-  <Item key="snake">Snake</Item>
+  <Item id="red panda">Red Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+  <Item id="aardvark">Aardvark</Item>
+  <Item id="kangaroo">Kangaroo</Item>
+  <Item id="snake">Snake</Item>
 </MyComboBox>
 ```
 
@@ -645,12 +645,12 @@ receiving keyboard focus as shown in the example below. Note that you are respon
 
 ```tsx example
 <MyComboBox label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
-  <Item key="red panda">Red Panda</Item>
-  <Item key="cat">Cat</Item>
-  <Item key="dog">Dog</Item>
-  <Item key="aardvark">Aardvark</Item>
-  <Item key="kangaroo">Kangaroo</Item>
-  <Item key="snake">Snake</Item>
+  <Item id="red panda">Red Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+  <Item id="aardvark">Aardvark</Item>
+  <Item id="kangaroo">Kangaroo</Item>
+  <Item id="snake">Snake</Item>
 </MyComboBox>
 ```
 
