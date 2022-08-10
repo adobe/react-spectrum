@@ -410,12 +410,15 @@ export class Virtualizer<T extends object, V, W> {
     let rect = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
-    let layoutInfo = layoutInfos[0];
-    if (!layoutInfo) {
-      return null;
+    // Layout may return multiple layout infos in the case of
+    // persisted keys, so find the first one that actually intersects.
+    for (let layoutInfo of layoutInfos) {
+      if (layoutInfo.rect.intersects(rect)) {
+        return layoutInfo.key;
+      }
     }
 
-    return layoutInfo.key;
+    return null;
   }
 
   /**
@@ -666,7 +669,7 @@ export class Virtualizer<T extends object, V, W> {
     let keyFound = this._persistedKeys.has(node.layoutInfo.key);
 
     // for components like Table, where we have rows with cells as children,
-    // if the key isn't found at the top level (row in this example), check 
+    // if the key isn't found at the top level (row in this example), check
     // the children of this node to see if a child is persisted. If a child
     // of this node is a persisted key we consider this node as "persistable."
     if (!keyFound && node.children && node.node.type !== 'section') {

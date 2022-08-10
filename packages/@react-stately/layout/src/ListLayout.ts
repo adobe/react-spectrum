@@ -11,7 +11,7 @@
  */
 
 import {Collection, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
-import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
@@ -489,11 +489,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
-    let layoutInfo = this.getVisibleLayoutInfos(new Rect(x, y, 1, 1))[0];
-    if (!layoutInfo) {
+    let key = this.virtualizer.keyAtPoint(new Point(x, y));
+    if (key == null) {
       return;
     }
 
+    let layoutInfo = this.getLayoutInfo(key);
     let rect = layoutInfo.rect;
     let target: DropTarget = {
       type: 'item',
