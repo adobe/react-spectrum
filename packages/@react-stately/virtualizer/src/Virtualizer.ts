@@ -411,7 +411,7 @@ export class Virtualizer<T extends object, V, W> {
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
     // Layout may return multiple layout infos in the case of
-    // persisted keys, so find the first one that actualy intersects.
+    // persisted keys, so find the first one that actually intersects.
     for (let layoutInfo of layoutInfos) {
       if (layoutInfo.rect.intersects(rect)) {
         return layoutInfo.key;
