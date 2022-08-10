@@ -65,8 +65,19 @@ describe('TextArea', () => {
     expect(input.style.height).toBe(`${newScrollHeight}px`);
   });
 
-  it('default does not change height', () => {
+  it('default can adjust after text "grows"', () => {
     let tree = renderComponent(TextArea, {});
+    let input = tree.getByTestId(testId);
+    let newScrollHeight = 1000;
+    expect(input.style.height).toBe(`${mockScrollHeight}px`);
+    // this will be cleaned up in the afterEach
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
+    typeText(input, '15');
+    expect(input.style.height).toBe(`${newScrollHeight}px`);
+  });
+
+  it('default does not change height when a height prop is set', () => {
+    let tree = renderComponent(TextArea, {height: 'size-2000'});
     let input = tree.getByTestId(testId);
     expect(input.style.height).toBe('');
     typeText(input, '15');
