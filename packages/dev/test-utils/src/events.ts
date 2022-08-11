@@ -175,7 +175,6 @@ export async function drag(element: Element, {delta, to: targetElement, steps = 
   } else if (type === 'touch') {
     fireEvent.touchStart(element, current);
     fireEvent.touchMove(element, current);
-    fireEvent.touchEnd(element, current);
   }
 
   for (let i = 0; i <= steps; i++) {
