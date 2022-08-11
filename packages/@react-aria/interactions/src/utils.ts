@@ -98,6 +98,8 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       if (state.observer) {
         state.observer.disconnect();
         state.observer = null;
+      }
+      if (state.removalObserver) {
         state.removalObserver.disconnect();
         state.removalObserver = null;
       }
@@ -122,7 +124,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       let onBlurHandler = (e: FocusEvent) => {
         stateRef.current.isFocused = false;
 
-        if (target.disabled) {
+        if (target.disabled || !document.body.contains(e.target)) {
           // For backward compatibility, dispatch a (fake) React synthetic event.
           stateRef.current.onBlur?.(new SyntheticFocusEvent('blur', e));
         }
@@ -157,15 +159,18 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
         if (stateRef.current.isFocused) {
           for (const mutation of mutationList) {
             for (const node of mutation.removedNodes) {
-              if (node === target || node.contains(target)) {
-                stateRef.current.removalObserver.disconnect();
-                // For backward compatibility, dispatch a (fake) React synthetic event.
-                let blurEvent = new SyntheticFocusEvent('blur', new FocusEvent('blur'));
-                blurEvent.target = target;
-                stateRef.current.onBlur?.(blurEvent);
-                stateRef.current.observer = null;
-                // early return so we don't look at the rest of the DOM
-                return;
+              if (node?.contains?.(target)) {
+                // this can be null because mutation observers fire async, so we might've disconnected and set to null before
+                // this fires, but it's still been scheduled by an event that happened before we disconnected
+                if (stateRef.current.removalObserver) {
+                  stateRef.current.removalObserver.disconnect();
+                  stateRef.current.removalObserver = null;
+                  // fire blur to cleanup any other synthetic blur handlers
+                  target.dispatchEvent(new FocusEvent('blur'));
+                  target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+                  // early return so we don't look at the rest of the DOM
+                  return;
+                }
               }
             }
           }
@@ -173,6 +178,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       });
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
+
       stateRef.current.removalObserver.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
     }
   }, []);
