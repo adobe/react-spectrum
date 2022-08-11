@@ -13,7 +13,7 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, useDOMRef, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
@@ -640,7 +640,7 @@ function ResizableTableColumnHeader(props) {
           ref={resizingRef}
           column={column}
           showResizer={showResizer}
-          triggerRef={triggerRef} />
+          triggerRef={useUnwrapDOMRef(triggerRef)} />
       </div>
     </FocusRing>
   );

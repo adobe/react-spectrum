@@ -88,7 +88,9 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
 
   return {
     columnHeaderProps: {
-      ...mergeProps(gridCellProps, pressProps, focusableProps, descriptionProps),
+      ...mergeProps(gridCellProps, pressProps, focusableProps, descriptionProps, {
+        onPointerDown: (e) => console.log(e.target.outerHTML)
+      }),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,

@@ -13,7 +13,7 @@
 import {ChangeEvent, RefObject, useCallback, useRef} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useId} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -40,7 +40,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   const cursor = useRef<string | null>(null);
   stateRef.current = columnState;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
   let id = useId();
 
   let {direction} = useLocale();
@@ -135,7 +134,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     onPress: (e) => {
       if (e.pointerType === 'touch') {
         focusInput();
-      } else {
+      } else if (e.pointerType !== 'virtual') {
         focusSafely(triggerRef.current);
       }
     }
