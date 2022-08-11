@@ -16,11 +16,11 @@ import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsComplex, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
+import {getDnDState} from '@react-stately/dnd';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -365,6 +365,126 @@ describe('ListView', function () {
         expect(dataTransfer.items._items).toHaveLength(0);
       });
 
+      it('should track the dropped element in global DnD state if dropping on a non-collection', function () {
+        let {getAllByRole, getByRole, getByText} = render(
+          <DraggableListView />
+        );
+
+        let grid = getByRole('grid');
+        let droppable = getByText('Drop here');
+        let rows = getAllByRole('row');
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+
+        expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
+
+        let cellA = within(rows[0]).getByRole('gridcell');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
+        expect(dndState.draggingCollectionRef.current).toBe(grid);
+        act(() => jest.runAllTimers());
+
+        fireEvent.pointerMove(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd']), droppedTarget: expect.any(Element), dropEffect: 'move'});
+        expect(dndState.draggingCollectionRef.current).toBe(grid);
+        expect(dndState.droppedTarget).toBe(droppable);
+        // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
+        act(() => jest.runAllTimers());
+
+        fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set()});
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+      });
+
+      it('should reset the global drop state on drag end even if a drop doesn\'t happen', function () {
+        let {getAllByRole, getByRole} = render(
+          <DraggableListView />
+        );
+
+        let grid = getByRole('grid');
+        let rows = getAllByRole('row');
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        let cellA = within(rows[0]).getByRole('gridcell');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a'])});
+        expect(dndState.draggingCollectionRef.current).toBe(grid);
+        act(() => jest.runAllTimers());
+
+        fireEvent.pointerMove(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+
+        fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set()});
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+      });
+
+      it('should reset the global drop state on drag start', function () {
+        let {getAllByRole} = render(
+          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
+        );
+
+        let grids = getAllByRole('grid');
+        let dataTransfer = new DataTransfer();
+        let file = new File(['hello world'], 'test.abc', {type: ''});
+        dataTransfer.items.add(file);
+
+        fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set(), currentDropCollectionRef: expect.any(Object)});
+        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
+
+        fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        // Droppable collection and other drop related global trackers should still be set
+        dndState = getDnDState();
+        expect(dndState).toEqual({
+          draggingKeys: new Set(),
+          currentDropCollectionRef: expect.any(Object),
+          droppedCollectionRef: expect.any(Object),
+          dropEffect: 'copy',
+          droppedTarget: {
+            dropPosition: 'before',
+            key: '7',
+            type: 'item'
+          }});
+        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
+        expect(dndState.droppedCollectionRef.current).toBe(grids[1]);
+
+        // Upon drag start, all previous tracked info in the global DnD state should be wiped and replaced
+        let rows = within(grids[1]).getAllByRole('row');
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        let cellA = within(rows[0]).getByRole('gridcell');
+        dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['7'])});
+        expect(dndState.draggingCollectionRef.current).toBe(grids[1]);
+      });
+
       describe('using util handlers', function () {
         function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
           act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
@@ -634,7 +754,9 @@ describe('ListView', function () {
 
         it('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root'}} />
+            <DragBetweenListsComplex
+              firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root', onRemove: null}}
+              secondListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} />
           );
 
           let grids = getAllByRole('grid');
@@ -647,7 +769,7 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -674,7 +796,6 @@ describe('ListView', function () {
           let grids = getAllByRole('grid');
           expect(grids).toHaveLength(2);
 
-          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
           expect(list1Rows).toHaveLength(6);
@@ -882,15 +1003,134 @@ describe('ListView', function () {
         });
       });
 
+      it('should track the dropped element in global DnD state if dropping on a non-collection', function () {
+        let {getAllByRole, getByRole, getByText} = render(
+          <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
+        );
+
+        let grid = getByRole('grid');
+        let droppable = getByText('Drop here');
+        let rows = getAllByRole('row');
+
+        let cellA = within(rows[0]).getByRole('gridcell');
+        userEvent.tab();
+        let draghandle = within(cellA).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
+        expect(dndState.draggingCollectionRef.current).toBe(grid);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toBe(droppable);
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
+
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set()});
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set(['a', 'b', 'c', 'd']),
+          x: 50,
+          y: 25,
+          dropOperation: 'move',
+          dropTarget: droppable,
+          isInternalDrop: false
+        });
+      });
+
+      it('should reset the global drop state on drag end even if a drop doesn\'t happen', function () {
+        let {getAllByRole, getByRole, getByText} = render(
+          <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
+        );
+
+        let grid = getByRole('grid');
+        let droppable = getByText('Drop here');
+        let rows = getAllByRole('row');
+
+        let cellA = within(rows[0]).getByRole('gridcell');
+        userEvent.tab();
+        let draghandle = within(cellA).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
+        expect(dndState.draggingCollectionRef.current).toBe(grid);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toBe(droppable);
+        fireEvent.keyDown(droppable, {key: 'Escape'});
+        fireEvent.keyUp(droppable, {key: 'Escape'});
+
+        dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set()});
+      });
+
+      it('should reset the global drop state on drag start', function () {
+        let {getAllByRole} = render(
+          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
+        );
+
+        let grids = getAllByRole('grid');
+        let dataTransfer = new DataTransfer();
+        let file = new File(['hello world'], 'test.abc', {type: ''});
+        dataTransfer.items.add(file);
+        // Can't perform drop from non RSP item via keyboard so just directly call drag enter and drop
+        fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        let dndState = getDnDState();
+        expect(dndState).toEqual({draggingKeys: new Set(), currentDropCollectionRef: expect.any(Object)});
+        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
+
+        fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        // Droppable collection and other drop related global trackers should still be set
+        dndState = getDnDState();
+        expect(dndState).toEqual({
+          draggingKeys: new Set(),
+          currentDropCollectionRef: expect.any(Object),
+          droppedCollectionRef: expect.any(Object),
+          dropEffect: 'copy',
+          droppedTarget: {
+            dropPosition: 'before',
+            key: '7',
+            type: 'item'
+          }});
+        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
+        expect(dndState.droppedCollectionRef.current).toBe(grids[1]);
+
+        // Start drag via keyboard. Upon drag start, all previous tracked info in the global DnD state should be wiped and replaced
+        let row = within(grids[0]).getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
+        expect(row).toHaveAttribute('draggable', 'true');
+
+        userEvent.tab();
+        let draghandle = within(cell).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+        expect(draghandle).toHaveAttribute('draggable', 'true');
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+        act(() => jest.runAllTimers());
+
+        dndState = getDnDState();
+        expect(dndState).toEqual({
+          draggingCollectionRef: expect.any(Object),
+          draggingKeys: new Set(['1']),
+          currentDropCollectionRef: expect.any(Object)
+        });
+        expect(dndState.draggingCollectionRef.current).toBe(grids[0]);
+        expect(dndState.currentDropCollectionRef.current).toBe(grids[0]);
+      });
+
       describe('using util handlers', function () {
-        it('should call onInsert when dropping between items', async function () {
-          let {getAllByRole} = render(
-            <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
-          );
-
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
-
+        function beginDrag(tree) {
+          let grids = tree.getAllByRole('grid');
           let row = within(grids[0]).getAllByRole('row')[0];
           let cell = within(row).getByRole('gridcell');
           expect(cell).toHaveTextContent('Adobe Photoshop');
@@ -902,8 +1142,15 @@ describe('ListView', function () {
           expect(draghandle).toHaveAttribute('draggable', 'true');
           fireEvent.keyDown(draghandle, {key: 'Enter'});
           fireEvent.keyUp(draghandle, {key: 'Enter'});
-
           act(() => jest.runAllTimers());
+        }
+
+        it('should call onInsert when dropping between items', async function () {
+          let tree = render(
+            <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
+          );
+
+          beginDrag(tree);
           // Move to 2nd list's first insert indicator
           userEvent.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -942,24 +1189,11 @@ describe('ListView', function () {
         });
 
         it('should call onReorder when performing a insert drop in the source list', async function () {
-          let {getAllByRole} = render(
+          let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
 
-          let grids = getAllByRole('grid');
-          let row = within(grids[0]).getAllByRole('row')[0];
-          let cell = within(row).getByRole('gridcell');
-          expect(cell).toHaveTextContent('Adobe Photoshop');
-          expect(row).toHaveAttribute('draggable', 'true');
-
-          userEvent.tab();
-          let draghandle = within(cell).getAllByRole('button')[0];
-          expect(draghandle).toBeTruthy();
-          expect(draghandle).toHaveAttribute('draggable', 'true');
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-
-          act(() => jest.runAllTimers());
+          beginDrag(tree);
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
@@ -982,24 +1216,11 @@ describe('ListView', function () {
         });
 
         it('should call onRootDrop when dropping on the list root', async function () {
-          let {getAllByRole} = render(
+          let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
           );
 
-          let grids = getAllByRole('grid');
-          let row = within(grids[0]).getAllByRole('row')[0];
-          let cell = within(row).getByRole('gridcell');
-          expect(cell).toHaveTextContent('Adobe Photoshop');
-          expect(row).toHaveAttribute('draggable', 'true');
-
-          userEvent.tab();
-          let draghandle = within(cell).getAllByRole('button')[0];
-          expect(draghandle).toBeTruthy();
-          expect(draghandle).toHaveAttribute('draggable', 'true');
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-
-          act(() => jest.runAllTimers());
+          beginDrag(tree);
           userEvent.tab();
 
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
@@ -1029,24 +1250,11 @@ describe('ListView', function () {
         });
 
         it('should call onItemDrop when dropping on a folder in the list', async function () {
-          let {getAllByRole} = render(
+          let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
           );
 
-          let grids = getAllByRole('grid');
-          let row = within(grids[0]).getAllByRole('row')[0];
-          let cell = within(row).getByRole('gridcell');
-          expect(cell).toHaveTextContent('Adobe Photoshop');
-          expect(row).toHaveAttribute('draggable', 'true');
-
-          userEvent.tab();
-          let draghandle = within(cell).getAllByRole('button')[0];
-          expect(draghandle).toBeTruthy();
-          expect(draghandle).toHaveAttribute('draggable', 'true');
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-
-          act(() => jest.runAllTimers());
+          beginDrag(tree);
           userEvent.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -1086,24 +1294,11 @@ describe('ListView', function () {
         });
 
         it('should call onRemove when performing a drop that should remove the item from the list', async function () {
-          let {getAllByRole} = render(
+          let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
 
-          let grids = getAllByRole('grid');
-          let row = within(grids[0]).getAllByRole('row')[0];
-          let cell = within(row).getByRole('gridcell');
-          expect(cell).toHaveTextContent('Adobe Photoshop');
-          expect(row).toHaveAttribute('draggable', 'true');
-
-          userEvent.tab();
-          let draghandle = within(cell).getAllByRole('button')[0];
-          expect(draghandle).toBeTruthy();
-          expect(draghandle).toHaveAttribute('draggable', 'true');
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-
-          act(() => jest.runAllTimers());
+          beginDrag(tree);
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -1124,6 +1319,10 @@ describe('ListView', function () {
           // Perform reorder operation and confirm that onRemove doesn't get called again
           onRemove.mockClear();
           onItemDrop.mockClear();
+          let grids = tree.getAllByRole('grid');
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          let draghandle = within(cell).getAllByRole('button')[0];
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
@@ -1152,50 +1351,55 @@ describe('ListView', function () {
           });
         });
 
-        it.skip('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
-          let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
+          let tree = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} secondListDnDOptions={{acceptedDragTypes: ['randomType']}} />
           );
 
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
-
-          let dropTarget = within(grids[0]).getAllByRole('row')[0];
-          let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
-          // Shouldn't allow a insert because the type from 2nd list isn't of "randomType"
-          expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          let totalRows = tree.getAllByRole('row', {hidden: true});
+          expect(totalRows).toHaveLength(12);
+          beginDrag(tree);
+          // No drop indicators should appear
+          totalRows = tree.getAllByRole('row', {hidden: true});
+          expect(totalRows).toHaveLength(12);
         });
 
-        it.skip('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
-          let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root'}} />
+        it('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
+          let tree = render(
+            <DragBetweenListsComplex
+              firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}}
+              secondListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'item', onRemove: null}} />
           );
 
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop since that is the only valid drop target
-          let dropTarget = within(grids[0]).getAllByRole('row')[4];
-          let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          // Dropping on a non-folder item should now be enabled
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Adobe Fresco');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
           expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledWith({
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '8',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
             dropOperation: 'move',
             items: [
-              {
-                kind: 'text',
-                types: new Set(['text/plain', 'folder']),
-                getText: expect.any(Function)
-              },
               {
                 kind: 'text',
                 types: new Set(['text/plain', 'file']),
@@ -1203,103 +1407,59 @@ describe('ListView', function () {
               }
             ]
           });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
         });
 
-        it.skip('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
-          let {getAllByRole, rerender} = render(
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+          let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
 
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          // Should allow insert since we provide all handlers
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
-          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop
-          let dropTarget = within(grids[0]).getAllByRole('row')[4];
-          let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          expect(list1Rows).toHaveLength(6);
-          let list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-          let dragCell = within(list2Rows[0]).getByRole('gridcell');
-
-          let dataTransfer = new DataTransfer();
-          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-
-          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          // Row number increases since there is a drop indicator
-          expect(list1Rows).toHaveLength(7);
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(1);
-
-          // Reset checked rows
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-
-          rerender(<DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />);
-          onInsert.mockClear();
-          dropTarget = within(grids[0]).getAllByRole('row')[4];
-          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          expect(list1Rows).toHaveLength(6);
-          list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-          dragCell = within(list2Rows[0]).getByRole('gridcell');
-
-          dataTransfer = new DataTransfer();
-          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-
-          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          // Row number shouldn't increase since the utility handlers have been disabled and thus drop indicators don't appear
-          expect(list1Rows).toHaveLength(6);
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          tree.rerender(<DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
+          beginDrag(tree);
+          userEvent.tab();
+          // Should automatically jump to the folder target since we didn't provide onRootDrop and onInsert
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Apps');
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
         });
 
-        it.skip('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
           };
-          let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop: onDrop, getDropOperation: getDropOperationMock}} />
+          let tree = render(
+            <DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onDrop: onDrop, getDropOperation: getDropOperationMock}} />
           );
 
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
-
-          let dropTarget = within(grids[0]).getAllByRole('row')[0];
-          let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          expect(getDropOperation).toHaveBeenCalledTimes(0);
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
-          expect(getDropOperation).toHaveBeenCalledTimes(1);
+          expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
       });
     });
