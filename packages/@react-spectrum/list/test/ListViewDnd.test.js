@@ -343,7 +343,7 @@ describe('ListView', function () {
         expect(dataTransfer.items._items).toHaveLength(0);
       });
 
-      it('should allow moving item within a list', async function () {
+      it('should allow moving one item within a list', async function () {
         let {getAllByRole} =  render(<Reorderable />);
 
         let rows = getAllByRole('row');
@@ -386,9 +386,9 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
 
         expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
-        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
-        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
-        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
         expect(document.activeElement).toBe(rows[2]);
       });
@@ -596,11 +596,13 @@ describe('ListView', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        let droppable = getAllByRole('button')[0];
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        // fireEvent.keyDown(droppable, {key: 'ArrowDown'});
+        // fireEvent.keyUp(droppable, {key: 'ArrowDown'});
+
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
