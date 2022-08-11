@@ -287,7 +287,7 @@ describe('TableViewSizing', function () {
       });
 
       // To test https://github.com/adobe/react-spectrum/issues/1885
-      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
+      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', async function () {
         function ControlledSelection(props) {
           let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
           return (
@@ -318,6 +318,9 @@ describe('TableViewSizing', function () {
         rerender(tree, <ControlledSelection selectionMode="none" />);
         act(() => {jest.runAllTimers();});
         expect(tree.queryByRole('checkbox')).toBeNull();
+
+        // wait for any MutationObservers from synthetic blur
+        await act(() => Promise.resolve());
       });
 
       it('should return the proper cell z-indexes for overflowMode="wrap"', function () {

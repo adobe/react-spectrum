@@ -3605,7 +3605,7 @@ describe('TableView', function () {
       </TableView>
     );
 
-    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
+    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', async function () {
       let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -3622,17 +3622,17 @@ describe('TableView', function () {
       expect(document.activeElement).toEqual(input);
       expect(input.value).toBe('blah');
 
+      fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
       act(() => {
-        fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
         jest.runAllTimers();
       });
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+      fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
       act(() => {
-        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
         jest.runAllTimers();
       });
 
@@ -3645,6 +3645,9 @@ describe('TableView', function () {
       });
 
       expect(dialog).not.toBeInTheDocument();
+
+      // wait for any MutationObservers from synthetic blur
+      await act(() => Promise.resolve());
     });
   });
 
