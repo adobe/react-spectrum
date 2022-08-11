@@ -79,14 +79,28 @@ storiesOf('StaticField', module)
     () => render({value: 10, labelPosition: 'side'})
   )
   .add(
-    'labelAlign: end>',
+    'labelAlign: end',
     () => render({value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {timeStyle: 'medium'}, labelAlign: 'end'})
-  );
+  )
+  .add(
+    'long string',
+    () => render({value: 'afdjkladfjkjfklafdljklakjfsljfklsdjklajsfkaljklakljdfkalsjdfkladjfkladklfdajklfjkdalsjdklajlajfdklajfkldafjfdkaljfkldajfasljfdlsa'})
+  )
+  .add(
+    'long string, labelPosition: side',
+    () => render({labelPosition: 'side', value: 'afdjkladfjkjfklafdljklakjfsljfklsdjklajsfkaljklakljdfkalsjdfkladjfkladklfdajklfjkdalsjdklajlajfdklajfkldafjfdkaljfkldajfasljfdlsa'})
+  )
+  .add(
+    'string array',
+    () => render({value: ['wow', 'cool', 'awesome']})
+  )
+  ;
 
 function render(props = {}) {
   return (
     <StaticField
       value="test"
+      width="300px"
       label="Display StaticField"
       {...props} />
   );

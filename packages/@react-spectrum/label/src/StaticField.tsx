@@ -37,11 +37,13 @@ interface DateProps<T extends DateTimeValue> {
 }
 
 interface StringProps<T extends string> {
-    value: T
+    value: T,
+    formatOptions?: never
 }
 
 interface StringListProps<T extends string[]> {
     value: T,
+    // @ts-ignore
     formatOptions?: Intl.ListFormatOptions
 }
 
@@ -57,8 +59,10 @@ type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
 function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
   let {
-    value, 
+    value,
     formatOptions,
+    labelPosition,
+    labelAlign,
 
     ...otherProps
   } = props;
@@ -67,56 +71,47 @@ function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFi
     labelStyles,
     'spectrum-Field',
     {
-      'spectrum-Field--positionTop': props.labelPosition === 'top',
-      'spectrum-Field--positionSide': props.labelPosition === 'side'
-    },
-    styleProps.className
+      'spectrum-Field--positionTop': labelPosition === 'top',
+      'spectrum-Field--positionSide': labelPosition === 'side'
+    }
   );
-
-  /* 
-  What should be done in the case of no label? based on what we've with Field, we wouldn't want to render <Label />. 
-  
-  Right now I have {...otherProps} on span but this is really only needed in the case that there aren't any labels. Otherwise, it doesn't make sense to have it here. For example, if the label is visble, you'll still label="blah" on the span for whatever reason. 
-
-  Another thing to note is the spacing when the labelPosition is on the side...just looks a bit strange. Not sure how I should center that besides adding a css class
-  */
 
   return (
     <div
       {...styleProps}
-      className={props.label && labelWrapperClass}
+      className={classNames(labelStyles, 'spectrum-StaticField', {[labelWrapperClass]: props.label}, styleProps.className)}
       ref={ref as RefObject<HTMLDivElement>}>
       {props.label &&
         <Label
-          {...otherProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
           elementType="span">
           {props.label}
         </Label>}
-      <span>
-        {Array.isArray(props.value) && 
-          <FormattedStringList value={value as string[]} formatOptions={formatOptions as Intl.ListFormatOptions} />}
+      <div
+        className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+        <div
+          className={classNames(labelStyles, 'spectrum-Field-field')}>
+          {Array.isArray(value) && 
+            // @ts-ignore
+            <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />}
 
-        {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<NumberValue>).start === 'number' && 
-          <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
+          {typeof value === 'object' && 'start' in value && typeof value.start === 'number' && typeof value.end === 'number' && 
+            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
 
-        {typeof value === 'object' && 'start' in (value as any) && typeof (value as RangeValue<DateTimeValue>).start !== 'number' && 
-          <FormattedDateRange value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+          {typeof value === 'object' && 'start' in value && typeof value.start !== 'number' && typeof value.end !== 'number' && 
+            <FormattedDateRange value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-        {typeof value === 'number' && 
-          <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
+          {typeof value === 'number' && 
+            <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
 
-        {typeof value === 'object' && 'calendar' in (value as any) && 
-          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
+          {(typeof value === 'object' && ('calendar' in value || 'hour' in value) || (value instanceof Date))  &&
+            <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
-        {value instanceof Date && 
-          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-        
-        {value instanceof Time && 
-          <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-
-        {typeof value === 'string' && 
-          props.value}
-      </span>
+          {typeof value === 'string' && 
+            props.value}
+        </div>
+      </div>
     </div>
   );
 }
@@ -125,7 +120,7 @@ function FormattedStringList<T extends string[]>(props: StringListProps<T>) {
   let stringFormatter = useListFormatter(props.formatOptions); 
 
   return (
-    stringFormatter.format(props.value)
+    <>{stringFormatter.format(props.value)}</>
   );
 }
 
@@ -187,7 +182,9 @@ function FormattedDate<T extends DateTimeValue>(props: DateProps<T>) {
   return <>{dateFormatter.format(value as Date)}</>;
 }
 
-function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {
+function convertValue(value: TimeValue) {
+  let date = today(getLocalTimeZone());
+  
   if (!value) {
     return null;
   }

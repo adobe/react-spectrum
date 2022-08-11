@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListFormatOptions, ListFormatter} from '@internationalized/string';
 import {useLocale} from './context';
 import {useMemo} from 'react';
 
 /**
- * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the number formatter for performance.
+ * Provides localized string formatting for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the string formatter for performance.
  * @param options - Formatting options.
  */
-export function useListFormatter(options: ListFormatOptions = {}): Intl.NumberFormat {
+
+// Typescript version 4.7 supports Intl.ListFormat - TODO upgrade
+// @ts-ignore
+export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {
   let {locale} = useLocale();
-  return useMemo(() => new Intl.ListFormatter(locale, options), [locale, options]);
+  // @ts-ignore
+  return useMemo(() => new Intl.ListFormat(locale, options), [locale, options]);
 }

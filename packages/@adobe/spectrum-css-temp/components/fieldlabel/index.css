@@ -159,3 +159,23 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-StaticField {
+
+  &.spectrum-Field--positionSide {
+    align-items: first baseline;
+  }
+
+  .spectrum-FieldLabel.spectrum-FieldLabel {
+    padding-top: 0px;
+  }
+
+  .spectrum-Field-wrapper.spectrum-Field-wrapper {
+    width: unset;
+  }
+
+  .spectrum-Field-field {
+    overflow: hidden;
+    word-break: break-all;
+  }
+}
