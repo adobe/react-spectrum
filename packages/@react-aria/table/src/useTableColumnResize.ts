@@ -120,32 +120,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     stateRef.current.onColumnResize(item, nextValue);
   };
 
-  let onDown = () => {
-    focusInput();
-    addGlobalListener(window, 'mouseup', onPointerUp, false);
-    addGlobalListener(window, 'touchend', onUp, false);
-    addGlobalListener(window, 'pointerup', onPointerUp, false);
-  };
-
-  let onPointerUp = (e) => {
-    // don't hide the resizer for touch since it's harder to bring back
-    if (e.pointerType === 'touch') {
-      focusInput();
-    } else {
-      focusSafely(triggerRef.current);
-    }
-    removeGlobalListener(window, 'mouseup', onPointerUp, false);
-    removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onPointerUp, false);
-  };
-
-  let onUp = () => {
-    focusInput();
-    removeGlobalListener(window, 'mouseup', onPointerUp, false);
-    removeGlobalListener(window, 'touchend', onUp, false);
-    removeGlobalListener(window, 'pointerup', onPointerUp, false);
-  };
-
   let {pressProps} = usePress({
     onPressStart: (e) => {
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
@@ -153,8 +127,17 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
       if (e.pointerType === 'virtual' && columnState.currentlyResizingColumn != null) {
         stateRef.current.onColumnResizeEnd(item);
+        focusSafely(triggerRef.current);
+        return;
       }
-      onDown();
+      focusInput();
+    },
+    onPress: (e) => {
+      if (e.pointerType === 'touch') {
+        focusInput();
+      } else {
+        focusSafely(triggerRef.current);
+      }
     }
   });
 
