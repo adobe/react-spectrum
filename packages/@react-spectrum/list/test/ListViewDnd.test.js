@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
+import {DragBetweenListsComplex, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -29,6 +29,20 @@ describe('ListView', function () {
   let onDragMove = jest.fn();
   let onDragEnd = jest.fn();
   let onDrop = jest.fn();
+  let onReorder = jest.fn();
+  let onInsert = jest.fn();
+  let onItemDrop = jest.fn();
+  let onRootDrop = jest.fn();
+  let onRemove = jest.fn();
+  let getDropOperation = jest.fn();
+  let mockUtilityOptions = {
+    onInsert: async (e) => onInsert(e),
+    onReorder: async (e) => onReorder(e),
+    onItemDrop: async (e) => onItemDrop(e),
+    onRootDrop: async (e) => onRootDrop(e),
+    onRemove: async (e) => onRemove(e)
+  };
+
   let checkSelection = (onSelectionChange, selectedKeys) => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
@@ -61,7 +75,12 @@ describe('ListView', function () {
   );
     // Allow for Virtualizer layout to update
     act(() => {jest.runAllTimers();});
-    return tree;
+    return {
+      ...tree,
+      rerender(el) {
+        return tree.rerender(<Provider theme={theme} scale={scale} locale={locale}>{el}</Provider>);
+      }
+    };
   };
 
   let moveFocus = (key, opts = {}) => {
@@ -345,6 +364,405 @@ describe('ListView', function () {
         expect(event.defaultPrevented).toBe(true);
         expect(dataTransfer.items._items).toHaveLength(0);
       });
+
+      describe('using util handlers', function () {
+        function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
+          act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+          let dragCell = within(rows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+        }
+
+        function dragBetweenLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
+          act(() => userEvent.click(within(sourceRows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(sourceRows[1]).getByRole('checkbox')));
+          let dragCell = within(sourceRows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+        }
+
+        it('should call onInsert when dropping between items', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            isInternalDrop: false,
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
+        });
+
+        it('should call onReorder when performing a insert drop in the source list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          let rows = within(grids[0]).getAllByRole('row');
+          let dropTarget = rows[4];
+          dragWithinList(rows, dropTarget, 1, 150);
+          expect(onReorder).toHaveBeenCalledTimes(1);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '4',
+              dropPosition: 'after'
+            },
+            keys: new Set(['1', '2'])
+          });
+        });
+
+        it('should call onRootDrop when dropping on the list root', async function () {
+          // make onInsert null otherwise it will attempt to do insert operations
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = grids[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
+        });
+
+        it('should call onItemDrop when dropping on a folder in the list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
+        });
+
+        it('should call onRemove when performing a drop that should remove the item from the list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{onItemDrop: mockUtilityOptions.onItemDrop}} secondListDnDOptions={{...mockUtilityOptions, onItemDrop: null}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledWith({
+            keys: new Set(['7', '8'])
+          });
+
+          // Perform reorder operation and confirm that onRemove doesn't get called again
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          dropTarget = list2Rows[4];
+          dragWithinList(list2Rows, dropTarget, 1, 150);
+          expect(onReorder).toHaveBeenCalledTimes(1);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '10',
+              dropPosition: 'after'
+            },
+            keys: new Set(['7', '8'])
+          });
+        });
+
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+          // Shouldn't allow a insert because the type from 2nd list isn't of "randomType"
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+        });
+
+        it('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root'}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop since that is the only valid drop target
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+        });
+
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+          let {getAllByRole, rerender} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(6);
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          let dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          // Row number increases since there is a drop indicator
+          expect(list1Rows).toHaveLength(7);
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(1);
+
+          // Reset checked rows
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+
+          rerender(<DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />);
+          onInsert.mockClear();
+          dropTarget = within(grids[0]).getAllByRole('row')[4];
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(6);
+          list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          // Row number shouldn't increase since the utility handlers have been disabled and thus drop indicators don't appear
+          expect(list1Rows).toHaveLength(6);
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+        });
+
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
+          let getDropOperationMock = () => {
+            getDropOperation();
+            return 'copy';
+          };
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop: onDrop, getDropOperation: getDropOperationMock}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(getDropOperation).toHaveBeenCalledTimes(1);
+        });
+      });
     });
 
     describe('via keyboard', function () {
@@ -461,6 +879,427 @@ describe('ListView', function () {
           dropOperation: 'move',
           dropTarget: droppable,
           isInternalDrop: false
+        });
+      });
+
+      describe('using util handlers', function () {
+        it('should call onInsert when dropping between items', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          expect(cell).toHaveTextContent('Adobe Photoshop');
+          expect(row).toHaveAttribute('draggable', 'true');
+
+          userEvent.tab();
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          // Move to 2nd list's first insert indicator
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            isInternalDrop: false,
+            dropOperation: 'move',
+            target: {
+              key: '7',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+        });
+
+        it('should call onReorder when performing a insert drop in the source list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          expect(cell).toHaveTextContent('Adobe Photoshop');
+          expect(row).toHaveAttribute('draggable', 'true');
+
+          userEvent.tab();
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe XD and Documents');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(1);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '3',
+              dropPosition: 'before'
+            },
+            keys: new Set(['1'])
+          });
+        });
+
+        it('should call onRootDrop when dropping on the list root', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          expect(cell).toHaveTextContent('Adobe Photoshop');
+          expect(row).toHaveAttribute('draggable', 'true');
+
+          userEvent.tab();
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          userEvent.tab();
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+        });
+
+        it('should call onItemDrop when dropping on a folder in the list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          expect(cell).toHaveTextContent('Adobe Photoshop');
+          expect(row).toHaveAttribute('draggable', 'true');
+
+          userEvent.tab();
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '7',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+        });
+
+        it('should call onRemove when performing a drop that should remove the item from the list', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          let row = within(grids[0]).getAllByRole('row')[0];
+          let cell = within(row).getByRole('gridcell');
+          expect(cell).toHaveTextContent('Adobe Photoshop');
+          expect(row).toHaveAttribute('draggable', 'true');
+
+          userEvent.tab();
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledWith({
+            keys: new Set(['1'])
+          });
+
+          // Perform reorder operation and confirm that onRemove doesn't get called again
+          onRemove.mockClear();
+          onItemDrop.mockClear();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+          act(() => jest.runAllTimers());
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe XD and Documents');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(1);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '3',
+              dropPosition: 'before'
+            },
+            keys: new Set(['1'])
+          });
+        });
+
+        it.skip('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+          // Shouldn't allow a insert because the type from 2nd list isn't of "randomType"
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+        });
+
+        it.skip('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root'}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop since that is the only valid drop target
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+        });
+
+        it.skip('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+          let {getAllByRole, rerender} = render(
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          // Perform same drop operation as the onItemDrop test, but this time it should do a root drop
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(6);
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          let dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          // Row number increases since there is a drop indicator
+          expect(list1Rows).toHaveLength(7);
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(1);
+
+          // Reset checked rows
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+
+          rerender(<DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />);
+          onInsert.mockClear();
+          dropTarget = within(grids[0]).getAllByRole('row')[4];
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(6);
+          list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          // Row number shouldn't increase since the utility handlers have been disabled and thus drop indicators don't appear
+          expect(list1Rows).toHaveLength(6);
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+        });
+
+        it.skip('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
+          let getDropOperationMock = () => {
+            getDropOperation();
+            return 'copy';
+          };
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop: onDrop, getDropOperation: getDropOperationMock}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(getDropOperation).toHaveBeenCalledTimes(1);
         });
       });
     });

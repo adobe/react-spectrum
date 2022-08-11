@@ -442,7 +442,18 @@ storiesOf('ListView/Drag and Drop', module)
   )
   .add(
     'drag between two lists, complex, new hook',
-    args => <DragBetweenListsComplex {...args} />,
+    args => (
+      <DragBetweenListsComplex
+        listViewProps={args}
+        firstListDnDOptions={{
+          onDragStart: action('dragStartList1'),
+          onDragEnd: action('dragEndList1')
+        }}
+        secondListDnDOptions={{
+          onDragStart: action('dragStartList2'),
+          onDragEnd: action('dragEndList2')
+        }} />
+    ),
     {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed'}}
   )
   .add(
@@ -1262,7 +1273,8 @@ function ActionBarExample(props?) {
   );
 }
 
-function DragBetweenListsComplex(props) {
+export function DragBetweenListsComplex(props) {
+  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1345,13 +1357,12 @@ function DragBetweenListsComplex(props) {
       }
     },
     acceptedDragTypes,
-    onDragStart: action('dragStartList1'),
     onRemove: (e) => {
       list1.remove(...e.keys);
     },
-    onDragEnd: action('dragEndList1'),
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => target.type === 'root' || !!list1.getItem(target.key).childNodes
+    isValidDropTarget: (target) => target.type === 'root' || !!list1.getItem(target.key).childNodes,
+    ...firstListDnDOptions
   });
 
   // List 2 should allow reordering, on folder drops, and on root drops
@@ -1406,13 +1417,12 @@ function DragBetweenListsComplex(props) {
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
     },
     acceptedDragTypes,
-    onDragStart: action('dragStartList2'),
     onRemove: (e) => {
       list2.remove(...e.keys);
     },
-    onDragEnd: action('dragEndList2'),
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes
+    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes,
+    ...secondListDnDOptions
   });
 
 
@@ -1424,9 +1434,9 @@ function DragBetweenListsComplex(props) {
         width="size-3600"
         height="size-3600"
         items={list1.items}
+        {...listViewProps}
         dragHooks={dragHooksList1}
-        dropHooks={dropHooksList1}
-        {...props}>
+        dropHooks={dropHooksList1}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1445,6 +1455,7 @@ function DragBetweenListsComplex(props) {
         width="size-3600"
         height="size-3600"
         items={list2.items}
+        {...listViewProps}
         dragHooks={dragHooksList2}
         dropHooks={dropHooksList2}
         {...props}>

@@ -441,7 +441,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDrop(e, target) {
         setDroppedCollectionRef(ref);
         if (localState.state.target) {
-          setDroppedTarget(localState.state.target);
+          setDroppedTarget(target || localState.state.target);
           onDrop(e, target || localState.state.target);
         }
       },

@@ -105,16 +105,17 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       }
     },
     endDrag(event) {
-      if (typeof onDragEnd === 'function') {
-        let {draggingCollectionRef, droppedCollectionRef, droppedTarget} = getDnDState();
-        let isInternalDrop = droppedCollectionRef?.current === draggingCollectionRef?.current;
-        let isInternalFolderDrop = isInternalDrop && !(droppedTarget instanceof HTMLElement) && droppedTarget?.type === 'item' && droppedTarget?.dropPosition === 'on' && !!collection.getItem(droppedTarget.key).childNodes;
-        // If it is a 'move' drop operatation to a drop target outside the collection or a folder within the dragged collection, we can assume the user wants to remove the items from the source collection
-        // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
-        if (typeof onRemove === 'function' && event.dropOperation === 'move' && (!isInternalDrop || isInternalFolderDrop)) {
-          onRemove({keys: draggingKeys.current});
-        }
+      let {draggingCollectionRef, droppedCollectionRef, droppedTarget} = getDnDState();
+      let isInternalDrop = droppedCollectionRef?.current === draggingCollectionRef?.current;
+      let isInternalFolderDrop = isInternalDrop && !(droppedTarget instanceof HTMLElement) && droppedTarget?.type === 'item' && droppedTarget?.dropPosition === 'on' && !!collection.getItem(droppedTarget.key).childNodes;
+      // If it is a 'move' drop operatation to a drop target outside the collection or a folder within the dragged collection, we can assume the user wants to remove the items from the source collection
+      // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
+      if (typeof onRemove === 'function' && event.dropOperation === 'move' && (!isInternalDrop || isInternalFolderDrop)) {
+        onRemove({keys: draggingKeys.current});
 
+      }
+
+      if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
           keys: draggingKeys.current,
