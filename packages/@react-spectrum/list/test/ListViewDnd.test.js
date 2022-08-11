@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
+import {act, drag, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
@@ -351,10 +351,7 @@ describe('ListView', function () {
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
-        let cell = within(rows[0]).getByRole('gridcell');
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        drag(rows[1], {to: rows[2], delta: {x: 0, y: 5}});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
@@ -375,18 +372,15 @@ describe('ListView', function () {
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
 
-        let cell1 = within(rows[0]).getByRole('gridcell');
-        let cell2 = within(rows[1]).getByRole('gridcell');
+        let cell1 = within(rows[1]).getByRole('gridcell');
+        let cell2 = within(rows[2]).getByRole('gridcell');
         fireEvent.pointerDown(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
 
         fireEvent.pointerDown(cell2, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent.pointerUp(cell2, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
 
-        fireEvent.pointerDown(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerMove(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 80});
-        fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        drag(rows[1], {to: rows[3], delta: {x: 0, y: 5}});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
@@ -415,11 +409,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-
-        let cell = within(list1rows[0]).getByRole('gridcell');
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 400, clientY: 0});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        drag(list1rows[0], {to: list2rows[0], delta: {x: 0, y: -5}});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
@@ -452,19 +442,15 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-
         let cell1 = within(list1rows[0]).getByRole('gridcell');
-        let cell2 = within(list1rows[1]).getByRole('gridcell');
+        let cell2 = within(list1rows[2]).getByRole('gridcell');
         fireEvent.pointerDown(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
 
         fireEvent.pointerDown(cell2, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent.pointerUp(cell2, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
 
-        fireEvent.pointerDown(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent.pointerMove(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 400, clientY: 0});
-        fireEvent.pointerUp(cell1, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        drag(list1rows[0], {to: list2rows[0], delta: {x: 0, y: -5}});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
@@ -623,7 +609,7 @@ describe('ListView', function () {
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
 
-        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toBe(rows[2]);
       });
 
       it('should allow moving multiple items within a list', async function () {
@@ -666,7 +652,7 @@ describe('ListView', function () {
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
-        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toBe(rows[3]);
       });
 
       it('should allow moving one item into another list', async function () {
