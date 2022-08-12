@@ -126,6 +126,7 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       }
 
       setDragging(false);
+      draggingKeys.current = new Set();
       draggedKey.current = null;
     }
   };

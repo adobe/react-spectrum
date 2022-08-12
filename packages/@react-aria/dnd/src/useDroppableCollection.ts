@@ -54,7 +54,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     onRootDrop,
     onItemDrop,
     onReorder
-  } = localState.props;
+  } = props;
 
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
     let {draggingCollectionRef, draggingKeys} = getDnDState();

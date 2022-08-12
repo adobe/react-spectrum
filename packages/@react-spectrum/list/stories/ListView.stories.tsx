@@ -1308,7 +1308,10 @@ export function DragBetweenListsComplex(props) {
         if (item.kind === 'text' && item.types.has(type)) {
           text = await item.getText(type);
           processedItems.push(JSON.parse(text));
-        } else {
+          break;
+        } else if (item.types.size === 1 && item.types.has('text/plain')) {
+          // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+          // Multiple drag items are contained in a single string so we need to split them out
           text = await item.getText('text/plain');
           processedItems = text.split('\n').map(val => JSON.parse(val));
           break;
