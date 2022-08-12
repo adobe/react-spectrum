@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -8,19 +9,21 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext} from './TableView';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ResizerProps<T> {
   column: GridNode<T>,
-  showResizer: boolean
+  showResizer: boolean,
+  triggerRef: RefObject<HTMLDivElement>
 }
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
+function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
   let {state, columnState} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {resizerProps} = useTableColumnResize({...props, label: stringFormatter.format('columnResizer')}, {...state, ...columnState}, ref);
+  let {inputProps, resizerProps} = useTableColumnResize({...props, label: stringFormatter.format('columnResizer')}, state, columnState, ref);
 
   let style = {
     cursor: undefined,
@@ -35,12 +38,22 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLDivElement>) {
   } else {
     style.cursor = 'col-resize';
   }
+
   return (
-    <div
-      ref={ref}
-      {...resizerProps}
-      style={style}
-      className={classNames(styles, 'spectrum-Table-columnResizer')} />
+    <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        role="presentation"
+        style={style}
+        className={classNames(styles, 'spectrum-Table-columnResizer')}
+        {...resizerProps}>
+        <VisuallyHidden>
+          <input
+            ref={ref}
+            type="range"
+            {...inputProps} />
+        </VisuallyHidden>
+      </div>
+    </FocusRing>
   );
 }
 
