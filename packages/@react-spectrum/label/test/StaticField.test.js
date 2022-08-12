@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
@@ -238,7 +239,7 @@ describe('StaticField', function () {
     let labelledField = getByTestId('test-id').closest('div');
     expect(ref.current).toBe(labelledField);
   });
-  
+
   it('renders when no visible label is provided', function () {
     let {getByTestId} = render(
       <StaticField
