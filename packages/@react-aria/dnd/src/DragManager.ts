@@ -75,7 +75,8 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
       getDragModality() === 'keyboard' ||
       (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
     ) {
-      dragSession.next();
+      let target = dragSession.findNearestDropTarget();
+      dragSession.setCurrentDropTarget(target);
     }
   });
 
@@ -409,6 +410,25 @@ class DragSession {
     } else {
       this.setCurrentDropTarget(this.validDropTargets[index - 1]);
     }
+  }
+
+  findNearestDropTarget(): DropTarget {
+    let dragTargetRect = this.dragTarget.element.getBoundingClientRect();
+
+    let minDistance = Infinity;
+    let nearest = null;
+    for (let dropTarget of this.validDropTargets) {
+      let rect = dropTarget.element.getBoundingClientRect();
+      let dx = rect.left - dragTargetRect.left;
+      let dy = rect.top - dragTargetRect.top;
+      let dist = (dx * dx) + (dy * dy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearest = dropTarget;
+      }
+    }
+
+    return nearest;
   }
 
   setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
