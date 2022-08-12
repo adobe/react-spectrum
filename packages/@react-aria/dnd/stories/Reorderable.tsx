@@ -21,6 +21,7 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import {ItemDropTarget} from '@react-types/shared';
+import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
@@ -121,6 +122,7 @@ function ReorderableGrid(props) {
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
     onDropEnter: chain(action('onDropEnter'), console.log),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log),
@@ -136,52 +138,6 @@ function ReorderableGrid(props) {
         }
 
         props.onMove(keys, e.target);
-      }
-    },
-    getDropTargetFromPoint(x, y) {
-      let rect = ref.current.getBoundingClientRect();
-      x += rect.x;
-      y += rect.y;
-      let closest = null;
-      let closestDistance = Infinity;
-      let closestDir = null;
-
-      for (let child of ref.current.children) {
-        if (!(child as HTMLElement).dataset.key) {
-          continue;
-        }
-
-        let r = child.getBoundingClientRect();
-        let points: [number, number, string][] = [
-          [r.left, r.top, 'before'],
-          [r.right, r.top, 'before'],
-          [r.left, r.bottom, 'after'],
-          [r.right, r.bottom, 'after']
-        ];
-
-        for (let [px, py, dir] of points) {
-          let dx = px - x;
-          let dy = py - y;
-          let d = dx * dx + dy * dy;
-          if (d < closestDistance) {
-            closestDistance = d;
-            closest = child;
-            closestDir = dir;
-          }
-        }
-
-        if (y >= r.top + 10 && y <= r.bottom - 10) {
-          closestDir = 'on';
-        }
-      }
-
-      let key = closest?.dataset.key;
-      if (key) {
-        return {
-          type: 'item',
-          key,
-          dropPosition: closestDir
-        };
       }
     }
   }, dropState, ref);
