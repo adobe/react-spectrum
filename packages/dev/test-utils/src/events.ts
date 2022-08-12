@@ -135,7 +135,7 @@ export function getElementCenter(element: Element) {
  * If target element provided, will drag to center of target element.
  * If both provided, delta will be from center of target element.
  */
-export async function drag(element: Element, {delta, to: targetElement, steps = 2, duration = 50, type = 'mouse'}) {
+export async function dragAndDrop(element: Element, {delta, to: targetElement, steps = 2, duration = 50, type = 'mouse'}) {
   if (!delta && !targetElement) {
     throw new Error('Must provide a delta or target element.');
   }
