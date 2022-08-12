@@ -13,6 +13,7 @@
 import {ActionButton, defaultTheme, Provider, Text} from '@adobe/react-spectrum';
 import algoliasearch from 'algoliasearch/lite';
 import docsStyle from './docs.css';
+import DOMPurify from 'dompurify';
 import {Item, SearchAutocomplete, Section} from '@react-spectrum/autocomplete';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
@@ -219,11 +220,11 @@ function DocSearch() {
       }
       section.items.push(
         <Item key={objectID} textValue={textValue.join(' | ')}>
-          <Text><span dangerouslySetInnerHTML={{__html: text.join(' | ')}} /></Text>
+          <Text><span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(text.join(' | '))}} /></Text>
           {
             prediction.content &&
             <Text slot="description">
-              <span dangerouslySetInnerHTML={{__html: prediction._snippetResult.content.value}} />
+              <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(prediction._snippetResult.content.value)}} />
             </Text>
           }
         </Item>
