@@ -425,12 +425,15 @@ export class Virtualizer<T extends object, V, W> {
     let rect = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
-    let layoutInfo = layoutInfos[0];
-    if (!layoutInfo) {
-      return null;
+    // Layout may return multiple layout infos in the case of
+    // persisted keys, so find the first one that actually intersects.
+    for (let layoutInfo of layoutInfos) {
+      if (layoutInfo.rect.intersects(rect)) {
+        return layoutInfo.key;
+      }
     }
 
-    return layoutInfo.key;
+    return null;
   }
 
   /**
