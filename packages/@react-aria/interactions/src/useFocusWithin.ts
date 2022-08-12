@@ -17,7 +17,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
-import {useSyntheticBlurEvent} from './utils';
+import {useSyntheticBlurEvent} from '@react-aria/utils';
 
 export interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */

@@ -15,7 +15,7 @@ import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useCallback, useContext, useEffect, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useSyntheticBlurEvent} from '@react-aria/interactions/src/utils';
+import {useSyntheticBlurEvent} from '@react-aria/utils';
 
 
 export interface FocusScopeProps {
