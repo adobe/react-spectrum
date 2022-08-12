@@ -68,7 +68,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
       (
-        onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
+        onInsert && target.type === 'item' && (!isInternalDrop || allowedOperations[0] === 'copy') && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
         onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') ||
         // Feedback was that internal root drop was weird so preventing that from happening
         onRootDrop && target.type === 'root' && !isInternalDrop ||

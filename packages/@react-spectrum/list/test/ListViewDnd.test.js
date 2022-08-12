@@ -526,7 +526,7 @@ describe('ListView', function () {
           act(() => jest.runAllTimers());
         }
 
-        it('should call onInsert when dropping between items', async function () {
+        it('should call onInsert when dropping between items in a different list', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -577,7 +577,54 @@ describe('ListView', function () {
           });
         });
 
-        it('should call onReorder when performing a insert drop in the source list', async function () {
+        it('should allow the user to perform a insert operation in the source list instead of a reorder operation if the drop operation is "copy"', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, getAllowedDropOperations: () => ['copy']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let rows = within(grids[0]).getAllByRole('row');
+          let dropTarget = rows[4];
+          dragWithinList(rows, dropTarget, 1, 150);
+
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            isInternalDrop: true,
+            dropOperation: 'copy',
+            target: {
+              key: '4',
+              dropPosition: 'after'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+          expect(items).toContainObject({
+            identifier: '2',
+            type: 'file',
+            name: 'Adobe XD'
+          });
+        });
+
+        it('should call onReorder when performing a insert drop in the source list', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -647,7 +694,7 @@ describe('ListView', function () {
 
         it('should call onItemDrop when dropping on a folder in the list', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onRemove: null}} secondListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} />
           );
 
           let grids = getAllByRole('grid');
@@ -659,7 +706,7 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
@@ -693,18 +740,53 @@ describe('ListView', function () {
             type: 'file',
             name: 'Adobe Fresco'
           });
+
+          let list1Rows = within(grids[0]).getAllByRole('row');
+          dropTarget = within(grids[0]).getAllByRole('row')[2];
+          dragWithinList(list1Rows, dropTarget, 1, 90);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '3',
+              dropPosition: 'on'
+            },
+            isInternalDrop: true,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          items = await Promise.all(onItemDrop.mock.calls[1][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+          expect(items).toContainObject({
+            identifier: '2',
+            type: 'file',
+            name: 'Adobe XD'
+          });
         });
 
-        it('should call onRemove when performing a drop that should remove the item from the list', async function () {
+        it('should call onRemove when performing a drop that should remove the item from the list', function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{onItemDrop: mockUtilityOptions.onItemDrop}} secondListDnDOptions={{...mockUtilityOptions, onItemDrop: null}} />
+            <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
           );
-
+          // Perform drop from list 2 into a folder within list 2
           let grids = getAllByRole('grid');
           expect(grids).toHaveLength(2);
-          let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          let dropTarget = list2Rows[4];
+          dragWithinList(list2Rows, dropTarget, 1, 100);
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
@@ -733,7 +815,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
           );
@@ -752,7 +834,7 @@ describe('ListView', function () {
           expect(onInsert).toHaveBeenCalledTimes(0);
         });
 
-        it('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
+        it('should allow the user to specify what a valid drop target is via isValidDropTarget', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex
               firstListDnDOptions={{...mockUtilityOptions, isValidDropTarget: (target) => target.type === 'root', onRemove: null}}
@@ -788,7 +870,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
           let {getAllByRole, rerender} = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -860,13 +942,13 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
         });
 
-        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
           };
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop: onDrop, getDropOperation: getDropOperationMock}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop, getDropOperation: getDropOperationMock}} />
           );
 
           let grids = getAllByRole('grid');
@@ -881,6 +963,68 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(getDropOperation).toHaveBeenCalledTimes(1);
+        });
+
+        it('should be able to perform drops if onDrop is provided without getDropOperation', function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop, acceptedDragTypes: 'all'}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onDrop).toHaveBeenCalledTimes(1);
+        });
+
+        it('should be able to perform drops if getDropOperation is provided without onDrop', function () {
+          let getDropOperationMock = () => {
+            getDropOperation();
+            return 'copy';
+          };
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, getDropOperation: getDropOperationMock}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            isInternalDrop: false,
+            dropOperation: 'copy',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
           expect(getDropOperation).toHaveBeenCalledTimes(1);
         });
       });
@@ -1145,7 +1289,7 @@ describe('ListView', function () {
           act(() => jest.runAllTimers());
         }
 
-        it('should call onInsert when dropping between items', async function () {
+        it('should call onInsert when dropping between items in a different list', async function () {
           let tree = render(
             <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
           );
@@ -1188,7 +1332,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should call onReorder when performing a insert drop in the source list', async function () {
+        it('should call onReorder when performing a insert drop in the source list', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -1251,7 +1395,7 @@ describe('ListView', function () {
 
         it('should call onItemDrop when dropping on a folder in the list', async function () {
           let tree = render(
-            <DragBetweenListsComplex firstListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions}} secondListDnDOptions={{...mockUtilityOptions, onRemove: null}} />
           );
 
           beginDrag(tree);
@@ -1291,9 +1435,47 @@ describe('ListView', function () {
             type: 'file',
             name: 'Adobe Photoshop'
           });
+
+          // Drop on folder in same list
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(2);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(2);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenLastCalledWith({
+            target: {
+              key: '3',
+              dropPosition: 'on'
+            },
+            isInternalDrop: true,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          items = await Promise.all(onItemDrop.mock.calls[1][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
         });
 
-        it('should call onRemove when performing a drop that should remove the item from the list', async function () {
+        it('should call onRemove when performing a drop that should remove the item from the list', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -1351,7 +1533,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} secondListDnDOptions={{acceptedDragTypes: ['randomType']}} />
           );
@@ -1415,7 +1597,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -1439,7 +1621,7 @@ describe('ListView', function () {
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
         });
 
-        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
@@ -1459,6 +1641,54 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
+        });
+
+        it('should be able to perform drops if onDrop is provided without getDropOperation', function () {
+          let tree = render(
+            <DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onDrop, acceptedDragTypes: 'all'}} />
+          );
+
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onDrop).toHaveBeenCalledTimes(1);
+        });
+
+        it('should be able to perform drops if getDropOperation is provided without onDrop', function () {
+          let getDropOperationMock = () => {
+            getDropOperation();
+            return 'copy';
+          };
+          let tree = render(
+            <DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, getDropOperation: getDropOperationMock}} />
+          );
+
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'copy',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
       });
@@ -1624,7 +1854,7 @@ describe('ListView', function () {
     ${['4']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
     ${['5']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
     ${['6']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    `('should be able to insert next to a disabled key, disabled key is $disabledKeys', async function ({disabledKeys, itemLabels}) {
+    `('should be able to insert next to a disabled key, disabled key is $disabledKeys', function ({disabledKeys, itemLabels}) {
       render(
         <Reorderable disabledKeys={disabledKeys} />
       );

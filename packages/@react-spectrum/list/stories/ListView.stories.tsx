@@ -1330,9 +1330,15 @@ export function DragBetweenListsComplex(props) {
     onInsert: async (e) => {
       let {
         items,
-        target
+        target,
+        dropOperation,
+        isInternalDrop
       } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
+      if (dropOperation === 'copy' && isInternalDrop) {
+        processedItems = processedItems.map(item => ({...item, identifier: item.identifier + 'copy'}));
+      }
+
       if (target.dropPosition === 'before') {
         list1.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {

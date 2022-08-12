@@ -65,7 +65,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       items
     } = e;
 
-    // TODO: write tests for if onDrop is provided by user but getDropOperations isn't and vice versa
     if (target.type === 'root') {
       onRootDrop && await onRootDrop({items, dropOperation});
     } else if (target.dropPosition === 'on') {
