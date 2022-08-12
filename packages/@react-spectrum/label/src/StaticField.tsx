@@ -14,6 +14,7 @@ import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, St
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import type {DateValue, TimeValue} from '@react-types/datepicker';
+import {filterDOMProps} from '@react-aria/utils';
 import {Label} from './Label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {RefObject} from 'react';
@@ -57,7 +58,7 @@ type StaticFieldProps<T> =
 type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
 type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
-function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLElement>) {
+function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLDivElement>) {
   let {
     value,
     formatOptions,
@@ -78,9 +79,10 @@ function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFi
 
   return (
     <div
+      {...filterDOMProps(props)}
       {...styleProps}
       className={classNames(labelStyles, 'spectrum-StaticField', {[labelWrapperClass]: props.label}, styleProps.className)}
-      ref={ref as RefObject<HTMLDivElement>}>
+      ref={ref}>
       {props.label &&
         <Label
           labelPosition={labelPosition}
@@ -129,7 +131,6 @@ function FormattedNumber<T extends NumberValue>(props: NumberProps<T>) {
   let value = props.value;
 
   if (typeof value === 'object' && typeof (value as RangeValue<NumberValue>).start === 'number' && typeof (value as RangeValue<NumberValue>).end === 'number') {
-    console.log('RangeValue<NumberValue>');
     return <>{numberFormatter.formatRange(value.start, value.end)}</>;
   }
 
@@ -167,7 +168,6 @@ function FormattedDate<T extends DateTimeValue>(props: DateProps<T>) {
   let timeZone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
 
   if (typeof value === 'object' && 'timeZone' in value) {
-    console.log(value.toDate());
     return <>{dateFormatter.format(value.toDate())}</>;
   }
 
