@@ -16,7 +16,7 @@ import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
@@ -676,7 +676,7 @@ describe('FocusScope', function () {
         // wait for the async MutationObserver
         await act(async () => Promise.resolve());
         act(() => {jest.runAllTimers();});
-        let item2 = tree.getByTestId('item2');;
+        let item2 = tree.getByTestId('item2');
         expect(document.activeElement).toBe(item2);
 
         fireEvent.click(item2);
