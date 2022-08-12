@@ -228,7 +228,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && e.currentTarget.contains(e.target as Element)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && e.currentTarget.contains(e.target as Element)) {
           if (shouldPreventDefaultKeyboard(e.target as Element)) {
             e.preventDefault();
           }
@@ -246,10 +246,15 @@ export function usePress(props: PressHookProps): PressResult {
             // instead of the same element where the key down event occurred.
             addGlobalListener(document, 'keyup', onKeyUp, false);
           }
+        } else if (e.key === 'Enter' && isHTMLAnchorLink(e.currentTarget)) {
+          // If the target is a link, we won't have handled this above because we want the default
+          // browser behavior to open the link when pressing Enter. But we still need to prevent
+          // default so that elements above do not also handle it (e.g. table row).
+          e.stopPropagation();
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat && e.currentTarget.contains(e.target as Element)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element)) {
           triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
@@ -284,7 +289,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let onKeyUp = (e: KeyboardEvent) => {
-      if (state.isPressed && isValidKeyboardEvent(e)) {
+      if (state.isPressed && isValidKeyboardEvent(e, state.target)) {
         if (shouldPreventDefaultKeyboard(e.target as Element)) {
           e.preventDefault();
         }
@@ -297,7 +302,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
-        if (state.target instanceof HTMLElement && (state.target.contains(target) && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
+        if (state.target instanceof HTMLElement && state.target.contains(target) && (isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link')) {
           state.target.click();
         }
       }
@@ -662,13 +667,13 @@ export function usePress(props: PressHookProps): PressResult {
   };
 }
 
-function isHTMLAnchorLink(target: HTMLElement): boolean {
+function isHTMLAnchorLink(target: Element): boolean {
   return target.tagName === 'A' && target.hasAttribute('href');
 }
 
-function isValidKeyboardEvent(event: KeyboardEvent): boolean {
-  const {key, code, target} = event;
-  const element = target as HTMLElement;
+function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boolean {
+  const {key, code} = event;
+  const element = currentTarget as HTMLElement;
   const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.

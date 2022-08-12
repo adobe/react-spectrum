@@ -92,6 +92,7 @@ export class Virtualizer<T extends object, V, W> {
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
+  private _persistedKeys: Set<Key>;
   private _relayoutRaf: number | null;
   private _scrollAnimation: CancelablePromise<void> | null;
   private _isScrolling: boolean;
@@ -112,6 +113,7 @@ export class Virtualizer<T extends object, V, W> {
     this._children = new Set();
     this._invalidationContext = null;
     this._overscanManager = new OverscanManager();
+    this._persistedKeys = new Set();
 
     this._scrollAnimation = null;
     this._isScrolling = false;
@@ -231,6 +233,30 @@ export class Virtualizer<T extends object, V, W> {
    */
   getItem(key: Key) {
     return this._collection ? this._collection.getItem(key) : null;
+  }
+
+  /**
+   * Set the keys of keys for layoutInfos persisted by the virtualizer.
+   * This is to prevent these views from being reused by the virtualizer.
+   */
+  set persistedKeys(persistedKeys: Set<Key>) {
+    let setsNotEqual = false;
+
+    if (this._persistedKeys.size !== persistedKeys.size) {
+      setsNotEqual = true;
+    } else {
+      for (var existingKey of this._persistedKeys) {
+        if (!persistedKeys.has(existingKey)) {
+          setsNotEqual = true;
+          break;
+        }
+      }
+    }
+
+    if (setsNotEqual) {
+      this._persistedKeys = persistedKeys;
+      this.updateSubviews();
+    }
   }
 
   /**
@@ -634,6 +660,24 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     return map;
+  }
+
+  isPersistedKey(node) {
+    let keyFound = this._persistedKeys.has(node.layoutInfo.key);
+
+    // for components like Table, where we have rows with cells as children,
+    // if the key isn't found at the top level (row in this example), check 
+    // the children of this node to see if a child is persisted. If a child
+    // of this node is a persisted key we consider this node as "persistable."
+    if (!keyFound && node.children && node.node.type !== 'section') {
+      for (let child of node.children) {
+        if (this._persistedKeys.has(child.layoutInfo.key)) {
+          keyFound = true;
+          break;
+        }
+      }
+    }
+    return keyFound;
   }
 
   updateSubviews(forceUpdate = false) {

@@ -14,7 +14,7 @@ import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -144,6 +144,15 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
 
     lastFocusedKey.current = focusedKey;
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
+
+  // Tell the virtualizer to persist the focusedKey and prevent it from being reused.
+  // This is to prevent the FocusRing from setting focus to the ListView when a
+  // focused ListViewItem is scrolled out of the Virtualizer visible rectangle.
+  let focusedKeySet = useMemo((): Set<Key> => (
+    focusedKey ? new Set([focusedKey]) : new Set()
+  ), [focusedKey]);
+
+  virtualizer.persistedKeys = focusedKeySet;
 
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
