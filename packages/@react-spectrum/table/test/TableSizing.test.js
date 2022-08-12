@@ -322,7 +322,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('checkbox')).toBeNull();
 
         // wait for any MutationObservers from synthetic blur
-        await act(() => Promise.resolve());
+        await act(async () => Promise.resolve());
       });
 
       it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
