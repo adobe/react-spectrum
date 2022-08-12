@@ -112,12 +112,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
           if (node.children) {
             addNodes(node.children);
           }
-        } else if (this.virtualizer.isPersistedKey(node)) {
-          res.push(node.layoutInfo);
-
-          if (node.children) {
-            addNodes(node.children);
-          }
         }
       }
     };
@@ -127,7 +121,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   }
 
   isVisible(node: LayoutNode, rect: Rect) {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky;
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {

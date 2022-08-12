@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {GridCollection} from '@react-types/grid';
+import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -23,7 +23,7 @@ import {useSelectableItem} from '@react-aria/selection';
 
 export interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
-  node: RSNode<unknown>,
+  node: GridNode<unknown>,
   /** Whether the grid cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
@@ -230,7 +230,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   if (isVirtualized) {
-    gridCellProps['aria-colindex'] = node.index + 1; // aria-colindex is 1-based
+    gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
   }
 
   return {
