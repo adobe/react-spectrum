@@ -173,9 +173,9 @@ governing permissions and limitations under the License.
   .spectrum-Field-wrapper.spectrum-Field-wrapper {
     width: unset;
   }
-
+  
   .spectrum-Field-field {
     overflow: hidden;
-    word-break: break-all;
+    word-break: break-word;
   }
 }
