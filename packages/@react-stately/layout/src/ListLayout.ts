@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
-import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {Collection, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
+import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
@@ -49,7 +49,7 @@ const DEFAULT_HEIGHT = 48;
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
-export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
+export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, DropTargetDelegate {
   protected rowHeight: number;
   protected estimatedRowHeight: number;
   protected headingHeight: number;
@@ -473,32 +473,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return null;
   }
 
-  // getDragTarget(point: Point): DragTarget {
-  //   let visible = this.getVisibleLayoutInfos(new Rect(point.x, point.y, 1, 1));
-  //   if (visible.length > 0) {
-  //     visible = visible.sort((a, b) => b.zIndex - a.zIndex);
-  //     return {
-  //       type: 'item',
-  //       key: visible[0].key
-  //     };
-  //   }
-
-  //   return null;
-  // }
-
-  // getDropTarget(point: Point): DropTarget {
-  //   let key = this.virtualizer.keyAtPoint(point);
-  //   if (key) {
-  //     return {
-  //       type: 'item',
-  //       key,
-  //       dropPosition: DropPosition.ON
-  //     };
-  //   }
-
-  //   return null;
-  // }
-
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
@@ -509,5 +483,40 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
     return layoutInfo;
+  }
+
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
+    x += this.virtualizer.visibleRect.x;
+    y += this.virtualizer.visibleRect.y;
+
+    let key = this.virtualizer.keyAtPoint(new Point(x, y));
+    if (key == null) {
+      return;
+    }
+
+    let layoutInfo = this.getLayoutInfo(key);
+    let rect = layoutInfo.rect;
+    let target: DropTarget = {
+      type: 'item',
+      key: layoutInfo.key,
+      dropPosition: 'on'
+    };
+
+    // If dropping on the item isn't accepted, try the target before or after depending on the y position.
+    // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
+    // of the top or bottom of the item.
+    if (!isValidDropTarget(target)) {
+      if (y <= rect.y + rect.height / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
+        target.dropPosition = 'before';
+      } else if (isValidDropTarget({...target, dropPosition: 'after'})) {
+        target.dropPosition = 'after';
+      }
+    } else if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
+      target.dropPosition = 'before';
+    } else if (y >= rect.maxY - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
+      target.dropPosition = 'after';
+    }
+
+    return target;
   }
 }
