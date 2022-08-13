@@ -1,7 +1,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
 import {useCallback, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useRef} from 'react';
 
 export interface AriaFocusRingProps {
@@ -48,23 +47,12 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
   });
   let [isFocused, setFocused] = useState(false);
   let [isFocusVisibleState, setFocusVisible] = useState(() => state.current.isFocused && state.current.isFocusVisible);
-  let safelySetFocused = useRef(setFocused);
-  let safelySetFocusVisible = useRef(setFocusVisible);
 
-  // blur can now be fired asynchronously after a component unmounts, so we can't set state in response to that blur
-  // eslint-disable-next-line arrow-body-style
-  useLayoutEffect(() => {
-    return () => {
-      safelySetFocused.current = () => {};
-      safelySetFocusVisible.current = () => {};
-    };
-  }, []);
-
-  let updateState = useCallback(() => safelySetFocusVisible.current(state.current.isFocused && state.current.isFocusVisible), []);
+  let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
 
   let onFocusChange = useCallback(isFocused => {
     state.current.isFocused = isFocused;
-    safelySetFocused.current(isFocused);
+    setFocused(isFocused);
     updateState();
   }, [updateState]);
 
