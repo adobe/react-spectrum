@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/dnd';
+import statelyDocs from 'docs:@react-stately/dnd';
 import sharedDocs from 'docs:@react-types/shared';
 import selectionDocs from 'docs:@react-aria/selection';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
@@ -53,7 +54,9 @@ To support dropping between items, the <TypeLink links={docs.links} type={docs.e
 
 Interactions like keyboard navigation, and drop target positioning may differ depending on the component and layout of items. These are implemented using the <TypeLink links={sharedDocs.links} type={sharedDocs.exports.KeyboardDelegate} /> and <TypeLink links={sharedDocs.links} type={sharedDocs.exports.DropTargetDelegate} /> interfaces, provided to `useDroppableCollection`. In most cases, you can use a default implementation provided by React Aria such as <TypeLink links={selectionDocs.links} type={selectionDocs.exports.ListKeyboardDelegate} /> and <TypeLink links={docs.links} type={docs.exports.ListDropTargetDelegate} />, but you may also provide your own if you need to customize the behavior.
 
-## Example
+## Dropping on items
+
+This example renders a ListBox using the [useListBox](useListBox.html) hook, and adds support for dropping data onto items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
 
 ```tsx example
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -66,27 +69,33 @@ import {useDroppableCollection, useDroppableItem, ListDropTargetDelegate} from '
 import {ListKeyboardDelegate} from '@react-aria/selection';
 
 function ListBox(props) {
-  // See useListBox docs for more details.
+  // Setup listbox as normal. See the useListBox docs for more details.
   let state = useListState(props);
   let ref = React.useRef();
-  let { listBoxProps } = useListBox(props, state, ref);
+  let {listBoxProps} = useListBox(props, state, ref);
 
+  ///- begin highlight -///
+  // Setup react-stately and react-aria hooks for drag and drop.
   let dropState = useDroppableCollectionState({
+    // Collection and selection manager come from list state.
     collection: state.collection,
     selectionManager: state.selectionManager,
     getDropOperation: props.getDropOperation,
   });
 
   let {collectionProps} = useDroppableCollection({
+    // Provide drop targets for keyboard and pointer-based drag and drop.
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
     dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
     onDrop: props.onDrop
   }, dropState, ref);
+  ///- end highlight -///
 
+  // Merge listbox props and dnd props, and render the items as normal.
   return (
-    <ul
-      {...mergeProps(listBoxProps, collectionProps)}
-      ref={ref}>
+    /*- begin highlight -*/
+    <ul {...mergeProps(listBoxProps, collectionProps)} ref={ref}>
+    {/*- end highlight -*/}
       {[...state.collection].map((item) => (
         <Option
           key={item.key}
@@ -100,19 +109,30 @@ function ListBox(props) {
 }
 
 function Option({ item, state, dropState }) {
+  // Setup listbox option as normal. See useListBox docs for details.
   let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
-  let { isFocusVisible, focusProps } = useFocusRing();
+  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
+  ///- begin highlight -///
+  // Register the item as a drop target.
   let {dropProps, isDropTarget} = useDroppableItem({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, ref);
+  ///- end highlight -///
 
+  // Merge option props and dnd props, and render the item.
   return (
+    ///- begin highlight -///
     <li
       {...mergeProps(optionProps, dropProps, focusProps)}
+      ///- end highlight -///
       ref={ref}
-      className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}>
+      ///- begin highlight -///
+      // Apply a class when the item is the active drop target.
+      className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}
+      ///- end highlight -///
+    >
       {item.rendered}
     </li>
   );
@@ -229,9 +249,37 @@ function Draggable({children}) {
 
 ## Dropping between items
 
+To add support for dropping between items, first implement the `DropIndicator` component using the <TypeLink links={docs.links} type={docs.exports.useDropIndicator} /> hook. This will render a line between items indicating the insertion position. Within a listbox, these must have `role=option`, and since our listbox is rendered as a `<ul>`, they must also be `<li>` elements to ensure the accessibility and HTML semantics are correct.
+
+`useDropIndicator` returns `isHidden` when the drop indicator is not needed (e.g. if there is no drag session in progress), in which case we can return null to prevent any extra elements from being rendered to the DOM. When `isDropTarget` is true, the drop indicator is active and should be visible. Note that for accessibility, an element must always be rendered while a drag session is in progress, even when the drop indicator is not currently active, so that screen readers can navigate to it.
+
 ```tsx example export=true render=false
 import {useDropIndicator} from '@react-aria/dnd';
 
+function DropIndicator(props) {
+  let ref = React.useRef();
+  let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
+  if (isHidden) {
+    return null;
+  }
+
+  let className = props.target.type === 'item'
+    ? `drop-indicator ${isDropTarget ? 'drop-target' : ''}`
+    : '';
+
+  return (
+    <li
+      {...dropIndicatorProps}
+      role="option"
+      ref={ref}
+      className={className} />
+  );
+}
+```
+
+Now that the `DropIndicator` component is implemented, we can render an instance between each item in the list. This uses the `before` drop position by default, except for after the last item in the list.
+
+```tsx example export=true render=false
 ///- begin collapse -///
 function ListBox(props) {
   // See useListBox docs for more details.
@@ -269,6 +317,7 @@ function ListBox(props) {
 ///- end collapse -///
 
 function Option({ item, state, dropState }) {
+  ///- begin collapse -///
   let ref = React.useRef();
   let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
@@ -276,48 +325,35 @@ function Option({ item, state, dropState }) {
   let {dropProps, isDropTarget} = useDroppableItem({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, ref);
+  ///- end collapse -///
+  // ...
 
   return (
     <>
-     <DropIndicator
+      {/*- begin highlight -*/}
+      <DropIndicator
         target={{type: 'item', key: item.key, dropPosition: 'before'}}
         dropState={dropState} />
+      {/*- end highlight -*/}
       <li
         {...mergeProps(optionProps, dropProps, focusProps)}
         ref={ref}
         className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}>
         {item.rendered}
       </li>
+      {/*- begin highlight -*/}
       {state.collection.getKeyAfter(item.key) == null &&
         <DropIndicator
           target={{type: 'item', key: item.key, dropPosition: 'after'}}
           dropState={dropState} />
       }
+      {/*- end highlight -*/}
     </>
-  );
-}
-
-function DropIndicator(props) {
-  let ref = React.useRef();
-  let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
-  if (isHidden) {
-    return null;
-  }
-
-  let className = props.target.type === 'item'
-    ? `drop-indicator ${isDropTarget ? 'drop-target' : ''}`
-    : '';
-
-  return (
-    <li
-      {...dropIndicatorProps}
-      role="option"
-      ref={ref}
-      className={className} />
   );
 }
 ```
 
+Now, we can render an example ListBox, which inserts a new item on drop.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -352,7 +388,9 @@ function Example() {
 }
 ```
 
-## Dropping on the root
+## Dropping on the collection
+
+To add support for dropping on the collection as a whole, an additional `DropIndicator` can be rendered at the start of the list, representing the `root` target. The `isDropTarget` method of the state object can be used to apply a class to the list when the root target is active.
 
 ```tsx example
 function ListBox(props) {
@@ -375,14 +413,21 @@ function ListBox(props) {
   ///- end collapse -///
   // ...
 
+  ///- begin highlight -///
   let isDropTarget = dropState.isDropTarget({type: 'root'});
+  ///- end highlight -///
 
   return (
     <ul
       {...mergeProps(listBoxProps, collectionProps)}
       ref={ref}
-      className={isDropTarget ? 'drop-target' : ''}>
+      ///- begin highlight -///
+      className={isDropTarget ? 'drop-target' : ''}
+      ///- end highlight -///
+    >
+      {/*- begin highlight -*/}
       <DropIndicator target={{type: 'root'}} dropState={dropState} />
+      {/*- end highlight -*/}
       {[...state.collection].map((item) => (
         <Option
           key={item.key}
