@@ -150,18 +150,6 @@ function Option({ item, state, dropState }) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.draggable {
-  display: inline-block;
-  vertical-align: top;
-  border: 1px solid gray;
-  padding: 5px 10px;
-  margin-right: 20px;
-}
-
-.draggable.dragging {
-  opacity: 0.5;
-}
-
 [role=listbox] {
   padding: 0;
   margin: 5px 0;
@@ -169,11 +157,6 @@ function Option({ item, state, dropState }) {
   border: 1px solid gray;
   max-width: 250px;
   outline: none;
-}
-
-[role=listbox].drop-target {
-  border-color: var(--blue);
-  outline: 1px solid var(--blue);
 }
 
 .option {
@@ -192,19 +175,6 @@ function Option({ item, state, dropState }) {
 
 .option.drop-target {
   outline: 2px solid var(--blue);
-}
-
-.drop-indicator {
-  width: 100%;
-  margin-left: 0;
-  height: 2px;
-  margin-bottom: -2px;
-  outline: none;
-  background: transparent;
-}
-
-.drop-indicator.drop-target {
-  background: var(--blue);
 }
 ```
 
@@ -244,6 +214,25 @@ function Draggable({children}) {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.draggable {
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid gray;
+  padding: 5px 10px;
+  margin-right: 20px;
+}
+
+.draggable.dragging {
+  opacity: 0.5;
+}
+```
+
+</details>
 
 </details>
 
@@ -388,6 +377,26 @@ function Example() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.drop-indicator {
+  width: 100%;
+  margin-left: 0;
+  height: 2px;
+  margin-bottom: -2px;
+  outline: none;
+  background: transparent;
+}
+
+.drop-indicator.drop-target {
+  background: var(--blue);
+}
+```
+
+</details>
+
 ## Dropping on the collection
 
 To add support for dropping on the collection as a whole, an additional `DropIndicator` can be rendered at the start of the list, representing the `root` target. The `isDropTarget` method of the state object can be used to apply a class to the list when the root target is active.
@@ -447,3 +456,15 @@ function ListBox(props) {
   <Item>presentation.ppt</Item>
 </ListBox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+[role=listbox].drop-target {
+  border-color: var(--blue);
+  outline: 1px solid var(--blue);
+}
+```
+
+</details>
