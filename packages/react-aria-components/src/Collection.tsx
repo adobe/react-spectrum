@@ -140,7 +140,10 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
     this.rendered = value.rendered;
     this.value = value.value;
     this.textValue = value.textValue || (typeof value.rendered === 'string' ? value.rendered : '') || value['aria-label'] || '';
-    if (value.id != null) {
+    if (value.id != null && value.id !== this.key) {
+      if (this.parentNode) {
+        throw new Error('Cannot change the id of an item');
+      }
       this.key = value.id;
     }
     this.ownerDocument.update();
@@ -293,6 +296,7 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
             if (key == null) {
               throw new Error('Could not determine key for item');
             }
+            // TODO: only works if wrapped Item passes through id...
             rendered = cloneElement(rendered, {key, id: key});
           }
           cache.set(item, rendered);

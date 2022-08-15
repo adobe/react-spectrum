@@ -47,8 +47,6 @@ type: component
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/combobox/'}
   ]} />
 
-[Hooks](useComboBox.html) • [Component](ComboBox.html)
-
 ## Example
 
 ```tsx example
@@ -187,20 +185,64 @@ A `ComboBox` uses the following components, which may also be used standalone or
 
 <PropTable component={docs.exports.ComboBox} links={docs.links} />
 
-<Divider UNSAFE_style={{margin: '20px 0'}} />
+### Label
+
+A `<Label>` accepts all props supported by the `<label>` HTML element.
+
+### Input
+
+An `<Input>` accepts all props supported by the `<input>` HTML element.
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `ComboBox`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### Popover
+
+A `<Popover>` is a container to hold the `<ListBox>` suggestions for a ComboBox. By default, it has a `placement` of `bottom start` within a `<ComboBox>`, but this and other positioning properties may be customized.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Popover} links={docs.links} />
+
+</details>
 
 ### ListBox
 
-<PropTable component={docs.exports.ListBox} links={docs.links} />
-
-<Divider size="M" UNSAFE_style={{margin: '20px 0'}} />
+Within a `<ComboBox>`, most `<ListBox>` props are set automatically. The `<ListBox>` defines the options to display in a ComboBox.
 
 <details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" />
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBox} links={docs.links} />
+
+</details>
+
+### Section
+
+A `<Section>` defines the child items, and optional title for a section within a `<ListBox>`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Section} links={docs.links} />
+
+</details>
 
 ### Item
 
-</summary>
+An `<Item>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for autocomplete in the ComboBox.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.Item} links={docs.links} />
 
@@ -266,6 +308,12 @@ A `Label` can be targeted with the `label` CSS selector, or by adding a custom `
 
 An `Input` can be targeted with the `input` CSS selector, or by adding a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
 
+### Button
+
+A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
 ### Popover
 
 The `Popover` component can be targeted with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM.
@@ -287,12 +335,6 @@ An `Item` can be targeted with the `[role=option]` CSS selector, or by adding a 
 Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
-
-### Button
-
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
-
-<StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ## Making it reusable
 
@@ -447,8 +489,8 @@ function Example() {
   return (
     <MyComboBox label="Preferred fruit or vegetable" defaultItems={options}>
       {item => (
-        <Section key={item.name} items={item.children} title={item.name}>
-          {item => <Item key={item.name}>{item.name}</Item>}
+        <Section items={item.children} title={item.name}>
+          {item => <Item id={item.name}>{item.name}</Item>}
         </Section>
       )}
     </MyComboBox>
@@ -686,7 +728,7 @@ function AsyncLoadingExample() {
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}>
-      {(item) => <Item key={item.name}>{item.name}</Item>}
+      {(item) => <Item id={item.name}>{item.name}</Item>}
     </MyComboBox>
   );
 }
