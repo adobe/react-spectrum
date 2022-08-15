@@ -130,12 +130,40 @@ module.exports = new Transformer({
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',
-                children: [
+                attributes: [
                   {
-                    type: 'text',
-                    value: node.value
+                    type: 'mdxJsxAttribute',
+                    name: 'dangerouslySetInnerHTML',
+                    value: {
+                      type: 'mdxJsxAttributeValueExpression',
+                      value: JSON.stringify({__html: node.value}),
+                      data: {
+                        estree: {
+                          type: 'Program',
+                          body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'ObjectExpression',
+                              properties: [{
+                                type: 'Property',
+                                kind: 'init',
+                                key: {
+                                  type: 'Identifier',
+                                  name: '__html'
+                                },
+                                value: {
+                                  type: 'Literal',
+                                  value: node.value
+                                }
+                              }]
+                            }
+                          }]
+                        }
+                      }
+                    }
                   }
-                ]
+                ],
+                children: []
               }
             ];
           }
@@ -523,7 +551,8 @@ function formatCode(node, code, printWidth = 80, force = false) {
     'jsx.quoteStyle': 'preferDouble',
     trailingCommas: 'never',
     lineWidth: printWidth,
-    'importDeclaration.spaceSurroundingNamedImports': false
+    'importDeclaration.spaceSurroundingNamedImports': false,
+    'importDeclaration.forceSingleLine': printWidth >= 80
   });
 
   return res.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, (str, contents) =>

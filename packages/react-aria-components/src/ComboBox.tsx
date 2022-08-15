@@ -5,10 +5,11 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
 import {Provider, slotCallbackSymbol, useSlot} from './utils';
-import React, {ReactNode, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useRef, useState} from 'react';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
 import {useComboBoxState} from 'react-stately';
+import {useResizeObserver} from '@react-aria/utils';
 
 interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label'> {
   children: ReactNode
@@ -30,8 +31,8 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     collection
   });
 
-  let buttonRef = useRef(null);
-  let inputRef = useRef(null);
+  let buttonRef = useRef<HTMLButtonElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef(null);
   let popoverRef = useRef(null);
   let [labelRef, label] = useSlot();
@@ -50,13 +51,31 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   },
   state);
 
+  // Make menu width match input + button
+  // TODO: should this be optional?
+  let [menuWidth, setMenuWidth] = useState(null);
+  let onResize = useCallback(() => {
+    if (buttonRef.current && inputRef.current) {
+      let buttonRect = buttonRef.current.getBoundingClientRect();
+      let inputRect = inputRef.current.getBoundingClientRect();
+      let minX = Math.min(buttonRect.left, inputRect.left);
+      let maxX = Math.max(buttonRect.right, inputRect.right);
+      setMenuWidth(maxX - minX);
+    }
+  }, [buttonRef, inputRef, setMenuWidth]);
+
+  useResizeObserver({
+    ref: inputRef,
+    onResize: onResize
+  });
+
   return (
     <Provider
       values={[
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef}],
         [InputContext, {...inputProps, ref: inputRef}],
-        [PopoverContext, {state, ref: popoverRef, triggerRef: inputRef, placement: 'bottom start', preserveChildren: true, isNonModal: true}],
+        [PopoverContext, {state, ref: popoverRef, triggerRef: inputRef, placement: 'bottom start', preserveChildren: true, isNonModal: true, style: {width: menuWidth}}],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}]
       ]}>
       {props.children}

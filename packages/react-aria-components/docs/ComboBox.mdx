@@ -53,16 +53,19 @@ type: component
 import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria-components';
 
 <ComboBox>
-  <Label>Test</Label>
+  <Label>Favorite Animal</Label>
   <div>
     <Input />
     <Button>▼</Button>
   </div>
   <Popover>
     <ListBox>
-      <Item>Foo</Item>
-      <Item>Bar</Item>
-      <Item>Baz</Item>
+      <Item>Aardvark</Item>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+      <Item>Kangaroo</Item>
+      <Item>Panda</Item>
+      <Item>Snake</Item>
     </ListBox>
   </Popover>
 </ComboBox>
@@ -72,35 +75,81 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+[role=combobox] {
+  margin: 0;
+  font-size: 1.072rem;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  padding: 4px 2rem 4px 8px;
+  vertical-align: middle;
+}
+
+[role=combobox]:focus {
+  outline: none;
+  border-color: slateblue;
+  box-shadow: 0 0 0 1px slateblue;
+}
+
+[role=combobox] + button {
+  background: slateblue;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  appearance: none;
+  margin-left: -1.714rem;
+  width: 1.429rem;
+  height: 1.429rem;
+  padding: 0;
+  vertical-align: middle;
+  font-size: 0.857rem;
+  outline: none;
+}
+
 [role=listbox] {
-  min-width: 150px;
-  max-width: 300px;
-  width: fit-content;
   max-height: inherit;
   overflow: auto;
-  margin: 4px 0 0 0;
-  border: 1px solid gray;
-  background: lightgray;
-  color: black;
+  padding: 2px;
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: white;
 }
 
 [role=option] {
-  padding: 2px 5px;
+  margin: 2px;
+  padding: 4px 8px 4px 22px;
+  border-radius: 6px;
   outline: none;
   cursor: default;
-  background: transparent;
+  color: #333;
+  font-size: 1.072rem;
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
-[role=option][data-focused] {
-  background: gray;
+[role=option][aria-selected=true] {
+  color: slateblue;
+  font-weight: 500;
+}
+
+[role=option][aria-selected=true]::before {
+  content: '✓';
+  content: '✓' / '';
+  alt: ' ';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+[role=option][data-focused],
+[role=option][data-pressed] {
+  background: slateblue;
   color: white;
 }
 
-[role=option][aria-selected=true] {
-  background: purple;
-  color: white;
+[role=option][aria-disabled] {
+  opacity: 0.4;
 }
 
 [role=option] [slot=label] {
@@ -111,10 +160,14 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   font-size: small;
 }
 
+[role=group]:not(:first-child) {
+  margin-top: 12px;
+}
+
 [role=group] header {
-  font-size: large;
+  font-size: 18px;
   font-weight: bold;
-  padding: 0 5px;
+  padding: 0 8px 0 22px;
 }
 ```
 
@@ -286,6 +339,19 @@ The `className` and `style` props also accept functions which receive states for
 </Item>
 ```
 
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
+
+```jsx
+<Item>
+  {({isSelected}) => (
+    <>
+      {isSelected && <CheckmarkIcon />}
+      Item
+    </>
+  )}
+</Item>
+```
+
 The states and selectors for each component used in a `ComboBox` are documented below.
 
 ### ComboBox
@@ -306,7 +372,7 @@ A `Label` can be targeted with the `label` CSS selector, or by adding a custom `
 
 ### Input
 
-An `Input` can be targeted with the `input` CSS selector, or by adding a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
+An `Input` within a ComboBox can be targeted with the `[role=combobox]` CSS selector, or by adding a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
 
 ### Button
 
@@ -489,7 +555,7 @@ function Example() {
   return (
     <MyComboBox label="Preferred fruit or vegetable" defaultItems={options}>
       {item => (
-        <Section items={item.children} title={item.name}>
+        <Section id={item.name} items={item.children} title={item.name}>
           {item => <Item id={item.name}>{item.name}</Item>}
         </Section>
       )}

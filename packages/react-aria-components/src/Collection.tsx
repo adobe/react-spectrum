@@ -292,7 +292,7 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
           rendered = children(item);
           if (rendered.key == null) {
             // @ts-ignore
-            let key = item.key ?? item.id;
+            let key = rendered.props.id ?? item.key ?? item.id;
             if (key == null) {
               throw new Error('Could not determine key for item');
             }
