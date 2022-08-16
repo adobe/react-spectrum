@@ -24,9 +24,10 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('test');
   });
 
   it('renders correctly with string array value', function () {
@@ -37,9 +38,10 @@ describe('StaticField', function () {
         value={['wow', 'cool', 'awesome']} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('wow, cool, and awesome');
   });
 
   it('renders correctly with CalendarDate value', function () {
@@ -50,9 +52,10 @@ describe('StaticField', function () {
         value={new CalendarDate(2019, 6, 5)} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('6/5/2019');
   });
 
   it('renders correctly with CalendarDateTime value', function () {
@@ -63,9 +66,10 @@ describe('StaticField', function () {
         value={new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('2/3/2020');
   });
 
   it('renders correctly with ZonedDateTime value', function () {
@@ -76,9 +80,10 @@ describe('StaticField', function () {
         value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('2/3/2020');
   });
 
   it('renders correctly with Date value', function () {
@@ -89,9 +94,10 @@ describe('StaticField', function () {
         value={new Date(2000, 5, 5)} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('6/5/2000');
   });
 
   it('renders correctly with Time value', function () {
@@ -99,12 +105,14 @@ describe('StaticField', function () {
       <StaticField
         data-testid="test-id"
         label="Field label"
-        value={new Time(9, 45)} />
+        value={new Time(9, 45)} 
+        formatOptions={{timeStyle: 'short'}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('9:45 AM');
   });
 
   it('renders correctly with RangeValue<Date>', function () {
@@ -115,9 +123,10 @@ describe('StaticField', function () {
         value={{start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('7/5/2019 – 7/10/2019');
   });
 
   it('renders correctly with RangeValue<Time>', function () {
@@ -125,12 +134,14 @@ describe('StaticField', function () {
       <StaticField
         data-testid="test-id"
         label="Field label"
-        value={new Time(9, 45)} />
+        value={{start: new Time(9, 45), end: new Time(10, 45)}} 
+        formatOptions={{timeStyle: 'short'}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('9:45 – 10:45 AM');
   });
 
   it('renders correctly with RangeValue<ZonedDateTime>', function () {
@@ -141,9 +152,10 @@ describe('StaticField', function () {
         value={{start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
   });
 
   it('renders correctly with RangeValue<CalendarDateTime>', function () {
@@ -154,9 +166,10 @@ describe('StaticField', function () {
         value={{start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
   });
 
   it('renders correctly with RangeValue<CalendarDate>', function () {
@@ -167,9 +180,10 @@ describe('StaticField', function () {
         value={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('6/5/2019 – 7/5/2019');
   });
 
   it('renders correctly with number value', function () {
@@ -180,9 +194,11 @@ describe('StaticField', function () {
         value={10} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('10');
+    
   });
 
   it('renders correctly with RangeValue<NumberValue>', function () {
@@ -193,9 +209,10 @@ describe('StaticField', function () {
         value={{start: 10, end: 20}} />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('10 – 20');
   });
 
   it('attaches a user provided ref to the outer div', function () {
@@ -207,8 +224,8 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(ref.current).toBe(labelledField);
+    let staticField = getByTestId('test-id');
+    expect(ref.current).toBe(staticField);
   });
 
   it('attaches a user provided ref to the outer div with a label', function () {
@@ -221,8 +238,8 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(ref.current).toBe(labelledField);
+    let staticField = getByTestId('test-id');
+    expect(ref.current).toBe(staticField);
   });
 
   it('labelPosition: side supports a ref', function () {
@@ -236,8 +253,8 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let labelledField = getByTestId('test-id').closest('div');
-    expect(ref.current).toBe(labelledField);
+    let staticField = getByTestId('test-id').closest('div');
+    expect(ref.current).toBe(staticField);
   });
 
   it('renders when no visible label is provided', function () {
@@ -247,9 +264,10 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let labelledField = getByTestId('test-id');
-    expect(labelledField).toBeInTheDocument();
-    expect(labelledField).not.toHaveAttribute('aria-describedby');
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).not.toHaveAttribute('aria-describedby');
+    expect(staticField).toHaveTextContent('test');
   });
 
 });

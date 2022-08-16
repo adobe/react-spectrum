@@ -55,8 +55,8 @@ type StaticFieldProps<T> =
     T extends string ? StringProps<T> :
     never;
 
-type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
-type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
+export type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
+export type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
 function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLDivElement>) {
   let {

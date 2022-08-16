@@ -10,49 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import type {DateValue} from '@react-types/datepicker';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
+import type {SpectrumStaticFieldProps, SpectrumStaticFieldTypes} from '../src/StaticField';
 import {StaticField} from '../';
-
-interface StaticFieldBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
-
-type NumberValue = number | RangeValue<number>;
-interface NumberProps<T extends NumberValue> {
-    value: T,
-    formatOptions?: Intl.NumberFormatOptions
-}
-
-type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
-type RangeDateTime = RangeValue<DateTime>;
-type DateTimeValue = DateTime | RangeDateTime;
-interface DateProps<T extends DateTimeValue> {
-    value: T,
-    formatOptions?: Intl.DateTimeFormatOptions
-}
-
-interface StringProps<T extends string> {
-    value: T,
-    formatOptions?: never
-}
-
-interface StringListProps<T extends string[]> {
-    value: T,
-    // @ts-ignore
-    formatOptions?: Intl.ListFormatOptions
-}
-
-type StaticFieldProps<T> =
-    T extends NumberValue ? NumberProps<T> :
-    T extends DateTimeValue ? DateProps<T> :
-    T extends string[] ? StringListProps<T> :
-    T extends string ? StringProps<T> :
-    never;
-
-type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
-type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
 const meta: Meta<SpectrumStaticFieldProps<SpectrumStaticFieldTypes>> = {
   title: 'StaticField',
@@ -65,25 +27,62 @@ const Template = (): Story<SpectrumStaticFieldProps<SpectrumStaticFieldTypes>> =
   <StaticField {...args} />
 );
 
-export const Default = Template().bind({});
-Default.args = {label: 'Test', value: 'hello'};
+export const StringType = Template().bind({});
+StringType.args = {label: 'Test', value: 'This is some sample text'};
+StringType.storyName = 'string';
 
 export const StringArray = Template().bind({});
 StringArray.args = {value: ['wow', 'cool', 'awesome']};
+StringArray.storyName = 'string array';
 
-export const withCalendarDate = Template().bind({});
-withCalendarDate.args = {value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}};
+export const CalendarDateType = Template().bind({});
+CalendarDateType.args = {value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}};
+CalendarDateType.storyName = 'CalendarDate';
 
-export const withCalendarDateTime = Template().bind({});
-withCalendarDateTime.args = {value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}};
+export const CalendarDateTimeType = Template().bind({});
+CalendarDateTimeType.args = {value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}};
+CalendarDateTimeType.storyName = 'CalendarDateTime';
 
-export const withZonedDateTime = Template().bind({});
-withZonedDateTime.args = {value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}};
+export const ZonedDateTimeType = Template().bind({});
+ZonedDateTimeType.args = {value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}};
+ZonedDateTimeType.storyName = 'ZonedDateTime';
 
-export const withDate = Template().bind({});
-withDate.args = {value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}};
+export const DateType = Template().bind({});
+DateType.args = {value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}};
+DateType.storyName = 'Date';
 
-export const withTime = Template().bind({});
-withTime.args = {value: new Time(9, 45), formatOptions: {timeStyle: 'short'}};
+export const TimeType = Template().bind({});
+TimeType.args = {value: new Time(9, 45), formatOptions: {timeStyle: 'short'}};
+TimeType.storyName = 'Time';
 
-/* still to be completed!! */
+export const DateRangeType = Template().bind({});
+DateRangeType.args = {value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}};
+DateRangeType.storyName = 'RangeValue<DateValue>';
+
+export const NumberType = Template().bind({});
+NumberType.args = {value: 10};
+NumberType.storyName = 'Number';
+
+export const NumberRangeType = Template().bind({});
+NumberRangeType.args = {value: {start: 10, end: 15}};
+NumberRangeType.storyName = 'RangeValue<NumberValue>';
+
+export const LabelPositionSide = Template().bind({});
+LabelPositionSide.args = {label: 'Test', value: 'This is some sample text', labelPosition: 'side'};
+LabelPositionSide.storyName = 'labelPosition: side';
+
+export const LabelAlignLabelPosition = Template().bind({});
+LabelAlignLabelPosition.args = {label: 'Test', value: 'This is some sample text', labelPosition: 'side', labelAlign: 'end'};
+LabelAlignLabelPosition.storyName = 'labelPosition: side, labelAlign: end';
+
+export const LabelAlignEnd = Template().bind({});
+LabelAlignEnd.args = {label: 'Test', value: 'This is some sample text', labelAlign: 'end'};
+LabelAlignEnd.storyName = 'labelAlign: end';
+
+export const NoLabel = Template().bind({});
+NoLabel.args = {value: 'This is some sample text'};
+NoLabel.storyName = 'no visible label';
+
+export const CustomWidth = Template().bind({});
+CustomWidth.args = {label: 'Test', value: 'foo'.repeat(20), width: '300px'};
+CustomWidth.storyName = 'custom width';
