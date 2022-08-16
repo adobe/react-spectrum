@@ -402,21 +402,23 @@ Items also support two slots: a label, and a description. When provided using th
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
-## Making it reusable
+## Reusable wrappers
+
+If you will use a ComboBox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as descibed [above](#styling).
 
 ```tsx example export=true
-import clsx from 'clsx';
-
 function MyComboBox({label, children, ...props}) {
   return (
     <ComboBox {...props}>
       <Label>{label}</Label>
-      <div>
+      <div className="my-combobox-container">
         <Input />
         <Button>▼</Button>
       </div>
-      <Popover>
-        <ListBox className="menu">
+      <Popover className="my-popover">
+        <ListBox className="my-listbox">
           {children}
         </ListBox>
       </Popover>
@@ -425,17 +427,20 @@ function MyComboBox({label, children, ...props}) {
 }
 
 function MyItem(props) {
-  return <Item {...props} className={({isFocused, isSelected}) => clsx('item', {focused: isFocused, selected: isSelected})} />
+  return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
-<MyComboBox label="Test">
-  <MyItem>Foo</MyItem>
-  <MyItem>Bar</MyItem>
-  <MyItem>Baz</MyItem>
+<MyComboBox label="Ice cream flavor">
+  <MyItem>Chocolate</MyItem>
+  <MyItem>Mint</MyItem>
+  <MyItem>Strawberry</MyItem>
+  <MyItem>Vanilla</MyItem>
 </MyComboBox>
 ```
 
 ## Usage
+
+The following examples show how to use the `MyComboBox` component created in the above example.
 
 ### Dynamic collections
 
