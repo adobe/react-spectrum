@@ -61,3 +61,22 @@ export function invert(object) {
 
   return res;
 }
+
+/** Returns whether two sets are equal. */
+export function isSetEqual<T>(a: Set<T>, b: Set<T>): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  if (a.size !== b.size) {
+    return false;
+  }
+
+  for (let key of a) {
+    if (!b.has(key)) {
+      return false;
+    }
+  }
+
+  return true;
+}

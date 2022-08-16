@@ -134,6 +134,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  gap: 8px;
 
   &.is-drop-target {
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
@@ -147,5 +148,9 @@
     > div > div {
       overflow: visible !important;
     }
+  }
+
+  .droppable {
+    margin: 0;
   }
 }

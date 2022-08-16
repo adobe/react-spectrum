@@ -19,6 +19,7 @@ import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
+import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
@@ -118,6 +119,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, domRef),
     onDropEnter: chain(action('onDropEnter'), console.log),
     // onDropMove: action('onDropMove'),
     onDropExit: chain(action('onDropExit'), console.log),
@@ -125,52 +127,6 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
     onDrop: async e => {
       onDrop(e);
       props.onDrop?.(e);
-    },
-    getDropTargetFromPoint(x, y) {
-      let rect = domRef.current.getBoundingClientRect();
-      x += rect.x;
-      y += rect.y;
-      let closest = null;
-      let closestDistance = Infinity;
-      let closestDir = null;
-
-      for (let child of domRef.current.children) {
-        if (!(child as HTMLElement).dataset.key) {
-          continue;
-        }
-
-        let r = child.getBoundingClientRect();
-        let points: [number, number, string][] = [
-          [r.left, r.top, 'before'],
-          [r.right, r.top, 'before'],
-          [r.left, r.bottom, 'after'],
-          [r.right, r.bottom, 'after']
-        ];
-
-        for (let [px, py, dir] of points) {
-          let dx = px - x;
-          let dy = py - y;
-          let d = dx * dx + dy * dy;
-          if (d < closestDistance) {
-            closestDistance = d;
-            closest = child;
-            closestDir = dir;
-          }
-        }
-
-        if (y >= r.top + 10 && y <= r.bottom - 10) {
-          closestDir = 'on';
-        }
-      }
-
-      let key = closest?.dataset.key;
-      if (key) {
-        return {
-          type: 'item',
-          key,
-          dropPosition: closestDir
-        };
-      }
     }
   }, dropState, domRef);
 
@@ -244,8 +200,7 @@ function CollectionItem({item, state, dropState}) {
         className={classNames(dndStyles, 'droppable', {
           'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
           'is-selected': state.selectionManager.isSelected(item.key)
-        })}
-        style={{margin: '4px 0'}}>
+        })}>
         {item.rendered}
       </div>
     </FocusRing>
@@ -275,9 +230,8 @@ function InsertionIndicator(props) {
       }
       style={{
         width: '100%',
-        marginLeft: 0,
+        margin: '-5px 0',
         height: 2,
-        marginBottom: -2,
         outline: 'none'
       }} />
   );
