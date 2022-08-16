@@ -446,6 +446,9 @@ workflows:
             - docs-verdaccio
       - comment:
           name: comment-pr
+          filters:
+            branches:
+              ignore: main
           requires:
             - deploy
       - comment:
