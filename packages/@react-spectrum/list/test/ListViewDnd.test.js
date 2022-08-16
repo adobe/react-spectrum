@@ -646,11 +646,12 @@ describe('ListView', function () {
     });
 
     it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
-      let {getAllByRole} = render(
+      let {getByRole, getAllByRole} = render(
         <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
 
       userEvent.tab();
+      let grid = getByRole('grid');
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(9);
       let droppable = rows[8];
@@ -682,7 +683,7 @@ describe('ListView', function () {
       });
 
       act(() => jest.runAllTimers());
-      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
+      let droppableButton = await within(droppable.parentElement).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
@@ -909,9 +910,14 @@ describe('ListView', function () {
         expect(row).toHaveAttribute('draggable', 'true');
         fireEvent.keyDown(draghandle, {key: 'Enter'});
         fireEvent.keyUp(draghandle, {key: 'Enter'});
+        act(() => jest.runAllTimers());
 
-        for (let row of rows) {
-          expect(row).toHaveAttribute('aria-hidden', 'true');
+        for (let [index, row] of rows.entries()) {
+          if (index === 0) {
+            expect(row).not.toHaveAttribute('aria-hidden', 'true');
+          } else {
+            expect(row).toHaveAttribute('aria-hidden', 'true');
+          }
         }
 
         fireEvent.keyDown(document.body, {key: 'Escape'});
