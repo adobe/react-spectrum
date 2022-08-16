@@ -14,17 +14,18 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
-import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
-import {DropTarget, Node} from '@react-types/shared';
+import type {DraggableItemResult} from '@react-aria/dnd';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/interactions';
+import {ItemDropTarget, Node} from '@react-types/shared';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import {Provider} from '@react-spectrum/provider';
 import React, {useContext, useRef} from 'react';
+import RowDropIndicator from './RowDropIndicator';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
@@ -42,7 +43,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     item,
     isEmphasized
   } = props;
-  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks, loadingState} = useContext(ListViewContext);
+  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, loadingState} = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -77,14 +78,12 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
       draggableItem = null;
     }
   }
+
   let isDropTarget: boolean;
-  let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef();
+  let target: ItemDropTarget;
   if (isListDroppable) {
-    let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
+    target = {type: 'item', key: item.key, dropPosition: 'on'};
     isDropTarget = dropState.isDropTarget(target);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -126,16 +125,12 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
-  // Make row aria-hidden when in a keyboard/screenreader drag session unless the row contains the dragging drag handle.
-  // We don't want mobile screen readers to be able to focus the rows themselves since we moved the drop indicator outside the row
-  let rowDropProps = dropIndicator?.isDragSession && dragState.draggedKey !== item.key ? {'aria-hidden': 'true'} : null;
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
     hoverProps,
     focusWithinProps,
-    focusProps,
-    rowDropProps
+    focusProps
   );
 
   let isFirstRow = item.prevKey == null;
@@ -163,9 +158,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
 
   return (
     <>
-      {isListDroppable &&
-        <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
-      }
+      {isListDroppable && <RowDropIndicator target={target} />}
       <div
         {...mergedProps}
         className={

@@ -59,9 +59,6 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
     }
   }, [isDropTarget, dragSession, ref]);
 
-  // TODO: alternative is to do a ref.contains(dragSession.dragTarget.element) to check if
-  // the droppable row contains the dragging drag handle and return aria-hidden = undefined in that case
-  // However, we'd still want to have aria-hidden: true for ALL rows since we are moving the drop indicators out of the row
   return {
     dropProps: {
       ...dropProps,
