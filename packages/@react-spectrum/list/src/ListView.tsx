@@ -26,7 +26,6 @@ import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
-import {Rect} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumListViewProps} from '@react-types/list';
@@ -145,53 +144,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     });
     droppableCollection = dropHooks.useDroppableCollection({
       keyboardDelegate: layout,
-      getDropTargetFromPoint(x, y) {
-        let closest = null;
-        let closestDistance = Infinity;
-        let closestDir = null;
-
-        x += domRef.current.scrollLeft;
-        y += domRef.current.scrollTop;
-
-        let visible = layout.getVisibleLayoutInfos(new Rect(x - 50, y - 50, x + 50, y + 50));
-
-        for (let layoutInfo of visible) {
-          let r = layoutInfo.rect;
-          let points: [number, number, string][] = [
-            [r.x, r.y + 4, 'before'],
-            [r.maxX, r.y + 4, 'before'],
-            [r.x, r.maxY - 8, 'after'],
-            [r.maxX, r.maxY - 8, 'after']
-          ];
-
-          for (let [px, py, dir] of points) {
-            let dx = px - x;
-            let dy = py - y;
-            let d = dx * dx + dy * dy;
-            if (d < closestDistance) {
-              closestDistance = d;
-              closest = layoutInfo;
-              closestDir = dir;
-            }
-          }
-
-          // TODO: Best way to implement only for when closest can be dropped on
-          // TODO: Figure out the typescript for this
-          // @ts-ignore
-          if (y >= r.y + 10 && y <= r.maxY - 10 && collection.getItem(closest.key).value.type === 'folder') {
-            closestDir = 'on';
-          }
-        }
-
-        let key = closest?.key;
-        if (key) {
-          return {
-            type: 'item',
-            key,
-            dropPosition: closestDir
-          };
-        }
-      }
+      dropTargetDelegate: layout
     }, dropState, domRef);
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});

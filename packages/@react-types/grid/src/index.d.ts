@@ -28,5 +28,8 @@ export interface GridRow<T> {
 
 export interface GridNode<T> extends Node<T> {
   column?: GridNode<T>,
-  colspan?: number
+  /** The number of columns spanned by this cell. */
+  colspan?: number,
+  /** The column index of this cell, accounting for any colspans. */
+  colIndex?: number
 }
