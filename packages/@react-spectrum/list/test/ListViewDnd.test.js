@@ -646,12 +646,11 @@ describe('ListView', function () {
     });
 
     it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
-      let {getByRole, getAllByRole} = render(
+      let {getAllByRole} = render(
         <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
 
       userEvent.tab();
-      let grid = getByRole('grid');
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(9);
       let droppable = rows[8];
