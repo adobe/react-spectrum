@@ -30,7 +30,7 @@ cd examples/$test_app
 yarn install
 
 #build test app
-yarn run build
+yarn build
 cd ../..
 
 echo "Cleaning up"

@@ -20,14 +20,24 @@ import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
   ref: RefObject<HTMLElement>,
+  /**
+   * A function returning the drop operation to be performed when items matching the given types are dropped
+   * on the drop target.
+   */
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation,
   getDropOperationForPoint?: (types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
+  /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DropEnterEvent) => void,
+  /** Handler that is called when a valid drag is moved within the drop target. */
   onDropMove?: (e: DropMoveEvent) => void,
-  // When the user hovers over the drop target for a period of time.
-  // typically opens that item. macOS/iOS call this "spring loading".
+  /**
+   * Handler that is called after a valid drag is held over the drop target for a period of time.
+   * This typically opens the item so that the user can drop within it.
+   */
   onDropActivate?: (e: DropActivateEvent) => void,
+  /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DropExitEvent) => void,
+  /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DropEvent) => void
 }
 
@@ -43,16 +53,43 @@ export function useDrop(options: DropOptions): DropResult {
   let state = useRef({
     x: 0,
     y: 0,
-    dragEnterCount: 0,
+    dragOverElements: new Set<Element>(),
     dropEffect: 'none' as DataTransfer['dropEffect'],
+    effectAllowed: 'none' as DataTransfer['effectAllowed'],
     dropActivateTimer: null
   }).current;
+
+  let fireDropEnter = (e: DragEvent) => {
+    setDropTarget(true);
+
+    if (typeof options.onDropEnter === 'function') {
+      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      options.onDropEnter({
+        type: 'dropenter',
+        x: e.clientX - rect.x,
+        y: e.clientY - rect.y
+      });
+    }
+  };
+
+  let fireDropExit = (e: DragEvent) => {
+    setDropTarget(false);
+
+    if (typeof options.onDropExit === 'function') {
+      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      options.onDropExit({
+        type: 'dropexit',
+        x: e.clientX - rect.x,
+        y: e.clientY - rect.y
+      });
+    }
+  };
 
   let onDragOver = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (e.clientX === state.x && e.clientY === state.y) {
+    if (e.clientX === state.x && e.clientY === state.y && e.dataTransfer.effectAllowed === state.effectAllowed) {
       e.dataTransfer.dropEffect = state.dropEffect;
       return;
     }
@@ -60,17 +97,42 @@ export function useDrop(options: DropOptions): DropResult {
     state.x = e.clientX;
     state.y = e.clientY;
 
+    let prevDropEffect = state.dropEffect;
+
+    // Update drop effect if allowed drop operations changed (e.g. user pressed modifier key).
+    if (e.dataTransfer.effectAllowed !== state.effectAllowed) {
+      let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
+      let dropOperation = allowedOperations[0];
+      if (typeof options.getDropOperation === 'function') {
+        let types = new DragTypes(e.dataTransfer);
+        dropOperation = getDropOperation(e.dataTransfer.effectAllowed, options.getDropOperation(types, allowedOperations));
+      }
+
+      state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
+    }
+
     if (typeof options.getDropOperationForPoint === 'function') {
       let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
       let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      let dropOperation = options.getDropOperationForPoint(types, allowedOperations, state.x - rect.x, state.y - rect.y);
+      let dropOperation = getDropOperation(
+        e.dataTransfer.effectAllowed,
+        options.getDropOperationForPoint(types, allowedOperations, state.x - rect.x, state.y - rect.y)
+      );
       state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     }
 
+    state.effectAllowed = e.dataTransfer.effectAllowed;
     e.dataTransfer.dropEffect = state.dropEffect;
 
-    if (typeof options.onDropMove === 'function') {
+    // If the drop operation changes, update state and fire events appropriately.
+    if (state.dropEffect === 'none' && prevDropEffect !== 'none') {
+      fireDropExit(e);
+    } else if (state.dropEffect !== 'none' && prevDropEffect === 'none') {
+      fireDropEnter(e);
+    }
+
+    if (typeof options.onDropMove === 'function' && state.dropEffect !== 'none') {
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       options.onDropMove({
         type: 'dropmove',
@@ -95,8 +157,8 @@ export function useDrop(options: DropOptions): DropResult {
 
   let onDragEnter = (e: DragEvent) => {
     e.stopPropagation();
-    state.dragEnterCount++;
-    if (state.dragEnterCount > 1) {
+    state.dragOverElements.add(e.target as Element);
+    if (state.dragOverElements.size > 1) {
       return;
     }
 
@@ -105,52 +167,55 @@ export function useDrop(options: DropOptions): DropResult {
 
     if (typeof options.getDropOperation === 'function') {
       let types = new DragTypes(e.dataTransfer);
-      dropOperation = options.getDropOperation(types, allowedOperations);
-    }
-
-    if (dropOperation !== 'cancel') {
-      setDropTarget(true);
+      dropOperation = getDropOperation(e.dataTransfer.effectAllowed, options.getDropOperation(types, allowedOperations));
     }
 
     if (typeof options.getDropOperationForPoint === 'function') {
       let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      dropOperation = options.getDropOperationForPoint(types, allowedOperations, e.clientX - rect.x, e.clientY - rect.y);
-    }
-
-    state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
-    e.dataTransfer.dropEffect = state.dropEffect;
-
-    if (typeof options.onDropEnter === 'function' && dropOperation !== 'cancel') {
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      options.onDropEnter({
-        type: 'dropenter',
-        x: e.clientX - rect.x,
-        y: e.clientY - rect.y
-      });
+      dropOperation = getDropOperation(
+        e.dataTransfer.effectAllowed,
+        options.getDropOperationForPoint(types, allowedOperations, e.clientX - rect.x, e.clientY - rect.y)
+      );
     }
 
     state.x = e.clientX;
     state.y = e.clientY;
+    state.effectAllowed = e.dataTransfer.effectAllowed;
+    state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
+    e.dataTransfer.dropEffect = state.dropEffect;
+
+    if (dropOperation !== 'cancel') {
+      fireDropEnter(e);
+    }
   };
 
   let onDragLeave = (e: DragEvent) => {
     e.stopPropagation();
-    state.dragEnterCount--;
-    if (state.dragEnterCount > 0) {
+
+    // We would use e.relatedTarget to detect if the drag is still inside the drop target,
+    // but it is always null in WebKit. https://bugs.webkit.org/show_bug.cgi?id=66547
+    // Instead, we track all of the targets of dragenter events in a set, and remove them
+    // in dragleave. When the set becomes empty, we've left the drop target completely.
+    // We must also remove any elements that are no longer in the DOM, because dragleave
+    // events will never be fired for these. This can happen, for example, with drop
+    // indicators between items, which disappear when the drop target changes.
+
+    state.dragOverElements.delete(e.target as Element);
+    for (let element of state.dragOverElements) {
+      if (!e.currentTarget.contains(element)) {
+        state.dragOverElements.delete(element);
+      }
+    }
+
+    if (state.dragOverElements.size > 0) {
       return;
     }
 
-    if (typeof options.onDropExit === 'function' && state.dropEffect !== 'none') {
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      options.onDropExit({
-        type: 'dropexit',
-        x: e.clientX - rect.x,
-        y: e.clientY - rect.y
-      });
+    if (state.dropEffect !== 'none') {
+      fireDropExit(e);
     }
 
-    setDropTarget(false);
     clearTimeout(state.dropActivateTimer);
   };
 
@@ -180,17 +245,8 @@ export function useDrop(options: DropOptions): DropResult {
       }, 0);
     }
 
-    if (typeof options.onDropExit === 'function') {
-      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      options.onDropExit({
-        type: 'dropexit',
-        x: e.clientX - rect.x,
-        y: e.clientY - rect.y
-      });
-    }
-
-    state.dragEnterCount = 0;
-    setDropTarget(false);
+    state.dragOverElements.clear();
+    fireDropExit(e);
     clearTimeout(state.dropActivateTimer);
   };
 
@@ -254,4 +310,10 @@ function effectAllowedToOperations(effectAllowed: string) {
   }
 
   return allowedOperations;
+}
+
+function getDropOperation(effectAllowed: string, operation: DropOperation) {
+  let allowedOperationsBits = DROP_OPERATION_ALLOWED[effectAllowed];
+  let op = DROP_OPERATION[operation];
+  return allowedOperationsBits & op ? operation : 'cancel';
 }
