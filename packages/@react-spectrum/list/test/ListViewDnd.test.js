@@ -84,7 +84,7 @@ describe('ListView', function () {
 
     function Reorderable(props) {
       return (
-        <ReorderExample onDrop={jest.fn()} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+        <ReorderExample disabledKeys={['1']} onDrop={jest.fn()} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
       );
     }
 
@@ -348,7 +348,7 @@ describe('ListView', function () {
 
         let grid = getByRole('grid');
         let rows = getAllByRole('row');
-        let cell = within(rows[0]).getByRole('gridcell');
+        let cell = within(rows[1]).getByRole('gridcell');
         expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
@@ -368,16 +368,12 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 75}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 75}));
-
-        act(() => jest.runAllTimers());
-        await act(async () => Promise.resolve());
-
-        // expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
         rows = getAllByRole('row');
-        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
-        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item One');
-        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
 
         expect(document.activeElement).toBe(rows[1]);
       });
@@ -660,14 +656,14 @@ describe('ListView', function () {
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
         userEvent.tab();
-        let draghandle = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        let draghandle = within(getAllByRole('row')[1]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-        fireEvent.keyDown(draghandle, {key: 'Enter'});
-        fireEvent.keyUp(draghandle, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -711,22 +707,25 @@ describe('ListView', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.body, {key: 'Enter'});
+        fireEvent.keyUp(document.body, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.body, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.body, {key: 'ArrowDown'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.body, {key: 'Enter'});
+        fireEvent.keyUp(document.body, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
 
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        rows = getAllByRole('row');
         expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
-        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
-        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
-        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
         expect(document.activeElement).toBe(rows[3]);
       });
@@ -762,6 +761,13 @@ describe('ListView', function () {
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
+
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        list1 = getAllByRole('grid')[0];
+        list2 = getAllByRole('grid')[1];
+        list1rows = within(list1).getAllByRole('row');
+        list2rows = within(list2).getAllByRole('row');
 
         expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
@@ -815,6 +821,13 @@ describe('ListView', function () {
 
         await act(async () => Promise.resolve());
         act(() => jest.runAllTimers());
+
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        list1 = getAllByRole('grid')[0];
+        list2 = getAllByRole('grid')[1];
+        list1rows = within(list1).getAllByRole('row');
+        list2rows = within(list2).getAllByRole('row');
 
         expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
