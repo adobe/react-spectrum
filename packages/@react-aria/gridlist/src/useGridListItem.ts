@@ -20,7 +20,7 @@ import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
 
-export interface AriaListItemOptions {
+export interface AriaGridListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
   node: RSNode<unknown>,
   /** Whether the list row is contained in a virtual scroller. */
@@ -29,7 +29,7 @@ export interface AriaListItemOptions {
   shouldSelectOnPressUp?: boolean
 }
 
-export interface ListItemAria extends SelectableItemStates {
+export interface GridListItemAria extends SelectableItemStates {
   /** Props for the list row element. */
   rowProps: DOMAttributes,
   /** Props for the grid cell element within the list row. */
@@ -39,12 +39,12 @@ export interface ListItemAria extends SelectableItemStates {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a row in a list.
+ * Provides the behavior and accessibility implementation for a row in a grid list.
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useListItem<T>(props: AriaListItemOptions, state: ListState<T>, ref: RefObject<FocusableElement>): ListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,

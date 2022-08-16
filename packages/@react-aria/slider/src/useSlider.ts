@@ -20,7 +20,7 @@ import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface SliderAria {
+export interface SliderAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 

@@ -22,7 +22,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLongPress} from '@react-aria/interactions';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
-interface MenuTriggerAriaProps {
+export interface AriaMenuTriggerProps {
   /** The type of menu that the menu trigger opens. */
   type?: 'menu' | 'listbox',
   /** Whether menu trigger is disabled. */
@@ -31,7 +31,7 @@ interface MenuTriggerAriaProps {
   trigger?: MenuTriggerType
 }
 
-interface MenuTriggerAria<T> {
+export interface MenuTriggerAria<T> {
   /** Props for the menu trigger element. */
   menuTriggerProps: AriaButtonProps,
 
@@ -44,9 +44,9 @@ interface MenuTriggerAria<T> {
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  */
-export function useMenuTrigger<T>(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
+export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
   let {
-    type = 'menu' as MenuTriggerAriaProps['type'],
+    type = 'menu' as AriaMenuTriggerProps['type'],
     isDisabled,
     trigger = 'press'
   } = props;

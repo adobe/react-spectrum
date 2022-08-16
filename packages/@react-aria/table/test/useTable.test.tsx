@@ -142,4 +142,30 @@ describe('useTable', () => {
       expect(onAction).toHaveBeenCalledWith(2);
     });
   });
+  describe('setting DOM props', () => {
+    it('sets the passed id', () => {
+      let {getByTestId} = render(
+        <Table
+          aria-label="Table with id"
+          data-testid="test-id"
+          id="table-id">
+          <TableHeader columns={columns}>
+            {column => (
+              <Column key={column.uid}>
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
+          <TableBody items={rows}>
+            {item => (
+              <Row>
+                {columnKey => <Cell>{item[columnKey]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
+      expect(getByTestId('test-id').id).toEqual('table-id');
+    });
+  });
 });

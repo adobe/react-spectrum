@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropEvent, DropOperation, DroppableCollectionProps, DropPosition, DropTarget, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, DropEvent, DropOperation, DroppableCollectionProps, DropPosition, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getTypes} from './utils';
@@ -23,7 +23,7 @@ import {useDroppableCollectionId} from './utils';
 
 export interface DroppableCollectionOptions extends DroppableCollectionProps {
   keyboardDelegate: KeyboardDelegate,
-  getDropTargetFromPoint: (x: number, y: number) => DropTarget | null
+  dropTargetDelegate: DropTargetDelegate
 }
 
 export interface DroppableCollectionResult {
@@ -52,16 +52,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
     ref,
-    onDropEnter(e) {
-      let target = props.getDropTargetFromPoint(e.x, e.y);
-      state.setTarget(target);
+    onDropEnter() {
+      state.setTarget(localState.nextTarget);
     },
     onDropMove(e) {
       state.setTarget(localState.nextTarget);
       autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
-      let target = props.getDropTargetFromPoint(x, y);
+      let isValidDropTarget = (target) => state.getDropOperation(target, types, allowedOperations) !== 'cancel';
+      let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
       if (!target) {
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;

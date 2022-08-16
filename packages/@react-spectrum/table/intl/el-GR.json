@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Αλλαγή μεγέθους στήλης",
   "loading": "Φόρτωση...",
   "loadingMore": "Φόρτωση περισσότερων...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Αλλαγή μεγέθους στήλης",
+  "sortAscending": "Ταξινόμηση κατά αύξουσα σειρά",
+  "sortDescending": "Ταξινόμηση κατά φθίνουσα σειρά"
 }

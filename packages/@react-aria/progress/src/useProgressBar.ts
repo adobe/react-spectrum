@@ -16,7 +16,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
-interface ProgressBarAria {
+export interface ProgressBarAria {
   /** Props for the progress bar container element. */
   progressBarProps: DOMAttributes,
   /** Props for the progress bar's visual label element (if any). */

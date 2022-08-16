@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '../';
@@ -128,3 +129,11 @@ PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
+
+export const PropIconFilter = Template.bind({});
+PropIconFilter.storyName = 'icon: Filter';
+PropIconFilter.args = {...PropDefaults.args, icon: <Filter />};
+
+export const PropIconNull = Template.bind({});
+PropIconNull.storyName = 'icon: null';
+PropIconNull.args = {...PropDefaults.args, icon: null};

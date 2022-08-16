@@ -19,58 +19,6 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
-const parameters = {
-  args: {
-    isReadOnly: true,
-    isQuiet: false,
-    isRequired: false,
-    isDisabled: false,
-    autoFocus: true,
-    validationState: '',
-    description: '',
-    errorMessage: '',
-    value: ''
-  },
-  argTypes: {
-    isQuiet: {
-      control: {type: 'boolean'}
-    },
-    isRequired: {
-      control: {type: 'boolean'}
-    },
-    isDisabled: {
-      control: {type: 'boolean'}
-    },
-    autoFocus: {
-      control: {type: 'boolean'}
-    },
-    validationState: {
-      control: {
-        type: 'radio',
-        options: ['', 'invalid', 'valid', '']
-      }
-    },
-    description: {
-      control: {
-        type: 'radio',
-        options: ['', 'Please enter a street address']
-      }
-    },
-    errorMessage: {
-      control: {
-        type: 'radio',
-        options: ['', 'please enter a valid street address']
-      }
-    },
-    value: {
-      control: {
-        type: 'radio',
-        options: ['', 'foo  '.repeat(20)]
-      }
-    }
-  }
-};
-
 storiesOf('TextArea', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
@@ -188,35 +136,28 @@ storiesOf('TextArea', module)
     'custom height with label',
     () => (
       <Form>
-        <TextArea label="Height size-2000" height="size-2000" />
-        <TextArea label="Height size-2000" height="size-2000" isQuiet />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" isQuiet />
+        <TextArea label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
+        <TextArea labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
       </Form>
     )
+  )
+  .add(
+    'changeable helptext',
+    () => <ValidationExample />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
+  )
+  .add(
+    'changeable helptext custom height',
+    () => <ValidationExample height="175px" minHeight="100px" maxHeight="50vh" />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
   )
   .add('controlled interactive',
     () => <ControlledTextArea />
   )
   .add('in flex', () => renderInFlexRowAndBlock())
-  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}))
-  .add('test: isReadOnly, with controls',
-    (args) => (   
-      <TextArea
-        label="Comments"
-        onChange={action('change')}
-        onFocus={action('focus')}
-        onBlur={action('blur')}
-        UNSAFE_className="custom_classname"
-        {...args} />
-    ), parameters
-  )
-  .add('test: isReadOnly, defaultValue',
-    () => render({isReadOnly: true, defaultValue: 'foo  '.repeat(10)})
-  )
-  .add('test: isReadOnly, with icon, value = icon',
-    () => render({isReadOnly: true, icon: <Info />,  value: 'icon'})
-  );
+  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
 
 function render(props = {}) {
   return (
@@ -235,7 +176,6 @@ function ControlledTextArea(props) {
   return (
     <>
       <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
-      <TextArea label="megatron" value={value} onChange={setValue} {...props} isReadOnly />
       <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
     </>
   );
@@ -287,5 +227,22 @@ function renderInFlexRowAndBlock(props = {}) {
           {...props} />
       </div>
     </Flex>
+  );
+}
+
+function ValidationExample(props) {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextArea
+      {...props}
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
   );
 }

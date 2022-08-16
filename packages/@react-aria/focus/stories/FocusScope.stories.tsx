@@ -18,7 +18,7 @@ import ReactDOM from 'react-dom';
 const dialogsRoot = 'dialogsRoot';
 
 interface StoryProps {
-  usePortal: boolean,
+  isPortaled: boolean,
   contain: boolean
 }
 
@@ -34,10 +34,10 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({usePortal, contain = true}) => <Example usePortal={usePortal} contain={contain} />;
+const Template = (): Story<StoryProps> => ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
 
-function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: boolean}) {
-  if (!usePortal) {
+function MaybePortal({children, isPortaled}: { children: ReactNode, isPortaled: boolean}) {
+  if (!isPortaled) {
     return <>{children}</>;
   }
 
@@ -47,7 +47,7 @@ function MaybePortal({children, usePortal}: { children: ReactNode, usePortal: bo
   );
 }
 
-function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, usePortal: boolean, contain: boolean}) {
+function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, isPortaled: boolean, contain: boolean}) {
   let [open, setOpen] = useState(false);
   let [showNew, setShowNew] = useState(false);
   let onKeyDown = (e) => {
@@ -58,7 +58,7 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   };
 
   return (
-    <MaybePortal usePortal={usePortal}>
+    <MaybePortal isPortaled={isPortaled}>
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
           <div role="dialog" onKeyDown={onKeyDown}>
@@ -72,7 +72,7 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
             <button type="button" onClick={onClose}>
               close
             </button>
-            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} usePortal={usePortal} />}
+            {open && <NestedDialog contain={contain} onClose={() => setOpen(false)} isPortaled={isPortaled} />}
           </div>
         )}
         {showNew && (
@@ -87,7 +87,7 @@ function NestedDialog({onClose, usePortal, contain}: {onClose: VoidFunction, use
   );
 }
 
-function Example({usePortal, contain}: StoryProps) {
+export function Example({isPortaled, contain}: StoryProps) {
   let [open, setOpen] = useState(false);
 
   return (
@@ -98,21 +98,67 @@ function Example({usePortal, contain}: StoryProps) {
         Open dialog
       </button>
       <input />
-      {open && <NestedDialog onClose={() => setOpen(false)} usePortal={usePortal} contain={contain} />}
+      {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
 
       <div id={dialogsRoot} />
     </div>
   );
 }
 
+function FocusableFirstInScopeExample() {
+  let [contentIndex, setContentIndex] = useState(0);
+  let [buttonRemoved, setButtonRemoved] = useState(false);
+  function DialogContent(index = 0) {
+    const nextIndex = index === 2 ? 0 : index + 1;
+    return (
+      <>
+        <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
+        {index === 2 ?
+          (
+            <>
+              <p>The end of the road.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={(e) => {(e.target as Element).remove(); setButtonRemoved(true);}}>Remove Me</button>
+              {buttonRemoved &&
+                <p>With no tabbable elements within the scope, FocusScope will try to focus the first focusable element within the scope, in this case, the dialog itself.</p>
+              }
+            </>
+          ) :
+          (
+            <>
+              <p>Content that will be replaced by <strong>Dialog {nextIndex + 1}</strong>.</p>
+              <button id={`button-${index}`} key={`button-${index}`} onClick={() => setContentIndex(nextIndex)}>Go to Dialog {nextIndex + 1}</button>
+            </>
+          )
+        }
+
+      </>
+    );
+  }
+  const contents = [];
+  for (let i = 0; i < 3; i++) {
+    contents.push(DialogContent(i));
+  }
+  return (
+    <FocusScope contain>
+      <div role="dialog" tabIndex={-1} aria-labelledby={`heading-${contentIndex}`} style={{border: '1px solid currentColor', borderRadius: '5px', padding: '0 1.5rem 1.5rem', width: '15rem'}}>
+        {contents[contentIndex]}
+      </div>
+    </FocusScope>
+  );
+}
+
 export const KeyboardNavigation = Template().bind({});
-KeyboardNavigation.args = {usePortal: false};
+KeyboardNavigation.args = {isPortaled: false};
 
 export const KeyboardNavigationInsidePortal = Template().bind({});
-KeyboardNavigationInsidePortal.args = {usePortal: true};
+KeyboardNavigationInsidePortal.args = {isPortaled: true};
 
 export const KeyboardNavigationNoContain = Template().bind({});
-KeyboardNavigationNoContain.args = {usePortal: false, contain: false};
+KeyboardNavigationNoContain.args = {isPortaled: false, contain: false};
 
 export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
-KeyboardNavigationInsidePortalNoContain.args = {usePortal: true, contain: false};
+KeyboardNavigationInsidePortalNoContain.args = {isPortaled: true, contain: false};
+
+const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
+
+export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});

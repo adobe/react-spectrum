@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Alat za promjenu veličine stupca",
   "loading": "Učitavam...",
   "loadingMore": "Učitavam još...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Promijeni veličinu stupca",
+  "sortAscending": "Sortiraj uzlazno",
+  "sortDescending": "Sortiraj silazno"
 }

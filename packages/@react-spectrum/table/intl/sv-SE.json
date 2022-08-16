@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Ändra storlek på kolumn",
   "loading": "Läser in...",
   "loadingMore": "Läser in mer...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Ändra storlek på kolumn",
+  "sortAscending": "Sortera i stigande ordning",
+  "sortDescending": "Sortera i fallande ordning"
 }
