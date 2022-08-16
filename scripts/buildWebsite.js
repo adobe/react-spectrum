@@ -24,6 +24,7 @@ build().catch(err => {
 });
 
 async function build() {
+  let publicUrlFlag = process.argv[2] ? `--public-url ${process.argv[2]}` : '';
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building into ${dir}...`);
@@ -57,7 +58,8 @@ async function build() {
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
-      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+      // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     }
   };
