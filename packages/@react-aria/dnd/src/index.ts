@@ -18,6 +18,7 @@ export type {DragPreviewProps} from './DragPreview';
 export type {DragOptions, DragResult} from './useDrag';
 export type {DropOptions, DropResult} from './useDrop';
 export type {ClipboardProps, ClipboardResult} from './useClipboard';
+export type {DropTargetDelegate} from '@react-types/shared';
 
 export {useDrag} from './useDrag';
 export {useDrop} from './useDrop';
@@ -27,3 +28,4 @@ export {useDropIndicator} from './useDropIndicator';
 export {useDraggableItem} from './useDraggableItem';
 export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
+export {ListDropTargetDelegate} from './ListDropTargetDelegate';
