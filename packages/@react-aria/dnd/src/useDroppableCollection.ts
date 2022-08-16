@@ -49,14 +49,14 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
   localState.props = props;
   localState.state = state;
 
-  let {
-    onInsert,
-    onRootDrop,
-    onItemDrop,
-    onReorder
-  } = props;
-
   let defaultOnDrop = useCallback(async (e: DroppableCollectionDropEvent) => {
+    let {
+      onInsert,
+      onRootDrop,
+      onItemDrop,
+      onReorder
+    } = localState.props;
+
     let {draggingCollectionRef, draggingKeys} = getDnDState();
     let isInternalDrop = draggingCollectionRef?.current === ref?.current;
     let {
@@ -74,8 +74,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     } else {
       onInsert && await onInsert({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: target.dropPosition}});
     }
-
-  }, [onRootDrop, onItemDrop, onInsert, onReorder, ref]);
+  }, [localState, ref]);
 
   let autoScroll = useAutoScroll(ref);
   let {dropProps} = useDrop({
