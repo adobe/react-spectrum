@@ -743,7 +743,7 @@ describe('ListView', function () {
 
           let list1Rows = within(grids[0]).getAllByRole('row');
           dropTarget = within(grids[0]).getAllByRole('row')[2];
-          dragWithinList(list1Rows, dropTarget, 1, 90);
+          dragWithinList(list1Rows, dropTarget, 1, 100);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '3',
@@ -953,6 +953,8 @@ describe('ListView', function () {
 
           let grids = getAllByRole('grid');
           expect(grids).toHaveLength(2);
+          expect(onDrop).toHaveBeenCalledTimes(0);
+          expect(getDropOperation).toHaveBeenCalledTimes(0);
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
@@ -963,7 +965,7 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
-          expect(getDropOperation).toHaveBeenCalledTimes(1);
+          expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
         it('should be able to perform drops if onDrop is provided without getDropOperation', function () {
@@ -996,6 +998,7 @@ describe('ListView', function () {
 
           let grids = getAllByRole('grid');
           expect(grids).toHaveLength(2);
+          expect(getDropOperation).toHaveBeenCalledTimes(0);
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
@@ -1025,7 +1028,7 @@ describe('ListView', function () {
               }
             ]
           });
-          expect(getDropOperation).toHaveBeenCalledTimes(1);
+          expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
       });
     });
