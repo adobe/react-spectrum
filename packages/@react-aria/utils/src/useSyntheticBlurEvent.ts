@@ -61,97 +61,66 @@ class SyntheticBlurEvent implements ReactFocusEvent {
   persist() {}
 }
 
-type Listener = (mutationList: MutationRecord[], target: HTMLElement) => boolean;
-
 export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   let stateRef = useRef({
     isFocused: false,
     onBlur,
-    disabledObserver: null as MutationObserver,
+    observer: null as MutationObserver,
+    removalObserver: null as MutationObserver,
     target: null as HTMLElement
   });
   stateRef.current.onBlur = onBlur;
 
-  let domNodeRemovedHandler = useCallback<Listener>((mutationList, target) => {
-    if (stateRef.current.isFocused && target) {
-      for (const mutation of mutationList) {
-        for (const node of mutation.removedNodes) {
-          if (node?.contains?.(target)) {
-            domNodeRemovedObserver.removeListener(domNodeRemovedHandler);
-            // fire blur which will be picked up by the 'once' blur handler defined below
-            target.dispatchEvent(new FocusEvent('blur'));
-            target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-            // early return so we don't look at the rest of the DOM
-            return true;
-          }
-        }
+  // Clean up MutationObserver on unmount. See below.
+  // eslint-disable-next-line arrow-body-style
+  useLayoutEffect(() => {
+    const state = stateRef.current;
+    return () => {
+      if (stateRef.current.target) {
+        stateRef.current.target.removeEventListener('focusout', onBlurHandler);
       }
-    }
-    return false;
-  }, [stateRef]);
+      if (state.observer) {
+        state.observer.disconnect();
+        state.observer = null;
+      }
+      if (state.removalObserver) {
+        state.removalObserver.disconnect();
+        state.removalObserver = null;
+      }
+    };
+  }, []);
+
 
   let onBlurHandler = useCallback((e: FocusEvent) => {
     let target = e.target;
     stateRef.current.isFocused = false;
 
-    if (
-      (
-        (target instanceof HTMLButtonElement ||
-          target instanceof HTMLInputElement ||
-          target instanceof HTMLTextAreaElement ||
-          target instanceof HTMLSelectElement) &&
-        target.disabled
-      ) ||
-      !document.body.contains(e.target as HTMLElement)
-    ) {
+    if (((target instanceof HTMLButtonElement ||
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement) && target.disabled) || !document.body.contains(e.target as HTMLElement)) {
       // For backward compatibility, dispatch a (fake) React synthetic event.
       stateRef.current.onBlur?.(new SyntheticBlurEvent('blur', e));
     }
 
     // We no longer need the MutationObserver once the target is blurred.
-    if (stateRef.current.disabledObserver) {
-      stateRef.current.disabledObserver.disconnect();
-      stateRef.current.disabledObserver = null;
+    if (stateRef.current.observer) {
+      stateRef.current.observer.disconnect();
+      stateRef.current.observer = null;
     }
 
-    domNodeRemovedObserver.removeListener(domNodeRemovedHandler);
+    // We no longer need the MutationObserver once the target is blurred.
+    if (stateRef.current.removalObserver) {
+      stateRef.current.removalObserver.disconnect();
+      stateRef.current.removalObserver = null;
+    }
   }, [stateRef]);
-
-  // Clean up MutationObserver on unmount. See below.
-  useLayoutEffect(() => {
-    const state = stateRef.current;
-
-    return () => {
-      if (stateRef.current.isFocused) {
-        stateRef.current.isFocused = false;
-      }
-      if (stateRef.current.target) {
-        stateRef.current.target.removeEventListener('focusout', onBlurHandler);
-        stateRef.current.target = null;
-      }
-      if (state.disabledObserver) {
-        state.disabledObserver.disconnect();
-        state.disabledObserver = null;
-      }
-      domNodeRemovedObserver.removeListener(domNodeRemovedHandler);
-    };
-  }, [domNodeRemovedHandler]);
 
   // This function is called during a React onFocus event.
   return useCallback((e: ReactFocusEvent) => {
 
     let target = e.target;
-    stateRef.current.isFocused = true;
-
-    if (stateRef.current.target && target !== stateRef.current.target) {
-      stateRef.current.target.removeEventListener('focusout', onBlurHandler);
-      target.addEventListener('focusout', onBlurHandler, {once: true});
-    } else if (!stateRef.current.target || e.target !== stateRef.current.target) {
-      e.target.addEventListener('focusout', onBlurHandler, {once: true});
-    }
-
     stateRef.current.target = target as HTMLElement;
-
     // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
     // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
@@ -162,52 +131,46 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       e.target instanceof HTMLTextAreaElement ||
       e.target instanceof HTMLSelectElement
     ) {
+      stateRef.current.isFocused = true;
 
-      stateRef.current.disabledObserver = new MutationObserver(() => {
+      target.addEventListener('focusout', onBlurHandler, {once: true});
+
+      stateRef.current.observer = new MutationObserver(() => {
         if (stateRef.current.isFocused && (target as any).disabled) {
-          stateRef.current.disabledObserver.disconnect();
+          stateRef.current.observer.disconnect();
           target.dispatchEvent(new FocusEvent('blur'));
           target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
         }
       });
 
-      stateRef.current.disabledObserver.observe(target, {attributes: true, attributeFilter: ['disabled']});
+      stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
 
     // Some browsers do not fire onBlur when the document.activeElement is removed from the dom.
     // Firefox has had a bug open about it for 13 years https://bugzilla.mozilla.org/show_bug.cgi?id=559561
     // A Safari bug has been logged for it as well https://bugs.webkit.org/show_bug.cgi?id=243749
-    domNodeRemovedObserver.addListener(domNodeRemovedHandler, target);
-  }, []);
-}
-
-
-class DOMNodeRemovedObserver {
-  private observer;
-  public listeners = new Map<Listener, HTMLElement>();
-  constructor() {
-    this.observer = new MutationObserver((mutationList) => {
-      for (let [listener, target] of this.listeners) {
-        if (listener(mutationList, target)) {
-          // early return if we find a place to call blur
-          return;
+    stateRef.current.removalObserver = new MutationObserver((mutationList) => {
+      if (stateRef.current.isFocused) {
+        for (const mutation of mutationList) {
+          for (const node of mutation.removedNodes) {
+            if (node?.contains?.(target)) {
+              // this can be null because mutation observers fire async, so we might've disconnected and set to null before
+              // this fires, but it's still been scheduled by an event that happened before we disconnected
+              if (stateRef.current.removalObserver) {
+                stateRef.current.removalObserver.disconnect();
+                stateRef.current.removalObserver = null;
+                // fire blur to cleanup any other synthetic blur handlers
+                target.dispatchEvent(new FocusEvent('blur'));
+                target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+                // early return so we don't look at the rest of the DOM
+                return;
+              }
+            }
+          }
         }
       }
     });
-  }
-  addListener(listener, target) {
-    if (this.listeners.size <= 0) {
-      this.observer.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
-    }
-    this.listeners.set(listener, target);
-  }
-  removeListener(listener) {
-    if (this.listeners.has(listener)) {
-      this.listeners.delete(listener);
-    }
-    if (this.listeners.size <= 0) {
-      this.observer.disconnect();
-    }
-  }
+
+    stateRef.current.removalObserver.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
+  }, []);
 }
-let domNodeRemovedObserver = new DOMNodeRemovedObserver();

@@ -121,8 +121,7 @@ describe('TableView', function () {
     offsetHeight.mockReset();
   });
 
-  afterEach(async () => {
-    await act(async () => Promise.resolve());
+  afterEach(() => {
     act(() => {jest.runAllTimers();});
   });
 
@@ -1566,7 +1565,7 @@ describe('TableView', function () {
         expect(body.scrollTop).toBe(24);
       });
 
-      it('should scroll to a cell when it is focused off screen', async function () {
+      it('should scroll to a cell when it is focused off screen', function () {
         let tree = renderManyColumns();
         let body = tree.getByRole('grid').childNodes[1];
 
@@ -1575,7 +1574,7 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should remain on the item,
+        // When scrolling the focused item out of view, focus should remaind on the item,
         // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         body.scrollLeft = 1000;
@@ -1599,8 +1598,6 @@ describe('TableView', function () {
         moveFocus('ArrowLeft');
         expect(body.scrollTop).toBe(164);
         expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
-        act(() => {jest.runAllTimers();});
-        await act(async () => Promise.resolve());
       });
 
       it('should not scroll when a column header receives focus', function () {
@@ -2277,7 +2274,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1), true);
       });
 
-      it('manually selecting all should not auto select new items', async function () {
+      it('manually selecting all should not auto select new items', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange}, items);
 
@@ -2298,7 +2295,6 @@ describe('TableView', function () {
         ]));
 
         act(() => jest.runAllTimers());
-        await act(async () => Promise.resolve());
 
         rows = tree.getAllByRole('row');
         expect(getCell(tree, 'Foo 0')).toBeVisible();
@@ -2326,7 +2322,7 @@ describe('TableView', function () {
       });
     });
 
-    describe('announcements', function () {
+    describe('annoucements', function () {
       it('should announce the selected or deselected row', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
@@ -2463,7 +2459,7 @@ describe('TableView', function () {
       expect(announce).toHaveBeenCalledTimes(2);
     });
 
-    it('updates even if not focused', async () => {
+    it('updates even if not focused', () => {
       let tree = render(<TableWithBreadcrumbs />);
 
       let link = tree.getAllByRole('link')[1];
@@ -2500,7 +2496,6 @@ describe('TableView', function () {
         // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
         jest.runAllTimers();
       });
-      await act(async () => Promise.resolve());
 
       expect(announce).toHaveBeenCalledTimes(3);
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
@@ -3449,7 +3444,7 @@ describe('TableView', function () {
       expect(checkbox.checked).toBe(false);
     });
 
-    it('can edit items', async function () {
+    it('can edit items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -3480,7 +3475,6 @@ describe('TableView', function () {
       expect(dialog).not.toBeInTheDocument();
 
       act(() => {jest.runAllTimers();});
-      await act(async () => Promise.resolve());
 
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
@@ -3577,7 +3571,7 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem').pop());
     });
 
-    it('menu keyboard navigation does not affect table', async function () {
+    it('menu keyboard navigation does not affect table', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -3603,7 +3597,6 @@ describe('TableView', function () {
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
       act(() => jest.runAllTimers());
-      await act(async () => Promise.resolve());
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));

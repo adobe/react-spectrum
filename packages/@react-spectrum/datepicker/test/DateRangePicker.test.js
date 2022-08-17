@@ -264,7 +264,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it('should emit onChange when selecting a date range in the calendar in uncontrolled mode', async function () {
+    it('should emit onChange when selecting a date range in the calendar in uncontrolled mode', function () {
       let onChange = jest.fn();
       let {getByRole, getByTestId, getAllByRole, getByLabelText} = render(
         <Provider theme={theme}>
@@ -295,7 +295,6 @@ describe('DateRangePicker', function () {
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 17)});
       expect(getTextValue(startDate)).toBe('2/10/2019'); // uncontrolled
       expect(getTextValue(endDate)).toBe('2/17/2019');
-      await act(async () => Promise.resolve());
     });
 
     it('should display time fields when a CalendarDateTime value is used', function () {
@@ -458,7 +457,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm time placeholders on blur if date range is selected', async function () {
+    it('should confirm time placeholders on blur if date range is selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getByTestId} = render(
         <Provider theme={theme}>
@@ -487,7 +486,6 @@ describe('DateRangePicker', function () {
 
       userEvent.click(document.body);
       act(() => jest.runAllTimers());
-      await act(async () => Promise.resolve());
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -499,7 +497,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should not confirm on blur if date range is not selected', async function () {
+    it('should not confirm on blur if date range is not selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByLabelText, getByTestId} = render(
         <Provider theme={theme}>
@@ -534,7 +532,6 @@ describe('DateRangePicker', function () {
 
       userEvent.click(document.body);
       act(() => jest.runAllTimers());
-      await act(async () => Promise.resolve());
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
