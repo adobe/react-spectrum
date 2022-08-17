@@ -156,30 +156,34 @@ class DOMNodeRemovedObserver {
   private target: HTMLElement;
 
   constructor() {
-    this.observer = new MutationObserver((mutationList) => {
-      if (this.target) {
-        for (const mutation of mutationList) {
-          for (const node of mutation.removedNodes) {
-            if (node?.contains?.(this.target)) {
-              // fire blur to cleanup any other synthetic blur handlers
-              this.target.dispatchEvent(new FocusEvent('blur'));
-              this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-              // early return so we don't look at the rest of the DOM
-              return;
+    if (typeof window !== 'undefined') {
+      this.observer = new MutationObserver((mutationList) => {
+        if (this.target) {
+          for (const mutation of mutationList) {
+            for (const node of mutation.removedNodes) {
+              if (node?.contains?.(this.target)) {
+                // fire blur to cleanup any other synthetic blur handlers
+                this.target.dispatchEvent(new FocusEvent('blur'));
+                this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+                // early return so we don't look at the rest of the DOM
+                return;
+              }
             }
           }
         }
-      }
-    });
+      });
+    }
     this.onBlurHandler = this.onBlurHandler.bind(this);
   }
 
   onBlurHandler() {
     this.target = null;
-    this.observer.disconnect();
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   }
   setTarget(target: HTMLElement) {
-    if (!this.target && target) {
+    if (!this.target && target && this.observer) {
       this.observer.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
     }
     if (this.target !== target) {
