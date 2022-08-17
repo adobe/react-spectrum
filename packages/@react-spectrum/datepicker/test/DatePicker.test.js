@@ -55,7 +55,7 @@ function render(el) {
 
 describe('DatePicker', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   afterEach(() => {
     act(() => {
@@ -186,7 +186,7 @@ describe('DatePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it('should emit onChange when selecting a date in the calendar in controlled mode', function () {
+    it('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, queryByLabelText} = render(
         <Provider theme={theme}>
@@ -215,9 +215,10 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
       expect(getTextValue(combobox)).toBe('2/3/2019'); // controlled
+      await act(async () => Promise.resolve());
     });
 
-    it('should emit onChange when selecting a date in the calendar in uncontrolled mode', function () {
+    it('should emit onChange when selecting a date in the calendar in uncontrolled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
@@ -244,6 +245,7 @@ describe('DatePicker', function () {
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
       expect(getTextValue(combobox)).toBe('2/4/2019'); // uncontrolled
+      await act(async () => Promise.resolve());
     });
 
     it('should display a time field when a CalendarDateTime value is used', function () {
@@ -371,7 +373,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm time placeholder on blur if date is selected', function () {
+    it('should confirm time placeholder on blur if date is selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
@@ -398,6 +400,7 @@ describe('DatePicker', function () {
 
       userEvent.click(document.body);
       act(() => jest.runAllTimers());
+      await act(async () => Promise.resolve());
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -407,7 +410,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
     });
 
-    it('should not confirm on blur if date is not selected', function () {
+    it('should not confirm on blur if date is not selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -440,6 +443,7 @@ describe('DatePicker', function () {
 
       userEvent.click(document.body);
       act(() => jest.runAllTimers());
+      await act(async () => Promise.resolve());
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
