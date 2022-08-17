@@ -15,7 +15,7 @@ import * as DragManager from './DragManager';
 import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
-import {getDnDState, setDnDState, setDropEffect, setDroppedTarget} from '@react-stately/dnd';
+import {clearDnDState, getDnDState, setDnDState, setDropEffect, setDroppedTarget} from '@react-stately/dnd';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -252,11 +252,12 @@ export function useDrop(options: DropOptions): DropResult {
       if (typeof options.onDrop === 'function') {
         options.onDrop(event);
       }
-      // TODO: for now don't clear global DnD state since useDrag's deferred onDragEnd needs the values
-      // set in options.onDrop (aka droppedTarget and droppedCollection). I'm a bit wary about a case where the
-      // user performs a drop from a non RSP collection into a RSP droppable collection and thus our onDragEnd won't fire
-      // and clear the global DnD state. Luckily it might not be that big of an issue if we clear on our drag start? Can't clear on
-      // document dragend listener since that occurs before our deffered onDrop/onDragEnd
+
+      // If there wasn't a collection being tracked as a dragged collection, then we are in a case where a non RSP drag is dropped on a
+      // RSP collection and thus we don't need to preserve the global DnD state for onDragEnd
+      if (dndStateSnapshot.draggingCollectionRef == null) {
+        clearDnDState();
+      }
     }, 0);
 
     state.dragOverElements.clear();

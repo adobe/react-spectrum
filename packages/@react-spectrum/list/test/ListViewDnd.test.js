@@ -441,7 +441,7 @@ describe('ListView', function () {
         expect(onDragEnd).toHaveBeenCalledTimes(1);
       });
 
-      it('should reset the global drop state on drag start', function () {
+      it('should reset the global drop state on drop if a dragged item is a non RSP drag target', function () {
         let {getAllByRole} = render(
           <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
         );
@@ -461,28 +461,8 @@ describe('ListView', function () {
         // Droppable collection and other drop related global trackers should still be set
         dndState = getDnDState();
         expect(dndState).toEqual({
-          draggingKeys: new Set(),
-          currentDropCollectionRef: expect.any(Object),
-          droppedCollectionRef: expect.any(Object),
-          dropEffect: 'copy',
-          droppedTarget: {
-            dropPosition: 'before',
-            key: '7',
-            type: 'item'
-          }});
-        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
-        expect(dndState.droppedCollectionRef.current).toBe(grids[1]);
-
-        // Upon drag start, all previous tracked info in the global DnD state should be wiped and replaced
-        let rows = within(grids[1]).getAllByRole('row');
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        let cellA = within(rows[0]).getByRole('gridcell');
-        dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-        dndState = getDnDState();
-        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['7'])});
-        expect(dndState.draggingCollectionRef.current).toBe(grids[1]);
+          draggingKeys: new Set()
+        });
       });
 
       describe('using util handlers', function () {
@@ -1217,62 +1197,6 @@ describe('ListView', function () {
 
         dndState = getDnDState();
         expect(dndState).toEqual({draggingKeys: new Set()});
-      });
-
-      it('should reset the global drop state on drag start', function () {
-        let {getAllByRole} = render(
-          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
-        );
-
-        let grids = getAllByRole('grid');
-        let dataTransfer = new DataTransfer();
-        let file = new File(['hello world'], 'test.abc', {type: ''});
-        dataTransfer.items.add(file);
-        // Can't perform drop from non RSP item via keyboard so just directly call drag enter and drop
-        fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-        let dndState = getDnDState();
-        expect(dndState).toEqual({draggingKeys: new Set(), currentDropCollectionRef: expect.any(Object)});
-        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
-
-        fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
-        // Droppable collection and other drop related global trackers should still be set
-        dndState = getDnDState();
-        expect(dndState).toEqual({
-          draggingKeys: new Set(),
-          currentDropCollectionRef: expect.any(Object),
-          droppedCollectionRef: expect.any(Object),
-          dropEffect: 'copy',
-          droppedTarget: {
-            dropPosition: 'before',
-            key: '7',
-            type: 'item'
-          }});
-        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
-        expect(dndState.droppedCollectionRef.current).toBe(grids[1]);
-
-        // Start drag via keyboard. Upon drag start, all previous tracked info in the global DnD state should be wiped and replaced
-        let row = within(grids[0]).getAllByRole('row')[0];
-        let cell = within(row).getByRole('gridcell');
-        expect(cell).toHaveTextContent('Adobe Photoshop');
-        expect(row).toHaveAttribute('draggable', 'true');
-
-        userEvent.tab();
-        let draghandle = within(cell).getAllByRole('button')[0];
-        expect(draghandle).toBeTruthy();
-        expect(draghandle).toHaveAttribute('draggable', 'true');
-        fireEvent.keyDown(draghandle, {key: 'Enter'});
-        fireEvent.keyUp(draghandle, {key: 'Enter'});
-        act(() => jest.runAllTimers());
-
-        dndState = getDnDState();
-        expect(dndState).toEqual({
-          draggingCollectionRef: expect.any(Object),
-          draggingKeys: new Set(['1']),
-          currentDropCollectionRef: expect.any(Object)
-        });
-        expect(dndState.draggingCollectionRef.current).toBe(grids[0]);
-        expect(dndState.currentDropCollectionRef.current).toBe(grids[0]);
       });
 
       describe('using util handlers', function () {
