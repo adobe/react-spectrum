@@ -235,7 +235,7 @@ export function useDrop(options: DropOptions): DropResult {
       items,
       dropOperation
     };
-    // Set drop effect in global DnD state for Chrome Android. TODO: file bug against chrome
+    // Set drop effect in global DnD state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
     // where onDragEnd always returns "none" as its drop effect.
     setDropEffect(state.dropEffect);
 

@@ -165,7 +165,7 @@ export function useDrag(options: DragOptions): DragResult {
       if (typeof options.onDragEnd === 'function') {
         let {dropEffect} = getDnDState();
         // Chrome Android always returns none as its dropEffect so we use the drop effect from onDrop instead
-        // TODO file browser bug
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
         if (dropEffect) {
           event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
         }
