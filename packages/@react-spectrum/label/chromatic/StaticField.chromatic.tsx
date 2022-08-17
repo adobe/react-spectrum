@@ -11,78 +11,125 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import {Meta, Story} from '@storybook/react';
-import React from 'react';
-import type {SpectrumStaticFieldProps, SpectrumStaticFieldTypes} from '../src/StaticField';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {StaticField} from '../';
 
-const meta: Meta<SpectrumStaticFieldProps<SpectrumStaticFieldTypes>> = {
+type StaticFieldStory = ComponentStoryObj<typeof StaticField>;
+
+export default {
   title: 'StaticField',
   component: StaticField
+} as ComponentMeta<typeof StaticField>;
+
+export let Default: StaticFieldStory = {
+  args: {label: 'Test', value: 'This is some sample text'},
+  name: 'String'
 };
 
-export default meta;
+export let StringArray: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: ['wow', 'cool', 'awesome']},
+  name: 'String array'
+};
 
-const Template = (): Story<SpectrumStaticFieldProps<SpectrumStaticFieldTypes>> => (args) => (
-  <StaticField {...args} />
-);
+export let CalendarDateType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}},
+  name: 'CalendarDate'
+};
 
-export const StringType = Template().bind({});
-StringType.args = {label: 'Test', value: 'This is some sample text'};
-StringType.storyName = 'string';
+export let CalendarDateTimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'CalendarDateTime'
+};
 
-export const StringArray = Template().bind({});
-StringArray.args = {value: ['wow', 'cool', 'awesome']};
-StringArray.storyName = 'string array';
+export let ZonedDateTimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}},
+  name: 'ZonedDateTime'
+};
 
-export const CalendarDateType = Template().bind({});
-CalendarDateType.args = {value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}};
-CalendarDateType.storyName = 'CalendarDate';
+export let DateType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}},
+  name: 'Date'
+};
 
-export const CalendarDateTimeType = Template().bind({});
-CalendarDateTimeType.args = {value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}};
-CalendarDateTimeType.storyName = 'CalendarDateTime';
+export let TimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new Time(9, 45), formatOptions: {timeStyle: 'short'}},
+  name: 'Time'
+};
 
-export const ZonedDateTimeType = Template().bind({});
-ZonedDateTimeType.args = {value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}};
-ZonedDateTimeType.storyName = 'ZonedDateTime';
+export let CalendarDateRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}},
+  name: 'RangeValue<CalendarDate>'
+};
 
-export const DateType = Template().bind({});
-DateType.args = {value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}};
-DateType.storyName = 'Date';
+export let CalendarDateTimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'RangeValue<CalendarDateTime>'
+};
 
-export const TimeType = Template().bind({});
-TimeType.args = {value: new Time(9, 45), formatOptions: {timeStyle: 'short'}};
-TimeType.storyName = 'Time';
+export let ZonedDateTimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'RangeValue<ZonedDateTime>'
+};
 
-export const DateRangeType = Template().bind({});
-DateRangeType.args = {value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}};
-DateRangeType.storyName = 'RangeValue<DateValue>';
+export let DateRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}, formatOptions: {dateStyle: 'medium'}},
+  name: 'RangeValue<Date>'
+};
 
-export const NumberType = Template().bind({});
-NumberType.args = {value: 10};
-NumberType.storyName = 'Number';
+export let TimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new Time(9, 45), end: new Time(10, 50)}, formatOptions: {timeStyle: 'short'}},
+  name: 'RangeValue<Time>'
+};
 
-export const NumberRangeType = Template().bind({});
-NumberRangeType.args = {value: {start: 10, end: 15}};
-NumberRangeType.storyName = 'RangeValue<NumberValue>';
+export let Number: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: 10},
+  name: 'Number'
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {label: 'Test', value: 'This is some sample text', labelPosition: 'side'};
-LabelPositionSide.storyName = 'labelPosition: side';
+export let NumberRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: 10, end: 20}},
+  name: 'RangeValue<Number>'
+};
 
-export const LabelAlignLabelPosition = Template().bind({});
-LabelAlignLabelPosition.args = {label: 'Test', value: 'This is some sample text', labelPosition: 'side', labelAlign: 'end'};
-LabelAlignLabelPosition.storyName = 'labelPosition: side, labelAlign: end';
+export let LabelPostionSide: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, labelPosition: 'side'},
+  name: 'labelPosition: side'
+};
 
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {label: 'Test', value: 'This is some sample text', labelAlign: 'end'};
-LabelAlignEnd.storyName = 'labelAlign: end';
+export let LabelAlignEnd: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, labelAlign: 'end'},
+  name: 'labelAlign: end'
+};
 
-export const NoLabel = Template().bind({});
-NoLabel.args = {value: 'This is some sample text'};
-NoLabel.storyName = 'no visible label';
+export let LabelAlignLabelPosition: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, labelPosition: 'side', labelAlign: 'end'},
+  name: 'labelAlign: side, labelAlign: end'
+};
 
-export const CustomWidth = Template().bind({});
-CustomWidth.args = {label: 'Test', value: 'foo'.repeat(20), width: '300px'};
-CustomWidth.storyName = 'custom width';
+export let NoLabel: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, label: null},
+  name: 'no visible label'
+};
+
+export let CustomWidth: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, width: '300px'},
+  name: 'custom width'
+};

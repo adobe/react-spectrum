@@ -13,11 +13,11 @@
 import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
-import type {DateValue, TimeValue} from '@react-types/datepicker';
 import {filterDOMProps} from '@react-aria/utils';
 import {Label} from './Label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {RefObject} from 'react';
+import type {TimeValue} from '@react-types/datepicker';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/utils';
 
@@ -55,7 +55,7 @@ type StaticFieldProps<T> =
     T extends string ? StringProps<T> :
     never;
 
-export type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateValue>;
+export type SpectrumStaticFieldTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
 export type SpectrumStaticFieldProps<T> = StaticFieldProps<T> & StaticFieldBaseProps;
 
 function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFieldProps<T>, ref: RefObject<HTMLDivElement>) {

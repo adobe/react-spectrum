@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -12,17 +11,14 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import React from 'react';
-import {StaticField} from '../src/StaticField';
-import {storiesOf} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {StaticField} from '../';
 
-const parameters = {
-  args: {
-    labelPosition: 'top',
-    labelAlign: 'start',
-    label: 'Test',
-    width: null
-  },
+type StaticFieldStory = ComponentStoryObj<typeof StaticField>;
+
+export default {
+  title: 'StaticField',
+  component: StaticField,
   argTypes: {
     labelPosition: {
       control: {
@@ -36,12 +32,6 @@ const parameters = {
         options: ['start', 'end']
       }
     },
-    label: {
-      control: {
-        type: 'radio',
-        options: ['Test', null]
-      }
-    },
     width: {
       control: {
         type: 'radio',
@@ -49,152 +39,87 @@ const parameters = {
       }
     }
   }
+} as ComponentMeta<typeof StaticField>;
+
+export let Default: StaticFieldStory = {
+  args: {label: 'Test', value: 'This is some sample text'},
+  name: 'String'
 };
 
-storiesOf('StaticField', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'string',
-    (args) => (
-      <StaticField
-        value="test"
-        width="300px"
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'long string',
-    (args) => (
-      <StaticField
-        value={'foo '.repeat(100)}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'string array',
-    (args) => (
-      <StaticField
-        value={['wow', 'cool', 'awesome']}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'CalendarDate',
-    (args) => (
-      <StaticField
-        value={new CalendarDate(2019, 6, 5)}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<Date>',
-    (args) => (
-      <StaticField
-        value={{start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<ZonedDateTime>',
-    (args) => (
-      <StaticField
-        value={{start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}}
-        formatOptions={{dateStyle: 'medium', timeStyle: 'medium'}}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<Time>',
-    (args) => (
-      <StaticField
-        value={{start: new Time(9, 45), end: new Time(10, 50)}}
-        label="Display StaticField"
-        formatOptions={{timeStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<CalendarDateTime>',
-    (args) => (
-      <StaticField
-        value={{start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}}
-        label="Display StaticField"
-        formatOptions={{timeStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<CalendarTime>',
-    (args) => (
-      <StaticField
-        value={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'long'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'ZonedDateTime',
-    (args) => (
-      <StaticField
-        value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'medium', timeStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'CalendarDateTime',
-    (args) => (
-      <StaticField
-        value={new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'medium', timeStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'Date',
-    (args) => (
-      <StaticField
-        value={new Date(2000, 5, 5)}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'medium'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'Time',
-    (args) => (
-      <StaticField
-        value={new Time(9, 45)}
-        label="Display StaticField"
-        formatOptions={{dateStyle: 'long'}}
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'RangeValue<NumberValue>',
-    (args) => (
-      <StaticField
-        value={{start: 10, end: 20}}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  )
-  .add(
-    'number',
-    (args) => (
-      <StaticField
-        value={10}
-        label="Display StaticField"
-        {...args} />
-    ), parameters
-  );
+export let StringArray: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: ['wow', 'cool', 'awesome']},
+  name: 'String array'
+};
+
+export let CalendarDateType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}},
+  name: 'CalendarDate'
+};
+
+export let CalendarDateTimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'CalendarDateTime'
+};
+
+export let ZonedDateTimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}},
+  name: 'ZonedDateTime'
+};
+
+export let DateType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}},
+  name: 'Date'
+};
+
+export let TimeType: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: new Time(9, 45), formatOptions: {timeStyle: 'short'}},
+  name: 'Time'
+};
+
+export let CalendarDateRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}},
+  name: 'RangeValue<CalendarDate>'
+};
+
+export let CalendarDateTimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'RangeValue<CalendarDateTime>'
+};
+
+export let ZonedDateTimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  name: 'RangeValue<ZonedDateTime>'
+};
+
+export let DateRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}, formatOptions: {dateStyle: 'medium'}},
+  name: 'RangeValue<Date>'
+};
+
+export let TimeRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: new Time(9, 45), end: new Time(10, 50)}, formatOptions: {timeStyle: 'short'}},
+  name: 'RangeValue<Time>'
+};
+
+export let Number: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: 10},
+  name: 'Number'
+};
+
+export let NumberRange: StaticFieldStory = {
+  ...Default,
+  args: {...Default.args, value: {start: 10, end: 20}},
+  name: 'RangeValue<Number>'
+};
