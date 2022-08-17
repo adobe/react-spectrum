@@ -1265,7 +1265,7 @@ describe('ListView', function () {
   });
 
   describe('scrolling', function () {
-    it('should scroll to a row when it is focused', function () {
+    it('should scroll to a row when it is focused', async function () {
       let tree = render(
         <ListView
           width="250px"
@@ -1312,6 +1312,7 @@ describe('ListView', function () {
       moveFocus('ArrowUp');
       expect(document.activeElement).toBe(getRow(tree, 'Item 0'));
       expect(grid.scrollTop).toBe(0);
+      await act(async () => Promise.resolve());
     });
 
     it('should scroll to a row when it is focused', function () {

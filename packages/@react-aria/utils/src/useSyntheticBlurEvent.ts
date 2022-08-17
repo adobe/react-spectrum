@@ -120,6 +120,15 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   return useCallback((e: ReactFocusEvent) => {
 
     let target = e.target;
+    stateRef.current.isFocused = true;
+
+    if (stateRef.current.target && target !== stateRef.current.target) {
+      stateRef.current.target.removeEventListener('focusout', onBlurHandler);
+      target.addEventListener('focusout', onBlurHandler, {once: true});
+    } else if (!stateRef.current.target || e.target !== stateRef.current.target) {
+      target.addEventListener('focusout', onBlurHandler, {once: true});
+    }
+
     stateRef.current.target = target as HTMLElement;
     // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
@@ -131,9 +140,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       e.target instanceof HTMLTextAreaElement ||
       e.target instanceof HTMLSelectElement
     ) {
-      stateRef.current.isFocused = true;
-
-      target.addEventListener('focusout', onBlurHandler, {once: true});
 
       stateRef.current.observer = new MutationObserver(() => {
         if (stateRef.current.isFocused && (target as any).disabled) {
