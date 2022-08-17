@@ -83,10 +83,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
         state.observer.disconnect();
         state.observer = null;
       }
-      if (state.removalObserver) {
-        state.removalObserver.disconnect();
-        state.removalObserver = null;
-      }
     };
   }, []);
 
@@ -108,12 +104,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       stateRef.current.observer.disconnect();
       stateRef.current.observer = null;
     }
-
-    // We no longer need the MutationObserver once the target is blurred.
-    if (stateRef.current.removalObserver) {
-      stateRef.current.removalObserver.disconnect();
-      stateRef.current.removalObserver = null;
-    }
   }, [stateRef]);
 
   // This function is called during a React onFocus event.
@@ -124,6 +114,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
     if (stateRef.current.target && target !== stateRef.current.target) {
       stateRef.current.target.removeEventListener('focusout', onBlurHandler);
+      domNodeRemovedObserver.removeTarget(stateRef.current.target);
       target.addEventListener('focusout', onBlurHandler, {once: true});
     } else if (!stateRef.current.target || e.target !== stateRef.current.target) {
       target.addEventListener('focusout', onBlurHandler, {once: true});
@@ -155,28 +146,56 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
     // Some browsers do not fire onBlur when the document.activeElement is removed from the dom.
     // Firefox has had a bug open about it for 13 years https://bugzilla.mozilla.org/show_bug.cgi?id=559561
     // A Safari bug has been logged for it as well https://bugs.webkit.org/show_bug.cgi?id=243749
-    stateRef.current.removalObserver = new MutationObserver((mutationList) => {
-      if (stateRef.current.isFocused) {
+    domNodeRemovedObserver.setTarget(target);
+  }, []);
+}
+
+
+class DOMNodeRemovedObserver {
+  private observer;
+  private target: HTMLElement;
+
+  constructor() {
+    this.observer = new MutationObserver((mutationList) => {
+      if (this.target) {
         for (const mutation of mutationList) {
           for (const node of mutation.removedNodes) {
-            if (node?.contains?.(target)) {
-              // this can be null because mutation observers fire async, so we might've disconnected and set to null before
-              // this fires, but it's still been scheduled by an event that happened before we disconnected
-              if (stateRef.current.removalObserver) {
-                stateRef.current.removalObserver.disconnect();
-                stateRef.current.removalObserver = null;
-                // fire blur to cleanup any other synthetic blur handlers
-                target.dispatchEvent(new FocusEvent('blur'));
-                target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-                // early return so we don't look at the rest of the DOM
-                return;
-              }
+            if (node?.contains?.(this.target)) {
+              // fire blur to cleanup any other synthetic blur handlers
+              this.target.dispatchEvent(new FocusEvent('blur'));
+              this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+              // early return so we don't look at the rest of the DOM
+              return;
             }
           }
         }
       }
     });
+    this.onBlurHandler = this.onBlurHandler.bind(this);
+  }
 
-    stateRef.current.removalObserver.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
-  }, []);
+  onBlurHandler() {
+    this.target = null;
+    this.observer.disconnect();
+  }
+  setTarget(target: HTMLElement) {
+    if (!this.target && target) {
+      this.observer.observe(document, {childList: true, subtree: true, attributes: false, characterData: false});
+    }
+    if (this.target !== target) {
+      if (this.target) {
+        this.target.removeEventListener('focusout', this.onBlurHandler);
+      }
+      target.addEventListener('focusout', this.onBlurHandler, {once: true});
+      this.target = target;
+    }
+  }
+  removeTarget(target) {
+    if (this.target === target) {
+      this.onBlurHandler();
+    } else if (target) {
+      target.removeEventListener('focusout', this.onBlurHandler);
+    }
+  }
 }
+let domNodeRemovedObserver = new DOMNodeRemovedObserver();
