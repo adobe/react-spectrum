@@ -496,31 +496,19 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       dropPosition: 'on'
     };
 
-    let allowsRootDrop = isValidDropTarget({type: 'root'});
-    let allowsOnItemDrop = isValidDropTarget(target);
-    // If before/after is a valid drop position, before/after should always be the drop position if the drop is within 5px of the item's top/bottom
-    // regardless of whether or not the list allows root or on item drops. If none of the below cases are hit, then it is a valid on item drop
-    if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
+    // If dropping on the item isn't accepted, try the target before or after depending on the y position.
+    // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
+    // of the top or bottom of the item.
+    if (!isValidDropTarget(target)) {
+      if (y <= rect.y + rect.height / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
+        target.dropPosition = 'before';
+      } else if (isValidDropTarget({...target, dropPosition: 'after'})) {
+        target.dropPosition = 'after';
+      }
+    } else if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
       target.dropPosition = 'before';
     } else if (y >= rect.maxY - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
       target.dropPosition = 'after';
-    } else if (!allowsOnItemDrop) {
-      if (allowsRootDrop) {
-        // If the list doesn't allow on item drops but allows root drops then the target is the root
-        target = {type: 'root'};
-      } else {
-        // If the list doesn't allow root or item drops, determine if the drop position is before/after. If neither are allowed
-        // then there isn't a valid drop target
-        let midY = rect.y + rect.height / 2;
-        // eslint-disable-next-line max-depth
-        if (y <= midY && isValidDropTarget({...target, dropPosition: 'before'})) {
-          target.dropPosition = 'before';
-        } else if (y >= midY && isValidDropTarget({...target, dropPosition: 'after'})) {
-          target.dropPosition = 'after';
-        } else {
-          target = null;
-        }
-      }
     }
 
     return target;
