@@ -198,9 +198,9 @@ export interface DroppableCollectionProps {
    */
   acceptedDragTypes?: 'all' | Array<string>,
   /**
-   * A function returning whether a given key in the droppable collection is a valid drop target.
+   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
-  isValidDropTarget?: (target: DropTarget, types: DragTypes) => boolean
+  isValidDropTarget?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {

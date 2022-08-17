@@ -1370,7 +1370,7 @@ export function DragBetweenListsComplex(props) {
       list1.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => target.type === 'root' || !!list1.getItem(target.key).childNodes,
+    isValidDropTarget: (target) => !!list1.getItem(target.key).childNodes,
     ...firstListDnDOptions
   });
 
@@ -1430,7 +1430,7 @@ export function DragBetweenListsComplex(props) {
       list2.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes,
+    isValidDropTarget: (target) => !!list2.getItem(target.key).childNodes,
     ...secondListDnDOptions
   });
 
@@ -1550,7 +1550,7 @@ function DragBetweenListsOverride(props) {
     onReorder: () => action('onReorder'),
     onRootDrop: () => action('onRootDrop'),
     onItemDrop: () => action('onItemDrop'),
-    isValidDropTarget: (target) => target.type === 'root' || !!list2.getItem(target.key).childNodes,
+    isValidDropTarget: (target) => !!list2.getItem(target.key).childNodes,
     acceptedDragTypes: 'all'
   });
 

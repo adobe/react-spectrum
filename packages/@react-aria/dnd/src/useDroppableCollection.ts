@@ -87,6 +87,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
+      setCurrentDropCollectionRef(ref);
       let isValidDropTarget = (target) => state.getDropOperation(target, types, allowedOperations) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
       if (!target) {
@@ -95,9 +96,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         return 'cancel';
       }
 
-      // Update the current collection ref tracker so getDropOperation can do its internal drop filtering.
-      // This will happen before onDropEnter when integrated w/ Devon's PR
-      setCurrentDropCollectionRef(ref);
       localState.dropOperation = state.getDropOperation(target, types, allowedOperations);
 
       // If the target doesn't accept the drop, see if the root accepts it instead.
