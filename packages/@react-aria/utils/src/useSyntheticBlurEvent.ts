@@ -109,7 +109,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   // This function is called during a React onFocus event.
   return useCallback((e: ReactFocusEvent) => {
 
-    let target = e.target;
+    let target = e.target as HTMLElement;
     stateRef.current.isFocused = true;
 
     if (stateRef.current.target && target !== stateRef.current.target) {
@@ -120,7 +120,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
       target.addEventListener('focusout', onBlurHandler, {once: true});
     }
 
-    stateRef.current.target = target as HTMLElement;
+    stateRef.current.target = target;
     // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
     // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
