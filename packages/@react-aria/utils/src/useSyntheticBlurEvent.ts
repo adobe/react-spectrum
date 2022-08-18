@@ -66,7 +66,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
     isFocused: false,
     onBlur,
     observer: null as MutationObserver,
-    removalObserver: null as MutationObserver,
     target: null as HTMLElement
   });
   stateRef.current.onBlur = onBlur;
@@ -152,17 +151,17 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
 
 class DOMNodeRemovedObserver {
-  private observer;
-  private target: HTMLElement;
+  private observer: MutationObserver | null;
+  private target: HTMLElement | null;
 
   constructor() {
+    // don't make an observer in SSR (MutationObserver is not supported in Node)
     if (typeof window !== 'undefined') {
       this.observer = new MutationObserver((mutationList) => {
         if (this.target) {
           for (const mutation of mutationList) {
             for (const node of mutation.removedNodes) {
               if (node?.contains?.(this.target)) {
-                // fire blur to cleanup any other synthetic blur handlers
                 this.target.dispatchEvent(new FocusEvent('blur'));
                 this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
                 // early return so we don't look at the rest of the DOM
@@ -197,7 +196,8 @@ class DOMNodeRemovedObserver {
   removeTarget(target) {
     if (this.target === target) {
       this.onBlurHandler();
-    } else if (target) {
+    }
+    if (target) {
       target.removeEventListener('focusout', this.onBlurHandler);
     }
   }
