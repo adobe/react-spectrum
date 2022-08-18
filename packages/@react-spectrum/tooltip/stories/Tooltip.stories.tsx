@@ -19,7 +19,7 @@ const argTypes = {
   placement: {
     control: 'radio',
     defaultValue: 'top',
-    options: ['top', 'bottom', 'left', 'right', 'start', 'end']
+    options: ['top', 'bottom', 'left', 'right']
   },
   variant: {
     control: 'radio',

@@ -73,17 +73,14 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip--right,
-.spectrum-Tooltip--left,
-.spectrum-Tooltip--start,
-.spectrum-Tooltip--end {
+.spectrum-Tooltip--left {
   .spectrum-Tooltip-tip {
     top: 50%;
     margin-top: calc(var(--spectrum-tooltip-tip-width) * -1);
   }
 }
 
-.spectrum-Tooltip--right,
-.spectrum-Tooltip--end {
+.spectrum-Tooltip--right {
   margin-left: var(--spectrum-tooltip-target-offset);
   &.is-open {
     @inherit: %spectrum-overlay--right--open;
@@ -94,8 +91,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Tooltip--left,
-.spectrum-Tooltip--start {
+.spectrum-Tooltip--left {
   margin-right: var(--spectrum-tooltip-target-offset);
   &.is-open {
     @inherit: %spectrum-overlay--left--open;

@@ -59,9 +59,19 @@ export const CrossOffset50: TooltipTriggerStory = {
 };
 
 export const ContainerPadding50AtEdge: TooltipTriggerStory = {
-  args: {containerPadding: 50},
+  args: {
+    placement: 'start',
+    containerPadding: 50,
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on again. But it just keeps going and going and going and going.</Tooltip>
+    ]
+  },
+  // padding is 231 so that it flips, this is because the tooltip has a width of 180px with the tip + 3px margin on the tooltip + 50px of container padding from this story
+  // anything less than 232px padding on the div will result in a flip, so this is how we can visually test container padding
+  // this uses slightly less than the required padding so that we account for any rounding and have a stable test
   decorators: [(Story) => (
-    <div style={{width: '100%'}}>
+    <div style={{width: '100%', padding: '230px'}}>
       <Story />
     </div>
   )]
