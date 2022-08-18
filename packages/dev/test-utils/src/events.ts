@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+// eslint-disable-next-line monorepo/no-internal-import
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import type {ITypeOpts} from '@testing-library/user-event';
 import userEvent from '@testing-library/user-event';
 
@@ -135,7 +137,7 @@ export function getElementCenter(element: Element) {
  * If target element provided, will drag to center of target element.
  * If both provided, delta will be from center of target element.
  */
-export async function dragAndDrop(element: Element, {delta, to: targetElement, steps = 2, duration = 50, type = 'mouse'}) {
+export async function dragAndDrop(element: Element, {delta, to: targetElement, steps = 1, duration = 0, type = 'mouse'}) {
   if (!delta && !targetElement) {
     throw new Error('Must provide a delta or target element.');
   }
@@ -177,13 +179,19 @@ export async function dragAndDrop(element: Element, {delta, to: targetElement, s
     fireEvent.touchMove(element, current);
   }
 
-  for (let i = 0; i <= steps; i++) {
+  let dataTransfer = new DataTransfer();
+  fireEvent(element, new DragEvent('dragstart', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
+  await act(async () => Promise.resolve());
+
+  for (let i = 0; i < steps; i++) {
     current.clientX += step.x;
     current.clientY += step.y;
 
-    await new Promise(resolve => {
-      setTimeout(resolve, duration / steps);
-    });
+    if (duration !== 0 && steps > 1) {
+      await new Promise(resolve => {
+        setTimeout(resolve, duration / steps);
+      });
+    }
 
     if (type === 'mouse') {
       fireEvent.mouseMove(element, current);
@@ -193,6 +201,8 @@ export async function dragAndDrop(element: Element, {delta, to: targetElement, s
       fireEvent.touchMove(element, current);
     }
 
+    fireEvent(element, new DragEvent('drag', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
+    fireEvent(targetElement, new DragEvent('dragover', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
   }
 
   if (type === 'mouse') {
@@ -202,4 +212,7 @@ export async function dragAndDrop(element: Element, {delta, to: targetElement, s
   } else if (type === 'touch') {
     fireEvent.touchEnd(element, current);
   }
+
+  fireEvent(element, new DragEvent('dragend', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
+  fireEvent(targetElement, new DragEvent('drop', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
 }
