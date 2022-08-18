@@ -12,10 +12,22 @@
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render, within} from '@react-spectrum/test-utils';
 import {StaticField} from '../src';
 
 describe('StaticField', function () {
+  it('renders a label', function () {
+    let {getByText} = render(
+      <StaticField
+        data-testid="test-id"
+        label="Field label"
+        value="test" />
+    );
+
+    let labelText = getByText('Field label');
+    expect(labelText).toBeTruthy();
+  });
+
   it('renders correctly with string value', function () {
     let {getByTestId} = render(
       <StaticField
@@ -26,7 +38,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('test');
   });
 
@@ -40,7 +51,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('wow, cool, and awesome');
   });
 
@@ -54,9 +64,23 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('6/5/2019');
   });
+
+  it('renders correctly with CalendarDate value with user provided format options', function () {
+    let {getByTestId} = render(
+      <StaticField
+        data-testid="test-id"
+        label="Field label"
+        value={new CalendarDate(2019, 6, 5)}
+        formatOptions={{dateStyle: 'long'}} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toHaveTextContent('June 5, 2019');
+  });
+  
 
   it('renders correctly with CalendarDateTime value', function () {
     let {getByTestId} = render(
@@ -68,8 +92,21 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('2/3/2020');
+  });
+
+  it('renders correctly with CalendarDateTime value with user provided format options', function () {
+    let {getByTestId} = render(
+      <StaticField
+        data-testid="test-id"
+        label="Field label"
+        value={new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)}
+        formatOptions={{dateStyle: 'medium', timeStyle: 'medium'}} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toHaveTextContent('Feb 3, 2020, 12:23:24 PM');
   });
 
   it('renders correctly with ZonedDateTime value', function () {
@@ -82,8 +119,21 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('2/3/2020');
+  });
+
+  it('renders correctly with ZonedDateTime value with user provided format options', function () {
+    let {getByTestId} = render(
+      <StaticField
+        data-testid="test-id"
+        label="Field label"
+        value={new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}
+        formatOptions={{dateStyle: 'full', timeStyle: 'short'}} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toHaveTextContent('Tuesday, March 3, 2020 at 3:00 AM');
   });
 
   it('renders correctly with Date value', function () {
@@ -96,8 +146,21 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('6/5/2000');
+  });
+
+  it('renders correctly with Date value with user provided format options', function () {
+    let {getByTestId} = render(
+      <StaticField
+        data-testid="test-id"
+        label="Field label"
+        value={new Date(2000, 5, 5)} 
+        formatOptions={{dateStyle: 'full'}} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toHaveTextContent('Monday, June 5, 2000');
   });
 
   it('renders correctly with Time value', function () {
@@ -111,7 +174,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('9:45 AM');
   });
 
@@ -125,7 +187,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('7/5/2019 – 7/10/2019');
   });
 
@@ -140,7 +201,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('9:45 – 10:45 AM');
   });
 
@@ -154,7 +214,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
   });
 
@@ -168,7 +227,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
   });
 
@@ -182,7 +240,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('6/5/2019 – 7/5/2019');
   });
 
@@ -196,7 +253,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('10');
     
   });
@@ -211,7 +267,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('10 – 20');
   });
 
@@ -240,6 +295,7 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(ref.current).toBe(staticField);
+    expect(within(ref.current).getByText('Field label')).toBeInTheDocument();
   });
 
   it('labelPosition: side supports a ref', function () {
@@ -253,8 +309,9 @@ describe('StaticField', function () {
         value="test" />
     );
 
-    let staticField = getByTestId('test-id').closest('div');
+    let staticField = getByTestId('test-id');
     expect(ref.current).toBe(staticField);
+    expect(within(ref.current).getByText('Field label')).toBeInTheDocument();
   });
 
   it('renders when no visible label is provided', function () {
@@ -266,8 +323,6 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).not.toHaveAttribute('aria-describedby');
     expect(staticField).toHaveTextContent('test');
   });
-
 });

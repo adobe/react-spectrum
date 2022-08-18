@@ -14,8 +14,8 @@ import {useLocale} from './context';
 import {useMemo} from 'react';
 
 /**
- * Provides localized string formatting for the current locale. Automatically updates when the locale changes,
- * and handles caching of the string formatter for performance.
+ * Provides localized list formatting for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the list formatter for performance.
  * @param options - Formatting options.
  */
 

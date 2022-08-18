@@ -23,7 +23,7 @@ export default {
     labelPosition: {
       control: {
         type: 'radio',
-        options: ['top', 'side']
+        options: [null, 'top', 'side']
       }
     },
     labelAlign: {
@@ -42,7 +42,7 @@ export default {
 } as ComponentMeta<typeof StaticField>;
 
 export let Default: StaticFieldStory = {
-  args: {label: 'Test', value: 'This is some sample text'},
+  args: {label: 'Test', value: 'foo '.repeat(20)},
   name: 'String'
 };
 

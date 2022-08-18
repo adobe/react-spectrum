@@ -166,6 +166,10 @@ governing permissions and limitations under the License.
     align-items: first baseline;
   }
 
+  &.spectrum-Field--positionTop { 
+    width: auto;
+  }
+
   .spectrum-FieldLabel.spectrum-FieldLabel {
     padding-top: 0px;
   }
