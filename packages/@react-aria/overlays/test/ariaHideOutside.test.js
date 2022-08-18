@@ -340,7 +340,8 @@ describe('ariaHideOutside', function () {
 
     let revert = ariaHideOutside([rows[1]]);
 
-    // Applies aria-hidden to the first row for TalkBack and to the first row's cell for iOS VO and
+    // Applies aria-hidden to the first row for TalkBack and to the first row's cell for iOS VO
+    // for https://bugs.webkit.org/show_bug.cgi?id=222623
     expect(rows[0]).toHaveAttribute('aria-hidden', 'true');
     expect(cells[0]).toHaveAttribute('aria-hidden', 'true');
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
