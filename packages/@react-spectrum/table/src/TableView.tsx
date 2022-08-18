@@ -21,8 +21,9 @@ import {GridNode} from '@react-types/grid';
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
@@ -46,7 +47,6 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {Nubbin} from './Nubbin';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -559,6 +559,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {state, columnState, headerRowHovered, resizeModeState: [isInResizeMode, setIsInResizeMode]} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {columnHeaderProps} = useTableColumnHeader({

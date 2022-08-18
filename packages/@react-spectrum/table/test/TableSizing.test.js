@@ -324,10 +324,15 @@ describe('TableViewSizing', function () {
 
       it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
         let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
+        let [headerRow, ...bodyRows] = tree.getAllByRole('row');
+        expect(bodyRows).toHaveLength(2);
 
-        for (let row of rows) {
+        for (let [index, cell] of headerRow.childNodes.entries()) {
+          // 4 because there is a checkbox column
+          expect(Number(cell.style.zIndex)).toBe(4 - index + 1);
+        }
+
+        for (let row of bodyRows) {
           for (let [index, cell] of row.childNodes.entries()) {
             if (index === 0) {
               expect(cell.style.zIndex).toBe('2');
