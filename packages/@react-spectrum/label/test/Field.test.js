@@ -12,7 +12,7 @@
 
 import {Field} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import {useField} from '@react-aria/label';
 
 let defaultProps = {
@@ -52,7 +52,16 @@ describe('Field', function () {
     let {getByRole} = renderField({ref});
     let field = getByRole('textbox').closest('div');
 
-    expect(ref.current).toBe(field.parentNode);
+    expect(ref.current).toBe(field);
+  });
+  describe('labelPosition: side', function () {
+    it('supports a ref', function () {
+      let ref = React.createRef();
+      let {getByRole} = renderField({ref, labelPosition: 'side'});
+      let field = getByRole('textbox').closest('div');
+
+      expect(ref.current).toBe(field.parentNode);
+    });
   });
   describe('help text', function () {
     describe('description', function () {

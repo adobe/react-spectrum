@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
@@ -321,11 +321,11 @@ describe('useDrag and useDrop', function () {
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
-        fireEvent(child, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(child, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: droppable}));
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
-        fireEvent(child, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(child, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: droppable}));
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
@@ -1013,6 +1013,70 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer.dropEffect).toBe('none');
         expect(droppable).toHaveAttribute('data-droptarget', 'false');
         expect(onDropEnter).not.toHaveBeenCalled();
+      });
+
+      it('should update drop operation if modifier key is pressed', () => {
+        let onDropEnter = jest.fn();
+        let onDropExit = jest.fn();
+        let onDragEnd = jest.fn();
+        let onDrop = jest.fn();
+        let tree = render(<>
+          <Draggable onDragEnd={onDragEnd} />
+          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+        </>);
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('none');
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('move');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+
+        // Simulate user pressing a modifier key. This changes effectAllowed passed by the browser.
+        // This should result in the dropEffect changing.
+        dataTransfer.effectAllowed = 'copy';
+        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('copy');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropExit).not.toHaveBeenCalled();
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+      });
+
+      it('should update drop operation to cancel if modifier key is pressed that is not allowed', () => {
+        let onDropEnter = jest.fn();
+        let onDropExit = jest.fn();
+        let onDragEnd = jest.fn();
+        let onDrop = jest.fn();
+        let getDropOperation = jest.fn().mockImplementation(() => 'move');
+        let tree = render(<>
+          <Draggable onDragEnd={onDragEnd} />
+          <Droppable getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+        </>);
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('none');
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('move');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+
+        // Simulate user pressing a modifier key. This changes effectAllowed passed by the browser.
+        // getDropOperation only allows move not copy, so drop effect should change to none and onDropExit should be called.
+        dataTransfer.effectAllowed = 'copy';
+        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('none');
+        expect(droppable).toHaveAttribute('data-droptarget', 'false');
+        expect(onDropExit).toHaveBeenCalledTimes(1);
       });
 
       it('should pass file types to getDropOperation', async () => {
@@ -2355,7 +2419,7 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(draggable);
+      expect(document.activeElement).toBe(droppable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Double tap to cancel drag.');
       expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then double tap to drop.');

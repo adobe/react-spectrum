@@ -11,20 +11,20 @@
  */
 
 import {AriaRadioGroupProps} from '@react-types/radio';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes} from 'react';
 import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
-interface RadioGroupAria {
+export interface RadioGroupAria {
   /** Props for the radio group wrapper element. */
-  radioGroupProps: HTMLAttributes<HTMLElement>,
+  radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes
 }
 
 /**

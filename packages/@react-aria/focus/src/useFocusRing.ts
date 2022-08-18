@@ -1,8 +1,9 @@
-import {HTMLAttributes, useCallback, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {isFocusVisible, useFocus, useFocusVisibleListener, useFocusWithin} from '@react-aria/interactions';
+import {useCallback, useState} from 'react';
 import {useRef} from 'react';
 
-interface FocusRingProps {
+export interface AriaFocusRingProps {
   /**
    * Whether to show the focus ring when something
    * inside the container element has focus (true), or
@@ -18,7 +19,7 @@ interface FocusRingProps {
   autoFocus?: boolean
 }
 
-interface FocusRingAria {
+export interface FocusRingAria {
   /** Whether the element is currently focused. */
   isFocused: boolean,
 
@@ -26,7 +27,7 @@ interface FocusRingAria {
   isFocusVisible: boolean,
 
   /** Props to apply to the container element with the focus ring. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: DOMAttributes
 }
 
 /**
@@ -34,7 +35,7 @@ interface FocusRingAria {
  * Focus rings are visible only when the user is interacting with a keyboard,
  * not with a mouse, touch, or other input methods.
  */
-export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
+export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
   let {
     autoFocus = false,
     isTextInput,

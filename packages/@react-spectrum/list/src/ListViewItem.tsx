@@ -27,7 +27,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useContext, useRef} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useListItem, useListSelectionCheckbox} from '@react-aria/list';
+import {useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -59,7 +59,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     isDisabled,
     allowsSelection,
     hasAction
-  } = useListItem({
+  } = useGridListItem({
     node: item,
     isVirtualized: true,
     shouldSelectOnPressUp: isListDraggable
@@ -67,7 +67,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled: !allowsSelection && !hasAction});
 
-  let {checkboxProps} = useListSelectionCheckbox({key: item.key}, state);
+  let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
   let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
 
   let draggableItem: DraggableItemResult;
@@ -250,8 +250,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
             slots={{
               text: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-content']},
               description: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-description'], ...descriptionProps},
-              icon: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-icon'], size: 'M'},
-              image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-image']},
+              illustration: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
+              image: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-thumbnail']},
               actionButton: {UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'], isQuiet: true},
               actionGroup: {
                 UNSAFE_className: listStyles['react-spectrum-ListViewItem-actions'],

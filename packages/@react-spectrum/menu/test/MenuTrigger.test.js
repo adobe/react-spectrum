@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, DEFAULT_LONG_PRESS_TIME, fireEvent, installPointerEvent, render, triggerLongPress, triggerPress, triggerTouch, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
-import {DEFAULT_LONG_PRESS_TIME, triggerLongPress, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -63,8 +61,7 @@ describe('MenuTrigger', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {

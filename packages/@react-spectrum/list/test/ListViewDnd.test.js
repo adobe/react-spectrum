@@ -11,12 +11,11 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -816,6 +815,45 @@ describe('ListView', function () {
           expect(row).toHaveAttribute('tabIndex', '0');
         }
       }
+    });
+
+    it('should support getAllowedDropOperations to limit allowed operations', () => {
+      let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
+      let {getAllByRole, getByText} = render(
+        <DraggableListView dragHookOptions={{getAllowedDropOperations}} />
+        );
+
+      let droppable = getByText('Drop here');
+      let row = getAllByRole('row')[0];
+      let cell = within(row).getByRole('gridcell');
+
+      userEvent.tab();
+      let draghandle = within(cell).getAllByRole('button')[0];
+
+      fireEvent.keyDown(draghandle, {key: 'Enter'});
+      fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(droppable);
+      fireEvent.keyDown(droppable, {key: 'Enter'});
+      fireEvent.keyUp(droppable, {key: 'Enter'});
+
+      expect(getAllowedDropOperations).toHaveBeenCalledTimes(1);
+
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'copy',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
     });
 
     describe('accessibility', function () {

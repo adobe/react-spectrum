@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
@@ -281,7 +281,8 @@ describe('RangeSlider', function () {
 
   describe('mouse interactions', () => {
     beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      // @ts-ignore
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
     beforeAll(() => {

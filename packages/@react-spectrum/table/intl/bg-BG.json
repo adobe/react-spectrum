@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Преоразмеряване на колони",
   "loading": "Зареждане...",
   "loadingMore": "Зареждане на още...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Преоразмеряване на колона",
+  "sortAscending": "Възходящо сортиране",
+  "sortDescending": "Низходящо сортиране "
 }

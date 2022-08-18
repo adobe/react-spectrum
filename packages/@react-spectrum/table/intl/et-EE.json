@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Veeru suuruse muutja",
   "loading": "Laadimine...",
   "loadingMore": "Laadi rohkem...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Muuda veeru suurust",
+  "sortAscending": "Sordi kasvavalt",
+  "sortDescending": "Sordi kahanevalt"
 }

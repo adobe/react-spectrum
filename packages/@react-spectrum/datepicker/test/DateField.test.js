@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render as render_, within} from '@testing-library/react';
+import {act, render as render_, within} from '@react-spectrum/test-utils';
 import {CalendarDate} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';

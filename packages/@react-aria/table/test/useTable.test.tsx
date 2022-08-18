@@ -13,9 +13,8 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {installPointerEvent, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
 import {
   TableCell,
   TableCheckboxCell,
@@ -141,6 +140,32 @@ describe('useTable', () => {
       expect(mockAnnounce).not.toHaveBeenCalled();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenCalledWith(2);
+    });
+  });
+  describe('setting DOM props', () => {
+    it('sets the passed id', () => {
+      let {getByTestId} = render(
+        <Table
+          aria-label="Table with id"
+          data-testid="test-id"
+          id="table-id">
+          <TableHeader columns={columns}>
+            {column => (
+              <Column key={column.uid}>
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
+          <TableBody items={rows}>
+            {item => (
+              <Row>
+                {columnKey => <Cell>{item[columnKey]}</Cell>}
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      );
+      expect(getByTestId('test-id').id).toEqual('table-id');
     });
   });
 });
