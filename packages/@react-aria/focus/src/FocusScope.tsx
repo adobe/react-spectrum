@@ -331,34 +331,13 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
       }
     };
 
-    let onFocusDocument = (e) => {
-      // If focusing an element in a child scope of the currently active scope, the child becomes active.
-      // Moving out of the active scope to an ancestor is not allowed.
-      if (!activeScope || isAncestorScope(activeScope, scopeRef)) {
-        activeScope = scopeRef;
-        focusedNode.current = e.target;
-        onSyntheticFocusDocument(e);
-      } else if (shouldContainFocus(scopeRef) && !isElementInChildScope(e.target, scopeRef)) {
-        // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
-        // restore focus to the previously focused node or the first tabbable element in the active scope.
-        if (focusedNode.current) {
-          focusedNode.current.focus();
-        } else if (activeScope) {
-          focusFirstInScope(activeScope.current);
-        }
-      } else if (shouldContainFocus(scopeRef)) {
-        focusedNode.current = e.target;
-        onSyntheticFocusDocument(e);
-      }
-    };
-
     document.addEventListener('keydown', onKeyDown, false);
-    document.addEventListener('focusin', onFocusDocument, false);
+    document.addEventListener('focusin', onFocus, false);
     scope.forEach(element => element.addEventListener('focusin', onFocus, false));
     scope.forEach(element => element.addEventListener('focusout', onBlur, false));
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
-      document.removeEventListener('focusin', onFocusDocument, false);
+      document.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
