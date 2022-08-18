@@ -725,18 +725,18 @@ describe('ListView', function () {
 
         expect(document.activeElement).toBe(draghandle);
 
-        fireEvent.keyDown(document.body, {key: 'Enter'});
-        fireEvent.keyUp(document.body, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         act(() => jest.runAllTimers());
 
-        fireEvent.keyDown(document.body, {key: 'ArrowDown'});
-        fireEvent.keyUp(document.body, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item Four and Item Five');
 
-        fireEvent.keyDown(document.body, {key: 'Enter'});
-        fireEvent.keyUp(document.body, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
         expect(onDrop).toHaveBeenCalledTimes(1);
@@ -768,20 +768,27 @@ describe('ListView', function () {
 
         userEvent.tab();
 
+        let draghandle = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toBe(draghandle);
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+        act(() => jest.runAllTimers());
+
         userEvent.tab();
+        
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
-        act(() => jest.runAllTimers());
-
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         list1 = getAllByRole('grid')[0];
@@ -828,20 +835,25 @@ describe('ListView', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+        let draghandle = within(list1rows[0]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+        act(() => jest.runAllTimers());
+
         userEvent.tab();
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
-        act(() => jest.runAllTimers());
-
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         list1 = getAllByRole('grid')[0];

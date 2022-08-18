@@ -872,7 +872,7 @@ export function DragIntoItemExample(props) {
 }
 
 export function DragBetweenListsExample(props) {
-  let onDropAction = action('onDrop');
+  let onDrop = chain(action('onDrop'), props.onDrop);
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -943,7 +943,7 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
-        onDropAction(e);
+        onDrop(e);
         onMove(keys, e.target);
       }
     },
