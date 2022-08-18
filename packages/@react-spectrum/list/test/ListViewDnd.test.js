@@ -84,13 +84,13 @@ describe('ListView', function () {
 
     function Reorderable(props) {
       return (
-        <ReorderExample disabledKeys={['1']} onDrop={jest.fn()} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+        <ReorderExample disabledKeys={['1']} onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
       );
     }
 
     function DragBetweenLists(props) {
       return (
-        <DragBetweenListsExample onDrop={jest.fn()} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+        <DragBetweenListsExample onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
       );
     }
 
@@ -358,24 +358,28 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 75});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 75}));
-        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 75}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 75});
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 75}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
-        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 75}));
         expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
 
         rows = getAllByRole('row');
         expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
 
-        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toBe(rows[2]);
       });
 
       it('should allow moving multiple items within a list', async function () {
@@ -400,18 +404,21 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 125});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 125}));
-        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 125}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 125});
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 125}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
-        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 125}));
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
 
-        await act(async () => Promise.resolve());
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
         act(() => jest.runAllTimers());
-
+        await act(async () => Promise.resolve());
         expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
 
         rows = getAllByRole('row');
         expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
@@ -451,14 +458,16 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 200, clientX: 1, clientY: -1});
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
-        fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
 
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-
-        expect(onDrop).toHaveBeenCalledTimes(1);
 
         grid1 = getAllByRole('grid')[0];
         grid2 = getAllByRole('grid')[1];
@@ -662,18 +671,22 @@ describe('ListView', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
+        expect(document.activeElement).toBe(draghandle);
+
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+        act(() => jest.runAllTimers());
+
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item Three and Item Four');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
-        act(() => jest.runAllTimers());
-
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         rows = getAllByRole('row');
@@ -704,21 +717,28 @@ describe('ListView', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+        let draghandle = within(getAllByRole('row')[2]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toBe(draghandle);
 
         fireEvent.keyDown(document.body, {key: 'Enter'});
         fireEvent.keyUp(document.body, {key: 'Enter'});
 
+        act(() => jest.runAllTimers());
+
         fireEvent.keyDown(document.body, {key: 'ArrowDown'});
         fireEvent.keyUp(document.body, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item Four and Item Five');
 
         fireEvent.keyDown(document.body, {key: 'Enter'});
         fireEvent.keyUp(document.body, {key: 'Enter'});
 
         await act(async () => Promise.resolve());
-        act(() => jest.runAllTimers());
-
         expect(onDrop).toHaveBeenCalledTimes(1);
 
         rows = getAllByRole('row');
