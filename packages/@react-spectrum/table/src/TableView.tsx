@@ -22,7 +22,7 @@ import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
@@ -46,6 +46,7 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {Nubbin} from './Nubbin';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -81,7 +82,8 @@ interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
   columnState: TableColumnResizeState<T>,
-  headerRowHovered: boolean
+  headerRowHovered: boolean,
+  resizeModeState: [boolean, (val: boolean) => void]
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -107,13 +109,16 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   }, [scale]);
 
+  let resizeModeState = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let [isInResizeMode, setIsInResizeMode] = resizeModeState;
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  const columnState = useTableColumnResizeState({...props, getDefaultWidth}, state.collection);
+  const columnState = useTableColumnResizeState({...mergeProps(props, {onColumnResizeEnd: () => setIsInResizeMode(false)}), getDefaultWidth}, state.collection);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -306,7 +311,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, []);
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, resizeModeState}}>
       <TableVirtualizer
         {...gridProps}
         {...styleProps}
@@ -345,6 +350,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, ...otherProps}) {
   let {direction} = useLocale();
+  let {columnState, state: tableState, resizeModeState} = useTableContext();
   let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -413,6 +419,14 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     }
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
+  let keysBefore = [];
+  let key = columnState.currentlyResizingColumn;
+  do {
+    keysBefore.push(key);
+    key = tableState.collection.getKeyBefore(key);
+  } while (key != null);
+  let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0);
+
   return (
     <div
       {...mergeProps(otherProps, virtualizerProps)}
@@ -444,6 +458,21 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         onScroll={onScroll}>
         {state.visibleViews[1]}
       </ScrollView>
+      <div
+        aria-hidden
+        className={classNames(styles, 'spectrum-Table-colResizeIndicator')}
+        style={{
+          left: `${resizerPosition}px`,
+          visibility: columnState.currentlyResizingColumn != null ? 'visible' : 'hidden'
+        }}>
+        <div
+          className={classNames(styles, 'spectrum-Table-colResizeNubbin')}
+          style={{
+            visibility: resizeModeState[0] ? 'visible' : 'hidden'
+          }}>
+          <Nubbin />
+        </div>
+      </div>
     </div>
   );
 }
@@ -530,7 +559,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered} = useTableContext();
+  let {state, columnState, headerRowHovered, resizeModeState: [isInResizeMode, setIsInResizeMode]} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -557,6 +586,7 @@ function ResizableTableColumnHeader(props) {
         break;
       case 'resize':
         columnState.onColumnResizeStart(column);
+        setIsInResizeMode(true);
         break;
     }
   };

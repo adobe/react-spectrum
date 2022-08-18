@@ -291,3 +291,8 @@ tbody.spectrum-Table-body {
     }
   }
 }
+
+.spectrum-Table-colResizeIndicator {
+  background-color: var(--spectrum-global-color-blue-400);
+}
+.spectrum-Table-colResizeNubbin {}

@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table {
+  position: relative;
   border-collapse: separate;
   border-spacing: 0;
   outline: none;
@@ -101,10 +102,11 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-columnResizer {
   display: flex;
-  flex: 0 0 auto;
-  justify-content: flex-end;
+  position: absolute;
+  inset-inline-end: -10px;
+  justify-content: center;
   box-sizing: border-box;
-  inline-size: 10px;
+  inline-size: 20px;
   block-size: 100%;
   user-select: none;
 
@@ -123,6 +125,13 @@ svg.spectrum-Table-sortedIcon {
       inline-size: 2px;
     }
   }
+}
+.spectrum-Table-columnResizerPlaceholder {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  inline-size: 10px;
+  block-size: 100%;
+  user-select: none;
 }
 
 .spectrum-Table-cell--alignCenter {
@@ -403,4 +412,18 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-checkbox {
   vertical-align: super;
+}
+
+.spectrum-Table-colResizeIndicator {
+  height: 100%;
+  width: 2px;
+  position: absolute;
+  pointer-events: none;
+}
+.spectrum-Table-colResizeNubbin {
+  position: absolute;
+  top: -6px;
+  width: 16px;
+  height: 16px;
+  inset-inline-start: -7px;
 }

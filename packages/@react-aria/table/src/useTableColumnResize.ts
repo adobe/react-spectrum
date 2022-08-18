@@ -79,9 +79,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         }
       }
     },
-    onMoveEnd() {
+    onMoveEnd({pointerType}) {
       columnResizeWidthRef.current = 0;
       document.body.style.cursor = cursor.current;
+      if (pointerType === 'mouse') {
+        stateRef.current.onColumnResizeEnd(item);
+      }
     }
   });
   let min = Math.floor(stateRef.current.getColumnMinWidth(item.key));

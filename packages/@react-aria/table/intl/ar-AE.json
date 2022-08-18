@@ -6,5 +6,6 @@
   "select": "تحديد",
   "selectAll": "تحديد الكل",
   "sortable": "عمود قابل للترتيب",
-  "resizeTextValue": "{value} pixels"
+  "resizeTextValue": "{value} pixels",
+  "columnSize": "{value} pixels"
 }

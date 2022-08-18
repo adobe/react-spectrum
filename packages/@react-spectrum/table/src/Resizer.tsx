@@ -40,20 +40,27 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   }
 
   return (
-    <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
+    <>
+      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
+        <div
+          role="presentation"
+          style={style}
+          className={classNames(styles, 'spectrum-Table-columnResizer')}
+          {...resizerProps}>
+          <VisuallyHidden>
+            <input
+              ref={ref}
+              type="range"
+              {...inputProps} />
+          </VisuallyHidden>
+        </div>
+      </FocusRing>
+      {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}
       <div
+        aria-hidden
         role="presentation"
-        style={style}
-        className={classNames(styles, 'spectrum-Table-columnResizer')}
-        {...resizerProps}>
-        <VisuallyHidden>
-          <input
-            ref={ref}
-            type="range"
-            {...inputProps} />
-        </VisuallyHidden>
-      </div>
-    </FocusRing>
+        className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')} />
+    </>
   );
 }
 
