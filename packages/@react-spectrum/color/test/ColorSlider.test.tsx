@@ -64,7 +64,7 @@ describe('ColorSlider', () => {
       expect(slider).toHaveAttribute('aria-labelledby');
       expect(slider).not.toHaveAttribute('aria-label');
 
-      let label = document.getElementById(slider.getAttribute('aria-labelledby') as string);
+      let label = document.getElementById(slider.getAttribute('aria-labelledby')!);
       expect(label).toHaveTextContent('Red');
       expect(label).toHaveAttribute('id');
 
@@ -91,7 +91,7 @@ describe('ColorSlider', () => {
       expect(slider).toHaveAttribute('aria-labelledby');
       expect(slider).not.toHaveAttribute('aria-label');
 
-      let label = document.getElementById(slider.getAttribute('aria-labelledby') as string);
+      let label = document.getElementById(slider.getAttribute('aria-labelledby')!);
       expect(label).toHaveTextContent('Test');
       expect(label).toHaveAttribute('id');
 
