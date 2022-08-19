@@ -9579,10 +9579,10 @@ downshift@^6.0.15:
     react-is "^17.0.2"
     tslib "^2.3.0"
 
-dprint-node@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.5.tgz#f658a1545ab86261df3eb2bb69274ff253ababeb"
-  integrity sha512-IQVkYK8KAwonHjEpQZ/YCxmLMhUBKMUKnh5L1glgPz/s9H3mRk6owWzecbuvBkHd1+40mfL7n5olpCgY884QEQ==
+dprint-node@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.6.tgz#a84db2f21673613a2068ebc99bc4768eed930f31"
+  integrity sha512-8EC3DC2yz3UUkzMIsoXFkGRsUR6h085uUOvvzp4GNgRrnT0EYOJHgbKc4640Of6BVP7y/lP1y8XJGP/bVz2GuA==
   dependencies:
     detect-libc "^1.0.3"
 
