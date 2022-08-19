@@ -13,9 +13,9 @@
 import {AriaListBoxProps} from '@react-types/listbox';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {Key, ReactNode, RefObject} from 'react';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
-import {ReactNode, RefObject} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
@@ -52,7 +52,12 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
   /**
    * An optional visual label for the listbox.
    */
-  label?: ReactNode
+  label?: ReactNode,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void
 }
 
 /**
@@ -84,7 +89,8 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
-    isVirtualized: props.isVirtualized
+    isVirtualized: props.isVirtualized,
+    onAction: props.onAction
   });
 
   let {labelProps, fieldProps} = useLabel({
