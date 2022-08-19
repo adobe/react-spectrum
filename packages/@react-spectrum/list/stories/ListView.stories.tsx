@@ -872,7 +872,10 @@ export function DragIntoItemExample(props) {
 }
 
 export function DragBetweenListsExample(props) {
-  let onDrop = chain(action('onDrop'), props.onDrop);
+  let {onDragStart, onDragEnd, onDrop} = props;
+  onDrop = chain(action('onDrop'), onDrop);
+  onDragStart = chain(action('dragStart'), onDragStart);
+  onDragEnd = chain(action('dragEnd'), onDragEnd);
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -918,8 +921,8 @@ export function DragBetweenListsExample(props) {
       getAllowedDropOperationsAction();
       return ['move', 'cancel'];
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart,
+    onDragEnd
   });
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
