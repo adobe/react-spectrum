@@ -4,7 +4,7 @@ import { Illustration, IllustrationPropsWithoutChildren } from "@react-spectrum/
 export default function File(props: IllustrationPropsWithoutChildren) {
   return (
     <Illustration {...props}>
-      <svg width="32" height="32">
+      <svg>
         <path
           fill="var(--spectrum-global-color-static-gray-300)"
           d="M3 29.5C1.6 29.5.5 28.4.5 27V5C.5 3.6 1.6 2.5 3 2.5h10.1c.5 0 1 .2 1.4.6l3.1 3.1c.2.2.4.3.7.3H29c1.4 0 2.5 1.1 2.5 2.5v18c0 1.4-1.1 2.5-2.5 2.5H3z"
