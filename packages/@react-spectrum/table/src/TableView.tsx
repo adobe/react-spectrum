@@ -462,7 +462,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         aria-hidden
         className={classNames(styles, 'spectrum-Table-colResizeIndicator')}
         style={{
-          left: `${resizerPosition}px`,
+          [direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`,
           visibility: columnState.currentlyResizingColumn != null ? 'visible' : 'hidden'
         }}>
         <div
