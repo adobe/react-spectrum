@@ -63,7 +63,7 @@ function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFi
     formatOptions,
     labelPosition,
     labelAlign,
-
+    label,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -80,7 +80,7 @@ function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFi
     <div
       {...filterDOMProps(props)}
       {...styleProps}
-      className={classNames(labelStyles, 'spectrum-StaticField', {[labelWrapperClass]: props.label}, styleProps.className)}
+      className={classNames(labelStyles, 'spectrum-StaticField', {[labelWrapperClass]: label}, styleProps.className)}
       ref={ref}>
       {props.label &&
         <Label
@@ -110,7 +110,7 @@ function StaticField<T extends SpectrumStaticFieldTypes>(props: SpectrumStaticFi
             <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
 
           {typeof value === 'string' && 
-            props.value}
+            value}
         </div>
       </div>
     </div>

@@ -123,7 +123,7 @@ describe('StaticField', function () {
   });
 
   it('renders correctly with ZonedDateTime value with user provided format options', function () {
-    let {getByTestId} = render(
+    let {getByTestId, getByText} = render(
       <StaticField
         data-testid="test-id"
         label="Field label"
@@ -133,7 +133,10 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('Tuesday, March 3, 2020 at 3:00 AM');
+
+    let text = getByText('Tuesday', {exact: false});
+    text = text.textContent;
+    expect(text).toMatch(/Tuesday, March 3, 2020 at \d{1,2}:\d{2} [AP]M/);
   });
 
   it('renders correctly with Date value', function () {

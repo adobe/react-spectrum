@@ -167,7 +167,7 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-Field--positionTop { 
-    width: auto;
+    width: unset;
   }
 
   .spectrum-FieldLabel.spectrum-FieldLabel {
