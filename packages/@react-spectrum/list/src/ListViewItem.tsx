@@ -73,7 +73,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
+    draggableItem = dragHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
