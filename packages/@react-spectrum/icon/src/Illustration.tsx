@@ -58,7 +58,7 @@ export function Illustration(props: IllustrationProps) {
   }
 
   return React.cloneElement(children, {
-    ...filterDOMProps(otherProps, {labelable: true}),
+    ...filterDOMProps(otherProps),
     ...styleProps,
     focusable: 'false',
     'aria-label': ariaLabel,
