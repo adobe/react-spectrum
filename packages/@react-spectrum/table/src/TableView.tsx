@@ -16,6 +16,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -33,7 +34,6 @@ import {TableColumnResizeState, TableState, useTableColumnResizeState, useTableS
 import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
@@ -620,7 +620,7 @@ function ResizableTableColumnHeader(props) {
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
-  let showResizer = headerRowHovered || columnState.currentlyResizingColumn != null;
+  let showResizer = (headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
