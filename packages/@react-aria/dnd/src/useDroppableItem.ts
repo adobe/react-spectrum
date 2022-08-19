@@ -22,7 +22,8 @@ export interface DroppableItemOptions {
 }
 
 export interface DroppableItemResult {
-  dropProps: HTMLAttributes<HTMLElement>
+  dropProps: HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean
 }
 
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
@@ -62,6 +63,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
     dropProps: {
       ...dropProps,
       'aria-hidden': !dragSession || isValidDropTarget ? undefined : 'true'
-    }
+    },
+    isDropTarget
   };
 }

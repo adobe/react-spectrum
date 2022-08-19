@@ -49,12 +49,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-
-  &.is-resizable {
-    &.is-hovered {
-      color: var(--spectrum-table-header-text-color-hover);
-    }
-  }
 }
 
 /* Helper for shared drop target overlay */
@@ -68,7 +62,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cell,
-.spectrum-Table-headCell {
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
   &:focus-ring,
   &.is-focused {
     &::before {
@@ -290,7 +285,7 @@ tbody.spectrum-Table-body {
   }
 
   &:active,
-  &:focus {
+  &:focus-ring {
     &::after {
       background-color: var(--spectrum-global-color-blue-400);
     }
