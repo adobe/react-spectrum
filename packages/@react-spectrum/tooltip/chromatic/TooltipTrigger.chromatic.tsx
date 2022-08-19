@@ -9,40 +9,100 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {ActionButton} from '@react-spectrum/button';
-import {Meta, Story} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {Tooltip, TooltipTrigger} from '../';
 
-const meta: Meta<SpectrumTooltipTriggerProps> = {
+type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
+
+export default {
   title: 'TooltipTrigger',
   component: TooltipTrigger,
+  args: {
+    defaultOpen: true,
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Tooltip message.</Tooltip>
+    ]
+  },
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
     // chromatic needs a bit more time than disableAnimations allows
-    chromatic: {pauseAnimationAtEnd: true}
+    chromatic: {
+      pauseAnimationAtEnd: true
+    }
   }
+} as ComponentMeta<typeof TooltipTrigger>;
+
+export const Default: TooltipTriggerStory = {};
+
+export const PlacementStart: TooltipTriggerStory = {
+  args: {placement: 'start'}
 };
 
-export default meta;
+export const PlacementEnd: TooltipTriggerStory = {
+  args: {placement: 'end'}
+};
 
-const Template = (): Story<SpectrumTooltipTriggerProps> => (args) => (
-  <TooltipTrigger {...args} defaultOpen>
-    <ActionButton>Trigger Tooltip</ActionButton>
-    <Tooltip>
-      Tooltip message.
-    </Tooltip>
-  </TooltipTrigger>
-);
+export const Offset50: TooltipTriggerStory = {
+  args: {offset: 50}
+};
 
+export const CrossOffset50: TooltipTriggerStory = {
+  args: {crossOffset: 50}
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const ContainerPadding50AtEdge: TooltipTriggerStory = {
+  args: {
+    placement: 'start',
+    containerPadding: 50,
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on again. But it just keeps going and going and going and going.</Tooltip>
+    ]
+  },
+  // padding is 231 so that it flips, this is because the tooltip has a width of 180px with the tip + 3px margin on the tooltip + 50px of container padding from this story
+  // anything less than 232px padding on the div will result in a flip, so this is how we can visually test container padding
+  // this uses slightly less than the required padding so that we account for any rounding and have a stable test
+  decorators: [(Story) => (
+    <div style={{width: '100%', padding: '230px'}}>
+      <Story />
+    </div>
+  )]
+};
 
-export const PlacementStart = Template().bind({});
-PlacementStart.args = {...Default.args, placement: 'start'};
+export const ArrowPositioningAtEdge: TooltipTriggerStory = {
+  args: {
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
+    ]
+  },
+  decorators: [(Story) => (
+    <div style={{width: '100%'}}>
+      <Story />
+    </div>
+  )]
+};
 
-export const PlacementEnd = Template().bind({});
-PlacementEnd.args = {...Default.args, placement: 'end'};
+export const PlacementNoFlip: TooltipTriggerStory = {
+  args: {
+    placement: 'start',
+    shouldFlip: false,
+    children: [
+      <ActionButton>Trigger Tooltip</ActionButton>,
+      <Tooltip>Long tooltip message that just goes on and on again.</Tooltip>
+    ]
+  },
+  decorators: [(Story) => (
+    <div style={{width: '100%'}}>
+      <Story />
+    </div>
+  )]
+};
