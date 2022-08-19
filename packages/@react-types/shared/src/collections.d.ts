@@ -128,7 +128,7 @@ export interface Collection<T> extends Iterable<T> {
   getKeys(): Iterable<Key>,
 
   /** Get an item by its key. */
-  getItem(key: Key): T,
+  getItem(key: Key | null): T,
 
   /** Get an item by the index of its key. */
   at(idx: number): T,

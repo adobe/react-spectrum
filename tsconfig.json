@@ -33,6 +33,7 @@
       {
         "name": "typescript-strict-plugin",
         "paths": [
+          "./packages/@react-spectrum/action",
           "./packages/@react-spectrum/button",
         ]
       }
