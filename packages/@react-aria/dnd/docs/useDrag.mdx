@@ -38,11 +38,9 @@ keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
 
 ```tsx example
 import {useDrag} from '@react-aria/dnd';
-import {mergeProps} from '@react-aria/utils';
-import {useButton} from '@react-aria/button';
 
 function Draggable() {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -50,11 +48,8 @@ function Draggable() {
     }
   });
 
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );
@@ -128,8 +123,6 @@ function DropTarget() {
     }
   });
 
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   let message = ['Drop here'];
   if (dropped) {
     message = dropped.map(d => {
@@ -144,7 +137,7 @@ function DropTarget() {
   }
 
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {message}
     </div>
   );
@@ -165,7 +158,7 @@ This example drags two items, each of which contains representations as plain te
 
 ```tsx example
 function Draggable() {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world',
@@ -187,11 +180,9 @@ function Draggable() {
 
   // ...
   ///- begin collapse -///
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
 
   return (
-    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );
@@ -210,12 +201,18 @@ By default, the drag preview shown under the user's pointer or finger is a copy 
 This example renders a custom drag preview which shows the text of the first drag item.
 
 ```tsx example
+/*- begin highlight -*/
 import {DragPreview} from '@react-aria/dnd';
+/*- end highlight -*/
 
 function Draggable() {
+  /*- begin highlight -*/
   let preview = React.useRef(null);
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  /*- end highlight -*/
+  let {dragProps, isDragging} = useDrag({
+    /*- begin highlight -*/
     preview,
+    /*- end highlight -*/
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -223,17 +220,16 @@ function Draggable() {
     }
   });
 
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
   return (
     <>
-      <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+      <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
         Drag me
       </div>
+      {/*- begin highlight -*/}
       <DragPreview ref={preview}>
         {items => <div style={{background: 'green', color: 'white'}}>{items[0]['text/plain']}</div>}
       </DragPreview>
+      {/*- end highlight -*/}
     </>
   );
 }
@@ -260,22 +256,21 @@ This example removes the draggable element from the UI when a move operation is 
 ```tsx example
 function Draggable() {
   let [moved, setMoved] = React.useState(false);
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
       }];
     },
+    /*- begin highlight -*/
     onDragEnd(e) {
       if (e.dropOperation === 'move') {
         setMoved(true);
       }
     }
+    /*- end highlight -*/
   });
-  ///- begin collapse -///
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-  ///- end collapse -///
+
   if (moved) {
     return null;
   }
@@ -283,7 +278,7 @@ function Draggable() {
   // ...
   ///- begin collapse -///
   return (
-    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );
@@ -299,24 +294,24 @@ The drag source can also control which drop operations are allowed for the data.
 
 ```tsx example
 function Draggable() {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
       }];
     },
+    /*- begin highlight -*/
     getAllowedDropOperations() {
       return ['copy'];
     }
+    /*- end highlight -*/
   });
 
   // ...
   ///- begin collapse -///
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
 
   return (
-    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+    <div {...dragProps} className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );
@@ -330,13 +325,18 @@ function Draggable() {
 
 ## Drag affordance
 
-The examples above apply `dragProps` (used for traditional pointer-based drag and drop), and `dragButtonProps` (used for accessible keyboard-base drag and drop) to the same element. This means the draggable element is focusable, and represented semantically as a button.
+In cases where a draggable element has other interactions that conflict with accessible drag and drop (e.g. <Keyboard>Enter</Keyboard> key), or if the element is not focusable, an explicit drag affordance can be added. This acts as a button that keyboard and screen reader users can use to activate drag and drop.
 
-However, there are cases where this is not possible. Buttons do not support nested interactive elements, so if you have a case where a draggable element must contain interactive elements such as buttons, text fields, checkboxes, etc., then the drag button can be split into a separate element. This is often represented as a visual affordance for dragging. The full element remains draggable via mouse or touch, but keyboard and screen reader accessible drag and drop is accomplished using this affordance instead.
+When the `hasDragButton` option is enabled, the keyboard interactions are moved from the returned `dragProps` to the `dragButtonProps` so that they can be applied to a separate element, while the mouse and touch dragging interactions remain in `dragProps`.
 
 ```tsx example
+import {useButton} from '@react-aria/button';
+
 function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
+    /*- begin highlight -*/
+    hasDragButton: true,
+    /*- end highlight -*/
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -344,12 +344,16 @@ function Draggable() {
     }
   });
 
+  /*- begin highlight -*/
   let ref = React.useRef();
   let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
+  /*- end highlight -*/
 
   return (
     <div {...dragProps} className={`draggable ${isDragging ? 'dragging' : ''}`} style={{display: 'inline-flex', alignItems: 'center', gap: 5}}>
+      {/*- begin highlight -*/}
       <span {...buttonProps} aria-label="Drag" ref={ref} style={{fontSize: 18}}>≡</span>
+      {/*- end highlight -*/}
       <span>Some text</span>
       <button onClick={() => alert('action')}>Action</button>
     </div>

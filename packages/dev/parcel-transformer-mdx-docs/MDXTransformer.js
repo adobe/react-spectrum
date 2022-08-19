@@ -311,9 +311,9 @@ module.exports = new Transformer({
                 }
 
                 // Remove extra newline after starting comment, but keep indentation.
-                if (highlightedNodes[0].type === 'text' && /^\s+$/.test(highlightedNodes[0].value)) {
+                if (highlightedNodes[0].type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
                   let node = highlightedNodes[0];
-                  node.value = node.value.replace(/^\s*\n+(\s*)$/, '$1');
+                  node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
                 }
 
                 // Remove opening brace from JSX-style ending comments.

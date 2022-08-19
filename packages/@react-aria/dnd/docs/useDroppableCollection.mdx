@@ -468,3 +468,163 @@ function ListBox(props) {
 ```
 
 </details>
+
+## Reordering
+
+Drag and drop can be combined in the same collection component to allow reordering items. This example builds on the [dropping between items](#dropping-between-items) example above to add support for dragging items as well. This is done using the `useDraggableCollectionState` and `useDraggableItem` hooks. See the [docs](useDraggableCollection.html) for more details on these hooks.
+
+```tsx example export=true render=false
+import {useDraggableCollectionState} from '@react-stately/dnd';
+import {useDraggableItem} from '@react-aria/dnd';
+
+function ReorderableListBox(props) {
+  // See useListBox docs for more details.
+  let state = useListState(props);
+  let ref = React.useRef();
+  let { listBoxProps } = useListBox({
+    ...props,
+    ///- begin highlight -///
+    shouldSelectOnPressUp: true
+    ///- end highlight -///
+  }, state, ref);
+
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getDropOperation: props.getDropOperation,
+  });
+
+  let {collectionProps} = useDroppableCollection({
+    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
+    onDrop: props.onDrop
+  }, dropState, ref);
+
+  ///- begin highlight -///
+  // Setup drag state for the collection.
+  let dragState = useDraggableCollectionState({
+    ...props,
+    // Collection and selection manager come from list state.
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    // Provide data for each dragged item. This function could
+    // also be provided by the user of the component.
+    getItems: props.getItems || ((keys) => {
+      return [...keys].map(key => {
+        let item = state.collection.getItem(key);
+
+        return {
+          'text/plain': item.textValue
+        };
+      });
+    }),
+  });
+  ///- end highlight -///
+
+  return (
+    <ul
+      {...mergeProps(listBoxProps, collectionProps)}
+      ref={ref}>
+      {[...state.collection].map((item) => (
+        <ReorderableOption
+          key={item.key}
+          item={item}
+          state={state}
+          dragState={dragState}
+          dropState={dropState}
+        />
+      ))}
+    </ul>
+  );
+}
+
+function ReorderableOption({ item, state, dragState, dropState }) {
+  ///- begin collapse -///
+  let ref = React.useRef();
+  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { isFocusVisible, focusProps } = useFocusRing();
+
+  let {dropProps, isDropTarget} = useDroppableItem({
+    target: {type: 'item', key: item.key, dropPosition: 'on'}
+  }, dropState, ref);
+  ///- end collapse -///
+  // ...
+
+  ///- begin highlight -///
+  // Register the item as a drag source.
+  let {dragProps} = useDraggableItem({
+    key: item.key
+  }, dragState);
+  ///- end highlight -///
+
+  return (
+    <>
+      <DropIndicator
+        target={{type: 'item', key: item.key, dropPosition: 'before'}}
+        dropState={dropState} />
+      <li
+        ///- begin highlight -///
+        {...mergeProps(optionProps, dragProps, dropProps, focusProps)}
+        ///- end highlight -///
+        ref={ref}
+        className={`option ${isFocusVisible ? 'focus-visible' : ''} ${isDropTarget ? 'drop-target' : ''}`}>
+        {item.rendered}
+      </li>
+      {state.collection.getKeyAfter(item.key) == null &&
+        <DropIndicator
+          target={{type: 'item', key: item.key, dropPosition: 'after'}}
+          dropState={dropState} />
+      }
+    </>
+  );
+}
+```
+
+Now, we can render an example ListBox, which allows the user to reorder items.
+
+```tsx example
+import {useListData} from '@react-stately/data';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'},
+      {id: 3, name: 'Kangaroo'},
+      {id: 4, name: 'Panda'},
+      {id: 5, name: 'Snake'}
+    ]
+  });
+
+  let draggedKeys = React.useRef(null);
+  let onDragStart = e => {
+    draggedKeys.current = [...e.keys];
+  };
+
+  let onDragEnd = e => {
+    draggedKeys.current = null;
+  };
+
+  let onDrop = async e => {
+    if (e.target.dropPosition === 'before') {
+      list.moveBefore(e.target.key, draggedKeys.current);
+    } else if (e.target.dropPosition === 'after') {
+      list.moveAfter(e.target.key, draggedKeys.current);
+    }
+  };
+
+  return (
+    <ReorderableListBox
+      aria-label="Favorite animals"
+      selectionMode="multiple"
+      selectionBehavior="replace"
+      items={list.items}
+      getDropOperation={target => draggedKeys.current && target.type === 'item' && target.dropPosition !== 'on' ? 'move' : 'cancel'}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDrop={onDrop}>
+      {item => <Item>{item.name}</Item>}
+    </ReorderableListBox>
+  );
+}
+```
