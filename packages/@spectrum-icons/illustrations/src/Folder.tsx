@@ -1,5 +1,5 @@
+import {Illustration, IllustrationPropsWithoutChildren} from "@react-spectrum/icon";
 import React from "react";
-import { Illustration, IllustrationPropsWithoutChildren } from "@react-spectrum/icon";
 
 export default function File(props: IllustrationPropsWithoutChildren) {
   return (
