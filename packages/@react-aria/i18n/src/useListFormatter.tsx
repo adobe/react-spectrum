@@ -10,9 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {useLocale} from './context';
+import {useMemo} from 'react';
 
-export {Field} from './Field';
-export {Label} from './Label';
-export {HelpText} from './HelpText';
-export {StaticField} from './StaticField';
+/**
+ * Provides localized list formatting for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the list formatter for performance.
+ * @param options - Formatting options.
+ */
+
+// Typescript version 4.7 supports Intl.ListFormat - TODO upgrade
+// @ts-ignore
+export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {
+  let {locale} = useLocale();
+  // @ts-ignore
+  return useMemo(() => new Intl.ListFormat(locale, options), [locale, options]);
+}
