@@ -1,7 +1,7 @@
-import {Illustration, IllustrationProps} from '@react-spectrum/icon';
+import {Illustration, IllustrationPropsWithoutChildren} from '@react-spectrum/icon';
 import React from 'react';
 
-export default function Error504(props: IllustrationProps) {
+export default function Error504(props: IllustrationPropsWithoutChildren) {
   return (
     <Illustration {...props}>
       <svg width="137" height="94">

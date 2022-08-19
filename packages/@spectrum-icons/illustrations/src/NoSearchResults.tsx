@@ -1,7 +1,7 @@
-import {Illustration, IllustrationProps} from "@react-spectrum/icon";
+import {Illustration, IllustrationPropsWithoutChildren} from "@react-spectrum/icon";
 import React from "react";
 
-export default function NoSearchResults(props: IllustrationProps) {
+export default function NoSearchResults(props: IllustrationPropsWithoutChildren) {
   return (
     <Illustration {...props}>
       <svg xmlns="http://www.w3.org/2000/svg" width="99.039" height="94.342">
