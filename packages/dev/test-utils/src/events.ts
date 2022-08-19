@@ -121,4 +121,3 @@ export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
     skipClick = true;
   }
 }
-
