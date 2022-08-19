@@ -11,8 +11,6 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-// eslint-disable-next-line monorepo/no-internal-import
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import type {ITypeOpts} from '@testing-library/user-event';
 import userEvent from '@testing-library/user-event';
 
