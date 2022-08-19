@@ -1716,7 +1716,7 @@ export function TableWithBreadcrumbs() {
   );
 }
 
-function DeletableRowsTable() {
+export function DeletableRowsTable() {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},

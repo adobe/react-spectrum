@@ -27,7 +27,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
-import {TableWithBreadcrumbs} from '../stories/Table.stories';
+import {DeletableRowsTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -1552,6 +1552,30 @@ describe('TableView', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+
+      it('should send focus to the collection if the focused row is removed', function () {
+        let tree = render(<DeletableRowsTable />);
+
+        let rows = tree.getAllByRole('row');
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(rows[1]);
       });
     });
 
@@ -3336,7 +3360,7 @@ describe('TableView', function () {
       expect(cells[1]).toHaveTextContent('Feb 3');
     });
 
-    it.only('can remove items', function () {
+    it('can remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
