@@ -16,11 +16,10 @@ import {ColorField} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {useColor} from '@react-stately/color/src/useColor';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {parseColor} from '@react-stately/color';
-import {useColor} from '@react-stately/color/src/useColor';
 
 storiesOf('ColorField', module)
   .add(
