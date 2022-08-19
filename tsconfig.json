@@ -34,6 +34,7 @@
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@react-spectrum/button",
+          "./packages/@react-spectrum/color",
         ]
       }
     ]

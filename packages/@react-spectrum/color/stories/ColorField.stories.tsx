@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Color} from '@react-types/color';
+import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
@@ -19,6 +19,8 @@ import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {parseColor} from '@react-stately/color';
+import {useColor} from '@react-stately/color/src/useColor';
 
 storiesOf('ColorField', module)
   .add(
@@ -119,9 +121,10 @@ storiesOf('ColorField', module)
     )
   );
 
-function ControlledColorField(props: any = {}) {
-  let [color, setColor] = useState(props.value || null);
-  let onChange = (color: Color) => {
+function ControlledColorField(props: SpectrumColorFieldProps) {
+  let controlledColor = useColor(props.value);
+  let [color, setColor] = useState<Color | null | undefined>(controlledColor);
+  let onChange = (color: Color | null) => {
     setColor(color);
     if (props.onChange) { props.onChange(color); }
   };
