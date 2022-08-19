@@ -11,10 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
+import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 export interface IllustrationProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
@@ -63,11 +62,6 @@ export function Illustration(props: IllustrationProps) {
     focusable: 'false',
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
-    role: hasLabel ? 'img' : undefined,
-    className: classNames(
-      styles,
-      children.props.className,
-      'spectrum-Illustration',
-      styleProps.className)
+    role: hasLabel ? 'img' : undefined
   });
 }
