@@ -24,7 +24,6 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
-import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
@@ -154,8 +153,12 @@ Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<Action
 to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
 
 ```tsx example
+import File from '@spectrum-icons/illustrations/File';
+import Folder from '@spectrum-icons/illustrations/Folder';
+
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
+    <Folder />
     <Text>Utilities</Text>
     <Text slot="description">16 items</Text>
     <ActionMenu>
@@ -187,6 +190,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
     </ActionMenu>
   </Item>
   <Item key="3" textValue="readme">
+    <File />
     <Text>readme.txt</Text>
     <Text slot="description">TXT</Text>
     <ActionMenu>
@@ -201,6 +205,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
     </ActionMenu>
   </Item>
   <Item key="4" textValue="Onboarding">
+    <File />
     <Text>Onboarding</Text>
     <Text slot="description">PDF</Text>
     <ActionMenu>
@@ -608,6 +613,7 @@ function DragIntoListFilesOnly() {
         dropHooks={dropHooks}>
         {item => (
           <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
             {item.type === 'folder' &&
               <>
@@ -723,6 +729,7 @@ function ReorderableList() {
       dropHooks={dropHooks}>
       {item => (
         <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          {item.type === 'folder' && <Folder />}
           <Text>{item.name}</Text>
           {item.type === 'folder' &&
             <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
