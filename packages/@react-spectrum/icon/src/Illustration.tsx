@@ -53,6 +53,10 @@ export function Illustration(props: IllustrationProps) {
 
   let hasLabel = props['aria-label'] || props['aria-labelledby'];
 
+  if (!ariaHidden) {
+    ariaHidden = undefined;
+  }
+
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps, {labelable: true}),
     ...styleProps,
