@@ -43,7 +43,17 @@
           "./packages/@react-spectrum/statuslight",
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
-          "./packages/@react-spectrum/well"
+          "./packages/@react-spectrum/well",
+          "./packages/@react-types/button",
+          "./packages/@react-types/checkbox",
+          "./packages/@react-types/divider",
+          "./packages/@react-types/illustratedmessage",
+          "./packages/@react-types/image",
+          "./packages/@react-types/meter",
+          "./packages/@react-types/statuslight",
+          "./packages/@react-types/text",
+          "./packages/@react-types/view",
+          "./packages/@react-types/well"
         ]
       }
     ]
