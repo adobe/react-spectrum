@@ -54,10 +54,8 @@ function DropTarget() {
     }
   });
 
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {dropped || 'Drop here'}
     </div>
   );
@@ -110,11 +108,9 @@ The `Draggable` component used above is defined below. See [useDrag](useDrag.htm
 
 ```tsx example render=false export=true
 import {useDrag} from '@react-aria/dnd';
-import {mergeProps} from '@react-aria/utils';
-import {useButton} from '@react-aria/button';
 
 function Draggable() {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world',
@@ -123,11 +119,8 @@ function Draggable() {
     }
   });
 
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dragProps, buttonProps)} ref={ref} className={`draggable ${isDragging ? 'dragging' : ''}`}>
+    <div {...dragProps} role="button" tabIndex={0} className={`draggable ${isDragging ? 'dragging' : ''}`}>
       Drag me
     </div>
   );
@@ -156,20 +149,20 @@ function DropTarget() {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
+    /*- begin highlight -*/
     async onDrop(e) {
       let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type'));
       if (item) {
         setDropped(await item.getText('my-app-custom-type'));
       }
     }
+    /*- end highlight -*/
   });
 
   // ...
   ///- begin collapse -///
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {dropped || 'Drop here'}
     </div>
   );
@@ -193,18 +186,18 @@ function DropTarget() {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
+    /*- begin highlight -*/
     async onDrop(e) {
       let item = e.items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'));
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
       }
     }
+    /*- end highlight -*/
   });
 
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {file ? <img src={file} style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Drop image here'}
     </div>
   );
@@ -228,6 +221,7 @@ function DropTarget() {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
+    /*- begin highlight -*/
     async onDrop(e) {
       // Find the first dropped item that is a directory.
       let dir = e.items.find(item => item.kind === 'directory');
@@ -243,6 +237,7 @@ function DropTarget() {
         setFiles(files);
       }
     }
+    /*- end highlight -*/
   });
 
   let contents = 'Drop directory here';
@@ -259,9 +254,8 @@ function DropTarget() {
     );
   }
 
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`}>
       {contents}
     </div>
   );
@@ -335,9 +329,11 @@ function DropTarget() {
   let ref = React.useRef();
   let {dropProps, isDropTarget} = useDrop({
     ref,
+    /*- begin highlight -*/
     getDropOperation(types, allowedOperations) {
       return types.has('image/png') ? 'copy' : 'cancel';
     },
+    /*- end highlight -*/
     async onDrop(e) {
       let item = e.items.find(item => item.kind === 'file' && item.type === 'image/png');
       if (item) {
@@ -348,10 +344,8 @@ function DropTarget() {
 
   // ...
 ///- begin collapse -///
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   return (
-    <div {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
       {file ? <img src={file} style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Drop image here'}
     </div>
   );
@@ -375,6 +369,7 @@ function DropTarget(props) {
       }
 
       let data = JSON.parse(await item.getText('my-app-file'));
+      /*- begin highlight -*/
       switch (e.dropOperation) {
         case 'move':
           MyAppFileService.move(data.filePath, props.filePath);
@@ -386,6 +381,7 @@ function DropTarget(props) {
           MyAppFileService.link(data.filePath, props.filePath);
           break;
       }
+      /*- end highlight -*/
     }
   });
 
@@ -417,10 +413,8 @@ function DropTarget() {
     onDrop: onEvent
   });
 
-  let {buttonProps} = useButton({elementType: 'div'}, ref);
-
   return (
-    <ul {...mergeProps(dropProps, buttonProps)} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto'}}>
+    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto'}}>
       {events.map((e, i) => <li key={i}>{e}</li>)}
     </ul>
   );

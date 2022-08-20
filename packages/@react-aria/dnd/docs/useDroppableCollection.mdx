@@ -157,6 +157,11 @@ function Option({ item, state, dropState }) {
   border: 1px solid gray;
   max-width: 250px;
   outline: none;
+  min-height: 50px;
+}
+
+[role=listbox]:empty {
+  border-style: dashed;
 }
 
 .option {
@@ -401,7 +406,7 @@ function Example() {
 
 To add support for dropping on the collection as a whole, an additional `DropIndicator` can be rendered at the start of the list, representing the `root` target. The `isDropTarget` method of the state object can be used to apply a class to the list when the root target is active.
 
-```tsx example
+```tsx example export=true
 function ListBox(props) {
   ///- begin collapse -///
   let state = useListState(props);
@@ -627,4 +632,294 @@ function Example() {
     </ReorderableListBox>
   );
 }
+```
+
+## Drop data
+
+`useDroppableCollection` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+### Text
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below finds the first available item that includes a custom app-specific type. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'},
+      {id: 3, name: 'Kangaroo'}
+    ]
+  });
+
+  let onDrop = async e => {
+    /*- begin highlight -*/
+    let dragItem = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type'));
+    if (!dragItem) {
+      return;
+    }
+
+    let value = JSON.parse(await dragItem.getText('my-app-custom-type'));
+    let item = {id: list.items.length + 1, name: value.message};
+    /*- end highlight -*/
+
+    if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, item);
+    } else if (e.target.dropPosition === 'after') {
+      list.insertAfter(e.target.key, item);
+    }
+  };
+
+  return (
+    <>
+      <Draggable>Octopus</Draggable>
+      <ListBox aria-label="Favorite animals" selectionMode="single" items={list.items} getDropOperation={target => target.type === 'item' && target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+    </>
+  );
+}
+```
+
+### Files
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
+
+```tsx example
+function Example() {
+  let list = useListData({});
+  let onDrop = async e => {
+    /*- begin highlight -*/
+    let items = await Promise.all(
+      e.items
+        .filter(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'))
+        .map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+    );
+    /*- end highlight -*/
+
+    if (e.target.type === 'root') {
+      list.prepend(...items);
+    } else if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      list.insertAfter(e.target.key, ...items);
+    }
+  };
+
+  return (
+    <ListBox aria-label="Images" items={list.items} getDropOperation={target => target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+      {item => (
+        <Item>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </Item>
+      )}
+    </ListBox>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.image-item {
+  display: flex;
+  height: 50px;
+  gap: 10px;
+}
+
+.image-item img {
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+### Directories
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in teh directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} />, and you can access the contents of each file as discussed above.
+
+This example accepts directory drops over the whole collection, and renders the contents as items in the list.
+
+```tsx example
+import File from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
+
+function Example() {
+  let [files, setFiles] = React.useState([]);
+  let onDrop = async e => {
+    // Find the first dropped item that is a directory.
+    let dir = e.items.find(item => item.kind === 'directory');
+    if (dir) {
+      /*- begin highlight -*/
+      // Read entries in directory and update state with relevant info.
+      let files = [];
+      for await (let entry of dir.getEntries()) {
+        files.push({
+          name: entry.name,
+          kind: entry.kind
+        });
+      }
+      setFiles(files);
+      /*- end highlight -*/
+    }
+  };
+
+  return (
+    <ListBox aria-label="Directory contents" items={files} getDropOperation={target => target.type === 'root' ? 'copy' : 'cancel'} onDrop={onDrop}>
+      {item => (
+        <Item key={item.name}>
+          <div className="dir-item">
+            {item.kind === 'directory' ? <Folder /> : <File />}
+            <span>{item.name}</span>
+          </div>
+        </Item>
+      )}
+    </ListBox>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dir-item {
+  flex: 0 0 auto;
+}
+
+.dir-item {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+```
+
+</details>
+
+## Drop operations
+
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+
+The drag source can specify which drop operations are allowed for the dragged data (see the [useDrag docs](useDrag.html) for how to customize this). By default, the first allowed operation is allowed by drop targets, meaning that the drop target accepts data of any type and operation.
+
+### getDropOperation
+
+The `getDropOperation` function passed to `useDroppableCollection` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement `getDropOperation` and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true.
+
+When the data is supported, either return one of the drop operations in `allowedOperation` or a specific drop operation if only that drop operation is supported. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx example
+function Example() {
+  ///- begin collapse -///
+  let list = useListData({});
+  let onDrop = async e => {
+    let items = await Promise.all(
+      e.items
+        .filter(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'))
+        .map(async item => ({
+          id: Math.random(),
+          url: URL.createObjectURL(await item.getFile()),
+          name: item.name
+        }))
+    );
+
+    if (e.target.type === 'root') {
+      list.prepend(...items);
+    } else if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      list.insertAfter(e.target.key, ...items);
+    }
+  };
+  ///- end collapse -///
+  // ...
+
+  return (
+    <ListBox
+      aria-label="Images"
+      items={list.items}
+      /*- begin highlight -*/
+      getDropOperation={(target, types) => types.has('image/png') && target.dropPosition !== 'on' ? 'copy' : 'cancel'}
+      /*- end highlight -*/
+      onDrop={onDrop}>
+      {item => (
+        <Item>
+          <div className="image-item">
+            <img src={item.url} />
+            <span>{item.name}</span>
+          </div>
+        </Item>
+      )}
+    </ListBox>
+  );
+}
+```
+
+### onDrop
+
+The `onDrop` event also includes the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+let onDrop = async (e) => {
+  let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-file'));
+  if (!item) {
+    return;
+  }
+
+  let data = JSON.parse(await item.getText('my-app-file'));
+  /*- begin highlight -*/
+  switch (e.dropOperation) {
+    case 'move':
+      MyAppFileService.move(data.filePath, props.filePath);
+      break;
+    case 'copy':
+      MyAppFileService.copy(data.filePath, props.filePath);
+      break;
+    case 'link':
+      MyAppFileService.link(data.filePath, props.filePath);
+      break;
+  }
+  /*- end highlight -*/
+};
 ```

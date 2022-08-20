@@ -131,10 +131,38 @@ module.exports = new Transformer({
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',
-                children: [
+                children: [],
+                attributes: [
                   {
-                    type: 'text',
-                    value: node.value
+                    type: 'mdxJsxAttribute',
+                    name: 'dangerouslySetInnerHTML',
+                    value: {
+                      type: 'mdxJsxAttributeValueExpression',
+                      value: JSON.stringify({__html: node.value}),
+                      data: {
+                        estree: {
+                          type: 'Program',
+                          body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'ObjectExpression',
+                              properties: [{
+                                type: 'Property',
+                                kind: 'init',
+                                key: {
+                                  type: 'Identifier',
+                                  name: '__html'
+                                },
+                                value: {
+                                  type: 'Literal',
+                                  value: node.value
+                                }
+                              }]
+                            }
+                          }]
+                        }
+                      }
+                    }
                   }
                 ]
               }
