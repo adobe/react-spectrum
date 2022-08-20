@@ -45,12 +45,13 @@ export function Illustration(props: IllustrationProps) {
   let {
     children,
     'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     'aria-hidden': ariaHidden,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  let hasLabel = props['aria-label'] || props['aria-labelledby'];
+  let hasLabel = ariaLabel || ariaLabelledby;
 
   if (!ariaHidden) {
     ariaHidden = undefined;
@@ -61,6 +62,7 @@ export function Illustration(props: IllustrationProps) {
     ...styleProps,
     focusable: 'false',
     'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     'aria-hidden': ariaHidden,
     role: hasLabel ? 'img' : undefined
   });
