@@ -1,6 +1,6 @@
 import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
-import {createContext, HTMLAttributes, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -9,6 +9,11 @@ import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {useCollection} from './Collection';
+import {useResizeObserver} from '@react-aria/utils';
+
+interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label'> {
+  children: ReactNode
+}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -17,17 +22,21 @@ interface SelectValueContext {
 
 const SelectContext = createContext<SelectValueContext>(null);
 
-export function Select<T extends object>(props: AriaSelectProps<T>) {
+export function Select<T extends object>(props: SelectProps<T>) {
   let [listBoxProps, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
 
-  let {portal, collection} = useCollection(listBoxProps);
+  let {portal, collection} = useCollection({
+    items: props.items ?? listBoxProps.items,
+    children: listBoxProps.children
+  });
   let state = useSelectState({
     ...props,
-    collection
+    collection,
+    children: null
   });
 
   // Get props for child elements from useSelect
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement>(null);
   let [labelRef, label] = useSlot();
   let {
     labelProps,
@@ -36,13 +45,32 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
     menuProps
   } = useSelect({...props, label}, state, ref);
 
+  // Make menu width match input + button
+  let [buttonWidth, setButtonWidth] = useState(null);
+  let onResize = useCallback(() => {
+    if (ref.current) {
+      setButtonWidth(ref.current.offsetWidth + 'px');
+    }
+  }, [ref]);
+
+  useResizeObserver({
+    ref,
+    onResize: onResize
+  });
+
   return (
     <Provider
       values={[
         [SelectContext, {state, valueProps}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref}],
-        [PopoverContext, {state, triggerRef: ref, preserveChildren: true}],
+        [ButtonContext, {...triggerProps, ref, isPressed: state.isOpen}],
+        [PopoverContext, {
+          state,
+          triggerRef: ref,
+          preserveChildren: true,
+          placement: 'bottom start',
+          style: {'--button-width': buttonWidth} as React.CSSProperties
+        }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}]
       ]}>
       {props.children}
@@ -50,13 +78,23 @@ export function Select<T extends object>(props: AriaSelectProps<T>) {
       <HiddenSelect
         state={state}
         triggerRef={ref}
-        label={props.label}
+        label={label}
         name={props.name} />
     </Provider>
   );
 }
 
-interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<{selectedItem: ReactNode}> {}
+export interface SelectValueRenderProps {
+  /**
+   * Whether the value is a placeholder.
+   * @selector [data-placeholder]
+   */
+  isPlaceholder: boolean,
+  /** The rendered value of the currently selected item. */
+  selectedItem: ReactNode
+}
+
+interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
 export function SelectValue(props: SelectValueProps) {
   let {state, valueProps} = useContext(SelectContext);
@@ -64,11 +102,12 @@ export function SelectValue(props: SelectValueProps) {
     ...props,
     defaultChildren: state.selectedItem?.rendered || 'Select an item',
     values: {
-      selectedItem: state.selectedItem?.rendered
+      selectedItem: state.selectedItem?.rendered,
+      isPlaceholder: !state.selectedItem
     }
   });
 
   return (
-    <span {...valueProps} {...renderProps} />
+    <span {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined} />
   );
 }

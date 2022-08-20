@@ -52,15 +52,14 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   state);
 
   // Make menu width match input + button
-  // TODO: should this be optional?
   let [menuWidth, setMenuWidth] = useState(null);
   let onResize = useCallback(() => {
-    if (buttonRef.current && inputRef.current) {
-      let buttonRect = buttonRef.current.getBoundingClientRect();
+    if (inputRef.current) {
+      let buttonRect = buttonRef.current?.getBoundingClientRect();
       let inputRect = inputRef.current.getBoundingClientRect();
-      let minX = Math.min(buttonRect.left, inputRect.left);
-      let maxX = Math.max(buttonRect.right, inputRect.right);
-      setMenuWidth(maxX - minX);
+      let minX = buttonRect ? Math.min(buttonRect.left, inputRect.left) : inputRect.left;
+      let maxX = buttonRect ? Math.max(buttonRect.right, inputRect.right) : inputRect.right;
+      setMenuWidth((maxX - minX) + 'px');
     }
   }, [buttonRef, inputRef, setMenuWidth]);
 
@@ -75,7 +74,15 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef}],
         [InputContext, {...inputProps, ref: inputRef}],
-        [PopoverContext, {state, ref: popoverRef, triggerRef: inputRef, placement: 'bottom start', preserveChildren: true, isNonModal: true, style: {width: menuWidth}}],
+        [PopoverContext, {
+          state,
+          ref: popoverRef,
+          triggerRef: inputRef,
+          placement: 'bottom start',
+          preserveChildren: true,
+          isNonModal: true,
+          style: {'--combobox-width': menuWidth} as React.CSSProperties
+        }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}]
       ]}>
       {props.children}

@@ -37,7 +37,7 @@ export function StateTable({properties}) {
             </td>
             <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="CSS Selector">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
-                <span className="token hljs-string" style={{whiteSpace: 'nowrap'}}>{prop.selector}</span>
+                <span className={prop.selector ? 'token hljs-string' : null} style={{whiteSpace: 'nowrap'}}>{prop.selector || '—'}</span>
               </code>
             </td>
             <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>

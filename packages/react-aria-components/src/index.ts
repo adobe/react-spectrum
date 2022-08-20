@@ -24,3 +24,4 @@ export {useContextProps} from './utils';
 
 export type {ItemStates} from './Collection';
 export type {ButtonRenderProps} from './Button';
+export type {SelectValueRenderProps} from './Select';
