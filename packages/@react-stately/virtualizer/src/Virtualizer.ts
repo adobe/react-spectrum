@@ -12,7 +12,7 @@
 
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection} from '@react-types/shared';
-import {concatIterators, difference} from './utils';
+import {concatIterators, difference, isSetEqual} from './utils';
 import {
   InvalidationContext,
   ScrollAnchor,
@@ -235,28 +235,43 @@ export class Virtualizer<T extends object, V, W> {
     return this._collection ? this._collection.getItem(key) : null;
   }
 
-  /**
-   * Set the keys of keys for layoutInfos persisted by the virtualizer.
-   * This is to prevent these views from being reused by the virtualizer.
-   */
-  set persistedKeys(persistedKeys: Set<Key>) {
-    let setsNotEqual = false;
+  /** The set of persisted keys are always present in the DOM, even if not currently in view. */
+  get persistedKeys(): Set<Key> {
+    return this._persistedKeys;
+  }
 
-    if (this._persistedKeys.size !== persistedKeys.size) {
-      setsNotEqual = true;
-    } else {
-      for (var existingKey of this._persistedKeys) {
-        if (!persistedKeys.has(existingKey)) {
-          setsNotEqual = true;
+  /** The set of persisted keys are always present in the DOM, even if not currently in view. */
+  set persistedKeys(persistedKeys: Set<Key>) {
+    if (!isSetEqual(persistedKeys, this._persistedKeys)) {
+      this._persistedKeys = persistedKeys;
+      this.updateSubviews();
+    }
+  }
+
+  /** Returns whether the given key, or an ancestor, is persisted. */
+  isPersistedKey(key: Key) {
+    // Quick check if the key is directly in the set of persisted keys.
+    if (this._persistedKeys.has(key)) {
+      return true;
+    }
+
+    // If not, check if the key is an ancestor of any of the persisted keys.
+    for (let k of this._persistedKeys) {
+      while (k != null) {
+        let layoutInfo = this.layout.getLayoutInfo(k);
+        if (!layoutInfo) {
           break;
+        }
+
+        k = layoutInfo.parentKey;
+
+        if (k === key) {
+          return true;
         }
       }
     }
 
-    if (setsNotEqual) {
-      this._persistedKeys = persistedKeys;
-      this.updateSubviews();
-    }
+    return false;
   }
 
   /**
@@ -663,24 +678,6 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     return map;
-  }
-
-  isPersistedKey(node) {
-    let keyFound = this._persistedKeys.has(node.layoutInfo.key);
-
-    // for components like Table, where we have rows with cells as children,
-    // if the key isn't found at the top level (row in this example), check
-    // the children of this node to see if a child is persisted. If a child
-    // of this node is a persisted key we consider this node as "persistable."
-    if (!keyFound && node.children && node.node.type !== 'section') {
-      for (let child of node.children) {
-        if (this._persistedKeys.has(child.layoutInfo.key)) {
-          keyFound = true;
-          break;
-        }
-      }
-    }
-    return keyFound;
   }
 
   updateSubviews(forceUpdate = false) {

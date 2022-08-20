@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.5.0",
+    "@internationalized/date": "^3.0.1",
+    "@react-aria/i18n": "^3.5.1",
     "@react-aria/label": "^3.4.0",
     "@react-aria/utils": "^3.13.2",
     "@react-spectrum/form": "^3.4.0",
