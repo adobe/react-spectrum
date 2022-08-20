@@ -10,26 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
-import {Key} from 'react';
+import {useLocale} from './context';
+import {useMemo} from 'react';
 
-export interface GridCollection<T> extends Collection<Node<T>> {
-  /** The number of columns in the grid. */
-  columnCount: number,
-  /** A list of rows in the grid. */
-  rows: GridNode<T>[]
-}
+/**
+ * Provides localized list formatting for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the list formatter for performance.
+ * @param options - Formatting options.
+ */
 
-export interface GridRow<T> {
-  key?: Key,
-  type: string,
-  childNodes: Iterable<Node<T>>
-}
-
-export interface GridNode<T> extends Node<T> {
-  column?: GridNode<T>,
-  /** The number of columns spanned by this cell. */
-  colspan?: number,
-  /** The column index of this cell, accounting for any colspans. */
-  colIndex?: number
+// Typescript version 4.7 supports Intl.ListFormat - TODO upgrade
+// @ts-ignore
+export function useListFormatter(options: Intl.ListFormatOptions = {}): Intl.ListFormat {
+  let {locale} = useLocale();
+  // @ts-ignore
+  return useMemo(() => new Intl.ListFormat(locale, options), [locale, options]);
 }

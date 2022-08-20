@@ -26,7 +26,9 @@ export interface DropIndicatorProps {
 }
 
 export interface DropIndicatorAria {
-  dropIndicatorProps: HTMLAttributes<HTMLElement>
+  dropIndicatorProps: HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean,
+  isHidden: boolean
 }
 
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
@@ -72,6 +74,8 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
     }
   }
 
+  let isDropTarget = state.isDropTarget(target);
+  let ariaHidden = !dragSession ? 'true' : dropProps['aria-hidden'];
   return {
     dropIndicatorProps: {
       ...dropProps,
@@ -79,8 +83,13 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       'aria-roledescription': stringFormatter.format('dropIndicator'),
       'aria-label': label,
       'aria-labelledby': labelledBy,
-      'aria-hidden': !dragSession ? 'true' : dropProps['aria-hidden'],
+      'aria-hidden': ariaHidden,
       tabIndex: -1
-    }
+    },
+    isDropTarget,
+    // If aria-hidden, we are either not in a drag session or the drop target is invalid.
+    // In that case, there's no need to render anything at all unless we need to show the indicator visually.
+    // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
+    isHidden: !isDropTarget && !!ariaHidden
   };
 }

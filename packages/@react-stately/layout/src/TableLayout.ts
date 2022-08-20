@@ -24,6 +24,8 @@ export class TableLayout<T> extends ListLayout<T> {
   stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
+  lastPersistedKeys: Set<Key> = null;
+  persistedIndices: Map<Key, number[]> = new Map();
 
   constructor(options: ListLayoutOptions<T>) {
     super(options);
@@ -50,6 +52,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let header = this.buildHeader();
     let body = this.buildBody(0);
     this.stickyColumnIndices = this.collection.columns.filter(c => c.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(c.key)).map(c => c.index);
+    this.lastPersistedKeys = null;
 
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
@@ -125,8 +128,9 @@ export class TableLayout<T> extends ListLayout<T> {
   // used to get the column widths when rendering to the DOM
   getColumnWidth_(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
+    let colIndex = node.colIndex ?? node.index;
     let width = 0;
-    for (let i = node.index; i < node.index + colspan; i++) {
+    for (let i = colIndex; i < colIndex + colspan; i++) {
       let column = this.collection.columns[i];
       width += this.getColumnWidth(column.key);
     }
@@ -274,6 +278,7 @@ export class TableLayout<T> extends ListLayout<T> {
   getVisibleLayoutInfos(rect: Rect) {
     let res: LayoutInfo[] = [];
 
+    this.buildPersistedIndices();
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -298,24 +303,35 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
-        // Check to see if a persisted key exists before the visible rows
-        // This is for keeping focus on a row that scrolls out of view
-        for (let h = 0; h < firstVisibleRow; h++) {
-          if (this.virtualizer.isPersistedKey(node.children[h])) {
-            res.push(node.children[h].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[h], rect);
-          }
+
+        // Add persisted rows before the visible rows.
+        let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
+        let persistIndex = 0;
+        while (
+          persistedRowIndices &&
+          persistIndex < persistedRowIndices.length &&
+          persistedRowIndices[persistIndex] < firstVisibleRow
+        ) {
+          let idx = persistedRowIndices[persistIndex];
+          res.push(node.children[idx].layoutInfo);
+          this.addVisibleLayoutInfos(res, node.children[idx], rect);
+          persistIndex++;
         }
+
         for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
+          // Skip persisted rows that overlap with visible cells.
+          while (persistedRowIndices && persistIndex < persistedRowIndices.length && persistedRowIndices[persistIndex] < i) {
+            persistIndex++;
+          }
+
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
-        // Check to see if a persisted key exists after the visible rows
-        for (let j = lastVisibleRow + 1; j < node.children.length; j++) {
-          if (this.virtualizer.isPersistedKey(node.children[j])) {
-            res.push(node.children[j].layoutInfo);
-            this.addVisibleLayoutInfos(res, node.children[j], rect);
-          }
+
+        // Add persisted rows after the visible rows.
+        while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
+          let idx = persistedRowIndices[persistIndex++];
+          res.push(node.children[idx].layoutInfo);
         }
         break;
       }
@@ -324,35 +340,27 @@ export class TableLayout<T> extends ListLayout<T> {
         let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
         let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
         let stickyIndex = 0;
-        // Check to see if a persisted key exists before the visible cells
-        // This is for keeping focus on a cell that scrolls out of view
-        for (let h = 0; h < firstVisibleCell; h++) {
-          if (this.virtualizer.isPersistedKey(node.children[h])) {
-            res.push(node.children[h].layoutInfo);
-          }
+
+        // Add persisted/sticky cells before the visible cells.
+        let persistedCellIndices = this.persistedIndices.get(node.layoutInfo.key) || this.stickyColumnIndices;
+        while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
+          let idx = persistedCellIndices[stickyIndex];
+          res.push(node.children[idx].layoutInfo);
+          stickyIndex++;
         }
+
         for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
-          // Sticky columns and row headers are always in the DOM. Interleave these
-          // with the visible range so that they are in the right order.
-          if (stickyIndex < this.stickyColumnIndices.length) {
-            let idx = this.stickyColumnIndices[stickyIndex];
-            while (idx < i) {
-              res.push(node.children[idx].layoutInfo);
-              idx = this.stickyColumnIndices[stickyIndex++];
-            }
+          // Skip sticky cells that overlap with visible cells.
+          while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < i) {
+            stickyIndex++;
           }
 
           res.push(node.children[i].layoutInfo);
         }
-        // Check to see if a persisted key exists after the visible cells
-        for (let j = lastVisibleCell; j < node.children.length; j++) {
-          if (this.virtualizer.isPersistedKey(node.children[j])) {
-            res.push(node.children[j].layoutInfo);
-          }
-        }
 
-        while (stickyIndex < this.stickyColumnIndices.length) {
-          let idx = this.stickyColumnIndices[stickyIndex++];
+        // Add any remaining sticky cells after the visible cells.
+        while (stickyIndex < persistedCellIndices.length) {
+          let idx = persistedCellIndices[stickyIndex++];
           res.push(node.children[idx].layoutInfo);
         }
         break;
@@ -379,6 +387,46 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return Math.max(0, Math.min(items.length - 1, low));
+  }
+
+  buildPersistedIndices() {
+    if (this.virtualizer.persistedKeys === this.lastPersistedKeys) {
+      return;
+    }
+
+    this.lastPersistedKeys = this.virtualizer.persistedKeys;
+    this.persistedIndices.clear();
+
+    // Build a map of parentKey => indices of children to persist.
+    for (let key of this.virtualizer.persistedKeys) {
+      let layoutInfo = this.layoutInfos.get(key);
+
+      // Walk up ancestors so parents are also persisted if children are.
+      while (layoutInfo && layoutInfo.parentKey) {
+        let collectionNode = this.collection.getItem(layoutInfo.key);
+        let indices = this.persistedIndices.get(layoutInfo.parentKey);
+        if (!indices) {
+          // stickyColumnIndices are always persisted along with any cells from persistedKeys.
+          indices = collectionNode.type === 'cell' ? [...this.stickyColumnIndices] : [];
+          this.persistedIndices.set(layoutInfo.parentKey, indices);
+        }
+
+        let index = collectionNode.index;
+        if (layoutInfo.parentKey === 'body') {
+          index -= this.collection.headerRows.length;
+        }
+
+        if (!indices.includes(index)) {
+          indices.push(index);
+        }
+
+        layoutInfo = this.layoutInfos.get(layoutInfo.parentKey);
+      }
+    }
+
+    for (let indices of this.persistedIndices.values()) {
+      indices.sort((a, b) => a - b);
+    }
   }
 
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
