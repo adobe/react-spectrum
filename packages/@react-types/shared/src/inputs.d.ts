@@ -33,9 +33,9 @@ export interface InputBase {
 
 export interface ValueBase<T, C = T> {
   /** The current value (controlled). */
-  value?: T,
+  value?: T | null,
   /** The default value (uncontrolled). */
-  defaultValue?: T,
+  defaultValue?: T | null,
   /** Handler that is called when the value changes. */
   onChange?: (value: C) => void
 }

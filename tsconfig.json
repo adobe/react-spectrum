@@ -35,6 +35,8 @@
         "paths": [
           "./packages/@react-spectrum/button",
           "./packages/@react-spectrum/color",
+          "./packages/@react-types/color",
+          "./packages/@react-types/shared"
         ]
       }
     ]
