@@ -35,6 +35,7 @@
         "paths": [
           "./packages/@react-spectrum/action",
           "./packages/@react-spectrum/button",
+          "./packages/@react-types/action"
         ]
       }
     ]
