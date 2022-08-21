@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ColorWheel} from '../';
 import {Flex} from '@adobe/react-spectrum';
-import {Color, parseColor} from '@react-stately/color';
+import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
