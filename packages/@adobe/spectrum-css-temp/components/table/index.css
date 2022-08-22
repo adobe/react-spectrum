@@ -95,7 +95,12 @@ svg.spectrum-Table-sortedIcon {
     }
     .spectrum-Table-headCellButton {
       box-sizing: border-box;
-      padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+      padding: var(--spectrum-table-header-padding-y) 0 var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+
+      /* truncate text with ellipsis */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 }
