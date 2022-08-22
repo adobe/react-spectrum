@@ -48,6 +48,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
+      input.scrollTop = input.scrollHeight;
     }
   }, [isQuiet, inputRef]);
 
