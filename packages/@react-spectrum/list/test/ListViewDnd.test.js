@@ -474,6 +474,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Seven');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Eight');
 
+        // TODO: Focused element should be the dragged item. It's currently showing the first list as focused.
         // expect(document.activeElement).toBe(list2rows[0]);
       });
 
@@ -530,6 +531,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
 
+        // TODO: Focused element should be the dragged item. It's currently showing the first list as focused.
         // expect(document.activeElement).toBe(list2rows[0]);
       });
     });
