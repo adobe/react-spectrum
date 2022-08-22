@@ -12,6 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {FocusScope} from '@react-aria/focus';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useMemo} from 'react';
@@ -74,33 +75,35 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {tabIndex, role, ...otherGridProps} = gridProps;
   return (
-    <div
-      {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
-      className={
-        classNames(
-          styles,
-          'spectrum-Tags',
-          {
-            'is-disabled': isDisabled
-          },
-          styleProps.className
-        )
-      }
-      role={state.collection.size ? 'grid' : null}
-      ref={domRef}>
-      {[...gridCollection].map(item => (
-        <Tag
-          {...item.childNodes[0].props}
-          key={item.key}
-          item={item}
-          state={state}
-          isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
-          isRemovable={isRemovable}
-          onRemove={onRemove}>
-          {item.childNodes[0].rendered}
-        </Tag>
-        ))}
-    </div>
+    <FocusScope>
+      <div
+        {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
+        className={
+          classNames(
+            styles,
+            'spectrum-Tags',
+            {
+              'is-disabled': isDisabled
+            },
+            styleProps.className
+          )
+        }
+        role={state.collection.size ? 'grid' : null}
+        ref={domRef}>
+        {[...gridCollection].map(item => (
+          <Tag
+            {...item.childNodes[0].props}
+            key={item.key}
+            item={item}
+            state={state}
+            isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
+            isRemovable={isRemovable}
+            onRemove={onRemove}>
+            {item.childNodes[0].rendered}
+          </Tag>
+          ))}
+      </div>
+    </FocusScope>
   );
 }
 
