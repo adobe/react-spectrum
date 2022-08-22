@@ -59,13 +59,16 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       cursor.current = document.body.style.cursor;
     },
-    onMove({deltaX, pointerType}) {
+    onMove({deltaX, deltaY, pointerType}) {
       if (direction === 'rtl') {
         deltaX *= -1;
       }
       // if moving up/down only, no need to resize
-      if (deltaX !== 0) {
+      if (deltaX !== 0 || (pointerType === 'keyboard' && deltaY !== 0)) {
         if (pointerType === 'keyboard') {
+          if (deltaY !== 0 && deltaX === 0) {
+            deltaX = deltaY * -1;
+          }
           deltaX *= 10;
         }
         columnResizeWidthRef.current += deltaX;

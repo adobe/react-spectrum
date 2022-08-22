@@ -1010,6 +1010,30 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
