@@ -57,6 +57,9 @@ export function Illustration(props: IllustrationProps) {
     ariaHidden = undefined;
   }
 
+  let width = children.props.width || '32';
+  let height = children.props.height || '32';
+
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
@@ -64,6 +67,7 @@ export function Illustration(props: IllustrationProps) {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-hidden': ariaHidden,
-    role: hasLabel ? 'img' : undefined
+    role: hasLabel ? 'img' : undefined,
+    viewBox: `0 0 ${width} ${height}`
   });
 }
