@@ -270,6 +270,7 @@ describe('ActionBar', () => {
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
     await act(async () => Promise.resolve());
+    rows = within(table).getAllByRole('row');
     // row reused by the virtualizer, so it's still in dom, but its contents have been swapped out
     expect(rows[1].textContent).not.toBe('Foo 1Bar 1Baz 1');
 
