@@ -19,6 +19,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {DeletableRowsTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -27,7 +28,6 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
-import {DeletableRowsTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -3440,6 +3440,7 @@ describe('TableView', function () {
     it('can bulk remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
+      let addButton = tree.getAllByRole('button')[0];
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
@@ -3453,6 +3454,7 @@ describe('TableView', function () {
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
+      expect(document.activeElement).toBe(dialog);
 
       triggerPress(confirmButton);
       expect(dialog).not.toBeInTheDocument();
@@ -3463,6 +3465,8 @@ describe('TableView', function () {
       expect(rows).toHaveLength(1);
 
       expect(checkbox.checked).toBe(false);
+
+      expect(document.activeElement).toBe(addButton);
     });
 
     it('can edit items', function () {
