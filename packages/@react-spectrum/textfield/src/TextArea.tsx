@@ -39,6 +39,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     // Standard textareas also grow by default, unless an explicit height is set.
     if (isQuiet || !props.height) {
       let input = inputRef.current;
+      let currentStart = input.selectionStart;
+      let currentEnd = input.selectionEnd;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
       input.style.alignSelf = 'start';
@@ -48,7 +50,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
-      input.scrollTop = input.scrollHeight;
+      requestAnimationFrame(() => {
+        input.setSelectionRange(currentStart, currentEnd);
+      });
     }
   }, [isQuiet, inputRef]);
 
