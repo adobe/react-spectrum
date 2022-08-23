@@ -31,7 +31,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
-  let lastInputValue = useRef(inputValue);
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
@@ -41,26 +40,30 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
+      // Firefox scroll position is lost when overflow: 'hidden' is applied so use
+      // scrollbar-width: 'none' instead.
+      let prevSBWidth = CSS.supports('scrollbar-width: none') && (input.style['scrollbar-width'] || 'auto');
+      if (prevSBWidth) {
+        input.style['scrollbar-width'] = 'none';
+      } else {
+        input.style.overflow = 'hidden';
+      }
       input.style.alignSelf = 'start';
-      input.style.overflow = 'hidden';
       input.style.height = 'auto';
       // offsetHeight - clientHeight accounts for the border/padding.
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
-      // Fixes Firefox autoscrolling issue. Force scroll position to end of text area if user is adding to the end of the text area content
-      if (inputValue?.startsWith(lastInputValue.current)) {
-        input.scrollTop = input.scrollHeight;
+      if (prevSBWidth) {
+        input.style['scrollbar-width'] = prevSBWidth;
       }
     }
-  }, [isQuiet, inputRef, inputValue, props.height]);
+  }, [isQuiet, inputRef, props.height]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
       onHeightChange();
     }
-
-    lastInputValue.current = inputValue;
   }, [onHeightChange, inputValue, inputRef]);
 
   if (props.placeholder) {
