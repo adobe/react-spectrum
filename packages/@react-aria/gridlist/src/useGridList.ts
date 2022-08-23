@@ -13,9 +13,9 @@
 import {AriaGridListProps} from '@react-types/list';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -26,12 +26,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-  /**
-   * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
-   * @default (key) => state.collection.getItem(key)?.textValue
-   */
-  getRowText?: (key: Key) => string
+  keyboardDelegate?: KeyboardDelegate
 }
 
 export interface GridListAria {
@@ -50,7 +45,6 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
-    getRowText,
     onAction
   } = props;
 
@@ -93,7 +87,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     gridProps['aria-colcount'] = 1;
   }
 
-  useGridSelectionAnnouncement({getRowText}, state);
+  useGridSelectionAnnouncement({}, state);
 
   return {
     gridProps
