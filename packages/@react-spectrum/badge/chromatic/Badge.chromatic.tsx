@@ -18,8 +18,7 @@ import React from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
 import {Text} from '@react-spectrum/text';
 
-let variants = ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple' ];
-
+let variants = ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
 
 const meta: Meta<SpectrumBadgeProps> = {
   title: 'Badge',
