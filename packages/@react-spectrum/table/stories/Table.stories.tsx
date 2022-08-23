@@ -1700,14 +1700,14 @@ export function TableWithBreadcrumbs() {
   );
 }
 
-function EmptyStateTable() {
+export function EmptyStateTable() {
   let [show, setShow] = useState(false);
 
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
       <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple">
-        <TableHeader columns={columns}>
+        <TableHeader columns={manyColunns}>
           {column =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }

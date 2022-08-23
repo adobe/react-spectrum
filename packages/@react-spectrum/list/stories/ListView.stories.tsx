@@ -108,7 +108,7 @@ const itemsWithThumbs = [
   {key: '9', title: 'file of great boi', illustration: <File />}
 ];
 
-function renderEmptyState() {
+export function renderEmptyState() {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">

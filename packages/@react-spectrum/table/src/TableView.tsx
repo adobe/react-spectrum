@@ -81,7 +81,8 @@ interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
   columnState: TableColumnResizeState<T>,
-  headerRowHovered: boolean
+  headerRowHovered: boolean,
+  isEmpty: boolean
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -305,9 +306,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   }, []);
   let {isFocusVisible, focusProps} = useFocusRing();
+  let isEmpty = state.collection.size === 0;
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isEmpty}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -523,9 +525,9 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
-  let {state} = useTableContext();
+  let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: state.collection.size === 0}, domRef);
+  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
   return (
     <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -541,9 +543,8 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered} = useTableContext();
+  let {state, columnState, headerRowHovered, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let isEmpty = state.collection.size === 0;
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
