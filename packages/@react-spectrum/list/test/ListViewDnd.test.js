@@ -362,7 +362,7 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
         fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
         fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
-        
+
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
@@ -431,7 +431,6 @@ describe('ListView', function () {
         let grid2 = getAllByRole('grid')[1];
         let list1rows = within(grid1).getAllByRole('row');
         let list2rows = within(grid2).getAllByRole('row');
-        let cell = within(list1rows[0]).getByRole('gridcell');
 
         expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
         expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
@@ -442,24 +441,35 @@ describe('ListView', function () {
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent.pointerMove(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 200, clientX: 1, clientY: -1});
+        fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
 
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
-        
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
-        act(() => jest.runAllTimers());
+        // purposefully run these two together inside one act so that the events line up as they do in the dom
+        // if they are in separate ones, then we create an render cycle in between
+        // if they are two separate acts
+        act(() => {
+          jest.advanceTimersToNextTimer();
+          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
+        });
+        // resolve async drop
         await act(async () => Promise.resolve());
-        expect(onDrop).toHaveBeenCalledTimes(1);
+        // resolve focus movement
+        act(() => {jest.runAllTimers();});
 
-        act(() => jest.runAllTimers());
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
         grid1 = getAllByRole('grid')[0];
         grid2 = getAllByRole('grid')[1];
@@ -474,8 +484,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Seven');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Eight');
 
-        // TODO: Focused element should be the dragged item. It's currently showing the first list as focused.
-        // expect(document.activeElement).toBe(list2rows[0]);
+        expect(document.activeElement).toBe(list2rows[0]);
       });
 
       it('should allow moving multiple items into another list', async function () {
@@ -485,7 +494,6 @@ describe('ListView', function () {
         let grid2 = getAllByRole('grid')[1];
         let list1rows = within(grid1).getAllByRole('row');
         let list2rows = within(grid2).getAllByRole('row');
-        let cell = within(list1rows[0]).getByRole('gridcell');
 
         expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
         expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
@@ -499,24 +507,32 @@ describe('ListView', function () {
         act(() => userEvent.click(within(list1rows[2]).getByRole('checkbox')));
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent.pointerMove(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 200, clientX: 1, clientY: -1});
-
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
-        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
 
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
-        act(() => jest.runAllTimers());
+        // purposefully run these two together inside one act so that the events line up as they do in the dom
+        // if they are in separate ones, then we create an render cycle in between
+        // if they are two separate acts
+        act(() => {
+          jest.advanceTimersToNextTimer();
+          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
+        });
+        // resolve async drop
         await act(async () => Promise.resolve());
-        expect(onDrop).toHaveBeenCalledTimes(1);
-
-        act(() => jest.runAllTimers());
+        // resolve focus movement
+        act(() => {jest.runAllTimers();});
 
         grid1 = getAllByRole('grid')[0];
         grid2 = getAllByRole('grid')[1];
@@ -531,8 +547,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
 
-        // TODO: Focused element should be the dragged item. It's currently showing the first list as focused.
-        // expect(document.activeElement).toBe(list2rows[0]);
+        expect(document.activeElement).toBe(list2rows[0]);
       });
     });
 
@@ -775,7 +790,7 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
 
         userEvent.tab();
-        
+
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
