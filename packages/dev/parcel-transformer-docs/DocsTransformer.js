@@ -246,6 +246,9 @@ module.exports = new Transformer({
 
       if (path.isTSQualifiedName()) {
         let left = processExport(path.get('left'));
+        if (!left) {
+          return {};
+        }
         if (left.type === 'interface' || left.type === 'object') {
           let property = left.properties[path.node.right.name];
           if (property) {
