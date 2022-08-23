@@ -93,7 +93,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     isVirtualized,
     focus,
     shouldSelectOnPressUp,
-    onAction: onCellAction ? () => onCellAction(node.key) : onAction
+    onAction: onCellAction ? () => onCellAction(node.key) : onAction,
+    // TODO: this will affect all grids, maybe make it specific to Table via useTableState?
+    // something like isInteractionDisabled: state.collection.size === 0
+    isDisabled: state.collection.size === 0
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {

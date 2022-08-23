@@ -59,7 +59,10 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onRowAction ? () => onRowAction(node.key) : onAction
+    onAction: onRowAction ? () => onRowAction(node.key) : onAction,
+    // TODO: this will affect all grids, maybe make it specific to Table via useTableState?
+    // something like isInteractionDisabled: state.collection.size === 0
+    isDisabled: state.collection.size === 0
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);

@@ -114,7 +114,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.collection.size === 0 || state.isKeyboardNavigationDisabled ? {} : collectionProps,
+    state.isKeyboardNavigationDisabled ? {} : collectionProps,
     descriptionProps
   );
 

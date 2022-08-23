@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:active {
+    &.is-active {
       color: var(--spectrum-table-header-text-color-down);
 
       .spectrum-Table-sortedIcon {

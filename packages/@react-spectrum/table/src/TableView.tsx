@@ -513,8 +513,9 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+  let {state} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div'}, domRef);
+  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: state.collection.size === 0}, domRef);
   return (
     <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -532,14 +533,16 @@ function ResizableTableColumnHeader(props) {
   let resizingRef = useRef(null);
   let {state, columnState, headerRowHovered} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let isEmpty = state.collection.size === 0;
+  let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps];
+  const allProps = [columnHeaderProps, hoverProps, pressProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -589,7 +592,7 @@ function ResizableTableColumnHeader(props) {
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
-  let showResizer = headerRowHovered || columnState.currentlyResizingColumn != null;
+  let showResizer = !isEmpty && (headerRowHovered || columnState.currentlyResizingColumn != null);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -601,6 +604,7 @@ function ResizableTableColumnHeader(props) {
             styles,
             'spectrum-Table-headCell',
             {
+              'is-active': isPressed,
               'is-resizable': columnProps.allowsResizing,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',

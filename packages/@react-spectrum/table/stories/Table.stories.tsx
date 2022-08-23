@@ -1709,7 +1709,7 @@ function EmptyStateTable() {
       <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple">
         <TableHeader columns={manyColunns}>
           {column =>
-            <Column allowsResizing minWidth={100}>{column.name}</Column>
+            <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
         <TableBody items={show ? manyRows : []}>
