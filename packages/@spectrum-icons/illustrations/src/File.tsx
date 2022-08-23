@@ -2,7 +2,6 @@ import {Illustration, IllustrationPropsWithoutChildren} from '@react-spectrum/ic
 import React from 'react';
 
 export default function File(props: IllustrationPropsWithoutChildren) {
-  console.log(props);
   return (
     <Illustration {...props}>
       <svg viewBox="0 0 32 32" height="32" width="32">
