@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Badge} from '../';
+import CheckmarkCircle from '@spectrum-icons/workflow/src/CheckmarkCircle';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
-import {Badge} from '../';
 import {storiesOf} from '@storybook/react';
-import {View} from '@react-spectrum/view';
-import CheckmarkCircle from '@spectrum-icons/workflow/src/CheckmarkCircle';
 import {Text} from '@react-spectrum/text';
 
 let variants = ['yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple', 'neutral', 'info', 'positive', 'negative'];

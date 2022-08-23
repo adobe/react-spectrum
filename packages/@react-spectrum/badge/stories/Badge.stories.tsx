@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import { Text } from '@react-spectrum/text';
+import {Badge} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Badge} from '../';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 
 type BadgeStory = ComponentStoryObj<typeof Badge>;
 
