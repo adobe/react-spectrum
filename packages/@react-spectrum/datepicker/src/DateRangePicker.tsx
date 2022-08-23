@@ -22,6 +22,8 @@ import {FieldButton} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
@@ -32,7 +34,7 @@ import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -55,6 +57,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
@@ -173,7 +176,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
                 {showTimeField &&
                   <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                     <TimeField
-                      label="Start time"
+                      label={stringFormatter.format('startTime')}
                       value={state.timeRange?.start || null}
                       onChange={v => state.setTime('start', v)}
                       placeholderValue={timePlaceholder}
@@ -184,7 +187,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
                       hideTimeZone={props.hideTimeZone}
                       flex />
                     <TimeField
-                      label="End time"
+                      label={stringFormatter.format('endTime')}
                       value={state.timeRange?.end || null}
                       onChange={v => state.setTime('end', v)}
                       placeholderValue={timePlaceholder}

@@ -22,6 +22,8 @@ import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
@@ -32,7 +34,7 @@ import {useDatePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -55,6 +57,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
@@ -159,7 +162,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
                 {showTimeField &&
                   <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
                     <TimeField
-                      label="Time"
+                      label={stringFormatter.format('time')}
                       value={state.timeValue}
                       onChange={state.setTimeValue}
                       placeholderValue={timePlaceholder}
