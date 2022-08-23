@@ -12,34 +12,40 @@
 
 import {Badge} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/src/CheckmarkCircle';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumBadgeProps} from '@react-types/badge';
 import {Text} from '@react-spectrum/text';
 
-let variants = ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
+let variants: SpectrumBadgeProps['variant'][] =
+  ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
 
-const meta: Meta<SpectrumBadgeProps> = {
+type BadgeStory = ComponentStoryObj<typeof Badge>;
+
+export default {
   title: 'Badge',
   component: Badge
-};
+} as ComponentMeta<typeof Badge>;
 
-export default meta;
-
-const Template = (): Story<SpectrumBadgeProps> => (args) => (
-  <Flex wrap>
-    {variants.map((variant: SpectrumBadgeProps['variant']) => (
-      <Badge variant={variant} {...args} />
-    ))}
+const renderVariants = (args) => (
+  <Flex wrap gap={8}>
+    {variants.map((variant) => <Badge {...args} variant={variant} />)}
   </Flex>
 );
 
-export const TextOnly = Template().bind({});
-TextOnly.args = {children: 'Badge text'};
+export const TextOnly: BadgeStory = {
+  args: {children: 'Badge text'},
+  render: renderVariants
+};
 
-export const IconOnly = Template().bind({});
-IconOnly.args = {children: <CheckmarkCircle />};
+export const IconOnly: BadgeStory = {
+  args: {children: <CheckmarkCircle />},
+  render: renderVariants
+};
 
-export const IconText = Template().bind({});
-IconText.args = {children: <><CheckmarkCircle /><Text>Badge text</Text></>};
+export const IconText: BadgeStory = {
+  name: 'Icon & text',
+  args: {children: <><CheckmarkCircle /><Text>Badge text</Text></>},
+  render: renderVariants
+};
