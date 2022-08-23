@@ -11,7 +11,7 @@
  */
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {RefObject, useCallback, useRef} from 'react';
+import React, {RefObject, useCallback, useEffect, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
@@ -31,7 +31,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
-
+  let lastInputValue = useRef(inputValue);
   let inputRef = useRef<HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
@@ -39,8 +39,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     // Standard textareas also grow by default, unless an explicit height is set.
     if (isQuiet || !props.height) {
       let input = inputRef.current;
-      let currentStart = input.selectionStart;
-      let currentEnd = input.selectionEnd;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
       input.style.alignSelf = 'start';
@@ -50,17 +48,22 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
-      requestAnimationFrame(() => {
-        input.setSelectionRange(currentStart, currentEnd);
-      });
+      // Fixes Firefox autoscrolling issue. Force scroll position to end of text area if user is adding to the end of the text area content
+      if (inputValue?.startsWith(lastInputValue.current)) {
+        input.scrollTop = input.scrollHeight;
+      }
     }
-  }, [isQuiet, inputRef]);
+  }, [isQuiet, inputRef, inputValue, props.height]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
       onHeightChange();
     }
   }, [onHeightChange, inputValue, inputRef]);
+
+  useEffect(() => {
+    lastInputValue.current = inputValue;
+  }, [inputValue]);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
