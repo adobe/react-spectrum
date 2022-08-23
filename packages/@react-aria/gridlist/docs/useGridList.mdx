@@ -253,8 +253,11 @@ import {Button} from 'your-component-library';
   margin-left: auto;
 }
 
-.list li input[type=checkbox] {
-  accent-color: white;
+/* iOS Safari has a bug that prevents accent-color: white from working. */
+@supports not (-webkit-touch-callout: none) {
+  .list li input[type=checkbox] {
+    accent-color: white;
+  }
 }
 ```
 
