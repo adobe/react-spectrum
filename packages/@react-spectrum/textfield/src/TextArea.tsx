@@ -42,7 +42,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       let prevOverflow = input.style.overflow;
       // Firefox scroll position is lost when overflow: 'hidden' is applied so use
       // scrollbar-width: 'none' instead.
-      let prevSBWidth = CSS.supports && CSS.supports('scrollbar-width: none') && (input.style['scrollbar-width'] || 'auto');
+      let prevSBWidth = CSS && CSS.supports && CSS.supports('scrollbar-width: none') && (input.style['scrollbar-width'] || 'auto');
       if (prevSBWidth) {
         input.style['scrollbar-width'] = 'none';
       } else {
