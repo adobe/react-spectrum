@@ -304,11 +304,12 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       setHorizontalScollbarVisible(bodyRef.current.clientHeight + 2 < bodyRef.current.offsetHeight);
     }
   }, []);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <TableContext.Provider value={{state, layout, columnState, headerRowHovered}}>
       <TableVirtualizer
-        {...gridProps}
+        {...mergeProps(gridProps, focusProps)}
         {...styleProps}
         className={
           classNames(
@@ -337,13 +338,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         bodyRef={bodyRef}
+        isFocusVisible={isFocusVisible}
         getColumnWidth={columnState.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
@@ -433,7 +435,15 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       </div>
       <ScrollView
         role="presentation"
-        className={classNames(styles, 'spectrum-Table-body')}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-body',
+            {
+              'focus-ring': isFocusVisible
+            }
+          )
+        }
         style={{flex: 1}}
         innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
         ref={bodyRef}

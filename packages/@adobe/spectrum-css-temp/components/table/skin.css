@@ -77,6 +77,10 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-table-border-color);
   background-color: var(--spectrum-table-background-color);
 
+  &:focus-ring {
+    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+  }
+
   &.is-drop-target {
     border-color: var(--spectrum-alias-border-color-focus);
     box-shadow: 0 0 0 1px var(--spectrum-alias-border-color-focus);

@@ -1707,7 +1707,7 @@ function EmptyStateTable() {
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
       <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple">
-        <TableHeader columns={manyColunns}>
+        <TableHeader columns={columns}>
           {column =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
           }
