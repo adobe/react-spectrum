@@ -39,7 +39,6 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
       className={classNames(
         styles,
         'spectrum-Badge',
-        'spectrum-Badge--fixed-top',
         {
           [`spectrum-Badge--${variant}`]: !isDisabled && variant,
           'is-disabled': isDisabled
@@ -51,7 +50,7 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
         slots={{
           icon: {
             size: 'S',
-            UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            UNSAFE_className: classNames(styles, 'spectrum-Badge-icon')
           },
           text: {
             UNSAFE_className: classNames(styles, 'spectrum-Badge-label')

@@ -14,6 +14,7 @@
 import {Badge} from '@react-spectrum/badge';
 import badgeStyles from '@adobe/spectrum-css-temp/components/badge/vars.css';
 import clsx from 'clsx';
+import {defaultTheme, Provider} from '@adobe/react-spectrum';
 import React from 'react';
 
 export function VersionBadge(props) {
@@ -42,7 +43,11 @@ export function VersionBadge(props) {
   }
 
   if (size === 'S') {
-    return <Badge variant={versionMap[preRelease[0]]}>{preRelease[0]}</Badge>;
+    return (
+      <Provider theme={defaultTheme} scale="medium">
+        <Badge variant={versionMap[preRelease[0]]}>{preRelease[0]}</Badge>
+      </Provider>
+    );
   }
 
   // TODO: remove once size prop is added
