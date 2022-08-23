@@ -4216,16 +4216,18 @@ describe('TableView', function () {
     it('should disable keyboard navigation within the table', function () {
       let tree = render(<EmptyStateTable />);
       let table = tree.getByRole('grid');
-      let headers = within(table).getAllByRole('columnheader');
+      let header = within(table).getAllByRole('columnheader')[2];
+      let headerButton = within(header).getByRole('button');
+      expect(headerButton).toHaveAttribute('aria-disabled', 'true');
       // Programatically focus the column header since we can't tab to it
       act(() => {
-        headers[2].focus();
+        header.focus();
       });
-      expect(document.activeElement).toBe(headers[2]);
+      expect(document.activeElement).toBe(header);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-      expect(document.activeElement).toBe(headers[2]);
+      expect(document.activeElement).toBe(header);
     });
 
     it('should disable press interactions with the column headers', function () {
@@ -4236,12 +4238,57 @@ describe('TableView', function () {
 
       userEvent.tab();
       expect(document.activeElement).toBe(toggleButton);
-      triggerPress(headers[2]);
+
+      let columnButton = within(headers[2]).getByRole('button');
+      triggerPress(columnButton);
       expect(document.activeElement).toBe(toggleButton);
       expect(tree.queryByRole('menuitem')).toBeFalsy();
       fireEvent.mouseEnter(headers[2]);
       act(() => {jest.runAllTimers();});
       expect(tree.queryByRole('slider')).toBeFalsy();
+    });
+
+    it.skip('should re-enable functionality when the table recieves items', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+      let selectAll = tree.getByRole('checkbox');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+
+      expect(selectAll).not.toHaveAttribute('disabled');
+      triggerPress(selectAll);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll.checked).toBeTruthy();
+      expect(document.activeElement).toBe(selectAll);
+
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('slider')).toBeTruthy();
+
+      let column1Button = within(headers[1]).getByRole('button');
+      let column2Button = within(headers[2]).getByRole('button');
+      triggerPress(column2Button);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('menuitem')).toBeTruthy();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(column2Button);
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      expect(document.activeElement).toBe(column1Button);
+
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll).toHaveAttribute('disabled');
+      triggerPress(headers[2]);
+      expect(document.activeElement).toBe(toggleButton);
     });
   });
 });
