@@ -11,7 +11,7 @@
  */
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
@@ -59,11 +59,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     if (inputRef.current) {
       onHeightChange();
     }
-  }, [onHeightChange, inputValue, inputRef]);
 
-  useEffect(() => {
     lastInputValue.current = inputValue;
-  }, [inputValue]);
+  }, [onHeightChange, inputValue, inputRef]);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
