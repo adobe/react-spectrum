@@ -60,12 +60,12 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Badge--sizeL {
+.spectrum-Badge--large {
   font-size: var(--spectrum-global-dimension-size-175);
   padding: var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-150);
 }
 
-.spectrum-Badge--sizeS {
+.spectrum-Badge--small {
   font-size: var(--spectrum-global-dimension-font-size-50);
   padding: var(--spectrum-global-dimension-size-40) var(--spectrum-global-dimension-size-85);
 }
