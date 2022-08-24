@@ -40,7 +40,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
-      // Firefox scroll position is lost when overflow: 'hidden' is applied so we skip applying it
+      // Firefox scroll position is lost when overflow: 'hidden' is applied so we skip applying it.
+      // The measure/applied height is also incorrect/reset if we turn on and off
+      // overflow: hidden in Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
       let isFirefox = 'MozAppearance' in input.style;
       if (!isFirefox) {
         input.style.overflow = 'hidden';
