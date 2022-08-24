@@ -28,7 +28,9 @@ export interface AriaTableColumnHeaderProps {
   node: GridNode<unknown>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  /** Whether the column has a menu in the header, this changes interactions with the header. */
+  /** Whether the column has a menu in the header, this changes interactions with the header.
+   * @private
+  */
   hasMenu?: boolean
 }
 
