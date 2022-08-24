@@ -34,7 +34,15 @@ keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
 
 <FunctionAPI function={docs.exports.useDrag} links={docs.links} />
 
+## Introduction
+
+Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen. It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by long pressing to activate drag and drop mode, swiping between drop targets, and double tapping to drop.
+
 ## Example
+
+This example shows how to make a simple draggable element that provides data as plain text. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While it is being dragged, it is displayed with a dimmed appearance by applying an additional CSS class.
 
 ```tsx example
 import {useDrag} from '@react-aria/dnd';
