@@ -20,7 +20,7 @@
       </g>
     </g>
     <g id="Group_156664" data-name="Group 156664" transform="translate(0 -199)">
-      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="#c0cce7" stroke-width="1.5">
+      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
         <rect width="364" height="232" rx="6" stroke="none"/>
         <rect x="0.75" y="0.75" width="362.5" height="230.5" rx="5.25" fill="none"/>
       </g>
@@ -32,11 +32,11 @@
       <text id="List_item-2" data-name="List item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
       <text id="List_item-3" data-name="List item" transform="translate(174 409)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
       <text id="List_item-4" data-name="List item" transform="translate(174 467)" fill="var(--anatomy-gray-800)" font-size="21" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
-      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
-      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
-      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="#c0cce7" stroke-width="1.5"/>
+      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
       <g id="Checkbox" transform="translate(142 264)">
-        <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
@@ -46,7 +46,7 @@
         </g>
       </g>
       <g id="Checkbox-2" data-name="Checkbox" transform="translate(141 321)">
-        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
@@ -56,16 +56,16 @@
         </g>
       </g>
       <g id="Checkbox-3" data-name="Checkbox" transform="translate(141 379)">
-        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
-        <g id="Box-3" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)" stroke-width="1">
+        <g id="Box-3" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1">
           <rect width="21" height="21" rx="2" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="20" rx="1.5" fill="none"/>
         </g>
         <g id="Checkmark" transform="translate(3 16.5)">
-          <g id="Frame" fill="#f0f" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <g id="Frame" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
             <rect width="15" height="15" stroke="none"/>
             <rect x="0.5" y="0.5" width="14" height="14" fill="none"/>
           </g>
@@ -73,7 +73,7 @@
         </g>
       </g>
       <g id="Checkbox-4" data-name="Checkbox" transform="translate(141 437)">
-        <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
           <rect width="21" height="48" stroke="none"/>
           <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
         </g>
@@ -87,14 +87,14 @@
       <text id="List_item_row" data-name="List item row" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item row</tspan></text>
       <g id="Group_152108" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
-        <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="#a2b6e1"/>
+        <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
     <g id="Group_156663" data-name="Group 156663" transform="translate(200.005 447)">
       <text id="List_item_grid_cell" data-name="List item grid cell" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">List item grid cell</tspan></text>
       <g id="Group_152108-2" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
         <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
-        <path id="Union_56-2" data-name="Union 56" d="M-9134-304.5a2.5,2.5,0,0,1,2-2.451V-370h1v63.05a2.5,2.5,0,0,1,2,2.451,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-304.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="#a2b6e1"/>
+        <path id="Union_56-2" data-name="Union 56" d="M-9134-304.5a2.5,2.5,0,0,1,2-2.451V-370h1v63.05a2.5,2.5,0,0,1,2,2.451,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-304.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
     <text id="Selection_checkbox_optional_" data-name="Selection
