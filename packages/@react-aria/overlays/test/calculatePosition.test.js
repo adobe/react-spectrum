@@ -192,96 +192,96 @@ describe('calculatePosition', function () {
     {
       placement: 'left',
       noOffset: [50, 200, undefined, 100, 350],
-      offsetBefore: [-200, 6, undefined, 44, 588],
-      offsetAfter: [300, 394, undefined, 156, 200],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 210, undefined, 90, 340],
       mainAxisOffset: [40, 200, undefined, 100, 350]
     },
     {
       placement: 'left top',
       noOffset: [50, 250, undefined, 50, 300],
-      offsetBefore: [-200, 6, undefined, 44, 588],
-      offsetAfter: [300, 394, undefined, 156, 200],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 260, undefined, 40, 290],
       mainAxisOffset: [40, 250, undefined, 50, 300]
     },
     {
       placement: 'left bottom',
       noOffset: [50, 150, undefined, 150, 400],
-      offsetBefore: [-200, 6, undefined, 44, 588],
-      offsetAfter: [300, 394, undefined, 156, 200],
+      offsetBefore: [-200, 50, undefined, 0, 500],
+      offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 160, undefined, 140, 390],
       mainAxisOffset: [40, 150, undefined, 150, 400]
     },
     {
       placement: 'top',
       noOffset: [200, 50, 100, undefined, 200],
-      offsetBefore: [6, -200, 44, undefined, 0],
-      offsetAfter: [394, 300, 156, undefined, 494],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
       mainAxisOffset: [200, 40, 100, undefined, 200],
       crossAxisOffset: [210, 50, 90, undefined, 200]
     },
     {
       placement: 'top left',
       noOffset: [250, 50, 50, undefined, 200],
-      offsetBefore: [6, -200, 44, undefined, 0],
-      offsetAfter: [394, 300, 156, undefined, 494],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
       mainAxisOffset: [250, 40, 50, undefined, 200],
       crossAxisOffset: [260, 50, 40, undefined, 200]
     },
     {
       placement: 'top right',
       noOffset: [150, 50, 150, undefined, 200],
-      offsetBefore: [6, -200, 44, undefined, 0],
-      offsetAfter: [394, 300, 156, undefined, 494],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
       mainAxisOffset: [150, 40, 150, undefined, 200],
       crossAxisOffset: [160, 50, 140, undefined, 200]
     },
     {
       placement: 'bottom',
       noOffset: [200, 350, 100, undefined, 200],
-      offsetBefore: [6, 100, 44, undefined, 494],
-      offsetAfter: [394, 600, 156, undefined, 0],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
       mainAxisOffset: [200, 360, 100, undefined, 190],
       crossAxisOffset: [210, 350, 90, undefined, 200]
     },
     {
       placement: 'bottom left',
       noOffset: [250, 350, 50, undefined, 200],
-      offsetBefore: [6, 100, 44, undefined, 494],
-      offsetAfter: [394, 600, 156, undefined, 0],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
       mainAxisOffset: [250, 360, 50, undefined, 190],
       crossAxisOffset: [260, 350, 40, undefined, 200]
     },
     {
       placement: 'bottom right',
       noOffset: [150, 350, 150, undefined, 200],
-      offsetBefore: [6, 100, 44, undefined, 494],
-      offsetAfter: [394, 600, 156, undefined, 0],
+      offsetBefore: [50, 100, 0, undefined, 450],
+      offsetAfter: [350, 600, 200, undefined, 0],
       mainAxisOffset: [150, 360, 150, undefined, 190],
       crossAxisOffset: [160, 350, 140, undefined, 200]
     },
     {
       placement: 'right',
       noOffset: [350, 200, undefined, 100, 350],
-      offsetBefore: [100, 6, undefined, 44, 588],
-      offsetAfter: [600, 394, undefined, 156, 200],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
       crossAxisOffset: [350, 210, undefined, 90, 340],
       mainAxisOffset: [360, 200, undefined, 100, 350]
     },
     {
       placement: 'right top',
       noOffset: [350, 250, undefined, 50, 300],
-      offsetBefore: [100, 6, undefined, 44, 588],
-      offsetAfter: [600, 394, undefined, 156, 200],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
       crossAxisOffset: [350, 260, undefined, 40, 290],
       mainAxisOffset: [360, 250, undefined, 50, 300]
     },
     {
       placement: 'right bottom',
       noOffset: [350, 150, undefined, 150, 400],
-      offsetBefore: [100, 6, undefined, 44, 588],
-      offsetAfter: [600, 394, undefined, 156, 200],
+      offsetBefore: [100, 50, undefined, 0, 500],
+      offsetAfter: [600, 350, undefined, 200, 200],
       crossAxisOffset: [350, 160, undefined, 140, 390],
       mainAxisOffset: [360, 150, undefined, 150, 400]
     }
@@ -371,95 +371,6 @@ describe('calculatePosition', function () {
       expect(positionTop).toBe(0);
 
       document.body.removeChild(target);
-    });
-  });
-
-  describe('moves popover arrow', () => {
-    it('checks if popover positioned within padding and has popover arrow', () => {
-      const target = createElementWithDimensions('div', {top: 50, left: 50, width: 50, height: 25});
-      const overlayNode = createElementWithDimensions('div', overlaySize);
-      const container = createElementWithDimensions('div', containerDimensions);
-
-      document.documentElement.appendChild(target);
-      document.documentElement.appendChild(container);
-      document.documentElement.appendChild(overlayNode);
-
-      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
-        placement: 'right',
-        targetNode: target,
-        overlayNode,
-        scrollNode: overlayNode,
-        padding: 12,
-        shouldFlip: false,
-        boundaryElement: container,
-        offset: 0,
-        crossOffset: 0
-      });
-      expect(positionTop).toBe(12);
-      expect(arrowOffsetTop).toBe(50.5);
-      expect(arrowOffsetLeft).toBe(undefined);
-
-      document.documentElement.removeChild(target);
-      document.documentElement.removeChild(container);
-      document.documentElement.removeChild(overlayNode);
-    });
-
-    it('checks if popover moves to padding 6 and arrow at popover edge', () => {
-      const target = createElementWithDimensions('div', {top: 0, left: 50, width: 50, height: 25});
-      const overlayNode = createElementWithDimensions('div', overlaySize);
-      const container = createElementWithDimensions('div', containerDimensions);
-
-      document.documentElement.appendChild(target);
-      document.documentElement.appendChild(overlayNode);
-      document.documentElement.appendChild(container);
-
-      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
-        placement: 'right',
-        targetNode: target,
-        overlayNode,
-        scrollNode: overlayNode,
-        padding: 12,
-        shouldFlip: false,
-        boundaryElement: container,
-        offset: 0,
-        crossOffset: 0
-      });
-      expect(positionTop).toBe(6);
-      expect(arrowOffsetTop).toBe(6.5);
-      expect(arrowOffsetLeft).toBe(undefined);
-
-      document.documentElement.removeChild(target);
-      document.documentElement.removeChild(container);
-      document.documentElement.removeChild(overlayNode);
-    });
-
-    it('checks if popover moves to padding 6 and popover arrow is removed', () => {
-      const target = createElementWithDimensions('div', {top: -10, left: 50, width: 50, height: 25});
-      const overlayNode = createElementWithDimensions('div', overlaySize);
-      const container = createElementWithDimensions('div', containerDimensions);
-
-      document.documentElement.appendChild(target);
-      document.documentElement.appendChild(overlayNode);
-      document.documentElement.appendChild(container);
-
-      let {position: {top: positionTop}, arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
-        placement: 'left',
-        targetNode: target,
-        overlayNode,
-        scrollNode: overlayNode,
-        padding: 12,
-        shouldFlip: false,
-        boundaryElement: container,
-        offset: 0,
-        crossOffset: 0
-      });
-      expect(positionTop).toBe(6);
-      expect(arrowOffsetTop).toBe(-3.5);
-      expect(arrowOffsetLeft).toBe(undefined);
-
-      document.documentElement.removeChild(target);
-      document.documentElement.removeChild(container);
-      document.documentElement.removeChild(overlayNode);
     });
   });
 });
