@@ -40,12 +40,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
-      // Firefox scroll position is lost when overflow: 'hidden' is applied so use
-      // scrollbar-width: 'none' instead.
-      let prevSBWidth = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('scrollbar-width: none') && (input.style['scrollbar-width'] || 'auto');
-      if (prevSBWidth) {
-        input.style['scrollbar-width'] = 'none';
-      } else {
+      // Firefox scroll position is lost when overflow: 'hidden' is applied so we skip applying it
+      let isFirefox = 'MozAppearance' in input.style;
+      if (!isFirefox) {
         input.style.overflow = 'hidden';
       }
       input.style.alignSelf = 'start';
@@ -54,9 +51,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
-      if (prevSBWidth) {
-        input.style['scrollbar-width'] = prevSBWidth;
-      }
     }
   }, [isQuiet, inputRef, props.height]);
 
