@@ -229,7 +229,7 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && e.currentTarget.contains(e.target as Element)) {
-          if (shouldPreventDefaultKeyboard(e.target as Element)) {
+          if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
             e.preventDefault();
           }
           e.stopPropagation();
@@ -290,7 +290,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(e.target as Element)) {
+        if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
           e.preventDefault();
         }
         e.stopPropagation();
@@ -674,15 +674,14 @@ function isHTMLAnchorLink(target: Element): boolean {
 function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boolean {
   const {key, code} = event;
   const element = currentTarget as HTMLElement;
-  const {tagName, isContentEditable} = element;
   const role = element.getAttribute('role');
   // Accessibility for keyboards. Space and Enter only.
   // "Spacebar" is for IE 11
   return (
     (key === 'Enter' || key === ' ' || key === 'Spacebar' || code === 'Space') &&
-    (tagName !== 'INPUT' &&
-      tagName !== 'TEXTAREA' &&
-      isContentEditable !== true) &&
+    !((element instanceof HTMLInputElement && !isValidInputKey(element, key)) ||
+      element instanceof HTMLTextAreaElement ||
+      element.isContentEditable) &&
     // A link with a valid href should be handled natively,
     // unless it also has role='button' and was triggered using Space.
     (!isHTMLAnchorLink(element) || (role === 'button' && key !== 'Enter')) &&
@@ -774,8 +773,35 @@ function shouldPreventDefault(target: Element) {
   return !(target instanceof HTMLElement) || !target.draggable;
 }
 
-function shouldPreventDefaultKeyboard(target: Element) {
-  return !((target.tagName === 'INPUT' || target.tagName === 'BUTTON') && (target as HTMLButtonElement | HTMLInputElement).type === 'submit');
+function shouldPreventDefaultKeyboard(target: Element, key: string) {
+  if (target instanceof HTMLInputElement) {
+    return !isValidInputKey(target, key);
+  }
+
+  if (target instanceof HTMLButtonElement) {
+    return target.type !== 'submit';
+  }
+
+  return true;
+}
+
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
+function isValidInputKey(target: HTMLInputElement, key: string) {
+  // Only space should toggle checkboxes and radios, not enter.
+  return target.type === 'checkbox' || target.type === 'radio'
+    ? key === ' '
+    : nonTextInputTypes.has(target.type);
 }
 
 function isVirtualPointerEvent(event: PointerEvent) {

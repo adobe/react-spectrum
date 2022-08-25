@@ -377,14 +377,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyLeftOf(key: Key): Key {
-    return key;
-  }
-
-  getKeyRightOf(key: Key): Key {
-    return key;
-  }
-
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
 
