@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/illustrations",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.13.2"
+    "@react-aria/utils": "^3.13.3"
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "3.0.0-alpha.1"
