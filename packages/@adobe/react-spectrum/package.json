@@ -39,6 +39,7 @@
     "@react-spectrum/image": "^3.3.0",
     "@react-spectrum/layout": "^3.4.0",
     "@react-spectrum/link": "^3.4.0",
+    "@react-spectrum/list": "3.0.0-rc.0",
     "@react-spectrum/listbox": "^3.7.0",
     "@react-spectrum/menu": "^3.8.0",
     "@react-spectrum/meter": "^3.3.0",
