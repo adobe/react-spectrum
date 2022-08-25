@@ -1,5 +1,5 @@
 export {Button} from './Button';
-export {Calendar, RangeCalendar, CalendarGrid} from './Calendar';
+export {Calendar, RangeCalendar, CalendarGrid, CalendarCell} from './Calendar';
 export {ComboBox} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField} from './DateField';
 export {DatePicker, DateRangePicker} from './DatePicker';
@@ -25,3 +25,5 @@ export {useContextProps} from './utils';
 export type {ItemStates} from './Collection';
 export type {ButtonRenderProps} from './Button';
 export type {SelectValueRenderProps} from './Select';
+export type {DateSegmentRenderProps} from './DateField';
+export type {CalendarCellRenderProps} from './Calendar';

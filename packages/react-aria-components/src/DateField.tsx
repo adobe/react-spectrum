@@ -1,13 +1,13 @@
 import {AriaDateFieldProps, AriaTimeFieldProps, useDateField, useDateSegment, useLocale, useTimeField} from 'react-aria';
 import {createCalendar} from '@internationalized/date';
-import {DateFieldState, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
-interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
+interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label'> {
   children: ReactNode
 }
 
@@ -61,7 +61,7 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef}],
-        [LabelContext, {...labelProps, ref: labelRef}]
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}]
       ]}>
       {props.children}
     </Provider>
@@ -88,8 +88,27 @@ function DateInput({children, style, className, slot}: DateInputProps, ref: Forw
 const _DateInput = forwardRef(DateInput);
 export {_DateInput as DateInput};
 
-interface DateSegmentRenderProps {
-  segment: IDateSegment
+export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'> {
+  /**
+   * Whether the value is a placeholder.
+   * @selector [data-placeholder]
+   */
+  isPlaceholder: boolean,
+  /**
+   * Whether the segment is read only.
+   * @selector [aria-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the date field is in an invalid state.
+   * @selector [aria-invalid]
+   */
+  isInvalid: boolean,
+  /**
+   * The type of segment. Values include `literal`, `year`, `month`, `day`, etc.
+   * @selector [data-type="..."]
+   */
+  type: DateSegmentType
 }
 
 interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
@@ -104,7 +123,11 @@ function DateSegment({segment, className, style, children}: DateSegmentProps, re
     className,
     style,
     children,
-    values: {segment},
+    values: {
+      ...segment,
+      isReadOnly: !segment.isEditable,
+      isInvalid: state.validationState === 'invalid'
+    },
     defaultChildren: segment.text
   });
 
@@ -112,7 +135,8 @@ function DateSegment({segment, className, style, children}: DateSegmentProps, re
     <div
       {...segmentProps}
       {...renderProps}
-      ref={domRef} />
+      ref={domRef}
+      data-type={segment.type} />
   );
 }
 
