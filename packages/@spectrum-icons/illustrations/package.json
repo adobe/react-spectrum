@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-spectrum/icon": "^3.6.0",
     "@react-aria/utils": "^3.13.3"
   },
   "devDependencies": {
