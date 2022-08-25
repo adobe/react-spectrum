@@ -71,7 +71,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
   let v = (value || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
-  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [selectedDate, setSelectedDate] = useState<DateValue>(null);

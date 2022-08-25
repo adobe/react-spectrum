@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,14 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCalendarProps, DateValue} from '@react-types/calendar';
-import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {CalendarState} from '@react-stately/calendar';
+/// <reference types="css-module-types" />
 
-/**
- * Provides the behavior and accessibility implementation for a calendar component.
- * A calendar displays one or more date grids and allows users to select a single date.
- */
-export function useCalendar<T extends DateValue>(props: AriaCalendarProps<T>, state: CalendarState): CalendarAria {
-  return useCalendarBase(props, state);
-}
+export * from './StaticField';
