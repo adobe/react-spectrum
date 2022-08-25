@@ -12,6 +12,7 @@
 
 export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
 export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
+export type {GridCollectionOptions} from './TableCollection';
 export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
 
 export {useTableColumnResizeState} from './useTableColumnResizeState';
@@ -21,4 +22,5 @@ export {TableBody} from './TableBody';
 export {Column} from './Column';
 export {Row} from './Row';
 export {Cell} from './Cell';
+export {TableCollection} from './TableCollection';
 export {Section} from '@react-stately/collections';

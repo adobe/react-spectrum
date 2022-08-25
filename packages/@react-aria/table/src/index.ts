@@ -17,6 +17,7 @@ export {useTableHeaderRow} from './useTableHeaderRow';
 export {useTableCell} from './useTableCell';
 export {useTableSelectionCheckbox, useTableSelectAllCheckbox} from './useTableSelectionCheckbox';
 export {useTableColumnResize} from './useTableColumnResize';
+export {TableKeyboardDelegate} from './TableKeyboardDelegate';
 
 // Workaround for a Parcel bug where re-exports don't work in the CommonJS output format...
 // export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';

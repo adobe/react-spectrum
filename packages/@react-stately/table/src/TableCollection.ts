@@ -13,7 +13,7 @@ import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 
-interface GridCollectionOptions {
+export interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean
 }
 
