@@ -75,7 +75,7 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
 
 export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
 
-interface SpectrumDateFieldBase extends SpectrumLabelableProps, StyleProps {
+interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, StyleProps {
   /**
    * Whether the date picker should be displayed with a quiet style.
    * @default false
