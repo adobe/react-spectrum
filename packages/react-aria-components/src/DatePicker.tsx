@@ -1,9 +1,9 @@
-import {AriaDatePickerProps, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
+import {AriaDatePickerProps, AriaDateRangePickerProps, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
-import {AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
+import {DateValue} from '@react-types/datepicker';
 import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';

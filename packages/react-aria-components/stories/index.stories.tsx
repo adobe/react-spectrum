@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -168,11 +168,7 @@ export const CalendarExample = () => (
       <Button slot="next">&gt;</Button>
     </div>
     <CalendarGrid style={{width: '100%'}}>
-      {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-        <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-          {formattedDate}
-        </div>
-      )}
+      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
     </CalendarGrid>
   </Calendar>
 );
@@ -186,18 +182,10 @@ export const CalendarMultiMonth = () => (
     </div>
     <div style={{display: 'flex', gap: 20}}>
       <CalendarGrid style={{flex: 1}}>
-        {({formattedDate, isSelected, isOutsideMonth}) => (
-          <div hidden={isOutsideMonth} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-            {formattedDate}
-          </div>
-        )}
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
       </CalendarGrid>
       <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-        {({formattedDate, isSelected, isOutsideMonth}) => (
-          <div hidden={isOutsideMonth} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-            {formattedDate}
-          </div>
-        )}
+        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
       </CalendarGrid>
     </div>
   </Calendar>
@@ -211,11 +199,7 @@ export const RangeCalendarExample = () => (
       <Button slot="next">&gt;</Button>
     </div>
     <CalendarGrid style={{width: '100%'}}>
-      {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-        <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-          {formattedDate}
-        </div>
-      )}
+      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
     </CalendarGrid>
   </RangeCalendar>
 );
@@ -245,11 +229,7 @@ export const DatePickerExample = () => (
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-              <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-                {formattedDate}
-              </div>
-            )}
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
           </CalendarGrid>
         </Calendar>
       </Dialog>
@@ -288,11 +268,7 @@ export const DateRangePickerExample = () => (
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {({formattedDate, isSelected, isOutsideVisibleRange}) => (
-              <div hidden={isOutsideVisibleRange} style={{textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''}}>
-                {formattedDate}
-              </div>
-            )}
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
           </CalendarGrid>
         </RangeCalendar>
       </Dialog>
