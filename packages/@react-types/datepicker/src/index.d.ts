@@ -33,7 +33,7 @@ type MappedDateValue<T> =
   T extends CalendarDate ? CalendarDate :
   never;
 
-export type Granularity = 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
+export type Granularity = 'day' | 'hour' | 'minute' | 'second';
 interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
@@ -111,7 +111,7 @@ export interface TimePickerProps<T extends TimeValue> extends InputBase, Validat
    * Determines the smallest unit that is displayed in the time picker.
    * @default 'minute'
    */
-  granularity?: 'hour' | 'minute' | 'second' | 'millisecond',
+  granularity?: 'hour' | 'minute' | 'second',
   /** Whether to hide the time zone abbreviation. */
   hideTimeZone?: boolean,
   /**

@@ -337,7 +337,7 @@
     align-items: center;
     justify-content: center;
 
-    > img, > svg {
+    > img {
       width: unset;
       height: 100%;
     }
