@@ -11,12 +11,12 @@
  */
 
 import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {CollectionFactory, useCollection} from '@react-stately/collections';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo, useState} from 'react';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
 import {TableCollection} from './TableCollection';
-import {useCollection} from '@react-stately/collections';
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
@@ -39,9 +39,11 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T, C extends TableCollection<T>> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  /** Factory to provide custom collection inherited from TableCollection. */
+  collectionFactory?: CollectionFactory<T, C>
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -53,9 +55,9 @@ const OPPOSITE_SORT_DIRECTION = {
  * Provides state management for a table component. Handles building a collection
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
-export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
+export function useTableState<T extends object, C extends TableCollection<T> = TableCollection<T>>(props: TableStateProps<T, C>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none'} = props;
+  let {selectionMode = 'none', collectionFactory} = props;
 
   let context = useMemo(() => ({
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
@@ -63,9 +65,13 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     columns: []
   }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
+  let defaultFactory = useMemo(() => (
+    (nodes, prev) => new TableCollection(nodes, prev, context)
+  ) as CollectionFactory<T, TableCollection<T>>, [context]);
+
   let collection = useCollection<T, TableCollection<T>>(
     props,
-    (nodes, prev) => new TableCollection(nodes, prev, context),
+    collectionFactory || defaultFactory,
     context
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});

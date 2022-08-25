@@ -11,6 +11,7 @@
  */
 
 export type {PartialNode} from './types';
+export type {CollectionFactory} from './useCollection';
 export {Item} from './Item';
 export {Section} from './Section';
 export {useCollection} from './useCollection';
