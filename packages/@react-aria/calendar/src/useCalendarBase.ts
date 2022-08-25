@@ -12,9 +12,9 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
+import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMAttributes} from '@react-types/shared';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
@@ -36,7 +36,7 @@ export interface CalendarAria {
   title: string
 }
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
+export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let domProps = filterDOMProps(props);
 
