@@ -43,7 +43,7 @@ export interface TableStateProps<T, C extends TableCollection<T>> extends Collec
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
   /** Factory to provide custom collection inherited from TableCollection. */
-  collectionFactory?: CollectionFactory<T, C>
+  collectionFactory?: (context: CollectionBuilderContext<T>) => CollectionFactory<T, C>
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -71,7 +71,7 @@ export function useTableState<T extends object, C extends TableCollection<T> = T
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
-    collectionFactory || defaultFactory,
+    collectionFactory?.(context) || defaultFactory,
     context
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection});
