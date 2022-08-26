@@ -1,6 +1,7 @@
 {
   "ascending": "naraščajoče",
   "ascendingSort": "razvrščeno po stolpcu {columnName} v naraščajočem vrstnem redu",
+  "columnSize": "{value} slikovnih pik",
   "descending": "padajoče",
   "descendingSort": "razvrščeno po stolpcu {columnName} v padajočem vrstnem redu",
   "select": "Izberite",
