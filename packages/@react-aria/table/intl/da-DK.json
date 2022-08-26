@@ -1,6 +1,7 @@
 {
   "ascending": "stigende",
   "ascendingSort": "sorteret efter kolonne {columnName} i stigende rækkefølge",
+  "columnSize": "{value} pixels",
   "descending": "faldende",
   "descendingSort": "sorteret efter kolonne {columnName} i faldende rækkefølge",
   "select": "Vælg",
