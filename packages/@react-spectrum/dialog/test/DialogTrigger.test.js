@@ -136,6 +136,84 @@ describe('DialogTrigger', function () {
     expect(popover).toHaveAttribute('style');
   });
 
+  describe('popover arrows', function () {
+    const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+    const originalOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
+
+    beforeAll(() => {
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {configurable: true, value: 500});
+      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {configurable: true, value: 500});
+    });
+    afterAll(() => {
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
+      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', originalOffsetWidth);
+    });
+
+    it('should trigger a popover with an arrow', function () {
+      let {getByRole, queryByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type="popover">
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+
+      expect(queryByRole('dialog')).toBeNull();
+
+      let button = getByRole('button');
+      // set position and size since the testing framework isn't doing that
+      button.getBoundingClientRect = () => ({top: 0, left: 0, width: 65, height: 32});
+      triggerPress(button);
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let popover = getByTestId('popover');
+      expect(popover).toBeVisible();
+      expect(popover).toHaveAttribute('style');
+
+      let arrow = getByTestId('arrow');
+      expect(arrow).toBeVisible();
+      expect(arrow).toHaveAttribute('style');
+    });
+
+    it('should trigger a popover without an arrow', function () {
+      let {getByRole, queryByRole, getByTestId, queryByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type="popover">
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+
+      expect(queryByRole('dialog')).toBeNull();
+
+      let button = getByRole('button');
+      // set position and size since the testing framework isn't doing that
+      button.getBoundingClientRect = () => ({top: -20, left: -40, width: 65, height: 32});
+      triggerPress(button);
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let popover = getByTestId('popover');
+      expect(popover).toBeVisible();
+      expect(popover).toHaveAttribute('style');
+
+      expect(queryByTestId('arrow')).toBeNull();
+    });
+  });
+
   it('popovers should be closeable', function () {
     let {getByRole, getByText, queryByRole} = render(
       <Provider theme={theme}>
