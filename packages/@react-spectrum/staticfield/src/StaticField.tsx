@@ -14,7 +14,7 @@ import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, St
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {Label} from './Label';
+import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {RefObject} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
