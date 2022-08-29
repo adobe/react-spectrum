@@ -10,11 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  SlotProvider,
+  useFocusableRef,
+  useHasChild,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {ElementType, ReactElement, useMemo} from 'react';
+import React, {ElementType, ReactElement} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -43,20 +50,13 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
+  let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
+  let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
     buttonVariant = VARIANT_MAPPING[variant];
   }
-
-  let hasIconOnlyChild = useMemo(() => {
-    if (React.Children.count(children) !== 1) {
-      return false;
-    }
-    let child = React.Children.toArray(children)[0];
-    // @ts-ignore
-    return React.isValidElement(child) && typeof child.type === 'function' && child.type().type.name === 'Icon';
-  }, [children]);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -71,7 +71,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             `spectrum-Button--${buttonVariant}`,
             {
               'spectrum-Button--quiet': isQuiet,
-              'spectrum-Button--iconOnly': hasIconOnlyChild,
+              'spectrum-Button--iconOnly': hasIcon && !hasLabel,
               'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
