@@ -14,7 +14,7 @@ import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} 
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {ElementType, ReactElement} from 'react';
+import React, {ElementType, ReactElement, useMemo} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -49,6 +49,15 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     buttonVariant = VARIANT_MAPPING[variant];
   }
 
+  let hasIconOnlyChild = useMemo(() => {
+    if (React.Children.count(children) !== 1) {
+      return false;
+    }
+    let child = React.Children.toArray(children)[0];
+    // @ts-ignore
+    return React.isValidElement(child) && typeof child.type === 'function' && child.type().type.name === 'Icon';
+  }, [children]);
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
@@ -62,6 +71,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             `spectrum-Button--${buttonVariant}`,
             {
               'spectrum-Button--quiet': isQuiet,
+              'spectrum-Button--iconOnly': hasIconOnlyChild,
               'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
