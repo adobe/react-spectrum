@@ -294,7 +294,7 @@ function CenteredWrapper({children}) {
 }
 
 /**
- * Lists are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
  */
 const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListView as ListView};
