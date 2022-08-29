@@ -21,6 +21,7 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
+let isReact18 = parseInt(React.version, 10) >= 18;
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -443,6 +444,7 @@ describe('ListView', function () {
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => {jest.runAllTimers();});
         fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
         fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
@@ -457,7 +459,7 @@ describe('ListView', function () {
 
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
         // purposefully run these two together inside one act so that the events line up as they do in the dom
-        // if they are in separate ones, then we create an render cycle in between
+        // if they are in separate ones, then we create a render cycle in between
         // if they are two separate acts
         act(() => {
           jest.advanceTimersToNextTimer();
@@ -509,6 +511,7 @@ describe('ListView', function () {
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => {jest.runAllTimers();});
         fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
         fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
@@ -529,6 +532,10 @@ describe('ListView', function () {
           jest.advanceTimersToNextTimer();
           fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
         });
+        if (!isReact18) {
+          // not sure why but in React 17 this blur happens in the browser but not in the test
+          act(() => list1rows[0].blur());
+        }
         // resolve async drop
         await act(async () => Promise.resolve());
         // resolve focus movement
