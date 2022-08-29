@@ -18,7 +18,6 @@ import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
-import Add from '@spectrum-icons/workflow/Add';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -60,8 +59,8 @@ storiesOf('Button', module)
     )
   )
   .add('icon only', () => (
-    <Button variant='cta'>
-      <Add />
+    <Button variant="cta">
+      <Bell />
     </Button>
   ))
   .add(
