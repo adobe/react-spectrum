@@ -22,7 +22,7 @@ import {usePress} from '../';
 function Example(props) {
   let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>test</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -2181,6 +2181,95 @@ describe('usePress', function () {
       fireEvent.keyUp(document.body, {key: ' '});
 
       expect(events).toEqual([]);
+    });
+
+    it('should fire press events on checkboxes but not prevent default', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByRole} = render(
+        <Example
+          elementType="input"
+          type="checkbox"
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = getByRole('checkbox');
+      fireEvent.keyDown(el, {key: 'Enter'});
+      fireEvent.keyUp(el, {key: 'Enter'});
+
+      // Enter key handled should do nothing on a checkbox
+      expect(events).toEqual([]);
+
+      let allow = fireEvent.keyDown(el, {key: ' '});
+      expect(allow).toBeTruthy();
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        }
+      ]);
+
+      allow = fireEvent.keyUp(el, {key: ' '});
+      expect(allow).toBeTruthy();
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
     });
   });
 

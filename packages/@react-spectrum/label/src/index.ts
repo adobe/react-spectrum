@@ -15,4 +15,3 @@
 export {Field} from './Field';
 export {Label} from './Label';
 export {HelpText} from './HelpText';
-export {StaticField} from './StaticField';
