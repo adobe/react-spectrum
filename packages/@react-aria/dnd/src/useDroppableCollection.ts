@@ -65,14 +65,25 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       items
     } = e;
 
-    if (target.type === 'root') {
-      onRootDrop && await onRootDrop({items, dropOperation});
-    } else if (target.dropPosition === 'on') {
-      onItemDrop && await onItemDrop({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}});
-    } else if (isInternalDrop && draggingKeys.size > 0 && e.dropOperation === 'move') {
-      onReorder && await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
-    } else {
-      onInsert && await onInsert({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: target.dropPosition}});
+    if (target.type === 'root' && onRootDrop) {
+      await onRootDrop({items, dropOperation});
+    }
+
+    if (target.type === 'item') {
+      if (target.dropPosition === 'on' && onItemDrop) {
+        await onItemDrop({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}})!;
+      }
+
+      if (target.dropPosition !== 'on') {
+        if (!isInternalDrop && onInsert) {
+          await onInsert({items, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
+        }
+
+        if (isInternalDrop && e.dropOperation === 'move' && onReorder) {
+          // TODO: get rid of e.dropOperation === 'move' restriction if we want onReorder to handle internal copy dnd operations?
+          await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
+        }
+      }
     }
   }, [localState, ref]);
 

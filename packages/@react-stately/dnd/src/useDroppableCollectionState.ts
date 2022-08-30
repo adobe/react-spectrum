@@ -68,12 +68,12 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
       (
-        (onInsert && target.type === 'item' && (!isInternalDrop || allowedOperations[0] === 'copy') && (target.dropPosition === 'before' || target.dropPosition === 'after')) ||
-        (onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after')) ||
+        (onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after')) ||
+        // TODO: added allowedOperations[0] !== 'copy' to block internal copy insert operations as per feedback. Perhaps rename onReorder to onInternalInsert and remove this restriction? Maybe this is just ok?
+        (onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') && allowedOperations[0] !== 'copy') ||
         // Feedback was that internal root drop was weird so preventing that from happening
         (onRootDrop && target.type === 'root' && !isInternalDrop) ||
         // Automatically prevent items (i.e. folders) from being dropped on themselves.
-        // TODO: this also prevents non-folder items from being dropped on themseleves as well, is that too restrictive? Can't really think of a reason to allow that
         (onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target, types))) ||
         !!onDrop
       )

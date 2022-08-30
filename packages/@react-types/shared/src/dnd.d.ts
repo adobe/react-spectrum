@@ -118,7 +118,6 @@ interface DroppableCollectionDropEvent extends DropEvent {
 interface DroppableCollectionInsertDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
-  isInternalDrop: boolean,
   target: {
     key: Key,
     dropPosition: Omit<DropPosition, 'on'>
@@ -178,7 +177,7 @@ export interface DroppableCollectionProps {
   /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**
-   * Handler called when external or copied items are dropped "between" the droppable collection's items.
+   * Handler called when external items are dropped "between" the droppable collection's items.
    */
   onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
   /**

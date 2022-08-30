@@ -524,7 +524,6 @@ describe('ListView', function () {
           expect(onRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
-            isInternalDrop: false,
             dropOperation: 'move',
             target: {
               key: '1',
@@ -557,9 +556,10 @@ describe('ListView', function () {
           });
         });
 
-        it('should allow the user to perform a insert operation in the source list instead of a reorder operation if the drop operation is "copy"', async function () {
+        it('should not allow a user to perform an internal copy drop operation', async function () {
+          // The real world scenario is a user dragging an item within the source collection while holding the option key to perform a copy drop
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, getAllowedDropOperations: () => ['copy']}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, getAllowedDropOperations: () => ['copy']}} />
           );
 
           let grids = getAllByRole('grid');
@@ -570,38 +570,8 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(1);
-          expect(onInsert).toHaveBeenCalledWith({
-            isInternalDrop: true,
-            dropOperation: 'copy',
-            target: {
-              key: '4',
-              dropPosition: 'after'
-            },
-            items: [
-              {
-                kind: 'text',
-                types: new Set(['text/plain', 'file']),
-                getText: expect.any(Function)
-              },
-              {
-                kind: 'text',
-                types: new Set(['text/plain', 'file']),
-                getText: expect.any(Function)
-              }
-            ]
-          });
-          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
-          expect(items).toContainObject({
-            identifier: '1',
-            type: 'file',
-            name: 'Adobe Photoshop'
-          });
-          expect(items).toContainObject({
-            identifier: '2',
-            type: 'file',
-            name: 'Adobe XD'
-          });
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledTimes(0);
         });
 
         it('should call onReorder when performing a insert drop in the source list', function () {
@@ -834,7 +804,6 @@ describe('ListView', function () {
           expect(onRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
-            isInternalDrop: false,
             dropOperation: 'move',
             target: {
               key: '5',
@@ -993,7 +962,6 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
-            isInternalDrop: false,
             dropOperation: 'copy',
             target: {
               key: '1',
@@ -1241,7 +1209,6 @@ describe('ListView', function () {
           expect(onRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
-            isInternalDrop: false,
             dropOperation: 'move',
             target: {
               key: '7',
