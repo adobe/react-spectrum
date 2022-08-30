@@ -272,7 +272,6 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     });
   }, [scopeRef, focusedNode]);
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
-  let onSyntheticFocusDocument = useSyntheticBlurEvent(onBlur);
   useLayoutEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
@@ -357,7 +356,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
     // and attach our blur fixer here
     if (shouldContainFocus(scopeRef) && isElementInChildScope(document.activeElement, scopeRef)) {
       let event = {target: document.activeElement};
-      onSyntheticFocusDocument(event as React.FocusEvent);
+      onSyntheticFocus(event as React.FocusEvent);
     }
   }, []);
 }

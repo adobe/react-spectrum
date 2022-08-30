@@ -71,7 +71,6 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   stateRef.current.onBlur = onBlur;
 
   // Clean up MutationObserver on unmount. See below.
-  // eslint-disable-next-line arrow-body-style
   useLayoutEffect(() => {
     const state = stateRef.current;
     return () => {
@@ -93,7 +92,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
     if (((target instanceof HTMLButtonElement ||
       target instanceof HTMLInputElement ||
       target instanceof HTMLTextAreaElement ||
-      target instanceof HTMLSelectElement) && target.disabled) || !document.body.contains(e.target as HTMLElement)) {
+      target instanceof HTMLSelectElement) && target.disabled) || !document.body.contains(target as HTMLElement)) {
       // For backward compatibility, dispatch a (fake) React synthetic event.
       stateRef.current.onBlur?.(new SyntheticBlurEvent('blur', e));
     }

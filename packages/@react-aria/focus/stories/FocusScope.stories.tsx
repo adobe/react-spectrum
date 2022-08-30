@@ -113,7 +113,7 @@ function FocusableFirstInScopeExample() {
     return (
       <div key={index}>
         <h1 id={`heading-${index}`}>Dialog {index + 1}</h1>
-        {index > 2 ?
+        {index >= 2 ?
           (
             <>
               <p>The end of the road.</p>
