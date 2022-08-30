@@ -393,10 +393,12 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
 
+  let [scrollPosition, setScrollPosition] = useState(0);
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
-  }, [bodyRef]);
+    setScrollPosition(bodyRef.current.scrollLeft);
+  }, [bodyRef, setScrollPosition, headerRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setTableWidth(rect.width);
@@ -425,7 +427,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     keysBefore.push(key);
     key = tableState.collection.getKeyBefore(key);
   } while (key != null);
-  let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0);
+  let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0) + (direction === 'ltr' ? -1 * scrollPosition : scrollPosition);
 
   return (
     <div

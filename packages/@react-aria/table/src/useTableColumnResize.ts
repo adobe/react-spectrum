@@ -63,14 +63,14 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (direction === 'rtl') {
         deltaX *= -1;
       }
-      // if moving up/down only, no need to resize
-      if (deltaX !== 0 || (pointerType === 'keyboard' && deltaY !== 0)) {
-        if (pointerType === 'keyboard') {
-          if (deltaY !== 0 && deltaX === 0) {
-            deltaX = deltaY * -1;
-          }
-          deltaX *= 10;
+      if (pointerType === 'keyboard') {
+        if (deltaY !== 0 && deltaX === 0) {
+          deltaX = deltaY * -1;
         }
+        deltaX *= 10;
+      }
+      // if moving up/down only, no need to resize
+      if (deltaX !== 0) {
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
         if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
