@@ -78,7 +78,7 @@ export interface SelectableItemStates {
   allowsSelection: boolean,
   /**
    * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
-   * and `disabledBehavior. It may also change depending on the current selection state
+   * and `disabledBehavior`. It may also change depending on the current selection state
    * of the list (e.g. when selection is primary). This can be used to enable or disable hover
    * styles or other visual indications of interactivity.
    */
