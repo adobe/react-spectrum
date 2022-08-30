@@ -107,7 +107,10 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
+  let disabledBehavior = selectionManager.disabledBehavior;
+  let delegate = useMemo(() => (
+    keyboardDelegate || new ListKeyboardDelegate(collection, disabledBehavior === 'selection' ? new Set() : disabledKeys, ref, collator)
+  ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({
     ref,
