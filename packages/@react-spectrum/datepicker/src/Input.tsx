@@ -37,29 +37,32 @@ function Input(props, ref) {
   // not cause a layout shift.
   let [reservePadding, setReservePadding] = useValueEffect(false);
   let onResize = useCallback(() => setReservePadding(function *(reservePadding) {
-    if (reservePadding) {
-      // Try to collapse padding if the content is clipped.
-      if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield false;
-
-        // If removing padding causes a layout shift, add it back.
-        if (inputRef.current.parentElement.offsetWidth !== width) {
-          yield true;
-        }
-      }
-    } else {
-      // Try to add padding if the content is not clipped.
-      if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield true;
-
-        // If adding padding does not change the width (i.e. width is constrained), remove it again.
-        if (inputRef.current.parentElement.offsetWidth === width) {
+    if (inputRef.current) {
+      if (reservePadding) {
+        // Try to collapse padding if the content is clipped.
+        if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
           yield false;
+
+          // If removing padding causes a layout shift, add it back.
+          if (inputRef.current.parentElement.offsetWidth !== width) {
+            yield true;
+          }
+        }
+      } else {
+        // Try to add padding if the content is not clipped.
+        if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
+          yield true;
+
+          // If adding padding does not change the width (i.e. width is constrained), remove it again.
+          if (inputRef.current.parentElement.offsetWidth === width) {
+            yield false;
+          }
         }
       }
     }
+
   }), [inputRef, setReservePadding]);
 
   useLayoutEffect(onResize, [onResize]);

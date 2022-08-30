@@ -1,6 +1,7 @@
 {
   "ascending": "crescente",
   "ascendingSort": "classificado pela coluna {columnName} em ordem crescente",
+  "columnSize": "{value} pixels",
   "descending": "decrescente",
   "descendingSort": "classificado pela coluna {columnName} em ordem decrescente",
   "select": "Selecionar",

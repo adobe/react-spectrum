@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {FocusableElement} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {RefObject, useRef} from 'react';
@@ -21,7 +21,7 @@ import {useEvent} from '@react-aria/utils';
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
   let res = useCalendarBase(props, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
