@@ -1,6 +1,7 @@
 {
   "ascending": "עולה",
   "ascendingSort": "מוין לפי עמודה {columnName} בסדר עולה",
+  "columnSize": "{value} פיקסלים",
   "descending": "יורד",
   "descendingSort": "מוין לפי עמודה {columnName} בסדר יורד",
   "select": "בחר",
