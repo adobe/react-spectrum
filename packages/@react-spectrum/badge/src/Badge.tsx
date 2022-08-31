@@ -68,8 +68,7 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * Status lights are used to color code categories and labels commonly found in data visualization.
- * When status lights have a semantic meaning, they should use semantic variant colors.
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
  */
 let _Badge = forwardRef(Badge);
 export {_Badge as Badge};
