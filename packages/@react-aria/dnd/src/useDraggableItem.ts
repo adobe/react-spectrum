@@ -49,8 +49,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       state.moveDrag(e);
     },
     onDragEnd(e) {
-      let {draggingCollectionRef, droppedCollectionRef} = getDnDState();
-      let isInternalDrop = draggingCollectionRef?.current === droppedCollectionRef?.current;
+      let {draggingCollectionRef, dropCollectionRef} = getDnDState();
+      let isInternalDrop = draggingCollectionRef?.current === dropCollectionRef?.current;
       state.endDrag({...e, keys: state.draggingKeys, isInternalDrop});
     }
   });

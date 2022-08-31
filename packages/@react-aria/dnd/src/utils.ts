@@ -11,7 +11,7 @@
  */
 
 import {CUSTOM_DRAG_TYPE, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryItem, DragItem, DropItem, DropTarget, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
+import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
@@ -312,10 +312,8 @@ export interface DnDState {
   draggingCollectionRef?: RefObject<HTMLElement>,
   /** The set of currently dragged keys. */
   draggingKeys: Set<Key>,
-  /** The current collection being hovered/focused for a potential drop operation. */
-  currentDropCollectionRef?: RefObject<HTMLElement>,
-  /** A ref for the collection the dragged items were dropped into, if any. */
-  droppedCollectionRef?: RefObject<HTMLElement>,
+  /** A ref for the collection that is targeted for a drop operation, if any. */
+  dropCollectionRef?: RefObject<HTMLElement>,
   /** The dropEffect of the drop event if any. */
   dropEffect?: DropEffect
 }
@@ -335,12 +333,8 @@ export function setDraggingKeys(keys: Set<Key>) {
   dndState.draggingKeys = keys;
 }
 
-export function setCurrentDropCollectionRef(ref: RefObject<HTMLElement>) {
-  dndState.currentDropCollectionRef = ref;
-}
-
-export function setDroppedCollectionRef(ref: RefObject<HTMLElement>) {
-  dndState.droppedCollectionRef = ref;
+export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+  dndState.dropCollectionRef = ref;
 }
 
 export function setDropEffect(dropEffect: DropEffect) {

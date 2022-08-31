@@ -13,7 +13,7 @@
 import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {getDnDState, setCurrentDropCollectionRef, setDroppedCollectionRef, useDroppableCollectionId} from './utils';
+import {getDnDState, setDropCollectionRef, useDroppableCollectionId} from './utils';
 import {getTypes} from './utils';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
@@ -98,12 +98,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       autoScroll.move(e.x, e.y);
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
-      // TODO: do I need this? useDroppableItem only needs this if a dragSession is in progress in which the setCurrentDropCollectionRef in DragManager below should suffice
-      setCurrentDropCollectionRef(ref);
-      let {draggingCollectionRef, draggingKeys} = getDnDState();
+      let {draggingCollectionRef, draggingKeys, dropCollectionRef} = getDnDState();
       let isInternalDrop = draggingCollectionRef?.current === ref?.current;
       let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternalDrop, draggingKeys}) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
+      console.log('target', target)
       if (!target) {
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;
@@ -121,11 +120,17 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           localState.dropOperation = dropOperation;
         }
       }
-
+      console.log('locate', target, localState.dropOperation)
+      // Only set dropCollectionRef if there is a valid drop target since we cleanup dropCollectionRef in onDropExit
+      // which only runs when leaving a valid drop target or if the dropEffect become none (mouse dnd only).
+      if (target && localState.dropOperation !== 'cancel' && ref?.current !== dropCollectionRef?.current) {
+        setDropCollectionRef(ref);
+      }
       localState.nextTarget = localState.dropOperation === 'cancel' ? null : target;
       return localState.dropOperation;
     },
     onDropExit() {
+      setDropCollectionRef(undefined);
       state.setTarget(null);
       autoScroll.stop();
     },
@@ -140,7 +145,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       }
     },
     onDrop(e) {
-      setDroppedCollectionRef(ref);
+      setDropCollectionRef(ref);
       if (state.target) {
         onDrop(e, state.target);
       }
@@ -383,8 +388,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let types = getTypes(drag.items);
         let selectionManager = localState.state.selectionManager;
         let target: DropTarget;
-        // Update the current collection ref tracker for useDroppableItem's getDropOperation isInternalDrop check
-        setCurrentDropCollectionRef(ref);
+        // Update the drop collection ref tracker for useDroppableItem's getDropOperation isInternalDrop check
+        setDropCollectionRef(ref);
 
         // When entering the droppable collection for the first time, the default drop target
         // is after the focused key.
@@ -434,6 +439,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         localState.state.setTarget(target);
       },
       onDropExit() {
+        setDropCollectionRef(undefined);
         localState.state.setTarget(null);
       },
       onDropTargetEnter(target) {
@@ -454,7 +460,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         }
       },
       onDrop(e, target) {
-        setDroppedCollectionRef(ref);
+        setDropCollectionRef(ref);
         if (localState.state.target) {
           onDrop(e, target || localState.state.target);
         }

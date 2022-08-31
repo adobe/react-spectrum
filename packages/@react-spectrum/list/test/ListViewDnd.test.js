@@ -451,8 +451,8 @@ describe('ListView', function () {
 
         fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         let dndState = getDnDState();
-        expect(dndState).toEqual({draggingKeys: new Set(), currentDropCollectionRef: expect.any(Object)});
-        expect(dndState.currentDropCollectionRef.current).toBe(grids[1]);
+        expect(dndState).toEqual({draggingKeys: new Set(), dropCollectionRef: expect.any(Object)});
+        expect(dndState.dropCollectionRef.current).toBe(grids[1]);
 
         fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
@@ -460,6 +460,10 @@ describe('ListView', function () {
         expect(dndState).toEqual({
           draggingKeys: new Set()
         });
+      });
+
+      it('should clear the dropCollectionRef on drop exit', function () {
+        // TODO
       });
 
       describe('using util handlers', function () {
