@@ -102,7 +102,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let isInternalDrop = draggingCollectionRef?.current === ref?.current;
       let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternalDrop, draggingKeys}) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
-      console.log('target', target)
       if (!target) {
         localState.dropOperation = 'cancel';
         localState.nextTarget = null;
@@ -120,7 +119,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           localState.dropOperation = dropOperation;
         }
       }
-      console.log('locate', target, localState.dropOperation)
+
       // Only set dropCollectionRef if there is a valid drop target since we cleanup dropCollectionRef in onDropExit
       // which only runs when leaving a valid drop target or if the dropEffect become none (mouse dnd only).
       if (target && localState.dropOperation !== 'cancel' && ref?.current !== dropCollectionRef?.current) {

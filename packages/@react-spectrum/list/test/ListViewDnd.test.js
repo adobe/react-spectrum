@@ -462,8 +462,39 @@ describe('ListView', function () {
         });
       });
 
-      it('should clear the dropCollectionRef on drop exit', function () {
-        // TODO
+      it('should update the dropCollectionRef during drag operations', function () {
+        let {getAllByRole} = render(
+          <DragBetweenListsComplex />
+        );
+
+        let list = getAllByRole('grid')[0];
+        let rows = within(list).getAllByRole('row');
+        let internalFolder = rows[2];
+
+        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        let dragCell = within(rows[0]).getByRole('gridcell');
+        let dataTransfer = new DataTransfer();
+
+        // Dragging over a invalid drop target should not update dropCollectionRef
+        fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => jest.runAllTimers());
+        fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(rows[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 50}));
+
+        let dndState = getDnDState();
+        expect(dndState.dropCollectionRef).toBeFalsy();
+
+        // Dragging over a valid drop target should update dropCollectionRef
+        fireEvent(internalFolder, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
+        dndState = getDnDState();
+        expect(dndState.dropCollectionRef.current).toBe(list);
+
+        // Leaving a valid drop target should clear the dropCollectionRef
+        fireEvent(internalFolder, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 100}));
+        dndState = getDnDState();
+        expect(dndState.dropCollectionRef).toBeFalsy();
       });
 
       describe('using util handlers', function () {
@@ -1164,6 +1195,43 @@ describe('ListView', function () {
 
         dndState = getDnDState();
         expect(dndState).toEqual({draggingKeys: new Set()});
+      });
+
+      it('should update the dropCollectionRef during drag operations', function () {
+        let {getAllByRole} = render(
+          <DragBetweenListsComplex firstListDnDOptions={{onDragEnd}} />
+        );
+
+        let list = getAllByRole('grid')[0];
+        let rows = within(list).getAllByRole('row');
+        let cell = within(rows[0]).getByRole('gridcell');
+
+        userEvent.tab();
+        let draghandle = within(cell).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+        expect(draghandle).toHaveAttribute('draggable', 'true');
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+        act(() => jest.runAllTimers());
+
+        // First drop target should be an internal folder, hence setting dropCollectionRef
+        let dndState = getDnDState();
+        expect(dndState.dropCollectionRef.current).toBe(list);
+
+        // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternalDrop = false
+        fireEvent.keyDown(document.body, {key: 'Escape'});
+        fireEvent.keyUp(document.body, {key: 'Escape'});
+        dndState = getDnDState();
+        expect(dndState.dropCollectionRef).toBeFalsy();
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set(['1']),
+          x: 50,
+          y: 25,
+          dropOperation: undefined,
+          isInternalDrop: false
+        });
       });
 
       describe('using util handlers', function () {
