@@ -731,7 +731,7 @@ export function ReorderExample(props) {
         onMove(keys, e.target);
       }
     },
-    getDropOperation(target) {
+    getDropOperation({target}) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }
@@ -838,7 +838,7 @@ export function DragIntoItemExample(props) {
         }
       }
     },
-    getDropOperation(target) {
+    getDropOperation({target}) {
       if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
         return 'cancel';
       }
@@ -949,7 +949,7 @@ export function DragBetweenListsExample(props) {
         onMove(keys, e.target);
       }
     },
-    getDropOperation(target) {
+    getDropOperation({target}) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }
@@ -1063,7 +1063,7 @@ export function DragBetweenListsRootOnlyExample(props) {
         onMove(keys, list1);
       }
     },
-    getDropOperation(target, types) {
+    getDropOperation({target, types}) {
       if (target.type === 'root' && (types.has('list2') || types.has('text/plain'))) {
         return 'move';
       }
@@ -1109,7 +1109,7 @@ export function DragBetweenListsRootOnlyExample(props) {
         onMove(keys, list2);
       }
     },
-    getDropOperation(target, types) {
+    getDropOperation({target, types}) {
       if (target.type === 'root' && (types.has('list1') || types.has('text/plain'))) {
         return 'move';
       }
@@ -1330,14 +1330,18 @@ export function DragBetweenListsComplex(props) {
     onItemDrop: async (e) => {
       let {
         items,
-        target
+        target,
+        isInternalDrop
       } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list1.getItem(target.key);
-      // Also check if the item is being dropped into itself
-      let draggedKeys = processedItems.map(item => item.identifier);
-      if (targetItem.childNodes && !draggedKeys.includes(target.key)) {
-        list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      if (isInternalDrop) {
+        // TODO: also handle deleting the dragged items from the list if it is an internal folder drop
+        // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
+        let keysToRemove = processedItems.map(item => item.identifier);
+        list1.remove(...keysToRemove);
       }
     },
     acceptedDragTypes,
@@ -1394,6 +1398,8 @@ export function DragBetweenListsComplex(props) {
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+        // TODO: also handle deleting the dragged items from the list if it is an internal folder drop
     },
     acceptedDragTypes,
     onRemove: (e) => {
@@ -1499,7 +1505,7 @@ function DragBetweenListsOverride(props) {
         [`${item.type}`]: JSON.stringify(item)
       };
     }),
-    getDropOperation: (target, types) => {
+    getDropOperation: ({target, types}) => {
       if (target.type !== 'root' || !(types.has('list-1-adobe-file'))) {
         return 'cancel';
       }

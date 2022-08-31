@@ -11,7 +11,8 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DraggableCollectionState, setDraggingCollectionRef} from '@react-stately/dnd';
+import {DraggableCollectionState} from '@react-stately/dnd';
+import {getDnDState, setDraggingCollectionRef, setDraggingKeys} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -37,14 +38,20 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
     onDragStart(e) {
+      // Track draggingKeys and draggingCollectionRef for useDroppableCollection's
+      // default onDrop handler and useDroppableCollectionState's default getDropOperation
+      // TODO: will want to move setDragginCollectionRef to useDraggableCollection when I make it
       setDraggingCollectionRef(props.parentRef);
       state.startDrag(props.key, e);
+      setDraggingKeys(state.draggingKeys);
     },
     onDragMove(e) {
       state.moveDrag(e);
     },
     onDragEnd(e) {
-      state.endDrag(e);
+      let {draggingCollectionRef, droppedCollectionRef} = getDnDState();
+      let isInternalDrop = draggingCollectionRef?.current === droppedCollectionRef?.current;
+      state.endDrag({...e, keys: state.draggingKeys, isInternalDrop});
     }
   });
 

@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
-import {getDnDState} from './utils';
+import {Collection, DropEventInfo, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useState} from 'react';
 
@@ -26,7 +25,7 @@ export interface DroppableCollectionState {
   target: DropTarget,
   setTarget(target: DropTarget): void,
   isDropTarget(target: DropTarget): boolean,
-  getDropOperation(target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]): DropOperation
+  getDropOperation(e: DropEventInfo): DropOperation
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
@@ -56,14 +55,18 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
   };
 
-  let defaultGetDropOperation = useCallback((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => {
+  let defaultGetDropOperation = useCallback((e: DropEventInfo) => {
+    let {
+      target,
+      types,
+      allowedOperations,
+      isInternalDrop,
+      draggingKeys
+    } = e;
     // TODO: will be covered in a separate PR (issue in board), for now ignore the typescript error
     // @ts-ignore
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];
-    let {draggingCollectionRef, currentDropCollectionRef, draggingKeys} = getDnDState();
-    // Compare draggingCollectionRef to currentDropCollectionRef since droppedCollectionRef hasn't been set yet (drop hasn't happened)
-    let isInternalDrop = draggingCollectionRef?.current === currentDropCollectionRef?.current;
 
     if (
       (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
@@ -83,19 +86,6 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
     return 'cancel';
   }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop]);
-
-  let propsGetDropOperation = useCallback((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]): DropOperation => {
-    let {draggingCollectionRef, currentDropCollectionRef, draggingKeys} = getDnDState();
-    let isInternalDrop = draggingCollectionRef?.current === currentDropCollectionRef?.current;
-
-    // Even if user provides their own getDropOperation, automatically prevent items (i.e. folders) from being dropped on themselves
-    // TODO: is the below overkill? Should we grant full freedom to the end user by not including this instead?
-    if (isInternalDrop && target.type === 'item' && target.dropPosition === 'on' && draggingKeys.has(target.key)) {
-      return 'cancel';
-    }
-
-    return getDropOperation(target, types, allowedOperations);
-  }, [getDropOperation]);
 
   return {
     collection,
@@ -146,10 +136,12 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
       return false;
     },
-    getDropOperation(target, types, allowedOperations) {
+    // TODO: how do we feel about providing isInternalDrop and dragged keys to the user provided getDropOperation as well? That way allow the user to
+    // define if they'd like to allow dropping items on themselves
+    getDropOperation(e) {
       return typeof getDropOperation === 'function'
-        ? propsGetDropOperation(target, types, allowedOperations)
-        : defaultGetDropOperation(target, types, allowedOperations);
+        ? getDropOperation(e)
+        : defaultGetDropOperation(e);
     }
   };
 }

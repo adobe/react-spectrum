@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearDnDState, getDnDState, setDnDState, setDropEffect, setDroppedTarget} from '@react-stately/dnd';
+import {clearDnDState, DragTypes, getDnDState, readFromDataTransfer, setDnDState, setDropEffect, setDroppedTarget} from './utils';
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
-import {DragTypes, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -239,6 +238,7 @@ export function useDrop(options: DropOptions): DropResult {
     // where onDragEnd always returns "none" as its drop effect.
     setDropEffect(state.dropEffect);
 
+    // TODO: remove now that end drag doesn't need
     // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
     setDroppedTarget(e.currentTarget as HTMLElement);
 

@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearDnDState, getDnDState} from '@react-stately/dnd';
+import {clearDnDState, getDnDState, writeToDataTransfer} from './utils';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
@@ -21,7 +21,6 @@ import intlMessages from '../intl/*.json';
 import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {writeToDataTransfer} from './utils';
 
 export interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
@@ -65,6 +64,7 @@ export function useDrag(options: DragOptions): DragResult {
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
+    // TODO: move this outside of useDrag instead?
     // Clear global DnD state in case it wasn't cleared via drag end
     // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
     clearDnDState();
@@ -171,6 +171,8 @@ export function useDrag(options: DragOptions): DragResult {
         }
         options.onDragEnd(event);
       }
+      // TODO: move this outside of useDrag? hopefully we won't be using dropEffect global state in favor of a drop listner in useDrag
+      // that captures the drop effect
       clearDnDState();
     }, 0);
 

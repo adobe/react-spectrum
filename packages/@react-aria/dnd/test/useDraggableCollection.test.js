@@ -121,7 +121,6 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -220,7 +219,6 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -308,7 +306,6 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -398,7 +395,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -498,7 +494,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -586,7 +581,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -671,7 +665,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -759,7 +752,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 
@@ -837,7 +829,6 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        dropTarget: droppable,
         isInternalDrop: false
       });
 

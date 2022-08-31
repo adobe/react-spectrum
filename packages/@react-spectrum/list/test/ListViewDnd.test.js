@@ -16,7 +16,8 @@ import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsComplex, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
-import {getDnDState} from '@react-stately/dnd';
+// TODO: direct path import
+import {getDnDState} from '@react-aria/dnd/src/utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -220,7 +221,6 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          dropTarget: droppable,
           isInternalDrop: false
         });
       });
@@ -309,7 +309,6 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          dropTarget: droppable,
           isInternalDrop: false
         });
       });
@@ -458,7 +457,6 @@ describe('ListView', function () {
 
         fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
-        // Droppable collection and other drop related global trackers should still be set
         dndState = getDnDState();
         expect(dndState).toEqual({
           draggingKeys: new Set()
@@ -727,7 +725,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should call onRemove when performing a drop that should remove the item from the list', function () {
+        it('should not call onRemove when performing a internal drop that removes the item from the list', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
           );
@@ -740,13 +738,10 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledWith({
-            keys: new Set(['7', '8'])
-          });
 
-          // Perform reorder operation and confirm that onRemove doesn't get called again
+          // Perform reorder operation and confirm that onRemove doesn't get called still
           act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
           act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
           dropTarget = list2Rows[4];
@@ -754,7 +749,7 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onReorder).toHaveBeenCalledWith({
             target: {
@@ -1033,7 +1028,6 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          dropTarget: droppable,
           isInternalDrop: false
         });
       });
@@ -1097,7 +1091,6 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          dropTarget: droppable,
           isInternalDrop: false
         });
       });
@@ -1136,7 +1129,6 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          dropTarget: droppable,
           isInternalDrop: false
         });
       });
@@ -1348,7 +1340,7 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(2);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(2);
+          expect(onRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
@@ -1373,7 +1365,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should call onRemove when performing a drop that should remove the item from the list', function () {
+        it('should not call onRemove when performing a internal drop that removes the item from the list', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -1390,13 +1382,10 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onRemove).toHaveBeenCalledWith({
-            keys: new Set(['1'])
-          });
 
-          // Perform reorder operation and confirm that onRemove doesn't get called again
+          // Perform reorder operation and confirm that onRemove doesn't get called still
           onRemove.mockClear();
           onItemDrop.mockClear();
           let grids = tree.getAllByRole('grid');
@@ -1825,11 +1814,7 @@ describe('ListView', function () {
       act(() => jest.runAllTimers());
       let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
-      let expectedDropTarget = {
-        'dropPosition': 'on',
-        'key': '8',
-        'type': 'item'
-      };
+
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
       await act(async () => Promise.resolve());
@@ -1844,7 +1829,6 @@ describe('ListView', function () {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        dropTarget: expectedDropTarget,
         isInternalDrop: true
       });
       onSelectionChange.mockClear();

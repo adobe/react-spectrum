@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
-import {getDnDState, setDraggingKeys} from './utils';
+import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
 import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -32,7 +31,7 @@ export interface DraggableCollectionState {
   getAllowedDropOperations?: () => DropOperation[],
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
-  endDrag(event: DragEndEvent): void
+  endDrag(event: DraggableCollectionEndEvent): void
 }
 
 export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
@@ -87,7 +86,6 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       setDragging(true);
       let keys = getKeys(key);
       draggingKeys.current = keys;
-      setDraggingKeys(keys);
       draggedKey.current = key;
       if (typeof onDragStart === 'function') {
         onDragStart({
@@ -105,23 +103,19 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       }
     },
     endDrag(event) {
-      let {draggingCollectionRef, droppedCollectionRef, droppedTarget} = getDnDState();
-      let isInternalDrop = droppedCollectionRef?.current === draggingCollectionRef?.current;
-      let isInternalFolderDrop = isInternalDrop && !(droppedTarget instanceof HTMLElement) && droppedTarget?.type === 'item' && droppedTarget?.dropPosition === 'on' && !!collection.getItem(droppedTarget.key).childNodes;
-      // If it is a 'move' drop operatation to a drop target outside the collection or a folder within the dragged collection, we can assume the user wants to remove the items from the source collection
+      let {
+        isInternalDrop
+      } = event;
+      // If it is a 'move' drop operatation to a drop target outside the collection, we can assume the user wants to remove the items from the source collection
       // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
-      if (typeof onRemove === 'function' && event.dropOperation === 'move' && (!isInternalDrop || isInternalFolderDrop)) {
+      if (typeof onRemove === 'function' && event.dropOperation === 'move' && !isInternalDrop) {
         onRemove({keys: draggingKeys.current});
-
       }
 
       if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
-          keys: draggingKeys.current,
-          // TODO: Pass dropTarget and isInternalDrop in case user needs said information in onDragEnd? Or overkill?
-          dropTarget: droppedTarget,
-          isInternalDrop
+          keys: draggingKeys.current
         });
       }
 

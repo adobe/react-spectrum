@@ -13,10 +13,9 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
-import {getDragModality, getTypes} from './utils';
+import {getDragModality, getTypes, setDroppedTarget} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import type {LocalizedStringFormatter} from '@internationalized/string';
-import {setDroppedTarget} from '@react-stately/dnd';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -529,6 +528,7 @@ class DragSession {
       this.dropOperation = this.dragTarget.allowedDropOperations[0];
     }
 
+    // TODO: remove now that end drag doesn't need
     // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
     setDroppedTarget(this.currentDropTarget.element as HTMLElement);
 

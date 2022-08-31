@@ -148,7 +148,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     }
   }));
 
-  let defaultGetDropOperation = (target, items, allowedOperations) => {
+  let defaultGetDropOperation = ({target, allowedOperations}) => {
     if (target.type === 'root') {
       return 'move';
     }

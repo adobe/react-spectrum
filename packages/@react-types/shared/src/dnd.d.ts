@@ -137,6 +137,8 @@ interface DroppableCollectionOnItemDropEvent {
     key: Key,
     dropPosition: 'on'
   }
+  // TODO: maybe worthwhile passing draggingKeys so user doesn't have to process the drop items
+  // if it is an internal drop
 }
 
 interface DroppableCollectionReorderEvent {
@@ -160,12 +162,21 @@ export interface DropTargetDelegate {
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
 }
 
+// TODO: naming?
+export interface DropEventInfo {
+  target: DropTarget,
+  types: DragTypes,
+  allowedOperations: DropOperation[],
+  isInternalDrop: boolean,
+  draggingKeys: Set<Key>
+}
+
 export interface DroppableCollectionProps {
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
-  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
+  getDropOperation?: (e: DropEventInfo) => DropOperation,
   /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called when a valid drag is moved within the drop target. */
@@ -212,7 +223,6 @@ interface DraggableCollectionMoveEvent extends DragMoveEvent {
 
 interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>,
-  dropTarget: DropTarget | HTMLElement | null,
   isInternalDrop: boolean
 }
 
@@ -237,6 +247,6 @@ export interface DraggableCollectionProps {
   preview?: RefObject<DragPreviewRenderer>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
-  /** Handler called when items are moved out of the draggable collection or moved into a folder within the draggable collection. */
+  /** Handler called when items are moved out of the draggable collection. */
   onRemove?: (e: DraggableCollectionRemoveEvent) => void
 }
