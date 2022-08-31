@@ -246,9 +246,6 @@ module.exports = new Transformer({
 
       if (path.isTSQualifiedName()) {
         let left = processExport(path.get('left'));
-        if (!left) {
-          return {};
-        }
         if (left.type === 'interface' || left.type === 'object') {
           let property = left.properties[path.node.right.name];
           if (property) {
@@ -509,6 +506,10 @@ module.exports = new Transformer({
           trueType: processExport(path.get('trueType')),
           falseType: processExport(path.get('falseType'))
         });
+      }
+
+      if (path.isTSModuleDeclaration()) {
+        return node;
       }
 
       console.log('UNKNOWN TYPE', path.node.type);
