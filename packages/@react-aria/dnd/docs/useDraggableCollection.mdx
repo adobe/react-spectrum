@@ -43,9 +43,11 @@ Collection components built with hooks such as [useListBox](useListBox.html), [u
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by long pressing to activate drag and drop mode, swiping between drop targets, and double tapping to drop.
 
+See the [drag and drop introduction](dnd.html) to learn more.
+
 ### Implementation
 
-The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} /> hook manages state for drag interactions within any [collection component](../react-stately/Collections.html). The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](../react-stately/Selection.html) system to enable dragging multiple selected items at once.
+The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} /> hook manages state for drag interactions within any [collection component](../react-stately/collections.html). The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](../react-stately/selection.html) system to enable dragging multiple selected items at once.
 
 ## Example
 

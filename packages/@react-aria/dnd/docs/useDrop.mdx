@@ -40,6 +40,8 @@ Drag and drop is a common UI interaction that allows users to transfer data betw
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by long pressing to activate drag and drop mode, swiping between drop targets, and double tapping to drop.
 
+See the [drag and drop introduction](dnd.html) to learn more.
+
 ## Example
 
 This example shows how to make a simple drop target that accepts plain text data. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While a drag is hovered over it, a blue outline is rendered by applying an additional CSS class.
@@ -216,7 +218,7 @@ function DropTarget() {
 
 A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
 
-The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in teh directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} />, and you can access the contents of each file as discussed above.
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} />, and you can access the contents of each file as discussed above.
 
 This example renders the file names within a dropped directory in a grid.
 
