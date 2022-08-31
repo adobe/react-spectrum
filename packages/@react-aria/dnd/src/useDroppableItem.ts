@@ -36,7 +36,6 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         target: options.target,
         getDropOperation(types, allowedOperations) {
           let {draggingCollectionRef, draggingKeys, currentDropCollectionRef} = getDnDState();
-          // TODO: this ref isn't the same as the collection ref...
           let isInternalDrop = draggingCollectionRef?.current === currentDropCollectionRef?.current;
           return state.getDropOperation({
             target: options.target,

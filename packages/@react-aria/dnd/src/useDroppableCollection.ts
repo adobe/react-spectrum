@@ -13,7 +13,7 @@
 import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {getDnDState, setCurrentDropCollectionRef, setDroppedCollectionRef, setDroppedTarget, useDroppableCollectionId} from './utils';
+import {getDnDState, setCurrentDropCollectionRef, setDroppedCollectionRef, useDroppableCollectionId} from './utils';
 import {getTypes} from './utils';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
@@ -142,8 +142,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     onDrop(e) {
       setDroppedCollectionRef(ref);
       if (state.target) {
-        // TODO: remove now that end drag doesn't need
-        setDroppedTarget(state.target);
         onDrop(e, state.target);
       }
     }
@@ -458,8 +456,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onDrop(e, target) {
         setDroppedCollectionRef(ref);
         if (localState.state.target) {
-          // TODO: remove now that end drag doesn't need
-          setDroppedTarget(target || localState.state.target);
           onDrop(e, target || localState.state.target);
         }
       },

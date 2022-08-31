@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearDnDState, DragTypes, getDnDState, readFromDataTransfer, setDnDState, setDropEffect, setDroppedTarget} from './utils';
+import {clearDnDState, DragTypes, getDnDState, readFromDataTransfer, setDnDState, setDropEffect} from './utils';
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
@@ -237,10 +237,6 @@ export function useDrop(options: DropOptions): DropResult {
     // Set drop effect in global DnD state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
     // where onDragEnd always returns "none" as its drop effect.
     setDropEffect(state.dropEffect);
-
-    // TODO: remove now that end drag doesn't need
-    // In the case where a drop happens on a non-collection drop target, track the element in which the drop was performed
-    setDroppedTarget(e.currentTarget as HTMLElement);
 
     let dndStateSnapshot = {...getDnDState()};
     // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.

@@ -316,9 +316,6 @@ export interface DnDState {
   currentDropCollectionRef?: RefObject<HTMLElement>,
   /** A ref for the collection the dragged items were dropped into, if any. */
   droppedCollectionRef?: RefObject<HTMLElement>,
-  // TODO: remove now that end drag doesn't need
-  /** The specific drop target the dragged items were dropped into, if any. */
-  droppedTarget?: DropTarget | HTMLElement,
   /** The dropEffect of the drop event if any. */
   dropEffect?: DropEffect
 }
@@ -344,11 +341,6 @@ export function setCurrentDropCollectionRef(ref: RefObject<HTMLElement>) {
 
 export function setDroppedCollectionRef(ref: RefObject<HTMLElement>) {
   dndState.droppedCollectionRef = ref;
-}
-
-// TODO: remove now that end drag doesn't need
-export function setDroppedTarget(dropTarget: DropTarget | HTMLElement) {
-  dndState.droppedTarget = dropTarget;
 }
 
 export function setDropEffect(dropEffect: DropEffect) {

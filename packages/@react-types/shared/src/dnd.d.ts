@@ -185,6 +185,7 @@ export interface DroppableCollectionProps {
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
+  // TODO: perhaps onDrop would benefit from having isInternalDrop and draggingKeys provided to it?
   /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**

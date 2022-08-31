@@ -364,7 +364,7 @@ describe('ListView', function () {
         expect(dataTransfer.items._items).toHaveLength(0);
       });
 
-      it('should track the dropped element in global DnD state if dropping on a non-collection', function () {
+      it('should update the global DnD state properly if dropping on a non-collection', function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView />
         );
@@ -396,9 +396,8 @@ describe('ListView', function () {
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         dndState = getDnDState();
-        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd']), droppedTarget: expect.any(Element), dropEffect: 'move'});
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd']), dropEffect: 'move'});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
-        expect(dndState.droppedTarget).toBe(droppable);
         // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
         act(() => jest.runAllTimers());
 
@@ -1095,7 +1094,7 @@ describe('ListView', function () {
         });
       });
 
-      it('should track the dropped element in global DnD state if dropping on a non-collection', function () {
+      it('should update the global DnD state properly if dropping on a non-collection', function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
         );
