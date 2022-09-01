@@ -50,7 +50,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
-  let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
 
   let buttonVariant = variant;
@@ -71,7 +70,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             `spectrum-Button--${buttonVariant}`,
             {
               'spectrum-Button--quiet': isQuiet,
-              'spectrum-Button--iconOnly': hasIcon && !hasLabel,
+              'spectrum-Button--iconOnly': !hasLabel,
               'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
