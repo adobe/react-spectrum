@@ -13,8 +13,8 @@
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-interface SpectrumBadgeProps extends DOMProps, StyleProps, AriaLabelingProps {
-  /** The content to display as the label. */
+export interface SpectrumBadgeProps extends DOMProps, StyleProps, AriaLabelingProps {
+  /** The content to display in the badge. */
   children: ReactNode,
   /** Whether the badge is disabled. */
   isDisabled?: boolean,
