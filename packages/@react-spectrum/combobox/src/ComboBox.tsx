@@ -183,7 +183,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         placement={placement}
         hideArrow
         isNonModal
-        isDismissable={false}>
+        isDismissable={false}
+        preventScroll>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
