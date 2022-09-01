@@ -710,6 +710,7 @@ export function ReorderExample(props) {
 
   let {dropHooks} = useDnDHooks({
     async onDrop(e) {
+      onDrop(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -726,7 +727,6 @@ export function ReorderExample(props) {
             }
           }
         }
-        onDrop(e);
         onMove(keys, e.target);
       }
     },
@@ -815,6 +815,7 @@ export function DragIntoItemExample(props) {
 
   let {dropHooks} = useDnDHooks({
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -831,7 +832,6 @@ export function DragIntoItemExample(props) {
             }
           }
         }
-        onDropAction(e);
         if (!keys.includes(e.target.key)) {
           onMove(keys, e.target);
         }
@@ -927,6 +927,7 @@ export function DragBetweenListsExample(props) {
 
   let {dropHooks} = useDnDHooks({
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -943,8 +944,6 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
-
-        onDropAction(e);
         onMove(keys, e.target);
       }
     },
@@ -1042,6 +1041,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
@@ -1058,7 +1058,6 @@ export function DragBetweenListsRootOnlyExample(props) {
             }
           }
         }
-        onDropAction(e);
         onMove(keys, list1);
       }
     },
@@ -1088,6 +1087,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     onDragStart: chain(action('dragStart'), onDragStart),
     onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
@@ -1104,7 +1104,6 @@ export function DragBetweenListsRootOnlyExample(props) {
             }
           }
         }
-        onDropAction(e);
         onMove(keys, list2);
       }
     },
@@ -1315,6 +1314,7 @@ export function DragBetweenListsComplex(props) {
         items,
         target
       } = e;
+      action('onInsertList1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
       if (target.dropPosition === 'before') {
@@ -1322,8 +1322,10 @@ export function DragBetweenListsComplex(props) {
       } else if (target.dropPosition === 'after') {
         list1.insertAfter(target.key, ...processedItems);
       }
+
     },
     onRootDrop: async (e) => {
+      action('onRootDropList1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list1.append(...processedItems);
     },
@@ -1333,6 +1335,7 @@ export function DragBetweenListsComplex(props) {
         target,
         isInternalDrop
       } = e;
+      action('onItemDropList1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list1.getItem(target.key);
       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -1345,6 +1348,7 @@ export function DragBetweenListsComplex(props) {
     },
     acceptedDragTypes,
     onRemove: (e) => {
+      action('onRemoveList1')(e);
       list1.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],
@@ -1370,6 +1374,7 @@ export function DragBetweenListsComplex(props) {
         items,
         target
       } = e;
+      action('onInsertList2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
       if (target.dropPosition === 'before') {
@@ -1383,6 +1388,7 @@ export function DragBetweenListsComplex(props) {
         keys,
         target
       } = e;
+      action('onReorderList2')(e);
       if (target.dropPosition === 'before') {
         list2.moveBefore(target.key, [...keys]);
       } else if (target.dropPosition === 'after') {
@@ -1390,6 +1396,7 @@ export function DragBetweenListsComplex(props) {
       }
     },
     onRootDrop: async (e) => {
+      action('onRootDropList2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
@@ -1399,6 +1406,7 @@ export function DragBetweenListsComplex(props) {
         target,
         isInternalDrop
       } = e;
+      action('onItemDropList2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -1411,6 +1419,7 @@ export function DragBetweenListsComplex(props) {
     },
     acceptedDragTypes,
     onRemove: (e) => {
+      action('onRemoveList2')(e);
       // TODO: no great way to stop the non-accepted drag items from getting removed.
       // Scenario: dragging files + folders and dropping on a drop target that only accepts files. We have
       // no good way currently of knowing that the folders shouldn't be removed
@@ -1507,6 +1516,7 @@ function DragBetweenListsOverride(props) {
       };
     }),
     onDragEnd: (e) => {
+      action('onDragEnd')(e);
       if (e.dropOperation === 'move') {
         list1.remove(...e.keys);
       }
@@ -1528,6 +1538,7 @@ function DragBetweenListsOverride(props) {
       return 'move';
     },
     onDrop: async (e) => {
+      action('onDrop')(e);
       let itemsToAdd = await Promise.all(
         e.items
           .filter(item => item.kind === 'text')
