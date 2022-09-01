@@ -1011,6 +1011,73 @@ describe('ListView', function () {
           });
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
+
+        it('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onRemove: null, acceptedDragTypes: ['file', 'folder']}} secondListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[6]).getByRole('checkbox')));
+          let dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenLastCalledWith({keys: new Set(['7', '13'])});
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['unique_type']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText(item.types.values().next().value))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '13',
+            type: 'unique_type',
+            name: 'invalid drag item'
+          });
+        });
       });
     });
 
@@ -1497,11 +1564,11 @@ describe('ListView', function () {
           );
 
           let totalRows = tree.getAllByRole('row', {hidden: true});
-          expect(totalRows).toHaveLength(12);
+          expect(totalRows).toHaveLength(13);
           beginDrag(tree);
           // No drop indicators should appear
           totalRows = tree.getAllByRole('row', {hidden: true});
-          expect(totalRows).toHaveLength(12);
+          expect(totalRows).toHaveLength(13);
         });
 
         it('should allow the user to specify what a valid drop target is via isValidDropTarget', async function () {
@@ -1648,6 +1715,75 @@ describe('ListView', function () {
             ]
           });
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
+        });
+
+        it.skip('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
+          // TODO: fix this test, tabbing/shift tabbing is buggy
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex
+              listViewProps={{selectedKeys: ['7', '13']}}
+              firstListDnDOptions={{...mockUtilityOptions, onRemove: null, acceptedDragTypes: ['file', 'folder']}}
+              secondListDnDOptions={{onRemove: mockUtilityOptions.onRemove}} />
+          );
+
+          let grids = getAllByRole('grid');
+          userEvent.tab();
+          expect(document.activeElement).toBe(within(grids[0]).getAllByRole('row')[0]);
+          let row = within(grids[1]).getAllByRole('row')[0];
+          // TODO: for some reason the listview isn't being treated as a single tab stop in the test so need to manually focus
+          act(() => row.focus());
+          expect(document.activeElement).toBe(row);
+          let cell = within(row).getByRole('gridcell');
+          let draghandle = within(cell).getAllByRole('button')[0];
+          expect(draghandle).toBeTruthy();
+          expect(draghandle).toHaveAttribute('draggable', 'true');
+          expect(draghandle).toHaveAttribute('aria-label', 'Drag 2 selected items');
+          act(() => draghandle.focus());
+          fireEvent.keyDown(draghandle, {key: 'Enter'});
+          fireEvent.keyUp(draghandle, {key: 'Enter'});
+          act(() => jest.runAllTimers());
+          userEvent.tab({shift: true});
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onRemove).toHaveBeenCalledTimes(1);
+          expect(onRemove).toHaveBeenLastCalledWith({keys: new Set(['7', '13'])});
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['unique_type']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText(item.types.values().next().value))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '13',
+            type: 'unique_type',
+            name: 'invalid drag item'
+          });
         });
       });
     });

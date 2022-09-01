@@ -67,9 +67,8 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     // @ts-ignore
     let typesSet = types.types ? types.types : types;
     let draggedTypes = [...typesSet.values()];
-
     if (
-      (acceptedDragTypes === 'all' || draggedTypes.every(type => acceptedDragTypes.includes(type))) &&
+      (acceptedDragTypes === 'all' || draggedTypes.some(type => acceptedDragTypes.includes(type))) &&
       (
         (onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after')) ||
         // TODO: added allowedOperations[0] !== 'copy' to block internal copy insert operations as per feedback. Perhaps rename onReorder to onInternalInsert and remove this restriction? Maybe this is just ok?

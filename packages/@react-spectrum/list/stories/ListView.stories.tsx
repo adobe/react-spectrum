@@ -434,7 +434,9 @@ storiesOf('ListView/Drag and Drop', module)
           onDragEnd: action('dragEndList2')
         }} />
     ),
-    {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed'}}
+    {description: {
+      data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'
+    }}
   )
   .add(
     'drag between two list, new hook with user overrides',
@@ -1274,7 +1276,8 @@ export function DragBetweenListsComplex(props) {
       {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
       {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
       {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
-      {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
+      {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
+      {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
     ],
     getKey: (item) => item.identifier
   });
@@ -1338,7 +1341,6 @@ export function DragBetweenListsComplex(props) {
       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
       if (isInternalDrop) {
-        // TODO: also handle deleting the dragged items from the list if it is an internal folder drop
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
         let keysToRemove = processedItems.map(item => item.identifier);
         list1.remove(...keysToRemove);
@@ -1357,10 +1359,14 @@ export function DragBetweenListsComplex(props) {
   let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
-      return {
-        [`${item.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
+      let dragItem = {};
+      let itemString = JSON.stringify(item);
+      dragItem[`${item.type}`] = itemString;
+      if (item.type !== 'unique_type') {
+        dragItem['text/plain'] = itemString;
+      }
+
+      return dragItem;
     }),
     onInsert: async (e) => {
       let {
@@ -1393,16 +1399,28 @@ export function DragBetweenListsComplex(props) {
     onItemDrop: async (e) => {
       let {
         items,
-        target
+        target,
+        isInternalDrop
       } = e;
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-        // TODO: also handle deleting the dragged items from the list if it is an internal folder drop
+      if (isInternalDrop) {
+        // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
+        let keysToRemove = processedItems.map(item => item.identifier);
+        list2.remove(...keysToRemove);
+      }
     },
     acceptedDragTypes,
     onRemove: (e) => {
+      // TODO: no great way to stop the non-accepted drag items from getting removed.
+      // Scenario: dragging files + folders and dropping on a drop target that only accepts files. We have
+      // no good way currently of knowing that the folders shouldn't be removed
+      // Ways to possibly handle this
+      // 1. Figure out what keys are actually accepted by the drop target and track the "droppableKeys" in global state. Communicate this to onRemove/onDragEnd
+      // 2. Expect that the user will perform the selective item removal via the drop target's drop handler (can we expect that list 1 always has access to list 2?)
+      // This brings into question if we should even have onRemove in the first place, should we just expect item deletion should happen in onDrop always?
       list2.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],

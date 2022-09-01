@@ -164,15 +164,14 @@ export function useDrag(options: DragOptions): DragResult {
     setTimeout(() => {
       if (typeof options.onDragEnd === 'function') {
         let {dropEffect} = getDnDState();
-        // Chrome Android always returns none as its dropEffect so we use the drop effect from onDrop instead
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+        // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
+        // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
         if (dropEffect) {
           event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
         }
         options.onDragEnd(event);
       }
-      // TODO: move this outside of useDrag? hopefully we won't be using dropEffect global state in favor of a drop listner in useDrag
-      // that captures the drop effect
+
       clearDnDState();
     }, 0);
 
