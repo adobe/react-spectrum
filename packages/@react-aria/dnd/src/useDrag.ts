@@ -11,15 +11,14 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearDnDState, getDnDState, writeToDataTransfer} from './utils';
+import {clearDnDState, getDnDState, useDragModality, writeToDataTransfer} from './utils';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDescription, useGlobalListeners} from '@react-aria/utils';
-import {useDragModality} from './utils';
+import {useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
@@ -60,7 +59,12 @@ export function useDrag(options: DragOptions): DragResult {
     y: 0
   }).current;
   state.options = options;
-  let [isDragging, setDragging] = useState(false);
+  let isDraggingRef = useRef(false);
+  let [, setDraggingState] = useState(false);
+  let setDragging = (isDragging) => {
+    isDraggingRef.current = isDragging;
+    setDraggingState(isDragging);
+  };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let onDragStart = (e: DragEvent) => {
@@ -160,24 +164,40 @@ export function useDrag(options: DragOptions): DragResult {
       y: e.clientY,
       dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
     };
-
-    setTimeout(() => {
-      if (typeof options.onDragEnd === 'function') {
-        let {dropEffect} = getDnDState();
-        // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
-        // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
-        if (dropEffect) {
-          event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
-        }
-        options.onDragEnd(event);
+    if (typeof options.onDragEnd === 'function') {
+      let {dropEffect} = getDnDState();
+      // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
+      // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+      if (dropEffect) {
+        event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
       }
+      options.onDragEnd(event);
+    }
 
-      clearDnDState();
-    }, 0);
-
+    clearDnDState();
     setDragging(false);
     removeAllGlobalListeners();
   };
+
+  // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+  // In this case, we need to manually call onDragEnd on cleanup
+  // eslint-disable-next-line arrow-body-style
+  useLayoutEffect(() => {
+    return () => {
+      if (isDraggingRef.current && typeof state.options.onDragEnd === 'function') {
+        let {dropEffect} = getDnDState();
+        let event: DragEndEvent = {
+          type: 'dragend',
+          x: 0,
+          y: 0,
+          dropOperation: DROP_EFFECT_TO_DROP_OPERATION[dropEffect || 'none']
+        };
+        state.options.onDragEnd(event);
+        clearDnDState();
+        setDragging(false);
+      }
+    };
+  }, [state]);
 
   let onPress = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
@@ -187,7 +207,6 @@ export function useDrag(options: DragOptions): DragResult {
     // Clear global DnD state in case it wasn't cleared via drag end
     // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
     clearDnDState();
-
     if (typeof state.options.onDragStart === 'function') {
       let rect = (e.target as HTMLElement).getBoundingClientRect();
       state.options.onDragStart({
@@ -217,7 +236,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   let modality = useDragModality();
   let descriptionProps = useDescription(
-    stringFormatter.format(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
+    stringFormatter.format(!isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end)
   );
 
   return {
@@ -231,6 +250,6 @@ export function useDrag(options: DragOptions): DragResult {
       ...descriptionProps,
       onPress
     },
-    isDragging
+    isDragging: isDraggingRef.current
   };
 }

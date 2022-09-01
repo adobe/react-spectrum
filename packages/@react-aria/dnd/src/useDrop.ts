@@ -222,43 +222,39 @@ export function useDrop(options: DropOptions): DropResult {
   let onDrop = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
-    let items = readFromDataTransfer(e.dataTransfer);
-
-    let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    let event: DropEvent = {
-      type: 'drop',
-      x: e.clientX - rect.x,
-      y: e.clientY - rect.y,
-      items,
-      dropOperation
-    };
     // Set drop effect in global DnD state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
     // where onDragEnd always returns "none" as its drop effect.
     setDropEffect(state.dropEffect);
 
+    if (typeof options.onDrop === 'function') {
+      let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
+      let items = readFromDataTransfer(e.dataTransfer);
+
+      let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      let event: DropEvent = {
+        type: 'drop',
+        x: e.clientX - rect.x,
+        y: e.clientY - rect.y,
+        items,
+        dropOperation
+      };
+
+      options.onDrop(event);
+    }
+
     let dndStateSnapshot = {...getDnDState()};
-    // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
-    // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
-    // This behavior is consistent across browsers, but see this issue for details:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-    setTimeout(() => {
-      setDnDState(dndStateSnapshot);
-      if (typeof options.onDrop === 'function') {
-        options.onDrop(event);
-      }
-
-      // If there wasn't a collection being tracked as a dragged collection, then we are in a case where a non RSP drag is dropped on a
-      // RSP collection and thus we don't need to preserve the global DnD state for onDragEnd
-      if (dndStateSnapshot.draggingCollectionRef == null) {
-        clearDnDState();
-      }
-    }, 0);
-
     state.dragOverElements.clear();
     fireDropExit(e);
     clearTimeout(state.dropActivateTimer);
+    // If there wasn't a collection being tracked as a dragged collection, then we are in a case where a non RSP drag is dropped on a
+    // RSP collection and thus we don't need to preserve the global DnD state for onDragEnd
+    if (dndStateSnapshot.draggingCollectionRef == null) {
+      clearDnDState();
+    } else {
+      // Otherwise we need to preserve the global dnd state for onDragEnd's isInternalDrop check.
+      // At the moment fireDropExit may clear dropCollectionRef (i.e. useDroppableCollection's provided onDropExit, required to clear dropCollectionRef when exiting a valid drop target)
+      setDnDState(dndStateSnapshot);
+    }
   };
 
   let optionsRef = useRef(options);
