@@ -27,8 +27,8 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
+import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useId} from '@react-aria/utils';
 import {useListData} from '@react-stately/data';
@@ -107,6 +107,7 @@ function ReorderableGrid(props) {
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
+  useDraggableCollection({}, dragState, ref);
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
@@ -178,8 +179,7 @@ function ReorderableGrid(props) {
             item={item}
             state={gridState}
             dragState={dragState}
-            dropState={dropState}
-            parentRef={ref} />
+            dropState={dropState} />
           {gridState.collection.getKeyAfter(item.key) == null &&
             <InsertionIndicator
               key={item.key + '-after'}
@@ -209,7 +209,7 @@ function ReorderableGrid(props) {
   );
 }
 
-function CollectionItem({item, state, dragState, dropState, parentRef}) {
+function CollectionItem({item, state, dragState, dropState}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -221,7 +221,7 @@ function CollectionItem({item, state, dragState, dropState, parentRef}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, parentRef}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({

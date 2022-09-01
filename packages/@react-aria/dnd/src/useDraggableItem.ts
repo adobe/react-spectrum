@@ -12,16 +12,15 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DraggableCollectionState} from '@react-stately/dnd';
-import {getDnDState, setDraggingCollectionRef, setDraggingKeys} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {getDnDState, setDraggingKeys} from './utils';
+import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DraggableItemProps {
-  key: Key,
-  parentRef: RefObject<HTMLElement>
+  key: Key
 }
 
 export interface DraggableItemResult {
@@ -38,11 +37,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     preview: state.preview,
     getAllowedDropOperations: state.getAllowedDropOperations,
     onDragStart(e) {
-      // Track draggingKeys and draggingCollectionRef for useDroppableCollection's
-      // default onDrop handler and useDroppableCollectionState's default getDropOperation
-      // TODO: will want to move setDragginCollectionRef to useDraggableCollection when I make it
-      setDraggingCollectionRef(props.parentRef);
       state.startDrag(props.key, e);
+      // Track draggingKeys for useDroppableCollection's default onDrop handler and useDroppableCollectionState's default getDropOperation
       setDraggingKeys(state.draggingKeys);
     },
     onDragMove(e) {

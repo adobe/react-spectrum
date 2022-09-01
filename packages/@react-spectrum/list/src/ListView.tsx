@@ -13,7 +13,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
-import type {DroppableCollectionResult} from '@react-aria/dnd';
+import {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import InsertionIndicator from './InsertionIndicator';
@@ -25,7 +25,7 @@ import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, RefObject, useContext, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumListViewProps} from '@react-types/list';
@@ -44,8 +44,7 @@ interface ListViewContextValue<T> {
   isListDraggable: boolean,
   isListDroppable: boolean,
   layout: ListLayout<T>,
-  loadingState: LoadingState,
-  parentRef: RefObject<HTMLDivElement>
+  loadingState: LoadingState
 }
 
 export const ListViewContext = React.createContext<ListViewContextValue<unknown>>(null);
@@ -124,6 +123,8 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
       selectionManager,
       preview
     });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    dragHooks.useDraggableCollection({}, dragState, domRef);
   }
   let layout = useListLayout(
     state,
@@ -180,7 +181,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState, parentRef: domRef}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
         <Virtualizer
           {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}

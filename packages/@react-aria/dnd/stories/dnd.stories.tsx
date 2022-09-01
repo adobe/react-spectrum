@@ -39,7 +39,7 @@ import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
-import {useClipboard, useDrag, useDraggableItem, useDrop} from '..';
+import {useClipboard, useDrag, useDraggableCollection, useDraggableItem, useDrop} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
@@ -361,6 +361,7 @@ function DraggableCollection(props) {
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
+  useDraggableCollection({}, dragState, ref);
 
   let {gridProps} = useGrid({
     ...props,
@@ -382,8 +383,7 @@ function DraggableCollection(props) {
           item={item}
           state={gridState}
           dragState={dragState}
-          onCut={props.onCut}
-          parentRef={ref} />
+          onCut={props.onCut} />
       ))}
       <DragPreview ref={preview}>
         {() => {
@@ -407,7 +407,7 @@ function DraggableCollection(props) {
   );
 }
 
-function DraggableCollectionItem({item, state, dragState, onCut, parentRef}) {
+function DraggableCollectionItem({item, state, dragState, onCut}) {
   let rowRef = React.useRef();
   let cellRef = React.useRef();
   let cellNode = [...item.childNodes][0];
@@ -422,7 +422,7 @@ function DraggableCollectionItem({item, state, dragState, onCut, parentRef}) {
     focusMode: 'cell'
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, parentRef}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
 
   let {clipboardProps} = useClipboard({
     getItems: () => dragState.getItems(item.key),

@@ -51,8 +51,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     layout,
     dragHooks,
     dropHooks,
-    loadingState,
-    parentRef} = useContext(ListViewContext);
+    loadingState
+  } = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -83,7 +83,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dragHooks.useDraggableItem({key: item.key, parentRef}, dragState);
+    draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }

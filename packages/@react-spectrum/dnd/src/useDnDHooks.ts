@@ -12,14 +12,6 @@
 
 import {
   DraggableCollectionOptions,
-  DraggableCollectionState,
-  DroppableCollectionState,
-  DroppableCollectionStateOptions,
-  useDraggableCollectionState,
-  useDroppableCollectionState
-} from '@react-stately/dnd';
-import {DraggableCollectionProps, DragItem} from '@react-types/shared';
-import {
   DraggableItemProps,
   DraggableItemResult,
   DragPreview,
@@ -29,16 +21,28 @@ import {
   DroppableCollectionResult,
   DroppableItemOptions,
   DroppableItemResult,
+  useDraggableCollection,
   useDraggableItem,
   useDropIndicator,
   useDroppableCollection,
   useDroppableItem
 } from '@react-aria/dnd';
+import {DraggableCollectionProps, DragItem} from '@react-types/shared';
+import {
+  DraggableCollectionState,
+  DraggableCollectionStateOptions,
+  DroppableCollectionState,
+  DroppableCollectionStateOptions,
+  useDraggableCollectionState,
+  useDroppableCollectionState
+} from '@react-stately/dnd';
+
 import {DroppableCollectionProps} from '@react-types/shared';
 import {Key, RefObject, useMemo} from 'react';
 
 export interface DragHooks {
-  useDraggableCollectionState(props: Omit<DraggableCollectionOptions, 'getItems'>): DraggableCollectionState,
+  useDraggableCollectionState(props: Omit<DraggableCollectionStateOptions, 'getItems'>): DraggableCollectionState,
+  useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>),
   useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult,
   DragPreview: typeof DragPreview
 }
@@ -65,13 +69,14 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
 
 export function useDnDHooks(options: DnDOptions): DnDHooks {
   let dragHooks = useMemo(() => ({
-    useDraggableCollectionState(props: DraggableCollectionOptions) {
+    useDraggableCollectionState(props: DraggableCollectionStateOptions) {
       return useDraggableCollectionState({
         getItems: () => [],
         ...props,
         ...options
       });
     },
+    useDraggableCollection,
     useDraggableItem,
     DragPreview
   }), [options]);

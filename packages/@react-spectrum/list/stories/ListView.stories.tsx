@@ -433,10 +433,7 @@ storiesOf('ListView/Drag and Drop', module)
           onDragStart: action('dragStartList2'),
           onDragEnd: action('dragEndList2')
         }} />
-    ),
-    {description: {
-      data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'
-    }}
+    ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
   )
   .add(
     'drag between two list, new hook with user overrides',
