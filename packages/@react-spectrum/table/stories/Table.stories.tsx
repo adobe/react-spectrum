@@ -28,6 +28,7 @@ import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -1361,6 +1362,15 @@ storiesOf('TableView', module)
     () => (
       <HidingColumnsAllowsResizing />
     )
+  )
+  .add(
+    'zoom resizing table',
+    () => (
+      <div style={{position: 'absolute', height: 'calc(100vh-32px)', width: 'calc(100vw - 32px)'}}>
+        <ZoomResizing />
+      </div>
+    ),
+    {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
   );
 
 function AsyncLoadingExample(props) {
@@ -1709,3 +1719,46 @@ export function TableWithBreadcrumbs() {
     </Flex>
   );
 }
+
+
+function EmptyState() {
+  return (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No results</Heading>
+    </IllustratedMessage>
+  );
+}
+
+function ZoomResizing() {
+  const [child, setChild] = useState('loader');
+
+  return (
+    <div className="App" style={{height: '100vh'}}>
+      <RadioGroup
+        label="Child type"
+        orientation="horizontal"
+        value={child}
+        onChange={setChild}>
+        <Radio value="loader">Loading state</Radio>
+        <Radio value="empty">Empty state</Radio>
+      </RadioGroup>
+      <Flex height="100%">
+        <TableView
+          height="100%"
+          width="100%"
+          renderEmptyState={child === 'empty' ? () => <EmptyState /> : undefined}>
+          <TableHeader>
+            <Column>column</Column>
+          </TableHeader>
+          <TableBody
+            items={[]}
+            loadingState={child === 'loader' ? 'loading' : undefined}>
+            {(item) => <Row>{(column) => <Cell>{item[column]}</Cell>}</Row>}
+          </TableBody>
+        </TableView>
+      </Flex>
+    </div>
+  );
+}
+

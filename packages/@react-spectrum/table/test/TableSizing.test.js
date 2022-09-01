@@ -56,17 +56,21 @@ for (let i = 1; i <= 100; i++) {
 }
 
 describe('TableViewSizing', function () {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, clientWidth, clientHeight;
 
-  beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+  beforeAll(() => {
     jest.useFakeTimers();
   });
 
-  afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+  beforeEach(function () {
+    // eslint-disable-next-line no-unused-vars
+    clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    // eslint-disable-next-line no-unused-vars
+    clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    // eslint-disable-next-line no-unused-vars
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
+    // eslint-disable-next-line no-unused-vars
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
   });
 
   afterEach(() => {
