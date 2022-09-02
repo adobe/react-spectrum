@@ -12,7 +12,7 @@
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import {DragHooks, DropHooks} from '@react-spectrum/dnd';
+import type {DragHooks, DropHooks} from '@react-spectrum/dnd';
 import {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -38,8 +38,7 @@ interface ListViewContextValue<T> {
   state: ListState<T>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
-  dragHooks: DragHooks,
-  dropHooks: DropHooks,
+  dndHooks: DragHooks & DropHooks,
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,
@@ -91,12 +90,11 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     isQuiet,
     overflowMode = 'truncate',
     onAction,
-    dragHooks,
-    dropHooks,
+    dndHooks,
     ...otherProps
   } = props;
-  let isListDraggable = !!dragHooks;
-  let isListDroppable = !!dropHooks;
+  let isListDraggable = !!dndHooks.useDraggableCollectionState;
+  let isListDroppable = !!dndHooks.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   if (dragHooksProvided.current !== isListDraggable) {
@@ -118,13 +116,13 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let dragState: DraggableCollectionState;
   let preview = useRef(null);
   if (isListDraggable) {
-    dragState = dragHooks.useDraggableCollectionState({
+    dragState = dndHooks.useDraggableCollectionState({
       collection,
       selectionManager,
       preview
     });
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    dragHooks.useDraggableCollection({}, dragState, domRef);
+    dndHooks.useDraggableCollection({}, dragState, domRef);
   }
   let layout = useListLayout(
     state,
@@ -135,16 +133,16 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   layout.allowDisabledKeyFocus = state.selectionManager.disabledBehavior === 'selection' || !!dragState?.draggingKeys.size;
 
 
-  let DragPreview = dragHooks?.DragPreview;
+  let DragPreview = dndHooks?.DragPreview;
   let dropState: DroppableCollectionState;
   let droppableCollection: DroppableCollectionResult;
   let isRootDropTarget: boolean;
   if (isListDroppable) {
-    dropState = dropHooks.useDroppableCollectionState({
+    dropState = dndHooks.useDroppableCollectionState({
       collection,
       selectionManager
     });
-    droppableCollection = dropHooks.useDroppableCollection({
+    droppableCollection = dndHooks.useDroppableCollection({
       keyboardDelegate: layout,
       dropTargetDelegate: layout
     }, dropState, domRef);
@@ -181,7 +179,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
   return (
-    <ListViewContext.Provider value={{state, dragState, dropState, dragHooks, dropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
+    <ListViewContext.Provider value={{state, dragState, dropState, dndHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <FocusRing focusRingClass={classNames(listStyles, 'focus-ring')}>
         <Virtualizer
           {...mergeProps(isListDroppable && droppableCollection?.collectionProps, gridProps)}

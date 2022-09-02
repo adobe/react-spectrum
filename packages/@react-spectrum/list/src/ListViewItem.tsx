@@ -49,8 +49,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     isListDraggable,
     isListDroppable,
     layout,
-    dragHooks,
-    dropHooks,
+    dndHooks,
     loadingState
   } = useContext(ListViewContext);
   let {direction} = useLocale();
@@ -83,7 +82,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dragHooks.useDraggableItem({key: item.key}, dragState);
+    draggableItem = dndHooks.useDraggableItem({key: item.key}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
@@ -96,8 +95,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
-    dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    droppableItem = dndHooks.useDroppableItem({target}, dropState, rowRef);
+    dropIndicator = dndHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();

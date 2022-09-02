@@ -41,47 +41,51 @@ import {DroppableCollectionProps} from '@react-types/shared';
 import {Key, RefObject, useMemo} from 'react';
 
 export interface DragHooks {
-  useDraggableCollectionState(props: Omit<DraggableCollectionStateOptions, 'getItems'>): DraggableCollectionState,
-  useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>),
-  useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult,
-  DragPreview: typeof DragPreview
+  useDraggableCollectionState?: (props: Omit<DraggableCollectionStateOptions, 'getItems'>) => DraggableCollectionState,
+  useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) => void,
+  useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
+  DragPreview?: typeof DragPreview
 }
 
 export interface DropHooks {
-  useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState,
-  useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult,
-  useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult,
-  useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
+  useDroppableCollectionState?: (props: DroppableCollectionStateOptions) => DroppableCollectionState,
+  useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableCollectionResult,
+  useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableItemResult,
+  useDropIndicator?: (props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DropIndicatorAria
 }
 
 export interface DnDHooks {
-  dragHooks: DragHooks,
-  dropHooks: DropHooks
+  dndHooks: DragHooks & DropHooks
 }
 
 export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
-   * A function that returns the items being dragged. If not specified, assumes that the collection is not draggable.
+   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
    */
   getItems?: (keys: Set<Key>) => DragItem[]
 }
 
 export function useDnDHooks(options: DnDOptions): DnDHooks {
-  let dragHooks = useMemo(() => ({
+  let {
+    onDrop,
+    onInsert,
+    onItemDrop,
+    onReorder,
+    onRootDrop,
+    getItems
+   } = options;
+
+  let dragHooks: DragHooks = useMemo(() => ({
     useDraggableCollectionState(props: DraggableCollectionStateOptions) {
-      return useDraggableCollectionState({
-        getItems: () => [],
-        ...props,
-        ...options
-      });
+      return useDraggableCollectionState({...props, ...options});
     },
     useDraggableCollection,
     useDraggableItem,
     DragPreview
   }), [options]);
 
-  let dropHooks = useMemo(() => ({
+  let dropHooks: DropHooks = useMemo(() => ({
     useDroppableCollectionState(props) {
       return useDroppableCollectionState({...props, ...options});
     },
@@ -92,10 +96,15 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
     useDropIndicator
   }), [options]);
 
+  let isDraggable = !!getItems;
+  let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-  // If the user doesn't want their collection to be draggable/droppable, they can just not pass dragHooks/dropHooks to their collection
+  let mergedHooks = {
+    ...(isDraggable ? dragHooks : {}),
+    ...(isDroppable ? dropHooks : {})
+  };
+
   return {
-    dragHooks,
-    dropHooks
+    dndHooks: mergedHooks
   };
 }
