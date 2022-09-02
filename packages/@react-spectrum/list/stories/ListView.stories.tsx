@@ -612,7 +612,7 @@ export function DragExample(props?) {
     };
   });
 
-  let {dragHooks} = useDnDHooks({
+  let {dndHooks} = useDnDHooks({
     getItems,
     getAllowedDropOperations() {
       getAllowedDropOperationsAction();
@@ -628,7 +628,7 @@ export function DragExample(props?) {
       selectionMode="multiple"
       items={items}
       disabledKeys={['f']}
-      dragHooks={dragHooks}
+      dndHooks={dndHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
@@ -690,7 +690,7 @@ export function ReorderExample(props) {
     }
   };
 
-  let {dragHooks} = useDnDHooks({
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -705,10 +705,7 @@ export function ReorderExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: onDragStart,
-    onDragEnd: onDragEnd
-  });
-
-  let {dropHooks} = useDnDHooks({
+    onDragEnd: onDragEnd,
     async onDrop(e) {
       onDrop(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
@@ -747,8 +744,7 @@ export function ReorderExample(props) {
       width="300px"
       items={list.items}
       disabledKeys={disabledKeys}
-      dragHooks={dragHooks}
-      dropHooks={dropHooks}
+      dndHooks={dndHooks}
       {...otherprops}>
       {(item: any) => (
         <Item>
@@ -795,7 +791,7 @@ export function DragIntoItemExample(props) {
     list.remove(...keys);
   };
 
-  let {dragHooks} = useDnDHooks({
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -810,10 +806,7 @@ export function DragIntoItemExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let {dropHooks} = useDnDHooks({
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
@@ -853,8 +846,7 @@ export function DragIntoItemExample(props) {
       width="300px"
       items={list.items}
       disabledKeys={disabledKeys}
-      dragHooks={dragHooks}
-      dropHooks={dropHooks}
+      dndHooks={dndHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
@@ -904,7 +896,7 @@ export function DragBetweenListsExample(props) {
     }
   };
 
-  let {dragHooks} = useDnDHooks({
+  let {dndHooks: dndHooksList1} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -925,7 +917,7 @@ export function DragBetweenListsExample(props) {
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let {dropHooks} = useDnDHooks({
+  let {dndHooks: dndHooksList2} = useDnDHooks({
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
@@ -966,8 +958,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dragHooks={dragHooks}
-          dropHooks={dropHooks}
+          dndHooks={dndHooksList1}
           {...props}>
           {(item: any) => (
             <Item>
@@ -984,8 +975,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dragHooks={dragHooks}
-          dropHooks={dropHooks}
+          dndHooks={dndHooksList2}
           {...props}>
           {(item: any) => (
             <Item>
@@ -1024,7 +1014,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     destinationList.append(...items);
   };
 
-  let {dragHooks: dragHooksFirst, dropHooks: dropHooksFirst} = useDnDHooks({
+  let {dndHooks: dndHooksFirst} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1070,7 +1060,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     }
   });
 
-  let {dragHooks: dragHooksSecond, dropHooks: dropHooksSecond} = useDnDHooks({
+  let {dndHooks: dndHooksSecond} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1126,8 +1116,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dragHooks={dragHooksFirst}
-          dropHooks={dropHooksFirst}
+          dndHooks={dndHooksFirst}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1144,8 +1133,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dragHooks={dragHooksSecond}
-          dropHooks={dropHooksSecond}
+          dndHooks={dndHooksSecond}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1301,7 +1289,7 @@ export function DragBetweenListsComplex(props) {
   };
 
   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
-  let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
+  let {dndHooks: dndHooksList1} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
@@ -1342,6 +1330,7 @@ export function DragBetweenListsComplex(props) {
 
       if (isInternalDrop) {
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
+        // TODO: dig into other libraries to see how they handle this
         let keysToRemove = processedItems.map(item => item.identifier);
         list1.remove(...keysToRemove);
       }
@@ -1357,7 +1346,7 @@ export function DragBetweenListsComplex(props) {
   });
 
   // List 2 should allow reordering, on folder drops, and on root drops
-  let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
+  let {dndHooks: dndHooksList2} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
       let dragItem = {};
@@ -1444,8 +1433,7 @@ export function DragBetweenListsComplex(props) {
         height="size-3600"
         items={list1.items}
         {...listViewProps}
-        dragHooks={dragHooksList1}
-        dropHooks={dropHooksList1}>
+        dndHooks={dndHooksList1}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1465,8 +1453,7 @@ export function DragBetweenListsComplex(props) {
         height="size-3600"
         items={list2.items}
         {...listViewProps}
-        dragHooks={dragHooksList2}
-        dropHooks={dropHooksList2}
+        dndHooks={dndHooksList2}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
@@ -1507,7 +1494,7 @@ function DragBetweenListsOverride(props) {
     getKey: (item) => item.identifier
   });
 
-  let {dragHooks: dragHooksList1} = useDnDHooks({
+  let {dndHooks: dndHooksList1} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       let dragType = `list-1-adobe-${item.type}`;
@@ -1523,13 +1510,7 @@ function DragBetweenListsOverride(props) {
     }
   });
 
-  let {dropHooks: dropHooksList2} = useDnDHooks({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list2.getItem(key);
-      return {
-        [`${item.type}`]: JSON.stringify(item)
-      };
-    }),
+  let {dndHooks: dndHooksList2} = useDnDHooks({
     getDropOperation: ({target, types}) => {
       if (target.type !== 'root' || !(types.has('list-1-adobe-file'))) {
         return 'cancel';
@@ -1565,7 +1546,7 @@ function DragBetweenListsOverride(props) {
         width="size-3600"
         height="size-3600"
         items={list1.items}
-        dragHooks={dragHooksList1}
+        dndHooks={dndHooksList1}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
@@ -1580,7 +1561,7 @@ function DragBetweenListsOverride(props) {
         width="size-3600"
         height="size-3600"
         items={list2.items}
-        dropHooks={dropHooksList2}
+        dndHooks={dndHooksList2}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
