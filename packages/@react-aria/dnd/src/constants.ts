@@ -32,6 +32,8 @@ export const DROP_OPERATION_ALLOWED = {
 };
 
 export const EFFECT_ALLOWED = invert(DROP_OPERATION_ALLOWED);
+EFFECT_ALLOWED[DROP_OPERATION.all] = 'all'; // ensure we don't map to 'uninitialized'.
+
 export const DROP_EFFECT = invert(DROP_OPERATION);
 export const DROP_EFFECT_TO_DROP_OPERATION: {[name: string]: DropOperation} = {
   none: 'cancel',
