@@ -1272,6 +1272,7 @@ export function DragBetweenListsComplex(props) {
     let text;
     for (let item of items) {
       for (let type of acceptedDragTypes) {
+        // TODO: this logic will need to be updated for files/directories,
         if (item.kind === 'text' && item.types.has(type)) {
           text = await item.getText(type);
           processedItems.push(JSON.parse(text));

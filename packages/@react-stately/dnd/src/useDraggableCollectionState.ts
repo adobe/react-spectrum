@@ -109,6 +109,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
       // If it is a 'move' drop operatation to a drop target outside the collection, we can assume the user wants to remove the items from the source collection
       // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
       if (typeof onRemove === 'function' && event.dropOperation === 'move' && !isInternalDrop) {
+        // TODO: dig into other DnD libraries to see how they handle partial sets of valid dropped keys
         onRemove({keys: draggingKeys.current});
       }
 

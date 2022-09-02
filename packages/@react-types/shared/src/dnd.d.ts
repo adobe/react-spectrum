@@ -114,7 +114,6 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
-// TODO: I could extend DropEvent but it feels like I'm just bloating the information these utility handler have
 interface DroppableCollectionInsertDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
@@ -137,8 +136,10 @@ interface DroppableCollectionOnItemDropEvent {
     key: Key,
     dropPosition: 'on'
   }
-  // TODO: maybe worthwhile passing draggingKeys so user doesn't have to process the drop items
-  // if it is an internal drop
+  // TODO: maybe worthwhile passing draggingKeys so user doesn't have to process the drop items datatransfer info
+  // if it is an internal drop (they can use the draggingkeys instead). However this feels weird since draggingKeys
+  // would only be usuable if it is an internal drop and not for external drops.
+  // For external drops the keys are from a different collection and thus won't make sense to the droppable collection
 }
 
 interface DroppableCollectionReorderEvent {
@@ -163,7 +164,7 @@ export interface DropTargetDelegate {
 }
 
 // TODO: naming?
-export interface DropEventInfo {
+export interface DropOperationEvent {
   target: DropTarget,
   types: DragTypes,
   allowedOperations: DropOperation[],
@@ -176,7 +177,7 @@ export interface DroppableCollectionProps {
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
-  getDropOperation?: (e: DropEventInfo) => DropOperation,
+  getDropOperation?: (e: DropOperationEvent) => DropOperation,
   /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called when a valid drag is moved within the drop target. */
@@ -185,7 +186,8 @@ export interface DroppableCollectionProps {
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
-  // TODO: perhaps onDrop would benefit from having isInternalDrop and draggingKeys provided to it?
+  // TODO: perhaps onDrop would benefit from having isInternalDrop and draggingKeys provided to it? Or should we let the user handle tracking that
+  // since they've dropped to the lower level api
   /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**
@@ -205,7 +207,7 @@ export interface DroppableCollectionProps {
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
-   * The drag types that the droppable collection accepts.
+   * The drag types that the droppable collection accepts. If your collection accepts directories, include 'directory' in your array of allowed types.
    */
   acceptedDragTypes?: 'all' | Array<string>,
   /**
@@ -238,8 +240,6 @@ export interface DraggableCollectionProps {
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
   /** Handler that is called when the dragged element is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
-  // TODO: is dropTarget being a dropTarget or Element too broad? Would be best if it could just be one or the other, but Element will be a thing
-  // if dropping on a non-collection drop target
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
   /** A function that returns the items being dragged. */

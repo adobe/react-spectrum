@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropEventInfo, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {Collection, DropOperation, DropOperationEvent, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCallback, useState} from 'react';
 
@@ -25,7 +25,7 @@ export interface DroppableCollectionState {
   target: DropTarget,
   setTarget(target: DropTarget): void,
   isDropTarget(target: DropTarget): boolean,
-  getDropOperation(e: DropEventInfo): DropOperation
+  getDropOperation(e: DropOperationEvent): DropOperation
 }
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
@@ -55,7 +55,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
   };
 
-  let defaultGetDropOperation = useCallback((e: DropEventInfo) => {
+  let defaultGetDropOperation = useCallback((e: DropOperationEvent) => {
     let {
       target,
       types,
@@ -63,24 +63,19 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       isInternalDrop,
       draggingKeys
     } = e;
-    // TODO: will be covered in a separate PR (issue in board), for now ignore the typescript error
-    // @ts-ignore
-    let typesSet = types.types ? types.types : types;
-    let draggedTypes = [...typesSet.values()];
-    if (
-      (acceptedDragTypes === 'all' || draggedTypes.some(type => acceptedDragTypes.includes(type))) &&
-      (
-        (onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after')) ||
-        // TODO: added allowedOperations[0] !== 'copy' to block internal copy insert operations as per feedback. Perhaps rename onReorder to onInternalInsert and remove this restriction? Maybe this is just ok?
-        (onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') && allowedOperations[0] !== 'copy') ||
-        // Feedback was that internal root drop was weird so preventing that from happening
-        (onRootDrop && target.type === 'root' && !isInternalDrop) ||
-        // Automatically prevent items (i.e. folders) from being dropped on themselves.
-        (onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target, types))) ||
-        !!onDrop
-      )
-    ) {
-      return allowedOperations[0];
+
+    if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => types.has(type))) {
+      let isValidInsert = onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after');
+      // TODO: added allowedOperations[0] !== 'copy' to block internal copy insert operations as per feedback. Perhaps rename onReorder to onInternalInsert and remove this restriction? Maybe this is just ok?
+      let isValidReorder = onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') && allowedOperations[0] !== 'copy';
+      // Feedback was that internal root drop was weird so preventing that from happening
+      let isValidRootDrop = onRootDrop && target.type === 'root' && !isInternalDrop;
+      // Automatically prevent items (i.e. folders) from being dropped on themselves.
+      let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target, types));
+
+      if (onDrop || isValidInsert || isValidReorder || isValidRootDrop || isValidOnItemDrop) {
+        return allowedOperations[0];
+      }
     }
 
     return 'cancel';

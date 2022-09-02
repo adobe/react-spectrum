@@ -160,7 +160,7 @@ export class DragTypes implements IDragTypes {
   }
 
   has(type: string) {
-    if (this.includesUnknownTypes) {
+    if (this.includesUnknownTypes || (type === 'directory' && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 

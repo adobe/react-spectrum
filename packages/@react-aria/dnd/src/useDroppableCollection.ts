@@ -21,7 +21,7 @@ import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 
-export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'getDropOperation' | 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'acceptedDragTypes' | 'isValidDropTarget'> {
+export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit'> {
   keyboardDelegate: KeyboardDelegate,
   dropTargetDelegate: DropTargetDelegate
 }
@@ -54,7 +54,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onInsert,
       onRootDrop,
       onItemDrop,
-      onReorder
+      onReorder,
+      getDropOperation,
+      acceptedDragTypes = 'all'
+      // isValidDropTarget
     } = localState.props;
 
     let {draggingCollectionRef, draggingKeys} = getDnDState();
@@ -65,18 +68,40 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       items
     } = e;
 
+    let filteredItems = items;
+    // TODO: for now users who specify their own getDropOperation but use our utility drop handlers will have to perform valid drop item filtering in the utility drophandlers
+    // maybe change the expectation so that isValidDropTarget and acceptedDragTypes isn't just for the defaultGetDropOperation but should be provided if you are going to be using the util handlers?
+    if (!getDropOperation) {
+      filteredItems = items.filter((item) => {
+        let itemTypes = [];
+        if (item.kind === 'directory') {
+          return acceptedDragTypes === 'all' || acceptedDragTypes.includes('directory');
+        } else {
+          itemTypes = item.kind === 'file' ? [item.type] : [...item.types];
+        }
+
+        // TODO: fix this logic, maybe adjust what isValidDropTarget accepts. We need to in case the dropped on folder has extra restriction compared to the collection itself.
+        // check to see if there is a way to convert back to dragTypes. Maybe add another prop call? Or add another arg to isValidDropTarget for item which would only be defined during onDrop but not
+        // getDropOperation
+        return acceptedDragTypes === 'all' || itemTypes.some(type => acceptedDragTypes.includes(type));
+        // if (validDragType) {
+        //   // return (target.type === 'root' || target.dropPosition !== 'on' || (target.dropPosition === 'on' && isValidDropTarget(target, itemTypes)));
+        // }
+      });
+    }
+
     if (target.type === 'root' && onRootDrop) {
-      await onRootDrop({items, dropOperation});
+      await onRootDrop({items: filteredItems, dropOperation});
     }
 
     if (target.type === 'item') {
       if (target.dropPosition === 'on' && onItemDrop) {
-        await onItemDrop({items, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}})!;
+        await onItemDrop({items: filteredItems, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}});
       }
 
       if (target.dropPosition !== 'on') {
         if (!isInternalDrop && onInsert) {
-          await onInsert({items, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
+          await onInsert({items: filteredItems, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
         }
 
         if (isInternalDrop && e.dropOperation === 'move' && onReorder) {

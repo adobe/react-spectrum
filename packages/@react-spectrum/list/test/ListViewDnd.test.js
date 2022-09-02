@@ -854,8 +854,8 @@ describe('ListView', function () {
         });
 
         it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
-          let {getAllByRole, rerender} = render(
-            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />
           );
 
           let grids = getAllByRole('grid');
@@ -881,48 +881,8 @@ describe('ListView', function () {
           fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
 
           list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          // Row number increases since there is a drop indicator
-          expect(list1Rows).toHaveLength(7);
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(1);
-
-          // Reset checked rows
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-
-          rerender(<DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />);
-          onInsert.mockClear();
-          dropTarget = within(grids[0]).getAllByRole('row')[4];
-          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
-          expect(list1Rows).toHaveLength(6);
-          list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-          dragCell = within(list2Rows[0]).getByRole('gridcell');
-
-          dataTransfer = new DataTransfer();
-          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-
-          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
           // Row number shouldn't increase since the utility handlers have been disabled and thus drop indicators don't appear
           expect(list1Rows).toHaveLength(6);
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
         });
 
         it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
@@ -1057,11 +1017,6 @@ describe('ListView', function () {
                 kind: 'text',
                 types: new Set(['text/plain', 'folder']),
                 getText: expect.any(Function)
-              },
-              {
-                kind: 'text',
-                types: new Set(['unique_type']),
-                getText: expect.any(Function)
               }
             ]
           });
@@ -1071,11 +1026,6 @@ describe('ListView', function () {
             type: 'folder',
             name: 'Pictures',
             childNodes: []
-          });
-          expect(items).toContainObject({
-            identifier: '13',
-            type: 'unique_type',
-            name: 'invalid drag item'
           });
         });
       });
