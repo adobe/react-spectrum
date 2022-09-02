@@ -34,6 +34,26 @@
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@react-spectrum/button",
+          "./packages/@react-spectrum/checkbox",
+          "./packages/@react-spectrum/divider",
+          "./packages/@react-spectrum/icon",
+          "./packages/@react-spectrum/illustratedmessage",
+          "./packages/@react-spectrum/image",
+          "./packages/@react-spectrum/meter",
+          "./packages/@react-spectrum/statuslight",
+          "./packages/@react-spectrum/text",
+          "./packages/@react-spectrum/view",
+          "./packages/@react-spectrum/well",
+          "./packages/@react-types/button",
+          "./packages/@react-types/checkbox",
+          "./packages/@react-types/divider",
+          "./packages/@react-types/illustratedmessage",
+          "./packages/@react-types/image",
+          "./packages/@react-types/meter",
+          "./packages/@react-types/statuslight",
+          "./packages/@react-types/text",
+          "./packages/@react-types/view",
+          "./packages/@react-types/well"
         ]
       }
     ]
