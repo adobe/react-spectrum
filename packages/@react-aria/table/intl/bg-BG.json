@@ -1,6 +1,7 @@
 {
   "ascending": "възходящ",
   "ascendingSort": "сортирано по колона {columnName} във възходящ ред",
+  "columnSize": "{value} пиксела",
   "descending": "низходящ",
   "descendingSort": "сортирано по колона {columnName} в низходящ ред",
   "select": "Изберете",
