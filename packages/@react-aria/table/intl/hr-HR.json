@@ -1,6 +1,7 @@
 {
   "ascending": "rastući",
   "ascendingSort": "razvrstano po stupcima {columnName} rastućem redoslijedom",
+  "columnSize": "{value} piksela",
   "descending": "padajući",
   "descendingSort": "razvrstano po stupcima {columnName} padajućim redoslijedom",
   "select": "Odaberite",

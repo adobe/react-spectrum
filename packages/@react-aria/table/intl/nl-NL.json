@@ -1,6 +1,7 @@
 {
   "ascending": "oplopend",
   "ascendingSort": "gesorteerd in oplopende volgorde in kolom {columnName}",
+  "columnSize": "{value} pixels",
   "descending": "aflopend",
   "descendingSort": "gesorteerd in aflopende volgorde in kolom {columnName}",
   "select": "Selecteren",
