@@ -33,6 +33,7 @@
       {
         "name": "typescript-strict-plugin",
         "paths": [
+          "./packages/@react-spectrum/action",
           "./packages/@react-spectrum/button",
           "./packages/@react-spectrum/checkbox",
           "./packages/@react-spectrum/divider",
@@ -44,6 +45,7 @@
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-types/action",
           "./packages/@react-types/button",
           "./packages/@react-types/checkbox",
           "./packages/@react-types/divider",
