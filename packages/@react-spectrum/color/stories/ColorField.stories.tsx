@@ -16,7 +16,7 @@ import {ColorField} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {useColor} from '@react-stately/color/src/useColor';
+import {useColor} from '@react-stately/color';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
