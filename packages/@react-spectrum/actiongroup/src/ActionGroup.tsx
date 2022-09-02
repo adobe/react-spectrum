@@ -398,7 +398,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
 
   // If single selection and empty selection is not allowed, swap the contents of the button to the selected item (like a Picker).
-  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection) {
+  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection && state.selectionManager.firstSelectedKey != null) {
     let selectedItem = state.collection.getItem(state.selectionManager.firstSelectedKey);
     if (selectedItem) {
       summaryIcon = selectedItem.rendered;
