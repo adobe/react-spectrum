@@ -1340,12 +1340,12 @@ export function DragBetweenListsComplex(props) {
       }
     },
     acceptedDragTypes,
-    onRemove: (e) => {
-      action('onRemoveList1')(e);
+    onItemRemove: (e) => {
+      action('onItemRemoveList1')(e);
       list1.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => !!list1.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).childNodes,
     ...firstListDnDOptions
   });
 
@@ -1411,19 +1411,19 @@ export function DragBetweenListsComplex(props) {
       }
     },
     acceptedDragTypes,
-    onRemove: (e) => {
-      action('onRemoveList2')(e);
+    onItemRemove: (e) => {
+      action('onItemRemoveList2')(e);
       // TODO: no great way to stop the non-accepted drag items from getting removed.
       // Scenario: dragging files + folders and dropping on a drop target that only accepts files. We have
       // no good way currently of knowing that the folders shouldn't be removed
       // Ways to possibly handle this
-      // 1. Figure out what keys are actually accepted by the drop target and track the "droppableKeys" in global state. Communicate this to onRemove/onDragEnd
+      // 1. Figure out what keys are actually accepted by the drop target and track the "droppableKeys" in global state. Communicate this to onItemRemove/onDragEnd
       // 2. Expect that the user will perform the selective item removal via the drop target's drop handler (can we expect that list 1 always has access to list 2?)
-      // This brings into question if we should even have onRemove in the first place, should we just expect item deletion should happen in onDrop always?
+      // This brings into question if we should even have onItemRemove in the first place, should we just expect item deletion should happen in onDrop always?
       list2.remove(...e.keys);
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    isValidDropTarget: (target) => !!list2.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
     ...secondListDnDOptions
   });
 
@@ -1532,12 +1532,12 @@ function DragBetweenListsOverride(props) {
       list2.append(...itemsToAdd);
     },
     // the below utility handlers shouldn't be called because onDrop is defined
-    // isValidDropTarget and acceptedDragTypes shouldn't affect the behavior either
+    // shouldAcceptItemDrop and acceptedDragTypes shouldn't affect the behavior either
     onInsert: () => action('onInsert'),
     onReorder: () => action('onReorder'),
     onRootDrop: () => action('onRootDrop'),
     onItemDrop: () => action('onItemDrop'),
-    isValidDropTarget: (target) => !!list2.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
     acceptedDragTypes: 'all'
   });
 

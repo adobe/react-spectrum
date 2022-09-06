@@ -35,7 +35,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     onRootDrop,
     onItemDrop,
     onReorder,
-    isValidDropTarget,
+    shouldAcceptItemDrop,
     collection,
     selectionManager,
     onDropExit,
@@ -71,7 +71,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       // Feedback was that internal root drop was weird so preventing that from happening
       let isValidRootDrop = onRootDrop && target.type === 'root' && !isInternalDrop;
       // Automatically prevent items (i.e. folders) from being dropped on themselves.
-      let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!isValidDropTarget || isValidDropTarget(target, types));
+      let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternalDrop && draggingKeys.has(target.key)) && (!shouldAcceptItemDrop || shouldAcceptItemDrop(target, types));
 
       if (onDrop || isValidInsert || isValidReorder || isValidRootDrop || isValidOnItemDrop) {
         return allowedOperations[0];
@@ -79,7 +79,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, isValidDropTarget, onReorder, onDrop]);
+  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
 
   return {
     collection,

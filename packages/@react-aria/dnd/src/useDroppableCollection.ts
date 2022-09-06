@@ -56,7 +56,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onItemDrop,
       onReorder,
       acceptedDragTypes
-      // isValidDropTarget
+      // shouldAcceptItemDrop
     } = localState.props;
 
     let {draggingCollectionRef, draggingKeys} = getDnDState();
@@ -77,12 +77,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           itemTypes = item.kind === 'file' ? [item.type] : [...item.types];
         }
 
-        // TODO: fix this logic, maybe adjust what isValidDropTarget accepts. We need to in case the dropped on folder has extra restriction compared to the collection itself.
-        // check to see if there is a way to convert back to dragTypes. Maybe add another prop call? Or add another arg to isValidDropTarget for item which would only be defined during onDrop but not
+        // TODO: fix this logic, maybe adjust what shouldAcceptItemDrop accepts. We need to in case the dropped on folder has extra restriction compared to the collection itself.
+        // check to see if there is a way to convert back to dragTypes. Maybe add another prop call? Or add another arg to shouldAcceptItemDrop for item which would only be defined during onDrop but not
         // getDropOperation
         return acceptedDragTypes === 'all' || itemTypes.some(type => acceptedDragTypes.includes(type));
         // if (validDragType) {
-        //   // return (target.type === 'root' || target.dropPosition !== 'on' || (target.dropPosition === 'on' && isValidDropTarget(target, itemTypes)));
+        //   // return (target.type === 'root' || target.dropPosition !== 'on' || (target.dropPosition === 'on' && shouldAcceptItemDrop(target, itemTypes)));
         // }
       });
     }

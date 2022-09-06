@@ -213,7 +213,7 @@ export interface DroppableCollectionProps {
   /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
-  isValidDropTarget?: (target: ItemDropTarget, types: DragTypes) => boolean
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
@@ -249,5 +249,5 @@ export interface DraggableCollectionProps {
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /** Handler called when items are moved out of the draggable collection. */
-  onRemove?: (e: DraggableCollectionRemoveEvent) => void
+  onItemRemove?: (e: DraggableCollectionRemoveEvent) => void
 }
