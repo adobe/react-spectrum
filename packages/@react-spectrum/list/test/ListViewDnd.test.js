@@ -1354,13 +1354,13 @@ describe('ListView', function () {
 
         for (let [index, row] of rows.entries()) {
           let cell = within(row).getByRole('gridcell', {hidden: true});
-          // Row doesn't have aria-hidden since the insertion indicator is within the row.
-          // Instead we hide the cell for iOS Safari and remove the row tab index so TalkBack doesn't focus the row
-          expect(row).not.toHaveAttribute('aria-hidden', 'true');
+          // We hide the cell for iOS Safari and remove the row tab index so TalkBack doesn't focus the row
           expect(row).not.toHaveAttribute('tabindex');
           if (index === 0) {
+            expect(row).not.toHaveAttribute('aria-hidden', 'true');
             expect(cell).not.toHaveAttribute('aria-hidden', 'true');
           } else {
+            expect(row).toHaveAttribute('aria-hidden', 'true');
             expect(cell).toHaveAttribute('aria-hidden', 'true');
           }
         }

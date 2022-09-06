@@ -136,7 +136,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     hoverProps,
     focusWithinProps,
     focusProps,
-    dropIndicator?.isVirtualDrag && {tabIndex: null}
+    dropHooks?.isDragSession() && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;
