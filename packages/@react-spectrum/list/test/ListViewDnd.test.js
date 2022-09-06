@@ -682,7 +682,7 @@ describe('ListView', function () {
       });
 
       act(() => jest.runAllTimers());
-      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
+      let droppableButton = await within(droppable.parentElement).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
@@ -893,7 +893,7 @@ describe('ListView', function () {
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
       });
 
-      it('disabled rows and invalid drop targets should become aria-hidden and when keyboard drag session starts', function () {
+      it('disabled rows and invalid drop targets should become aria-hidden when keyboard drag session starts', function () {
         let {getAllByRole} = render(
           <ReorderExample listViewProps={{disabledKeys: ['2']}} />
         );
@@ -912,12 +912,16 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
 
         for (let [index, row] of rows.entries()) {
-          if (index === 0) {
-            expect(row).not.toHaveAttribute('aria-hidden', 'true');
-          } else {
-            expect(row).toHaveAttribute('aria-hidden', 'true');
-          }
+          let cell = within(row).getByRole('gridcell', {hidden: true});
+          // Row doesn't have aria-hidden since the insertion indicator is within the row.
+          // Instead we hide the cell for iOS Safari and remove the row tab index so TalkBack doesn't focus the row
+          expect(row).not.toHaveAttribute('aria-hidden', 'true');
           expect(row).not.toHaveAttribute('tabindex');
+          if (index === 0) {
+            expect(cell).not.toHaveAttribute('aria-hidden', 'true');
+          } else {
+            expect(cell).toHaveAttribute('aria-hidden', 'true');
+          }
         }
 
         fireEvent.keyDown(document.body, {key: 'Escape'});
