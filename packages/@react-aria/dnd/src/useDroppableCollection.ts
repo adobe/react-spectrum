@@ -21,7 +21,7 @@ import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 
-export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit'> {
+export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'getDropOperations'> {
   keyboardDelegate: KeyboardDelegate,
   dropTargetDelegate: DropTargetDelegate
 }
@@ -55,8 +55,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
-      getDropOperation,
-      acceptedDragTypes = 'all'
+      acceptedDragTypes
       // isValidDropTarget
     } = localState.props;
 
@@ -69,9 +68,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     } = e;
 
     let filteredItems = items;
-    // TODO: for now users who specify their own getDropOperation but use our utility drop handlers will have to perform valid drop item filtering in the utility drophandlers
-    // maybe change the expectation so that isValidDropTarget and acceptedDragTypes isn't just for the defaultGetDropOperation but should be provided if you are going to be using the util handlers?
-    if (!getDropOperation) {
+    if (acceptedDragTypes) {
       filteredItems = items.filter((item) => {
         let itemTypes = [];
         if (item.kind === 'directory') {
