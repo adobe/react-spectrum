@@ -93,8 +93,8 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
     dndHooks,
     ...otherProps
   } = props;
-  let isListDraggable = !!dndHooks.useDraggableCollectionState;
-  let isListDroppable = !!dndHooks.useDroppableCollectionState;
+  let isListDraggable = !!dndHooks?.useDraggableCollectionState;
+  let isListDroppable = !!dndHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   if (dragHooksProvided.current !== isListDraggable) {
