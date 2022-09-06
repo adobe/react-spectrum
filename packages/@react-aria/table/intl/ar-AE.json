@@ -1,10 +1,10 @@
 {
   "ascending": "تصاعدي",
   "ascendingSort": "ترتيب حسب العمود {columnName} بترتيب تصاعدي",
+  "columnSize": "{value} بالبكسل",
   "descending": "تنازلي",
   "descendingSort": "ترتيب حسب العمود {columnName} بترتيب تنازلي",
   "select": "تحديد",
   "selectAll": "تحديد الكل",
-  "sortable": "عمود قابل للترتيب",
-  "resizeTextValue": "{value} pixels"
+  "sortable": "عمود قابل للترتيب"
 }
