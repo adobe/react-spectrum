@@ -35,10 +35,7 @@ describe('ColorWheel', () => {
 
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    // @ts-ignore
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -223,7 +220,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -249,7 +246,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
       let thumb = slider.parentElement;
 
@@ -272,7 +269,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -295,7 +292,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -316,7 +313,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -347,7 +344,7 @@ describe('ColorWheel', () => {
                ...
              input.spectrum-ColorWheel-slider
     */
-    let handleColorElement = _container.firstChild.firstChild.nextSibling.firstChild as HTMLElement;
+    let handleColorElement = _container?.firstChild?.firstChild?.nextSibling?.firstChild as HTMLElement;
     let thumbColor = parseColor(handleColorElement.style.backgroundColor);
     expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
     expect(thumbColor.getChannelValue('alpha')).toEqual(1);

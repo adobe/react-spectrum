@@ -84,36 +84,42 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     }
 
     let computeVisibleItems = (visibleItems: number) => {
-      let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
-      let containerSize = orientation === 'horizontal' ? wrapperRef.current.offsetWidth : wrapperRef.current.offsetHeight;
-      let isShowingMenu = visibleItems < state.collection.size;
-      let calculatedSize = 0;
-      let newVisibleItems = 0;
+      if (domRef.current && wrapperRef.current) {
+        let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
+        let containerSize = orientation === 'horizontal' ? wrapperRef.current.offsetWidth : wrapperRef.current.offsetHeight;
+        let isShowingMenu = visibleItems < state.collection.size;
+        let calculatedSize = 0;
+        let newVisibleItems = 0;
 
-      if (isShowingMenu) {
-        calculatedSize += orientation === 'horizontal'
-          ? outerWidth(listItems.pop(), false, true)
-          : outerHeight(listItems.pop(), false, true);
-      }
-
-      for (let [i, item] of listItems.entries()) {
-        calculatedSize += orientation === 'horizontal'
-          ? outerWidth(item, i === 0, i === listItems.length - 1)
-          : outerHeight(item, i === 0, i === listItems.length - 1);
-        if (calculatedSize <= containerSize) {
-          newVisibleItems++;
-        } else {
-          break;
+        if (isShowingMenu) {
+          let item = listItems.pop();
+          if (item) {
+            calculatedSize += orientation === 'horizontal'
+              ? outerWidth(item, false, true)
+              : outerHeight(item, false, true);
+          }
         }
-      }
 
-      // If selection is enabled, and not all of the items fit, collapse all of them into a dropdown
-      // immediately rather than having some visible and some not.
-      if (selectionMode !== 'none' && newVisibleItems < state.collection.size) {
-        return 0;
-      }
+        for (let [i, item] of listItems.entries()) {
+          calculatedSize += orientation === 'horizontal'
+            ? outerWidth(item, i === 0, i === listItems.length - 1)
+            : outerHeight(item, i === 0, i === listItems.length - 1);
+          if (calculatedSize <= containerSize) {
+            newVisibleItems++;
+          } else {
+            break;
+          }
+        }
 
-      return newVisibleItems;
+        // If selection is enabled, and not all of the items fit, collapse all of them into a dropdown
+        // immediately rather than having some visible and some not.
+        if (selectionMode !== 'none' && newVisibleItems < state.collection.size) {
+          return 0;
+        }
+
+        return newVisibleItems;
+      }
+      return visibleItems;
     };
 
     setVisibleItems(function *() {
@@ -166,14 +172,14 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   // in all scenarios because it may not shrink when available space is reduced.
   let parentRef = useMemo(() => ({
     get current() {
-      return wrapperRef.current.parentElement;
+      return wrapperRef.current?.parentElement;
     }
   }), [wrapperRef]);
-  useResizeObserver({ref: overflowMode !== 'wrap' ? parentRef : null, onResize: updateOverflow});
+  useResizeObserver({ref: overflowMode !== 'wrap' ? parentRef : undefined, onResize: updateOverflow});
   useLayoutEffect(updateOverflow, [updateOverflow, state.collection]);
 
   let children = [...state.collection];
-  let menuItem = null;
+  let menuItem: ReactElement | null = null;
   let menuProps = {};
 
   // If there are no visible items, don't apply any props to the action group container
@@ -257,16 +263,16 @@ export {_ActionGroup as ActionGroup};
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
   state: ListState<T>,
-  isDisabled: boolean,
-  isEmphasized: boolean,
+  isDisabled?: boolean,
+  isEmphasized?: boolean,
   staticColor?: 'white' | 'black',
   hideButtonText?: boolean,
   orientation?: 'horizontal' | 'vertical',
-  onAction: (key: Key) => void
+  onAction?: (key: Key) => void
 }
 
 function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor, onAction, hideButtonText, orientation}: ActionGroupItemProps<T>) {
-  let ref = useRef();
+  let ref = useRef(null);
   let {buttonProps} = useActionGroupItem({key: item.key}, state);
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -282,7 +288,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
   // If button text is hidden, we need to show it as a tooltip instead, so
   // go find the text element in the DOM after rendering.
   let textId = useId();
-  let [textContent, setTextContent] = useState('');
+  let [textContent, setTextContent] = useState<string | null | undefined>('');
   useLayoutEffect(() => {
     if (hideButtonText) {
       setTextContent(document.getElementById(textId)?.textContent);
@@ -359,7 +365,7 @@ interface ActionGroupMenuProps<T> extends AriaLabelingProps {
   summaryIcon?: ReactNode,
   isOnlyItem?: boolean,
   orientation?: 'horizontal' | 'vertical',
-  onAction: (key: Key) => void
+  onAction?: (key: Key) => void
 }
 
 function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
@@ -376,7 +382,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let {hoverProps, isHovered} = useHover({isDisabled});
 
   // If no aria-label or aria-labelledby is given, provide a default one.
-  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? null : '…');
+  let ariaLabel = otherProps['aria-label'] || (otherProps['aria-labelledby'] ? undefined : '…');
   let ariaLabelledby = otherProps['aria-labelledby'];
   let textId = useId();
   let id = useId();
@@ -392,14 +398,14 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   let isSelected = state.selectionManager.selectionMode !== 'none' && !state.selectionManager.isEmpty;
 
   // If single selection and empty selection is not allowed, swap the contents of the button to the selected item (like a Picker).
-  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection) {
+  if (!summaryIcon && state.selectionManager.selectionMode === 'single' && state.selectionManager.disallowEmptySelection && state.selectionManager.firstSelectedKey != null) {
     let selectedItem = state.collection.getItem(state.selectionManager.firstSelectedKey);
     if (selectedItem) {
       summaryIcon = selectedItem.rendered;
       if (typeof summaryIcon === 'string') {
         summaryIcon = <Text>{summaryIcon}</Text>;
       }
-      iconOnly = hideButtonText;
+      iconOnly = !!hideButtonText;
       ariaLabelledby = `${ariaLabelledby ?? id} ${textId}`;
     }
   }
@@ -453,7 +459,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             }
             isDisabled={isDisabled}
             staticColor={staticColor}>
-            {summaryIcon || <More />}
+            {summaryIcon ? <More /> : null}
           </ActionButton>
         </PressResponder>
       </SlotProvider>
