@@ -16,8 +16,6 @@ import {ReactNode} from 'react';
 export interface SpectrumBadgeProps extends DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the badge. */
   children: ReactNode,
-  /** Whether the badge is disabled. */
-  isDisabled?: boolean,
   /**
    * The variant changes the background color of the badge.
    * When badge has a semantic meaning, they should use the variant for semantic colors.

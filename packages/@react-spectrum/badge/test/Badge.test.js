@@ -51,17 +51,7 @@ describe('Badge', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'Badge'}   | ${Badge}   | ${{isDisabled: true}}
-  `('$Name disabled, its css only, so this just makes sure it does not blow up', function ({Component, props}) {
-    let {getByTestId} = render(<Component {...props} data-testid="badge">Badge of honor</Component>);
-
-    let badge = getByTestId('badge');
-    expect(within(badge).getByText('Badge of honor')).toBeInTheDocument();
-  });
-
-  it.each`
-    Name               | Component        | props
+    Name         | Component  | props
     ${'Badge'}   | ${Badge}   | ${{}}
   `('$Name forwards ref', function ({Component, props}) {
     let ref = React.createRef();

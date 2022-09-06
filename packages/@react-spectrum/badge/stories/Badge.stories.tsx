@@ -27,9 +27,6 @@ export default {
         type: 'select',
         options: ['positive', 'negative', 'neutral', 'info', 'indigo', 'yellow', 'magenta', 'fuchsia', 'purple', 'seafoam']
       }
-    },
-    isDisabled: {
-      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof Badge>;
@@ -47,4 +44,8 @@ export const WithIcon: BadgeStory = {
 export const IconOnly: BadgeStory = {
   args: {children: <CheckmarkCircle />, variant: 'positive', 'aria-label': 'Licensed'},
   name: 'Icon only'
+};
+
+export const Overflow: BadgeStory = {
+  args: {children: '24 days left in trial', variant: 'positive', UNSAFE_style: {width: '74px'}}
 };

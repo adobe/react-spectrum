@@ -23,7 +23,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    isDisabled,
     variant,
     ...otherProps
   } = useProviderProps(props);
@@ -40,8 +39,7 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
         styles,
         'spectrum-Badge',
         {
-          [`spectrum-Badge--${variant}`]: !isDisabled && variant,
-          'is-disabled': isDisabled
+          [`spectrum-Badge--${variant}`]: variant
         },
         styleProps.className
       )}

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -11,47 +12,30 @@
  */
 
 
-import {Badge} from '@react-spectrum/badge';
 import badgeStyles from '@adobe/spectrum-css-temp/components/badge/vars.css';
 import clsx from 'clsx';
-import {defaultTheme, Provider} from '@adobe/react-spectrum';
 import React from 'react';
 
 export function VersionBadge(props) {
   let {
     version = '',
-    size = 'S'
+    size = 'small'
   } = props;
 
   let versionMap = {
-    'alpha': 'info',
-    'beta': 'info',
-    'rc': 'positive'
-  };
-
-  let versionMapClasses = {
-    'alpha': 'spectrum-Label--blue',
-    'beta': 'spectrum-Label--blue',
-    'rc': 'spectrum-Label--green'
+    'alpha': 'spectrum-Badge--info',
+    'beta': 'spectrum-Badge--info',
+    'rc': 'spectrum-Badge--positive'
   };
 
   let preRelease = version.match(/(alpha)|(beta)|(rc)/);
-  let sizeClass = `spectrum-Label--${size}`;
+  let sizeClass = `spectrum-Badge--${size}`;
 
   if (!preRelease) {
     return null;
   }
 
-  if (size === 'S') {
-    return (
-      <Provider theme={defaultTheme} scale="medium">
-        <Badge variant={versionMap[preRelease[0]]}>{preRelease[0]}</Badge>
-      </Provider>
-    );
-  }
-
-  // TODO: remove once size prop is added
   return (
-    <span className={clsx(badgeStyles['spectrum-Label'], badgeStyles[sizeClass], badgeStyles[versionMapClasses[preRelease[0]]])}>{preRelease[0]}</span>
+    <span className={clsx(badgeStyles['spectrum-Badge'], badgeStyles[sizeClass], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
   );
 }

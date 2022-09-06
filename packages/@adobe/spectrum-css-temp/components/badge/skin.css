@@ -12,11 +12,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Badge {
   color: var(--spectrum-label-colored-text-color);
-
-  &.is-disabled {
-    color: var(--spectrum-label-text-color-disabled);
-    background-color: var(  --spectrum-label-colored-background-color-disabled);
-  }
 }
 
 .spectrum-Badge--neutral {

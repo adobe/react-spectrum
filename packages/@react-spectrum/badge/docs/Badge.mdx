@@ -21,6 +21,7 @@ import {Badge} from '@react-spectrum/badge';
 ---
 category: Status
 keywords: [badge]
+after_version: 3.0.0
 ---
 
 # Badge
@@ -42,7 +43,7 @@ sourceData={[
 
 ## Content
 
-Badges can hav a label, an icon, or both. An icon is provided by passing an icon component as a child to the Badge.
+Badges can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the Badge.
 A visible label can be provided by passing a string or a Text component as a child, depending on whether the Badge has an accompanying icon.
 
 ```tsx example
@@ -76,31 +77,28 @@ When badges have a semantic meaning, they should use semantic colors.
 Use the appropriate color to indicate status as follows.
 
 ```tsx example
-<Badge variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</Badge>
-<Badge variant="info">Blue: Active, In Use, Live, Published</Badge>
-<Badge variant="negative">Red: Error, Alert, Rejected, Failed</Badge>
-<Badge variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</Badge>
+import {Flex} from '@react-spectrum/layout';
+
+<Flex direction="column" gap={8}>
+  <Badge variant="positive">Green: Approved, Complete, Success, New, Purchased, Licensed</Badge>
+  <Badge variant="info">Blue: Active, In Use, Live, Published</Badge>
+  <Badge variant="negative">Red: Error, Alert, Rejected, Failed</Badge>
+  <Badge variant="neutral">Gray: Archived, Deleted, Paused, Draft, Not Started, Ended</Badge>
+</Flex>
 ```
 
 When status lights are used to color code categories, they use label colors. The ideal usage for these is when there
 are 8 or fewer categories being color coded.
 
 ```tsx example
-<Badge variant="seafoam">Seafoam</Badge>
-<Badge variant="indigo">Indigo</Badge>
-<Badge variant="purple">Purple</Badge>
-<Badge variant="fuchsia">Fuchsia</Badge>
-<Badge variant="magenta">Magenta</Badge>
-<Badge variant="yellow">Yellow</Badge>
-```
+import {Flex} from '@react-spectrum/layout';
 
-### Disabled
-[View guidelines](https://spectrum.adobe.com/page/badge/#Disabled)
-
-Use the `isDisabled` prop to match the state of a containing element.
-Note that the `isDisabled` prop alters the visual style of the Badge,
-but does not convey any state information to assistive technology.
-
-```tsx example
-<Badge variant="yellow" isDisabled>Yellow</Badge>
+<Flex direction="column" gap={8}>
+  <Badge variant="seafoam">Seafoam</Badge>
+  <Badge variant="indigo">Indigo</Badge>
+  <Badge variant="purple">Purple</Badge>
+  <Badge variant="fuchsia">Fuchsia</Badge>
+  <Badge variant="magenta">Magenta</Badge>
+  <Badge variant="yellow">Yellow</Badge>
+</Flex>
 ```

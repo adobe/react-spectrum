@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   position: relative;
 
-  width: auto;
+  width: fit-content;
 
   padding: var(--spectrum-global-dimension-size-50) 0;
 
