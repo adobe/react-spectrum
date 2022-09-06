@@ -1123,7 +1123,7 @@ describe('ListView', function () {
       });
 
       act(() => jest.runAllTimers());
-      let droppableButton = await within(droppable.parentElement).findByLabelText('Drop on Folder 2', {hidden: true});
+      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
