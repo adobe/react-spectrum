@@ -454,8 +454,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(rows[2]);
       });
 
-      // TODO: fix, broke after merge
-      it.skip('should allow moving one item into another list', async function () {
+      it('should allow moving one item into another list', async function () {
         let {getAllByRole} =  render(<DragBetweenLists />);
 
         let grid1 = getAllByRole('grid')[0];
@@ -486,18 +485,10 @@ describe('ListView', function () {
         fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
-
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
-        // purposefully run these two together inside one act so that the events line up as they do in the dom
-        // if they are in separate ones, then we create a render cycle in between
-        // if they are two separate acts
-        act(() => {
-          jest.advanceTimersToNextTimer();
-          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
-        });
-        // resolve async drop
+        // resolve async drop, don't fire dragend to simulate browser bug:https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+        // onDragEnd will be called by our cleanup instead
         await act(async () => Promise.resolve());
-        // resolve focus movement
         act(() => {jest.runAllTimers();});
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
@@ -519,8 +510,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(list2rows[0]);
       });
 
-      // TODO: fix, broke after merge
-      it.skip('should allow moving multiple items into another list', async function () {
+      it('should allow moving multiple items into another list', async function () {
         let {getAllByRole} =  render(<DragBetweenLists />);
 
         let grid1 = getAllByRole('grid')[0];
@@ -556,19 +546,11 @@ describe('ListView', function () {
         fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
 
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
-        // purposefully run these two together inside one act so that the events line up as they do in the dom
-        // if they are in separate ones, then we create an render cycle in between
-        // if they are two separate acts
-        act(() => {
-          jest.advanceTimersToNextTimer();
-          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
-        });
-        if (!isReact18) {
-          // not sure why but in React 17 this blur happens in the browser but not in the test
-          act(() => list1rows[0].blur());
-        }
-        // resolve async drop
+        // resolve async drop, don't fire dragend to simulate browser bug:https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+        // onDragEnd will be called by our cleanup instead
         await act(async () => Promise.resolve());
+        act(() => {jest.runAllTimers();});
+
         // resolve focus movement
         act(() => {jest.runAllTimers();});
 
@@ -2055,8 +2037,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(rows[3]);
       });
 
-      // TODO: fix, broke after merge
-      it.skip('should allow moving one item into another list', async function () {
+      it('should allow moving one item into another list', async function () {
         let {getAllByRole} =  render(<DragBetweenLists />);
 
         let list1 = getAllByRole('grid')[0];
@@ -2087,8 +2068,6 @@ describe('ListView', function () {
 
         act(() => jest.runAllTimers());
 
-        userEvent.tab();
-
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -2115,8 +2094,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(list2rows[0]);
       });
 
-      // TODO: fix, broke after merge
-      it.skip('should allow moving multiple items into another list', async function () {
+      it('should allow moving multiple items into another list', async function () {
         let {getAllByRole} =  render(<DragBetweenLists />);
 
         let list1 = getAllByRole('grid')[0];
@@ -2154,8 +2132,6 @@ describe('ListView', function () {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
         act(() => jest.runAllTimers());
-
-        userEvent.tab();
 
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
