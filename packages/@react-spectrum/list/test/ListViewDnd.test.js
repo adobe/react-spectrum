@@ -682,7 +682,7 @@ describe('ListView', function () {
       });
 
       act(() => jest.runAllTimers());
-      let droppableButton = await within(droppable.parentElement).findByLabelText('Drop on Folder 2', {hidden: true});
+      let droppableButton = await within(droppable).findByLabelText('Drop on Folder 2', {hidden: true});
       expect(document.activeElement).toBe(droppableButton);
       fireEvent.keyDown(droppableButton, {key: 'Enter'});
       fireEvent.keyUp(droppableButton, {key: 'Enter'});
@@ -893,7 +893,7 @@ describe('ListView', function () {
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');
       });
 
-      it('disabled rows and invalid drop targets should become aria-hidden when keyboard drag session starts', function () {
+      it('disabled rows and invalid drop targets should become aria-hidden and when keyboard drag session starts', function () {
         let {getAllByRole} = render(
           <ReorderExample listViewProps={{disabledKeys: ['2']}} />
         );
@@ -917,6 +917,7 @@ describe('ListView', function () {
           } else {
             expect(row).toHaveAttribute('aria-hidden', 'true');
           }
+          expect(row).not.toHaveAttribute('tabindex');
         }
 
         fireEvent.keyDown(document.body, {key: 'Escape'});
