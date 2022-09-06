@@ -260,7 +260,6 @@ function DocSearch() {
     <Provider theme={defaultTheme} role="search">
       <SearchAutocomplete
         aria-label="Search"
-        placeholder="Search"
         UNSAFE_className={docsStyle.docSearchBox}
         id="algolia-doc-search"
         value={searchValue}
