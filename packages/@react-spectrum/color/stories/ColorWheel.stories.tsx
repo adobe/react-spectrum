@@ -44,7 +44,7 @@ storiesOf('ColorWheel', module)
     'controlled',
     () => {
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-      let colorCSS = color.toString('css');
+      let colorCSS = color?.toString('css');
       return (<Flex gap={'size-500'} direction="row" alignItems="center">
         <ColorWheel onChange={setColor} value={color} />
         <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />

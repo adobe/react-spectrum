@@ -144,7 +144,7 @@ XBlueYGreenisDisabled.args = {...XBlueYGreen.args, isDisabled: true};
 /* TODO: how do we visually label and how to do we aria-label */
 export let XBlueYGreenAriaLabelled = Template.bind({});
 XBlueYGreenAriaLabelled.storyName = 'RGB xChannel="blue", yChannel="green", aria-label="foo"';
-XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, label: undefined, 'aria-label': 'foo'};
+XBlueYGreenAriaLabelled.args = {...XBlueYGreen.args, 'aria-label': 'foo'};
 
 export let XBlueYGreenSize3000 = Template.bind({});
 XBlueYGreenSize3000.storyName = 'RGB xChannel="blue", yChannel="green", size="size-3000"';

@@ -14,13 +14,14 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
+import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
+let isReact18 = parseInt(React.version, 10) >= 18;
 
 describe('ListView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -84,9 +85,16 @@ describe('ListView', function () {
 
     function Reorderable(props) {
       return (
-        <ReorderExample onDrop={jest.fn()} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+        <ReorderExample disabledKeys={['1']} onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
       );
     }
+
+    function DragBetweenLists(props) {
+      return (
+        <DragBetweenListsExample onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+      );
+    }
+
     beforeEach(() => {
       jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
         left: 0,
@@ -335,6 +343,219 @@ describe('ListView', function () {
         expect(event.defaultPrevented).toBe(true);
         expect(dataTransfer.items._items).toHaveLength(0);
       });
+
+      it('should allow moving one item within a list', async function () {
+        let {getAllByRole, getByRole} =  render(<Reorderable />);
+
+        let grid = getByRole('grid');
+        let rows = getAllByRole('row');
+        let cell = within(rows[1]).getByRole('gridcell');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+
+        expect(document.activeElement).toBe(rows[2]);
+      });
+
+      it('should allow moving multiple items within a list', async function () {
+        let {getAllByRole, getByRole} =  render(<Reorderable />);
+
+        let grid = getByRole('grid');
+        let rows = getAllByRole('row');
+        let cell = within(rows[1]).getByRole('gridcell');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
+
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(document.activeElement).toBe(rows[2]);
+      });
+
+      it('should allow moving one item into another list', async function () {
+        let {getAllByRole} =  render(<DragBetweenLists />);
+
+        let grid1 = getAllByRole('grid')[0];
+        let grid2 = getAllByRole('grid')[1];
+        let list1rows = within(grid1).getAllByRole('row');
+        let list2rows = within(grid2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => {jest.runAllTimers();});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+
+        fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
+        // purposefully run these two together inside one act so that the events line up as they do in the dom
+        // if they are in separate ones, then we create a render cycle in between
+        // if they are two separate acts
+        act(() => {
+          jest.advanceTimersToNextTimer();
+          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
+        });
+        // resolve async drop
+        await act(async () => Promise.resolve());
+        // resolve focus movement
+        act(() => {jest.runAllTimers();});
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        grid1 = getAllByRole('grid')[0];
+        grid2 = getAllByRole('grid')[1];
+        list1rows = within(grid1).getAllByRole('row');
+        list2rows = within(grid2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Four');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+
+        expect(document.activeElement).toBe(list2rows[0]);
+      });
+
+      it('should allow moving multiple items into another list', async function () {
+        let {getAllByRole} =  render(<DragBetweenLists />);
+
+        let grid1 = getAllByRole('grid')[0];
+        let grid2 = getAllByRole('grid')[1];
+        let list1rows = within(grid1).getAllByRole('row');
+        let list2rows = within(grid2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
+
+        act(() => userEvent.click(within(list1rows[0]).getByRole('checkbox')));
+        act(() => userEvent.click(within(list1rows[2]).getByRole('checkbox')));
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(list1rows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        act(() => {jest.runAllTimers();});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+        fireEvent(list1rows[0], new DragEvent('drag', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(list1rows[0], new DragEvent('dragenter', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
+        fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
+
+        fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
+        // purposefully run these two together inside one act so that the events line up as they do in the dom
+        // if they are in separate ones, then we create an render cycle in between
+        // if they are two separate acts
+        act(() => {
+          jest.advanceTimersToNextTimer();
+          fireEvent(list1rows[0], new DragEvent('dragend', {dataTransfer, clientX: 200, clientY: -1}));
+        });
+        if (!isReact18) {
+          // not sure why but in React 17 this blur happens in the browser but not in the test
+          act(() => list1rows[0].blur());
+        }
+        // resolve async drop
+        await act(async () => Promise.resolve());
+        // resolve focus movement
+        act(() => {jest.runAllTimers();});
+
+        grid1 = getAllByRole('grid')[0];
+        grid2 = getAllByRole('grid')[1];
+        list1rows = within(grid1).getAllByRole('row');
+        list2rows = within(grid2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Five');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+
+        expect(document.activeElement).toBe(list2rows[0]);
+      });
     });
 
     describe('via keyboard', function () {
@@ -448,6 +669,226 @@ describe('ListView', function () {
           y: 25,
           dropOperation: 'move'
         });
+      });
+
+      it('should allow moving one item within a list', async function () {
+        let {getAllByRole} =  render(<Reorderable />);
+
+        let rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        userEvent.tab();
+        let draghandle = within(getAllByRole('row')[1]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toBe(draghandle);
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        act(() => jest.runAllTimers());
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item Three and Item Four');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+
+        expect(document.activeElement).toBe(rows[2]);
+      });
+
+      it('should allow moving multiple items within a list', async function () {
+        let {getAllByRole} =  render(<Reorderable />);
+
+        let rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
+
+        userEvent.tab();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        let draghandle = within(getAllByRole('row')[2]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toBe(draghandle);
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        act(() => jest.runAllTimers());
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Item Four and Item Five');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(document.activeElement).toBe(rows[3]);
+      });
+
+      it('should allow moving one item into another list', async function () {
+        let {getAllByRole} =  render(<DragBetweenLists />);
+
+        let list1 = getAllByRole('grid')[0];
+        let list2 = getAllByRole('grid')[1];
+
+        let list1rows = within(list1).getAllByRole('row');
+        let list2rows = within(list2).getAllByRole('row');
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
+
+        userEvent.tab();
+
+        let draghandle = within(getAllByRole('row')[0]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        expect(document.activeElement).toBe(draghandle);
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        act(() => jest.runAllTimers());
+
+        userEvent.tab();
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        list1 = getAllByRole('grid')[0];
+        list2 = getAllByRole('grid')[1];
+        list1rows = within(list1).getAllByRole('row');
+        list2rows = within(list2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Four');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+
+        expect(document.activeElement).toBe(list2rows[0]);
+      });
+
+      it('should allow moving multiple items into another list', async function () {
+        let {getAllByRole} =  render(<DragBetweenLists />);
+
+        let list1 = getAllByRole('grid')[0];
+        let list2 = getAllByRole('grid')[1];
+
+        let list1rows = within(list1).getAllByRole('row');
+        let list2rows = within(list2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
+
+        userEvent.tab();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        let draghandle = within(list1rows[0]).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        act(() => jest.runAllTimers());
+
+        userEvent.tab();
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        list1 = getAllByRole('grid')[0];
+        list2 = getAllByRole('grid')[1];
+        list1rows = within(list1).getAllByRole('row');
+        list2rows = within(list2).getAllByRole('row');
+
+        expect(within(list1rows[0]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(list1rows[1]).getByRole('gridcell')).toHaveTextContent('Item Four');
+        expect(within(list1rows[2]).getByRole('gridcell')).toHaveTextContent('Item Five');
+
+        expect(within(list2rows[0]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Three');
+        expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
+
+        expect(document.activeElement).toBe(list2rows[0]);
       });
     });
 

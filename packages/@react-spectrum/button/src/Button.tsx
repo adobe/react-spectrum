@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  SlotProvider,
+  useFocusableRef,
+  useHasChild,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -43,6 +50,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
+  let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
@@ -62,6 +70,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             `spectrum-Button--${buttonVariant}`,
             {
               'spectrum-Button--quiet': isQuiet,
+              'spectrum-Button--iconOnly': !hasLabel,
               'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered
