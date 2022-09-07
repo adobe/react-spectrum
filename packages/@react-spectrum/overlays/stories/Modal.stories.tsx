@@ -58,10 +58,6 @@ function UnmountingTrigger() {
     setModalOpen(true);
   };
 
-  let closeModal = () => {
-    setModalOpen(false);
-  };
-
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
@@ -74,12 +70,12 @@ function UnmountingTrigger() {
           <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
         </Dialog>
       </DialogTrigger>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={closeModal}>Close</Button></ButtonGroup>
+          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
