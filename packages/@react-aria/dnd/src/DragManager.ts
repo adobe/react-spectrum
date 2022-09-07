@@ -100,7 +100,7 @@ export function useDragSession() {
   return session;
 }
 
-export function isDragSession(): boolean {
+export function isVirtualDragging(): boolean {
   return !!dragSession;
 }
 

@@ -29,4 +29,4 @@ export {useDraggableItem} from './useDraggableItem';
 export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
-export {isDragSession} from './DragManager';
+export {isVirtualDragging} from './DragManager';

@@ -136,7 +136,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     hoverProps,
     focusWithinProps,
     focusProps,
-    dropHooks?.isDragSession() && {tabIndex: null}
+    // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
+    // allowing for single swipe navigation between row drop indicator
+    dropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;
