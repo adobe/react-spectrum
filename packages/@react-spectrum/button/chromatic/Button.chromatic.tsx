@@ -121,6 +121,11 @@ function render(props: any = {}) {
         {...props}>
         默認
       </Button>
+      <Button
+        aria-label="Icon only"
+        {...props}>
+        <Bell />
+      </Button>
     </Flex>
   );
 }

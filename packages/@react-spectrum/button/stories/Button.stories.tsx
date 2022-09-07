@@ -58,6 +58,11 @@ storiesOf('Button', module)
       </Flex>
     )
   )
+  .add('icon only', () => (
+    <Button variant="cta">
+      <Bell />
+    </Button>
+  ))
   .add(
     'variant: overBackground',
     () => (

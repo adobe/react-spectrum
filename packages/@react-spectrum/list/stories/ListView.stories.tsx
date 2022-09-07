@@ -12,7 +12,6 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
-import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
@@ -614,7 +613,7 @@ export function DragExample(props?) {
       {(item: any) => (
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
-          {item.key === 'a' && <FileTxt />}
+          {item.key === 'a' && <File />}
           <Text>
             {item.name}
           </Text>
@@ -853,7 +852,10 @@ export function DragIntoItemExample(props) {
 }
 
 export function DragBetweenListsExample(props) {
-  let onDropAction = action('onDrop');
+  let {onDragStart, onDragEnd, onDrop} = props;
+  onDrop = chain(action('onDrop'), onDrop);
+  onDragStart = chain(action('dragStart'), onDragStart);
+  onDragEnd = chain(action('dragEnd'), onDragEnd);
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -899,8 +901,8 @@ export function DragBetweenListsExample(props) {
       getAllowedDropOperationsAction();
       return ['move', 'cancel'];
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart,
+    onDragEnd
   });
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
@@ -924,7 +926,7 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
-        onDropAction(e);
+        onDrop(e);
         onMove(keys, e.target);
       }
     },
