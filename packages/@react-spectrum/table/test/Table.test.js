@@ -4217,17 +4217,14 @@ describe('TableView', function () {
       let tree = render(<EmptyStateTable />);
       let table = tree.getByRole('grid');
       let header = within(table).getAllByRole('columnheader')[2];
+      expect(header).not.toHaveAttribute('tabindex');
       let headerButton = within(header).getByRole('button');
       expect(headerButton).toHaveAttribute('aria-disabled', 'true');
-      // Programatically focus the column header since we can't tab to it
+      // Can't progamatically focus the column headers since they have no tab index when table is empty
       act(() => {
         header.focus();
       });
-      expect(document.activeElement).toBe(header);
-
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-      expect(document.activeElement).toBe(header);
+      expect(document.activeElement).toBe(document.body);
     });
 
     it('should disable press interactions with the column headers', function () {
