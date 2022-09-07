@@ -353,16 +353,16 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If not virtualized, scroll the focused element into view when the focusedKey changes.
+  // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    // If not virtualized, scroll the focused element into view when the focusedKey changes.
-    // When virtualized, Virtualizer handles this internally.
     if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
       }
     }
-  }, [isVirtualized, scrollRef, manager, delegate, selectOnFocus]);
+  }, [isVirtualized, scrollRef, manager.focusedKey]);
 
   let handlers = {
     onKeyDown,
