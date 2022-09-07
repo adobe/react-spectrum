@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,19 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '@react-types/color';
-import {parseColor} from './Color';
-import {useMemo} from 'react';
+import {testSSR} from '@react-spectrum/test-utils';
 
-export function useColor(value: string | Color | undefined | null) {
-  return useMemo(() => {
-    if (typeof value === 'string') {
-      try {
-        return parseColor(value);
-      } catch (err) {
-        return undefined;
-      }
-    }
-    return value;
-  }, [value]);
-}
+describe('Badge SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {Badge} from '../';
+
+      <Badge>Badge text</Badge>
+    `);
+  });
+});
