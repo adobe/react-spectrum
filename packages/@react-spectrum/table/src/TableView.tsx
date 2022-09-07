@@ -392,20 +392,8 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
   }, [bodyRef]);
 
-  // Track offsetWidth so we have the width regardless of a scrollbar
-  // use that to determine if we should update the tableWidth on visible rect change
-  // if the size change was due to scrollbars appearing, don't bother recalculating
-  // column sizes.
-  let prevTableWidth = useRef(0);
-  useLayoutEffect(() => {
-    if (bodyRef.current) {
-      prevTableWidth.current = bodyRef.current.offsetWidth;
-    }
-  });
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    if (bodyRef.current && bodyRef.current.offsetWidth !== prevTableWidth.current) {
-      setTableWidth(rect.width);
-    }
+    setTableWidth(rect.width);
 
     state.setVisibleRect(rect);
 
