@@ -10,41 +10,49 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Label {
+.spectrum-Badge {
   color: var(--spectrum-label-colored-text-color);
 }
 
-.spectrum-Label--inactive,
-.spectrum-Label--grey {
+.spectrum-Badge--neutral {
   background-color: var(--spectrum-label-colored-gray-background-color);
 }
 
-.spectrum-Label--red {
+.spectrum-Badge--negative {
   background-color: var(--spectrum-label-colored-red-background-color);
 }
 
-.spectrum-Label--orange, .spectrum-Label--or {
-  background-color: var(--spectrum-label-colored-orange-background-color);
-}
-
-.spectrum-Label--yellow {
+.spectrum-Badge--yellow {
+  color: var(--spectrum-global-color-static-black);
   background-color: var(--spectrum-label-colored-yellow-background-color);
 }
 
-.spectrum-Label--seafoam  {
+.spectrum-Badge--seafoam  {
   background-color: var(--spectrum-label-colored-seafoam-background-color);
 }
 
-.spectrum-Label--green {
+.spectrum-Badge--positive {
   /* this color is not accessible in dark mode */
   /* background-color: var(--spectrum-label-colored-green-background-color); */
   background-color: var(--spectrum-global-color-static-green-700);
 }
 
-.spectrum-Label--blue, .spectrum-Label--active, .spectrum-Label--and  {
+.spectrum-Badge--info  {
   background-color: var(--spectrum-label-colored-blue-background-color);
 }
 
-.spectrum-Label--fuchsia  {
+.spectrum-Badge--fuchsia  {
   background-color: var(--spectrum-label-colored-fuchsia-background-color);
+}
+
+.spectrum-Badge--indigo  {
+  background-color: var(--spectrum-global-color-indigo-400);
+}
+
+.spectrum-Badge--magenta  {
+  background-color: var(--spectrum-global-color-magenta-400);
+}
+
+.spectrum-Badge--purple  {
+  background-color: var(--spectrum-global-color-purple-400);
 }
