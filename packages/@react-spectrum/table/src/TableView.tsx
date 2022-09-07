@@ -263,7 +263,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing && state.collection.size > 0) {
+        if (item.props.allowsResizing) {
           return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
@@ -528,8 +528,9 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+  let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div'}, domRef);
+  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
   return (
     <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -545,15 +546,15 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered} = useTableContext();
+  let {state, columnState, headerRowHovered, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let {pressProps, isPressed} = usePress({});
+  let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
   const allProps = [columnHeaderProps, hoverProps, pressProps];
 
@@ -605,7 +606,7 @@ function ResizableTableColumnHeader(props) {
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
-  let showResizer = headerRowHovered || columnState.currentlyResizingColumn != null;
+  let showResizer = !isEmpty && (headerRowHovered || columnState.currentlyResizingColumn != null);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

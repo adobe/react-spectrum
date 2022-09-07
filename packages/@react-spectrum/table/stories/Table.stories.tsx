@@ -1702,11 +1702,11 @@ export function TableWithBreadcrumbs() {
 
 export function EmptyStateTable() {
   let [show, setShow] = useState(false);
-
+  let [sortDescriptor, setSortDescriptor] = useState({});
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
-      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple">
+      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
         <TableHeader columns={manyColunns}>
           {column =>
             <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
