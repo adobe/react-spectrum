@@ -190,8 +190,21 @@ function DocSearch() {
   const client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
   const searchIndex = client.initIndex('react-spectrum');
   const searchOptions = {
+    distinct: 1,
     highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
     highlightPostTag: '</mark>'
+  };
+
+  const sectionTitles = {
+    'react-aria': 'React Aria',
+    'react-spectrum': 'React Spectrum',
+    'react-stately': 'React Stately',
+    'internationalized': 'Internationalized',
+    'blog': 'Blog',
+    'architecture': 'Architecture',
+    'contribute': 'Contribute',
+    'releases': 'Releases',
+    'support': 'Support'
   };
 
   const [searchValue, setSearchValue] = useState('');
@@ -204,10 +217,21 @@ function DocSearch() {
     hits.forEach(prediction => {
       let hierarchy = prediction.hierarchy;
       let objectID = prediction.objectID;
-      let lvl0 = hierarchy.lvl0;
-      let section = sections.find(section => section.title === lvl0);
+      let url = prediction.url;
+      let sectionTitle;
+      for (const [path, title] of Object.entries(sectionTitles)) {
+        let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
+        if (url.match(regexp)) {
+          sectionTitle = title;
+          break;
+        }
+      }
+      if (!sectionTitle) {
+        sectionTitle = 'Documentation';
+      }
+      let section = sections.find(section => section.title === sectionTitle);
       if (!section) {
-        section = {title: lvl0, items: []};
+        section = {title: sectionTitle, items: []};
         sections.push(section);
       }
       let text = [];
@@ -230,7 +254,10 @@ function DocSearch() {
         </Item>
       );
     });
-    let suggestions = sections.map((section, index) => <Section key={`${index}-lvl0-${section.title}`} title={section.title}>{section.items}</Section>);
+    let titles = Object.values(sectionTitles);
+    sections.forEach((section, index) => console.log(index, section.title, titles.indexOf(section.title)));
+    sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
+    let suggestions = sections.map((section, index) => <Section key={`${index}-${section.title}`} title={section.title}>{section.items}</Section>);
     setSuggestions(suggestions);
   };
 
