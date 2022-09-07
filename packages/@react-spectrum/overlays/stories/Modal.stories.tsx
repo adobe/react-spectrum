@@ -51,7 +51,6 @@ function ModalExample() {
 }
 
 function UnmountingTrigger() {
-  let buttonRef = useRef<FocusableRefValue<HTMLButtonElement>>();
   let [isPopoverOpen, setPopoverOpen] = useState(false);
   let [isModalOpen, setModalOpen] = useState(false);
 
@@ -62,15 +61,13 @@ function UnmountingTrigger() {
 
   let closeModal = () => {
     setModalOpen(false);
-    // Explicit focus management is necessary when closing the modal.
-    setTimeout(() => buttonRef.current && buttonRef.current.focus(), 400);
   };
 
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
       <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
-        <ActionButton ref={buttonRef}>Open popover</ActionButton>
+        <ActionButton>Open popover</ActionButton>
         <Dialog isDismissable={false}>
           <Heading>Title</Heading>
           <Divider />
