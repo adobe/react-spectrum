@@ -46,6 +46,8 @@ describe('useDialog', function () {
         <input data-testid="input" autoFocus />
       </Example>
     );
+    let el = res.getByTestId('test');
+    expect(el).toHaveAttribute('tabIndex', '-1');
     let input = res.getByTestId('input');
     expect(document.activeElement).toBe(input);
   });

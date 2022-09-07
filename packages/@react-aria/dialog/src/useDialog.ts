@@ -31,6 +31,8 @@ export interface DialogAria {
 export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement>): DialogAria {
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
+
+  // The autoFocused state flags when the the dialog or one of its descendants has received focus when the dialog opens.
   let [autoFocused, setAutoFocused] = useState(false);
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -41,6 +43,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
         focusSafely(ref.current);
       }
 
+      // Set autoFocused to true.
       setAutoFocused(true);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
@@ -68,6 +71,10 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
     dialogProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
+      // Intialize tabIndex equal to 0, so that autoFocus prop on the Dialog's FocusScope
+      // will focus the dialog itself first should no descendant have focus.
+      // After autoFocused gets set to true, the tabIndex on the dialog itself should be set to -1,
+      // so that the dialog will not be included in the focus order focus wraps with FocusScope.
       tabIndex: (autoFocused ? -1 : 0),
       'aria-labelledby': props['aria-labelledby'] || titleId
     },
