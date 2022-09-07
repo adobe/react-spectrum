@@ -30,8 +30,7 @@ export interface TableColumnResizeAria {
 export interface AriaTableColumnResizeProps<T> {
   column: GridNode<T>,
   label: string,
-  triggerRef: RefObject<HTMLDivElement>,
-  isDisabled?: boolean
+  triggerRef: RefObject<HTMLDivElement>
 }
 
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
@@ -160,8 +159,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           stateRef.current.onColumnResizeEnd(item);
           state.setKeyboardNavigationDisabled(false);
         },
-        onChange,
-        disabled: isDisabled
+        onChange
       },
       ariaProps
     )
