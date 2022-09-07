@@ -37,16 +37,16 @@ function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMR
       in={isOpen}
       mountOnEnter
       unmountOnExit>
-      <ActionBarInner {...props} ref={ref} />
+      <ActionBarInnerWithRef {...props} ref={ref} />
     </OpenTransition>
   );
 }
 
-interface ActionBarInnerProps extends SpectrumActionBarProps<unknown> {
+interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
   isOpen?: boolean
 }
 
-const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef<HTMLDivElement>) => {
+function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -101,7 +101,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
           <ActionGroup
             aria-label={stringFormatter.format('actions')}
             isQuiet
-            staticColor={isEmphasized ? 'white' : null}
+            staticColor={isEmphasized ? 'white' : undefined}
             overflowMode="collapse"
             buttonLabelBehavior="collapse"
             onAction={onAction}
@@ -113,7 +113,7 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
             aria-label={stringFormatter.format('clearSelection')}
             onPress={() => onClearSelection()}
             isQuiet
-            staticColor={isEmphasized ? 'white' : null}>
+            staticColor={isEmphasized ? 'white' : undefined}>
             <CrossLarge />
           </ActionButton>
           <Text UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-selectedCount')}>
@@ -125,7 +125,9 @@ const ActionBarInner = React.forwardRef((props: ActionBarInnerProps, ref: DOMRef
       </div>
     </FocusScope>
   );
-});
+}
+
+const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof ActionBarInner>;
 
 /**
  * TODO: Add description of component here.

@@ -11,27 +11,18 @@
  */
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
-import {DialogContainerExample, MenuExample} from '../stories/DialogContainerExamples';
+import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from '../stories/DialogContainerExamples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('DialogContainer', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.runAllTimers();
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   it('should open and close a dialog based on controlled state', function () {
@@ -175,7 +166,45 @@ describe('DialogContainer', function () {
 
     triggerPress(button);
     act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
 
     expect(queryByRole('dialog')).toBeNull();
+  });
+
+  it('should be able to have dialogs open dialogs and still restore focus', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <NestedDialogContainerExample />
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+    act(() => {jest.runAllTimers();});
+
+    let menu = getByRole('menu');
+    let menuitem = within(menu).getAllByRole('menuitem')[0];
+
+    triggerPress(menuitem);
+    act(() => {jest.runAllTimers();});
+
+    let dialog = getByRole('dialog');
+    let confirmButton = within(dialog).getByText('Do that');
+
+    triggerPress(confirmButton);
+    act(() => {jest.runAllTimers();});
+
+    dialog = getByRole('dialog');
+    confirmButton = within(dialog).getByRole('button', {name: 'Do this'});
+
+    expect(document.activeElement).toBe(confirmButton);
+
+    let closeButton = getByRole('button', {name: 'Dismiss'});
+
+    triggerPress(closeButton);
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+
+    expect(document.activeElement).toBe(button);
   });
 });
