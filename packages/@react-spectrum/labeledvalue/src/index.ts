@@ -12,4 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './StaticField';
+export type {SpectrumLabeledValueProps} from './LabeledValue';
+export {LabeledValue} from './LabeledValue';
