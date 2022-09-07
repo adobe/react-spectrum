@@ -4286,6 +4286,9 @@ describe('TableView', function () {
       expect(selectAll).toHaveAttribute('disabled');
       triggerPress(headers[2]);
       expect(document.activeElement).toBe(toggleButton);
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
 });

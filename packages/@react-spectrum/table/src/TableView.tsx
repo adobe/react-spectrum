@@ -420,7 +420,8 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 
   return (
     <div
-      {...mergeProps(otherProps, virtualizerProps)}
+      // Override virtualizer provided tabindex if TableView is empty so it is tabbable.
+      {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
       ref={domRef}>
       <div
         role="presentation"
