@@ -413,7 +413,7 @@ function focusFirstInScope(scope: Element[], tabbable:boolean = true) {
 
 function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus: boolean) {
   const autoFocusRef = React.useRef(autoFocus);
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (autoFocusRef.current) {
       activeScope = scopeRef;
       if (!isElementInScope(document.activeElement, activeScope.current)) {
