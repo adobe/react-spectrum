@@ -52,52 +52,57 @@ export let StringArray: LabeledValueStory = {
 };
 
 export let CalendarDateType: LabeledValueStory = {
-  args: {label: 'Test', value: new CalendarDate(2019, 6, 5), formatOptions: {dateStyle: 'medium'}},
+  args: {label: 'Test', value: new CalendarDate(2019, 6, 5)},
   name: 'CalendarDate'
 };
 
 export let CalendarDateTimeType: LabeledValueStory = {
-  args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)},
   name: 'CalendarDateTime'
 };
 
+export let CalendarDateTimeTypeFormatOptions: LabeledValueStory = {
+  args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
+  name: 'CalendarDateTime with formatOptions'
+};
+
 export let ZonedDateTimeType: LabeledValueStory = {
-  args: {label: 'Test', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), formatOptions: {dateStyle: 'long', timeStyle: 'long'}},
+  args: {label: 'Test', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)},
   name: 'ZonedDateTime'
 };
 
 export let DateType: LabeledValueStory = {
-  args: {label: 'Test', value: new Date(2000, 5, 5), formatOptions: {dateStyle: 'long'}},
+  args: {label: 'Test', value: new Date(2000, 5, 5)},
   name: 'Date'
 };
 
 export let TimeType: LabeledValueStory = {
-  args: {label: 'Test', value: new Time(9, 45), formatOptions: {timeStyle: 'short'}},
+  args: {label: 'Test', value: new Time(9, 45)},
   name: 'Time'
 };
 
 export let CalendarDateRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}, formatOptions: {dateStyle: 'medium'}},
+  args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
   name: 'RangeValue<CalendarDate>'
 };
 
 export let CalendarDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}},
   name: 'RangeValue<CalendarDateTime>'
 };
 
 export let ZonedDateTimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}, formatOptions: {dateStyle: 'medium', timeStyle: 'medium'}},
+  args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
   name: 'RangeValue<ZonedDateTime>'
 };
 
 export let DateRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}, formatOptions: {dateStyle: 'medium'}},
+  args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}},
   name: 'RangeValue<Date>'
 };
 
 export let TimeRange: LabeledValueStory = {
-  args: {label: 'Test', value: {start: new Time(9, 45), end: new Time(10, 50)}, formatOptions: {timeStyle: 'short'}},
+  args: {label: 'Test', value: {start: new Time(9, 45), end: new Time(10, 50)}},
   name: 'RangeValue<Time>'
 };
 

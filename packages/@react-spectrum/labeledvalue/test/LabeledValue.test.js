@@ -64,7 +64,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2019');
+    expect(staticField).toHaveTextContent('June 5, 2019');
   });
 
   it('renders correctly with CalendarDate value with user provided format options', function () {
@@ -92,7 +92,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020 at 12:23 PM');
   });
 
   it('renders correctly with CalendarDateTime value with user provided format options', function () {
@@ -119,7 +119,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST');
   });
 
   it('renders correctly with ZonedDateTime value with user provided format options', function () {
@@ -149,7 +149,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2000');
+    expect(staticField).toHaveTextContent('June 5, 2000 at 12:00 AM');
   });
 
   it('renders correctly with Date value with user provided format options', function () {
@@ -190,7 +190,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('7/5/2019 – 7/10/2019');
+    expect(staticField).toHaveTextContent('July 5, 2019, 12:00 AM – July 10, 2019, 12:00 AM');
   });
 
   it('renders correctly with RangeValue<Time>', function () {
@@ -217,7 +217,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST – March 3, 2020, 12:00 AM PST');
   });
 
   it('renders correctly with RangeValue<CalendarDateTime>', function () {
@@ -230,7 +230,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:23 PM – March 3, 2020, 12:23 PM');
   });
 
   it('renders correctly with RangeValue<CalendarDate>', function () {
@@ -243,7 +243,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2019 – 7/5/2019');
+    expect(staticField).toHaveTextContent('June 5 – July 5, 2019');
   });
 
   it('renders correctly with number value', function () {

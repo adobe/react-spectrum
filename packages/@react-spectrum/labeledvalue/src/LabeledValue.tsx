@@ -137,10 +137,14 @@ function FormattedNumber<T extends NumberValue>(props: NumberProps<T>) {
 }
 
 function FormattedDate<T extends DateTimeValue>(props: DateProps<T>) {
-  let dateFormatter = useDateFormatter(props.formatOptions);
-  let value = props.value;
+  let {value, formatOptions} = props;
+  if (!formatOptions) {
+    formatOptions = getDefaultFormatOptions('start' in value ? value.start : value);
+  }
+
+  let dateFormatter = useDateFormatter(formatOptions);
   let timeZone = dateFormatter.resolvedOptions().timeZone || getLocalTimeZone();
-  let final;
+  let final: Date;
 
   if ('start' in value && 'end' in value) {
     let start = value.start;
@@ -166,6 +170,20 @@ function convertDateTime(value: DateTime, timeZone: any) {
   }
 
   return value;
+}
+
+function getDefaultFormatOptions(value: DateTime): Intl.DateTimeFormatOptions {
+  if (value instanceof Date) {
+    return {dateStyle: 'long', timeStyle: 'short'};
+  } else if ('timeZone' in value) {
+    return {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'};
+  } else if ('hour' in value && 'year' in value) {
+    return {dateStyle: 'long', timeStyle: 'short'};
+  } else if ('hour' in value) {
+    return {timeStyle: 'short'};
+  } else {
+    return {dateStyle: 'long'};
+  }
 }
 
 function convertValue(value: Time) {
