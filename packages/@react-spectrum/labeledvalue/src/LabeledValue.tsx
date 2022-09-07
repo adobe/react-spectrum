@@ -176,7 +176,7 @@ function getDefaultFormatOptions(value: DateTime): Intl.DateTimeFormatOptions {
   if (value instanceof Date) {
     return {dateStyle: 'long', timeStyle: 'short'};
   } else if ('timeZone' in value) {
-    return {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'};
+    return {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: value.timeZone, timeZoneName: 'short'};
   } else if ('hour' in value && 'year' in value) {
     return {dateStyle: 'long', timeStyle: 'short'};
   } else if ('hour' in value) {
