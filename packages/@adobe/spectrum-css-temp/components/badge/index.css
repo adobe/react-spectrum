@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-.spectrum-Label {
-  display: inline-block;
+.spectrum-Badge {
+  display: inline-flex;
   position: relative;
 
-  width: auto;
+  width: fit-content;
 
-  padding: var(--spectrum-global-dimension-size-50) var(--spectrum-global-dimension-size-125);
+  padding: var(--spectrum-global-dimension-size-50) 0;
 
   border-radius: var(--spectrum-border-radius);
 
@@ -30,14 +30,42 @@ governing permissions and limitations under the License.
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: auto;
   font-smoothing: subpixel-antialiased;
+
+  /* label should always have padding at the end */
+  .spectrum-Badge-label {
+    padding-inline-end: var(--spectrum-global-dimension-size-115);
+  }
+
+  .spectrum-Badge-icon {
+    padding-inline-start: var(--spectrum-global-dimension-size-115);
+  }
+  /* icon + text buttons should have padding between the text and icon no matter the order */
+  .spectrum-Badge-icon + .spectrum-Badge-label {
+    padding-inline-start: var(--spectrum-global-dimension-size-65);
+  }
+
+  .spectrum-Badge-label:not([hidden]) + .spectrum-Badge-icon {
+    padding-inline-end: var(--spectrum-global-dimension-size-115);
+  }
+
+  /* text only buttons should have padding at the start */
+  .spectrum-Badge-label:only-child {
+    padding-inline-start: var(--spectrum-global-dimension-size-115);
+  }
+
+  /* icon only buttons should have padding at the end */
+  .spectrum-Badge-icon:only-child {
+    padding-inline-start: var(--spectrum-global-dimension-size-50);
+    padding-inline-end: var(--spectrum-global-dimension-size-50);
+  }
 }
 
-.spectrum-Label--large {
+.spectrum-Badge--large {
   font-size: var(--spectrum-global-dimension-size-175);
   padding: var(--spectrum-global-dimension-size-100) var(--spectrum-global-dimension-size-150);
 }
 
-.spectrum-Label--small {
+.spectrum-Badge--small {
   font-size: var(--spectrum-global-dimension-font-size-50);
   padding: var(--spectrum-global-dimension-size-40) var(--spectrum-global-dimension-size-85);
 }
