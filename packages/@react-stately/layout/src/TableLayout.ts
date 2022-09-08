@@ -191,7 +191,8 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
+      // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
+      let rect = new Rect(40,  Math.max(y, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
       loader.isSticky = children.length === 0;
@@ -200,7 +201,7 @@ export class TableLayout<T> extends ListLayout<T> {
       y = loader.rect.maxY;
       width = Math.max(width, rect.width);
     } else if (children.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = 'body';
       empty.isSticky = true;
