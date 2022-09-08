@@ -73,11 +73,7 @@ storiesOf('Button', module)
     () => renderStyles()
   );
 
-interface StoryProps<T> extends SpectrumButtonProps<T> {
-  showIconWithText?: boolean
-}
-
-function render<T extends ElementType = 'button'>(props: StoryProps<T> = {variant: 'primary'}) {
+function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {showIconWithText?: boolean} = {variant: 'primary'}) {
   let {
     showIconWithText,
     ...otherProps
