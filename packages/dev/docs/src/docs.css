@@ -71,6 +71,9 @@
 html, body {
   margin: 0;
   text-size-adjust: none;
+  height: 100vh;
+  overflow-y: hidden;
+  overflow-anchor: none;
 }
 
 .provider {
@@ -290,14 +293,16 @@ html, body {
 }
 
 main {
+  margin-top: var(--spectrum-global-dimension-size-550);
   margin-left: 256px;
   margin-right: 180px;
-  padding: 40px 52px 0 52px;
+  padding: 0 52px;
   box-sizing: border-box;
   display: flex;
-  min-height: 100vh;
+  height: calc(100vh - var(--spectrum-global-dimension-size-550));
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
 }
 
 .article {
@@ -627,6 +632,10 @@ h2.sectionHeader {
   z-index: 1;
 }
 
+.docSearchBoxThemeProvider {
+  height: var(--spectrum-global-dimension-size-400);
+}
+
 .docSearchBox {
   margin-inline-start: auto;
   width: var(--spectrum-global-dimension-size-3600);
@@ -845,8 +854,8 @@ h2.sectionHeader {
 
   main {
     margin-left: 0;
-    margin-top: 48px;
-    padding: 40px 24px;
+    margin-top: var(--spectrum-global-dimension-size-550);
+    padding: var(--spectrum-global-dimension-size-325) var(--spectrum-global-dimension-size-250);
   }
 
   /* Show the toolbar at the top with the hamburger and theme switcher buttons */
@@ -857,6 +866,7 @@ h2.sectionHeader {
     display: flex;
     width: 100%;
   }
+
   .hamburgerButton {
     display: inline-flex;
   }

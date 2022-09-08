@@ -283,7 +283,7 @@ function DocSearch() {
   };
 
   return (
-    <ThemeProvider>
+    <ThemeProvider UNSAFE_className={docsStyle.docSearchBoxThemeProvider}>
       <span role="search">
         <SearchAutocomplete
           aria-label="Search"
