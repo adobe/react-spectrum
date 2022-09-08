@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, defaultTheme, Provider, Text} from '@adobe/react-spectrum';
+import {ActionButton, Text} from '@adobe/react-spectrum';
 import algoliasearch from 'algoliasearch/lite';
 import docsStyle from './docs.css';
 import DOMPurify from 'dompurify';
@@ -19,7 +19,7 @@ import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {ThemeSwitcher} from './ThemeSwitcher';
+import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 
 if (process.env.NODE_ENV === 'production') {
@@ -255,7 +255,6 @@ function DocSearch() {
       );
     });
     let titles = Object.values(sectionTitles);
-    sections.forEach((section, index) => console.log(index, section.title, titles.indexOf(section.title)));
     sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
     let suggestions = sections.map((section, index) => <Section key={`${index}-${section.title}`} title={section.title}>{section.items}</Section>);
     setSuggestions(suggestions);
@@ -284,17 +283,19 @@ function DocSearch() {
   };
 
   return (
-    <Provider theme={defaultTheme} role="search">
-      <SearchAutocomplete
-        aria-label="Search"
-        UNSAFE_className={docsStyle.docSearchBox}
-        id="algolia-doc-search"
-        value={searchValue}
-        onInputChange={onInputChange}
-        onSubmit={onSubmit}>
-        {suggestions}
-      </SearchAutocomplete>
-    </Provider>
+    <ThemeProvider>
+      <span role="search">
+        <SearchAutocomplete
+          aria-label="Search"
+          UNSAFE_className={docsStyle.docSearchBox}
+          id="algolia-doc-search"
+          value={searchValue}
+          onInputChange={onInputChange}
+          onSubmit={onSubmit}>
+          {suggestions}
+        </SearchAutocomplete>
+      </span>
+    </ThemeProvider>
   );
 }
 
