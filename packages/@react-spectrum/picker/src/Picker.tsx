@@ -175,7 +175,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         placement={placement}
         hideArrow
         shouldCloseOnBlur
-        onClose={state.close}>
+        onClose={state.close}
+        preventScroll>
         {listbox}
       </Popover>
     );
