@@ -1350,9 +1350,19 @@ describe('ListView', function () {
         expect(row).toHaveAttribute('draggable', 'true');
         fireEvent.keyDown(draghandle, {key: 'Enter'});
         fireEvent.keyUp(draghandle, {key: 'Enter'});
+        act(() => jest.runAllTimers());
 
-        for (let row of rows) {
-          expect(row).toHaveAttribute('aria-hidden', 'true');
+        for (let [index, row] of rows.entries()) {
+          let cell = within(row).getByRole('gridcell', {hidden: true});
+          // We hide the cell for iOS Safari and remove the row tab index so TalkBack doesn't focus the row
+          expect(row).not.toHaveAttribute('tabindex');
+          if (index === 0) {
+            expect(row).not.toHaveAttribute('aria-hidden', 'true');
+            expect(cell).not.toHaveAttribute('aria-hidden', 'true');
+          } else {
+            expect(row).toHaveAttribute('aria-hidden', 'true');
+            expect(cell).toHaveAttribute('aria-hidden', 'true');
+          }
         }
 
         fireEvent.keyDown(document.body, {key: 'Escape'});
