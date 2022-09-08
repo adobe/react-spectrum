@@ -173,5 +173,6 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
   id?: string | undefined,
   role?: AriaRole | undefined,
   tabIndex?: number | undefined,
-  style?: CSSProperties | undefined
+  style?: CSSProperties | undefined,
+  className?: string | undefined
 }

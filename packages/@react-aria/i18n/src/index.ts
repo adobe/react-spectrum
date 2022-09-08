@@ -13,6 +13,7 @@
 export {I18nProvider, useLocale} from './context';
 export {useMessageFormatter} from './useMessageFormatter';
 export {useLocalizedStringFormatter} from './useLocalizedStringFormatter';
+export {useListFormatter} from './useListFormatter';
 export {useDateFormatter} from './useDateFormatter';
 export {useNumberFormatter} from './useNumberFormatter';
 export {useCollator} from './useCollator';

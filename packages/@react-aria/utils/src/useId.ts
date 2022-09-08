@@ -89,7 +89,7 @@ export function useSlotId(depArray: ReadonlyArray<any> = []): string {
     setResolvedId(function *() {
       yield id;
 
-      yield document.getElementById(id) ? id : null;
+      yield document.getElementById(id) ? id : undefined;
     });
   }, [id, setResolvedId]);
 
