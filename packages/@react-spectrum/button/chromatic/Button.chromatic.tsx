@@ -58,17 +58,17 @@ storiesOf('Button', module)
       <Flex gap="size-200">
         <Button
           variant="primary">
-          {0} Dogs
+          <Text>{0} Dogs</Text>
         </Button>
         <Button
           isDisabled
           variant="primary">
-          {0} Dogs
+          <Text>{0} Dogs</Text>
         </Button>
         <Button
           isQuiet
           variant="primary">
-          {0} Dogs
+          <Text>{0} Dogs</Text>
         </Button>
       </Flex>
     )

@@ -459,8 +459,8 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
             {props.showFooter && <Footer><Checkbox>I have read and accept{props.extraLabel}</Checkbox></Footer>}
             <ButtonGroup>
               <Button variant="secondary" onPress={close}>Secondary</Button>
-              <Button variant="primary" onPress={close}>Primary{props.extraLabel}</Button>
-              <Button variant="cta" onPress={close} autoFocus>CTA{props.extraLabel}</Button>
+              <Button variant="primary" onPress={close}><Text>{props.extraLabel}</Text>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus><Text>CTA{props.extraLabel}</Text></Button>
             </ButtonGroup>
           </Dialog>
         )}
