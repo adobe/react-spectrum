@@ -17,8 +17,8 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {setGlobalAllowedDropOperations, useDragModality} from './utils';
 import {useDescription, useGlobalListeners} from '@react-aria/utils';
-import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
@@ -79,15 +79,17 @@ export function useDrag(options: DragOptions): DragResult {
     let items = options.getItems();
     writeToDataTransfer(e.dataTransfer, items);
 
+    let allowed = DROP_OPERATION.all;
     if (typeof options.getAllowedDropOperations === 'function') {
       let allowedOperations = options.getAllowedDropOperations();
-      let allowed = DROP_OPERATION.none;
+      allowed = DROP_OPERATION.none;
       for (let operation of allowedOperations) {
         allowed |= DROP_OPERATION[operation] || DROP_OPERATION.none;
       }
-
-      e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
     }
+
+    setGlobalAllowedDropOperations(allowed);
+    e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
 
     // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
@@ -161,6 +163,7 @@ export function useDrag(options: DragOptions): DragResult {
 
     setDragging(false);
     removeAllGlobalListeners();
+    setGlobalAllowedDropOperations(DROP_OPERATION.none);
   };
 
   let onPress = (e: PressEvent) => {

@@ -12,10 +12,10 @@
 
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
-import {DragTypes, readFromDataTransfer} from './utils';
+import {DragTypes, globalAllowedDropOperations, readFromDataTransfer} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
-import {useLayoutEffect} from '@react-aria/utils';
+import {isIPad, isMac, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
@@ -55,7 +55,7 @@ export function useDrop(options: DropOptions): DropResult {
     y: 0,
     dragOverElements: new Set<Element>(),
     dropEffect: 'none' as DataTransfer['dropEffect'],
-    effectAllowed: 'none' as DataTransfer['effectAllowed'],
+    allowedOperations: DROP_OPERATION.all,
     dropActivateTimer: null
   }).current;
 
@@ -89,7 +89,8 @@ export function useDrop(options: DropOptions): DropResult {
     e.preventDefault();
     e.stopPropagation();
 
-    if (e.clientX === state.x && e.clientY === state.y && e.dataTransfer.effectAllowed === state.effectAllowed) {
+    let allowedOperations = getAllowedOperations(e);
+    if (e.clientX === state.x && e.clientY === state.y && allowedOperations === state.allowedOperations) {
       e.dataTransfer.dropEffect = state.dropEffect;
       return;
     }
@@ -100,29 +101,27 @@ export function useDrop(options: DropOptions): DropResult {
     let prevDropEffect = state.dropEffect;
 
     // Update drop effect if allowed drop operations changed (e.g. user pressed modifier key).
-    if (e.dataTransfer.effectAllowed !== state.effectAllowed) {
-      let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
-      let dropOperation = allowedOperations[0];
+    if (allowedOperations !== state.allowedOperations) {
+      let allowedOps = allowedOperationsToArray(allowedOperations);
+      let dropOperation = allowedOps[0];
       if (typeof options.getDropOperation === 'function') {
         let types = new DragTypes(e.dataTransfer);
-        dropOperation = getDropOperation(e.dataTransfer.effectAllowed, options.getDropOperation(types, allowedOperations));
+        dropOperation = getDropOperation(allowedOperations, options.getDropOperation(types, allowedOps));
       }
-
       state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     }
 
     if (typeof options.getDropOperationForPoint === 'function') {
-      let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
       let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       let dropOperation = getDropOperation(
-        e.dataTransfer.effectAllowed,
-        options.getDropOperationForPoint(types, allowedOperations, state.x - rect.x, state.y - rect.y)
+        allowedOperations,
+        options.getDropOperationForPoint(types, allowedOperationsToArray(allowedOperations), state.x - rect.x, state.y - rect.y)
       );
       state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     }
 
-    state.effectAllowed = e.dataTransfer.effectAllowed;
+    state.allowedOperations = allowedOperations;
     e.dataTransfer.dropEffect = state.dropEffect;
 
     // If the drop operation changes, update state and fire events appropriately.
@@ -162,26 +161,27 @@ export function useDrop(options: DropOptions): DropResult {
       return;
     }
 
-    let allowedOperations = effectAllowedToOperations(e.dataTransfer.effectAllowed);
+    let allowedOperationsBits = getAllowedOperations(e);
+    let allowedOperations = allowedOperationsToArray(allowedOperationsBits);
     let dropOperation = allowedOperations[0];
 
     if (typeof options.getDropOperation === 'function') {
       let types = new DragTypes(e.dataTransfer);
-      dropOperation = getDropOperation(e.dataTransfer.effectAllowed, options.getDropOperation(types, allowedOperations));
+      dropOperation = getDropOperation(allowedOperationsBits, options.getDropOperation(types, allowedOperations));
     }
 
     if (typeof options.getDropOperationForPoint === 'function') {
       let types = new DragTypes(e.dataTransfer);
       let rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       dropOperation = getDropOperation(
-        e.dataTransfer.effectAllowed,
+        allowedOperationsBits,
         options.getDropOperationForPoint(types, allowedOperations, e.clientX - rect.x, e.clientY - rect.y)
       );
     }
 
     state.x = e.clientX;
     state.y = e.clientY;
-    state.effectAllowed = e.dataTransfer.effectAllowed;
+    state.allowedOperations = allowedOperationsBits;
     state.dropEffect = DROP_OPERATION_TO_DROP_EFFECT[dropOperation] || 'none';
     e.dataTransfer.dropEffect = state.dropEffect;
 
@@ -294,8 +294,66 @@ export function useDrop(options: DropOptions): DropResult {
   };
 }
 
-function effectAllowedToOperations(effectAllowed: string) {
-  let allowedOperationsBits = DROP_OPERATION_ALLOWED[effectAllowed];
+function getAllowedOperations(e: DragEvent) {
+  let allowedOperations = DROP_OPERATION_ALLOWED[e.dataTransfer.effectAllowed];
+
+  // WebKit always sets effectAllowed to "copyMove" on macOS, and "all" on iOS, regardless of what was
+  // set during the dragstart event: https://bugs.webkit.org/show_bug.cgi?id=178058
+  //
+  // Android Chrome also sets effectAllowed to "copyMove" in all cases: https://bugs.chromium.org/p/chromium/issues/detail?id=1359182
+  //
+  // If the drag started within the page, we can use a global variable to get the real allowed operations.
+  // This needs to be intersected with the actual effectAllowed, which may have been filtered based on modifier keys.
+  // Unfortunately, this means that link operations do not work at all in Safari.
+  if (globalAllowedDropOperations) {
+    allowedOperations &= globalAllowedDropOperations;
+  }
+
+  // Chrome and Safari on macOS will automatically filter effectAllowed when pressing modifier keys,
+  // allowing the user to switch between move, link, and copy operations. Firefox on macOS and all
+  // Windows browsers do not do this, so do it ourselves instead. The exact keys are platform dependent.
+  // https://ux.stackexchange.com/questions/83748/what-are-the-most-common-modifier-keys-for-dragging-objects-with-a-mouse
+  //
+  // Note that none of these modifiers are ever set in WebKit due to a bug: https://bugs.webkit.org/show_bug.cgi?id=77465
+  // However, Safari does update effectAllowed correctly, so we can just rely on that.
+  let allowedModifiers = DROP_OPERATION.none;
+  if (isMac()) {
+    if (e.altKey) {
+      allowedModifiers |= DROP_OPERATION.copy;
+    }
+
+    // Chrome and Safari both use the Control key for link, even though Finder uses Command + Option.
+    // iPadOS doesn't support link operations and will not fire the drop event at all if dropEffect is set to link.
+    // https://bugs.webkit.org/show_bug.cgi?id=244701
+    if (e.ctrlKey && !isIPad()) {
+      allowedModifiers |= DROP_OPERATION.link;
+    }
+
+    if (e.metaKey) {
+      allowedModifiers |= DROP_OPERATION.move;
+    }
+  } else {
+    if (e.altKey) {
+      allowedModifiers |= DROP_OPERATION.link;
+    }
+
+    if (e.shiftKey) {
+      allowedModifiers |= DROP_OPERATION.move;
+    }
+
+    if (e.ctrlKey) {
+      allowedModifiers |= DROP_OPERATION.copy;
+    }
+  }
+
+  if (allowedModifiers) {
+    return allowedOperations & allowedModifiers;
+  }
+
+  return allowedOperations;
+}
+
+function allowedOperationsToArray(allowedOperationsBits: DROP_OPERATION) {
   let allowedOperations = [];
   if (allowedOperationsBits & DROP_OPERATION.move) {
     allowedOperations.push('move');
@@ -312,8 +370,7 @@ function effectAllowedToOperations(effectAllowed: string) {
   return allowedOperations;
 }
 
-function getDropOperation(effectAllowed: string, operation: DropOperation) {
-  let allowedOperationsBits = DROP_OPERATION_ALLOWED[effectAllowed];
+function getDropOperation(allowedOperations: DROP_OPERATION, operation: DropOperation) {
   let op = DROP_OPERATION[operation];
-  return allowedOperationsBits & op ? operation : 'cancel';
+  return allowedOperations & op ? operation : 'cancel';
 }
