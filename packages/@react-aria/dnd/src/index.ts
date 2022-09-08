@@ -31,3 +31,4 @@ export {useDraggableCollection} from './useDraggableCollection';
 export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
+export {isVirtualDragging} from './DragManager';

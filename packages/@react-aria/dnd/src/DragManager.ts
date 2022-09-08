@@ -100,6 +100,10 @@ export function useDragSession() {
   return session;
 }
 
+export function isVirtualDragging(): boolean {
+  return !!dragSession;
+}
+
 function endDragging() {
   dragSession = null;
   for (let cb of subscriptions) {

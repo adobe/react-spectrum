@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CUSTOM_DRAG_TYPE, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
+import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
 import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
@@ -347,4 +347,9 @@ export function clearDnDState() {
 
 export function setDnDState(state: DnDState) {
   dndState = state;
+}
+
+export let globalAllowedDropOperations = DROP_OPERATION.none;
+export function setGlobalAllowedDropOperations(o: DROP_OPERATION) {
+  globalAllowedDropOperations = o;
 }
