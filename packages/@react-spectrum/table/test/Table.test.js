@@ -19,9 +19,9 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {DeletableRowsTable, EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import {EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
@@ -1571,6 +1571,30 @@ describe('TableView', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+
+      it('should send focus to the collection if the focused row is removed', function () {
+        let tree = render(<DeletableRowsTable />);
+
+        let rows = tree.getAllByRole('row');
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(rows[1]);
       });
     });
 
@@ -3390,9 +3414,6 @@ describe('TableView', function () {
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
-
-      // focus gets reset
-      act(() => table.focus());
       expect(document.activeElement).toBe(rows[1]);
     });
 
@@ -3438,6 +3459,7 @@ describe('TableView', function () {
     it('can bulk remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
+      let addButton = tree.getAllByRole('button')[0];
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
@@ -3451,6 +3473,7 @@ describe('TableView', function () {
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
+      expect(document.activeElement).toBe(dialog);
 
       triggerPress(confirmButton);
       expect(dialog).not.toBeInTheDocument();
@@ -3461,6 +3484,8 @@ describe('TableView', function () {
       expect(rows).toHaveLength(1);
 
       expect(checkbox.checked).toBe(false);
+
+      expect(document.activeElement).toBe(addButton);
     });
 
     it('can edit items', function () {
