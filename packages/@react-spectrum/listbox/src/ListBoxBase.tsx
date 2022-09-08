@@ -106,7 +106,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 
   return (
     <ListBoxContext.Provider value={state}>
-
       <FocusScope>
         <Virtualizer
           {...styleProps}

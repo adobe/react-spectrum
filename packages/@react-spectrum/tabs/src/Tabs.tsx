@@ -13,7 +13,7 @@
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {FocusRing, FocusScope} from '@react-aria/focus';
+import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
@@ -116,20 +116,18 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
         refs: {tablistRef, wrapperRef},
         tabPanelProps
       }}>
-      <FocusScope>
-        <div
-          {...filterDOMProps(otherProps)}
-          {...styleProps}
-          ref={domRef}
-          className={classNames(
-            styles,
-            'spectrum-TabsPanel',
-            `spectrum-TabsPanel--${orientation}`,
-            styleProps.className
-          )}>
-          {props.children}
-        </div>
-      </FocusScope>
+      <div
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
+        ref={domRef}
+        className={classNames(
+          styles,
+          'spectrum-TabsPanel',
+          `spectrum-TabsPanel--${orientation}`,
+          styleProps.className
+        )}>
+        {props.children}
+      </div>
     </TabContext.Provider>
   );
 }

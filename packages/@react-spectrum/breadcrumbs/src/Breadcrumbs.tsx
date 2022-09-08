@@ -13,7 +13,6 @@ import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {FocusScope} from '@react-aria/focus';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {Key, ReactElement, useCallback, useRef} from 'react';
@@ -203,31 +202,29 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   });
 
   return (
-    <FocusScope>
-      <nav
-        {...styleProps}
-        {...navProps}
-        ref={domRef}>
-        <ul
-          ref={listRef}
-          className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs',
-              {
-                'spectrum-Breadcrumbs--small': size === 'S',
-                'spectrum-Breadcrumbs--medium': size === 'M',
-                'spectrum-Breadcrumbs--multiline': isMultiline,
-                'spectrum-Breadcrumbs--showRoot': showRoot,
-                'is-disabled': isDisabled
-              },
-              styleProps.className
-            )
-          }>
-          {breadcrumbItems}
-        </ul>
-      </nav>
-    </FocusScope>
+    <nav
+      {...styleProps}
+      {...navProps}
+      ref={domRef}>
+      <ul
+        ref={listRef}
+        className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs',
+            {
+              'spectrum-Breadcrumbs--small': size === 'S',
+              'spectrum-Breadcrumbs--medium': size === 'M',
+              'spectrum-Breadcrumbs--multiline': isMultiline,
+              'spectrum-Breadcrumbs--showRoot': showRoot,
+              'is-disabled': isDisabled
+            },
+            styleProps.className
+          )
+        }>
+        {breadcrumbItems}
+      </ul>
+    </nav>
   );
 }
 
