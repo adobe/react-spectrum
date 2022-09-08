@@ -544,14 +544,14 @@ describe('ListView', function () {
         fireEvent(grid1, new DragEvent('dragleave', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent(grid2, new DragEvent('dragover', {dataTransfer, clientX: 200, clientY: -1}));
         fireEvent.pointerUp(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 200, clientY: -1});
-
         fireEvent(grid2, new DragEvent('drop', {dataTransfer, clientX: 200, clientY: -1}));
+        if (!isReact18) {
+          // not sure why but in React 17 this blur happens in the browser but not in the test
+          act(() => list1rows[0].blur());
+        }
         // resolve async drop, don't fire dragend to simulate browser bug:https://bugzilla.mozilla.org/show_bug.cgi?id=460801
         // onDragEnd will be called by our cleanup instead
         await act(async () => Promise.resolve());
-        act(() => {jest.runAllTimers();});
-
-        // resolve focus movement
         act(() => {jest.runAllTimers();});
 
         grid1 = getAllByRole('grid')[0];
