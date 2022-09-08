@@ -81,7 +81,8 @@ interface TableContextValue<T> {
   state: TableState<T>,
   layout: TableLayout<T>,
   columnState: TableColumnResizeState<T>,
-  headerRowHovered: boolean
+  headerRowHovered: boolean,
+  isEmpty: boolean
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -252,6 +253,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           return <TableSelectAllCell column={item} />;
         }
 
+        // TODO: consider this case, what if we have hidden headers and a empty table
         if (item.props.hideHeader) {
           return (
             <TooltipTrigger placement="top" trigger="focus">
@@ -304,11 +306,13 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       setHorizontalScollbarVisible(bodyRef.current.clientHeight + 2 < bodyRef.current.offsetHeight);
     }
   }, []);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let isEmpty = state.collection.size === 0;
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isEmpty}}>
       <TableVirtualizer
-        {...gridProps}
+        {...mergeProps(gridProps, focusProps)}
         {...styleProps}
         className={
           classNames(
@@ -337,13 +341,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         bodyRef={bodyRef}
+        isFocusVisible={isFocusVisible}
         getColumnWidth={columnState.getColumnWidth} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
@@ -415,7 +420,8 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 
   return (
     <div
-      {...mergeProps(otherProps, virtualizerProps)}
+      // Override virtualizer provided tabindex if TableView is empty so it is tabbable.
+      {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
       ref={domRef}>
       <div
         role="presentation"
@@ -433,7 +439,15 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       </div>
       <ScrollView
         role="presentation"
-        className={classNames(styles, 'spectrum-Table-body')}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-body',
+            {
+              'focus-ring': isFocusVisible
+            }
+          )
+        }
         style={{flex: 1}}
         innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
         ref={bodyRef}
@@ -461,7 +475,8 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader(props) {
   let {column} = props;
   let ref = useRef<HTMLDivElement>(null);
-  let {state} = useTableContext();
+  let {state, isEmpty} = useTableContext();
+  let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true
@@ -469,9 +484,9 @@ function TableColumnHeader(props) {
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps];
+  const allProps = [columnHeaderProps, hoverProps, pressProps];
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -483,6 +498,7 @@ function TableColumnHeader(props) {
             styles,
             'spectrum-Table-headCell',
             {
+              'is-active': isPressed,
               'is-resizable': columnProps.allowsResizing,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
@@ -513,8 +529,9 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+  let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div'}, domRef);
+  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
   return (
     <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -530,16 +547,17 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered} = useTableContext();
+  let {state, columnState, headerRowHovered, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps];
+  const allProps = [columnHeaderProps, hoverProps, pressProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -589,7 +607,7 @@ function ResizableTableColumnHeader(props) {
     }
   }, [columnState.currentlyResizingColumn, column.key]);
 
-  let showResizer = headerRowHovered || columnState.currentlyResizingColumn != null;
+  let showResizer = !isEmpty && (headerRowHovered || columnState.currentlyResizingColumn != null);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -601,6 +619,7 @@ function ResizableTableColumnHeader(props) {
             styles,
             'spectrum-Table-headCell',
             {
+              'is-active': isPressed,
               'is-resizable': columnProps.allowsResizing,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
@@ -685,7 +704,6 @@ function TableSelectAllCell({column}) {
         }
         <Checkbox
           {...checkboxProps}
-          isDisabled={isSingleSelectionMode}
           isEmphasized
           UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />

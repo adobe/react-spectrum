@@ -21,13 +21,13 @@ import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
-import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -92,6 +92,25 @@ function ExampleSortTable() {
     </TableView>
   );
 }
+
+let defaultTable = (
+  <TableView aria-label="Table">
+    <TableHeader>
+      <Column key="foo">Foo</Column>
+      <Column key="bar">Bar</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Foo 1</Cell>
+        <Cell>Bar 1</Cell>
+      </Row>
+      <Row>
+        <Cell>Foo 2</Cell>
+        <Cell>Bar 2</Cell>
+      </Row>
+    </TableBody>
+  </TableView>
+);
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -3682,25 +3701,6 @@ describe('TableView', function () {
   });
 
   describe('async loading', function () {
-    let defaultTable = (
-      <TableView aria-label="Table">
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>Bar 1</Cell>
-          </Row>
-          <Row>
-            <Cell>Foo 2</Cell>
-            <Cell>Bar 2</Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-    );
-
     it('should display a spinner when loading', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
@@ -3870,75 +3870,6 @@ describe('TableView', function () {
       // we can't get better results than that without mocking every single clientHeight/Width
       // this is a good candidate for storybook interactions test
       expect(onLoadMoreSpy).toHaveBeenCalledTimes(4);
-    });
-
-    it('should display an empty state when there are no items', function () {
-      let tree = render(
-        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
-          <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
-          </TableHeader>
-          <TableBody>
-            {[]}
-          </TableBody>
-        </TableView>
-      );
-
-      let table = tree.getByRole('grid');
-      let rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-
-      let cell = within(rows[1]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '2');
-
-      let heading = within(cell).getByRole('heading');
-      expect(heading).toBeVisible();
-      expect(heading).toHaveTextContent('No results');
-
-      rerender(tree, defaultTable);
-      act(() => jest.runAllTimers());
-
-      rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(3);
-      expect(heading).not.toBeInTheDocument();
-    });
-
-    it('empty table select all should do nothing', function () {
-      let onSelectionChange = jest.fn();
-      let tree = render(
-        <div>
-          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
-            <TableHeader>
-              <Column key="foo">Foo</Column>
-              <Column key="bar">Bar</Column>
-            </TableHeader>
-            <TableBody>
-              {[]}
-            </TableBody>
-          </TableView>
-          <input />
-        </div>
-      );
-
-      let table = tree.getByRole('grid');
-      let selectAll = tree.getByRole('checkbox');
-      let rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(table);
-      userEvent.tab();
-      // shift tab with userEvent doesn't bring you to the right place
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shift: true});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab', shift: true});
-      expect(document.activeElement).toBe(selectAll);
-
-      userEvent.type(document.activeElement, '{space}');
-      expect(onSelectionChange).toHaveBeenCalledWith('all');
-      expect(selectAll).toHaveAttribute('aria-checked', 'true');
     });
   });
 
@@ -4204,6 +4135,160 @@ describe('TableView', function () {
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
+    });
+  });
+
+  describe('empty state', function () {
+    it('should display an empty state when there are no items', function () {
+      let tree = render(
+        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody>
+            {[]}
+          </TableBody>
+        </TableView>
+      );
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+
+      let cell = within(rows[1]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '2');
+
+      let heading = within(cell).getByRole('heading');
+      expect(heading).toBeVisible();
+      expect(heading).toHaveTextContent('No results');
+
+      rerender(tree, defaultTable);
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(heading).not.toBeInTheDocument();
+    });
+
+    it('empty table select all should be disabled', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <div>
+          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
+            <TableHeader>
+              <Column key="foo">Foo</Column>
+              <Column key="bar">Bar</Column>
+            </TableHeader>
+            <TableBody>
+              {[]}
+            </TableBody>
+          </TableView>
+          <input />
+        </div>
+      );
+
+      let table = tree.getByRole('grid');
+      let selectAll = tree.getByRole('checkbox');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      userEvent.tab();
+      expect(document.activeElement).not.toBe(selectAll);
+      expect(selectAll).toHaveAttribute('disabled');
+    });
+
+    it('should allow the user to tab into the table body', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let toggleButton = tree.getAllByRole('button')[0];
+      let link = tree.getByRole('link');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      userEvent.tab();
+      expect(document.activeElement).toBe(link);
+    });
+
+    it('should disable keyboard navigation within the table', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let header = within(table).getAllByRole('columnheader')[2];
+      expect(header).not.toHaveAttribute('tabindex');
+      let headerButton = within(header).getByRole('button');
+      expect(headerButton).toHaveAttribute('aria-disabled', 'true');
+      // Can't progamatically focus the column headers since they have no tab index when table is empty
+      act(() => {
+        header.focus();
+      });
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should disable press interactions with the column headers', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+
+      let columnButton = within(headers[2]).getByRole('button');
+      triggerPress(columnButton);
+      expect(document.activeElement).toBe(toggleButton);
+      expect(tree.queryByRole('menuitem')).toBeFalsy();
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryByRole('slider')).toBeFalsy();
+    });
+
+    it.skip('should re-enable functionality when the table recieves items', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+      let selectAll = tree.getByRole('checkbox');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+
+      expect(selectAll).not.toHaveAttribute('disabled');
+      triggerPress(selectAll);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll.checked).toBeTruthy();
+      expect(document.activeElement).toBe(selectAll);
+
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('slider')).toBeTruthy();
+
+      let column1Button = within(headers[1]).getByRole('button');
+      let column2Button = within(headers[2]).getByRole('button');
+      triggerPress(column2Button);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('menuitem')).toBeTruthy();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(column2Button);
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      expect(document.activeElement).toBe(column1Button);
+
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll).toHaveAttribute('disabled');
+      triggerPress(headers[2]);
+      expect(document.activeElement).toBe(toggleButton);
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
 });
