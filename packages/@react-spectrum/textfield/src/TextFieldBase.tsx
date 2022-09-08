@@ -50,7 +50,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     descriptionProps,
     errorMessageProps,
-    inputRef,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
     validationIconClassName
@@ -58,7 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
+  let inputRef = userInputRef || defaultInputRef;
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({

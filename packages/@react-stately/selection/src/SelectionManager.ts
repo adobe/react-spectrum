@@ -103,7 +103,9 @@ export class SelectionManager implements MultipleSelectionManager {
    * Sets the focused key.
    */
   setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
-    this.state.setFocusedKey(key, childFocusStrategy);
+    if (key == null || this.collection.getItem(key)) {
+      this.state.setFocusedKey(key, childFocusStrategy);
+    }
   }
 
   /**

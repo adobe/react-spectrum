@@ -78,7 +78,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    listProps,
+    state.collection.size === 0 ? {} : listProps,
     descriptionProps
   );
 
