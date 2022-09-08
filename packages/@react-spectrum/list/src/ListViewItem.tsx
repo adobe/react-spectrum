@@ -86,7 +86,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    droppableItem = dropHooks.useDroppableItem({target}, dropState, rowRef);
     dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
@@ -136,7 +135,10 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     dropProps,
     hoverProps,
     focusWithinProps,
-    focusProps
+    focusProps,
+    // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
+    // allowing for single swipe navigation between row drop indicator
+    dropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;
@@ -226,7 +228,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               }
             </div>
           }
-          {isDropTarget && !dropIndicator?.dropIndicatorProps['aria-hidden'] &&
+          {isListDroppable && !dropIndicator?.isHidden &&
             <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
           }
           <CSSTransition
