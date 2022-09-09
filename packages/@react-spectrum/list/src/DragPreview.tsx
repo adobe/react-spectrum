@@ -14,25 +14,38 @@ import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './styles.css';
 import React from 'react';
+import {SpectrumListViewProps} from '@react-types/list';
 import {Text} from '@react-spectrum/text';
 
-interface DragPreviewProps {
+interface DragPreviewProps<T> {
   item: GridNode<any>,
   itemCount: number,
-  itemHeight: number
+  itemHeight: number,
+  density: SpectrumListViewProps<T>['density']
 }
 
-export function DragPreview(props: DragPreviewProps) {
+export function DragPreview(props: DragPreviewProps<unknown>) {
   let {
     item,
     itemCount,
-    itemHeight
+    itemHeight,
+    density
   } = props;
 
   let isDraggingMultiple = itemCount > 1;
 
   return (
-    <div style={{height: itemHeight}} className={classNames(listStyles, 'react-spectrum-ListViewItem', 'react-spectrum-ListViewItem-dragPreview', {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple})}>
+    <div
+      style={{height: itemHeight}}
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListViewItem',
+          'react-spectrum-ListViewItem-dragPreview',
+          {'react-spectrum-ListViewItem-dragPreview--multiple': isDraggingMultiple},
+          `react-spectrum-ListViewItem-dragPreview--${density}`
+          )
+      }>
       <Grid UNSAFE_className={listStyles['react-spectrum-ListViewItem-grid']}>
         <SlotProvider
           slots={{
