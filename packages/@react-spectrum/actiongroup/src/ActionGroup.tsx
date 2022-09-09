@@ -23,6 +23,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
+import {FocusScope} from '@react-aria/focus';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
@@ -215,42 +216,44 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   };
 
   return (
-    <div {...styleProps} style={style} className={classNames(styles, 'flex-container', styleProps.className)} ref={wrapperRef}>
-      <div
-        {...actionGroupProps}
-        ref={domRef}
-        className={
-          classNames(
-            styles,
-            'flex-gap',
-            'spectrum-ActionGroup',
-            {
-              'spectrum-ActionGroup--quiet': isQuiet,
-              'spectrum-ActionGroup--vertical': isVertical,
-              'spectrum-ActionGroup--compact': density === 'compact',
-              'spectrum-ActionGroup--justified': isJustified && !isMeasuring,
-              'spectrum-ActionGroup--overflowCollapse': overflowMode === 'collapse'
-            },
-            otherProps.UNSAFE_className
-          )
-        }>
-        <Provider {...providerProps}>
-          {children.map((item) => (
-            <ActionGroupItem
-              key={item.key}
-              onAction={onAction}
-              isDisabled={isDisabled}
-              isEmphasized={isEmphasized}
-              staticColor={staticColor}
-              item={item}
-              state={state}
-              hideButtonText={hideButtonText}
-              orientation={orientation} />
-          ))}
-          {menuItem}
-        </Provider>
+    <FocusScope>
+      <div {...styleProps} style={style} className={classNames(styles, 'flex-container', styleProps.className)} ref={wrapperRef}>
+        <div
+          {...actionGroupProps}
+          ref={domRef}
+          className={
+            classNames(
+              styles,
+              'flex-gap',
+              'spectrum-ActionGroup',
+              {
+                'spectrum-ActionGroup--quiet': isQuiet,
+                'spectrum-ActionGroup--vertical': isVertical,
+                'spectrum-ActionGroup--compact': density === 'compact',
+                'spectrum-ActionGroup--justified': isJustified && !isMeasuring,
+                'spectrum-ActionGroup--overflowCollapse': overflowMode === 'collapse'
+              },
+              otherProps.UNSAFE_className
+            )
+          }>
+          <Provider {...providerProps}>
+            {children.map((item) => (
+              <ActionGroupItem
+                key={item.key}
+                onAction={onAction}
+                isDisabled={isDisabled}
+                isEmphasized={isEmphasized}
+                staticColor={staticColor}
+                item={item}
+                state={state}
+                hideButtonText={hideButtonText}
+                orientation={orientation} />
+            ))}
+            {menuItem}
+          </Provider>
+        </div>
       </div>
-    </div>
+    </FocusScope>
   );
 }
 

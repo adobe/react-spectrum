@@ -43,8 +43,14 @@ function pressArrowDown(button) {
 
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
 
   afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
     onRemoveSpy.mockClear();
   });
 
@@ -81,19 +87,18 @@ describe('TagGroup', function () {
   });
 
   it('has correct accessibility roles', () => {
-    let {container} = render(
+    let tree = render(
       <TagGroup
         aria-label="tag group">
         <Item aria-label="Tag 1">Tag 1</Item>
       </TagGroup>
     );
 
-    let tagGroup = container.children[0];
-    expect(tagGroup).toHaveAttribute('role', 'grid');
-    let tag = tagGroup.children[0];
-    expect(tag).toHaveAttribute('role', 'row');
-    let tagContent = tag.children[0];
-    expect(tagContent).toHaveAttribute('role', 'gridcell');
+    let tagGroup = tree.getByRole('grid');
+    expect(tagGroup).toBeInTheDocument();
+    let tags = tree.getAllByRole('row');
+    let cells = tree.getAllByRole('gridcell');
+    expect(tags).toHaveLength(cells.length);
   });
 
   it('has correct tab index when not disabled', () => {

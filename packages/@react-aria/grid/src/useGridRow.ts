@@ -59,7 +59,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onRowAction ? () => onRowAction(node.key) : onAction
+    onAction: onRowAction ? () => onRowAction(node.key) : onAction,
+    isDisabled: state.collection.size === 0
   });
 
   let isSelected = state.selectionManager.isSelected(node.key);
