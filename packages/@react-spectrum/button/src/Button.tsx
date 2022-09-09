@@ -51,7 +51,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
-  let hasIcon = useHasChild(`.${styles['spectrum-Button-icon']}`, domRef);
+  let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
