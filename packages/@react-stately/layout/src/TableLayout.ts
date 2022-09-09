@@ -26,10 +26,12 @@ export class TableLayout<T> extends ListLayout<T> {
   isLoading = false;
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
+  private disableSticky: boolean;
 
   constructor(options: ListLayoutOptions<T>) {
     super(options);
     this.stickyColumnIndices = [];
+    this.disableSticky = this.checkChrome105();
   }
 
 
@@ -266,7 +268,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -438,5 +440,13 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return res;
+  }
+
+  private checkChrome105() {
+    if (typeof window === 'undefined' || window.navigator == null || !window.navigator['userAgentData']) {
+      return false;
+    }
+
+    return window.navigator['userAgentData'].brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105);
   }
 }
