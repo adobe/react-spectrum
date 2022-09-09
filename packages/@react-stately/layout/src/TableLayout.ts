@@ -168,7 +168,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -196,7 +196,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
-      loader.isSticky = children.length === 0;
+      loader.isSticky = !this.disableSticky && children.length === 0;
       this.layoutInfos.set('loader', loader);
       children.push({layoutInfo: loader});
       y = loader.rect.maxY;
@@ -205,7 +205,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = 'body';
-      empty.isSticky = true;
+      empty.isSticky = !this.disableSticky;
       this.layoutInfos.set('empty', empty);
       children.push({layoutInfo: empty});
       y = empty.rect.maxY;
