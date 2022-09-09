@@ -295,8 +295,7 @@ html, body {
 main {
   margin-top: var(--spectrum-global-dimension-size-550);
   margin-left: 256px;
-  margin-right: 180px;
-  padding: 0 52px;
+  padding: 0 244px 0 52px;
   box-sizing: border-box;
   display: flex;
   height: calc(100vh - var(--spectrum-global-dimension-size-550));
@@ -735,13 +734,6 @@ h2.sectionHeader {
 @media (max-width: 569px) {
   .docSearchBox {
     width: var(--spectrum-global-dimension-size-2400);
-  }
-}
-
-@media (max-width: 1200px) {
-  /* Hide the table of contents */
-  main {
-    margin-right: 0;
   }
 }
 
