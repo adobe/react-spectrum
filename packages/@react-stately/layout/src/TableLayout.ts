@@ -442,11 +442,21 @@ export class TableLayout<T> extends ListLayout<T> {
     return res;
   }
 
+  // Checks if Chrome version is 105 or greater
   private checkChrome105() {
     if (typeof window === 'undefined' || window.navigator == null) {
       return false;
     }
-    let regex = /Chrome\/(\d\d\d)/;
-    return window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105) || Number(regex.exec(window.navigator.userAgent)[1]) >= 105 ;
+
+    let isChrome105;
+    if (window.navigator['userAgentData']) {
+      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105);
+    } else {
+      let regex = /Chrome\/(\d+)/;
+      let matches = regex.exec(window.navigator.userAgent);
+      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) >= 105;
+    }
+
+    return isChrome105;
   }
 }
