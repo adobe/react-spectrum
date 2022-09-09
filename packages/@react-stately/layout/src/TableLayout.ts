@@ -443,10 +443,10 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   private checkChrome105() {
-    if (typeof window === 'undefined' || window.navigator == null || !window.navigator['userAgentData']) {
+    if (typeof window === 'undefined' || window.navigator == null) {
       return false;
     }
-
-    return window.navigator['userAgentData'].brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105);
+    let regex = /Chrome\/105/;
+    return window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105) || regex.test(window.navigator.userAgent);
   }
 }
