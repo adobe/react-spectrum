@@ -446,7 +446,7 @@ export class TableLayout<T> extends ListLayout<T> {
     if (typeof window === 'undefined' || window.navigator == null) {
       return false;
     }
-    let regex = /Chrome\/105/;
-    return window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105) || regex.test(window.navigator.userAgent);
+    let regex = /Chrome\/(\d\d\d)/;
+    return window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105) || Number(regex.exec(window.navigator.userAgent)[1]) >= 105 ;
   }
 }
