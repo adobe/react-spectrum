@@ -462,7 +462,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
             }
             isDisabled={isDisabled}
             staticColor={staticColor}>
-            {summaryIcon ? <More /> : null}
+            {summaryIcon || <More />}
           </ActionButton>
         </PressResponder>
       </SlotProvider>
