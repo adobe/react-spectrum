@@ -153,7 +153,7 @@ function DraggableCollectionItem({item, state, dragState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({

@@ -1079,6 +1079,67 @@ describe('useDrag and useDrop', function () {
         expect(onDropExit).toHaveBeenCalledTimes(1);
       });
 
+      it('should update drop operation if modifier key is pressed and browser does not update effectAllowed', () => {
+        let onDropEnter = jest.fn();
+        let onDropExit = jest.fn();
+        let onDragEnd = jest.fn();
+        let onDrop = jest.fn();
+        let tree = render(<>
+          <Draggable onDragEnd={onDragEnd} />
+          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+        </>);
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('none');
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('move');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+
+        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true}));
+        expect(dataTransfer.dropEffect).toBe('link');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropExit).not.toHaveBeenCalled();
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+      });
+
+      it('should handle when browser does not set effectAllowed properly', () => {
+        let onDropEnter = jest.fn();
+        let onDropExit = jest.fn();
+        let onDragEnd = jest.fn();
+        let onDrop = jest.fn();
+        let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
+        let tree = render(<>
+          <Draggable onDragEnd={onDragEnd} getAllowedDropOperations={getAllowedDropOperations} />
+          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+        </>);
+
+        let draggable = tree.getByText('Drag me');
+        let droppable = tree.getByText('Drop here');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.effectAllowed).toBe('copy');
+
+        // Simulate WebKit bug.
+        dataTransfer.effectAllowed = 'copyMove';
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('copy');
+        expect(droppable).toHaveAttribute('data-droptarget', 'true');
+        expect(onDropEnter).toHaveBeenCalledTimes(1);
+
+        dataTransfer.effectAllowed = 'copyMove';
+        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true}));
+        expect(dataTransfer.dropEffect).toBe('none');
+        expect(droppable).toHaveAttribute('data-droptarget', 'false');
+        expect(onDropExit).toHaveBeenCalledTimes(1);
+      });
+
       it('should pass file types to getDropOperation', async () => {
         let getDropOperation = jest.fn().mockImplementation(() => 'move');
         let tree = render(<Droppable getDropOperation={getDropOperation} />);

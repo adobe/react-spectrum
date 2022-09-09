@@ -95,7 +95,7 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
 
   let v = (value?.start || value?.end || props.placeholderValue);
   let [granularity] = useDefaultProps(v, props.granularity);
-  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
