@@ -22,8 +22,7 @@ import {Text} from '@react-spectrum/text';
 
 const parameters = {
   args: {
-    variant: 'cta',
-    showIconWithText: false
+    variant: 'cta'
   },
   argTypes: {
     variant: {
@@ -31,9 +30,6 @@ const parameters = {
         type: 'radio',
         options: ['cta', 'primary', 'secondary', 'negative', 'overBackground']
       }
-    },
-    showIconWithText: {
-      control: {type: 'boolean'}
     }
   }
 };
@@ -50,6 +46,14 @@ storiesOf('Button', module)
   .add(
     'default',
     (args) => render(args)
+  )
+  .add(
+    'with icon',
+    (args) => renderIconText(args)
+  )
+  .add(
+    'icon only',
+    (args) => renderIconOnly(args)
   )
   .add(
     'element: a',
@@ -73,32 +77,82 @@ storiesOf('Button', module)
     () => renderStyles()
   );
 
-function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {showIconWithText?: boolean} = {variant: 'primary'}) {
-  let {
-    showIconWithText,
-    ...otherProps
-  } = props;
-  let buttonProps = mergeProps(otherProps, actions);
+function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttonProps = mergeProps(props, actions);
 
   let buttons = (
     <Flex gap="size-200">
       <Button {...buttonProps}>
-        {showIconWithText && <Bell />}
+        Default
+      </Button>
+      <Button {...buttonProps} isDisabled>
+        Disabled
+      </Button>
+      {props.variant !== 'cta' && (
+        <Button {...buttonProps} isQuiet>
+          Quiet
+        </Button>
+      )}
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground') {
+    return (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttonProps = mergeProps(props, actions);
+
+  let buttons = (
+    <Flex gap="size-200">
+      <Button {...buttonProps}>
+        <Bell />
         <Text>Default</Text>
       </Button>
       <Button {...buttonProps} isDisabled>
-        {showIconWithText && <Bell />}
+        <Bell />
         <Text>Disabled</Text>
       </Button>
       {props.variant !== 'cta' && (
         <Button {...buttonProps} isQuiet>
-          {showIconWithText && <Bell />}
+          <Bell />
           <Text>Quiet</Text>
         </Button>
       )}
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground') {
+    return (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttonProps = mergeProps(props, actions);
+
+  let buttons = (
+    <Flex gap="size-200">
       <Button {...buttonProps}>
         <Bell />
       </Button>
+      {props.variant !== 'cta' && (
+        <Button {...buttonProps} isQuiet>
+          <Bell />
+        </Button>
+      )}
     </Flex>
   );
 
