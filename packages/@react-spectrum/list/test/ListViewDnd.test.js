@@ -794,7 +794,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should not allow a user to perform an internal copy drop operation', async function () {
+        it('should allow a user to perform an internal copy drop operation', async function () {
           // The real world scenario is a user dragging an item within the source collection while holding the option key to perform a copy drop
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, getAllowedDropOperations: () => ['copy']}} />
@@ -809,7 +809,16 @@ describe('ListView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledTimes(1);
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '4',
+              dropPosition: 'after'
+            },
+            keys: new Set(['1', '2']),
+            dropOperation: 'copy'
+          });
+
         });
 
         it('should call onReorder when performing a insert drop in the source list', function () {
@@ -831,7 +840,8 @@ describe('ListView', function () {
               key: '4',
               dropPosition: 'after'
             },
-            keys: new Set(['1', '2'])
+            keys: new Set(['1', '2']),
+            dropOperation: 'move'
           });
         });
 
@@ -996,7 +1006,8 @@ describe('ListView', function () {
               key: '10',
               dropPosition: 'after'
             },
-            keys: new Set(['7', '8'])
+            keys: new Set(['7', '8']),
+            dropOperation: 'move'
           });
         });
 
@@ -1539,7 +1550,8 @@ describe('ListView', function () {
               key: '3',
               dropPosition: 'before'
             },
-            keys: new Set(['1'])
+            keys: new Set(['1']),
+            dropOperation: 'move'
           });
         });
 
@@ -1709,7 +1721,8 @@ describe('ListView', function () {
               key: '3',
               dropPosition: 'before'
             },
-            keys: new Set(['1'])
+            keys: new Set(['1']),
+            dropOperation: 'move'
           });
         });
 

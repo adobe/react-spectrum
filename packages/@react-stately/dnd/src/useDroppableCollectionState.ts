@@ -10,9 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DropOperation, DropOperationEvent, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
+import {Key, useCallback, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useCallback, useState} from 'react';
+
+interface DropOperationEvent {
+  target: DropTarget,
+  types: DragTypes,
+  allowedOperations: DropOperation[],
+  isInternalDrop: boolean,
+  draggingKeys: Set<Key>
+}
 
 export interface DroppableCollectionStateOptions extends Omit<DroppableCollectionProps, 'onDropMove' | 'onDropActivate'> {
   collection: Collection<Node<unknown>>,
@@ -66,8 +74,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
     if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => types.has(type))) {
       let isValidInsert = onInsert && target.type === 'item' && !isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after');
-      // TODO: added allowedOperations[0] !== 'copy' to block internal copy insert operations as per feedback. Perhaps rename onReorder to onInternalInsert and remove this restriction? Maybe this is just ok?
-      let isValidReorder = onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after') && allowedOperations[0] !== 'copy';
+      let isValidReorder = onReorder && target.type === 'item' && isInternalDrop && (target.dropPosition === 'before' || target.dropPosition === 'after');
       // Feedback was that internal root drop was weird so preventing that from happening
       let isValidRootDrop = onRootDrop && target.type === 'root' && !isInternalDrop;
       // Automatically prevent items (i.e. folders) from being dropped on themselves.
@@ -130,11 +137,10 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
 
       return false;
     },
-    // TODO: how do we feel about providing isInternalDrop and dragged keys to the user provided getDropOperation as well? That way allow the user to
-    // define if they'd like to allow dropping items on themselves
     getDropOperation(e) {
+      let {target, types, allowedOperations} = e;
       return typeof getDropOperation === 'function'
-        ? getDropOperation(e)
+        ? getDropOperation(target, types, allowedOperations)
         : defaultGetDropOperation(e);
     }
   };

@@ -104,7 +104,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   let dropState = useDroppableCollectionState({
     collection: state.collection,
     selectionManager: state.selectionManager,
-    getDropOperation({target, allowedOperations}) {
+    getDropOperation(target, allowedOperations) {
       if (target.type === 'root') {
         return 'move';
       }

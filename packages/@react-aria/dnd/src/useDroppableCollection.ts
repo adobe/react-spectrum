@@ -101,9 +101,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           await onInsert({items: filteredItems, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
         }
 
-        if (isInternalDrop && e.dropOperation === 'move' && onReorder) {
-          // TODO: get rid of e.dropOperation === 'move' restriction if we want onReorder to handle internal copy dnd operations?
-          await onReorder({keys: draggingKeys, target: {key: target.key, dropPosition: target.dropPosition}});
+        if (isInternalDrop && onReorder) {
+          await onReorder({keys: draggingKeys, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
         }
       }
     }

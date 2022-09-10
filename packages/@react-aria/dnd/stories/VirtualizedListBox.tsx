@@ -111,7 +111,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
   let dropState = useDroppableCollectionState({
     collection: state.collection,
     selectionManager: state.selectionManager,
-    getDropOperation({target, types, allowedOperations}) {
+    getDropOperation(target, types, allowedOperations) {
       if (props.accept) {
         // Don't accept if types includes both items and folders.
         let rejected = acceptedTypes.filter(type => type !== props.accept);

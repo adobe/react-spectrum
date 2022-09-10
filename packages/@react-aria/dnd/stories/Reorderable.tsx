@@ -112,7 +112,7 @@ function ReorderableGrid(props) {
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
-    getDropOperation({target}) {
+    getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }

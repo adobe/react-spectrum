@@ -71,10 +71,6 @@ export function useDrag(options: DragOptions): DragResult {
   let modalityOnPointerDown = useRef<string>(null);
 
   let onDragStart = (e: DragEvent) => {
-    // TODO: move this outside of useDrag instead?
-    // Clear global DnD state in case it wasn't cleared via drag end
-    // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
-    clearDnDState();
     if (e.defaultPrevented) {
       return;
     }
@@ -171,13 +167,14 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
-    let event: DragEndEvent = {
-      type: 'dragend',
-      x: e.clientX,
-      y: e.clientY,
-      dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
-    };
     if (typeof options.onDragEnd === 'function') {
+      let event: DragEndEvent = {
+        type: 'dragend',
+        x: e.clientX,
+        y: e.clientY,
+        dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
+      };
+
       let {dropEffect} = getDnDState();
       // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
       // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
@@ -218,9 +215,6 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
-    // Clear global DnD state in case it wasn't cleared via drag end
-    // (i.e non RSP drag item dropped on droppable collection doesn't trigger our drag end)
-    clearDnDState();
     startDragging(e.target as HTMLElement);
   };
 

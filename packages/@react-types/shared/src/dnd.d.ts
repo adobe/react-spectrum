@@ -144,6 +144,7 @@ interface DroppableCollectionOnItemDropEvent {
 
 interface DroppableCollectionReorderEvent {
   keys: Set<Key>,
+  dropOperation: DropOperation,
   target: {
     key: Key,
     dropPosition: Omit<DropPosition, 'on'>
@@ -163,21 +164,12 @@ export interface DropTargetDelegate {
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
 }
 
-// TODO: naming?
-export interface DropOperationEvent {
-  target: DropTarget,
-  types: DragTypes,
-  allowedOperations: DropOperation[],
-  isInternalDrop: boolean,
-  draggingKeys: Set<Key>
-}
-
 export interface DroppableCollectionProps {
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
-  getDropOperation?: (e: DropOperationEvent) => DropOperation,
+  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
   /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called when a valid drag is moved within the drop target. */

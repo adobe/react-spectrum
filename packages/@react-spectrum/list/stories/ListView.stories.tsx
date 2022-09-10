@@ -728,7 +728,7 @@ export function ReorderExample(props) {
         onMove(keys, e.target);
       }
     },
-    getDropOperation({target}) {
+    getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }
@@ -831,7 +831,7 @@ export function DragIntoItemExample(props) {
         }
       }
     },
-    getDropOperation({target}) {
+    getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
         return 'cancel';
       }
@@ -943,7 +943,7 @@ export function DragBetweenListsExample(props) {
         onMove(keys, e.target);
       }
     },
-    getDropOperation({target}) {
+    getDropOperation(target) {
       if (target.type === 'root' || target.dropPosition === 'on') {
         return 'cancel';
       }
@@ -1055,7 +1055,7 @@ export function DragBetweenListsRootOnlyExample(props) {
         onMove(keys, list1);
       }
     },
-    getDropOperation({target, types}) {
+    getDropOperation(target, types) {
       if (target.type === 'root' && (types.has('list2') || types.has('text/plain'))) {
         return 'move';
       }
@@ -1101,7 +1101,7 @@ export function DragBetweenListsRootOnlyExample(props) {
         onMove(keys, list2);
       }
     },
-    getDropOperation({target, types}) {
+    getDropOperation(target, types) {
       if (target.type === 'root' && (types.has('list1') || types.has('text/plain'))) {
         return 'move';
       }
@@ -1380,13 +1380,32 @@ export function DragBetweenListsComplex(props) {
     onReorder: async (e) => {
       let {
         keys,
-        target
+        target,
+        dropOperation
       } = e;
       action('onReorderList2')(e);
+
+      let itemsToCopy = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item = {...list2.getItem(key)};
+          item.identifier = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
       if (target.dropPosition === 'before') {
-        list2.moveBefore(target.key, [...keys]);
+        if (dropOperation === 'move') {
+          list2.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
       } else if (target.dropPosition === 'after') {
-        list2.moveAfter(target.key, [...keys]);
+        if (dropOperation === 'move') {
+          list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
       }
     },
     onRootDrop: async (e) => {
@@ -1516,7 +1535,7 @@ function DragBetweenListsOverride(props) {
   });
 
   let {dndHooks: dndHooksList2} = useDnDHooks({
-    getDropOperation: ({target, types}) => {
+    getDropOperation: (target, types) => {
       if (target.type !== 'root' || !(types.has('list-1-adobe-file'))) {
         return 'cancel';
       }
