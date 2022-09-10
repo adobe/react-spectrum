@@ -21,7 +21,7 @@ import {
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
-import {DragHooks, DropHooks} from '@react-spectrum/dnd';
+import type {DnDHooks} from '@react-spectrum/dnd';
 import {Key} from 'react';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -62,5 +62,5 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    * The drag and drop hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
    * @private
    */
-  dndHooks?: DragHooks & DropHooks
+  dndHooks?: DnDHooks['dndHooks']
 }

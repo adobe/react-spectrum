@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import type {DnDHooks} from '@react-spectrum/dnd';
 import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import type {DragHooks, DropHooks} from '@react-spectrum/dnd';
-import {DroppableCollectionResult} from '@react-aria/dnd';
+import type {DroppableCollectionResult} from '@react-aria/dnd';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import InsertionIndicator from './InsertionIndicator';
@@ -38,7 +38,7 @@ interface ListViewContextValue<T> {
   state: ListState<T>,
   dragState: DraggableCollectionState,
   dropState: DroppableCollectionState,
-  dndHooks: DragHooks & DropHooks,
+  dndHooks: DnDHooks['dndHooks'],
   onAction:(key: Key) => void,
   isListDraggable: boolean,
   isListDroppable: boolean,

@@ -1622,7 +1622,6 @@ describe('ListView', function () {
 
           // Drop on folder in same list
           beginDrag(tree);
-          userEvent.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});

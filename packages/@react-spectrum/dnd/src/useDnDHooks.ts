@@ -21,6 +21,7 @@ import {
   DroppableCollectionResult,
   DroppableItemOptions,
   DroppableItemResult,
+  isVirtualDragging,
   useDraggableCollection,
   useDraggableItem,
   useDropIndicator,
@@ -55,7 +56,7 @@ export interface DropHooks {
 }
 
 export interface DnDHooks {
-  dndHooks: DragHooks & DropHooks
+  dndHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
 }
 
 export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
@@ -101,7 +102,8 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
 
   let mergedHooks = {
     ...(isDraggable ? dragHooks : {}),
-    ...(isDroppable ? dropHooks : {})
+    ...(isDroppable ? dropHooks : {}),
+    ...(isDraggable || isDroppable ? {isVirtualDragging} : {})
   };
 
   return {
