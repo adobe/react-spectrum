@@ -167,6 +167,118 @@ describe('ActionBar', () => {
     expect(document.activeElement).toBe(rows[1]);
   });
 
+  it('should restore focus to the the new first row if the row we wanted to restore to was removed', async () => {
+    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+    let checkbox = within(rows[1]).getByRole('checkbox');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(rows[1]);
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    expect(checkbox).toBeChecked();
+    act(() => jest.runAllTimers());
+
+    let toolbar = tree.getByRole('toolbar');
+    expect(toolbar).toBeVisible();
+    expect(document.activeElement).toBe(rows[1]);
+
+    // Simulate tabbing within the table
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.nextNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+    act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
+    await act(async () => Promise.resolve());
+    expect(rows[1]).not.toBeInTheDocument();
+
+    rows = within(table).getAllByRole('row');
+    expect(toolbar).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(rows[1]);
+  });
+
+  it('should restore focus to the new first row if the row we wanted to restore to was removed via actiongroup menu', async () => {
+    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    act(() => {jest.runAllTimers();});
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+    let checkbox = within(rows[1]).getByRole('checkbox');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(rows[1]);
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    expect(checkbox).toBeChecked();
+    act(() => jest.runAllTimers());
+
+    let toolbar = tree.getByRole('toolbar');
+    expect(toolbar).toBeVisible();
+    expect(document.activeElement).toBe(rows[1]);
+
+    jest.spyOn(toolbar.parentNode, 'offsetWidth', 'get').mockImplementation(() => 200);
+    for (let action of toolbar.childNodes) {
+      jest.spyOn(action, 'offsetWidth', 'get').mockImplementation(() => 75);
+    }
+    fireEvent(window, new Event('resize'));
+
+    // Simulate tabbing within the table
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.nextNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+    expect(within(toolbar).getAllByRole('button')).toHaveLength(3);
+    expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+    let listItems = tree.getAllByRole('menuitem');
+    expect(document.activeElement).toBe(listItems[0]);
+    expect(document.activeElement.textContent).toBe('Delete');
+
+    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+    act(() => jest.runAllTimers());
+    act(() => jest.runAllTimers());
+    await act(async () => Promise.resolve());
+    rows = within(table).getAllByRole('row');
+    // row reused by the virtualizer, so it's still in dom, but its contents have been swapped out
+    expect(rows[1].textContent).not.toBe('Foo 1Bar 1Baz 1');
+
+    rows = within(table).getAllByRole('row');
+    expect(toolbar).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(rows[1]);
+  });
+
   it('should fire onAction when clicking on an action', () => {
     let onAction = jest.fn();
     let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);

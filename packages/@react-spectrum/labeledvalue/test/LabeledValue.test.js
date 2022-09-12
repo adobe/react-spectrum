@@ -11,14 +11,14 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {LabeledValue} from '../src';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
-import {StaticField} from '../src';
 
-describe('StaticField', function () {
+describe('LabeledValue', function () {
   it('renders a label', function () {
     let {getByText} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value="test" />
@@ -30,7 +30,7 @@ describe('StaticField', function () {
 
   it('renders correctly with string value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value="test" />
@@ -43,7 +43,7 @@ describe('StaticField', function () {
 
   it('renders correctly with string array value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={['wow', 'cool', 'awesome']} />
@@ -56,7 +56,7 @@ describe('StaticField', function () {
 
   it('renders correctly with CalendarDate value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new CalendarDate(2019, 6, 5)} />
@@ -64,12 +64,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2019');
+    expect(staticField).toHaveTextContent('June 5, 2019');
   });
 
   it('renders correctly with CalendarDate value with user provided format options', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new CalendarDate(2019, 6, 5)}
@@ -80,11 +80,11 @@ describe('StaticField', function () {
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('June 5, 2019');
   });
-  
+
 
   it('renders correctly with CalendarDateTime value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)} />
@@ -92,12 +92,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020 at 12:23 PM');
   });
 
   it('renders correctly with CalendarDateTime value with user provided format options', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)}
@@ -111,7 +111,7 @@ describe('StaticField', function () {
 
   it('renders correctly with ZonedDateTime value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)} />
@@ -119,12 +119,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST');
   });
 
   it('renders correctly with ZonedDateTime value with user provided format options', function () {
     let {getByTestId, getByText} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}
@@ -141,7 +141,7 @@ describe('StaticField', function () {
 
   it('renders correctly with Date value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={new Date(2000, 5, 5)} />
@@ -149,15 +149,15 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2000');
+    expect(staticField).toHaveTextContent('June 5, 2000 at 12:00 AM');
   });
 
   it('renders correctly with Date value with user provided format options', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={new Date(2000, 5, 5)} 
+        value={new Date(2000, 5, 5)}
         formatOptions={{dateStyle: 'full'}} />
     );
 
@@ -168,10 +168,10 @@ describe('StaticField', function () {
 
   it('renders correctly with Time value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={new Time(9, 45)} 
+        value={new Time(9, 45)}
         formatOptions={{timeStyle: 'short'}} />
     );
 
@@ -182,7 +182,7 @@ describe('StaticField', function () {
 
   it('renders correctly with RangeValue<Date>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={{start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}} />
@@ -190,15 +190,15 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('7/5/2019 – 7/10/2019');
+    expect(staticField).toHaveTextContent('July 5, 2019, 12:00 AM – July 10, 2019, 12:00 AM');
   });
 
   it('renders correctly with RangeValue<Time>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={{start: new Time(9, 45), end: new Time(10, 45)}} 
+        value={{start: new Time(9, 45), end: new Time(10, 45)}}
         formatOptions={{timeStyle: 'short'}} />
     );
 
@@ -209,7 +209,7 @@ describe('StaticField', function () {
 
   it('renders correctly with RangeValue<ZonedDateTime>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={{start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}} />
@@ -217,12 +217,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST – March 3, 2020, 12:00 AM PST');
   });
 
   it('renders correctly with RangeValue<CalendarDateTime>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={{start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}} />
@@ -230,12 +230,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('2/3/2020 – 3/3/2020');
+    expect(staticField).toHaveTextContent('February 3, 2020, 12:23 PM – March 3, 2020, 12:23 PM');
   });
 
   it('renders correctly with RangeValue<CalendarDate>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}} />
@@ -243,12 +243,12 @@ describe('StaticField', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('6/5/2019 – 7/5/2019');
+    expect(staticField).toHaveTextContent('June 5 – July 5, 2019');
   });
 
   it('renders correctly with number value', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={10} />
@@ -257,12 +257,12 @@ describe('StaticField', function () {
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('10');
-    
+
   });
 
   it('renders correctly with RangeValue<NumberValue>', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         value={{start: 10, end: 20}} />
@@ -276,7 +276,7 @@ describe('StaticField', function () {
   it('attaches a user provided ref to the outer div', function () {
     let ref = React.createRef();
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         ref={ref}
         value="test" />
@@ -289,7 +289,7 @@ describe('StaticField', function () {
   it('attaches a user provided ref to the outer div with a label', function () {
     let ref = React.createRef();
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         ref={ref}
@@ -304,7 +304,7 @@ describe('StaticField', function () {
   it('labelPosition: side supports a ref', function () {
     let ref = React.createRef();
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         label="Field label"
         labelPosition="side"
@@ -319,7 +319,7 @@ describe('StaticField', function () {
 
   it('renders when no visible label is provided', function () {
     let {getByTestId} = render(
-      <StaticField
+      <LabeledValue
         data-testid="test-id"
         value="test" />
     );

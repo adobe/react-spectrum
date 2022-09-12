@@ -20,6 +20,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import dndStyles from './dnd.css';
+import {DraggableListBox} from './DraggableListBox';
 import {DragPreview} from '../src/DragPreview';
 import {DroppableGridExample} from './DroppableGrid';
 import {DroppableListBox, DroppableListBoxExample} from './DroppableListBox';
@@ -73,6 +74,32 @@ storiesOf('Drag and Drop', module)
         <Droppable actionId="Parent">
           <Droppable actionId="Child" />
         </Droppable>
+      </Flex>
+    )
+  )
+  .add(
+    'Draggable listbox',
+    () => (
+      <Flex direction="column" gap="size-200" alignItems="center">
+        <DraggableListBox selectionMode="multiple" selectionBehavior="replace">
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </DraggableListBox>
+        <Droppable />
+      </Flex>
+    )
+  )
+  .add(
+    'Draggable listbox, onAction',
+    () => (
+      <Flex direction="column" gap="size-200" alignItems="center">
+        <DraggableListBox selectionMode="multiple" selectionBehavior="replace" onAction={action('onAction')}>
+          <Item>Foo</Item>
+          <Item key="bar">Bar</Item>
+          <Item>Baz</Item>
+        </DraggableListBox>
+        <Droppable />
       </Flex>
     )
   )
@@ -195,7 +222,7 @@ storiesOf('Drag and Drop', module)
   );
 
 function Draggable() {
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -218,7 +245,7 @@ function Draggable() {
   });
 
   let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
+  let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
     <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
@@ -421,7 +448,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
     focusMode: 'cell'
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let {clipboardProps} = useClipboard({
     getItems: () => dragState.getItems(item.key),

@@ -10,41 +10,47 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Label {
+.spectrum-Badge {
   color: var(--spectrum-label-colored-text-color);
 }
 
-.spectrum-Label--inactive,
-.spectrum-Label--grey {
+.spectrum-Badge--neutral {
   background-color: var(--spectrum-label-colored-gray-background-color);
 }
 
-.spectrum-Label--red {
+.spectrum-Badge--negative {
   background-color: var(--spectrum-label-colored-red-background-color);
 }
 
-.spectrum-Label--orange, .spectrum-Label--or {
-  background-color: var(--spectrum-label-colored-orange-background-color);
+.spectrum-Badge--yellow {
+  color: var(--spectrum-global-color-static-black);
+  background-color: var(--spectrum-global-color-static-yellow-600);
 }
 
-.spectrum-Label--yellow {
-  background-color: var(--spectrum-label-colored-yellow-background-color);
+.spectrum-Badge--seafoam  {
+  background-color: var(--spectrum-global-color-static-seafoam-700);
 }
 
-.spectrum-Label--seafoam  {
-  background-color: var(--spectrum-label-colored-seafoam-background-color);
-}
-
-.spectrum-Label--green {
-  /* this color is not accessible in dark mode */
-  /* background-color: var(--spectrum-label-colored-green-background-color); */
+.spectrum-Badge--positive {
   background-color: var(--spectrum-global-color-static-green-700);
 }
 
-.spectrum-Label--blue, .spectrum-Label--active, .spectrum-Label--and  {
+.spectrum-Badge--info  {
   background-color: var(--spectrum-label-colored-blue-background-color);
 }
 
-.spectrum-Label--fuchsia  {
-  background-color: var(--spectrum-label-colored-fuchsia-background-color);
+.spectrum-Badge--fuchsia  {
+  background-color: var(--spectrum-global-color-static-fuchsia-600);
+}
+
+.spectrum-Badge--indigo  {
+  background-color: var(--spectrum-global-color-static-indigo-600);
+}
+
+.spectrum-Badge--magenta  {
+  background-color: var(--spectrum-global-color-static-magenta-600);
+}
+
+.spectrum-Badge--purple  {
+  background-color: var(--spectrum-global-color-static-purple-600);
 }

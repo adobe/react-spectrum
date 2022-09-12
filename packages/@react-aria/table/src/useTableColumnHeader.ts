@@ -90,7 +90,14 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
 
   return {
     columnHeaderProps: {
-      ...mergeProps(gridCellProps, pressProps, focusableProps, descriptionProps),
+      ...mergeProps(
+        gridCellProps,
+        pressProps,
+        focusableProps,
+        descriptionProps,
+        // If the table is empty, make all column headers untabbable or programatically focusable
+        state.collection.size === 0 && {tabIndex: null}
+      ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,

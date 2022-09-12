@@ -15,6 +15,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
 import React, {Fragment, useState} from 'react';
@@ -66,8 +67,12 @@ function UnmountingTrigger() {
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
+          <Content>
+            <Flex direction="column" gap="size-100">
+              <Text>I am a dialog</Text>
+              <ActionButton onPress={openModal}>Open modal</ActionButton>
+            </Flex>
+          </Content>
         </Dialog>
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
