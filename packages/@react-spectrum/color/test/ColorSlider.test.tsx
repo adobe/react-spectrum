@@ -23,10 +23,7 @@ describe('ColorSlider', () => {
   beforeAll(() => {
     // @ts-ignore
     jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    // @ts-ignore
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -67,11 +64,11 @@ describe('ColorSlider', () => {
       expect(slider).toHaveAttribute('aria-labelledby');
       expect(slider).not.toHaveAttribute('aria-label');
 
-      let label = document.getElementById(slider.getAttribute('aria-labelledby'));
+      let label = document.getElementById(slider.getAttribute('aria-labelledby')!);
       expect(label).toHaveTextContent('Red');
       expect(label).toHaveAttribute('id');
 
-      expect(group).toHaveAttribute('aria-labelledby', label.id);
+      expect(group).toHaveAttribute('aria-labelledby', label?.id);
       expect(group).not.toHaveAttribute('aria-label');
     });
 
@@ -94,11 +91,11 @@ describe('ColorSlider', () => {
       expect(slider).toHaveAttribute('aria-labelledby');
       expect(slider).not.toHaveAttribute('aria-label');
 
-      let label = document.getElementById(slider.getAttribute('aria-labelledby'));
+      let label = document.getElementById(slider.getAttribute('aria-labelledby')!);
       expect(label).toHaveTextContent('Test');
       expect(label).toHaveAttribute('id');
 
-      expect(group).toHaveAttribute('aria-labelledby', label.id);
+      expect(group).toHaveAttribute('aria-labelledby', label?.id);
       expect(group).not.toHaveAttribute('aria-label');
     });
 
