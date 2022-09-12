@@ -900,7 +900,10 @@ export function DragBetweenListsExample(props) {
     }
   };
 
-  let {dndHooks: dndHooksList1} = useDnDHooks({
+  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -915,13 +918,7 @@ export function DragBetweenListsExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart,
-    onDragEnd
-  });
-
-  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-
-  let {dndHooks: dndHooksList2} = useDnDHooks({
+    onDragEnd,
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
@@ -962,7 +959,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dndHooks={dndHooksList1}
+          dndHooks={dndHooks}
           {...props}>
           {(item: any) => (
             <Item>
@@ -979,7 +976,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dndHooks={dndHooksList2}
+          dndHooks={dndHooks}
           {...props}>
           {(item: any) => (
             <Item>

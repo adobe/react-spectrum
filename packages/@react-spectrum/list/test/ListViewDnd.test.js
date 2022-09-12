@@ -2079,6 +2079,7 @@ describe('ListView', function () {
 
         act(() => jest.runAllTimers());
 
+        userEvent.tab();
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -2144,6 +2145,7 @@ describe('ListView', function () {
 
         act(() => jest.runAllTimers());
 
+        userEvent.tab();
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
