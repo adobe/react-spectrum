@@ -129,6 +129,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
+  let isVirtualDragging = dropHooks?.isVirtualDragging() || dragHooks?.isVirtualDragging();
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
@@ -138,7 +139,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps,
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
-    dropHooks?.isVirtualDragging() && {tabIndex: null}
+    isVirtualDragging && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;
