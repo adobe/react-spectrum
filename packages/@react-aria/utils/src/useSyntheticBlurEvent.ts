@@ -110,6 +110,10 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
     let target = e.target as HTMLElement;
     stateRef.current.isFocused = true;
 
+    if (!domNodeRemovedObserver) {
+      domNodeRemovedObserver = new DOMNodeRemovedObserver();
+    }
+
     if (stateRef.current.target && target !== stateRef.current.target) {
       stateRef.current.target.removeEventListener('focusout', onBlurHandler);
       domNodeRemovedObserver.removeTarget(stateRef.current.target);
@@ -156,18 +160,10 @@ class DOMNodeRemovedObserver {
   constructor() {
     // don't make an observer in SSR (MutationObserver is not supported in Node)
     if (typeof window !== 'undefined') {
-      this.observer = new MutationObserver((mutationList) => {
-        if (this.target) {
-          for (const mutation of mutationList) {
-            for (const node of mutation.removedNodes) {
-              if (node?.contains?.(this.target)) {
-                this.target.dispatchEvent(new FocusEvent('blur'));
-                this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-                // early return so we don't look at the rest of the DOM
-                return;
-              }
-            }
-          }
+      this.observer = new MutationObserver(() => {
+        if (this.target && !document.body.contains(this.target)) {
+          this.target.dispatchEvent(new FocusEvent('blur'));
+          this.target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
         }
       });
     }
@@ -198,7 +194,8 @@ class DOMNodeRemovedObserver {
     }
     if (target) {
       target.removeEventListener('focusout', this.onBlurHandler);
+      this.target = null;
     }
   }
 }
-let domNodeRemovedObserver = new DOMNodeRemovedObserver();
+let domNodeRemovedObserver;
