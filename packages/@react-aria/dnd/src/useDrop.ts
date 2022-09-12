@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearDnDState, DragTypes, getDnDState, globalAllowedDropOperations, readFromDataTransfer, setDnDState, setDropEffect} from './utils';
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
+import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
 import {isIPad, isMac, useLayoutEffect} from '@react-aria/utils';
@@ -222,9 +222,9 @@ export function useDrop(options: DropOptions): DropResult {
   let onDrop = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Set drop effect in global DnD state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
-    // where onDragEnd always returns "none" as its drop effect.
-    setDropEffect(state.dropEffect);
+    // Track drop effect in global state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+    // Android onDragEnd always returns "none" as its drop effect.
+    setGlobalDropEffect(state.dropEffect);
 
     if (typeof options.onDrop === 'function') {
       let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
@@ -242,18 +242,18 @@ export function useDrop(options: DropOptions): DropResult {
       options.onDrop(event);
     }
 
-    let dndStateSnapshot = {...getDnDState()};
+    let dndStateSnapshot = {...globalDndState};
     state.dragOverElements.clear();
     fireDropExit(e);
     clearTimeout(state.dropActivateTimer);
     // If there wasn't a collection being tracked as a dragged collection, then we are in a case where a non RSP drag is dropped on a
-    // RSP collection and thus we don't need to preserve the global DnD state for onDragEnd
+    // RSP collection and thus we don't need to preserve the global drop effect
     if (dndStateSnapshot.draggingCollectionRef == null) {
-      clearDnDState();
+      setGlobalDropEffect(undefined);
     } else {
       // Otherwise we need to preserve the global dnd state for onDragEnd's isInternalDrop check.
       // At the moment fireDropExit may clear dropCollectionRef (i.e. useDroppableCollection's provided onDropExit, required to clear dropCollectionRef when exiting a valid drop target)
-      setDnDState(dndStateSnapshot);
+      setGlobalDnDState(dndStateSnapshot);
     }
   };
 

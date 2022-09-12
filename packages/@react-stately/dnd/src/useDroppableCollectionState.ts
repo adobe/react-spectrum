@@ -46,7 +46,6 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     shouldAcceptItemDrop,
     collection,
     selectionManager,
-    onDropExit,
     onDropEnter,
     getDropOperation,
     onDrop

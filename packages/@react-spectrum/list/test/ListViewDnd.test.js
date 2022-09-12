@@ -16,8 +16,7 @@ import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
-// TODO: direct path import
-import {getDnDState} from '@react-aria/dnd/src/utils';
+import {globalDndState} from '@react-aria/dnd/src/utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -591,7 +590,7 @@ describe('ListView', function () {
         fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
 
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
         act(() => jest.runAllTimers());
@@ -601,8 +600,8 @@ describe('ListView', function () {
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-        dndState = getDnDState();
-        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd']), dropEffect: 'move'});
+        dndState = globalDndState;
+        expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
         // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
         act(() => jest.runAllTimers());
@@ -610,7 +609,7 @@ describe('ListView', function () {
         fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set()});
         expect(onDragEnd).toHaveBeenCalledTimes(1);
       });
@@ -629,7 +628,7 @@ describe('ListView', function () {
         fireEvent.pointerDown(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
         fireEvent(cellA, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
 
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
         act(() => jest.runAllTimers());
@@ -640,7 +639,7 @@ describe('ListView', function () {
         fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set()});
         expect(onDragEnd).toHaveBeenCalledTimes(1);
       });
@@ -656,13 +655,13 @@ describe('ListView', function () {
         dataTransfer.items.add(file);
 
         fireEvent(grids[1], new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set(), dropCollectionRef: expect.any(Object)});
         expect(dndState.dropCollectionRef.current).toBe(grids[1]);
 
         fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState).toEqual({
           draggingKeys: new Set()
         });
@@ -689,17 +688,17 @@ describe('ListView', function () {
         fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(rows[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 50}));
 
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState.dropCollectionRef).toBeFalsy();
 
         // Dragging over a valid drop target should update dropCollectionRef
         fireEvent(internalFolder, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState.dropCollectionRef.current).toBe(list);
 
         // Leaving a valid drop target should clear the dropCollectionRef
         fireEvent(internalFolder, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 100}));
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState.dropCollectionRef).toBeFalsy();
       });
 
@@ -1380,7 +1379,7 @@ describe('ListView', function () {
         fireEvent.keyDown(draghandle, {key: 'Enter'});
         fireEvent.keyUp(draghandle, {key: 'Enter'});
 
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
         act(() => jest.runAllTimers());
@@ -1389,7 +1388,7 @@ describe('ListView', function () {
         fireEvent.keyDown(droppable, {key: 'Enter'});
         fireEvent.keyUp(droppable, {key: 'Enter'});
 
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set()});
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
@@ -1418,7 +1417,7 @@ describe('ListView', function () {
         fireEvent.keyDown(draghandle, {key: 'Enter'});
         fireEvent.keyUp(draghandle, {key: 'Enter'});
 
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
         act(() => jest.runAllTimers());
@@ -1427,7 +1426,7 @@ describe('ListView', function () {
         fireEvent.keyDown(droppable, {key: 'Escape'});
         fireEvent.keyUp(droppable, {key: 'Escape'});
 
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set()});
       });
 
@@ -1449,13 +1448,13 @@ describe('ListView', function () {
         act(() => jest.runAllTimers());
 
         // First drop target should be an internal folder, hence setting dropCollectionRef
-        let dndState = getDnDState();
+        let dndState = globalDndState;
         expect(dndState.dropCollectionRef.current).toBe(list);
 
         // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternalDrop = false
         fireEvent.keyDown(document.body, {key: 'Escape'});
         fireEvent.keyUp(document.body, {key: 'Escape'});
-        dndState = getDnDState();
+        dndState = globalDndState;
         expect(dndState.dropCollectionRef).toBeFalsy();
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
@@ -1463,7 +1462,7 @@ describe('ListView', function () {
           keys: new Set(['1']),
           x: 50,
           y: 25,
-          dropOperation: undefined,
+          dropOperation: 'cancel',
           isInternalDrop: false
         });
       });

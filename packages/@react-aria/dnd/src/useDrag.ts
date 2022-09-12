@@ -11,11 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearDnDState, getDnDState, setGlobalAllowedDropOperations, useDragModality, writeToDataTransfer} from './utils';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
+import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
@@ -175,19 +175,18 @@ export function useDrag(options: DragOptions): DragResult {
         dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
       };
 
-      let {dropEffect} = getDnDState();
       // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
       // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
-      if (dropEffect) {
-        event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[dropEffect];
+      if (globalDropEffect) {
+        event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect];
       }
       options.onDragEnd(event);
     }
 
-    clearDnDState();
     setDragging(false);
     removeAllGlobalListeners();
     setGlobalAllowedDropOperations(DROP_OPERATION.none);
+    setGlobalDropEffect(undefined);
   };
 
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
@@ -195,17 +194,20 @@ export function useDrag(options: DragOptions): DragResult {
   // eslint-disable-next-line arrow-body-style
   useLayoutEffect(() => {
     return () => {
-      if (isDraggingRef.current && typeof state.options.onDragEnd === 'function') {
-        let {dropEffect} = getDnDState();
-        let event: DragEndEvent = {
-          type: 'dragend',
-          x: 0,
-          y: 0,
-          dropOperation: DROP_EFFECT_TO_DROP_OPERATION[dropEffect || 'none']
-        };
-        state.options.onDragEnd(event);
-        clearDnDState();
+      if (isDraggingRef.current) {
+        if (typeof state.options.onDragEnd === 'function') {
+          let event: DragEndEvent = {
+            type: 'dragend',
+            x: 0,
+            y: 0,
+            dropOperation: DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect || 'none']
+          };
+          state.options.onDragEnd(event);
+        }
+
         setDragging(false);
+        setGlobalAllowedDropOperations(DROP_OPERATION.none);
+        setGlobalDropEffect(undefined);
       }
     };
   }, [state]);
@@ -239,7 +241,6 @@ export function useDrag(options: DragOptions): DragResult {
         if (typeof state.options.onDragEnd === 'function') {
           state.options.onDragEnd(e);
         }
-        clearDnDState();
       }
     }, stringFormatter);
 

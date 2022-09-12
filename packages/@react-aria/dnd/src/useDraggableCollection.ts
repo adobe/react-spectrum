@@ -11,14 +11,14 @@
  */
 
 import {DraggableCollectionState} from '@react-stately/dnd';
-import {getDnDState, setDraggingCollectionRef} from './utils';
+import {globalDndState, setDraggingCollectionRef} from './utils';
 import {RefObject} from 'react';
 
 export interface DraggableCollectionOptions {}
 
 export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) {
   // Update global DnD state if this keys within this collection are dragged
-  let {draggingCollectionRef} = getDnDState();
+  let {draggingCollectionRef} = globalDndState;
   if  (state.draggingKeys.size > 0 && draggingCollectionRef?.current !== ref.current) {
     setDraggingCollectionRef(ref);
   }
