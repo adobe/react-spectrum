@@ -24,16 +24,14 @@ governing permissions and limitations under the License.
 
 .spectrum-Badge--yellow {
   color: var(--spectrum-global-color-static-black);
-  background-color: var(--spectrum-label-colored-yellow-background-color);
+  background-color: var(--spectrum-global-color-static-yellow-600);
 }
 
 .spectrum-Badge--seafoam  {
-  background-color: var(--spectrum-label-colored-seafoam-background-color);
+  background-color: var(--spectrum-global-color-static-seafoam-700);
 }
 
 .spectrum-Badge--positive {
-  /* this color is not accessible in dark mode */
-  /* background-color: var(--spectrum-label-colored-green-background-color); */
   background-color: var(--spectrum-global-color-static-green-700);
 }
 
@@ -42,17 +40,17 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Badge--fuchsia  {
-  background-color: var(--spectrum-label-colored-fuchsia-background-color);
+  background-color: var(--spectrum-global-color-static-fuchsia-600);
 }
 
 .spectrum-Badge--indigo  {
-  background-color: var(--spectrum-global-color-indigo-400);
+  background-color: var(--spectrum-global-color-static-indigo-600);
 }
 
 .spectrum-Badge--magenta  {
-  background-color: var(--spectrum-global-color-magenta-400);
+  background-color: var(--spectrum-global-color-static-magenta-600);
 }
 
 .spectrum-Badge--purple  {
-  background-color: var(--spectrum-global-color-purple-400);
+  background-color: var(--spectrum-global-color-static-purple-600);
 }
