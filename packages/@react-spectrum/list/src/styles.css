@@ -399,6 +399,16 @@
     border-radius: var(--spectrum-alias-border-radius-regular);
     background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
 
+    &.react-spectrum-ListViewItem-dragPreview--compact {
+      padding-top: var(--spectrum-listview-item-compact-padding-y);
+      padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+    }
+
+    &.react-spectrum-ListViewItem-dragPreview--spacious {
+      padding-top: var(--spectrum-listview-item-spacious-padding-y);
+      padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+    }
+
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
         "thumbnail content     . badge"
