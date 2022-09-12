@@ -266,7 +266,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
             let item = state.collection.getItem(dragState.draggedKey);
             let itemCount = dragState.draggingKeys.size;
             let itemHeight = layout.getLayoutInfo(dragState.draggedKey).rect.height;
-            return <SpectrumDragPreview item={item} itemCount={itemCount} itemHeight={itemHeight}  />;
+            return <SpectrumDragPreview item={item} itemCount={itemCount} itemHeight={itemHeight} density={density}  />;
           }}
         </DragPreview>
       }
