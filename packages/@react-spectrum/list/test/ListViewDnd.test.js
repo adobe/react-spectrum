@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
-import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {globalDndState} from '@react-aria/dnd/src/utils';
@@ -198,9 +198,9 @@ describe('ListView', function () {
         });
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-
-        // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
         expect(onDrop).toHaveBeenCalledWith({
@@ -218,10 +218,6 @@ describe('ListView', function () {
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
-
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
@@ -295,9 +291,10 @@ describe('ListView', function () {
         });
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
         fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
 
-        // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
         act(() => jest.runAllTimers());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
@@ -306,10 +303,6 @@ describe('ListView', function () {
         expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Adobe XD');
         expect(await onDrop.mock.calls[0][0].items[2].getText('text/plain')).toBe('Documents');
         expect(await onDrop.mock.calls[0][0].items[3].getText('text/plain')).toBe('Adobe InDesign');
-
-        fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-        fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
-        act(() => jest.runAllTimers());
         expect(onDragEnd).toHaveBeenCalledTimes(1);
         expect(onDragEnd).toHaveBeenCalledWith({
           type: 'dragend',
@@ -599,15 +592,13 @@ describe('ListView', function () {
         fireEvent(cellA, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         dndState = globalDndState;
         expect(dndState).toEqual({draggingCollectionRef: expect.any(Object), draggingKeys: new Set(['a', 'b', 'c', 'd'])});
         expect(dndState.draggingCollectionRef.current).toBe(grid);
-        // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
-        act(() => jest.runAllTimers());
-
         fireEvent.pointerUp(cellA, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
         fireEvent(cellA, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+
         act(() => jest.runAllTimers());
         dndState = globalDndState;
         expect(dndState).toEqual({draggingKeys: new Set()});
@@ -1188,6 +1179,158 @@ describe('ListView', function () {
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
+        it('should accept generic types/folder drops if acceptedDragTypes is "all"', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: 'all'}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(6);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let dataTransfer = new DataTransfer();
+          let file = new File(['hello world'], 'test.abc', {type: ''});
+          dataTransfer.items.add(file);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          expect(list1Rows).toHaveLength(7);
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'file',
+                name: 'test.abc',
+                type: 'application/octet-stream',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+          expect(await onInsert.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onInsert.mock.calls[0][0].items[0].getFile()).toBe(file);
+
+          dataTransfer = new DataTransfer();
+          let dir = new FileSystemDirectoryEntry('test', [
+            new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
+            new FileSystemDirectoryEntry('nested', [
+              new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
+            ])
+          ]);
+          dataTransfer.items.add(dir);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(2);
+          expect(onInsert).toHaveBeenLastCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before'
+            },
+            items: [
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
+
+          let collect = async (dir) => {
+            let entries = [];
+            for await (let entry of dir.getEntries()) {
+              entries.push(entry);
+            }
+            return entries;
+          };
+
+          let entries = await collect(onInsert.mock.calls[1][0].items[0]);
+          expect(entries).toEqual([
+            {
+              kind: 'file',
+              type: 'text/plain',
+              name: 'test.txt',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            },
+            {
+              kind: 'directory',
+              name: 'nested',
+              getEntries: expect.any(Function)
+            }
+          ]);
+
+          expect(await entries[0].getText()).toBe('hello world');
+          expect(await collect(entries[1])).toEqual([
+            {
+              kind: 'file',
+              type: 'text/html',
+              name: 'foo.html',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            }
+          ]);
+        });
+
+        it('should accept Folder drops if acceptedDragTypes contains "directory"', async function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['directory']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let dataTransfer = new DataTransfer();
+          let dir = new FileSystemDirectoryEntry('test', [
+            new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
+            new FileSystemDirectoryEntry('nested', [
+              new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
+            ])
+          ]);
+          dataTransfer.items.add(dir);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 185}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 185}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenLastCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
+        });
+
         it('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null, acceptedDragTypes: ['file', 'folder']}} secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
@@ -1236,12 +1379,155 @@ describe('ListView', function () {
               }
             ]
           });
+          // Doesn't include the item w/ identifier 13 since that has a disallowed drag type
           let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText(item.types.values().next().value))));
           expect(items).toContainObject({
             identifier: '7',
             type: 'folder',
             name: 'Pictures',
             childNodes: []
+          });
+        });
+
+        it('should accept a drop that contains a mix of allowed and disallowed drag types (directories and file case)', function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: ['directory', 'text/plain']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let dropTarget = grids[0];
+          let dataTransfer = new DataTransfer();
+          let fileA = new File(['hello world'], 'test.abc', {type: ''});
+          let fileB = new File(['testing'], 'blah.txt', {type: 'text/plain'});
+          let dir = new FileSystemDirectoryEntry('test', [
+            new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
+            new FileSystemDirectoryEntry('nested', [
+              new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
+            ])
+          ]);
+          dataTransfer.items.add(fileA);
+          dataTransfer.items.add(fileB);
+          dataTransfer.items.add(dir);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          // Doesn't include fileA because it doesn't match types
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                name: 'blah.txt',
+                type: 'text/plain',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              },
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
+        });
+
+        it('should use acceptedDragTypes to filter items provided to the drop util handlers even if getDropOperation is provided', function () {
+          let getDropOperation = (target) => {
+            if (target.type === 'root') {
+              return 'move';
+            }
+
+            return 'cancel';
+          };
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: ['text/plain'], getDropOperation: getDropOperation}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let dropTarget = grids[0];
+          let dataTransfer = new DataTransfer();
+          let fileA = new File(['hello world'], 'test.abc', {type: ''});
+          let fileB = new File(['testing'], 'blah.txt', {type: 'text/plain'});
+          dataTransfer.items.add(fileA);
+          dataTransfer.items.add(fileB);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          // Doesn't include fileA because it doesn't match types
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'file',
+                name: 'blah.txt',
+                type: 'text/plain',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+        });
+
+        it('should perform no item filtering for user provided onDrop', function () {
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: ['text/plain'], onDrop}} />
+          );
+
+          let grids = getAllByRole('grid');
+          let dropTarget = grids[0];
+          let dataTransfer = new DataTransfer();
+          let fileA = new File(['hello world'], 'test.html', {type: 'text/html'});
+          let fileB = new File(['testing'], 'blah.txt', {type: 'text/plain'});
+          dataTransfer.items.add(fileA);
+          dataTransfer.items.add(fileB);
+
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onDrop).toHaveBeenCalledTimes(1);
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 1,
+            y: 1,
+            dropOperation: 'move',
+            target: {
+              'dropPosition': 'before',
+              'key': '1',
+              'type': 'item'
+            },
+            items: [
+              {
+                kind: 'file',
+                name: 'test.html',
+                type: 'text/html',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              },
+              {
+                kind: 'file',
+                name: 'blah.txt',
+                type: 'text/plain',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
           });
         });
       });
@@ -2482,8 +2768,6 @@ describe('ListView', function () {
       fireEvent.pointerUp(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
       fireEvent(draggedCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
 
-      // Advance past the setTimeout(0) in useDrag/useDrop
-      act(() => jest.advanceTimersByTime(0));
       await waitFor(() => expect(within(grids[1]).getAllByRole('row')).toHaveLength(7), {interval: 10});
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledTimes(1);
