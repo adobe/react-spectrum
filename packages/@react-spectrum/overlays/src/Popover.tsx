@@ -19,7 +19,7 @@ import {PlacementAxis, PopoverProps} from '@react-types/overlays';
 import React, {DOMAttributes, forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {useModal, useOverlay} from '@react-aria/overlays';
 
 interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -32,8 +32,7 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   isKeyboardDismissDisabled?: boolean,
   isNonModal?: boolean,
   isDismissable?: boolean,
-  overlayProps: DOMAttributes<FocusableElement>,
-  preventScroll?: boolean
+  overlayProps: DOMAttributes<FocusableElement>
 }
 
 /**
@@ -61,7 +60,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     isKeyboardDismissDisabled,
     isNonModal,
     isDismissable = true,
-    preventScroll,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -69,7 +67,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {overlayProps, underlayProps} = useOverlay({...props, isDismissable: isDismissable && props.isOpen}, domRef);
   return (
     <Overlay {...otherProps}>
-      {preventScroll && <Underlay transparent {...underlayProps} /> }
+      <Underlay transparent {...underlayProps} />
       <PopoverWrapper
         {...styleProps}
         ref={domRef}
@@ -81,8 +79,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         hideArrow={hideArrow}
         isNonModal={isNonModal}
         isDismissable={isDismissable}
-        overlayProps={overlayProps}
-        preventScroll={preventScroll}>
+        overlayProps={overlayProps}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -104,13 +101,11 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isDismissable,
     overlayProps,
-    preventScroll,
     ...otherProps
   } = props;
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
-  usePreventScroll({isDisabled: !preventScroll});
 
   return (
     <div

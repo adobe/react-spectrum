@@ -109,8 +109,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
         placement={placement}
         hideArrow
         onClose={state.close}
-        shouldCloseOnBlur
-        preventScroll>
+        shouldCloseOnBlur>
         {contents}
       </Popover>
     );
