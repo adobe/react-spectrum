@@ -31,14 +31,14 @@ export interface AriaTableColumnResizeProps<T> {
   column: GridNode<T>,
   label: string,
   triggerRef: RefObject<HTMLDivElement>,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  onMove: () => void,
+  onMoveEnd: () => void
 }
 
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled} = props;
   const stateRef = useRef<TableColumnResizeState<T>>(null);
-  // keep track of what the cursor on the body is so it can be restored back to that when done resizing
-  const cursor = useRef<string | null>(null);
   stateRef.current = columnState;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
@@ -58,7 +58,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   const {moveProps} = useMove({
     onMoveStart() {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
-      cursor.current = document.body.style.cursor;
+      stateRef.current.onColumnResizeStart(item);
     },
     onMove({deltaX, deltaY, pointerType}) {
       if (direction === 'rtl') {
@@ -74,18 +74,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (deltaX !== 0) {
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
-        if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', direction === 'rtl' ? 'w-resize' : 'e-resize');
-        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
-        } else {
-          document.body.style.setProperty('cursor', 'col-resize');
-        }
+        props.onMove();
       }
     },
     onMoveEnd({pointerType}) {
       columnResizeWidthRef.current = 0;
-      document.body.style.cursor = cursor.current;
+      props.onMoveEnd();
       if (pointerType === 'mouse') {
         stateRef.current.onColumnResizeEnd(item);
       }

@@ -83,8 +83,10 @@ interface TableContextValue<T> {
   layout: TableLayout<T>,
   columnState: TableColumnResizeState<T>,
   headerRowHovered: boolean,
-  resizeModeState: [boolean, (val: boolean) => void],
-  isEmpty: boolean
+  isInResizeMode: boolean,
+  setIsInResizeMode: (val: boolean) => void,
+  isEmpty: boolean,
+  isQuiet: boolean
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -110,16 +112,16 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
   }, [scale]);
 
-  let resizeModeState = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let [isInResizeMode, setIsInResizeMode] = resizeModeState;
+  let [isInResizeMode, setIsInResizeMode] = useState(false);
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  const columnState = useTableColumnResizeState({...mergeProps(props, {onColumnResizeEnd: () => setIsInResizeMode(false)}), getDefaultWidth}, state.collection);
+  const columnState = useTableColumnResizeState({...mergeProps(props, {onColumnResizeEnd: () => {
+    setIsInResizeMode(false);
+  }}), getDefaultWidth}, state.collection);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
@@ -315,7 +317,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let isEmpty = state.collection.size === 0;
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, resizeModeState, isEmpty}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, isQuiet}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -355,7 +357,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
-  let {columnState, state: tableState, resizeModeState} = useTableContext();
+  let {columnState, state: tableState, isInResizeMode, isQuiet} = useTableContext();
   let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -433,11 +435,15 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     key = tableState.collection.getKeyBefore(key);
   } while (key != null);
   let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0) + (direction === 'ltr' ? -1 * scrollPosition : scrollPosition);
+  if (isQuiet) {
+    // quiet doesn't have a border
+    resizerPosition = resizerPosition - 1;
+  }
 
   return (
     <FocusScope>
       <div
-        // Override virtualizer provided tabindex if TableView is empty so it is tabbable.
+        // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
         {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
         ref={domRef}>
         <div
@@ -485,7 +491,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
           <div
             className={classNames(styles, 'spectrum-Table-colResizeNubbin')}
             style={{
-              visibility: resizeModeState[0] ? 'visible' : 'hidden'
+              visibility: isInResizeMode ? 'visible' : 'hidden'
             }}>
             <Nubbin />
           </div>
@@ -580,8 +586,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {state, columnState, headerRowHovered, resizeModeState: [isInResizeMode, setIsInResizeMode], isEmpty} = useTableContext();
+  let {state, columnState, headerRowHovered, setIsInResizeMode, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({

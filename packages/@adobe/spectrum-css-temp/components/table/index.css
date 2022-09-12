@@ -432,3 +432,13 @@ svg.spectrum-Table-sortedIcon {
   height: 16px;
   inset-inline-start: -7px;
 }
+
+.resize-ew * {
+  cursor: col-resize !important;
+}
+.resize-e * {
+  cursor: e-resize !important;
+}
+.resize-w * {
+  cursor: w-resize !important;
+}
