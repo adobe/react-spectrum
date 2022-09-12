@@ -145,11 +145,11 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   let buttons = (
     <Flex gap="size-200">
-      <Button {...buttonProps}>
+      <Button {...buttonProps} aria-label="default icon only button">
         <Bell />
       </Button>
       {props.variant !== 'cta' && (
-        <Button {...buttonProps} isQuiet>
+        <Button {...buttonProps} isQuiet aria-label="quiet icon only button">
           <Bell />
         </Button>
       )}
