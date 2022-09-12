@@ -17,6 +17,7 @@ import {announce} from '@react-aria/live-announcer';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {renderEmptyState} from '../stories/ListView.stories';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -570,11 +571,18 @@ describe('ListView', function () {
   });
 
   it('should render empty state', function () {
-    function renderEmptyState() {
-      return <div>No results</div>;
-    }
     let {getByText} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
     expect(getByText('No results')).toBeTruthy();
+  });
+
+  it('should allow you to tab into ListView body if empty', function () {
+    let {getByRole} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
+    let grid = getByRole('grid');
+    let link = getByRole('link');
+    userEvent.tab();
+    expect(document.activeElement).toBe(grid);
+    userEvent.tab();
+    expect(document.activeElement).toBe(link);
   });
 
   it('supports custom data attributes', () => {

@@ -19,6 +19,7 @@ import {useDrag, useDrop} from '../';
 export function Draggable(props) {
   let preview = useRef(null);
   let {dragProps, dragButtonProps, isDragging} = useDrag({
+    hasDragButton: true,
     getItems() {
       return [{
         'text/plain': 'hello world'

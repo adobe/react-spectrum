@@ -51,7 +51,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
       <Flex gap="size-500" alignItems="start">
         <Flex direction="column" gap={isHue ? 0 : 'size-50'} alignItems="center">
           <ColorArea
-            size={isHue ? 'size-1200' : null}
+            size={isHue ? 'size-1200' : undefined}
             {...props}
             value={color}
             onChange={onChange}
