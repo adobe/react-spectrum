@@ -237,17 +237,19 @@ export function useDrag(options: DragOptions): DragResult {
 
     interactions = {
       ...descriptionProps,
-      onPointerDown({nativeEvent: e}) {
+      onPointerDown(e) {
         // Try to detect virtual drags.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
         } else {
-          let rect = (e.target as HTMLElement).getBoundingClientRect();
+          let rect = e.currentTarget.getBoundingClientRect();
+          let offsetX = e.clientX - rect.x;
+          let offsetY = e.clientY - rect.y;
           let centerX = rect.width / 2;
           let centerY = rect.height / 2;
 
-          if (Math.abs(e.offsetX - centerX) < 0.5 && Math.abs(e.offsetY - centerY) < 0.5) {
+          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
             // Android TalkBack.
             modalityOnPointerDown.current = 'virtual';
           } else {
