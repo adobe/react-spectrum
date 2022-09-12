@@ -67,7 +67,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {overlayProps, underlayProps} = useOverlay({...props, isDismissable: isDismissable && props.isOpen}, domRef);
   return (
     <Overlay {...otherProps}>
-      <Underlay transparent {...underlayProps} />
+      <Underlay isTransparent {...underlayProps} />
       <PopoverWrapper
         {...styleProps}
         ref={domRef}

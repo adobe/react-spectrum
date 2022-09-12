@@ -16,11 +16,11 @@ import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.cs
 
 interface UnderlayProps {
   isOpen?: boolean,
-  transparent?: boolean
+  isTransparent?: boolean
 }
 
-export function Underlay({isOpen, transparent}: UnderlayProps) {
+export function Underlay({isOpen, isTransparent}: UnderlayProps) {
   return (
-    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'spectrum-Underlay--transparent': transparent}, {'is-open': isOpen})} />
+    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'spectrum-Underlay--isTransparent': isTransparent}, {'is-open': isOpen})} />
   );
 }
