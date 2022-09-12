@@ -152,6 +152,12 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
         </Button>
         <Tooltip>Notifications</Tooltip>
       </TooltipTrigger>
+      <TooltipTrigger offset={2}>
+        <Button {...buttonProps} aria-label="Notifications (disabled)" isDisabled>
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
       {props.variant !== 'cta' && (
         <TooltipTrigger offset={2}>
           <Button {...buttonProps} isQuiet aria-label="Notifications (quiet)">
