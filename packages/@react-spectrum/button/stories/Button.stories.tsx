@@ -19,6 +19,7 @@ import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 const parameters = {
   args: {
@@ -145,13 +146,19 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   let buttons = (
     <Flex gap="size-200">
-      <Button {...buttonProps} aria-label="default icon only button">
-        <Bell />
-      </Button>
-      {props.variant !== 'cta' && (
-        <Button {...buttonProps} isQuiet aria-label="quiet icon only button">
+      <TooltipTrigger offset={2}>
+        <Button {...buttonProps} aria-label="Notifications">
           <Bell />
         </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+      {props.variant !== 'cta' && (
+        <TooltipTrigger offset={2}>
+          <Button {...buttonProps} isQuiet aria-label="Notifications (quiet)">
+            <Bell />
+          </Button>
+          <Tooltip>Notifications</Tooltip>
+        </TooltipTrigger>
       )}
     </Flex>
   );
