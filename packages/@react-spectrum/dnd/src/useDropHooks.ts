@@ -5,6 +5,7 @@ import {
   DroppableCollectionResult,
   DroppableItemOptions,
   DroppableItemResult,
+  isVirtualDragging,
   useDropIndicator,
   useDroppableCollection,
   useDroppableItem
@@ -17,7 +18,8 @@ export interface DropHooks {
   useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState,
   useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult,
   useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult,
-  useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria
+  useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria,
+  isVirtualDragging(): boolean
 }
 
 export function useDropHooks(options: DroppableCollectionProps): DropHooks {
@@ -29,6 +31,7 @@ export function useDropHooks(options: DroppableCollectionProps): DropHooks {
     useDroppableCollection(props, state, ref) {
       return useDroppableCollection({...props, ...options}, state, ref);
     },
-    useDropIndicator
+    useDropIndicator,
+    isVirtualDragging
   }), [options]);
 }
