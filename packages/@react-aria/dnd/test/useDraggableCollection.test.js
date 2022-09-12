@@ -676,7 +676,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
     });
 
@@ -771,7 +772,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
     });
   });
@@ -1103,7 +1105,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       delete window.ontouchstart;
@@ -1202,7 +1205,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       delete window.ontouchstart;

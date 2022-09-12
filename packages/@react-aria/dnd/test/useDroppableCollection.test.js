@@ -657,7 +657,7 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let getDropOperation = ({target}) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
+      let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
         <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
@@ -740,7 +740,7 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let getDropOperation = ({target}) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
+      let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
         <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
@@ -922,7 +922,7 @@ describe('useDroppableCollection', () => {
 
     it('should default to on the first selected item if the last focused item is the first selected item and only dropping on items is allowed', () => {
       let onDrop = jest.fn();
-      let getDropOperation = ({target}) => target.dropPosition !== 'on' ? 'cancel' : 'move';
+      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
       let tree = render(<>
         <Draggable />
         <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
@@ -961,7 +961,7 @@ describe('useDroppableCollection', () => {
 
     it('should default to on the last selected item when only dropping on items is allowed', () => {
       let onDrop = jest.fn();
-      let getDropOperation = ({target}) => target.dropPosition !== 'on' ? 'cancel' : 'move';
+      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
       let tree = render(<>
         <Draggable />
         <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
