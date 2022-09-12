@@ -154,3 +154,34 @@
     margin: 0;
   }
 }
+
+.draggable-listbox {
+  padding: 0;
+  margin: 5px 0;
+  list-style: none;
+  border: 1px solid gray;
+  outline: none;
+  width: 250px;
+}
+
+.option {
+  padding: 2px 5px;
+  outline: none;
+}
+
+.option.pressed {
+  background: var(--spectrum-global-color-gray-200);
+}
+
+.option[aria-selected=true] {
+  background: blueviolet;
+  color: white;
+}
+
+.option.focus-visible {
+  outline: 2px solid orange;
+}
+
+.option.drop-target {
+  outline: 2px solid blue;
+}

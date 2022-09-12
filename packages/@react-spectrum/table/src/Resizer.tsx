@@ -19,11 +19,11 @@ interface ResizerProps<T> {
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {state, columnState} = useTableContext();
+  let {state, columnState, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {inputProps, resizerProps} = useTableColumnResize({...props, label: stringFormatter.format('columnResizer')}, state, columnState, ref);
+  let {inputProps, resizerProps} = useTableColumnResize({...props, label: stringFormatter.format('columnResizer'), isDisabled: isEmpty}, state, columnState, ref);
 
   let style = {
     cursor: undefined,

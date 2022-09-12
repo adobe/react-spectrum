@@ -12,7 +12,7 @@
 
 import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 
 export interface DroppableCollectionStateOptions extends DroppableCollectionProps {
   collection: Collection<Node<unknown>>,
@@ -30,6 +30,7 @@ export interface DroppableCollectionState {
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let [target, setTarget] = useState<DropTarget>(null);
+  let targetRef = useRef<DropTarget>(null);
 
   let getOppositeTarget = (target: ItemDropTarget): ItemDropTarget => {
     if (target.dropPosition === 'before') {
@@ -50,6 +51,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         return;
       }
 
+      let target = targetRef.current;
       if (target && typeof props.onDropExit === 'function') {
         props.onDropExit({
           type: 'dropexit',
@@ -69,8 +71,10 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       }
 
       setTarget(newTarget);
+      targetRef.current = newTarget;
     },
     isDropTarget(dropTarget) {
+      let target = targetRef.current;
       if (isEqualDropTarget(dropTarget, target)) {
         return true;
       }

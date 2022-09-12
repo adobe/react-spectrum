@@ -11,14 +11,14 @@
  */
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {RefObject, useCallback, useRef} from 'react';
+import React, {Ref, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     isDisabled = false,
@@ -31,12 +31,12 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
-  let inputRef = useRef<HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {
     // Quiet textareas always grow based on their text content.
     // Standard textareas also grow by default, unless an explicit height is set.
-    if (isQuiet || !props.height) {
+    if ((isQuiet || !props.height) && inputRef.current) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;

@@ -22,13 +22,14 @@ import {
   StyleProps
 } from '@react-types/shared';
 import {DragHooks, DropHooks} from '@react-spectrum/dnd';
+import {Key} from 'react';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: string) => void,
+  onAction?: (key: Key) => void,
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior
 }
@@ -56,7 +57,7 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionStyle` prop and the interaction modality.
    */
-  onAction?: (key: string) => void,
+  onAction?: (key: Key) => void,
   /**
    * The drag hooks returned by `useDragHooks` used to enable drag and drop behavior for the ListView.
    * @private

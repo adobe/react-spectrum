@@ -36,18 +36,14 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
         }
 
         // Skip this node and its children if it is one of the target nodes, or a live announcer.
-        // Also skip children of already hidden nodes, as aria-hidden is recursive.
+        // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
+        // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
+        // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
         if (
           visibleNodes.has(node as Element) ||
-          hiddenNodes.has(node.parentElement)
+          (hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
         ) {
           return NodeFilter.FILTER_REJECT;
-        }
-
-        // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
-        // https://bugs.webkit.org/show_bug.cgi?id=222623
-        if (node instanceof Element && node.getAttribute('role') === 'row') {
-          return NodeFilter.FILTER_SKIP;
         }
 
         // Skip this node but continue to children if one of the targets is inside the node.
