@@ -71,9 +71,6 @@
 html, body {
   margin: 0;
   text-size-adjust: none;
-  height: 100vh;
-  overflow-y: hidden;
-  overflow-anchor: none;
 }
 
 .provider {
@@ -293,15 +290,14 @@ html, body {
 }
 
 main {
-  margin-top: var(--spectrum-global-dimension-size-550);
   margin-left: 256px;
-  padding: 0 244px 0 52px;
+  margin-right: 180px;
+  padding: 40px 52px 0 52px;
   box-sizing: border-box;
   display: flex;
-  height: calc(100vh - var(--spectrum-global-dimension-size-550));
+  min-height: 100vh;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
 }
 
 .article {
@@ -722,12 +718,39 @@ h2.sectionHeader {
   content: ' • ';
 }
 
+/* Show line under page header and push main down to make room for search. */
+@media (max-width: 1780px) {
+  html, body {
+    scroll-padding-top: var(--spectrum-global-dimension-size-600);
+  }
+
+  main {
+    margin-top: 48px;
+  }
+
+  .pageHeader {
+    border-bottom: 1px solid var(--spectrum-global-color-gray-200);
+    background: var(--page-background);
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    left: 256px;
+  }
+}
+
 @media (max-width: 750px) {
   .float {
     float: none;
     margin-left: auto;
     margin-right: auto;
     width: auto
+  }
+}
+
+@media (max-width: 1200px) {
+  /* Hide the table of contents */
+  main {
+    margin-right: 0;
   }
 }
 
@@ -846,8 +869,8 @@ h2.sectionHeader {
 
   main {
     margin-left: 0;
-    margin-top: var(--spectrum-global-dimension-size-550);
-    padding: var(--spectrum-global-dimension-size-325) var(--spectrum-global-dimension-size-250);
+    margin-top: 48px;
+    padding: 40px 24px;
   }
 
   /* Show the toolbar at the top with the hamburger and theme switcher buttons */
@@ -856,6 +879,8 @@ h2.sectionHeader {
     background: var(--page-background);
     z-index: 50;
     display: flex;
+    justify-content: space-between;
+    left: 0;
     width: 100%;
   }
 
