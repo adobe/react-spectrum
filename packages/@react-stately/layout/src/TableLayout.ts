@@ -26,10 +26,12 @@ export class TableLayout<T> extends ListLayout<T> {
   isLoading = false;
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
+  private disableSticky: boolean;
 
   constructor(options: ListLayoutOptions<T>) {
     super(options);
     this.stickyColumnIndices = [];
+    this.disableSticky = this.checkChrome105();
   }
 
 
@@ -166,7 +168,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -195,7 +197,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let rect = new Rect(40,  Math.max(y, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
-      loader.isSticky = children.length === 0;
+      loader.isSticky = !this.disableSticky && children.length === 0;
       this.layoutInfos.set('loader', loader);
       children.push({layoutInfo: loader});
       y = loader.rect.maxY;
@@ -204,7 +206,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = 'body';
-      empty.isSticky = true;
+      empty.isSticky = !this.disableSticky;
       this.layoutInfos.set('empty', empty);
       children.push({layoutInfo: empty});
       y = empty.rect.maxY;
@@ -267,7 +269,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -439,5 +441,23 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return res;
+  }
+
+  // Checks if Chrome version is 105 or greater
+  private checkChrome105() {
+    if (typeof window === 'undefined' || window.navigator == null) {
+      return false;
+    }
+
+    let isChrome105;
+    if (window.navigator['userAgentData']) {
+      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105);
+    } else {
+      let regex = /Chrome\/(\d+)/;
+      let matches = regex.exec(window.navigator.userAgent);
+      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) >= 105;
+    }
+
+    return isChrome105;
   }
 }
