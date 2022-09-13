@@ -164,8 +164,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
         placement={placement}
         hideArrow
         isNonModal
-        isDismissable={false}
-        preventScroll>
+        isDismissable={false}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
