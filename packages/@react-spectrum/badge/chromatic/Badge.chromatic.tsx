@@ -55,3 +55,11 @@ export const TextIcon: BadgeStory = {
   args: {children: <><Text>Badge text</Text><CheckmarkCircle /></>},
   render: renderVariants
 };
+
+export const Overflow: BadgeStory = {
+  args: {children: '24 days left in trial', variant: 'positive', UNSAFE_style: {width: '74px'}}
+};
+
+export const OverflowWithIcon: BadgeStory = {
+  args: {children: <><CheckmarkCircle /><Text>24 days left in trial</Text></>, variant: 'positive', UNSAFE_style: {width: '74px'}}
+};
