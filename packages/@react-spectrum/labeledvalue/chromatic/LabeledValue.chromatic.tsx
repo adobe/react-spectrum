@@ -92,17 +92,17 @@ export let NumberRange: LabeledValueStory = {
 };
 
 export let LabelPostionSide: LabeledValueStory = {
-  args: {label: 'Test', labelPosition: 'side'},
+  args: {label: 'Cookies', labelPosition: 'side', value: 10},
   name: 'labelPosition: side'
 };
 
 export let LabelAlignEnd: LabeledValueStory = {
-  args: {label: 'Test', labelAlign: 'end'},
+  args: {label: 'Cookies', labelAlign: 'end', value: 10},
   name: 'labelAlign: end'
 };
 
 export let LabelAlignLabelPosition: LabeledValueStory = {
-  args: {label: 'Test', labelPosition: 'side', labelAlign: 'end'},
+  args: {label: 'Cookies', labelPosition: 'side', labelAlign: 'end', value: 10},
   name: 'labelAlign: side, labelAlign: end'
 };
 
@@ -112,6 +112,6 @@ export let NoLabel: LabeledValueStory = {
 };
 
 export let CustomWidth: LabeledValueStory = {
-  args: {label: 'Test', width: '300px'},
+  args: {label: 'Cookies', width: '300px', value: 10},
   name: 'custom width'
 };
