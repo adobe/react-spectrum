@@ -13,7 +13,6 @@
 import {DOMAttributes} from '@react-types/shared';
 import {RefObject, SyntheticEvent, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
-import {usePreventScroll} from './usePreventScroll';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
@@ -43,10 +42,7 @@ export interface AriaOverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: Element) => boolean,
-
-  /** Prevents scrolling on elements under overlay when overlay is open. */
-  preventScroll?: boolean
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface OverlayAria {
@@ -70,11 +66,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     isOpen,
     isDismissable = false,
     isKeyboardDismissDisabled = false,
-    shouldCloseOnInteractOutside,
-    preventScroll = true
+    shouldCloseOnInteractOutside
   } = props;
-
-  usePreventScroll({isDisabled: !preventScroll || !isOpen});
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
