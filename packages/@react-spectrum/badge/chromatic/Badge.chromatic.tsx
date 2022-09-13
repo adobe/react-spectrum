@@ -49,3 +49,9 @@ export const IconText: BadgeStory = {
   args: {children: <><CheckmarkCircle /><Text>Badge text</Text></>},
   render: renderVariants
 };
+
+export const TextIcon: BadgeStory = {
+  name: 'Text & icon',
+  args: {children: <><Text>Badge text</Text><CheckmarkCircle /></>},
+  render: renderVariants
+};
