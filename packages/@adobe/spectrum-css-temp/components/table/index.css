@@ -108,7 +108,8 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-columnResizer {
   display: flex;
   position: absolute;
-  inset-inline-end: -10px;
+  /* -9 aligns us with already existing cell dividers inside the table itself */
+  inset-inline-end: -9px;
   justify-content: center;
   box-sizing: border-box;
   inline-size: 20px;
@@ -126,9 +127,6 @@ svg.spectrum-Table-sortedIcon {
   &:active,
   &.focus-ring {
     outline: none;
-    &::after {
-      inline-size: 2px;
-    }
   }
 }
 .spectrum-Table-columnResizerPlaceholder {
@@ -292,6 +290,22 @@ svg.spectrum-Table-sortedIcon {
   border-inline-end-width: var(--spectrum-table-divider-border-size);
 }
 
+.spectrum-Table-cell--resizing {
+  position: relative;
+  border-inline-end-width: calc(2 * var(--spectrum-table-divider-border-size));
+
+  /* cover border between rows, otherwise you get little 1px breaks in the vertical line every row */
+  &::after {
+    position: absolute;
+    content: '';
+    display: block;
+    top: -1px;
+    inset-inline-end: -2px;
+    inline-size: 2px;
+    height: 1px;
+  }
+}
+
 .spectrum-Table-row {
   position: relative;
   cursor: default;
@@ -420,17 +434,27 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-colResizeIndicator {
+  display: none;
   height: 100%;
   width: 2px;
   position: absolute;
+  top: 0;
+  inset-inline-end: 0;
   pointer-events: none;
+  &.spectrum-Table-colResizeIndicator--visible {
+    display: block;
+  }
 }
 .spectrum-Table-colResizeNubbin {
+  display: none;
   position: absolute;
-  top: -6px;
+  top: 0px;
   width: 16px;
   height: 16px;
   inset-inline-start: -7px;
+  &.spectrum-Table-colResizeNubbin--visible {
+    display: block;
+  }
 }
 
 .resize-ew * {

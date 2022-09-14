@@ -85,8 +85,7 @@ interface TableContextValue<T> {
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
-  isEmpty: boolean,
-  isQuiet: boolean
+  isEmpty: boolean
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -317,7 +316,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let isEmpty = state.collection.size === 0;
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, isQuiet}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -357,7 +356,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
-  let {columnState, state: tableState, isInResizeMode, isQuiet} = useTableContext();
   let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -400,12 +398,10 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
 
-  let [scrollPosition, setScrollPosition] = useState(0);
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
-    setScrollPosition(bodyRef.current.scrollLeft);
-  }, [bodyRef, setScrollPosition, headerRef]);
+  }, [bodyRef, headerRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     setTableWidth(rect.width);
@@ -427,18 +423,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       }
     }
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
-
-  let keysBefore = [];
-  let key = columnState.currentlyResizingColumn;
-  do {
-    keysBefore.push(key);
-    key = tableState.collection.getKeyBefore(key);
-  } while (key != null);
-  let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0) + (direction === 'ltr' ? -1 * scrollPosition : scrollPosition);
-  if (isQuiet) {
-    // quiet doesn't have a border
-    resizerPosition = resizerPosition - 1;
-  }
 
   return (
     <FocusScope>
@@ -481,21 +465,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
           onScroll={onScroll}>
           {state.visibleViews[1]}
         </ScrollView>
-        <div
-          aria-hidden
-          className={classNames(styles, 'spectrum-Table-colResizeIndicator')}
-          style={{
-            [direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`,
-            visibility: columnState.currentlyResizingColumn != null ? 'visible' : 'hidden'
-          }}>
-          <div
-            className={classNames(styles, 'spectrum-Table-colResizeNubbin')}
-            style={{
-              visibility: isInResizeMode ? 'visible' : 'hidden'
-            }}>
-            <Nubbin />
-          </div>
-        </div>
       </div>
     </FocusScope>
   );
@@ -586,7 +555,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered, setIsInResizeMode, isEmpty} = useTableContext();
+  let {state, columnState, headerRowHovered, setIsInResizeMode, isInResizeMode, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
@@ -700,6 +669,27 @@ function ResizableTableColumnHeader(props) {
           column={column}
           showResizer={showResizer}
           triggerRef={useUnwrapDOMRef(triggerRef)} />
+        <div
+          aria-hidden
+          className={classNames(
+            styles,
+            'spectrum-Table-colResizeIndicator',
+            {
+              'spectrum-Table-colResizeIndicator--visible': columnState.currentlyResizingColumn != null,
+              'spectrum-Table-colResizeIndicator--resizing': columnState.currentlyResizingColumn === column.key
+            }
+          )}>
+          <div
+            className={classNames(
+              styles,
+              'spectrum-Table-colResizeNubbin',
+              {
+                'spectrum-Table-colResizeNubbin--visible': isInResizeMode && columnState.currentlyResizingColumn === column.key
+              }
+            )}>
+            <Nubbin />
+          </div>
+        </div>
       </div>
     </FocusRing>
   );
@@ -885,7 +875,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let {state} = useTableContext();
+  let {state, columnState} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -905,6 +895,7 @@ function TableCell({cell}) {
             'spectrum-Table-cell',
             {
               'spectrum-Table-cell--divider': columnProps.showDivider && cell.column.nextKey !== null,
+              'spectrum-Table-cell--resizing': columnState.currentlyResizingColumn === cell.column.key,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
               'is-disabled': isDisabled
             },
