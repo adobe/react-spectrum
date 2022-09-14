@@ -2239,76 +2239,59 @@ describe('ListView', function () {
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
-        it.skip('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
-          // TODO: fix this test, tabbing/shift tabbing is buggy
-          let {getAllByRole} = render(
+        it('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
+          let tree = render(
             <DragBetweenListsComplex
-              listViewProps={{selectedKeys: ['7', '13']}}
-              firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null, acceptedDragTypes: ['file', 'folder']}}
-              secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+              listViewProps={{selectedKeys: ['1', '3']}}
+              firstListDnDOptions={{onDragEnd}}
+              secondListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['file']}} />
           );
 
-          let grids = getAllByRole('grid');
+          beginDrag(tree);
           userEvent.tab();
-          expect(document.activeElement).toBe(within(grids[0]).getAllByRole('row')[0]);
-          let row = within(grids[1]).getAllByRole('row')[0];
-          // TODO: for some reason the listview isn't being treated as a single tab stop in the test so need to manually focus
-          act(() => row.focus());
-          expect(document.activeElement).toBe(row);
-          let cell = within(row).getByRole('gridcell');
-          let draghandle = within(cell).getAllByRole('button')[0];
-          expect(draghandle).toBeTruthy();
-          expect(draghandle).toHaveAttribute('draggable', 'true');
-          expect(draghandle).toHaveAttribute('aria-label', 'Drag 2 selected items');
-          act(() => draghandle.focus());
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-          act(() => jest.runAllTimers());
-          userEvent.tab({shift: true});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['1', '3']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenLastCalledWith({keys: new Set(['7', '13'])});
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
             target: {
-              key: '1',
+              key: '7',
               dropPosition: 'before'
             },
             items: [
+
               {
                 kind: 'text',
-                types: new Set(['text/plain', 'folder']),
-                getText: expect.any(Function)
-              },
-              {
-                kind: 'text',
-                types: new Set(['unique_type']),
+                types: new Set(['text/plain', 'file']),
                 getText: expect.any(Function)
               }
             ]
           });
           let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText(item.types.values().next().value))));
           expect(items).toContainObject({
-            identifier: '7',
-            type: 'folder',
-            name: 'Pictures',
-            childNodes: []
-          });
-          expect(items).toContainObject({
-            identifier: '13',
-            type: 'unique_type',
-            name: 'invalid drag item'
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
           });
         });
 
-        it('should use shouldAcceptItem when filtering items onItem', async function () {
+        it('should use shouldAcceptItem to filter out items to provide to onItemDrop', async function () {
           let shouldAcceptItemDrop = (target, types) => target.type === 'item' && types.has('file');
           let tree = render(
             <DragBetweenListsComplex listViewProps={{selectedKeys: ['1', '3']}} firstListDnDOptions={{...mockUtilityOptions}} secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} />
