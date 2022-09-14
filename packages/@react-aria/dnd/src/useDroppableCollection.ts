@@ -55,8 +55,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
-      acceptedDragTypes
-      // shouldAcceptItemDrop
+      acceptedDragTypes,
+      shouldAcceptItemDrop
     } = localState.props;
 
     let {draggingCollectionRef, draggingKeys} = globalDndState;
@@ -69,21 +69,24 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     let filteredItems = items;
     if (acceptedDragTypes) {
-      filteredItems = items.filter((item) => {
-        let itemTypes = [];
+      filteredItems = items.filter(item => {
+        let itemTypes: Set<string>;
         if (item.kind === 'directory') {
-          return acceptedDragTypes === 'all' || acceptedDragTypes.includes('directory');
+          itemTypes = new Set(['directory']);
         } else {
-          itemTypes = item.kind === 'file' ? [item.type] : [...item.types];
+          itemTypes = item.kind === 'file' ? new Set([item.type]) : item.types;
         }
 
-        // TODO: fix this logic, maybe adjust what shouldAcceptItemDrop accepts. We need to in case the dropped on folder has extra restriction compared to the collection itself.
-        // check to see if there is a way to convert back to dragTypes. Maybe add another prop call? Or add another arg to shouldAcceptItemDrop for item which would only be defined during onDrop but not
-        // getDropOperation
-        return acceptedDragTypes === 'all' || itemTypes.some(type => acceptedDragTypes.includes(type));
-        // if (validDragType) {
-        //   // return (target.type === 'root' || target.dropPosition !== 'on' || (target.dropPosition === 'on' && shouldAcceptItemDrop(target, itemTypes)));
-        // }
+        if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => itemTypes.has(type))) {
+          // If we are performing a on item drop, check if the item in question accepts the dropped item since the item may have heavier restrictions
+          // than the droppable collection itself
+          if (target.type === 'item' && target.dropPosition === 'on' && typeof shouldAcceptItemDrop === 'function') {
+            return shouldAcceptItemDrop(target, itemTypes);
+          }
+          return true;
+        }
+
+        return false;
       });
     }
 
