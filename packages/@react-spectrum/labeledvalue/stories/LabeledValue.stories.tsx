@@ -115,3 +115,8 @@ export let NumberRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: 10, end: 20}},
   name: 'RangeValue<Number>'
 };
+
+export let NoLabel: LabeledValueStory = {
+  args: {'aria-label': 'Test', value: 'Hello'},
+  name: 'No visible label'
+};
