@@ -41,6 +41,11 @@ export const WithIcon: BadgeStory = {
   name: 'With icon'
 };
 
+export const WithIconReverseOrder: BadgeStory = {
+  args: {children: <><Text>Licensed</Text><CheckmarkCircle /></>, variant: 'positive'},
+  name: 'With icon, order reversed'
+};
+
 export const IconOnly: BadgeStory = {
   args: {children: <CheckmarkCircle />, variant: 'positive', 'aria-label': 'Licensed'},
   name: 'Icon only'
