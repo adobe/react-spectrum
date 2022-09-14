@@ -449,13 +449,13 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
   .add(
     'drop onto root',
     args => (
-      <RootDropExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      <RootDropExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
     ), {description: {data: 'Allows one way dragging from first list to root of second list. Copy and link operations shouldnt remove items from the first list'}}
   )
   .add(
     'drop between items',
     args => (
-      <InsertExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      <InsertExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
     ), {description: {data: 'Allows one way dragging from first list to between items of second list. Copy and link operations shouldnt remove items from the first list'}}
   )
   .add(
@@ -470,12 +470,10 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
       <DragBetweenListsComplex
         listViewProps={args}
         firstListDnDOptions={{
-          onDragStart: action('dragStartList1'),
-          onDragEnd: action('dragEndList1')
+          onDragStart: action('dragStartList1')
         }}
         secondListDnDOptions={{
-          onDragStart: action('dragStartList2'),
-          onDragEnd: action('dragEndList2')
+          onDragStart: action('dragStartList2')
         }} />
     ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
   )
@@ -1527,9 +1525,16 @@ function RootDropExampleUtilHandlers(props) {
         'text/plain': JSON.stringify(item)
       };
     }),
-    onItemRemove: (e) => {
-      action('onItemRemoveList1')(e);
-      list1.remove(...e.keys);
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEnd')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
     },
     acceptedDragTypes,
     ...firstListDnDOptions
@@ -1611,9 +1616,16 @@ function InsertExampleUtilHandlers(props) {
         'text/plain': JSON.stringify(item)
       };
     }),
-    onItemRemove: (e) => {
-      action('onItemRemoveList1')(e);
-      list1.remove(...e.keys);
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEnd')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
     },
     acceptedDragTypes,
     ...firstListDnDOptions
@@ -1847,9 +1859,16 @@ export function DragBetweenListsComplex(props) {
       }
     },
     acceptedDragTypes,
-    onItemRemove: (e) => {
-      action('onItemRemoveList1')(e);
-      list1.remove(...e.keys);
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEndList1')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).childNodes,
@@ -1932,22 +1951,22 @@ export function DragBetweenListsComplex(props) {
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
       if (isInternalDrop && dropOperation === 'move') {
-        // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
         let keysToRemove = processedItems.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
     },
     acceptedDragTypes,
-    onItemRemove: (e) => {
-      action('onItemRemoveList2')(e);
-      // TODO: no great way to stop the non-accepted drag items from getting removed.
-      // Scenario: dragging files + folders and dropping on a drop target that only accepts files. We have
-      // no good way currently of knowing that the folders shouldn't be removed
-      // Ways to possibly handle this
-      // 1. Figure out what keys are actually accepted by the drop target and track the "droppableKeys" in global state. Communicate this to onItemRemove/onDragEnd
-      // 2. Expect that the user will perform the selective item removal via the drop target's drop handler (can we expect that list 1 always has access to list 2?)
-      // This brings into question if we should even have onItemRemove in the first place, should we just expect item deletion should happen in onDrop always?
-      list2.remove(...e.keys);
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEndList2')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,

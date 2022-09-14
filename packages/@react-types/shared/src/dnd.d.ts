@@ -239,7 +239,5 @@ export interface DraggableCollectionProps {
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer>,
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
-  getAllowedDropOperations?: () => DropOperation[],
-  /** Handler called when items are moved out of the draggable collection. */
-  onItemRemove?: (e: DraggableCollectionRemoveEvent) => void
+  getAllowedDropOperations?: () => DropOperation[]
 }

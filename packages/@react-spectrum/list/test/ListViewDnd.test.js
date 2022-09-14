@@ -35,14 +35,12 @@ describe('ListView', function () {
   let onInsert = jest.fn();
   let onItemDrop = jest.fn();
   let onRootDrop = jest.fn();
-  let onItemRemove = jest.fn();
   let getDropOperation = jest.fn();
   let mockUtilityOptions = {
     onInsert: async (e) => onInsert(e),
     onReorder: async (e) => onReorder(e),
     onItemDrop: async (e) => onItemDrop(e),
-    onRootDrop: async (e) => onRootDrop(e),
-    onItemRemove: async (e) => onItemRemove(e)
+    onRootDrop: async (e) => onRootDrop(e)
   };
 
   let checkSelection = (onSelectionChange, selectedKeys) => {
@@ -730,7 +728,7 @@ describe('ListView', function () {
           fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: targetX, clientY: targetY}));
           fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
           fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: targetX, clientY: targetY}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: targetX, clientY: targetY}));
           act(() => jest.runAllTimers());
         }
 
@@ -749,7 +747,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -797,7 +794,6 @@ describe('ListView', function () {
 
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onReorder).toHaveBeenCalledWith({
@@ -823,7 +819,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onReorder).toHaveBeenCalledWith({
             target: {
@@ -850,7 +845,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledWith({
             dropOperation: 'move',
             items: [
@@ -882,7 +876,7 @@ describe('ListView', function () {
 
         it('should call onItemDrop when dropping on a folder in the list', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null}} secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} secondListDnDOptions={{onDragEnd}} />
           );
 
           let grids = getAllByRole('grid');
@@ -891,10 +885,18 @@ describe('ListView', function () {
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
           dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['7', '8']),
+            x: 1,
+            y: 185,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
@@ -965,42 +967,6 @@ describe('ListView', function () {
           });
         });
 
-        it('should not call onItemRemove when performing a internal drop that removes the item from the list', function () {
-          let {getAllByRole} = render(
-            <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
-          );
-          // Perform drop from list 2 into a folder within list 2
-          let grids = getAllByRole('grid');
-          expect(grids).toHaveLength(2);
-          let list2Rows = within(grids[1]).getAllByRole('row');
-          let dropTarget = list2Rows[4];
-          dragWithinList(list2Rows, dropTarget, 1, 100);
-          expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(1);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
-
-          // Perform reorder operation and confirm that onItemRemove doesn't get called still
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-          dropTarget = list2Rows[4];
-          dragWithinList(list2Rows, dropTarget, 1, 150);
-          expect(onReorder).toHaveBeenCalledTimes(1);
-          expect(onItemDrop).toHaveBeenCalledTimes(1);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onReorder).toHaveBeenCalledWith({
-            target: {
-              key: '10',
-              dropPosition: 'after'
-            },
-            keys: new Set(['7', '8']),
-            dropOperation: 'move'
-          });
-        });
-
         it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
@@ -1016,15 +982,14 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
         });
 
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex
-              firstListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: () => false, onItemRemove: null}}
-              secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+              firstListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: () => false}}
+              secondListDnDOptions={{onDragEnd}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1034,10 +999,19 @@ describe('ListView', function () {
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
           dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['7', '8']),
+            x: 1,
+            y: 185,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1201,7 +1175,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1237,7 +1210,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(2);
           expect(onInsert).toHaveBeenLastCalledWith({
             dropOperation: 'move',
@@ -1312,7 +1284,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
@@ -1333,7 +1304,7 @@ describe('ListView', function () {
 
         it('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null, acceptedDragTypes: ['file', 'folder']}} secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['file', 'folder']}} secondListDnDOptions={{onDragEnd}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1362,8 +1333,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenLastCalledWith({keys: new Set(['7', '13'])});
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['7', '13']),
+            x: 1,
+            y: 1,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1415,7 +1393,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Doesn't include fileA because it doesn't match types
           expect(onRootDrop).toHaveBeenCalledWith({
@@ -1463,7 +1440,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Doesn't include fileA because it doesn't match types
           expect(onRootDrop).toHaveBeenCalledWith({
@@ -1499,7 +1475,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
           expect(onDrop).toHaveBeenCalledWith({
@@ -1535,7 +1510,7 @@ describe('ListView', function () {
           // All items for list 1 should be valid drop targets but it should only accept file type items
           let shouldAcceptItemDrop = (target, types) => target.type === 'item' && types.has('file');
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null, shouldAcceptItemDrop}} secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} secondListDnDOptions={{onDragEnd}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1563,12 +1538,20 @@ describe('ListView', function () {
 
           fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
           fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 185}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 185}));
           act(() => jest.runAllTimers());
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['7', '8']),
+            x: 1,
+            y: 185,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Only has the file in onItemDrop, the folder item should have been filtered out
           expect(onItemDrop).toHaveBeenCalledWith({
@@ -1857,7 +1840,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1897,7 +1879,6 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onReorder).toHaveBeenCalledWith({
             target: {
@@ -1911,7 +1892,7 @@ describe('ListView', function () {
 
         it('should call onRootDrop when dropping on the list root', async function () {
           let tree = render(
-            <DragBetweenListsComplex firstListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} secondListDnDOptions={{...mockUtilityOptions, onItemRemove: null}} />
+            <DragBetweenListsComplex firstListDnDOptions={{onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
           );
 
           beginDrag(tree);
@@ -1924,7 +1905,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['1']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onRootDrop).toHaveBeenCalledWith({
             dropOperation: 'move',
             items: [
@@ -1945,7 +1934,7 @@ describe('ListView', function () {
 
         it('should call onItemDrop when dropping on a folder in the list', async function () {
           let tree = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions}} secondListDnDOptions={{...mockUtilityOptions, onItemRemove: null}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
           );
 
           beginDrag(tree);
@@ -1962,7 +1951,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['1']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
@@ -1999,7 +1996,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(2);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(2);
+          expect(onDragEnd).toHaveBeenLastCalledWith({
+            type: 'dragend',
+            keys: new Set(['1']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: true
+          });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
@@ -2024,62 +2029,6 @@ describe('ListView', function () {
           });
         });
 
-        it('should not call onItemRemove when performing a internal drop that removes the item from the list', function () {
-          let tree = render(
-            <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
-          );
-
-          beginDrag(tree);
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
-          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-          expect(onReorder).toHaveBeenCalledTimes(0);
-          expect(onItemDrop).toHaveBeenCalledTimes(1);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
-
-          // Perform reorder operation and confirm that onItemRemove doesn't get called still
-          onItemRemove.mockClear();
-          onItemDrop.mockClear();
-          let grids = tree.getAllByRole('grid');
-          let row = within(grids[0]).getAllByRole('row')[0];
-          let cell = within(row).getByRole('gridcell');
-          let draghandle = within(cell).getAllByRole('button')[0];
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-          fireEvent.keyDown(draghandle, {key: 'Enter'});
-          fireEvent.keyUp(draghandle, {key: 'Enter'});
-
-          act(() => jest.runAllTimers());
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe XD and Documents');
-          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-
-          expect(onReorder).toHaveBeenCalledTimes(1);
-          expect(onItemDrop).toHaveBeenCalledTimes(0);
-          expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          expect(onReorder).toHaveBeenCalledWith({
-            target: {
-              key: '3',
-              dropPosition: 'before'
-            },
-            keys: new Set(['1']),
-            dropOperation: 'move'
-          });
-        });
-
         it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} secondListDnDOptions={{acceptedDragTypes: ['randomType']}} />
@@ -2096,8 +2045,8 @@ describe('ListView', function () {
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', async function () {
           let tree = render(
             <DragBetweenListsComplex
-              firstListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}}
-              secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: (target) => target.type === 'item', onItemRemove: null}} />
+              firstListDnDOptions={{onDragEnd}}
+              secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: (target) => target.type === 'item'}} />
           );
 
           beginDrag(tree);
@@ -2119,7 +2068,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['1']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
@@ -2294,7 +2251,7 @@ describe('ListView', function () {
         it('should use shouldAcceptItem to filter out items to provide to onItemDrop', async function () {
           let shouldAcceptItemDrop = (target, types) => target.type === 'item' && types.has('file');
           let tree = render(
-            <DragBetweenListsComplex listViewProps={{selectedKeys: ['1', '3']}} firstListDnDOptions={{...mockUtilityOptions}} secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} />
+            <DragBetweenListsComplex listViewProps={{selectedKeys: ['1', '3']}} firstListDnDOptions={{...mockUtilityOptions, onDragEnd}} secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} />
           );
 
           beginDrag(tree);
@@ -2311,7 +2268,15 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledTimes(1);
+          expect(onDragEnd).toHaveBeenCalledWith({
+            type: 'dragend',
+            keys: new Set(['1', '3']),
+            x: 50,
+            y: 25,
+            dropOperation: 'move',
+            isInternalDrop: false
+          });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {

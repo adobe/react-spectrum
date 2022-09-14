@@ -43,8 +43,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     onDragMove,
     onDragEnd,
     preview,
-    getAllowedDropOperations,
-    onItemRemove
+    getAllowedDropOperations
   } = props;
   let [, setDragging] = useState(false);
   // Retain a local tracker for draggingKeys since the global DnD state is briefly inaccurate during the deferred onDrop and onDragEnd
@@ -106,17 +105,12 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
       let {
         isInternalDrop
       } = event;
-      // If it is a 'move' drop operatation to a drop target outside the collection, we can assume the user wants to remove the items from the source collection
-      // Doesn't replace onDragEnd unlike the utility function in useDroppableCollection since dragEnd isn't always for remove operations
-      if (typeof onItemRemove === 'function' && event.dropOperation === 'move' && !isInternalDrop) {
-        // TODO: dig into other DnD libraries to see how they handle partial sets of valid dropped keys
-        onItemRemove({keys: draggingKeys.current});
-      }
 
       if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
-          keys: draggingKeys.current
+          keys: draggingKeys.current,
+          isInternalDrop
         });
       }
 
