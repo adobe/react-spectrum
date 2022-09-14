@@ -685,6 +685,19 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 595
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -697,17 +710,17 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
         expect(onColumnResizeEnd).toHaveBeenCalledWith([
           {
             key: 'foo',
-            width: 595
+            width: 620
           }, {
             key: 'bar',
-            width: 200
+            width: 190
           }, {
             key: 'baz',
-            width: 200
+            width: 190
           }
         ]);
 
@@ -768,6 +781,19 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 595
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -780,17 +806,17 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
         expect(onColumnResizeEnd).toHaveBeenCalledWith([
           {
             key: 'foo',
-            width: 595
+            width: 620
           }, {
             key: 'bar',
-            width: 200
+            width: 190
           }, {
             key: 'baz',
-            width: 200
+            width: 190
           }
         ]);
 
