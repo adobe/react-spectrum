@@ -1530,6 +1530,75 @@ describe('ListView', function () {
             ]
           });
         });
+
+        it('should use shouldAcceptItem to filter out items to provide to onItemDrop', async function () {
+          // All items for list 1 should be valid drop targets but it should only accept file type items
+          let shouldAcceptItemDrop = (target, types) => target.type === 'item' && types.has('file');
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onItemRemove: null, shouldAcceptItemDrop}} secondListDnDOptions={{onItemRemove: mockUtilityOptions.onItemRemove}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
+          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          let dragCell = within(list2Rows[0]).getByRole('gridcell');
+
+          let dataTransfer = new DataTransfer();
+          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+
+          act(() => jest.runAllTimers());
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 185}));
+
+          // Drop indicator should show up on drop folder even though it only accepts files and the dragged items includes a folder
+          let dropIndicator = within(dropTarget).findByLabelText('Drop on Utilities', {hidden: true});
+          expect(dropIndicator).toBeTruthy();
+
+          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 185}));
+          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          // Only has the file in onItemDrop, the folder item should have been filtered out
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).not.toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
+        });
       });
     });
 
@@ -2236,6 +2305,51 @@ describe('ListView', function () {
             identifier: '13',
             type: 'unique_type',
             name: 'invalid drag item'
+          });
+        });
+
+        it('should use shouldAcceptItem when filtering items onItem', async function () {
+          let shouldAcceptItemDrop = (target, types) => target.type === 'item' && types.has('file');
+          let tree = render(
+            <DragBetweenListsComplex listViewProps={{selectedKeys: ['1', '3']}} firstListDnDOptions={{...mockUtilityOptions}} secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} />
+          );
+
+          beginDrag(tree);
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onItemRemove).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '7',
+              dropPosition: 'on'
+            },
+            isInternalDrop: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
           });
         });
       });

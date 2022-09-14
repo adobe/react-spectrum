@@ -80,7 +80,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => itemTypes.has(type))) {
           // If we are performing a on item drop, check if the item in question accepts the dropped item since the item may have heavier restrictions
           // than the droppable collection itself
-          if (target.type === 'item' && target.dropPosition === 'on' && typeof shouldAcceptItemDrop === 'function') {
+          if (target.type === 'item' && target.dropPosition === 'on' && shouldAcceptItemDrop) {
             return shouldAcceptItemDrop(target, itemTypes);
           }
           return true;
