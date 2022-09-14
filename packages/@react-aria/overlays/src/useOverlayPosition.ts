@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, computeTriggerCloseToEdge, PositionResult} from './calculatePosition';
 import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {RefObject, useCallback, useRef, useState} from 'react';
@@ -66,6 +66,52 @@ export interface PositionAria {
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
 export const DEFAULT_MODAL_PADDING = 12;
+
+/**
+ * For buttons positioned near the edge
+ * Don't think this should be a hook
+ */
+export function useCheckOverlayPosition(props: AriaPositionProps): Boolean {
+  let {direction} = useLocale();
+  // TODO trim this list,
+  let {
+    targetRef,
+    overlayRef,
+    scrollRef = overlayRef,
+    placement = 'bottom' as Placement,
+    containerPadding = DEFAULT_MODAL_PADDING,
+    shouldFlip = true,
+    boundaryElement = typeof document !== 'undefined' ? document.body : null,
+    offset = 0,
+    crossOffset = 0,
+    shouldUpdatePosition = true,
+    isOpen = true,
+    onClose,
+    maxHeight
+  } = props;
+
+  if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
+    return;
+  }
+
+  // TODO should this be in a useLayoutEffect
+  // currently this seems to be called each time a useOverlayPosition() is called
+
+  // TODO trim this list, only using let placement, targetNode, padding, boundaryElement, overlayNode
+  // kept for now in case I found issues like need to consider shouldFlip
+  return isTriggerCloseToEdge({
+    placement: translateRTL(placement, direction),
+    overlayNode: overlayRef.current,
+    targetNode: targetRef.current,
+    scrollNode: scrollRef.current,
+    padding: containerPadding,
+    shouldFlip,
+    boundaryElement,
+    offset,
+    crossOffset,
+    maxHeight
+  });
+}
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger

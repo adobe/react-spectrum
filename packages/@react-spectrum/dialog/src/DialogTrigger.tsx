@@ -18,7 +18,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {useCheckOverlayPosition, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
@@ -144,9 +144,9 @@ export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboardDismissDisabled, ...props}) {
   let triggerRef = useRef<HTMLElement>();
-
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
+
+  let repositionPopover = useCheckOverlayPosition({
     targetRef: targetRef || triggerRef,
     overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
@@ -157,7 +157,27 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
     isOpen: state.isOpen
   });
 
+  //console.log('repositionPopover', repositionPopover);
+  //console.log('padding', repositionPopover && (props.containerPadding > 6) ? 6 : props.containerPadding);
+
+  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
+    targetRef: targetRef || triggerRef,
+    overlayRef: unwrapDOMRef(overlayRef),
+    placement: props.placement,
+    containerPadding: repositionPopover && (props.containerPadding == undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
+    offset: props.offset,
+    crossOffset: props.crossOffset,
+    shouldFlip: props.shouldFlip,
+    isOpen: state.isOpen
+  });
+
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
+  //console.log('overlayRef, targetRef, triggerRef', overlayRef, targetRef, triggerRef);
+
+  /* console.log('overlayRef, targetRef', overlayRef, targetRef);
+  console.log('popoverProps, placement, arrowProps, triggerProps, overlayProps', popoverProps, placement, arrowProps, triggerProps, overlayProps);
+
+  console.log('popoverProps2, arrowProps2', popoverProps2, arrowProps2);*/
 
   let triggerPropsWithRef = {
     ...triggerProps,

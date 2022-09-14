@@ -26,7 +26,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {View} from '@react-spectrum/layout';
+import {View} from '@react-spectrum/view';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
