@@ -129,6 +129,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }
 
   let domRef = useDOMRef(ref);
+  let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
@@ -315,8 +316,12 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {isFocusVisible, focusProps} = useFocusRing();
   let isEmpty = state.collection.size === 0;
 
+  let onFocusedResizer = () => {
+    bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
+  };
+
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -346,6 +351,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         setTableWidth={columnState.setTableWidth}
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
+        headerRef={headerRef}
         bodyRef={bodyRef}
         isFocusVisible={isFocusVisible}
         getColumnWidth={columnState.getColumnWidth} />
@@ -354,9 +360,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
-  let headerRef = useRef<HTMLDivElement>();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
@@ -555,7 +560,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered, setIsInResizeMode, isInResizeMode, isEmpty} = useTableContext();
+  let {state, columnState, headerRowHovered, setIsInResizeMode, isInResizeMode, isEmpty, onFocusedResizer} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
@@ -612,6 +617,7 @@ function ResizableTableColumnHeader(props) {
       // without the immediate timeout, Android Chrome doesn't move focus to the resizer
       setTimeout(() => {
         resizingRef.current.focus();
+        onFocusedResizer();
       }, 0);
     }
   }, [columnState.currentlyResizingColumn, column.key]);
