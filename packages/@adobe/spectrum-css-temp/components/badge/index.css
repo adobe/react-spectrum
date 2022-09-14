@@ -33,19 +33,22 @@ governing permissions and limitations under the License.
 
   /* label should always have padding at the end */
   .spectrum-Badge-label {
+    order: 1; /* always be after the icon, regardless of DOM order */
     padding-inline-end: var(--spectrum-global-dimension-size-115);
   }
 
   .spectrum-Badge-icon {
+    flex-shrink: 0;
+    order: 0; /* always be before the label, regardless of DOM order */
     padding-inline-start: var(--spectrum-global-dimension-size-115);
   }
   /* icon + text buttons should have padding between the text and icon no matter the order */
   .spectrum-Badge-icon + .spectrum-Badge-label {
-    padding-inline-start: var(--spectrum-global-dimension-size-65);
+    padding-inline-start: var(--spectrum-global-dimension-size-100);
   }
 
   .spectrum-Badge-label:not([hidden]) + .spectrum-Badge-icon {
-    padding-inline-end: var(--spectrum-global-dimension-size-115);
+    padding-inline-end: var(--spectrum-global-dimension-size-100);
   }
 
   /* text only buttons should have padding at the start */
