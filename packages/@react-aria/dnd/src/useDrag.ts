@@ -267,6 +267,20 @@ export function useDrag(options: DragOptions): DragResult {
           e.stopPropagation();
           startDragging(e.target as HTMLElement);
         }
+      },
+      onClick(e) {
+        if (
+          e.target === e.currentTarget &&
+          !isDragging &&
+          (
+            modalityOnPointerDown.current === 'mouse' ||
+            modalityOnPointerDown.current === null
+          )
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          startDragging(e.target as HTMLElement);
+        }
       }
     };
   }
