@@ -175,7 +175,7 @@ class DragSession {
   private stringFormatter: LocalizedStringFormatter;
   private isVirtualClick: boolean;
   private initialFocused: boolean;
-  private genericAncestor: HTMLElement;
+  private genericAncestor: HTMLElement | SVGElement;
 
   constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
     this.dragTarget = target;
@@ -638,14 +638,36 @@ function isVirtualPointerEvent(event: PointerEvent) {
   );
 }
 
-function findGenericAncestor(dragTarget: DragTarget, validDropTargets: DropTarget[]): HTMLElement {
-  let ancestor = dragTarget.element.parentElement.closest(':not([aria-hidden]):not([role])');
-  let genericAncestor;
-  while (ancestor && ancestor !== document.body) {
-    if (validDropTargets.every(dropTarget => ancestor.contains(dropTarget.element))) {
-      genericAncestor = ancestor;
+function findGenericAncestor(dragTarget: DragTarget, validDropTargets: DropTarget[]): HTMLElement | SVGElement {
+  // Walk upward from each drop target to get all ancestors.
+  let ancestors = [
+    getAncestors(dragTarget.element),
+    ...validDropTargets.map(dropTarget => getAncestors(dropTarget.element))
+  ];
+
+  let minLength = ancestors.reduce((min, parents) => Math.min(min, parents.length), Infinity);
+
+  // Start from outer most parent (document.body) and work inward until one of them doesn't match.
+  let last: HTMLElement | SVGElement;
+  for (let i = 0; i < minLength; i++) {
+    let parent = ancestors[0][i];
+    if (parent.hasAttribute('aria-hidden') || ancestors.some((p) => p[i] !== parent)) {
+      break;
     }
-    ancestor = ancestor.parentElement.closest(':not([aria-hidden]):not([role])');
+
+    if (!parent.hasAttribute('role')) {
+      last = parent;
+    }
   }
-  return genericAncestor;
+
+  return last;
+}
+
+function getAncestors(element: Element) {
+  let parents = [];
+  while (element !== document.body && element.parentElement) {
+    element = element.parentElement;
+    parents.unshift(element);
+  }
+  return parents;
 }
