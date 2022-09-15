@@ -19,7 +19,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {ItemDropTarget, TextItem} from '@react-types/shared';
+import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
@@ -2049,7 +2049,8 @@ function DragBetweenListsOverride(props) {
       let item = list1.getItem(key);
       let dragType = `list-1-adobe-${item.type}`;
       return {
-        [`${dragType}`]: JSON.stringify(item)
+        [`${dragType}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
       };
     }),
     onDragEnd: (e) => {
@@ -2062,7 +2063,7 @@ function DragBetweenListsOverride(props) {
 
   let {dndHooks: dndHooksList2} = useDnDHooks({
     getDropOperation: (target, types) => {
-      if (target.type !== 'root' || !(types.has('list-1-adobe-file'))) {
+      if (target.type !== 'root' || !(types.has('list-1-adobe-file') || types.has('text/plain'))) {
         return 'cancel';
       }
 
@@ -2070,11 +2071,23 @@ function DragBetweenListsOverride(props) {
     },
     onDrop: async (e) => {
       action('onDrop')(e);
-      let itemsToAdd = await Promise.all(
-        e.items
-          .filter(item => item.kind === 'text')
-          .map(async (item: TextItem) => JSON.parse(await item.getText('list-1-adobe-file')))
-      );
+      let {
+        items
+      } = e;
+      let itemsToAdd = [];
+      let text;
+      for (let item of items) {
+        if (item.kind === 'text') {
+          if (item.types.size === 1 && item.types.has('text/plain')) {
+            text = await item.getText('text/plain');
+            itemsToAdd = text.split('\n').map(val => JSON.parse(val));
+          } else {
+            text = await item.getText('list-1-adobe-file');
+            itemsToAdd.push(JSON.parse(text));
+          }
+        }
+      }
+
       list2.append(...itemsToAdd);
     },
     // the below utility handlers shouldn't be called because onDrop is defined
