@@ -1518,28 +1518,8 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
-          let dragCell = within(list2Rows[0]).getByRole('gridcell');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
 
-          let dataTransfer = new DataTransfer();
-          fireEvent.pointerDown(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-          fireEvent(dragCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-
-          act(() => jest.runAllTimers());
-          expect(onInsert).toHaveBeenCalledTimes(0);
-          fireEvent.pointerMove(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-          fireEvent(dragCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 185}));
-
-          // Drop indicator should show up on drop folder even though it only accepts files and the dragged items includes a folder
-          let dropIndicator = within(dropTarget).findByLabelText('Drop on Utilities', {hidden: true});
-          expect(dropIndicator).toBeTruthy();
-
-          fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 185}));
-          fireEvent(dragCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 185}));
-          act(() => jest.runAllTimers());
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
