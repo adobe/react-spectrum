@@ -15,7 +15,7 @@ import {checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useField, useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 
 export interface CheckboxGroupAria {
   /** Props for the checkbox group wrapper element. */
@@ -37,14 +37,12 @@ export interface CheckboxGroupAria {
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
   let {isDisabled, name} = props;
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Checkbox group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
-
-  let {descriptionProps, errorMessageProps} = useField(props);
 
   let domProps = filterDOMProps(props, {labelable: true});
 

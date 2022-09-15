@@ -16,7 +16,7 @@ import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
-import {useField, useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
@@ -48,14 +48,12 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
-
-  let {descriptionProps, errorMessageProps} = useField(props);
 
   let domProps = filterDOMProps(props, {labelable: true});
 
