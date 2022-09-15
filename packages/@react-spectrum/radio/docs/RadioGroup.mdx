@@ -185,6 +185,41 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 </RadioGroup>
 ```
 
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/radio-group/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <RadioGroup
+      aria-label="Favorite pet"
+      onChange={setSelected}
+      validationState={isValid ? 'valid' : 'invalid'}
+      description="Please select a pet."
+      errorMessage={
+        selected === 'cats'
+          ? 'No cats allowed.'
+          : 'Please select dogs.'
+      }>
+      <Radio value="dogs">
+        Dogs
+      </Radio>
+      <Radio value="cats">
+        Cats
+      </Radio>
+      <Radio value="dragons">
+        Dragons
+      </Radio>
+    </RadioGroup>
+  );
+}
+```
+
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/radio-button/#Disabled)
 
