@@ -16,15 +16,19 @@ import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
+import {useField, useLabel} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
 export interface RadioGroupAria {
   /** Props for the radio group wrapper element. */
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
-  labelProps: DOMAttributes
+  labelProps: DOMAttributes,
+  /** Props for the radio grouop description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the radio group error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -50,6 +54,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
+
+  let {descriptionProps, errorMessageProps} = useField(props);
 
   let domProps = filterDOMProps(props, {labelable: true});
 
@@ -130,6 +136,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       ...fieldProps,
       ...focusWithinProps
     }),
-    labelProps
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   };
 }

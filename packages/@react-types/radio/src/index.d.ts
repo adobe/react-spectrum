@@ -18,6 +18,7 @@ import {
   InputBase,
   LabelableProps,
   Orientation,
+  SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
   Validation,
@@ -56,7 +57,7 @@ export interface RadioProps extends FocusableProps {
 }
 
 export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
-export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
   /**
    * The Radio(s) contained within the RadioGroup.
    */
