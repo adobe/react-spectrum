@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, Orientation} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Orientation} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
 
 export interface SeparatorProps extends DOMProps, AriaLabelingProps {
   /**
@@ -26,7 +25,7 @@ export interface SeparatorProps extends DOMProps, AriaLabelingProps {
 
 export interface SeparatorAria {
   /** Props for the separator element. */
-  separatorProps: HTMLAttributes<HTMLElement>
+  separatorProps: DOMAttributes
 }
 
 /**

@@ -136,12 +136,22 @@ storiesOf('TextArea', module)
     'custom height with label',
     () => (
       <Form>
-        <TextArea label="Height size-2000" height="size-2000" />
-        <TextArea label="Height size-2000" height="size-2000" isQuiet />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" isQuiet />
+        <TextArea label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
+        <TextArea labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
       </Form>
     )
+  )
+  .add(
+    'changeable helptext',
+    () => <ValidationExample />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
+  )
+  .add(
+    'changeable helptext custom height',
+    () => <ValidationExample height="175px" minHeight="100px" maxHeight="50vh" />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
   )
   .add('controlled interactive',
     () => <ControlledTextArea />
@@ -153,7 +163,6 @@ function render(props = {}) {
   return (
     <TextArea
       label="Comments"
-      placeholder="React"
       onChange={action('change')}
       onFocus={action('focus')}
       onBlur={action('blur')}
@@ -179,16 +188,13 @@ function renderInFlexRowAndBlock(props = {}) {
       <Flex gap="size-100">
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </Flex>
@@ -196,16 +202,13 @@ function renderInFlexRowAndBlock(props = {}) {
       <Flex gap="size-100" alignItems="end">
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </Flex>
@@ -213,19 +216,33 @@ function renderInFlexRowAndBlock(props = {}) {
       <div>
         <TextArea
           label="Default"
-          placeholder="React"
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
         <TextArea
           label="Quiet"
-          placeholder="React"
           isQuiet
           {...props} />
       </div>
     </Flex>
+  );
+}
+
+function ValidationExample(props) {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextArea
+      {...props}
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
   );
 }

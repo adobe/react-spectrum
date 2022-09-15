@@ -58,7 +58,7 @@ If you are looking for place to start, consider the following options:
 
 ## Developing
 When you are ready to start developing you can clone the repo and start storybook.
-Make sure you have the following requirements installed: [node](https://nodejs.org/) (v11.0.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
+Make sure you have the following requirements installed: [node](https://nodejs.org/) (v14.15.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
 
 Fork the repo first using [this guide](https://help.github.com/articles/fork-a-repo), then clone it locally.
 ```

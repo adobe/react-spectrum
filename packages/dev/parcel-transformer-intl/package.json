@@ -1,0 +1,13 @@
+{
+  "name": "parcel-transformer-intl",
+  "version": "1.0.0",
+  "private": true,
+  "main": "IntlTransformer.js",
+  "engines": {
+    "parcel": "^2.1.1"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.1.1",
+    "@internationalized/string-compiler": "^3.0.0"
+  }
+}

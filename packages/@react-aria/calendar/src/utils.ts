@@ -10,17 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, endOfMonth, isSameDay, startOfMonth, toDate} from '@internationalized/date';
+import {CalendarDate, DateFormatter, endOfMonth, isSameDay, startOfMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
+import type {LocalizedStringFormatter} from '@internationalized/string';
+import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
-export const calendarIds = new WeakMap<CalendarState | RangeCalendarState, string>();
+interface HookData {
+  ariaLabel: string,
+  ariaLabelledBy: string,
+  errorMessageId: string,
+  selectedDateDescription: string
+}
+
+export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
+
+export function getEraFormat(date: CalendarDate): 'short' | undefined {
+  return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
+}
 
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let start: CalendarDate, end: CalendarDate;
   if ('highlightedRange' in state) {
@@ -29,6 +41,15 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
     start = end = state.value;
   }
 
+  let dateFormatter = useDateFormatter({
+    weekday: 'long',
+    month: 'long',
+    year: 'numeric',
+    day: 'numeric',
+    era: getEraFormat(start) || getEraFormat(end),
+    timeZone: state.timeZone
+  });
+
   let anchorDate = 'anchorDate' in state ? state.anchorDate : null;
   return useMemo(() => {
     // No message if currently selecting a range, or there is nothing highlighted.
@@ -36,26 +57,36 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
       // Use a single date message if the start and end dates are the same day,
       // otherwise include both dates.
       if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: toDate(start, state.timeZone)});
+        let date = dateFormatter.format(start.toDate(state.timeZone));
+        return stringFormatter.format('selectedDateDescription', {date});
       } else {
-        return formatMessage('selectedRangeDescription', {start: toDate(start, state.timeZone), end: toDate(end, state.timeZone)});
+        let dateRange = formatRange(dateFormatter, stringFormatter, start, end, state.timeZone);
+
+        return stringFormatter.format('selectedRangeDescription', {dateRange});
       }
     }
     return '';
-  }, [start, end, anchorDate, state.timeZone, formatMessage]);
+  }, [start, end, anchorDate, state.timeZone, stringFormatter, dateFormatter]);
 }
 
-export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string) {
+export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: startDate.calendar.identifier !== 'gregory' ? 'long' : undefined,
-    calendar: startDate.calendar.identifier
+    era,
+    calendar: startDate.calendar.identifier,
+    timeZone
   });
 
   let dateFormatter = useDateFormatter({
-    dateStyle: 'long',
-    calendar: startDate.calendar.identifier
+    month: 'long',
+    year: 'numeric',
+    day: 'numeric',
+    era,
+    calendar: startDate.calendar.identifier,
+    timeZone
   });
 
   return useMemo(() => {
@@ -65,10 +96,43 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
       if (isSameDay(endDate, endOfMonth(startDate))) {
         return monthFormatter.format(startDate.toDate(timeZone));
       } else if (isSameDay(endDate, endOfMonth(endDate))) {
-        return monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+        return isAria
+          ? formatRange(monthFormatter, stringFormatter, startDate, endDate, timeZone)
+          : monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
       }
     }
 
-    return dateFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
-  }, [startDate, endDate, monthFormatter, dateFormatter, timeZone]);
+    return isAria
+      ? formatRange(dateFormatter, stringFormatter, startDate, endDate, timeZone)
+      : dateFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+  }, [startDate, endDate, monthFormatter, dateFormatter, stringFormatter, timeZone, isAria]);
+}
+
+function formatRange(dateFormatter: DateFormatter, stringFormatter: LocalizedStringFormatter, start: CalendarDate, end: CalendarDate, timeZone: string) {
+  let parts = dateFormatter.formatRangeToParts(start.toDate(timeZone), end.toDate(timeZone));
+
+  // Find the separator between the start and end date. This is determined
+  // by finding the last shared literal before the end range.
+  let separatorIndex = -1;
+  for (let i = 0; i < parts.length; i++) {
+    let part = parts[i];
+    if (part.source === 'shared' && part.type === 'literal') {
+      separatorIndex = i;
+    } else if (part.source === 'endRange') {
+      break;
+    }
+  }
+
+  // Now we can combine the parts into start and end strings.
+  let startValue = '';
+  let endValue = '';
+  for (let i = 0; i < parts.length; i++) {
+    if (i < separatorIndex) {
+      startValue += parts[i].value;
+    } else if (i > separatorIndex) {
+      endValue += parts[i].value;
+    }
+  }
+
+  return stringFormatter.format('dateRange', {startDate: startValue, endDate: endValue});
 }

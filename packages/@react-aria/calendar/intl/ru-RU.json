@@ -1,11 +1,14 @@
 {
-  "dateSelected": "выбрано {date, date, full}",
+  "dateRange": "С {startDate} по {endDate}",
+  "dateSelected": "Выбрано {date}",
   "finishRangeSelectionPrompt": "Щелкните, чтобы завершить выбор диапазона дат",
+  "maximumDate": "Последняя доступная дата",
+  "minimumDate": "Первая доступная дата",
   "next": "Далее",
   "previous": "Назад",
-  "selectedDateDescription": "Выбранная дата: {date, date, full}",
-  "selectedRangeDescription": "Выбранный диапазон: {start, date, long} – {end, date, long}",
+  "selectedDateDescription": "Выбранная дата: {date}",
+  "selectedRangeDescription": "Выбранный диапазон: {dateRange}",
   "startRangeSelectionPrompt": "Щелкните, чтобы начать выбор диапазона дат",
-  "todayDate": "Сегодня, {date, date, full}",
-  "todayDateSelected": "Сегодня, выбрано {date, date, full}"
+  "todayDate": "Сегодня, {date}",
+  "todayDateSelected": "Сегодня, выбрано {date}"
 }

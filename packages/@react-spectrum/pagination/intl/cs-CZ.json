@@ -1,3 +1,3 @@
 {
-  "page_count": "z {n, plural, =one{# stránky} other{# stránek}}"
+  "page_count": "z {n, plural, one{# stránky} other{# stránek}}"
 }

@@ -27,10 +27,6 @@ storiesOf('ColorWheel', module)
     () => <ColorWheel isDisabled defaultValue="hsl(0, 100%, 50%)" />
   )
   .add(
-    'step',
-    () => <ColorWheel step={6} defaultValue="hsl(0, 100%, 50%)" />
-  )
-  .add(
     'custom size',
     () => {
       let [size, setSize] = useState('size-2400');
@@ -48,10 +44,33 @@ storiesOf('ColorWheel', module)
     'controlled',
     () => {
       let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-      let colorCSS = color.toString('css');
+      let colorCSS = color?.toString('css');
       return (<Flex gap={'size-500'} direction="row" alignItems="center">
         <ColorWheel onChange={setColor} value={color} />
         <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
       </Flex>);
     }
+  )
+  .add(
+    'controlled hsl',
+    () => <Flex gap={'size-500'} direction="row" alignItems="center"><ControlledHSL onChangeEnd={action('onChangeEnd')} /></Flex>
   );
+
+export function ControlledHSL(props) {
+  let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));
+  let colorCSS = color.toString('css');
+  let onChangeEnd = (color) => {
+    props.onChangeEnd && props.onChangeEnd(color);
+    setColor(color);
+  };
+  let onChange = (color) => {
+    props.onChange && props.onChange(color);
+    setColor(color);
+  };
+  return (
+    <>
+      <ColorWheel onChange={onChange} onChangeEnd={onChangeEnd} value={color.toString('hsl')} />
+      <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
+    </>
+  );
+}

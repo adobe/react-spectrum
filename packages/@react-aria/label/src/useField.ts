@@ -10,18 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {HelpTextProps} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
+import {DOMAttributes, HelpTextProps, Validation} from '@react-types/shared';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
-interface AriaFieldProps extends LabelAriaProps, HelpTextProps {}
+export interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation, 'isRequired'> {}
 
 export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -30,11 +29,11 @@ export interface FieldAria extends LabelAria {
  * @param props - Props for the Field.
  */
 export function useField(props: AriaFieldProps): FieldAria {
-  let {description, errorMessage} = props;
+  let {description, errorMessage, validationState} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let descriptionId = useSlotId();
-  let errorMessageId = useSlotId();
+  let descriptionId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
+  let errorMessageId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [
@@ -45,19 +44,14 @@ export function useField(props: AriaFieldProps): FieldAria {
     ].filter(Boolean).join(' ') || undefined
   });
 
-  let descriptionProps: HTMLAttributes<HTMLElement> = {};
-  let errorMessageProps: HTMLAttributes<HTMLElement> = {};
-  if (description) {
-    descriptionProps.id = descriptionId;
-  }
-  if (errorMessage) {
-    errorMessageProps.id = errorMessageId;
-  }
-
   return {
     labelProps,
     fieldProps,
-    descriptionProps,
-    errorMessageProps
+    descriptionProps: {
+      id: descriptionId
+    },
+    errorMessageProps: {
+      id: errorMessageId
+    }
   };
 }

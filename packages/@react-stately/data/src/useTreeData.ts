@@ -12,7 +12,7 @@
 
 import {Key, useMemo, useState} from 'react';
 
-interface TreeOptions<T extends object> {
+export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
@@ -34,7 +34,7 @@ interface TreeNode<T extends object> {
   children: TreeNode<T>[]
 }
 
-interface TreeData<T extends object> {
+export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
   items: TreeNode<T>[],
 
@@ -123,7 +123,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    getChildren = (item: any) => item.children || []
+    getChildren = (item: any) => item.children
   } = options;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
 
@@ -133,7 +133,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [items, setItems] = useState(initialNodes);
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[], parentKey?: Key | null) {
+  function buildTree(initialItems: T[] = [], parentKey?: Key | null) {
     return initialItems.map(item => {
       let node: TreeNode<T> = {
         key: getKey(item),

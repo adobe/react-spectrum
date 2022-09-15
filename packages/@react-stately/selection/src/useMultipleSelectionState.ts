@@ -10,19 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useRef, useState} from 'react';
-import {MultipleSelection, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
 
+function equalSets(setA, setB) {
+  if (setA.size !== setB.size) {
+    return false;
+  }
+
+  for (let item of setA) {
+    if (!setB.has(item)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export interface MultipleSelectionStateProps extends MultipleSelection {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /** Whether onSelectionChange should fire even if the new set of keys is the same as the last. */
+  allowDuplicateSelectionEvents?: boolean,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior
+}
+
 /**
  * Manages state for multiple selection and focus in a collection.
  */
-export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
+export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
-    disallowEmptySelection
+    disallowEmptySelection,
+    allowDuplicateSelectionEvents,
+    selectionBehavior: selectionBehaviorProp = 'toggle',
+    disabledBehavior = 'all'
   } = props;
 
   // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
@@ -42,10 +68,28 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   let disabledKeysProp = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
+  let [selectionBehavior, setSelectionBehavior] = useState(selectionBehaviorProp);
+
+  // If the selectionBehavior prop is set to replace, but the current state is toggle (e.g. due to long press
+  // to enter selection mode on touch), and the selection becomes empty, reset the selection behavior.
+  if (selectionBehaviorProp === 'replace' && selectionBehavior === 'toggle' && typeof selectedKeys === 'object' && selectedKeys.size === 0) {
+    setSelectionBehavior('replace');
+  }
+
+  // If the selectionBehavior prop changes, update the state as well.
+  let lastSelectionBehavior = useRef(selectionBehaviorProp);
+  useEffect(() => {
+    if (selectionBehaviorProp !== lastSelectionBehavior.current) {
+      setSelectionBehavior(selectionBehaviorProp);
+      lastSelectionBehavior.current = selectionBehaviorProp;
+    }
+  }, [selectionBehaviorProp]);
 
   return {
     selectionMode,
     disallowEmptySelection,
+    selectionBehavior,
+    setSelectionBehavior,
     get isFocused() {
       return isFocusedRef.current;
     },
@@ -65,8 +109,13 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
       setFocusedKey(k);
     },
     selectedKeys,
-    setSelectedKeys,
-    disabledKeys: disabledKeysProp
+    setSelectedKeys(keys) {
+      if (allowDuplicateSelectionEvents || !equalSets(keys, selectedKeys)) {
+        setSelectedKeys(keys);
+      }
+    },
+    disabledKeys: disabledKeysProp,
+    disabledBehavior
   };
 }
 

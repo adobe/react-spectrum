@@ -1,4 +1,8 @@
 {
+  "columnResizer": "Groottewijziging van kolom",
   "loading": "Laden...",
-  "loadingMore": "Meer laden..."
+  "loadingMore": "Meer laden...",
+  "resizeColumn": "Kolomgrootte wijzigen",
+  "sortAscending": "Oplopend sorteren",
+  "sortDescending": "Aflopend sorteren"
 }

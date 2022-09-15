@@ -20,7 +20,7 @@ interface GridCollectionOptions {
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
-  let columns = [];
+  let columns: GridNode<T>[][] = [];
   let seen = new Map();
   for (let column of columnNodes) {
     let parentKey = column.parentKey;
@@ -104,7 +104,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
         }
 
         item.level = i;
-        item.index = colIndex;
+        item.colIndex = colIndex;
         row.push(item);
       }
 
@@ -216,6 +216,7 @@ export class TableCollection<T> extends GridCollection<T> {
     for (let node of nodes) {
       visit(node);
     }
+
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 

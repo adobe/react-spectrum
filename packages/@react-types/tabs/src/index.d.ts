@@ -21,16 +21,22 @@ import {
 } from '@react-types/shared';
 import {Key, ReactNode} from 'react';
 
-export interface AriaTabProps {
+export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
   key: Key,
   /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
+  /**
+   * Whether the Tabs are disabled.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
+  isDisabled?: boolean
+}
 
-interface AriaTabListBase {
+interface AriaTabListBase extends AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -40,12 +46,7 @@ interface AriaTabListBase {
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
-  /**
-   * Whether the Tabs are disabled.
-   * Shows that a selection exists, but is not available in that circumstance.
-   */
-  isDisabled?: boolean
+  orientation?: Orientation
 }
 
 export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
@@ -61,6 +62,8 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, 
   disabledKeys?: Iterable<Key>,
   /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
+  /** Whether the tabs are displayed in an emphasized style. */
+  isEmphasized?: boolean,
   /** The amount of space between the tabs. */
   density?: 'compact' | 'regular'
 }

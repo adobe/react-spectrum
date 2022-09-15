@@ -13,7 +13,7 @@
 import {RefObject} from 'react';
 import {useDOMPropsResponderContext} from './DOMPropsContext';
 
-export function useDOMPropsResponder(domRef: RefObject<HTMLElement>) {
+export function useDOMPropsResponder(domRef: RefObject<Element>) {
 
   let domProps = useDOMPropsResponderContext({ref: domRef}) || {};
 

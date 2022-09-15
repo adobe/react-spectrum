@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLinkProps} from '@react-types/link';
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps extends PressEvents {
+export interface BreadcrumbItemProps extends AriaLinkProps {
   /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
   /**
@@ -36,18 +37,16 @@ export interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
   elementType?: string
 }
 
-export interface BreadcrumbsProps<T> {
+export interface BreadcrumbsProps {}
+export interface AriaBreadcrumbsProps extends BreadcrumbsProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps, StyleProps {
   /** The breadcrumb items. */
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
   /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
-  onAction?: (key: Key) => void
-}
-
-export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
-
-export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
+  onAction?: (key: Key) => void,
   /**
    * Size of the Breadcrumbs including spacing and layout.
    * @default 'L'
@@ -58,5 +57,9 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
-  isMultiline?: boolean
+  isMultiline?: boolean,
+  /**
+   * Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render.
+   */
+  autoFocusCurrent?: boolean
 }

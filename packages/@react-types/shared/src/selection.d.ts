@@ -16,7 +16,7 @@ export interface SingleSelection {
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
   /** The currently selected key in the collection (controlled). */
-  selectedKey?: Key,
+  selectedKey?: Key | null,
   /** The initial selected key in the collection (uncontrolled). */
   defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
@@ -24,6 +24,7 @@ export interface SingleSelection {
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
+export type SelectionBehavior = 'toggle' | 'replace';
 export type Selection = 'all' | Set<Key>;
 export interface MultipleSelection {
   /** The type of selection that is allowed in the collection. */
@@ -40,4 +41,10 @@ export interface MultipleSelection {
   disabledKeys?: Iterable<Key>
 }
 
+export interface SpectrumSelectionProps {
+  /** How selection should be displayed. */
+  selectionStyle?: 'checkbox' | 'highlight'
+}
+
 export type FocusStrategy = 'first' | 'last';
+export type DisabledBehavior = 'selection' | 'all';

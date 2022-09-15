@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key, RefObject} from 'react';
 
 export interface DragDropEvent {
   // Relative to the target element's position
@@ -118,12 +118,30 @@ export interface DragTypes {
   has(type: string): boolean
 }
 
+export interface DropTargetDelegate {
+  /**
+   * Returns a drop target within a collection for the given x and y coordinates.
+   * The point is provided relative to the top left corner of the collection container.
+   * A drop target can be checked to see if it is valid using the provided `isValidDropTarget` function.
+   */
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
+}
+
 export interface DroppableCollectionProps {
+  /**
+   * A function returning the drop operation to be performed when items matching the given types are dropped
+   * on the drop target.
+   */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
+  /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
+  /** Handler that is called when a valid drag is moved within the drop target. */
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
+  /** Handler that is called after a valid drag is held over the drop target for a period of time. */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
+  /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
+  /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void
 }
 
@@ -139,11 +157,19 @@ interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>
 }
 
+export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
+
 export interface DraggableCollectionProps {
+  /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
+  /** Handler that is called when the dragged element is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
+  /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
+  /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>) => DragItem[],
-  renderPreview?: (selectedKeys: Set<Key>, draggedKey: Key) => JSX.Element,
+  /** The ref of the element that will be rendered as the drag preview while dragging. */
+  preview?: RefObject<DragPreviewRenderer>,
+  /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[]
 }

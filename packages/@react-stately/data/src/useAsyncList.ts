@@ -14,7 +14,7 @@ import {createListActions, ListData, ListState} from './useListData';
 import {Key, Reducer, useEffect, useReducer} from 'react';
 import {LoadingState, Selection, SortDescriptor} from '@react-types/shared';
 
-interface AsyncListOptions<T, C> {
+export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
   /** The initial sort descriptor. */
@@ -32,7 +32,8 @@ interface AsyncListOptions<T, C> {
   sort?: AsyncListLoadFunction<T, C>
 }
 
-type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
+type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+
 interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
   items: T[],
@@ -89,7 +90,7 @@ interface Action<T, C> {
   filterText?: string
 }
 
-interface AsyncListData<T> extends ListData<T> {
+export interface AsyncListData<T> extends ListData<T> {
   /** Whether data is currently being loaded. */
   isLoading: boolean,
   /** If loading data failed, then this contains the error that occurred. */

@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import V2Popover from '@react/react-spectrum/Popover';
 
 function PopoverWithDialog({children}) {
   return (
@@ -29,7 +27,7 @@ function PopoverWithDialog({children}) {
 
 describe('Popover', function () {
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
   afterAll(() => {
     jest.useRealTimers();
@@ -54,7 +52,6 @@ describe('Popover', function () {
     it.each`
       Name      | Component            | props                | expectedTabIndex
       ${'v3'}   | ${PopoverWithDialog} | ${{}}                | ${'-1'}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}  | ${'1'}
     `('$Name has a tabIndex set', async function ({Name, Component, props, expectedTabIndex}) {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -66,20 +63,17 @@ describe('Popover', function () {
       act(() => {
         jest.runAllTimers();
       });
-      if (Name === 'v3') {
-        await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
-      }
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      }); // wait for animation
       expect(dialog).toHaveAttribute('tabIndex', expectedTabIndex);
     });
 
     it.each`
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name auto focuses the first tabbable element by default', async function ({Name, Component, props}) {
-      let {getByRole, getByTestId} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <Component {...props}>
             <input data-testid="input1" />
@@ -91,22 +85,16 @@ describe('Popover', function () {
       act(() => {
         jest.runAllTimers();
       });
-      if (Name === 'v2') {
-        let input1 = getByTestId('input1');
-        expect(document.activeElement).toBe(input1);
-      } else {
-        let dialog = getByRole('dialog');
-        await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
-        expect(document.activeElement).toBe(dialog);
-      }
+      let dialog = getByRole('dialog');
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      }); // wait for animation
+      expect(document.activeElement).toBe(dialog);
     });
 
     it.each`
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{isOpen: true}}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name auto focuses the dialog itself if there is no focusable child', async function ({Name, Component, props}) {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -119,18 +107,15 @@ describe('Popover', function () {
 
       let dialog = getByRole('dialog');
 
-      if (Name === 'v3') {
-        await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
-      }
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      }); // wait for animation
       expect(document.activeElement).toBe(dialog);
     });
 
     it.each`
       Name      | Component            | props
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
-      ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name allows autofocus prop on a child element to work as expected', async function ({Name, Component, props}) {
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
@@ -144,11 +129,9 @@ describe('Popover', function () {
         jest.runAllTimers();
       });
 
-      if (Name === 'v3') {
-        await waitFor(() => {
-          expect(getByRole('dialog')).toBeVisible();
-        }); // wait for animation
-      }
+      await waitFor(() => {
+        expect(getByRole('dialog')).toBeVisible();
+      }); // wait for animation
 
       let input2 = getByTestId('input2');
       expect(document.activeElement).toBe(input2);
@@ -172,11 +155,9 @@ describe('Popover', function () {
 
       let dialog = getByRole('dialog');
 
-      if (Name === 'v3') {
-        await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
-      }
+      await waitFor(() => {
+        expect(dialog).toBeVisible();
+      }); // wait for animation
 
       let input1 = getByTestId('input1');
       let input2 = getByTestId('input2');

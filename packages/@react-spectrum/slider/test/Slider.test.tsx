@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {installMouseEvent} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
@@ -207,13 +206,17 @@ describe('Slider', function () {
   });
 
   describe('keyboard interactions', () => {
-    // Can't test arrow/page up/down, home/end arrows because they are handled by the browser and JSDOM doesn't feel like it.
-
     it.each`
       Name                                 | props                                 | commands
       ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
       ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
       ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -225,15 +228,89 @@ describe('Slider', function () {
     });
 
     it.each`
+      Name                                 | props                                 | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(up/down arrows, ltr)'}           | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(up/down arrows, rtl)'}           | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowUp, result: +1}, {left: press.ArrowDown, result: -1}]}
+      ${'(page up/down, ltr)'}             | ${{locale: 'de-DE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(page up/down, rtl)'}             | ${{locale: 'ar-AE'}}                  | ${[{left: press.PageUp, result: +10}, {left: press.PageDown, result: -10}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.Home, result: -50}, {left: press.End, result: +100}]}
+    `('$Name moves the slider in the correct direction orientation vertical', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} orientation="vertical" />
+        </Provider>
+      );
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
       Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +20}, {left: press.ArrowLeft, result: -20}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -20}, {left: press.ArrowLeft, result: +20}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
-          <Slider label="Label" step={10} defaultValue={50} />
+          <Slider label="Label" step={20} defaultValue={40} />
         </Provider>
       );
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
+      Name                          | props                 | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +10}, {left: press.ArrowLeft, result: -10}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +20}, {left: press.PageDown, result: -20}]}
+    `('$Name sets page size to a multiple of step', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" minValue={0} maxValue={230} defaultValue={50} step={10} />
+        </Provider>
+      );
+      // The slider page size should be initially calulated as 230/10 = 23 and then snapped to 20 so it is a multiple of the step
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
+      Name                          | props                 | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +2}, {left: press.PageDown, result: -2}]}
+    `('$Name sets page size to a multiple of step (scenario: step is less than min)', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" minValue={50} maxValue={75} defaultValue={60} step={2} />
+        </Provider>
+      );
+      // The slider page size should be initially calulated as 25/10 = 2.5, snaps to 2
+      let slider = tree.getByRole('slider');
+      testKeypresses([slider, slider], commands);
+    });
+
+    it.each`
+    Name                          | props                 | commands
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +2}, {left: press.ArrowLeft, result: -2}]}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -2}, {left: press.ArrowLeft, result: +2}]}
+      ${'(page up/down, ltr)'}      | ${{locale: 'de-DE'}}  | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
+      ${'(page up/down, rtl)'}      | ${{locale: 'ar-AE'}}  | ${[{left: press.PageUp, result: +4}, {left: press.PageDown, result: -4}]}
+    `('$Name sets page size to a multiple of step (scenario: step is greater than max)', function ({props, commands}) {
+      let tree = render(
+        <Provider theme={theme} {...props}>
+          <Slider label="Label" minValue={-50} maxValue={-15} defaultValue={-40} step={2} />
+        </Provider>
+      );
+      // The slider page size should be initially calulated as 35/10 = 3.5, snaps to 4
       let slider = tree.getByRole('slider');
       testKeypresses([slider, slider], commands);
     });
@@ -255,11 +332,8 @@ describe('Slider', function () {
 
   describe('mouse interactions', () => {
     beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-    });
-    afterAll(() => {
       // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
     installMouseEvent();
@@ -391,11 +465,8 @@ describe('Slider', function () {
 
   describe('touch interactions', () => {
     beforeAll(() => {
-      jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-    });
-    afterAll(() => {
       // @ts-ignore
-      window.HTMLElement.prototype.offsetWidth.mockReset();
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
 
     it('doesn\'t jump to second touch on track while already dragging', () => {

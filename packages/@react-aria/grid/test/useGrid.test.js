@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Grid} from '../stories/example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
@@ -38,6 +38,13 @@ function renderGrid(props = {}) {
 }
 
 describe('useGrid', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+  });
+  afterEach(() => {
+    // run out notifications
+    act(() => {jest.runAllTimers();});
+  });
   it('gridFocusMode = row, cellFocusMode = cell', () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'cell'});
 

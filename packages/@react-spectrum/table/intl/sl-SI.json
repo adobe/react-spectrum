@@ -1,4 +1,8 @@
 {
+  "columnResizer": "Prilagojevalnik velikosti stolpcev",
   "loading": "Nalaganje...",
-  "loadingMore": "Nalaganje več vsebine..."
+  "loadingMore": "Nalaganje več vsebine...",
+  "resizeColumn": "Spremeni velikost stolpca",
+  "sortAscending": "Razvrsti naraščajoče",
+  "sortDescending": "Razvrsti padajoče"
 }

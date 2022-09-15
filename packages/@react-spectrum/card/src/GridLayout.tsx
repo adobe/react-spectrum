@@ -13,7 +13,7 @@
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Node} from '@react-types/shared';
+import {Node, Orientation} from '@react-types/shared';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
   // /**
@@ -22,7 +22,7 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   /**
    * The minimum item size.
-   * @default 208 x 208
+   * @default 208 x 208 for horizontal card orientation. 102 x 102 for vertical card orientation.
    */
   minItemSize?: Size,
   /**
@@ -30,11 +30,6 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * @default Infinity
    */
   maxItemSize?: Size,
-  /**
-   * The margin around the grid view between the edges and the items.
-   * @default 24
-   */
-  margin?: number, // TODO: Perhaps should accept Responsive<DimensionValue>
   /**
    * The minimum space required between items.
    * @default 18 x 18
@@ -46,18 +41,23 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    */
   maxColumns?: number,
   /**
-   * The vertical padding for an item.
+   * The additional padding along the card's main axis. Affects the sizing of the content area following the card image.
    * @default 95
    */
-  itemPadding?: number
+  itemPadding?: number,
+  /**
+   * The orientation of the cards withn the grid.
+   * @default vertical
+   */
+  cardOrientation?: Orientation
 }
 
-// TODO: copied from V2, update this with the proper spectrum values
-// Should these be affected by Scale as well?
 const DEFAULT_OPTIONS = {
   S: {
     itemPadding: 20,
-    minItemSize: new Size(96, 96),
+    minItemSize: {
+      'vertical': new Size(96, 96)
+    },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 8,
     minSpace: new Size(6, 6),
@@ -65,10 +65,20 @@ const DEFAULT_OPTIONS = {
     dropSpacing: 50
   },
   L: {
-    // TODO: for now bumping this higher since the new cards have more stuff in the content area.
-    // Will need to ask Spectrum what these values should be. Used to be 52. Do the same for S above
-    itemPadding: 95,
-    minItemSize: new Size(208, 208),
+    itemPadding: {
+      'vertical': {
+        'medium': 78,
+        'large': 98
+      },
+      'horizontal': {
+        'medium': 150,
+        'large': 170
+      }
+    },
+    minItemSize: {
+      'vertical': new Size(208, 208),
+      'horizontal': new Size(102, 102)
+    },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
     minSpace: new Size(18, 18),
@@ -80,10 +90,10 @@ const DEFAULT_OPTIONS = {
 export class GridLayout<T> extends BaseLayout<T> {
   protected minItemSize: Size;
   protected maxItemSize: Size;
-  protected margin: number;
   protected minSpace: Size;
   protected maxColumns: number;
   itemPadding: number;
+  cardOrientation: Orientation;
   protected itemSize: Size;
   protected numColumns: number;
   protected numRows: number;
@@ -91,14 +101,14 @@ export class GridLayout<T> extends BaseLayout<T> {
 
   constructor(options: GridLayoutOptions = {}) {
     super(options);
-    // TODO: restore cardSize option when we support different size cards
     let cardSize = 'L';
-    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
+    this.cardOrientation = options.cardOrientation || 'vertical';
+    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize[this.cardOrientation];
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding;
+    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation][this.scale];
     this.itemSize = null;
     this.numColumns = 0;
     this.numRows = 0;
@@ -109,7 +119,6 @@ export class GridLayout<T> extends BaseLayout<T> {
     return 'grid';
   }
 
-  // TODO: Below functions From V2 Maybe don't need this? Might be a short cut for getting all visible rects since otherwise we'd have to iterate across all nodes
   getIndexAtPoint(x, y, allowInsertingAtEnd = false) {
     let itemHeight = this.itemSize.height + this.minSpace.height;
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
@@ -141,7 +150,7 @@ export class GridLayout<T> extends BaseLayout<T> {
       for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
         let keyFromIndex = this.collection.rows[index].key;
         let layoutInfo = this.layoutInfos.get(keyFromIndex);
-        if (this.isVisible(layoutInfo, rect)) {
+        if (layoutInfo && this.isVisible(layoutInfo, rect)) {
           res.push(layoutInfo);
         }
       }
@@ -159,10 +168,13 @@ export class GridLayout<T> extends BaseLayout<T> {
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;
+    let horizontalItemPadding = this.cardOrientation === 'horizontal' ? this.itemPadding : 0;
+    let verticalItemPadding = this.cardOrientation === 'vertical' ? this.itemPadding : 0;
+    let minCardWidth = this.minItemSize.width + horizontalItemPadding;
 
     // Compute the number of rows and columns needed to display the content
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor((availableWidth + this.minSpace.width) / (this.minItemSize.width + this.minSpace.width));
+    let columns = Math.floor((availableWidth + this.minSpace.width) / (minCardWidth + this.minSpace.width));
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
 
@@ -171,13 +183,11 @@ export class GridLayout<T> extends BaseLayout<T> {
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / this.numColumns);
-    itemWidth = Math.max(this.minItemSize.width, Math.min(this.maxItemSize.width, itemWidth));
-
+    itemWidth = Math.max(minCardWidth, Math.min(this.maxItemSize.width, itemWidth));
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - this.minItemSize.width) / this.minItemSize.width);
-    let itemHeight = this.minItemSize.height + this.minItemSize.height * t;
-    itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + this.itemPadding;
-
+    let t = ((itemWidth - minCardWidth) / minCardWidth);
+    let itemHeight = Math.floor(this.minItemSize.height + this.minItemSize.height * t);
+    itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + verticalItemPadding;
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
@@ -226,6 +236,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
     // TODO: Perhaps have it so that the child key for each row is stored with the layoutInfo?
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    layoutInfo.allowOverflow = true;
     this.layoutInfos.set(node.key, layoutInfo);
     return layoutInfo;
   }

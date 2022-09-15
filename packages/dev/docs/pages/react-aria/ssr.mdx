@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -61,7 +61,7 @@ function MyComponent() {
 
 ## Locale selection
 
-When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
+When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale-specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
 
 ```tsx
 import {SSRProvider} from '@react-aria/ssr';

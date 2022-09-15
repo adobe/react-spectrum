@@ -26,6 +26,11 @@ governing permissions and limitations under the License.
   --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-global-color-blue-400);
   --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-global-color-blue-500);
   --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-global-color-blue-600);
+  --spectrum-calendar-day-background-color-cap-invalid-selected: var(--spectrum-global-color-red-500);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-hover: var(--spectrum-global-color-red-600);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-down: var(--spectrum-global-color-red-700);
+  --spectrum-calendar-day-background-color-selected-hover: var(--spectrum-alias-highlight-selected);
+  --spectrum-calendar-day-background-color-invalid-selected: rgba(215, 55, 63, 0.15);
   --spectrum-calendar-day-text-color-cap-selected: white;
   --spectrum-calendar-day-text-color-cap-selected-hover: white;
   --spectrum-calendar-day-today-background-color: var(--spectrum-global-color-gray-300);
@@ -33,13 +38,15 @@ governing permissions and limitations under the License.
   --spectrum-calendar-day-today-background-color-down: var(--spectrum-global-color-gray-500);
 
   --background: transparent;
-  background: var(--background);
+  &:after {
+    background: var(--background);
+  }
 
   &.is-range-selection {
     background: var(--spectrum-calendar-day-background-color-selected);
 
-    &:after {
-      background: var(--background);
+    &.is-invalid {
+      background: var(--spectrum-calendar-day-background-color-invalid-selected);
     }
   }
 
@@ -54,6 +61,10 @@ governing permissions and limitations under the License.
   &.is-selection-end {
     color: var(--spectrum-calendar-day-text-color-cap-selected);
     --background: var(--spectrum-calendar-day-background-color-cap-selected);
+
+    &.is-invalid {
+      --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected);
+    }
   }
 
   &:hover {
@@ -62,7 +73,11 @@ governing permissions and limitations under the License.
 
     &.is-range-selection {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
-      --background: var(--spectrum-alias-highlight-selected);
+      --background: var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
     }
 
     &.is-today {
@@ -74,6 +89,10 @@ governing permissions and limitations under the License.
     &.is-selection-end {
       color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
       --background: var(--spectrum-calendar-day-background-color-cap-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-hover);
+      }
     }
   }
 
@@ -83,7 +102,11 @@ governing permissions and limitations under the License.
 
     &.is-range-selection {
       color: var(--spectrum-calendar-day-text-color-selected-hover);
-      --background:  var(--spectrum-alias-highlight-selected-hover);
+      --background:  var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
     }
 
     &.is-today {
@@ -95,6 +118,10 @@ governing permissions and limitations under the License.
     &.is-selection-end {
       color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
       --background: var(--spectrum-calendar-day-background-color-cap-selected-down);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-down);
+      }
     }
   }
 
@@ -115,13 +142,67 @@ governing permissions and limitations under the License.
     &.is-selected {
       color: var(--spectrum-calendar-day-text-color-disabled);
     }
+  }
 
-    &.is-range-selection {
-      background: var(--spectrum-global-color-gray-200);
+  &.is-unavailable:not(.is-selected) {
+    &,
+    &.is-today {
+      --background: transparent;
     }
+  }
+}
 
-    &.is-selected {
-      --background: var(--spectrum-global-color-gray-200);
+@media (forced-colors: active) {
+  .spectrum-Calendar-date {
+    color: CanvasText;
+    forced-color-adjust: none;
+    --spectrum-calendar-button-icon-color: ButtonText;
+    --spectrum-calendar-day-background-color-cap-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-down: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-cap-selected-down: Highlight;
+    --spectrum-calendar-day-background-color-cap-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-disabled: ButtonFace;
+    --spectrum-calendar-day-background-color-down: ButtonFace;
+    --spectrum-calendar-day-background-color-hover: ButtonFace;
+    --spectrum-calendar-day-background-color-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-selected: Highlight;  
+    --spectrum-calendar-day-border-color-key-focus: ButtonText;
+    --spectrum-calendar-day-text-color-cap-selected: HighlightText;
+    --spectrum-calendar-day-text-color-cap-selected-hover: HighlightText;
+    --spectrum-calendar-day-text-color-disabled: GrayText;
+    --spectrum-calendar-day-text-color-hover: ButtonText;
+    --spectrum-calendar-day-text-color-selected-hover: HighlightText;
+    --spectrum-calendar-day-title-text-color: CanvasText;
+    --spectrum-calendar-day-today-background-color: ButtonText;
+    --spectrum-calendar-day-today-background-color-down: ButtonText;
+    --spectrum-calendar-day-today-background-color-hover: ButtonText;
+    --spectrum-calendar-day-today-text-color: ButtonFace;
+    &.is-range-selection {
+      color: HighlightText;
+    }
+    &.is-disabled {
+      &.is-range-selection {
+        background: Highlight;
+        color: HighlightText;
+      }
+  
+      &.is-selected {
+        background: Highlight;
+        color: HighlightText;
+      }
+    }
+    &.is-unavailable {
+      &.is-today {
+        color: var(--spectrum-calendar-day-text-color-hover);
+      }
+    }
+    &:hover {
+      &.is-today {
+        color: var(--spectrum-calendar-day-today-text-color);
+      }
     }
   }
 }

@@ -11,24 +11,19 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerBase, DateValue} from '@react-types/datepicker';
-import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import {NumberParser} from '@internationalized/number';
-import React, {useMemo, useRef} from 'react';
-import styles from './index.css';
+import React, {useRef} from 'react';
+import styles from './styles.css';
 import {useDateSegment} from '@react-aria/datepicker';
-import {useFocusManager} from '@react-aria/focus';
-import {useLocale} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 
 interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
   segment: DateSegment,
-  state: DatePickerFieldState
+  state: DateFieldState
 }
 
 interface LiteralSegmentProps {
-  segment: DateSegment,
-  isPlaceholder?: boolean
+  segment: DateSegment
 }
 
 export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSegmentProps) {
@@ -37,57 +32,41 @@ export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSeg
     case 'literal':
       return <LiteralSegment segment={segment} />;
 
-    // These segments cannot be directly edited by the user.
-    case 'weekday':
-    case 'timeZoneName':
-      return <LiteralSegment segment={segment} isPlaceholder />;
-
     // Editable segment
     default:
       return <EditableSegment segment={segment} state={state} {...otherProps} />;
   }
 }
 
-function LiteralSegment({segment, isPlaceholder}: LiteralSegmentProps) {
-  let focusManager = useFocusManager();
-  let {pressProps} = usePress({
-    onPressStart: (e) => {
-      if (e.pointerType === 'mouse') {
-        let res = focusManager.focusNext({from: e.target as HTMLElement});
-        if (!res) {
-          focusManager.focusPrevious({from: e.target as HTMLElement});
-        }
-      }
-    }
-  });
-
+function LiteralSegment({segment}: LiteralSegmentProps) {
   return (
     <span
-      role="presentation"
-      className={classNames(styles, 'react-spectrum-Datepicker-literal', {'is-placeholder': isPlaceholder})}
-      {...pressProps}
+      aria-hidden="true"
+      className={classNames(styles, 'react-spectrum-Datepicker-literal')}
       data-testid={segment.type === 'literal' ? undefined : segment.type}>
       {segment.text}
     </span>
   );
 }
 
-function EditableSegment({segment, state, ...otherProps}: DatePickerSegmentProps) {
+function EditableSegment({segment, state}: DatePickerSegmentProps) {
   let ref = useRef();
-  let {segmentProps} = useDateSegment(otherProps, segment, state, ref);
-  let {locale} = useLocale();
-  let parser = useMemo(() => new NumberParser(locale), [locale]);
-  let isNumeric = useMemo(() => parser.isValidPartialNumber(segment.text), [segment.text, parser]);
+  let {segmentProps} = useDateSegment(segment, state, ref);
   return (
     <div
+      {...segmentProps}
       ref={ref}
-      className={classNames(styles, 'react-spectrum-DatePicker-cell', {'is-placeholder': segment.isPlaceholder})}
+      className={classNames(styles, 'react-spectrum-DatePicker-cell', {
+        'is-placeholder': segment.isPlaceholder,
+        'is-read-only': !segment.isEditable
+      })}
       style={{
-        minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
+        ...segmentProps.style,
+        minWidth: segment.maxValue != null ? String(segment.maxValue).length + 'ch' : null
       }}
-      data-testid={segment.type}
-      {...segmentProps}>
-      {segment.text}
+      data-testid={segment.type}>
+      <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span>
+      {segment.isPlaceholder ? '' : segment.text}
     </div>
   );
 }

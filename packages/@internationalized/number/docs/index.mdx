@@ -1,0 +1,53 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import {HeaderInfo, FunctionAPI, ClassAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@internationalized/number/package.json';
+
+---
+category: Numbers
+keywords: [number, internationalization]
+order: 0
+navigationTitle: Introduction
+description: The @internationalized/number package provides utilities for formatting and parsing numbers across locales and numbering systems.
+---
+
+# @internationalized/number
+
+The `@internationalized/number` package provides utilities for formatting and parsing numbers across locales and numbering systems.
+
+<HeaderInfo packageData={packageData} />
+
+## Features
+
+* **Advanced formatting** – Formatting and parsing decimals, percentages, currency values, and unit values are supported.
+* **Locale-aware** – Numbers are formatted and parsed according to the locale expectations, including decimal characters and separators, percent signs, unit and currency symbols, and more.
+* **International numbering systems** – Support for the Latin, Arabic, and Han decimal numbering systems, including automatic detection of the numbering system used in the input.
+* **Small bundle size** – The entire library is 1.7 kB minified and compressed with Brotli. No large locale data is needed – all data is retrieved from builtin browser APIs!
+
+## Introduction
+
+Numbers are represented in many different ways by cultures around the world. This includes differences in currency symbols, units, decimal points, grouping separators, and even digits themselves. When building applications that support users around the world, it is important to handle these aspects correctly for each locale. The `@internationalized/number` package provides a utilities to format and parse numbers according to locale expectations.
+
+This example parses a percentage in the Arabic numbering system according to the `ar-SA` locale, and formats as a Latin number in the `en-US` locale.
+
+```tsx
+import {NumberParser, NumberFormatter} from '@internationalized/number';
+
+let parser = new NumberParser('ar-SA', {style: 'percent'});
+let number = parser.parse('٤٥٪'); // 0.45
+
+let formatter = new NumberFormatter('en-US', {style: 'percent'});
+formatter.format(number); // '45%'
+```
+
+See the docs for [NumberParser](NumberParser.html) and [NumberFormatter](NumberFormatter.html) to learn more.

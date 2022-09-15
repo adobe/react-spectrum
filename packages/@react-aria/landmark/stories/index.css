@@ -1,0 +1,31 @@
+.application {
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "globalnav  globalnav globalnav"
+    "navigation content   navcontent";
+}
+.globalnav {
+  grid-area: globalnav;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-6);
+}
+.navigation {
+  grid-area: navigation;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-2);
+}
+.main {
+  grid-area: content;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-3);
+}
+.navigation-content {
+  grid-area: navcontent;
+  padding: 10px;
+  background: var(--spectrum-alias-categorical-color-4);
+}

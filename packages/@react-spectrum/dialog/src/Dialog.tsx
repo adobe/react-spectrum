@@ -25,7 +25,7 @@ import React, {useContext, useMemo, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog} from '@react-aria/dialog';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 let sizeMap = {
   S: 'small',
@@ -47,7 +47,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');
@@ -58,18 +58,20 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
+  let hasHeading = useHasChild(`.${styles['spectrum-Dialog-heading']}`, unwrapDOMRef(gridRef));
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
+  let hasTypeIcon = useHasChild(`.${styles['spectrum-Dialog-typeIcon']}`, unwrapDOMRef(gridRef));
 
   let slots = useMemo(() => ({
     hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
-    header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader, 'spectrum-Dialog-heading--noTypeIcon': !hasTypeIcon}), level: 2, ...titleProps},
+    header: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-header', {'spectrum-Dialog-header--noHeading': !hasHeading, 'spectrum-Dialog-header--noTypeIcon': !hasTypeIcon})},
     typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
     divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
-  }), [styles, hasFooter, hasHeader, titleProps]);
+  }), [hasFooter, hasHeader, titleProps]);
 
   // If rendered in a popover or tray there won't be a visible dismiss button,
   // so we render a hidden one for screen readers.
@@ -101,7 +103,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
             <ActionButton
               UNSAFE_className={styles['spectrum-Dialog-closeButton']}
               isQuiet
-              aria-label={formatMessage('dismiss')}
+              aria-label={stringFormatter.format('dismiss')}
               onPress={onDismiss}>
               <CrossLarge />
             </ActionButton>

@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {renderHook} from '@testing-library/react-hooks';
+import React from 'react';
+import {render, renderHook} from '@react-spectrum/test-utils';
 import {useField} from '../';
+import {WithError} from '../stories/useField.stories';
 
 describe('useField', function () {
   let renderFieldHook = (fieldProps) => {
@@ -27,13 +29,23 @@ describe('useField', function () {
 
   it('should return props for description and error message if they are passed in', function () {
     let {descriptionProps, errorMessageProps} = renderFieldHook({label: 'Test', description: 'Description', errorMessage: 'Error'});
-    expect(descriptionProps.id).toBeDefined();
-    expect(errorMessageProps.id).toBeDefined();
+    // these will be undefined because nothing rendered them into the dom, so useSlotId in play won't find it and will set them to undefined
+    expect(descriptionProps.id).toBeUndefined();
+    expect(errorMessageProps.id).toBeUndefined();
   });
 
-  it('should not return props for description and error message if they are not passed in', function () {
+  it('should not return an id for description and error message if they are not passed in', function () {
     let {descriptionProps, errorMessageProps} = renderFieldHook({label: 'Test'});
-    expect(descriptionProps).toEqual({});
-    expect(errorMessageProps).toEqual({});
+    expect(descriptionProps.id).toBeUndefined();
+    expect(errorMessageProps.id).toBeUndefined();
+  });
+
+  it('can render and label both the description and error message at the same time', function () {
+    let {getByText, getByLabelText} = render(<WithError {...WithError.args} />);
+    let description = getByText('I describe the field.');
+    let error = getByText('I\'m a helpful error for the field.');
+    let input = getByLabelText('Test label');
+    expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
+    expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(error.id));
   });
 });

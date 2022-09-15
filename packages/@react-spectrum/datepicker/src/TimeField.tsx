@@ -10,64 +10,73 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerField} from './DatePickerField';
-import {DateValue, SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
-import {FocusScope} from '@react-aria/focus';
-import {getLocalTimeZone, Time, toCalendarDateTime, today, toTime} from '@internationalized/date';
-import React, {useMemo} from 'react';
-import {useControlledState} from '@react-stately/utils';
+import {classNames} from '@react-spectrum/utils';
+import {DatePickerSegment} from './DatePickerSegment';
+import datepickerStyles from './styles.css';
+import {Field} from '@react-spectrum/label';
+import {FocusableRef} from '@react-types/shared';
+import {Input} from './Input';
+import React, {ReactElement} from 'react';
+import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
+import {useFocusManagerRef} from './utils';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTimeField} from '@react-aria/datepicker';
+import {useTimeFieldState} from '@react-stately/datepicker';
 
-export function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>) {
+function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {
     autoFocus,
-    placeholderValue = new Time(12),
-    minValue,
-    maxValue
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    isQuiet
   } = props;
 
-  let [value, setValue] = useControlledState<TimeValue>(
-    props.value,
-    props.defaultValue,
-    props.onChange
-  );
+  let domRef = useFocusManagerRef(ref);
+  let {locale} = useLocale();
+  let state = useTimeFieldState({
+    ...props,
+    locale
+  });
 
-  let v = value || placeholderValue;
-  let day = v && 'day' in v ? v : undefined;
-  let placeholderDate = useMemo(() => convertValue(placeholderValue), [placeholderValue]);
-  let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
-  let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
-
-  let dateTime = useMemo(() => value == null ? null : convertValue(value), [value]);
-  let onChange = newValue => {
-    setValue(v && 'day' in v ? newValue : toTime(newValue));
-  };
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, domRef);
 
   return (
-    <FocusScope autoFocus={autoFocus}>
-      <DatePickerField
-        {...props}
-        data-testid="date-field"
-        value={dateTime}
-        defaultValue={undefined}
-        minValue={minDate}
-        maxValue={maxDate}
-        onChange={onChange}
-        maxGranularity="hour"
-        placeholderValue={placeholderDate} />
-    </FocusScope>
+    <Field
+      {...props}
+      ref={domRef}
+      elementType="span"
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      validationState={state.validationState}
+      UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
+      <Input
+        fieldProps={fieldProps}
+        isDisabled={isDisabled}
+        isQuiet={isQuiet}
+        autoFocus={autoFocus}
+        validationState={state.validationState}
+        className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
+        {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )}
+      </Input>
+    </Field>
   );
 }
 
-function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {
-  if (!value) {
-    return null;
-  }
-
-  if ('day' in value) {
-    return value;
-  }
-
-  return toCalendarDateTime(date, value);
-}
+/**
+ * TimeFields allow users to enter and edit time values using a keyboard.
+ * Each part of the time is displayed in an individually editable segment.
+ */
+const _TimeField = React.forwardRef(TimeField) as <T extends TimeValue>(props: SpectrumTimeFieldProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export {_TimeField as TimeField};

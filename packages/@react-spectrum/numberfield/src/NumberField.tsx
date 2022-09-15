@@ -21,7 +21,6 @@ import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
-import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
@@ -30,7 +29,6 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
-  props = useFormProps(props);
   let provider = useProvider();
   let {
     isQuiet,

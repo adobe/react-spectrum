@@ -16,7 +16,7 @@ export function useControlledState<T>(
   value: T,
   defaultValue: T,
   onChange: (value: T, ...args: any[]) => void
-): [T, (value: T | ((prevState: T) => T), ...args: any[]) => void]  {
+): [T, (value: T, ...args: any[]) => void]  {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);
   let wasControlled = ref.current;
@@ -42,6 +42,7 @@ export function useControlledState<T>(
     };
 
     if (typeof value === 'function') {
+      console.warn('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
       // this supports functional updates https://reactjs.org/docs/hooks-reference.html#functional-updates
       // when someone using useControlledState calls setControlledState(myFunc)
       // this will call our useState setState with a function as well which invokes myFunc and calls onChange with the value from myFunc

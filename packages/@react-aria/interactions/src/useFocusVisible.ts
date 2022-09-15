@@ -19,10 +19,10 @@ import {isMac} from '@react-aria/utils';
 import {isVirtualClick} from './utils';
 import {useEffect, useState} from 'react';
 
-type Modality = 'keyboard' | 'pointer' | 'virtual';
+export type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
-type FocusVisibleHandler = (isFocusVisible: boolean) => void;
+export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -30,7 +30,7 @@ interface FocusVisibleProps {
   autoFocus?: boolean
 }
 
-interface FocusVisibleResult {
+export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
   isFocusVisible: boolean
 }
@@ -58,7 +58,7 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
  */
 function isValidKey(e: KeyboardEvent) {
   // Control and Shift keys trigger when navigating back to the tab with keyboard.
-  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.type === 'keyup' && (e.key === 'Control' || e.key === 'Shift'));
+  return !(e.metaKey || (!isMac() && e.altKey) || e.ctrlKey || e.key === 'Control' || e.key === 'Shift' || e.key === 'Meta');
 }
 
 
@@ -231,6 +231,8 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
       fn(isFocusVisible());
     };
     changeHandlers.add(handler);
-    return () => changeHandlers.delete(handler);
+    return () => {
+      changeHandlers.delete(handler);
+    };
   }, deps);
 }

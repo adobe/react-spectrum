@@ -16,11 +16,13 @@ import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import {mergeProps, mergeRefs} from '@react-aria/utils';
+import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
+import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+  props = useFormProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -45,6 +47,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
+  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -77,25 +80,21 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
 
     let renderChildren = () => {
-      if (hasHelpText) {
-        if (labelPosition === 'side') {
-          return (
-            <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-              {children}
-              {renderHelpText()}
-            </Flex>
-          );
-        }
-
+      if (labelPosition === 'side') {
         return (
-          <>
+          <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
             {children}
-            {renderHelpText()}
-          </>
+            {hasHelpText && renderHelpText()}
+          </Flex>
         );
       }
 
-      return children;
+      return (
+        <>
+          {children}
+          {hasHelpText && renderHelpText()}
+        </>
+      );
     };
 
     return (
@@ -122,8 +121,15 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
-    ref
+    ref: mergedRefs
   }));
+}
+
+function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
+  return useCallback(
+    mergeRefs(...refs) as (instance: (T | null)) => void,
+    [...refs]
+  );
 }
 
 let _Field = React.forwardRef(Field);

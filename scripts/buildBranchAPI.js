@@ -79,10 +79,8 @@ async function build() {
   // Copy necessary code and configuration over
   fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'cssnano.config.js'), path.join(dir, 'cssnano.config.js'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
@@ -103,7 +101,8 @@ async function build() {
         continue;
       }
 
-      fs.copySync(path.join(__dirname, '..', 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
+      fs.copySync(path.join(__dirname, '..', 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {dereference: true});
+
       if (!p.includes('@react-types')) {
         delete json.types;
       }
@@ -126,7 +125,7 @@ async function build() {
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/*/', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'branch-api'));
+  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'branch-api'), {dereference: true});
   fs.removeSync(dir);
 }
 

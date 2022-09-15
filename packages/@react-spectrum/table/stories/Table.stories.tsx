@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
+import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
@@ -23,16 +24,18 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
+import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
+import {LoadingState, SelectionMode} from '@react-types/shared';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SelectionMode} from '@react-types/shared';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
@@ -67,6 +70,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 1', foo: 'Foo 2', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 1}
+];
+
 let manyColunns = [];
 for (let i = 0; i < 100; i++) {
   manyColunns.push({name: 'Column ' + i, key: 'C' + i});
@@ -89,7 +97,7 @@ function renderEmptyState() {
         <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
       </svg>
       <Heading>No results</Heading>
-      <Content>No results found</Content>
+      <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
     </IllustratedMessage>
   );
 }
@@ -162,6 +170,23 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'dynamic, falsy row keys',
+    () => (
+      <TableView aria-label="TableView with dynamic contents and falsy keys" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'dynamic with selection',
     () => (
       <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
@@ -196,6 +221,40 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'horizontal scrolling only',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="single" width={200} height={220} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items.slice(0, 3)}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'horizontal scrolling only flush bottom',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="single" width={200} height={174} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items.slice(0, 3)}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'dynamic with disabled, single selection',
     () => (
       <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
@@ -216,6 +275,23 @@ storiesOf('TableView', module)
     'dynamic with disabled, multiple selection',
     () => (
       <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'dynamic with disabled, multiple selection, highlight',
+    () => (
+      <TableView disabledKeys={['Foo 1', 'Foo 3']} aria-label="TableView with dynamic contents" selectionStyle="highlight" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -269,6 +345,75 @@ storiesOf('TableView', module)
       <TableView isQuiet selectedKeys={['Foo 1', 'Foo 3']} onSelectionChange={s => onSelectionChange([...s])} selectionMode="multiple" aria-label="TableView with dynamic contents" width={300} height={200}>
         <TableHeader columns={columns}>
           {column => <Column showDivider>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'selectionStyle: highlight',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+  .add(
+    'selectionStyle: highlight, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" selectionMode="multiple" selectionStyle="highlight" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+   .add(
+    'selectionMode: none, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+     )
+   )
+
+  .add(
+    'selectionStyle: checkbox, onAction',
+    () => (
+      <TableView aria-label="TableView with dynamic contents" width={400} height={300} selectionMode="multiple" selectionStyle="checkbox" onSelectionChange={s => onSelectionChange([...s])} onAction={action('onAction')}>
+        <TableHeader columns={columns}>
+          {column => <Column minWidth={200}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -341,7 +486,8 @@ storiesOf('TableView', module)
     'focusable cells',
     () => (
       <Flex direction="column">
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <TableView aria-label="TableView with focusable cells" selectionMode="multiple" width={450} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
@@ -366,7 +512,8 @@ storiesOf('TableView', module)
             </Row>
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </Flex>
     )
   )
@@ -374,7 +521,8 @@ storiesOf('TableView', module)
     'many columns and rows',
     () => (
       <>
-        <input aria-label="Focusable before" placeholder="Focusable before" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader columns={manyColunns}>
             {column =>
@@ -389,7 +537,8 @@ storiesOf('TableView', module)
             }
           </TableBody>
         </TableView>
-        <input aria-label="Focusable after" placeholder="Focusable after" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </>
     ),
     {chromatic: {disable: true}}
@@ -722,6 +871,12 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'Inline delete buttons',
+    () => (
+      <DeletableRowsTable />
+    )
+  )
+  .add(
     'hiding columns',
     () => (
       <HidingColumns />
@@ -749,7 +904,7 @@ storiesOf('TableView', module)
   .add(
     'isLoading more',
     () => (
-      <TableView aria-label="TableView loading more" width={700} height={200}>
+      <TableView aria-label="TableView loading more" width={700} height={200} selectionMode="multiple">
         <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -787,16 +942,7 @@ storiesOf('TableView', module)
   .add(
     'renderEmptyState',
     () => (
-      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState}>
-        <TableHeader columns={manyColunns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody>
-          {[]}
-        </TableBody>
-      </TableView>
+      <EmptyStateTable />
     )
   )
   .add(
@@ -969,9 +1115,263 @@ storiesOf('TableView', module)
         </TableBody>
       </TableView>
     )
+  )
+  .add('table with breadcrumb navigation', () => <TableWithBreadcrumbs />)
+  .add(
+    'allowsResizing, uncontrolled, dynamic widths',
+    () => (
+      <>
+        <label htmlFor="focusable-before">Focusable before</label>
+        <input id="focusable-before" />
+        <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+          <TableHeader>
+            <Column allowsResizing defaultWidth="1fr">File Name</Column>
+            <Column allowsResizing defaultWidth="2fr">Type</Column>
+            <Column allowsResizing defaultWidth="2fr">Size</Column>
+            <Column allowsResizing defaultWidth="1fr">Weight</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>2018 Proposal</Cell>
+              <Cell>PDF</Cell>
+              <Cell>214 KB</Cell>
+              <Cell>1 LB</Cell>
+            </Row>
+            <Row>
+              <Cell>Budget</Cell>
+              <Cell>XLS</Cell>
+              <Cell>120 KB</Cell>
+              <Cell>20 LB</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+        <label htmlFor="focusable-after">Focusable after</label>
+        <input id="focusable-after" />
+      </>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, static widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="50%">File Name</Column>
+          <Column allowsResizing defaultWidth="20%">Type</Column>
+          <Column allowsResizing defaultWidth={239}>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, column divider', () => (
+      <TableView aria-label="TableView with resizable columns and divider" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing showDivider>File Name</Column>
+          <Column allowsResizing defaultWidth="3fr">Type</Column>
+          <Column allowsResizing>Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, min/max widths', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>File Name</Column>
+          <Column allowsResizing defaultWidth="1fr" minWidth={175} maxWidth={500}>Size</Column>
+          <Column allowsResizing defaultWidth={200} minWidth={175} maxWidth={300}>Type</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, some columns not allowed resizing', () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+        <TableHeader>
+          <Column allowsResizing >File Name</Column>
+          <Column defaultWidth="1fr">Type</Column>
+          <Column defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="2fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, undefined table width and height', () => (
+      <TableView aria-label="TableView with resizable columns and no width or height set">
+        <TableHeader>
+          <Column allowsResizing defaultWidth={150}>File Name</Column>
+          <Column allowsResizing defaultWidth={100}>Type</Column>
+          <Column allowsResizing defaultWidth={100}>Size</Column>
+          <Column allowsResizing defaultWidth={100}>Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'allowsResizing, uncontrolled, sortable columns',
+    () => <AsyncLoadingExample isResizable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, many columns and rows',
+    () => (
+      <>
+        <label htmlFor="focusable-before">Focusable before</label>
+        <input id="focusable-before" />
+        <TableView aria-label="TableView with many columns and rows" selectionMode="multiple" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader columns={manyColunns}>
+            {column =>
+              <Column allowsResizing minWidth={100}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={manyRows}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+        <label htmlFor="focusable-after">Focusable after</label>
+        <input id="focusable-after" />
+      </>
+    ),
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, onColumnResize action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
+    'allowsResizing, onColumnResizeEnd action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
+    'allowsResizing, hiding columns',
+    () => (
+      <HidingColumnsAllowsResizing />
+    )
+  )
+  .add(
+    'zoom resizing table',
+    () => (
+      <div style={{position: 'absolute', height: 'calc(100vh-32px)', width: 'calc(100vw - 32px)'}}>
+        <ZoomResizing />
+      </div>
+    ),
+    {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
   );
 
-function AsyncLoadingExample() {
+function AsyncLoadingExample(props) {
+  const {isResizable} = props;
   interface Item {
     data: {
       id: string,
@@ -992,7 +1392,7 @@ function AsyncLoadingExample() {
       let json = await res.json();
       return {items: json.data.children, cursor: json.data.after};
     },
-    async sort({items, sortDescriptor}) {
+    sort({items, sortDescriptor}) {
       return {
         items: items.slice().sort((a, b) => {
           let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
@@ -1010,10 +1410,10 @@ function AsyncLoadingExample() {
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" width={100} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsSorting>Title</Column>
-          <Column key="author" width={200} allowsSorting>Author</Column>
-          <Column key="num_comments" width={100} allowsSorting>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Score</Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>Title</Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>Author</Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Comments</Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>
@@ -1111,7 +1511,6 @@ function ProjectListTable() {
         marginTop={'size-200'}
         width={'size-3600'}
         aria-label={'Search by name'}
-        placeholder={'Search by name'}
         value={filterText}
         onChange={(onChange)} />
       <View flexGrow={1} height={700} overflow="hidden">
@@ -1170,7 +1569,7 @@ function AsyncServerFilterTable(props) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -1192,7 +1591,6 @@ function AsyncServerFilterTable(props) {
         marginTop={'size-200'}
         width={'size-3600'}
         aria-label={'Search by name'}
-        placeholder={'Search by name'}
         defaultValue={list.filterText}
         onChange={(onChange)} />
       <TableView
@@ -1246,5 +1644,173 @@ function ChangableSelectionMode() {
         </TableBody>
       </TableView>
     </Flex>
+  );
+}
+
+export function TableWithBreadcrumbs() {
+  const fs = [
+    {key: 'a', name: 'Folder A', type: 'folder'},
+    {key: 'b', name: 'File B', value: '10 MB'},
+    {key: 'c', name: 'File C', value: '10 MB', parent: 'a'},
+    {key: 'd', name: 'File D', value: '10 MB', parent: 'a'}
+  ];
+
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as 'idle');
+  const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
+  const [items, setItems] = useState(() => fs.filter(item => !item.parent));
+  const changeFolder = (folder) => {
+    setItems([]);
+    setLoadingState('loading' as 'loading');
+
+    // mimic loading behavior
+    setTimeout(() => {
+      setLoadingState('idle');
+      setItems(fs.filter(item =>  folder ? item.parent === folder : !item.parent));
+    }, 700);
+    setSelection(new Set([]));
+  };
+
+  return (
+    <Flex direction="column" width="400px">
+      <div>The TableView should not error if row selection changes due to items changes from external navigation (breadcrumbs).</div>
+      <Breadcrumbs
+        onAction={item => {
+          if (item === 'root') {
+            changeFolder('');
+          }
+        }}>
+        <Item key="root">root</Item>
+        <Item>a</Item>
+      </Breadcrumbs>
+      <TableView
+        width="400px"
+        aria-label="table"
+        selectedKeys={selection}
+        selectionMode="multiple"
+        onSelectionChange={(sel) => setSelection(sel)}>
+        <TableHeader>
+          <Column key="name" isRowHeader>Name</Column>
+          <Column key="value">Value</Column>
+        </TableHeader>
+        <TableBody items={items} loadingState={loadingState}>
+          {(item) => (
+            <Row key={item.key}>
+              {(column) => {
+                if (item.type === 'folder' && column === 'name') {
+                  return (
+                    <Cell textValue={item[column]}>
+                      <Link onPress={() => changeFolder(item.key)}>
+                        {item[column]}
+                      </Link>
+                    </Cell>
+                  );
+                }
+                return <Cell>{item[column]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
+    </Flex>
+  );
+}
+
+export function DeletableRowsTable() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
+      {id: 2, firstName: 'Julia', lastName: 'Jones', birthday: 'February 10'}
+    ]
+  });
+
+  return (
+    <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableHeader>
+        <Column isRowHeader key="firstName">First Name</Column>
+        <Column isRowHeader key="lastName">Last Name</Column>
+        <Column key="birthday">Birthday</Column>
+        <Column key="actions" align="end">Actions</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item =>
+          (<Row>
+            {column =>
+              (<Cell>
+                {column === 'actions'
+                  ? <ActionButton onPress={() => list.remove(item.id)}>Delete</ActionButton>
+                  : item[column]
+                }
+              </Cell>)
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
+  );
+}
+
+export function EmptyStateTable() {
+  let [show, setShow] = useState(false);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  return (
+    <Flex direction="column">
+      <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
+      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+        <TableHeader columns={manyColunns}>
+          {column =>
+            <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={show ? manyRows : []}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
+  );
+}
+
+function EmptyState() {
+  return (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No results</Heading>
+    </IllustratedMessage>
+  );
+}
+
+function ZoomResizing() {
+  const [child, setChild] = useState('loader');
+
+  return (
+    <div className="App" style={{height: '100vh'}}>
+      <RadioGroup
+        label="Child type"
+        orientation="horizontal"
+        value={child}
+        onChange={setChild}>
+        <Radio value="loader">Loading state</Radio>
+        <Radio value="empty">Empty state</Radio>
+      </RadioGroup>
+      <Flex height="100%">
+        <TableView
+          height="100%"
+          width="100%"
+          renderEmptyState={child === 'empty' ? () => <EmptyState /> : undefined}>
+          <TableHeader>
+            <Column>column</Column>
+          </TableHeader>
+          <TableBody
+            items={[]}
+            loadingState={child === 'loader' ? 'loading' : undefined}>
+            {(item) => <Row>{(column) => <Cell>{item[column]}</Cell>}</Row>}
+          </TableBody>
+        </TableView>
+      </Flex>
+    </div>
   );
 }

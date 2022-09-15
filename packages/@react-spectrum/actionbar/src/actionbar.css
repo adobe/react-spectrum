@@ -93,3 +93,11 @@
     max-inline-size: 100%;
   }
 }
+@media (forced-colors: active) {
+  .react-spectrum-ActionBar {
+    &.react-spectrum-ActionBar--emphasized .react-spectrum-ActionBar-bar {
+
+      border: 1px solid transparent;
+    }
+  }
+}

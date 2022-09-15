@@ -16,7 +16,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {useRef} from 'react';
+import React, {forwardRef, useRef} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
@@ -96,5 +96,5 @@ function AccordionItem<T>(props: AccordionItemProps<T>) {
   );
 }
 
-const _Accordion = React.forwardRef(Accordion);
+const _Accordion = forwardRef(Accordion) as <T>(props: SpectrumAccordionProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
 export {_Accordion as Accordion};

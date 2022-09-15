@@ -5,7 +5,8 @@
   "command": {
     "publish": {
       "allowBranch": [
-        "main"
+        "main",
+        "release"
       ]
     }
   }

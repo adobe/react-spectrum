@@ -10,16 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadingCardView, ControlledCardView, CustomLayout, DynamicCardView, items, NoItemCardView, renderEmptyState, StaticCardView} from './GridCardView.stories';
+import {
+  AsyncLoading,
+  AsyncLoadingCardViewStory,
+  CardViewIdKeysStory,
+  ControlledCards,
+  ControlledCardViewStory,
+  CustomLayout,
+  DisabledKeys,
+  DynamicCards,
+  DynamicCardViewStory,
+  EmptyWithHeightGrid,
+  FalsyIds,
+  FilteringGrid,
+  IsLoadingHeightGrid,
+  IsLoadingNoHeightGrid,
+  LoadingMoreGrid,
+  StaticCards,
+  StaticCardViewStory
+} from './GridCardView.stories';
+import {CardView, WaterfallLayout} from '../';
+import {ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
+import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
-import {WaterfallLayout} from '../';
+import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
 
 let itemsNoSize = [
   {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1'},
+  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1 really really really really really really really really really really really really long'},
   {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
   {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
   {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
@@ -42,64 +63,168 @@ let itemsNoSize = [
   {src: 'https://i.imgur.com/zzwWogn.jpg', title: 'Bob 8'}
 ];
 
-const StoryFn = ({storyFn}) => storyFn();
-
 export default {
   title: 'CardView/Waterfall layout',
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  component: CardView,
+  args: {
+    'aria-label': 'Test CardView'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'radio',
+      defaultValue: 'multiple',
+      options: ['none', 'single', 'multiple']
+    }
+  }
+} as ComponentStoryObj<typeof CardView>;
+
+export const DefaultWaterfallStatic: StaticCardViewStory = {
+  ...StaticCards,
+  args: {
+    ...StaticCards.args,
+    layout: WaterfallLayout
+  }
 };
 
-export const DefaultWaterfallStatic = () => StaticCardView({layout: WaterfallLayout, items});
-DefaultWaterfallStatic.storyName = 'static card';
+export const FalsyIdWaterfall: CardViewIdKeysStory = {
+  ...FalsyIds,
+  args: {
+    ...FalsyIds.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const DefaultWaterfall = () => DynamicCardView({layout: WaterfallLayout, items});
-DefaultWaterfall.storyName = 'size provided with items';
+export const DefaultWaterfall: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: WaterfallLayout
+  },
+  name: 'size provided with items'
+};
 
-export const DefaultWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items: itemsNoSize});
-DefaultWaterfallNoSize.storyName = 'no size provided with items';
+export const DefaultWaterfallNoSize: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: WaterfallLayout,
+    items: itemsNoSize
+  },
+  name: 'no size provided with items'
+};
 
-export const QuietWaterfall = () => DynamicCardView({layout: WaterfallLayout, items, isQuiet: true});
-QuietWaterfall.storyName = 'quiet cards';
+export const QuietWaterfall: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: WaterfallLayout,
+    isQuiet: true
+  },
+  name: 'quiet cards'
+};
 
-export const QuietWaterfallNoSize = () => DynamicCardView({layout: WaterfallLayout, items: itemsNoSize, isQuiet: true});
-QuietWaterfallNoSize.storyName = 'quiet cards, no size provided with items';
+export const QuietWaterfallNoSize: DynamicCardViewStory = {
+  ...DynamicCards,
+  args: {
+    ...DynamicCards.args,
+    layout: WaterfallLayout,
+    isQuiet: true,
+    items: itemsNoSize
+  },
+  name: 'quiet cards, no size provided with items'
+};
 
-export const DisabledKeys = () => DynamicCardView({layout: WaterfallLayout, items, disabledKeys: ['Joe 2', 'Bob 4']});
-DisabledKeys.storyName = 'disabled keys, Joe2, Bob 4';
+export const DisabledKeysWaterfall: DynamicCardViewStory = {
+  ...DisabledKeys,
+  args: {
+    ...DisabledKeys.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const NoSelection = () => DynamicCardView({layout: WaterfallLayout, items, selectionMode: 'none'});
-NoSelection.storyName = 'no selection allowed';
+export const SelectedKeys: ControlledCardViewStory = {
+  ...ControlledCards,
+  args: {
+    ...ControlledCards.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const SingleSelection = () => DynamicCardView({layout: WaterfallLayout, items, selectionMode: 'single'});
-SingleSelection.storyName = 'single selection only';
+export const IsLoadingNoHeightWaterfall: DynamicCardViewStory = {
+  ...IsLoadingNoHeightGrid,
+  args: {
+    ...IsLoadingNoHeightGrid.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const SelectedKeys = () => ControlledCardView({layout: WaterfallLayout, items});
-SelectedKeys.storyName = 'selected keys, controlled';
+export const IsLoadingHeightWaterfall: DynamicCardViewStory = {
+  ...IsLoadingHeightGrid,
+  args: {
+    ...IsLoadingHeightGrid.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const isLoadingNoHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', loadingState: 'loading'});
-isLoadingNoHeightWaterfall.storyName = 'loadingState = loading, no height';
+export const LoadingMoreWaterfall: DynamicCardViewStory = {
+  ...LoadingMoreGrid,
+  args: {
+    ...LoadingMoreGrid.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const isLoadingHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', loadingState: 'loading'});
-isLoadingHeightWaterfall.storyName = 'loadingState = loading, set height';
+export const FilteringWaterfall: DynamicCardViewStory = {
+  ...FilteringGrid,
+  args: {
+    ...FilteringGrid.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const loadingMoreWaterfall = () => DynamicCardView({layout: WaterfallLayout, loadingState: 'loadingMore', items});
-loadingMoreWaterfall.storyName = 'loadingState = loadingMore';
+export const EmptyWithHeightWaterfall: DynamicCardViewStory = {
+  ...EmptyWithHeightGrid,
+  args: {
+    ...EmptyWithHeightGrid.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const filteringWaterfall = () => DynamicCardView({layout: WaterfallLayout, loadingState: 'filtering', items});
-filteringWaterfall.storyName = 'loadingState = filtering';
+export const AsyncLoadingWaterfall: AsyncLoadingCardViewStory = {
+  ...AsyncLoading,
+  args: {
+    ...AsyncLoading.args,
+    layout: WaterfallLayout
+  }
+};
 
-export const emptyWithHeightWaterfall = () => NoItemCardView({layout: WaterfallLayout, width: '800px', height: '800px', renderEmptyState});
-emptyWithHeightWaterfall.storyName = 'empty, set height';
+export const CustomLayoutOptions: CustomWaterfallLayoutStory = {
+  render: (args) => <CustomWaterfallLayout {...args} />,
+  args: {
+    selectionMode: 'multiple',
+    items: itemsNoSize,
+    layoutOptions: {minSpace: new Size(50, 50), maxColumns: 2, margin: 10}
+  },
+  name: 'Custom layout options'
+};
 
-export const AsyncLoading = () => AsyncLoadingCardView({layout: WaterfallLayout});
-AsyncLoading.storyName = 'Async loading';
+interface LayoutOptions {
+  layoutOptions?: WaterfallLayoutOptions
+}
 
-export const CustomLayoutOptions = () => CustomGalleryLayout({items}, {minSpace: new Size(50, 50), maxColumns: 2, itemPadding: 400, margin: 10});
-CustomGalleryLayout.storyName = 'Custom layout options';
-
-function CustomGalleryLayout(props, layoutOptions) {
+type CustomWaterfallLayoutStory = ComponentStoryObj<typeof CustomWaterfallLayout>;
+function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
+  let {
+    layoutOptions,
+    ...otherProps
+  } = props;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let galleryLayout = useMemo(() => new WaterfallLayout({collator, ...layoutOptions}), [collator, layoutOptions]);
+  let galleryLayout = useMemo(() => new WaterfallLayout<object>({collator, ...layoutOptions}), [collator, layoutOptions]);
 
-  return CustomLayout({...props, layout: galleryLayout}, {});
+  return CustomLayout({...otherProps, layout: galleryLayout});
 }

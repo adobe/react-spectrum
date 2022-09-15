@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
   /**
@@ -59,7 +59,7 @@ export interface NumberFieldState {
   decrementToMin(): void
 }
 
-interface NumberFieldStateProps extends NumberFieldProps {
+export interface NumberFieldStateOptions extends NumberFieldProps {
   /**
    * The locale that should be used for parsing.
    * @default 'en-US'
@@ -72,7 +72,7 @@ interface NumberFieldStateProps extends NumberFieldProps {
  * and increment or decrement the value using stepper buttons.
  */
 export function useNumberFieldState(
-  props: NumberFieldStateProps
+  props: NumberFieldStateOptions
 ): NumberFieldState {
   let {
     minValue,
@@ -104,9 +104,15 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  useEffect(() => {
+  let prevValue = useRef(numberValue);
+  let prevLocale = useRef(locale);
+  let prevFormatOptions = useRef(formatOptions);
+  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
     setInputValue(format(numberValue));
-  }, [numberValue, locale, formatOptions]);
+    prevValue.current = numberValue;
+    prevLocale.current = locale;
+    prevFormatOptions.current = formatOptions;
+  }
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
@@ -168,31 +174,27 @@ export function useNumberFieldState(
   };
 
   let increment = () => {
-    setNumberValue((previousValue) => {
-      let newValue = safeNextStep('+', minValue);
+    let newValue = safeNextStep('+', minValue);
 
-      // if we've arrived at the same value that was previously in the state, the
-      // input value should be updated to match
-      // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
-      // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
-      if (newValue === previousValue) {
-        setInputValue(format(newValue));
-      }
+    // if we've arrived at the same value that was previously in the state, the
+    // input value should be updated to match
+    // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
+    // you'd be at 5, then incrementing to 5 again, so no re-render would happen and 4 would be left in the input
+    if (newValue === numberValue) {
+      setInputValue(format(newValue));
+    }
 
-      return newValue;
-    });
+    setNumberValue(newValue);
   };
 
   let decrement = () => {
-    setNumberValue((previousValue) => {
-      let newValue = safeNextStep('-', maxValue);
+    let newValue = safeNextStep('-', maxValue);
 
-      if (newValue === previousValue) {
-        setInputValue(format(newValue));
-      }
+    if (newValue === numberValue) {
+      setInputValue(format(newValue));
+    }
 
-      return newValue;
-    });
+    setNumberValue(newValue);
   };
 
   let incrementToMax = () => {

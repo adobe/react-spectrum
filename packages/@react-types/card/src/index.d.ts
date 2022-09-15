@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
+import {Scale} from '@react-types/provider';
 
 interface AriaCardProps extends AriaLabelingProps {}
 
@@ -22,13 +23,17 @@ interface SpectrumCardProps extends AriaCardProps, StyleProps, DOMProps {
   layout?: 'grid' | 'waterfall' | 'gallery',
   // TODO: readd size when we get updated designs from spectrum
   // size?: 'S' | 'M' | 'L',
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: Orientation
 }
 
 interface LayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
-  // cardOrientation?: 'horizontal' | 'vertical',
-  collator?: Intl.Collator
+  cardOrientation?: Orientation,
+  collator?: Intl.Collator,
+  // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
+  // Added here so we can keep the default item padding options within the layouts instead of having to
+  // do extra work in CardView to accomodate different sizing for scales
+  scale?: Scale
 }
 
 // TODO: double check if this is the best way to type the layout provided to the CardView
@@ -38,7 +43,7 @@ interface CardViewLayout<T> extends Layout<Node<T>>, KeyboardDelegate {
   isLoading: boolean,
   direction: Direction,
   layoutType: string,
-  itemPadding: number
+  margin?: number
 }
 
 export interface CardViewLayoutConstructor<T> {
@@ -51,8 +56,7 @@ interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<As
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   // TODO: readd size when we get updated designs from spectrum
   // cardSize?: 'S' | 'M' | 'L',
-  // TODO: readd when we support horizontal cards in the layouts
-  // cardOrientation?: 'horizontal' | 'vertical',
+  cardOrientation?: Orientation,
   isQuiet?: boolean,
   renderEmptyState?: () => ReactNode,
   loadingState?: LoadingState

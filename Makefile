@@ -5,10 +5,6 @@ PATH := ./node_modules/.bin:$(PATH)
 
 all: node_modules
 
-adobe_setup:
-	mkdir packages/dev/v2-test-deps
-	cp scripts/v2-package.json packages/dev/v2-test-deps/package.json
-
 node_modules: package.json
 	yarn install
 	touch $@
@@ -69,6 +65,9 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
+storybook-16:
+	yarn build:storybook-16
+
 storybook-17:
 	yarn build:storybook-17
 
@@ -83,7 +82,7 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ --no-optimize
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -91,4 +90,3 @@ website:
 website-production:
 	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
-	node scripts/brotli.js

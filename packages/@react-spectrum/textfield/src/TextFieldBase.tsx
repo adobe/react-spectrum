@@ -20,9 +20,7 @@ import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
   wrapperChildren?: ReactElement | ReactElement[],
@@ -39,10 +37,7 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
   let {
-    label,
     validationState,
     icon,
     isQuiet = false,
@@ -55,7 +50,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     descriptionProps,
     errorMessageProps,
-    inputRef,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
     validationIconClassName
@@ -63,7 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
+  let inputRef = userInputRef || defaultInputRef;
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -142,18 +137,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     </div>
   );
 
-  if (label) {
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
-    }));
-  }
-
   return (
     <Field
       {...props}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      wrapperClassName={classNames(styles, 'spectrum-Textfield-wrapper')}
       showErrorIcon={false}
       ref={domRef}>
       {textField}

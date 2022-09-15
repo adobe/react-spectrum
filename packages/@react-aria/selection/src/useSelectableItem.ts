@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
+import {Key, RefObject, useEffect, useRef} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressEvent} from '@react-types/shared';
-import {PressProps} from '@react-aria/interactions';
+import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
-interface SelectableItemOptions {
+export interface SelectableItemOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -28,12 +30,17 @@ interface SelectableItemOptions {
   /**
    * Ref to the item.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<FocusableElement>,
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).
    */
   shouldSelectOnPressUp?: boolean,
+  /**
+   * Whether selection requires the pointer/mouse down and up events to occur on the same target or triggers selection on
+   * the target of the pointer/mouse up event.
+   */
+  allowsDifferentPressOrigin?: boolean,
   /**
    * Whether the option is contained in a virtual scroller.
    */
@@ -45,14 +52,44 @@ interface SelectableItemOptions {
   /**
    * Whether the option should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
-interface SelectableItemAria {
+export interface SelectableItemStates {
+  /** Whether the item is currently in a pressed state. */
+  isPressed: boolean,
+  /** Whether the item is currently selected. */
+  isSelected: boolean,
+  /**
+   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
+   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the item may be selected, dependent on `selectionMode`, `disabledKeys`, and `disabledBehavior`.
+   */
+  allowsSelection: boolean,
+  /**
+   * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
+   * and `disabledBehavior`. It may also change depending on the current selection state
+   * of the list (e.g. when selection is primary). This can be used to enable or disable hover
+   * styles or other visual indications of interactivity.
+   */
+  hasAction: boolean
+}
+
+export interface SelectableItemAria extends SelectableItemStates {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: HTMLAttributes<HTMLElement> & PressProps
+  itemProps: DOMAttributes
 }
 
 /**
@@ -66,14 +103,40 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldSelectOnPressUp,
     isVirtualized,
     shouldUseVirtualFocus,
-    focus
+    focus,
+    isDisabled,
+    onAction,
+    allowsDifferentPressOrigin
   } = options;
 
-  let onSelect = (e: PressEvent | PointerEvent) => manager.select(key, e);
+  let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
+    if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
+      manager.toggleSelection(key);
+    } else {
+      if (manager.selectionMode === 'none') {
+        return;
+      }
+
+      if (manager.selectionMode === 'single') {
+        if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+          manager.toggleSelection(key);
+        } else {
+          manager.replaceSelection(key);
+        }
+      } else if (e && e.shiftKey) {
+        manager.extendSelection(key);
+      } else if (manager.selectionBehavior === 'toggle' || (e && (isCtrlKeyPressed(e) || e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+        // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
+        manager.toggleSelection(key);
+      } else {
+        manager.replaceSelection(key);
+      }
+    }
+  };
 
   // Focus the associated DOM node when this item becomes the focusedKey
-  let isFocused = key === manager.focusedKey;
   useEffect(() => {
+    let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
       if (focus) {
         focus();
@@ -81,7 +144,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
-  }, [ref, isFocused, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
@@ -89,7 +152,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {};
   if (!shouldUseVirtualFocus) {
     itemProps = {
-      tabIndex: isFocused ? 0 : -1,
+      tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
@@ -98,6 +161,27 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
+
+  // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
+  // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
+  // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
+  // With touch, onAction occurs on single tap, and long press enters selection mode.
+  isDisabled = isDisabled || manager.isDisabled(key);
+  let allowsSelection = !isDisabled && manager.canSelectItem(key);
+  let allowsActions = onAction && !isDisabled;
+  let hasPrimaryAction = allowsActions && (
+    manager.selectionBehavior === 'replace'
+      ? !allowsSelection
+      : manager.isEmpty
+  );
+  let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
+  let hasAction = hasPrimaryAction || hasSecondaryAction;
+  let modality = useRef(null);
+
+  let longPressEnabled = hasAction && allowsSelection;
+  let longPressEnabledOnPressStart = useRef(false);
+  let hadPrimaryActionOnPressStart = useRef(false);
+
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
@@ -105,29 +189,72 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
+  let itemPressProps: PressProps = {};
   if (shouldSelectOnPressUp) {
-    itemProps.onPressStart = (e) => {
-      if (e.pointerType === 'keyboard') {
+    itemPressProps.onPressStart = (e) => {
+      modality.current = e.pointerType;
+      longPressEnabledOnPressStart.current = longPressEnabled;
+      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey())) {
         onSelect(e);
       }
     };
 
-    itemProps.onPressUp = (e) => {
-      if (e.pointerType !== 'keyboard') {
-        onSelect(e);
-      }
-    };
+    // If allowsDifferentPressOrigin, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
+    // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
+    if (!allowsDifferentPressOrigin) {
+      itemPressProps.onPress = (e) => {
+        if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
+          if (e.pointerType === 'keyboard' && !isActionKey()) {
+            return;
+          }
+
+          onAction();
+        } else if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
+      };
+    } else {
+      itemPressProps.onPressUp = (e) => {
+        if (e.pointerType !== 'keyboard') {
+          onSelect(e);
+        }
+      };
+
+      itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+    }
   } else {
-    // On touch, it feels strange to select on touch down, so we special case this.
-    itemProps.onPressStart = (e) => {
-      if (e.pointerType !== 'touch') {
+    itemPressProps.onPressStart = (e) => {
+      modality.current = e.pointerType;
+      longPressEnabledOnPressStart.current = longPressEnabled;
+      hadPrimaryActionOnPressStart.current = hasPrimaryAction;
+
+      // Select on mouse down unless there is a primary action which will occur on mouse up.
+      // For keyboard, select on key down. If there is an action, the Space key selects on key down,
+      // and the Enter key performs onAction on key up.
+      if (
+        (e.pointerType === 'mouse' && !hasPrimaryAction) ||
+        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
+      ) {
         onSelect(e);
       }
     };
 
-    itemProps.onPress = (e) => {
-      if (e.pointerType === 'touch') {
-        onSelect(e);
+    itemPressProps.onPress = (e) => {
+      // Selection occurs on touch up. Primary actions always occur on pointer up.
+      // Both primary and secondary actions occur on Enter key up. The only exception
+      // is secondary actions, which occur on double click with a mouse.
+      if (
+        e.pointerType === 'touch' ||
+        e.pointerType === 'pen' ||
+        e.pointerType === 'virtual' ||
+        (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
+        (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
+      ) {
+        if (hasAction) {
+          onAction();
+        } else {
+          onSelect(e);
+        }
       }
     };
   }
@@ -136,7 +263,62 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemProps['data-key'] = key;
   }
 
-  return {
-    itemProps
+  itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
+  let {pressProps, isPressed} = usePress(itemPressProps);
+
+  // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
+  let onDoubleClick = hasSecondaryAction ? (e) => {
+    if (modality.current === 'mouse') {
+      e.stopPropagation();
+      e.preventDefault();
+      onAction();
+    }
+  } : undefined;
+
+  // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
+  // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
+  // selecting, and may toggle the appearance of a UI affordance like checkboxes on each item.
+  let {longPressProps} = useLongPress({
+    isDisabled: !longPressEnabled,
+    onLongPress(e) {
+      if (e.pointerType === 'touch') {
+        onSelect(e);
+        manager.setSelectionBehavior('toggle');
+      }
+    }
+  });
+
+  // Prevent native drag and drop on long press if we also select on long press.
+  // Once the user is in selection mode, they can long press again to drag.
+  // Use a capturing listener to ensure this runs before useDrag, regardless of
+  // the order the props get merged.
+  let onDragStartCapture = e => {
+    if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
+      e.preventDefault();
+    }
   };
+
+  return {
+    itemProps: mergeProps(
+      itemProps,
+      allowsSelection || hasPrimaryAction ? pressProps : {},
+      longPressEnabled ? longPressProps : {},
+      {onDoubleClick, onDragStartCapture}
+    ),
+    isPressed,
+    isSelected: manager.isSelected(key),
+    isDisabled,
+    allowsSelection,
+    hasAction
+  };
+}
+
+function isActionKey() {
+  let event = window.event as KeyboardEvent;
+  return event?.key === 'Enter';
+}
+
+function isSelectionKey() {
+  let event = window.event as KeyboardEvent;
+  return event?.key === ' ' || event?.code === 'Space';
 }

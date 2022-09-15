@@ -11,11 +11,15 @@
  */
 
 import {Card} from '../src';
-import {Default, DefaultPreviewAlt, NoDescription} from '../stories/Card.stories';
-import {Quiet} from '../stories/QuietCard.stories';
+import {composeStories} from '@storybook/testing-react';
+import * as defaultStories from '../chromatic/Card.chromatic';
+import * as quietStories from '../chromatic/QuietCard.chromatic';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let {Default, DefaultPreviewAlt, NoDescription} = composeStories(defaultStories);
+let {Quiet} = composeStories(quietStories);
 
 describe('Card', function () {
   it('Default is labelled and described', function () {
@@ -30,17 +34,6 @@ describe('Card', function () {
 
     userEvent.tab();
     expect(card).toBe(document.activeElement);
-
-    let buttons = getAllByRole('button');
-    expect(buttons.length).toBe(2);
-
-    userEvent.tab();
-    expect(buttons[0]).toBe(document.activeElement);
-    expect(buttons[0]).toHaveAttribute('aria-label', 'More actions');
-
-    // this is the footer button
-    userEvent.tab();
-    expect(buttons[1]).toBe(document.activeElement);
 
     userEvent.tab();
     expect(document.body).toBe(document.activeElement);
@@ -74,11 +67,5 @@ describe('Card', function () {
 
     userEvent.tab();
     expect(card).toBe(document.activeElement);
-
-    let button = getByRole('button');
-
-    userEvent.tab();
-    expect(button).toBe(document.activeElement);
-    expect(button).toHaveAttribute('aria-label', 'More actions');
   });
 });

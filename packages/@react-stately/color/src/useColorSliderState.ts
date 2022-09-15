@@ -11,7 +11,7 @@
  */
 
 import {Color, ColorSliderProps} from '@react-types/color';
-import {parseColor} from './Color';
+import {normalizeColor, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
 
@@ -25,17 +25,9 @@ export interface ColorSliderState extends SliderState {
 }
 
 
-interface ColorSliderStateOptions extends ColorSliderProps {
+export interface ColorSliderStateOptions extends ColorSliderProps {
   /** The locale to use for formatting the color channel value. */
   locale: string
-}
-
-function normalizeColor(v: string | Color) {
-  if (typeof v === 'string') {
-    return parseColor(v);
-  } else {
-    return v;
-  }
 }
 
 /**
@@ -54,18 +46,19 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     ...otherProps,
     // Unused except in getThumbValueLabel, which is overridden below. null to appease TypeScript.
     numberFormatter: null,
-    value: [color.getChannelValue(channel)],
-    onChange([v]) {
+    value: color.getChannelValue(channel),
+    onChange(v) {
       setColor(color.withChannelValue(channel, v));
     },
-    onChangeEnd([v]) {
-      // onChange will have already been called with the right value, this is just to trigger onChangEnd
+    onChangeEnd(v) {
+      // onChange will have already been called with the right value, this is just to trigger onChangeEnd
       if (props.onChangeEnd) {
         props.onChangeEnd(color.withChannelValue(channel, v));
       }
     }
   });
 
+  let {step, pageSize} = color.getChannelRange(channel);
   return {
     ...sliderState,
     value: color,
@@ -92,6 +85,8 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
     },
     getThumbValueLabel() {
       return color.formatChannelValue(channel, locale);
-    }
+    },
+    step,
+    pageSize
   };
 }

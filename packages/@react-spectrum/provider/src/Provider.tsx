@@ -43,6 +43,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
   } = props;
+  if (!theme) {
+    throw new Error('theme not found, the parent provider must have a theme provided');
+  }
   // Hooks must always be called.
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
@@ -185,6 +188,10 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   );
 });
 
+/**
+ * Returns the various settings and styles applied by the nearest parent Provider.
+ * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
+ */
 export function useProvider(): ProviderContext {
   return useContext(Context);
 }

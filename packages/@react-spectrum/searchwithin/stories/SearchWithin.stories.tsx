@@ -11,43 +11,46 @@
  */
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchWithin} from '../';
 import {SpectrumPickerProps} from '@react-types/select';
+import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 
 export default {
   title: 'SearchWithin'
 };
 
-function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
-    <SearchWithin label="Search" {...props}>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+    <SearchWithin label="This is label" {...props}>
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
         <Item key="audiences">Audiences</Item>
         <Item key="tags">Tags</Item>
+        <Item key="long">This item is very long and word wraps poorly</Item>
       </Picker>
     </SearchWithin>
   );
 }
 
-function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
-    <SearchWithin label="Search" {...props}>
+    <SearchWithin label="Test label" {...props}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
         <Item key="audiences">Audiences</Item>
         <Item key="tags">Tags</Item>
+        <Item key="long">This item is very long and word wraps poorly</Item>
       </Picker>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
     </SearchWithin>
   );
 }
@@ -58,13 +61,14 @@ function ResizeSearchWithinApp(props) {
   return (
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '300px' : '400px'}}>
-        <SearchWithin label="Search" {...props} width="100%">
-          <SearchField placeholder="Search" onChange={action('change')} onSubmit={action('submit')} />
+        <SearchWithin label="Test label" {...props} width="100%">
+          <SearchField onChange={action('change')} onSubmit={action('submit')} />
           <Picker defaultSelectedKey="all" onSelectionChange={action('selectionChange')}>
             <Item key="all">All</Item>
             <Item key="campaigns">Campaigns</Item>
             <Item key="audiences">Audiences</Item>
             <Item key="tags">Tags</Item>
+            <Item key="long">This item is very long and word wraps poorly</Item>
           </Picker>
         </SearchWithin>
       </div>
@@ -116,7 +120,16 @@ CustomWidth30.storyName = 'Custom width: 30';
 export const LabelPositionSide = () => render({labelPosition: 'side'});
 LabelPositionSide.storyName = 'labelPosition: side';
 
-export const NoLabel = () => render({label: undefined, 'aria-label': 'Aria Label'});
+export const NoVisibleLabel = () => render({label: undefined, 'aria-label': 'Test aria label'});
+
+export const NoLabels = () => render({label: undefined});
+
+export const ExternalLabel = () => (
+  <div style={{display: 'flex', flexDirection: 'column'}}>
+    <span id="foo">External label</span>
+    {render({label: undefined, 'aria-labelledby': 'foo'})}
+  </div>
+);
 
 export const AutoFocusSearchField = () => render({}, {autoFocus: true});
 AutoFocusSearchField.storyName = 'autoFocus: true on SearchField';
@@ -129,3 +142,9 @@ export const ReverseChildrenOrder = () => renderReverse({});
 export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
 
 export const ResizeSearchWithinNoLabel = () => <ResizeSearchWithinApp label={null} />;
+
+export const iconFilter = () => render({}, {icon: <Filter />});
+iconFilter.storyName = 'icon: Filter';
+
+export const iconNull = () => render({}, {icon: null});
+iconNull.storyName = 'icon: null';

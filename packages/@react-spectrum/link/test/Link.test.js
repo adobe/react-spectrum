@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Link} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import V2Link from '@react/react-spectrum/Link';
 
 // Triggers a "press" event on an element.
 // TODO: import from somewhere more common
@@ -31,7 +30,7 @@ describe('Link', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
   });
 
   afterAll(() => {
@@ -46,7 +45,6 @@ describe('Link', function () {
   it.each`
     Name        | Component | props
     ${'Link'}   | ${Link}   | ${{onPress: onPressSpy}}
-    ${'V2Link'} | ${V2Link} | ${{onClick: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);
 
@@ -60,15 +58,12 @@ describe('Link', function () {
   it.each`
     Name        | Component | props
     ${'Link'}   | ${Link}   | ${{UNSAFE_className: 'test-class'}}
-    ${'V2Link'} | ${V2Link} | ${{className: 'test-class'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);
     let link = getByText('Click me');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
-  // New v3 functionality, omitting v2 component
-  // V3 will clone custom child element and map the class/event handlers
   it('Wraps string to span', () => {
     let {getByRole} = render(<Link >Click me</Link>);
     let link = getByRole('link');
@@ -108,10 +103,12 @@ describe('Link', function () {
   });
 
   it('supports autofocus', () => {
+    jest.useFakeTimers();
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
-
+    act(() => {jest.runAllTimers();});
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
+    jest.useRealTimers();
   });
 
   it('supports a wrapping tooltip trigger', () => {

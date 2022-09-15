@@ -16,10 +16,14 @@ import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
+import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {Link} from '@react-spectrum/link';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -265,10 +269,6 @@ storiesOf('ComboBox', module)
     () => render({validationState: 'valid', isQuiet: true, defaultSelectedKey: 'two'})
   )
   .add(
-    'placeholder',
-    () => render({placeholder: 'Select an item...'})
-  )
-  .add(
     'autoFocus: true',
     () => render({autoFocus: true})
   )
@@ -469,6 +469,31 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </Flex>
     )
+  )
+  .add(
+    'within a dialog',
+    () => <ComboBoxWithinDialog />
+  )
+  .add(
+    'within a dialog, allowsCustomValue: true',
+    () => <ComboBoxWithinDialog allowsCustomValue />
+  )
+  .add(
+    'WHCM test',
+    () => (
+      <Flex direction="column" gap="size-200">
+        <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Combobox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+        {renderRow({placeholder: 'Type here...'})}
+        {renderRow()}
+        {renderRow({labelPosition: 'side'})}
+        {renderRow({isQuiet: true, placeholder: 'Type here...'})}
+        {renderRow({isQuiet: true})}
+        {renderRow({isRequired: true})}
+        {renderRow({isRequired: true, isQuiet: true})}
+        {renderRow({validationState: 'invalid'})}
+        {renderRow({validationState: 'invalid', isQuiet: true})}
+      </Flex>
+    )
   );
 
 
@@ -545,7 +570,7 @@ function AsyncLoadingExample() {
 
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -562,7 +587,7 @@ function AsyncLoadingExample() {
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}
+      onLoadMore={chain(action('onLoadMore'), list.loadMore)}
       onOpenChange={action('onOpenChange')}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
@@ -584,7 +609,7 @@ function AsyncLoadingExampleControlledKey() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       return {
@@ -641,7 +666,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      let res = await fetch(cursor || `https://swapi.dev/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
       let selectedText;
@@ -859,6 +884,8 @@ let CustomValueComboBox = (props) => {
     setSelectedKey(key);
   };
 
+  actions['onKeyDown'] = action('onKeyDown');
+
   return (
     <div>
       <div>Selected Key: {selectedKey}</div>
@@ -906,6 +933,29 @@ function render(props = {}) {
   );
 }
 
+function renderRow(props = {}) {
+  return (
+    <Flex gap="size-200">
+      <ComboBox label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+      <ComboBox isDisabled label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+    </Flex>  
+  );
+}
+
 function ComboBoxWithMap(props) {
   let [items, setItems] = React.useState([
     {name: 'The first item', id: 'one'},
@@ -932,5 +982,66 @@ function ComboBoxWithMap(props) {
         ))}
       </ComboBox>
     </Flex>
+  );
+}
+
+function ComboBoxWithinDialog(props) {
+  let {allowsCustomValue} = props;
+  let items = [
+    {name: 'Animals', id: 's1', children: [
+      {name: 'Aardvark', id: '1'},
+      {name: 'Kangaroo', id: '2'},
+      {name: 'Snake', id: '3'}
+    ]},
+    {name: 'People', id: 's2', children: [
+      {name: 'Danni', id: '4'},
+      {name: 'Devon', id: '5'},
+      {name: 'Ross', id: '6'}
+    ]}
+  ];
+  let [selectedKey, setSelectedKey] = useState(null);
+  return (
+    <DialogTrigger>
+      <ActionButton>Show ComboBox</ActionButton>
+      {(close) => (
+        <Dialog>
+          <Content>
+            <ComboBox
+              label="Combo Box"
+              defaultItems={items}
+              placeholder="choose wisely"
+              width="size-3000"
+              allowsCustomValue={allowsCustomValue}
+              selectedKey={selectedKey}
+              onSelectionChange={setSelectedKey}
+              onKeyDown={
+                e => {
+                  if (
+                    e.key === 'Escape' &&
+                    (
+                      selectedKey !== null ||
+                      (e.target as HTMLInputElement).value === '' ||
+                      allowsCustomValue
+                    )
+                  ) {
+                    e.continuePropagation();
+                  }
+                }
+              }>
+              {(item) => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {(item) => <Item key={item.name}>{item.name}</Item>}
+                </Section>
+              )}
+            </ComboBox>
+          </Content>
+          <ButtonGroup>
+            <Button onPress={close} variant="secondary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </Dialog>
+      )}
+    </DialogTrigger>
   );
 }

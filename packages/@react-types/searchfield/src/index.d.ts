@@ -11,6 +11,7 @@
  */
 
 import {AriaTextFieldProps, SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
+import {SpectrumTextInputBase} from '@react-types/shared';
 
 export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the SearchField is submitted. */
@@ -21,4 +22,4 @@ export interface SearchFieldProps extends TextFieldProps {
 }
 
 export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
-export interface SpectrumSearchFieldProps extends AriaSearchFieldProps, SpectrumTextFieldProps {}
+export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, AriaSearchFieldProps, SpectrumTextFieldProps {}

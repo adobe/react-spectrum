@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Item} from '@react-spectrum/menu';
-import {Button} from '@react-spectrum/button';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
-import {Content, Footer} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
@@ -64,17 +62,10 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
     <CardView {...props} items={items} layout={layout} width="800px" height="800px" UNSAFE_style={{background: 'white'}} aria-label="Test CardView" selectionMode="multiple">
       {(item: any) => (
         <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
-          <Image src={item.src} />
+          <Image src={item.src} data-chromatic="ignore" />
           <Heading>{item.title}</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
-          <ActionMenu>
-            <Item>Action 1</Item>
-            <Item>Action 2</Item>
-          </ActionMenu>
-          <Footer>
-            <Button variant="primary">Something</Button>
-          </Footer>
         </Card>
       )}
     </CardView>

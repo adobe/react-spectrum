@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTableState';
-export * from './TableHeader';
-export * from './TableBody';
-export * from './Column';
-export * from './Row';
-export * from './Cell';
+export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
+export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
+export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
+
+export {useTableColumnResizeState} from './useTableColumnResizeState';
+export {useTableState} from './useTableState';
+export {TableHeader} from './TableHeader';
+export {TableBody} from './TableBody';
+export {Column} from './Column';
+export {Row} from './Row';
+export {Cell} from './Cell';
 export {Section} from '@react-stately/collections';

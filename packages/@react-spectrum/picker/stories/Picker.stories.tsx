@@ -57,9 +57,9 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item key="rarely">Short</Item>
-        <Item key="sometimes">Normal</Item>
-        <Item key="always">This item is very long and word wraps poorly</Item>
+        <Item key="Short">Short</Item>
+        <Item key="Normal">Normal</Item>
+        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
       </Picker>
     )
   )
@@ -205,7 +205,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
-        <Item key="two">Two dollary-doos</Item>
+        <Item key="Two dollary-doos">Two dollary-doos</Item>
         <Item key="Three">Three</Item>
       </Picker>
     )
@@ -493,13 +493,15 @@ storiesOf('Picker', module)
     () => (
       <>
         <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-          <input placeholder="Shift tab here" />
+          <label htmlFor="focus-before">Focus before</label>
+          <input id="focus-before" />
           <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
             <Item key="One">One</Item>
             <Item key="Two">Two</Item>
             <Item key="Three">Three</Item>
           </Picker>
-          <input placeholder="Tab here" />
+          <label htmlFor="focus-after">Focus after</label>
+          <input id="focus-after" />
         </div>
       </>
     )
@@ -537,11 +539,13 @@ storiesOf('Picker', module)
     'focus',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-        <input placeholder="Shift tab here" />
+        <label htmlFor="focus-before">Focus before</label>
+        <input id="focus-before" />
         <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
           {item => <Item>{item.name}</Item>}
         </Picker>
-        <input placeholder="Tab here" />
+        <label htmlFor="focus-after">Focus after</label>
+        <input id="focus-after" />
       </div>
     )
   )
@@ -598,9 +602,9 @@ function ResizePicker() {
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '200px' : '300px'}}>
         <Picker label="Choose A" width="100%">
-          <Item key="rarely">A1</Item>
-          <Item key="sometimes">A2</Item>
-          <Item key="always">A3</Item>
+          <Item key="A1">A1</Item>
+          <Item key="A2">A2</Item>
+          <Item key="A3">A3</Item>
         </Picker>
       </div>
       <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>

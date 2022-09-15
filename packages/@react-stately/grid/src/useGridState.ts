@@ -1,17 +1,18 @@
 import {GridCollection} from '@react-types/grid';
 import {Key, useEffect, useMemo} from 'react';
-import {MultipleSelection} from '@react-types/shared';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
   /** A selection manager to read and update row selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager,
+  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  isKeyboardNavigationDisabled: boolean
 }
 
-interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelection {
+export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
   collection: C,
   disabledKeys?: Iterable<Key>,
   focusMode?: 'row' | 'cell'
@@ -50,11 +51,12 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
       selectionState.setFocusedKey(null);
     }
-  }, [collection, selectionState.focusedKey]);
+  }, [collection, selectionState]);
 
   return {
     collection,
     disabledKeys,
+    isKeyboardNavigationDisabled: false,
     selectionManager: new SelectionManager(collection, selectionState)
   };
 }

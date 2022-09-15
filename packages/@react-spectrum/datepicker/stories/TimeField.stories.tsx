@@ -161,6 +161,7 @@ function render(props = {}) {
     <TimeField
       label="Time"
       onChange={action('change')}
+      maxWidth="calc(100vw - 40px)"
       {...props} />
   );
 }
