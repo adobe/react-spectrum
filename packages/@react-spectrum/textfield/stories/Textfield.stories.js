@@ -11,135 +11,111 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import Info from '@spectrum-icons/workflow/Info';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';
 
 storiesOf('TextField', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {
+      label: 'Street address',
+      isQuiet: false,
+      isDisabled: false,
+      isReadOnly: false,
+      isRequired: false,
+      necessityIndicator: 'icon',
+      labelPosition: 'top',
+      labelAlign: 'start',
+      validationState: null
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      },
+      necessityIndicator: {
+        control: {
+          type: 'radio',
+          options: ['icon', 'label']
+        }
+      },
+      labelAlign: {
+        control: {
+          type: 'radio',
+          options: ['start', 'end']
+        }
+      },
+      validationState: {
+        control: {
+          type: 'radio',
+          options: [null, 'valid', 'invalid']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render()
+    args => render(args)
   )
   .add(
     'value: Test (controlled)',
-    () => render({value: 'Test'})
+    args => render({...args, value: 'Test'})
   )
   .add(
     'defaultValue: Test (uncontrolled)',
-    () => render({defaultValue: 'Test'})
-  )
-  .add(
-    'isQuiet: true',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => render({isDisabled: true, isQuiet: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid'})
+    args => render({...args, defaultValue: 'Test'})
   )
   .add(
     'type: email',
-    () => render({type: 'email'})
+    args => render({...args, type: 'email'})
   )
   .add(
     'pattern: [0-9]+',
-    () => render({pattern: '[0-9]+'})
-  )
-  .add(
-    'isReadOnly: true',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isReadOnly: true, value: read only value',
-    () => render({value: 'read only value', isReadOnly: true})
-  )
-  .add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
+    args => render({...args, pattern: '[0-9]+'})
   )
   .add(
     'autoFocus: true',
-    () => render({autoFocus: true})
+    args => render({...args, autoFocus: true})
   )
   .add(
     'icon: Info',
-    () => render({icon: <Info />})
-  )
-  .add(
-    'icon: Info, isQuiet',
-    () => render({icon: <Info />, isQuiet: true})
-  )
-  .add(
-    'icon: Info, isDisabled',
-    () => render({icon: <Info />, isDisabled: true})
-  )
-  .add(
-    'icon: Info, isQuiet, isDisabled',
-    () => render({icon: <Info />, isQuiet: true, isDisabled: true})
-  )
-  .add(
-    'icon: Info, validationState: invalid, isQuiet',
-    () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
+    args => render({...args, icon: <Info />})
   )
   .add(
     'no visible label',
-    () => render({label: null, 'aria-label': 'Street address'})
+    args => render({...args, label: null, 'aria-label': 'Street address'})
   )
   .add(
     'with description',
-    () => render({description: 'Please enter your street address.'})
+    args => render({...args, description: 'Please enter your street address.'})
   )
   .add(
     'with error message',
-    () => render({errorMessage: 'Please enter a valid street address.', validationState: 'invalid'})
+    args => render({...args, errorMessage: 'Please enter a valid street address.', validationState: 'invalid'})
   )
   .add(
     'with description, error message and validation',
-    () => renderWithDescriptionErrorMessageAndValidation()
+    args => renderWithDescriptionErrorMessageAndValidation(args)
+  )
+  .add(
+    'with contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add('custom width',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
+    args => render({...args, icon: <Info />, validationState: 'invalid', width: '300px'})
   )
   .add('custom width small',
-    () => render({icon: <Info />, validationState: 'invalid', width: '30px'})
-  )
-  .add('custom width, quiet',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
-  )
-  .add('custom width, labelPosition: side',
-    () => render({icon: <Info />, validationState: 'invalid', width: '500px', labelPosition: 'side'})
-  )
-  .add('custom width small, labelPosition: side',
-    () => render({icon: <Info />, validationState: 'invalid', width: '30px', labelPosition: 'side'})
+    args => render({...args, icon: <Info />, validationState: 'invalid', width: '30px'})
   );
 
 function render(props = {}) {
@@ -154,13 +130,14 @@ function render(props = {}) {
   );
 }
 
-function renderWithDescriptionErrorMessageAndValidation() {
+function renderWithDescriptionErrorMessageAndValidation(props) {
   function Example() {
     let [value, setValue] = React.useState('0');
     let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-  
+
     return (
       <TextField
+        {...props}
         validationState={isValid ? 'valid' : 'invalid'}
         value={value}
         onChange={setValue}

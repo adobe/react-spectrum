@@ -11,8 +11,11 @@
  */
 
 import {ComboBox, Item} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -25,10 +28,16 @@ let states = [
   {isDisabled: true},
   {validationState: ['valid', 'invalid']},
   {isRequired: true},
-  {necessityIndicator: 'label'}
+  {necessityIndicator: 'label'},
+  {contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )}
 ];
 
-let combinations = generatePowerset(states);
+let combinations = generatePowerset(states, v => v.validationState && v.contextualHelp);
 
 function shortName(key, value) {
   let returnVal = '';

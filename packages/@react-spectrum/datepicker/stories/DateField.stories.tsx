@@ -12,8 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateField} from '../';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -180,6 +183,15 @@ storiesOf('Date and Time/DateField/styling', module)
   .add(
     'errorMessage',
     () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
 
 function render(props = {}) {
