@@ -4,6 +4,7 @@ import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {MoveMoveEvent} from '@react-types/shared';
 import React, {RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {TableColumnResizeState} from '@react-stately/table';
@@ -15,7 +16,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>
+  triggerRef: RefObject<HTMLDivElement>,
+  onMovedResizer: (e: MoveMoveEvent) => void
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
@@ -30,7 +32,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     ...props,
     label: stringFormatter.format('columnResizer'),
     isDisabled: isEmpty,
-    onMove: () => {
+    onMove: (e) => {
       document.body.classList.remove(classNames(styles, 'resize-ew'));
       document.body.classList.remove(classNames(styles, 'resize-e'));
       document.body.classList.remove(classNames(styles, 'resize-w'));
@@ -41,6 +43,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       } else {
         document.body.classList.add(classNames(styles, 'resize-ew'));
       }
+      props.onMovedResizer(e);
     },
     onMoveEnd: () => {
       document.body.classList.remove(classNames(styles, 'resize-ew'));

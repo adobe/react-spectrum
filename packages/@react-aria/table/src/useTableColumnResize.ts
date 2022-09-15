@@ -11,7 +11,7 @@
  */
 
 import {ChangeEvent, RefObject, useCallback, useRef} from 'react';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, MoveEndEvent, MoveMoveEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
@@ -32,8 +32,8 @@ export interface AriaTableColumnResizeProps<T> {
   label: string,
   triggerRef: RefObject<HTMLDivElement>,
   isDisabled?: boolean,
-  onMove: () => void,
-  onMoveEnd: () => void
+  onMove: (e: MoveMoveEvent) => void,
+  onMoveEnd: (e: MoveEndEvent) => void
 }
 
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
@@ -60,7 +60,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
       stateRef.current.onColumnResizeStart(item);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove(e) {
+      let {deltaX, deltaY, pointerType} = e;
       if (direction === 'rtl') {
         deltaX *= -1;
       }
@@ -74,12 +75,13 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (deltaX !== 0) {
         columnResizeWidthRef.current += deltaX;
         stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
-        props.onMove();
+        props.onMove(e);
       }
     },
-    onMoveEnd({pointerType}) {
+    onMoveEnd(e) {
+      let {pointerType} = e;
       columnResizeWidthRef.current = 0;
-      props.onMoveEnd();
+      props.onMoveEnd(e);
       if (pointerType === 'mouse') {
         stateRef.current.onColumnResizeEnd(item);
       }
