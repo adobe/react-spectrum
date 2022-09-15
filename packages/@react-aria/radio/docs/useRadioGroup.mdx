@@ -104,7 +104,7 @@ let RadioContext = React.createContext(null);
 function RadioGroup(props) {
   let {children, label} = props;
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
   return (
     <div {...radioGroupProps}>
@@ -112,6 +112,8 @@ function RadioGroup(props) {
       <RadioContext.Provider value={state}>
         {children}
       </RadioContext.Provider>
+      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
+      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
     </div>
   )
 }
@@ -160,7 +162,7 @@ let RadioContext = React.createContext(null);
 function RadioGroup(props) {
   let {children, label} = props;
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
   return (
     <div {...radioGroupProps}>
@@ -168,6 +170,8 @@ function RadioGroup(props) {
       <RadioContext.Provider value={state}>
         {children}
       </RadioContext.Provider>
+      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
+      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
     </div>
   )
 }
@@ -272,6 +276,29 @@ function Example() {
     </>
   );
 }
+```
+
+### Description
+
+The `description` prop can be used to associate additional help text with a radio group.
+
+```tsx example
+<RadioGroup label="Favorite pet" description="Select your favorite pet.">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+### Error message
+
+The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
+semantically mark the radio group as invalid for assistive technologies.
+
+```tsx example
+<RadioGroup label="Favorite pet" errorMessage="Invalid pet selection.">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
 ```
 
 ### Disabled
