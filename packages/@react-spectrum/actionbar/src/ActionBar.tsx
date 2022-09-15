@@ -100,9 +100,9 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: DOMRef<HTMLDivEle
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
           <div className={classNames(styles, 'react-spectrum-ActionBar-actionGroupWrapper')}>
             <ActionGroup
-              aria-label={formatMessage('actions')}
+              aria-label={stringFormatter.format('actions')}
               isQuiet
-              staticColor={isEmphasized ? 'white' : null}
+              staticColor={isEmphasized ? 'white' : undefined}
               overflowMode="collapse"
               buttonLabelBehavior="collapse"
               onAction={onAction}
