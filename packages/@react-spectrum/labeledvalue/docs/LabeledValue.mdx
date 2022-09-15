@@ -31,10 +31,7 @@ after_version: 3.0.0
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['LabeledValue']}
-  sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/field-label/'}
-  ]} />
+  componentNames={['LabeledValue']} />
 
 ## Example
 
@@ -44,7 +41,7 @@ after_version: 3.0.0
 
 ## Value
 
-In addition to a string as shown above, a `LabeledValue` accepts numbers, dates, times, and lists in the `value` prop.
+In addition to a string as shown above, a `LabeledValue` accepts numbers, dates, times, and lists of strings in the `value` prop.
 
 ### Numbers
 
@@ -69,7 +66,7 @@ An object with `start` and `end` properties may also be provided to format a num
 
 ### Dates and times
 
-The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](../internationalized/date.html) to display a date or time, which is formatted according to the user's locale.
+The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](../internationalized/date/index.html) to display a date or time, which is formatted according to the user's locale.
 
 ```tsx example
 import {today, getLocalTimeZone} from '@internationalized/date';
@@ -102,13 +99,13 @@ with the option parameter of [Intl.DateTimeFormat](https://developer.mozilla.org
 
 ### Lists
 
-When the `value` prop is set to an array of strings, they are rendered as a comma separated list according to the user's locale.
+When the `value` prop is set to an array of strings, they are rendered as a comma-separated list according to the user's locale.
 
 ```tsx example
 <LabeledValue label="Pizza toppings" value={['Pepperoni', 'Pineapple', 'Mushroom', 'Garlic']} />
 ```
 
-By default, the list is displayed as a conjunction (an "and"-based grouping of items). This may be changed to a disjunction (an "or"-based grouping), or a pure comma separated list using the `formatOptions` prop. This is compatible with the option parameter of [Intl.ListFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat).
+By default, the list is displayed as a conjunction (an "and"-based grouping of items). This may be changed to a disjunction (an "or"-based grouping), or a pure comma-separated list using the `formatOptions` prop. This is compatible with the option parameter of [Intl.ListFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat).
 
 ```tsx example
 <LabeledValue label="Interests" value={['Travel', 'Hiking', 'Snorkeling', 'Camping']} formatOptions={{type: 'unit'}} />
@@ -116,24 +113,13 @@ By default, the list is displayed as a conjunction (an "and"-based grouping of i
 
 ## Labeling
 
-A visual label should be provided to the `LabeledValue` using the `label` prop.
-
-### Accessibility
-
-If a visible label isn't specified, an `aria-label` should be provided to the `LabeledValue` for
-accessibility. If labeled by a separate element, an `aria-labelledby` prop must be provided using
-the `id` of the labeling element instead.
-
-```tsx example
-<strong id="cookies">Cookies</strong>
-<LabeledValue aria-labelledby="cookies" value={500} />
-```
+A visual label must be provided to the `LabeledValue` using the `label` prop.
 
 ### Internationalization
 
-In order to internationalize a `LabeledValue`, a localized string should be passed to the `label` or `aria-label` prop.
+In order to internationalize a `LabeledValue`, a localized string should be passed to the `label` prop.
 
-`LabeledValue` automatically formats numbers, dates, times, and lists according to the user's locale, as defined by the [Provider](Provider.html) component. String values provided to a `LabeledValue` should be translated accordingly.
+`LabeledValue` automatically formats numbers, dates, times, and lists according to the user's locale, as defined by the [Provider](Provider.html#locales) component. String values provided to a `LabeledValue` should be translated accordingly.
 
 ## Props
 
@@ -144,7 +130,7 @@ In order to internationalize a `LabeledValue`, a localized string should be pass
 ### Label alignment and position
 [View guidelines](https://spectrum.adobe.com/page/field-label/#Label-position)
 
-By default, the label is positioned above the `LabeledValue`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `LabeledValue` and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+By default, the label is positioned above the `LabeledValue`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `LabeledValue` and "end" refers to the right-most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
 <LabeledValue label="File name" value="Onboarding.pdf" labelPosition="side" labelAlign="end" />

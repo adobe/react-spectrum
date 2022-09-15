@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
+import type {DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {RefObject} from 'react';
+import React, {ReactNode, RefObject} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useStyleProps} from '@react-spectrum/utils';
 
 // NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
 
-export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
+export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, DOMProps {
+  /** The content to display as the label. */
+  label: ReactNode
+}
 
 type NumberValue = number | RangeValue<number>;
 interface NumberProps<T extends NumberValue> {
@@ -88,7 +91,7 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
 
   return (
     <div
-      {...filterDOMProps(props)}
+      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={classNames(labelStyles, 'spectrum-LabeledValue', {[labelWrapperClass]: label}, styleProps.className)}
       ref={ref}>
@@ -101,12 +104,7 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
         </Label>}
       <div
         className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        <div
-          className={classNames(labelStyles, 'spectrum-Field-field')}
-          aria-label={props['aria-label']}
-          aria-labelledby={props['aria-labelledby']}
-          aria-describedby={props['aria-describedby']}
-          aria-details={props['aria-details']}>
+        <div className={classNames(labelStyles, 'spectrum-Field-field')}>
           {Array.isArray(value) &&
             // @ts-ignore
             <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />}
