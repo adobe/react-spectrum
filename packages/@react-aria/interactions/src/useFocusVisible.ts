@@ -79,10 +79,7 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
 }
 
 function handleClickEvent(e: MouseEvent) {
-  // Talkback double tap has detail === 1 for click events, so we check e.buttons
-  // instead
-  let isTalkBackClick = isAndroid() && e.buttons === 1;
-  if (isVirtualClick(e) || isTalkBackClick) {
+  if (isVirtualClick(e)) {
     hasEventBeforeFocus = true;
     currentModality = 'virtual';
   }
