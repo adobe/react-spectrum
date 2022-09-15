@@ -21,7 +21,7 @@ import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 
-export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'getDropOperations'> {
+export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'getDropOperation'> {
   keyboardDelegate: KeyboardDelegate,
   dropTargetDelegate: DropTargetDelegate
 }

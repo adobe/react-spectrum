@@ -121,7 +121,6 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
       selectionManager,
       preview
     });
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     dndHooks.useDraggableCollection({}, dragState, domRef);
   }
   let layout = useListLayout(

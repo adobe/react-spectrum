@@ -46,7 +46,6 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     getAllowedDropOperations
   } = props;
   let [, setDragging] = useState(false);
-  // Retain a local tracker for draggingKeys since the global DnD state is briefly inaccurate during the deferred onDrop and onDragEnd
   let draggingKeys = useRef(new Set<Key>());
   let draggedKey = useRef(null);
   let getKeys = (key: Key) => {

@@ -41,14 +41,14 @@ import {
 import {DroppableCollectionProps} from '@react-types/shared';
 import {Key, RefObject, useMemo} from 'react';
 
-export interface DragHooks {
+interface DragHooks {
   useDraggableCollectionState?: (props: Omit<DraggableCollectionStateOptions, 'getItems'>) => DraggableCollectionState,
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview
 }
 
-export interface DropHooks {
+interface DropHooks {
   useDroppableCollectionState?: (props: DroppableCollectionStateOptions) => DroppableCollectionState,
   useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableCollectionResult,
   useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableItemResult,

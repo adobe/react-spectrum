@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export type {DnDOptions, DnDHooks, DragHooks, DropHooks} from './useDnDHooks';
+export type {DnDOptions, DnDHooks} from './useDnDHooks';
 export {useDnDHooks} from './useDnDHooks';

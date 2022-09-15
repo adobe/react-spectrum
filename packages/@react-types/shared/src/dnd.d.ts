@@ -136,10 +136,6 @@ interface DroppableCollectionOnItemDropEvent {
     key: Key,
     dropPosition: 'on'
   }
-  // TODO: maybe worthwhile passing draggingKeys so user doesn't have to process the drop items datatransfer info
-  // if it is an internal drop (they can use the draggingkeys instead). However this feels weird since draggingKeys
-  // would only be usuable if it is an internal drop and not for external drops.
-  // For external drops the keys are from a different collection and thus won't make sense to the droppable collection
 }
 
 interface DroppableCollectionReorderEvent {
@@ -178,8 +174,6 @@ export interface DroppableCollectionProps {
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
-  // TODO: perhaps onDrop would benefit from having isInternalDrop and draggingKeys provided to it? Or should we let the user handle tracking that
-  // since they've dropped to the lower level api
   /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**
@@ -219,10 +213,6 @@ interface DraggableCollectionMoveEvent extends DragMoveEvent {
 interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>,
   isInternalDrop: boolean
-}
-
-interface DraggableCollectionRemoveEvent {
-  keys: Set<Key>
 }
 
 export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
