@@ -15,13 +15,17 @@ import {checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useLabel} from '@react-aria/label';
+import {useField, useLabel} from '@react-aria/label';
 
 export interface CheckboxGroupAria {
   /** Props for the checkbox group wrapper element. */
   groupProps: DOMAttributes,
   /** Props for the checkbox group's visible label (if any). */
-  labelProps: DOMAttributes
+  labelProps: DOMAttributes,
+  /** Props for the checkbox group description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the checkbox group error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -40,6 +44,8 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
     labelElementType: 'span'
   });
 
+  let {descriptionProps, errorMessageProps} = useField(props);
+
   let domProps = filterDOMProps(props, {labelable: true});
 
   // Pass name prop from group to all items by attaching to the state.
@@ -51,6 +57,8 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
       'aria-disabled': isDisabled || undefined,
       ...fieldProps
     }),
-    labelProps
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   };
 }

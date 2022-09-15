@@ -19,6 +19,7 @@ import {
   InputBase,
   LabelableProps,
   Orientation,
+  SpectrumHelpTextProps,
   SpectrumLabelableProps,
   StyleProps,
   Validation,
@@ -90,7 +91,7 @@ export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   isEmphasized?: boolean
 }
 
-export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation, StyleProps {
+export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation, StyleProps, SpectrumHelpTextProps {
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */

@@ -99,6 +99,18 @@ storiesOf('CheckboxGroup', module)
     () => render({}, [{}, {validationState: 'invalid'}, {}])
   )
   .add(
+    'with description',
+    () => render({description: 'Please select some pets.'})
+  )
+  .add(
+    'with error message',
+    () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid'})
+  )
+  .add(
+    'with description, error message and validation',
+    () => renderWithDescriptionErrorMessageAndValidation()
+  )
+  .add(
     'no visible label',
     () => render({label: null, 'aria-label': 'Pets'})
   )
@@ -134,4 +146,31 @@ function ControlledCheckboxGroup() {
       <Checkbox value="dragons">Dragons</Checkbox>
     </CheckboxGroup>
   );
+}
+
+function renderWithDescriptionErrorMessageAndValidation() {
+  function Example() {
+    let [checked, setChecked] = useState<string[]>(['dogs', 'dragons']);
+    let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
+  
+    return (
+      <CheckboxGroup
+        label="Pets"
+        onChange={setChecked}
+        value={checked}
+        validationState={isValid ? 'valid' : 'invalid'}
+        description="Select only dogs and dragons."
+        errorMessage={
+          checked.includes('cats')
+            ? 'No cats allowed.'
+            : 'Select only dogs and dragons.'
+        }>
+        <Checkbox value="dogs">Dogs</Checkbox>
+        <Checkbox value="cats">Cats</Checkbox>
+        <Checkbox value="dragons">Dragons</Checkbox>
+      </CheckboxGroup>
+    );
+  }
+
+  return <Example />;
 }
