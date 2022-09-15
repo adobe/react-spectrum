@@ -30,11 +30,12 @@ export interface TableColumnResizeAria {
 export interface AriaTableColumnResizeProps<T> {
   column: GridNode<T>,
   label: string,
-  triggerRef: RefObject<HTMLDivElement>
+  triggerRef: RefObject<HTMLDivElement>,
+  isDisabled?: boolean
 }
 
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef} = props;
+  let {column: item, triggerRef, isDisabled} = props;
   const stateRef = useRef<TableColumnResizeState<T>>(null);
   // keep track of what the cursor on the body is so it can be restored back to that when done resizing
   const cursor = useRef<string | null>(null);
@@ -159,7 +160,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           stateRef.current.onColumnResizeEnd(item);
           state.setKeyboardNavigationDisabled(false);
         },
-        onChange
+        onChange,
+        disabled: isDisabled
       },
       ariaProps
     )

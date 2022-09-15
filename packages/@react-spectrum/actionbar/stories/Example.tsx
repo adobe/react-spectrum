@@ -50,6 +50,7 @@ let defaultItems = [
 export function Example(props: any = {}) {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
   let [items, setItems] = useState(defaultItems);
+
   let ref = useRef(null);
   return (
     <ActionBarContainer height={props.containerHeight || 300}>
@@ -88,28 +89,26 @@ export function Example(props: any = {}) {
               }
               setItems(newItems);
               setSelectedKeys(new Set());
-              // TODO need to solve restore focus when the row we arrived from is deleted, tableview ref is not focusable
-              // ref.current.focus();
             }
           }
         })}>
-        <Item key="edit">
+        <Item key="edit" textValue="Edit">
           <Edit />
           <Text>Edit</Text>
         </Item>
-        <Item key="copy">
+        <Item key="copy" textValue="Copy">
           <Copy />
           <Text>Copy</Text>
         </Item>
-        <Item key="delete">
+        <Item key="delete" textValue="Delete">
           <Delete />
           <Text>Delete</Text>
         </Item>
-        <Item key="move">
+        <Item key="move" textValue="Move">
           <Move />
           <Text>Move</Text>
         </Item>
-        <Item key="duplicate">
+        <Item key="duplicate" textValue="Duplicate">
           <Duplicate />
           <Text>Duplicate</Text>
         </Item>

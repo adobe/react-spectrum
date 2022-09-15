@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:active {
+    &.is-active {
       color: var(--spectrum-table-header-text-color-down);
 
       .spectrum-Table-sortedIcon {
@@ -76,6 +76,10 @@ governing permissions and limitations under the License.
   border-style: solid;
   border-color: var(--spectrum-table-border-color);
   background-color: var(--spectrum-table-background-color);
+
+  &:focus-ring {
+    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+  }
 
   &.is-drop-target {
     border-color: var(--spectrum-alias-border-color-focus);
