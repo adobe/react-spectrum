@@ -17,7 +17,7 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isVirtualClick, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {setGlobalAllowedDropOperations, useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
@@ -213,17 +213,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message: string;
-  if (!isDragging) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
-
+  let message = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
   let descriptionProps = useDescription(stringFormatter.format(message));
 
   let interactions: HTMLAttributes<HTMLElement>;
@@ -238,12 +228,9 @@ export function useDrag(options: DragOptions): DragResult {
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
-        if (e.pointerType !== 'touch') {
-          modalityOnPointerDown.current = e.pointerType;
-          return;
-        }
+        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
 
-        // Try to detect virtual drags.
+        // Try to detect virtual drag passthrough gestures.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
@@ -276,8 +263,8 @@ export function useDrag(options: DragOptions): DragResult {
         }
       },
       onClick(e) {
-        // Handle NVDA/JAWS in browse mode. In this case, no keyboard events are fired.
-        if (e.target === e.currentTarget && isVirtualClick(e.nativeEvent) && modality === 'keyboard') {
+        // Handle NVDA/JAWS in browse mode, and touch screen readers. In this case, no keyboard events are fired.
+        if (isVirtualClick(e.nativeEvent) || modalityOnPointerDown.current === 'virtual') {
           e.preventDefault();
           e.stopPropagation();
           startDragging(e.target as HTMLElement);
