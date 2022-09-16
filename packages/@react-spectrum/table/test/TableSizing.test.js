@@ -102,7 +102,7 @@ describe('TableViewSizing', function () {
         </TableView>
         , scale);
 
-      it('should layout rows with default height', async function () {
+      it('should layout rows with default height', function () {
         let tree = renderTable();
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(3);
