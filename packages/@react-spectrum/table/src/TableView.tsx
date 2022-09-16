@@ -87,7 +87,7 @@ interface TableContextValue<T> {
   setIsInResizeMode: (val: boolean) => void,
   isEmpty: boolean,
   onFocusedResizer: () => void,
-  onMovedResizer: (e: MoveMoveEvent) => void
+  onMoveResizer: (e: MoveMoveEvent) => void
 }
 
 
@@ -324,7 +324,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   };
 
   let lastResizeInteractionModality = useRef(undefined);
-  let onMovedResizer = (e) => {
+  let onMoveResizer = (e) => {
     if (e.pointerType === 'keyboard') {
       lastResizeInteractionModality.current = e.pointerType;
     } else {
@@ -333,7 +333,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   };
 
   return (
-    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMovedResizer}}>
+    <TableContext.Provider value={{state, layout, columnState, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -580,7 +580,7 @@ function ResizableTableColumnHeader(props) {
   let ref = useRef(null);
   let triggerRef = useRef(null);
   let resizingRef = useRef(null);
-  let {state, columnState, headerRowHovered, setIsInResizeMode, isInResizeMode, isEmpty, onFocusedResizer, onMovedResizer} = useTableContext();
+  let {state, columnState, headerRowHovered, setIsInResizeMode, isInResizeMode, isEmpty, onFocusedResizer, onMoveResizer} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
@@ -695,7 +695,7 @@ function ResizableTableColumnHeader(props) {
           column={column}
           showResizer={showResizer}
           triggerRef={useUnwrapDOMRef(triggerRef)}
-          onMovedResizer={onMovedResizer} />
+          onMoveResizer={onMoveResizer} />
         <div
           aria-hidden
           className={classNames(

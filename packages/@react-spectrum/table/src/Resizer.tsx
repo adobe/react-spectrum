@@ -17,7 +17,7 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onMovedResizer: (e: MoveMoveEvent) => void
+  onMoveResizer: (e: MoveMoveEvent) => void
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
@@ -43,7 +43,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       } else {
         document.body.classList.add(classNames(styles, 'resize-ew'));
       }
-      props.onMovedResizer(e);
+      props.onMoveResizer(e);
     },
     onMoveEnd: () => {
       document.body.classList.remove(classNames(styles, 'resize-ew'));
