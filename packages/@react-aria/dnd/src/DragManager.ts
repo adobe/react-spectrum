@@ -74,9 +74,16 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
   requestAnimationFrame(() => {
     dragSession.setup();
 
+    if (getDragModality() === 'virtual') {
+      const {element} = target;
+      flushSync(() => {
+        element.blur();
+      });
+      element.focus();
+    }
+
     if (
       getDragModality() === 'keyboard' ||
-      getDragModality() === 'virtual' ||
       (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
     ) {
       let target = dragSession.findNearestDropTarget();
