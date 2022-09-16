@@ -3866,7 +3866,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(3);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -3891,10 +3891,8 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 3 by useLayoutEffect
-      // we can't get better results than that without mocking every single clientHeight/Width
-      // this is a good candidate for storybook interactions test
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(4);
+
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(2);
     });
   });
 

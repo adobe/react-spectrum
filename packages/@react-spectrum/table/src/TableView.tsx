@@ -21,7 +21,13 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {
+  layoutInfoToStyle,
+  ScrollView,
+  setScrollLeft,
+  useVirtualizer,
+  VirtualizerItem
+} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -121,10 +127,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
-  const columnState = useTableColumnResizeState({...mergeProps(props, {onColumnResizeEnd: () => {
-    setIsInResizeMode(false);
-  }}), getDefaultWidth}, state.collection);
-
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
   if (shouldShowCheckboxes !== showSelectionCheckboxes) {
@@ -134,6 +136,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let domRef = useDOMRef(ref);
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
+  let virtualizer = useRef(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let density = props.density || 'regular';
@@ -154,6 +157,17 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }),
     [props.overflowMode, scale, density]
   );
+
+  const columnState = useTableColumnResizeState({...mergeProps(props, {
+    onResize: () => {
+      if (virtualizer.current) {
+        virtualizer.current.relayoutNow({sizeChanged: true});
+      }
+    },
+    onColumnResizeEnd: () => {
+      setIsInResizeMode(false);
+    }
+  }), getDefaultWidth}, state.collection);
   layout.collection = state.collection;
   layout.getColumnWidth = columnState.getColumnWidth;
 
@@ -165,7 +179,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, state, domRef);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
-  // This overrides collection view's renderWrapper to support DOM heirarchy.
+  // This overrides collection view's renderWrapper to support DOM hierarchy.
   type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
@@ -366,14 +380,29 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         headerRef={headerRef}
         lastResizeInteractionModality={lastResizeInteractionModality}
         bodyRef={bodyRef}
-        isFocusVisible={isFocusVisible}
-        getColumnWidth={columnState.getColumnWidth} />
+        virtualizer={virtualizer}
+        isFocusVisible={isFocusVisible} />
     </TableContext.Provider>
   );
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, lastResizeInteractionModality, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
+function TableVirtualizer({
+  layout,
+  collection,
+  lastResizeInteractionModality,
+  focusedKey,
+  renderView,
+  renderWrapper,
+  domRef,
+  bodyRef,
+  headerRef,
+  setTableWidth,
+  onVisibleRectChange: onVisibleRectChangeProp,
+  isFocusVisible,
+  virtualizer,
+  ...otherProps
+}) {
   let {direction} = useLocale();
   let {state: tableState, columnState} = useTableContext();
   let loadingState = collection.body.props.loadingState;
@@ -390,6 +419,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     },
     transitionDuration: isLoading ? 160 : 220
   });
+  virtualizer.current = state.virtualizer;
 
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
@@ -409,11 +439,6 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, state, domRef);
 
-  // If columnwidths change, need to relayout.
-  useLayoutEffect(() => {
-    state.virtualizer.relayoutNow({sizeChanged: true});
-  }, [getColumnWidth, state.virtualizer]);
-
   useEffect(() => {
     if (lastResizeInteractionModality.current === 'keyboard' && headerRef.current.contains(document.activeElement)) {
       document.activeElement?.scrollIntoView?.(false);
@@ -430,9 +455,11 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   }, [bodyRef, headerRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
-    setTableWidth(rect.width);
-
+    // order matters here, setTableWidth calls a relayoutNow
+    // setVisibleRect calls a relayout after a raf, to combine them, they must be in this order
+    // so that the relayoutNow cancels the raf
     state.setVisibleRect(rect);
+    setTableWidth(rect.width);
 
     if (!isLoading && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
@@ -442,13 +469,20 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
+  let prevContentSizeHeight = useRef(state.virtualizer.contentSize.height);
   useLayoutEffect(() => {
     if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (state.contentSize.height <= state.virtualizer.visibleRect.height) {
+      if (prevContentSizeHeight.current > 0 && state.virtualizer.contentSize.height < state.virtualizer.visibleRect.height) {
+        // choosing
+        // - state.contentSize.height > 0 && state.contentSize.height // if height reduces (delete the page) then we want to load more
+        // - state.virtualizer.contentSize.height // not an entry in dependency array, so if we remove the state.contentSize, this won't work if we removed the dependency we aren't using
+        // - ref for initial render
+        // - ref to store content size from virtualizer and remove dependency array <-
         onLoadMore();
       }
     }
-  }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
+    prevContentSizeHeight.current = state.virtualizer.contentSize.height;
+  });
 
   let keysBefore = [];
   let key = columnState.currentlyResizingColumn;
