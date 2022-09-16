@@ -11,20 +11,21 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
-import FileTxt from '@spectrum-icons/workflow/FileTxt';
+import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';
+import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import {Link} from '@react-spectrum/link';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
-import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 const parameters = {
   args: {
@@ -103,37 +104,17 @@ const itemsWithThumbs = [
   {key: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
   {key: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
   {key: '8', title: 'audiophile', url: 'https://random.dog/32367-2062-4347.jpg'},
-  {key: '9', title: 'folder of great bois', illustration: <Folder />}
+  {key: '9', title: 'file of great boi', illustration: <File />}
 ];
 
-function IllustrationContainer(props) {
-  props = useSlotProps(props, 'illustration');
-  let {styleProps} = useStyleProps(props);
-  return (
-    <div {...styleProps}>
-      {props.children}
-    </div>
-  );
-}
-
-function Folder() {
-  return (
-    <IllustrationContainer>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95.23 67">
-        <path fill="var(--spectrum-global-color-gray-600)" d="M94.47,27a4.45,4.45,0,0,0-3.72-2H20.34a5.45,5.45,0,0,0-5.05,3.37L3.12,57.68V3.88A.89.89,0,0,1,4,3H23.21a2.51,2.51,0,0,1,1.69.66l9.7,8.94a1.56,1.56,0,0,0,1,.4h40a1.5,1.5,0,0,1,1.5,1.5v6a1.5,1.5,0,0,0,3,0v-6a4.51,4.51,0,0,0-4.5-4.5H36.21L26.93,1.46A5.48,5.48,0,0,0,23.21,0H4A3.88,3.88,0,0,0,.12,3.88v61h0A1.51,1.51,0,0,0,1.5,67H79a1.49,1.49,0,0,0,1.38-.92L94.89,31.19A4.45,4.45,0,0,0,94.47,27ZM92.12,30,78,64H3.75L18.06,29.52A2.46,2.46,0,0,1,20.34,28H90.75a1.48,1.48,0,0,1,1.37,2Z" />
-      </svg>
-    </IllustrationContainer>
-  );
-}
-
-function renderEmptyState() {
+export function renderEmptyState() {
   return (
     <IllustratedMessage>
       <svg width="150" height="103" viewBox="0 0 150 103">
         <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
       </svg>
       <Heading>No results</Heading>
-      <Content>No results found</Content>
+      <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
     </IllustratedMessage>
   );
 }
@@ -633,7 +614,7 @@ export function DragExample(props?) {
       {(item: any) => (
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
-          {item.key === 'a' && <FileTxt />}
+          {item.key === 'a' && <File />}
           <Text>
             {item.name}
           </Text>
@@ -872,7 +853,10 @@ export function DragIntoItemExample(props) {
 }
 
 export function DragBetweenListsExample(props) {
-  let onDropAction = action('onDrop');
+  let {onDragStart, onDragEnd, onDrop} = props;
+  onDrop = chain(action('onDrop'), onDrop);
+  onDragStart = chain(action('dragStart'), onDragStart);
+  onDragEnd = chain(action('dragEnd'), onDragEnd);
 
   let list1 = useListData({
     initialItems: props.items1 || itemList1
@@ -918,8 +902,8 @@ export function DragBetweenListsExample(props) {
       getAllowedDropOperationsAction();
       return ['move', 'cancel'];
     },
-    onDragStart: action('dragStart'),
-    onDragEnd: action('dragEnd')
+    onDragStart,
+    onDragEnd
   });
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
@@ -943,7 +927,7 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
-        onDropAction(e);
+        onDrop(e);
         onMove(keys, e.target);
       }
     },

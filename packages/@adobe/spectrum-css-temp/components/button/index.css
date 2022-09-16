@@ -170,6 +170,11 @@ governing permissions and limitations under the License.
   .spectrum-Button-label + .spectrum-Icon {
     margin-inline-end: var(--spectrum-button-primary-text-gap);
   }
+
+  &.spectrum-Button--iconOnly {
+    min-inline-size: unset;
+    padding: var(--spectrum-global-dimension-size-65);
+  }
 }
 
 a.spectrum-Button,

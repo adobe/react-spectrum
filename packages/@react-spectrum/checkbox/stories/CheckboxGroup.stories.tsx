@@ -126,7 +126,7 @@ function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkb
 }
 
 function ControlledCheckboxGroup() {
-  let [checked, setChecked] = useState([]);
+  let [checked, setChecked] = useState<string[]>([]);
   return (
     <CheckboxGroup label="Pets" onChange={setChecked} value={checked}>
       <Checkbox value="dogs">Dogs</Checkbox>

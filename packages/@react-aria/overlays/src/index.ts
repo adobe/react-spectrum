@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {DEFAULT_MODAL_PADDING, useOverlayPosition} from './useOverlayPosition';
+export {useOverlayPosition} from './useOverlayPosition';
 export {useOverlay} from './useOverlay';
 export {useOverlayTrigger} from './useOverlayTrigger';
 export {usePreventScroll} from './usePreventScroll';

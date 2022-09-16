@@ -13,6 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import type {LocalizedStringFormatter} from '@internationalized/string';
@@ -75,7 +76,8 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
       getDragModality() === 'keyboard' ||
       (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
     ) {
-      dragSession.next();
+      let target = dragSession.findNearestDropTarget();
+      dragSession.setCurrentDropTarget(target);
     }
   });
 
@@ -96,6 +98,10 @@ export function useDragSession() {
   }, []);
 
   return session;
+}
+
+export function isVirtualDragging(): boolean {
+  return !!dragSession;
 }
 
 function endDragging() {
@@ -411,6 +417,25 @@ class DragSession {
     }
   }
 
+  findNearestDropTarget(): DropTarget {
+    let dragTargetRect = this.dragTarget.element.getBoundingClientRect();
+
+    let minDistance = Infinity;
+    let nearest = null;
+    for (let dropTarget of this.validDropTargets) {
+      let rect = dropTarget.element.getBoundingClientRect();
+      let dx = rect.left - dragTargetRect.left;
+      let dy = rect.top - dragTargetRect.top;
+      let dist = (dx * dx) + (dy * dy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearest = dropTarget;
+      }
+    }
+
+    return nearest;
+  }
+
   setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
     if (dropTarget !== this.currentDropTarget) {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
@@ -474,7 +499,16 @@ class DragSession {
 
     // Blur and re-focus the drop target so that the focus ring appears.
     if (this.currentDropTarget) {
-      this.currentDropTarget.element.blur();
+      // Since we cancel all focus events in drag sessions, refire blur to make sure state gets updated so drag target doesn't think it's still focused
+      // i.e. When you from one list to another during a drag session, we need the blur to fire on the first list after the drag.
+      if (!this.dragTarget.element.contains(this.currentDropTarget.element)) {
+        this.dragTarget.element.dispatchEvent(new FocusEvent('blur'));
+        this.dragTarget.element.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+      }
+      // Re-focus the focusedKey upon reorder. This requires a React rerender between blurring and focusing.
+      flushSync(() => {
+        this.currentDropTarget.element.blur();
+      });
       this.currentDropTarget.element.focus();
     }
 
