@@ -95,6 +95,10 @@ storiesOf('RadioGroup', module)
     () => render({errorMessage: 'Please select a pet.', validationState: 'invalid'})
   )
   .add(
+    'with error message and error icon',
+    () => render({errorMessage: 'Please select a pet.', validationState: 'invalid', showErrorIcon: true})
+  )
+  .add(
     'with description, error message and validation',
     () => renderWithDescriptionErrorMessageAndValidation()
   )

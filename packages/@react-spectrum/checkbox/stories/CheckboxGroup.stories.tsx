@@ -107,6 +107,10 @@ storiesOf('CheckboxGroup', module)
     () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid'})
   )
   .add(
+    'with error message and error icon',
+    () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
+  )
+  .add(
     'with description, error message and validation',
     () => renderWithDescriptionErrorMessageAndValidation()
   )
