@@ -25,7 +25,7 @@ export interface RadioGroupAria {
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
   labelProps: DOMAttributes,
-  /** Props for the radio grouop description element, if any. */
+  /** Props for the radio group description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the radio group error message element, if any. */
   errorMessageProps: DOMAttributes
