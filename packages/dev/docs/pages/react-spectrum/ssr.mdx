@@ -42,6 +42,9 @@ import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
 
 Wrapping your application in an `SSRProvider` ensures that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects four things: id generation for accessibility, media queries, feature detection, and automatic locale selection.
 
+Note that `SSRProvider` doesn't support [strict mode](https://reactjs.org/docs/strict-mode.html) on React 16 and 17.
+When strict mode is enabled on React 16 or 17, it generates different IDs between server and client. That results in hydration errors.
+
 When using SSR, only a single copy of React Spectrum can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. When server side rendering, these ids need to be consistent so they match between the server and client, and this would not be possible with multiple copies of React Spectrum.
 
 Media queries and DOM feature detection cannot be performed on the server because they depend on specific browser parameters that aren’t sent as part of the request. In cases where these affect the rendering of a particular component, this check is delayed until just after hydration is completed. This ensures that the rendering is consistent between the server and hydrated DOM, but updated immediately after the page becomes interactive.

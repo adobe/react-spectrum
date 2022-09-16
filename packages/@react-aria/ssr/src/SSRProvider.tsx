@@ -69,8 +69,26 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
+// Access `React.useId` using `toString` to supress bundler warning (workaround for https://github.com/webpack/webpack/issues/14814)
+const useId: () => string | undefined = (React as any)['useId'.toString()];
+
 /** @private */
 export function useSSRSafeId(defaultId?: string): string {
+  // Use React.useId if available (i.e. if running on React 18). Otherwise, fallback to useIdForLegacyReact.
+  // It is safe to wrap hooks with if statement here because useId is invariant on runtime.
+  if (typeof useId === 'function') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const id = useId();
+    return defaultId || id;
+  } else {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useIdForLegacyReact(defaultId);
+  }
+}
+
+// Returns unique ID that is consistent across the server and client.
+// Known limitation: on strict mode, generated IDs doesn't match between the server and client.
+function useIdForLegacyReact(defaultId?: string): string {
   let ctx = useContext(SSRContext);
 
   // If we are rendering in a non-DOM environment, and there's no SSRProvider,
