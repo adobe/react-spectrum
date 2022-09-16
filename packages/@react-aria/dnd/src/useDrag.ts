@@ -17,8 +17,8 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {setGlobalAllowedDropOperations, useDragModality} from './utils';
-import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
@@ -213,17 +213,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message: string;
-  if (!isDragging) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
-
+  let message = !isDragging ? MESSAGES[modality].start : MESSAGES[modality].end;
   let descriptionProps = useDescription(stringFormatter.format(message));
 
   let interactions: HTMLAttributes<HTMLElement>;
@@ -237,17 +227,21 @@ export function useDrag(options: DragOptions): DragResult {
 
     interactions = {
       ...descriptionProps,
-      onPointerDown({nativeEvent: e}) {
-        // Try to detect virtual drags.
+      onPointerDown(e) {
+        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
+
+        // Try to detect virtual drag passthrough gestures.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
         } else {
-          let rect = (e.target as HTMLElement).getBoundingClientRect();
+          let rect = e.currentTarget.getBoundingClientRect();
+          let offsetX = e.clientX - rect.x;
+          let offsetY = e.clientY - rect.y;
           let centerX = rect.width / 2;
           let centerY = rect.height / 2;
 
-          if (Math.abs(e.offsetX - centerX) < 0.5 && Math.abs(e.offsetY - centerY) < 0.5) {
+          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
             // Android TalkBack.
             modalityOnPointerDown.current = 'virtual';
           } else {
@@ -269,14 +263,8 @@ export function useDrag(options: DragOptions): DragResult {
         }
       },
       onClick(e) {
-        if (
-          e.target === e.currentTarget &&
-          !isDragging &&
-          (
-            modalityOnPointerDown.current === 'mouse' ||
-            modalityOnPointerDown.current === null
-          )
-        ) {
+        // Handle NVDA/JAWS in browse mode, and touch screen readers. In this case, no keyboard events are fired.
+        if (isVirtualClick(e.nativeEvent) || modalityOnPointerDown.current === 'virtual') {
           e.preventDefault();
           e.stopPropagation();
           startDragging(e.target as HTMLElement);
