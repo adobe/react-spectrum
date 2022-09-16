@@ -16,6 +16,7 @@ import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, Dr
 import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
+import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {useEffect, useState} from 'react';
 
@@ -288,7 +289,7 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
-    if (e.detail === 0 || this.isVirtualClick) {
+    if (isVirtualClick(e) || this.isVirtualClick) {
       if (e.target === this.dragTarget.element) {
         this.cancel();
         return;
@@ -588,20 +589,4 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
-}
-
-function isVirtualPointerEvent(event: PointerEvent) {
-  // If the pointer size is zero, then we assume it's from a screen reader.
-  // Android TalkBack double tap will sometimes return a event with width and height of 1
-  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
-  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
-  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
-  return (
-    (event.width === 0 && event.height === 0) ||
-    (event.width === 1 &&
-      event.height === 1 &&
-      event.pressure === 0 &&
-      event.detail === 0
-    )
-  );
 }

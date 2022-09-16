@@ -17,8 +17,8 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isVirtualClick, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {setGlobalAllowedDropOperations, useDragModality} from './utils';
-import {useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
@@ -238,6 +238,11 @@ export function useDrag(options: DragOptions): DragResult {
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
+        if (e.pointerType !== 'touch') {
+          modalityOnPointerDown.current = e.pointerType;
+          return;
+        }
+
         // Try to detect virtual drags.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
@@ -265,6 +270,14 @@ export function useDrag(options: DragOptions): DragResult {
       },
       onKeyUpCapture(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          startDragging(e.target as HTMLElement);
+        }
+      },
+      onClick(e) {
+        // Handle NVDA/JAWS in browse mode. In this case, no keyboard events are fired.
+        if (e.target === e.currentTarget && isVirtualClick(e.nativeEvent) && modality === 'keyboard') {
           e.preventDefault();
           e.stopPropagation();
           startDragging(e.target as HTMLElement);
