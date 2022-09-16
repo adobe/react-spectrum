@@ -96,17 +96,17 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             state
           }}>
           {children}
-          {hasHelpText &&
-            <HelpText
-              descriptionProps={descriptionProps}
-              errorMessageProps={errorMessageProps}
-              description={description}
-              errorMessage={errorMessage}
-              validationState={validationState}
-              showErrorIcon={showErrorIcon} />
-          }
         </RadioContext.Provider>
       </div>
+      {hasHelpText &&
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          showErrorIcon={showErrorIcon} />
+      }
     </div>
   );
 }

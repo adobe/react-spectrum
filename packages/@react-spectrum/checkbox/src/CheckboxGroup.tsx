@@ -93,18 +93,18 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
         <Provider isEmphasized={isEmphasized} validationState={validationState}>
           <CheckboxGroupContext.Provider value={state}>
             {children}
-            {hasHelpText &&
-              <HelpText
-                descriptionProps={descriptionProps}
-                errorMessageProps={errorMessageProps}
-                description={description}
-                errorMessage={errorMessage}
-                validationState={validationState}
-                showErrorIcon={showErrorIcon} />
-            }
           </CheckboxGroupContext.Provider>
         </Provider>
       </div>
+      {hasHelpText &&
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          showErrorIcon={showErrorIcon} />
+      }
     </div>
   );
 }
