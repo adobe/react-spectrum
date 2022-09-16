@@ -16,6 +16,7 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase,
   LabelableProps,
   Orientation,
@@ -73,7 +74,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, HelpTextProps, Validation {
   /**
    * The name of the CheckboxGroup, used when submitting an HTML form.
    */
