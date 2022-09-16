@@ -105,7 +105,7 @@ import {useCheckboxGroupState} from '@react-stately/checkbox';
 let CheckboxGroupContext = React.createContext(null);
 
 function CheckboxGroup(props) {
-  let {children, label} = props;
+  let {children, label, description, errorMessage, validationState} = props;
   let state = useCheckboxGroupState(props);
   let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
 
@@ -115,8 +115,10 @@ function CheckboxGroup(props) {
       <CheckboxGroupContext.Provider value={state}>
         {children}
       </CheckboxGroupContext.Provider>
-      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
-      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
+      {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
+      {errorMessage && validationState === 'invalid' &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      }
     </div>
   );
 }
@@ -216,7 +218,7 @@ The `errorMessage` prop can be used to help the user fix a validation error. It 
 semantically mark the checkbox group as invalid for assistive technologies.
 
 ```tsx example
-<CheckboxGroup label="Favorite sports" errorMessage="Invalid selection of sports.">
+<CheckboxGroup label="Favorite sports" errorMessage="Invalid selection of sports." validationState="invalid">
   <Checkbox value="soccer">Soccer</Checkbox>
   <Checkbox value="baseball">Baseball</Checkbox>
   <Checkbox value="basketball">Basketball</Checkbox>

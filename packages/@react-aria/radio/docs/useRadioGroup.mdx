@@ -102,7 +102,7 @@ import {useRadioGroupState} from '@react-stately/radio';
 let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
-  let {children, label} = props;
+  let {children, label, description, errorMessage, validationState} = props;
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
@@ -112,8 +112,10 @@ function RadioGroup(props) {
       <RadioContext.Provider value={state}>
         {children}
       </RadioContext.Provider>
-      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
-      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
+      {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
+      {errorMessage && validationState === 'invalid' &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      }
     </div>
   )
 }
@@ -160,7 +162,7 @@ import {useFocusRing} from '@react-aria/focus';
 let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
-  let {children, label} = props;
+  let {children, label, description, errorMessage, validationState} = props;
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
@@ -170,8 +172,10 @@ function RadioGroup(props) {
       <RadioContext.Provider value={state}>
         {children}
       </RadioContext.Provider>
-      {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
-      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
+      {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
+      {errorMessage && validationState === 'invalid' &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      }
     </div>
   )
 }
@@ -295,7 +299,7 @@ The `errorMessage` prop can be used to help the user fix a validation error. It 
 semantically mark the radio group as invalid for assistive technologies.
 
 ```tsx example
-<RadioGroup label="Favorite pet" errorMessage="Invalid pet selection.">
+<RadioGroup label="Favorite pet" errorMessage="Invalid pet selection." validationState="invalid">
   <Radio value="dogs">Dogs</Radio>
   <Radio value="cats">Cats</Radio>
 </RadioGroup>
