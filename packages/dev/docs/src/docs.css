@@ -232,7 +232,7 @@ html, body {
   justify-content: space-between;
 }
 
-.sideNavItem span {
+.sideNavItem > span {
   margin-left: 10px;
   cursor: pointer;
 }

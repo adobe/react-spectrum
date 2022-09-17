@@ -223,7 +223,7 @@ function CollectionItem({item, state, dragState, dropState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -239,10 +239,10 @@ function CollectionItem({item, state, dragState, dropState}) {
   let id = useId();
 
   return (
-    <div {...rowProps} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
+    <div {...mergeProps(rowProps, dragProps)} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(gridCellProps, dragProps)}
+          {...gridCellProps}
           aria-labelledby={id}
           ref={cellRef}
           className={classNames(dndStyles, 'draggable', 'droppable', {
