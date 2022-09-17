@@ -264,7 +264,6 @@ function getAvailableSpace(
   return Math.max(0, boundaryDimensions[size] + boundaryDimensions[axis] + boundaryDimensions.scroll[axis] - containerOffsetWithBoundary[axis] - childOffset[axis] - childOffset[size] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
 }
 
-
 export function calculatePositionInternal(
   placementInput: Placement,
   childOffset: Offset,
@@ -320,21 +319,6 @@ export function calculatePositionInternal(
     left: boundaryDimensions.left + boundaryDimensions.scroll.left,
     right: boundaryDimensions.left + boundaryDimensions.scroll.left + boundaryDimensions.width
   };
-  console.log('boundaryLimits', boundaryLimits);
-
-  // for popover triggers close to the edge decrease the padding
-  /*if (placementInfo.placement === 'left' || placementInfo.placement === 'right') {
-    let centerOfButtonVertical = childOffset.top + childOffset.height / 2;
-    // Really it should be center of button center + padding + half of arrow width > boundary but we don't have access to arrow dimensions
-    if (centerOfButtonVertical + padding * 2 > boundaryLimits.bottom || centerOfButtonVertical - padding * 2 < boundaryLimits.top) {
-      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
-    }
-  } else if (placementInfo.placement === 'top' || placementInfo.placement === 'bottom') {
-    let centerOfButtonHorizontal = childOffset.left + childOffset.width / 2;
-    if (centerOfButtonHorizontal + padding * 2 > boundaryLimits.right || centerOfButtonHorizontal - padding * 2 < boundaryLimits.left) {
-      padding = 6; // setting the padding to 6px as defined by Spectrum for this case
-    }
-  }*/
 
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
@@ -423,63 +407,6 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     isContainerPositioned,
     maxHeight
   );
-}
-
-// Uses minimal logic from calculatePosition to figure out if the trigger is "too close" to the edge
-export function isTriggerCloseToEdge(opts: PositionOpts): Boolean {
-  let {
-    placement,
-    targetNode,
-    padding,
-    boundaryElement,
-    overlayNode
-  } = opts;
-
-  let shouldReposition = false;
-
-  let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
-  // Defines the placement, axis, crossaxis, etc.
-  let placementInfo = parsePlacement(placement);
-  let isBodyContainer = container.tagName === 'BODY';
-  // getOffest determins the top, left, width and hight
-  // get position looks and node and window and calles getOffset too 
-  let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
-
-  if (!isBodyContainer) {
-    let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
-    childOffset.top += parseInt(marginTop, 10) || 0;
-    childOffset.left += parseInt(marginLeft, 10) || 0;
-  }
-
-  // for the node gets scroll info and top, left, width, height
-  let boundaryDimensions = getContainerDimensions(boundaryElement);
-
-  let boundaryLimits = {
-    top: boundaryDimensions.top + boundaryDimensions.scroll.top,
-    bottom: boundaryDimensions.top + boundaryDimensions.scroll.top + boundaryDimensions.height,
-    left: boundaryDimensions.left + boundaryDimensions.scroll.left,
-    right: boundaryDimensions.left + boundaryDimensions.scroll.left + boundaryDimensions.width
-  };
-
-  // TODO Should this deal with flip?
-  // Any component flipping is perpendicular to the edge and this is looking at popovers
-  // opening horitonal to the edge
-
-  // for popover triggers close to the edge decrease the padding
-  if (placementInfo.placement === 'left' || placementInfo.placement === 'right') {
-    let centerOfButtonVertical = childOffset.top + childOffset.height / 2;
-    // Really it should be center of button center + padding + half of arrow width > boundary but we don't have access to arrow dimensions
-    if (centerOfButtonVertical + padding * 2 > boundaryLimits.bottom || centerOfButtonVertical - padding * 2 < boundaryLimits.top) {
-      shouldReposition = true;
-    }
-  } else if (placementInfo.placement === 'top' || placementInfo.placement === 'bottom') {
-    let centerOfButtonHorizontal = childOffset.left + childOffset.width / 2;
-    if (centerOfButtonHorizontal + padding * 2 > boundaryLimits.right || centerOfButtonHorizontal - padding * 2 < boundaryLimits.left) {
-      shouldReposition = true;
-    }
-  }
-
-  return shouldReposition
 }
 
 function getOffset(node: Element): Offset {

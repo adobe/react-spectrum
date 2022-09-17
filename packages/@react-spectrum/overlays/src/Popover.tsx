@@ -107,8 +107,6 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   useLayoutEffect(() => {
     // check position of arrow and popover boundries
     if (ref.current && arrowProps) {
-      // console.log('ref.current', ref.current);
-
       let propsHideArrow = hideArrow;
 
       // figure out the location of the offset and which popover dimension to use

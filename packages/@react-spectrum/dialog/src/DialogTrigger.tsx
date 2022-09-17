@@ -18,7 +18,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useCheckOverlayPosition, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {DEFAULT_MODAL_PADDING, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
@@ -145,26 +145,41 @@ export {_DialogTrigger as DialogTrigger};
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboardDismissDisabled, ...props}) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let isCloserPadding = false;
 
-  let repositionPopover = useCheckOverlayPosition({
-    targetRef: targetRef || triggerRef,
-    overlayRef: unwrapDOMRef(overlayRef),
-    placement: props.placement,
-    containerPadding: props.containerPadding,
-    offset: props.offset,
-    crossOffset: props.crossOffset,
-    shouldFlip: props.shouldFlip,
-    isOpen: state.isOpen
-  });
-
-  //console.log('repositionPopover', repositionPopover);
-  //console.log('padding', repositionPopover && (props.containerPadding > 6) ? 6 : props.containerPadding);
+  // For popover triggers close to the edge, decrease the overlay to container padding
+  if (triggerRef?.current) {
+    // The popover ref is not defined here so we don't know the arrow size to include in this.
+    let triggerRect = triggerRef.current.getBoundingClientRect();
+    let documentRect = document.body.getBoundingClientRect();
+    let [axisPlacement] = props.placement?.split(' ') || ['bottom']; // Flip and RTL don't matter
+    if (axisPlacement === 'start' || axisPlacement === 'end' || axisPlacement === 'right' || axisPlacement === 'left') {
+      // top edge start/end math
+      if ((DEFAULT_MODAL_PADDING * 2) - (triggerRect.height / 2) > triggerRect.top) {
+        isCloserPadding = true;
+      }
+      // bottom edge start/end math
+      if (triggerRect.top + (DEFAULT_MODAL_PADDING * 2) + (triggerRect.height / 2) > window.innerHeight) {
+        isCloserPadding = true;
+      }
+    }
+    if (axisPlacement === 'top' || axisPlacement === 'bottom') {
+      // right edge top/bottom math
+      if ((DEFAULT_MODAL_PADDING * 2) - (triggerRect.width / 2) > triggerRect.left) {
+        isCloserPadding = true;
+      }
+      // left edge top/bottom math
+      if (triggerRect.right - (triggerRect.width / 2) + (DEFAULT_MODAL_PADDING * 2) > documentRect.right) {
+        isCloserPadding = true;
+      }
+    }
+  }
 
   let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     targetRef: targetRef || triggerRef,
     overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
-    containerPadding: repositionPopover && (props.containerPadding == undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
+    containerPadding: isCloserPadding && (props.containerPadding == undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
     offset: props.offset,
     crossOffset: props.crossOffset,
     shouldFlip: props.shouldFlip,
@@ -172,13 +187,6 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
   });
 
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
-  //console.log('overlayRef, targetRef, triggerRef', overlayRef, targetRef, triggerRef);
-
-  /* console.log('overlayRef, targetRef', overlayRef, targetRef);
-  console.log('popoverProps, placement, arrowProps, triggerProps, overlayProps', popoverProps, placement, arrowProps, triggerProps, overlayProps);
-
-  console.log('popoverProps2, arrowProps2', popoverProps2, arrowProps2);*/
-
   let triggerPropsWithRef = {
     ...triggerProps,
     ref: targetRef ? undefined : triggerRef
