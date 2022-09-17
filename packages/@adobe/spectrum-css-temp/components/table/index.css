@@ -57,7 +57,7 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-headCell {
   display: flex;
   box-sizing: border-box;
-  font-size: var(--spectrum-global-dimension-size-175);
+  font-size: var(--spectrum-global-dimension-font-size-100);
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
   min-height: var(--spectrum-table-header-min-height);
