@@ -313,13 +313,6 @@ export function calculatePositionInternal(
     }
   }
 
-  let boundaryLimits = {
-    top: boundaryDimensions.top + boundaryDimensions.scroll.top,
-    bottom: boundaryDimensions.top + boundaryDimensions.scroll.top + boundaryDimensions.height,
-    left: boundaryDimensions.left + boundaryDimensions.scroll.left,
-    right: boundaryDimensions.left + boundaryDimensions.scroll.left + boundaryDimensions.width
-  };
-
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 

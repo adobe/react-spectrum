@@ -187,6 +187,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
   });
 
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
+
   let triggerPropsWithRef = {
     ...triggerProps,
     ref: targetRef ? undefined : triggerRef
