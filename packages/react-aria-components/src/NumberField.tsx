@@ -7,7 +7,7 @@ import {Provider, useSlot} from './utils';
 import React, {ReactNode, useRef} from 'react';
 import {useNumberFieldState} from 'react-stately';
 
-interface NumberFieldProps extends AriaNumberFieldProps {
+interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'> {
   children: ReactNode
 }
 
