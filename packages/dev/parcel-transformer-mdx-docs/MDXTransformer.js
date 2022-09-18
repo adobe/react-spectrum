@@ -17,6 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
+const parcelCss = require('@parcel/css');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -125,6 +126,17 @@ module.exports = new Transformer({
           }
 
           if (node.lang === 'css') {
+            let transformed = parcelCss.transform({
+              filename: asset.filePath,
+              code: Buffer.from(node.value),
+              drafts: {
+                nesting: true
+              },
+              targets: {
+                chrome: 95 << 16
+              }
+            });
+            let css = transformed.code.toString();
             return [
               ...responsiveCode(node),
               {
@@ -136,7 +148,7 @@ module.exports = new Transformer({
                     name: 'dangerouslySetInnerHTML',
                     value: {
                       type: 'mdxJsxAttributeValueExpression',
-                      value: JSON.stringify({__html: node.value}),
+                      value: JSON.stringify({__html: css}),
                       data: {
                         estree: {
                           type: 'Program',
@@ -153,7 +165,7 @@ module.exports = new Transformer({
                                 },
                                 value: {
                                   type: 'Literal',
-                                  value: node.value
+                                  value: css
                                 }
                               }]
                             }

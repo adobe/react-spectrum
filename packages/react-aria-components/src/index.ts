@@ -27,3 +27,4 @@ export type {ButtonRenderProps} from './Button';
 export type {SelectValueRenderProps} from './Select';
 export type {DateSegmentRenderProps} from './DateField';
 export type {CalendarCellRenderProps} from './Calendar';
+export type {SliderRenderProps, SliderThumbRenderProps} from './Slider';

@@ -1,6 +1,6 @@
 import {AriaSliderProps, mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
 import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
@@ -22,6 +22,19 @@ interface SliderContextValue {
 }
 
 const InternalSliderContext = createContext<SliderContextValue>(null);
+
+export interface SliderRenderProps {
+  /**
+   * The orientation of the slider.
+   * @selector [data-orientation="horizontal | vertical"]
+   */
+  orientation: Orientation,
+  /**
+   * Whether the slider is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
+}
 
 function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
   let trackRef = useRef(null);
@@ -95,15 +108,32 @@ function SliderTrack({children, style, className}: SliderTrackProps, ref: Forwar
 const _SliderTrack = forwardRef(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
-interface ThumbRenderProps {
+export interface SliderThumbRenderProps {
+  /** The slider state object. */
   state: SliderState,
+  /**
+   * Whether this thumb is currently being dragged.
+   * @selector [data-dragging]
+   */
   isDragging: boolean,
+  /**
+   * Whether the thumb is currently focused.
+   * @selector [data-focused]
+   */
   isFocused: boolean,
+  /**
+   * Whether the thumb is keyboard focused.
+   * @selector [data-focus-visible]
+   */
   isFocusVisible: boolean,
+  /**
+   * Whether the thumb is disabled.
+   * @selector [data-disabled]
+   */
   isDisabled: boolean
 }
 
-interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<ThumbRenderProps> {}
+interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackRef} = useContext(InternalSliderContext);
