@@ -758,8 +758,8 @@ function MyListBox(props) {
 This also works the other way. If you need to customize `Select` itself, but want to reuse the components it contains, you can do so by providing the necessary contexts. The `Provider` component is an easier way to send multiple contexts at once.
 
 ```tsx
-import {useSelect, LabelContext, ButtonContext, PopoverContext, ListBoxContext} from 'react-aria';
-import {Provider} from 'react-aria-components';
+import {LabelContext, ButtonContext, PopoverContext, ListBoxContext, Provider} from 'react-aria-components';
+import {useSelect} from 'react-aria';
 
 function MySelect(props) {
   // ...

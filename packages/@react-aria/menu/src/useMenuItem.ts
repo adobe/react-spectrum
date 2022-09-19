@@ -115,7 +115,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   let ariaProps = {
-    'aria-disabled': isDisabled,
+    'aria-disabled': isDisabled || undefined,
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,

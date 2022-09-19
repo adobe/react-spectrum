@@ -13,7 +13,7 @@ import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
-const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLUListElement>>(null);
+const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
 interface MenuTriggerProps2 extends MenuTriggerProps {
@@ -33,7 +33,7 @@ export function MenuTrigger(props: MenuTriggerProps2) {
     <Provider
       values={[
         [MenuContext, menuProps],
-        [ButtonContext, {...menuTriggerProps, ref}],
+        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
         [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
       ]}>
       {props.children}
@@ -43,7 +43,7 @@ export function MenuTrigger(props: MenuTriggerProps2) {
 
 interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {}
 
-function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUListElement>) {
+function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
   let {portal, collection} = useCollection(props);
   let state = useTreeState({
@@ -70,7 +70,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
 
   return (
     <>
-      <ul
+      <div
         {...menuProps}
         ref={ref}
         style={props.style}
@@ -78,11 +78,11 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLUList
         <Provider
           values={[
             [InternalMenuContext, state],
-            [SeparatorContext, {elementType: 'li'}]
+            [SeparatorContext, {elementType: 'div'}]
           ]}>
           {children}
         </Provider>
-      </ul>
+      </div>
       {portal}
     </>
   );
@@ -96,7 +96,7 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
-  let {itemProps, headingProps, groupProps} = useMenuSection({
+  let {headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
@@ -113,20 +113,26 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
   });
 
   return (
-    <li {...itemProps} style={{display: 'contents'}}>
+    <section 
+      {...groupProps}
+      className={className || section.props?.className}
+      style={style || section.props?.style}>
       {section.rendered &&
-        <span {...headingProps} style={{display: 'contents'}}>
+        <header {...headingProps}>
           {section.rendered}
-        </span>
+        </header>
       }
-      <ul 
-        {...groupProps}
-        className={className || section.props?.className}
-        style={style || section.props?.style}>
-        {children}
-      </ul>
-    </li>
+      {children}
+    </section>
   );
+}
+
+export interface MenuItemStates extends ItemStates {
+  /**
+   * Whether the item is currently selected.
+   * @selector [aria-checked=true]
+   */
+   isSelected: boolean
 }
 
 interface MenuItemProps<T> extends RenderProps<ItemStates> {
@@ -150,7 +156,7 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
   });
 
   return (
-    <li
+    <div
       {...menuItemProps}
       {...renderProps}
       ref={ref}
@@ -169,6 +175,6 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
         ]}>
         {renderProps.children}
       </Provider>
-    </li>
+    </div>
   );
 }
