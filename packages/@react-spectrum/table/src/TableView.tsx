@@ -495,6 +495,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
               }
             )
           }
+          tabIndex={-1}
           style={{flex: 1}}
           innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
           ref={bodyRef}
