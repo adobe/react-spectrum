@@ -375,6 +375,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
 function TableVirtualizer({layout, collection, lastResizeInteractionModality, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, setTableWidth, getColumnWidth, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
+  let {state: tableState, columnState} = useTableContext();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
@@ -449,6 +450,14 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
+  let keysBefore = [];
+  let key = columnState.currentlyResizingColumn;
+  do {
+    keysBefore.push(key);
+    key = tableState.collection.getKeyBefore(key);
+  } while (key != null);
+  let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0) - 2;
+
   return (
     <FocusScope>
       <div
@@ -489,6 +498,9 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           onScrollEnd={state.endScrolling}
           onScroll={onScroll}>
           {state.visibleViews[1]}
+          <div
+            className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} />
         </ScrollView>
       </div>
     </FocusScope>
@@ -902,7 +914,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let {state, columnState} = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -922,7 +934,6 @@ function TableCell({cell}) {
             'spectrum-Table-cell',
             {
               'spectrum-Table-cell--divider': columnProps.showDivider && cell.column.nextKey !== null,
-              'spectrum-Table-cell--resizing': columnState.currentlyResizingColumn === cell.column.key,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
               'is-disabled': isDisabled
             },

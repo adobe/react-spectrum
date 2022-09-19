@@ -46,6 +46,9 @@ svg.spectrum-Table-sortedIcon {
   border-right-width: 1px;
   border-right-style: solid;
   flex: 0 0 auto;
+  padding-bottom: 1px;
+  margin-bottom: -1px;
+  z-index: 1;
 }
 .spectrum-Table-headCellContents {
   display: inline-block;
@@ -135,6 +138,13 @@ svg.spectrum-Table-sortedIcon {
   inline-size: 10px;
   block-size: 100%;
   user-select: none;
+}
+.spectrum-Table-bodyResizeIndicator {
+  display: none;
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  top: 0px;
 }
 
 .spectrum-Table-cell--alignCenter {
@@ -290,22 +300,6 @@ svg.spectrum-Table-sortedIcon {
   border-inline-end-width: var(--spectrum-table-divider-border-size);
 }
 
-.spectrum-Table-cell--resizing {
-  position: relative;
-  border-inline-end-width: calc(2 * var(--spectrum-table-divider-border-size));
-
-  /* cover border between rows, otherwise you get little 1px breaks in the vertical line every row */
-  &::after {
-    position: absolute;
-    content: '';
-    display: block;
-    top: -1px;
-    inset-inline-end: -2px;
-    inline-size: 2px;
-    height: 1px;
-  }
-}
-
 .spectrum-Table-row {
   position: relative;
   cursor: default;
@@ -435,7 +429,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-colResizeIndicator {
   display: none;
-  height: 100%;
+  height: calc(100% + 1px);
   width: 2px;
   position: absolute;
   top: 0;

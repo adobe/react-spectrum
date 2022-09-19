@@ -225,16 +225,6 @@ tbody.spectrum-Table-body {
   border-inline-end-color: var(--spectrum-table-divider-border-color);
 }
 
-.spectrum-Table-cell--resizing {
-  position: relative;
-  border-inline-end-style: solid;
-  border-inline-end-color: var(--spectrum-global-color-blue-600);
-
-  &::after {
-    background-color: var(--spectrum-global-color-blue-600);
-  }
-}
-
 .spectrum-Table--quiet {
   .spectrum-Table-body {
     border-width: 1px 0;
@@ -313,3 +303,6 @@ tbody.spectrum-Table-body {
   }
 }
 .spectrum-Table-colResizeNubbin {}
+.spectrum-Table-bodyResizeIndicator {
+  background-color: var(--spectrum-global-color-blue-600);
+}
