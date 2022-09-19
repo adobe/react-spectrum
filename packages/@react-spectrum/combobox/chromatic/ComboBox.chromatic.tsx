@@ -28,13 +28,7 @@ let states = [
   {isDisabled: true},
   {validationState: ['valid', 'invalid']},
   {isRequired: true},
-  {necessityIndicator: 'label'},
-  {contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )}
+  {necessityIndicator: 'label'}
 ];
 
 let combinations = generatePowerset(states, v => v.validationState && v.contextualHelp);
@@ -141,3 +135,15 @@ PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
+
+export const PropContextualHelp = Template.bind({});
+PropContextualHelp.storyName = 'contextual help';
+PropContextualHelp.args = {
+  ...PropDefaults.args,
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )
+};
