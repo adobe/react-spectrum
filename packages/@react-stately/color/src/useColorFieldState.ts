@@ -121,7 +121,7 @@ export function useColorFieldState(
     }
     return color;
   }, [inputValue]);
-  let parsed = useRef(null);
+  let parsed = useRef<Color | null>(null);
   parsed.current = parsedValue;
 
   let commit = () => {
@@ -169,8 +169,20 @@ export function useColorFieldState(
     }
     safelySetColorValue(newValue);
   };
-  let incrementToMax = () => safelySetColorValue(maxColor);
-  let decrementToMin = () => safelySetColorValue(minColor);
+  let incrementToMax = () => {
+    if (parsed.current) {
+      safelySetColorValue(maxColor.withChannelValue('alpha', parsed.current.getChannelValue('alpha')));
+    } else {
+      safelySetColorValue(maxColor);
+    }
+  };
+  let decrementToMin = () => {
+    if (parsed.current) {
+      safelySetColorValue(minColor.withChannelValue('alpha', parsed.current.getChannelValue('alpha')));
+    } else {
+      safelySetColorValue(minColor);
+    }
+  };
 
   let validate = (value: string) => value === '' || !!value.match(validationRegex)?.[0];
 
