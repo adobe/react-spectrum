@@ -82,7 +82,8 @@ governing permissions and limitations under the License.
     }
 
     &.spectrum-Field--alignEnd {
-      grid-template-columns: 1fr auto 0;
+      grid-template-columns: 1fr auto;
+      justify-items: end;
     }
 
     .spectrum-FieldLabel {
