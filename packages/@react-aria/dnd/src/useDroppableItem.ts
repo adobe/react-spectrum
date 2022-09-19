@@ -36,12 +36,12 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         target: options.target,
         getDropOperation(types, allowedOperations) {
           let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
-          let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+          let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
           return state.getDropOperation({
             target: options.target,
             types,
             allowedOperations,
-            isInternalDrop,
+            isInternal,
             draggingKeys
           });
         }
@@ -51,12 +51,12 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
 
   let dragSession = DragManager.useDragSession();
   let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
-  let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+  let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
   let isValidDropTarget = dragSession && state.getDropOperation({
     target: options.target,
     types: getTypes(dragSession.dragTarget.items),
     allowedOperations: dragSession.dragTarget.allowedDropOperations,
-    isInternalDrop,
+    isInternal,
     draggingKeys
   }) !== 'cancel';
 

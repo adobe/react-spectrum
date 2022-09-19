@@ -1461,16 +1461,16 @@ function ItemDropExampleUtilHandlers(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDrop')(e);
-      if (isInternalDrop) {
+      if (isInternal) {
         let processedItems = await itemProcessor(items, acceptedDragTypes);
         let targetItem = list.getItem(target.key);
         if (targetItem?.childNodes != null) {
           list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-          if (isInternalDrop && dropOperation === 'move') {
+          if (isInternal && dropOperation === 'move') {
             let keysToRemove = processedItems.map(item => item.identifier);
             list.remove(...keysToRemove);
           }
@@ -1528,11 +1528,11 @@ function RootDropExampleUtilHandlers(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEnd')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1619,11 +1619,11 @@ function InsertExampleUtilHandlers(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEnd')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1843,7 +1843,7 @@ export function DragBetweenListsComplex(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDropList1')(e);
@@ -1851,7 +1851,7 @@ export function DragBetweenListsComplex(props) {
       let targetItem = list1.getItem(target.key);
       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternalDrop && dropOperation === 'move') {
+      if (isInternal && dropOperation === 'move') {
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
         // TODO: dig into other libraries to see how they handle this
         let keysToRemove = processedItems.map(item => item.identifier);
@@ -1862,11 +1862,11 @@ export function DragBetweenListsComplex(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEndList1')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1942,7 +1942,7 @@ export function DragBetweenListsComplex(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDropList2')(e);
@@ -1950,7 +1950,7 @@ export function DragBetweenListsComplex(props) {
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternalDrop && dropOperation === 'move') {
+      if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
@@ -1959,11 +1959,11 @@ export function DragBetweenListsComplex(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEndList2')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
         list2.remove(...keysToRemove);
       }

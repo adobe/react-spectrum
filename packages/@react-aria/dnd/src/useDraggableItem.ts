@@ -78,8 +78,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     },
     onDragEnd(e) {
       let {draggingCollectionRef, dropCollectionRef} = globalDndState;
-      let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef.current === dropCollectionRef?.current;
-      state.endDrag({...e, keys: state.draggingKeys, isInternalDrop});
+      let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef.current === dropCollectionRef?.current;
+      state.endDrag({...e, keys: state.draggingKeys, isInternal});
       clearGlobalDnDState();
     }
   });

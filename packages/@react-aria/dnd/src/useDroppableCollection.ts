@@ -60,7 +60,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     } = localState.props;
 
     let {draggingCollectionRef, draggingKeys} = globalDndState;
-    let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+    let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
     let {
       target,
       dropOperation,
@@ -96,16 +96,16 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
     if (target.type === 'item') {
       if (target.dropPosition === 'on' && onItemDrop) {
-        await onItemDrop({items: filteredItems, dropOperation, isInternalDrop, target: {key: target.key, dropPosition: 'on'}});
+        await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
       }
 
       if (target.dropPosition !== 'on') {
-        if (!isInternalDrop && onInsert) {
-          await onInsert({items: filteredItems, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
+        if (!isInternal && onInsert) {
+          await onInsert({items: filteredItems, dropOperation, target});
         }
 
-        if (isInternalDrop && onReorder) {
-          await onReorder({keys: draggingKeys, dropOperation, target: {key: target.key, dropPosition: target.dropPosition}});
+        if (isInternal && onReorder) {
+          await onReorder({keys: draggingKeys, dropOperation, target});
         }
       }
     }
@@ -123,8 +123,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     },
     getDropOperationForPoint(types, allowedOperations, x, y) {
       let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
-      let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
-      let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternalDrop, draggingKeys}) !== 'cancel';
+      let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+      let isValidDropTarget = (target) => state.getDropOperation({target, types, allowedOperations, isInternal, draggingKeys}) !== 'cancel';
       let target = props.dropTargetDelegate.getDropTargetFromPoint(x, y, isValidDropTarget);
       if (!target) {
         localState.dropOperation = 'cancel';
@@ -132,12 +132,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         return 'cancel';
       }
 
-      localState.dropOperation = state.getDropOperation({target, types, allowedOperations, isInternalDrop, draggingKeys});
+      localState.dropOperation = state.getDropOperation({target, types, allowedOperations, isInternal, draggingKeys});
 
       // If the target doesn't accept the drop, see if the root accepts it instead.
       if (localState.dropOperation === 'cancel') {
         let rootTarget: DropTarget = {type: 'root'};
-        let dropOperation = state.getDropOperation({target: rootTarget, types, allowedOperations, isInternalDrop, draggingKeys});
+        let dropOperation = state.getDropOperation({target: rootTarget, types, allowedOperations, isInternal, draggingKeys});
         if (dropOperation !== 'cancel') {
           target = rootTarget;
           localState.dropOperation = dropOperation;
@@ -376,14 +376,14 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       let seenRoot = 0;
       let operation: DropOperation;
       let {draggingCollectionRef, draggingKeys} = globalDndState;
-      let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+      let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
       do {
         let nextTarget = getNextTarget(target, wrap);
         if (!nextTarget) {
           return null;
         }
         target = nextTarget;
-        operation = localState.state.getDropOperation({target: nextTarget, types, allowedOperations: allowedDropOperations, isInternalDrop, draggingKeys});
+        operation = localState.state.getDropOperation({target: nextTarget, types, allowedOperations: allowedDropOperations, isInternal, draggingKeys});
         if (target.type === 'root') {
           seenRoot++;
         }
@@ -405,8 +405,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       getDropOperation(types, allowedOperations) {
         if (localState.state.target) {
           let {draggingCollectionRef, draggingKeys} = globalDndState;
-          let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
-          return localState.state.getDropOperation({target: localState.state.target, types, allowedOperations, isInternalDrop, draggingKeys});
+          let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+          return localState.state.getDropOperation({target: localState.state.target, types, allowedOperations, isInternal, draggingKeys});
         }
 
         // Check if any of the targets accept the drop.
@@ -418,7 +418,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         let types = getTypes(drag.items);
         let selectionManager = localState.state.selectionManager;
         let target: DropTarget;
-        // Update the drop collection ref tracker for useDroppableItem's getDropOperation isInternalDrop check
+        // Update the drop collection ref tracker for useDroppableItem's getDropOperation isInternal check
         setDropCollectionRef(ref);
 
         // When entering the droppable collection for the first time, the default drop target
@@ -453,9 +453,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
 
           let {draggingCollectionRef, draggingKeys} = globalDndState;
-          let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+          let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
           // If the default target is not valid, find the next one that is.
-          if (localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternalDrop, draggingKeys}) === 'cancel') {
+          if (localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternal, draggingKeys}) === 'cancel') {
             target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false)
               ?? nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false);
           }
@@ -556,8 +556,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                 // If the target does not accept the drop, find the next valid target.
                 // If no next valid target, find the previous valid target.
                 let {draggingCollectionRef, draggingKeys} = globalDndState;
-                let isInternalDrop = draggingCollectionRef?.current === ref?.current;
-                let operation = localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternalDrop, draggingKeys});
+                let isInternal = draggingCollectionRef?.current === ref?.current;
+                let operation = localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternal, draggingKeys});
                 if (operation === 'cancel') {
                   target = nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false)
                     ?? nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false);
@@ -600,8 +600,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
               // If the target does not accept the drop, find the previous valid target.
               // If no next valid target, find the next valid target.
               let {draggingCollectionRef, draggingKeys} = globalDndState;
-              let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
-              let operation = localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternalDrop, draggingKeys});
+              let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef?.current === ref?.current;
+              let operation = localState.state.getDropOperation({target, types, allowedOperations: drag.allowedDropOperations, isInternal, draggingKeys});
               if (operation === 'cancel') {
                 target = nextValidTarget(target, types, drag.allowedDropOperations, getPreviousTarget, false)
                   ?? nextValidTarget(target, types, drag.allowedDropOperations, getNextTarget, false);

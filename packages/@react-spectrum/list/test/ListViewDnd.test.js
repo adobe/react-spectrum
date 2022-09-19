@@ -223,7 +223,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -308,7 +308,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -752,7 +752,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -799,7 +800,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '4',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             keys: new Set(['1', '2']),
             dropOperation: 'copy'
@@ -823,7 +825,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '4',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             keys: new Set(['1', '2']),
             dropOperation: 'move'
@@ -892,7 +895,7 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
@@ -901,9 +904,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -937,9 +941,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '3',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: true,
+            isInternal: true,
             dropOperation: 'move',
             items: [
               {
@@ -1006,7 +1011,7 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1017,7 +1022,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '5',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             items: [
               {
@@ -1135,7 +1141,8 @@ describe('ListView', function () {
             dropOperation: 'copy',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1180,7 +1187,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1215,7 +1223,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1288,9 +1297,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1340,14 +1350,15 @@ describe('ListView', function () {
             x: 1,
             y: 1,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1530,16 +1541,17 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Only has the file in onItemDrop, the folder item should have been filtered out
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1613,7 +1625,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1676,7 +1688,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1714,7 +1726,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1769,7 +1781,7 @@ describe('ListView', function () {
         let dndState = globalDndState;
         expect(dndState.dropCollectionRef.current).toBe(list);
 
-        // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternalDrop = false
+        // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternal = false
         fireEvent.keyDown(document.body, {key: 'Escape'});
         fireEvent.keyUp(document.body, {key: 'Escape'});
         dndState = globalDndState;
@@ -1781,7 +1793,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'cancel',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1825,7 +1837,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '7',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1863,7 +1876,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '3',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             keys: new Set(['1']),
             dropOperation: 'move'
@@ -1892,7 +1906,7 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onRootDrop).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1938,15 +1952,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '7',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1983,15 +1998,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: true
+            isInternal: true
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
               key: '3',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: true,
+            isInternal: true,
             dropOperation: 'move',
             items: [
               {
@@ -2055,15 +2071,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '8',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -2199,7 +2216,7 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -2209,7 +2226,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '7',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
 
@@ -2255,15 +2273,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '7',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -2749,7 +2768,7 @@ describe('ListView', function () {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        isInternalDrop: true
+        isInternal: true
       });
       onSelectionChange.mockClear();
       onDragStart.mockClear();
