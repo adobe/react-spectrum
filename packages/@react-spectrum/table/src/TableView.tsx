@@ -457,6 +457,11 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     key = tableState.collection.getKeyBefore(key);
   } while (key != null);
   let resizerPosition = keysBefore.reduce((acc, key) => acc + columnState.getColumnWidth(key), 0) - 2;
+  let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
+  // this should be fine, every movement of the resizer causes a rerender
+  // scrolling can cause it to lag for a moment, but it's always updated
+  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
+  let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   return (
     <FocusScope>
@@ -485,7 +490,8 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
               styles,
               'spectrum-Table-body',
               {
-                'focus-ring': isFocusVisible
+                'focus-ring': isFocusVisible,
+                'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
               }
             )
           }

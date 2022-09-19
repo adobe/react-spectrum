@@ -182,6 +182,9 @@ svg.spectrum-Table-sortedIcon {
   &.is-drop-target {
     @inherit: %drop-target;
   }
+  &.spectrum-Table-body--resizerAtTableEdge {
+    border-start-end-radius: 0;
+  }
 }
 
 /* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
