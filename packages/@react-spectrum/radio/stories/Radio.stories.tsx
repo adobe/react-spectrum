@@ -11,11 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Flex} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Flex} from '@adobe/react-spectrum';
 
 storiesOf('RadioGroup', module)
   .addParameters({providerSwitcher: {status: 'positive'}})

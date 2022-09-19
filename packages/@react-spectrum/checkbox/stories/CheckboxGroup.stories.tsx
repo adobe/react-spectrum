@@ -12,10 +12,10 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
+import {Flex} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 import {storiesOf} from '@storybook/react';
-import {Flex} from '@adobe/react-spectrum';
 
 storiesOf('CheckboxGroup', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
