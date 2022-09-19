@@ -160,13 +160,13 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-StaticField {
+.spectrum-LabeledValue {
 
   &.spectrum-Field--positionSide {
     align-items: first baseline;
   }
 
-  &.spectrum-Field--positionTop { 
+  &.spectrum-Field--positionTop {
     width: unset;
   }
 
@@ -177,7 +177,7 @@ governing permissions and limitations under the License.
   .spectrum-Field-wrapper.spectrum-Field-wrapper {
     width: unset;
   }
-  
+
   .spectrum-Field-field {
     overflow: hidden;
     word-break: break-word;
