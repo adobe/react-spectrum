@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {DEFAULT_MODAL_PADDING, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
@@ -18,7 +19,6 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {DEFAULT_MODAL_PADDING, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
@@ -179,7 +179,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
     targetRef: targetRef || triggerRef,
     overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
-    containerPadding: isCloserPadding && (props.containerPadding == undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
+    containerPadding: isCloserPadding && (props.containerPadding === undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
     offset: props.offset,
     crossOffset: props.crossOffset,
     shouldFlip: props.shouldFlip,
