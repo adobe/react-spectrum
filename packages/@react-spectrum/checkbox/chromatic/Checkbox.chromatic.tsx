@@ -61,10 +61,6 @@ storiesOf('Checkbox', module)
   .add(
     'no label',
     () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
-  )
-  .add(
-    'show error icon',
-    () => render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true})
   );
 
 // need selected + indeterminate because there is a sibling selector `checked + ...` so being careful
