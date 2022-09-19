@@ -455,11 +455,20 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .resize-ew * {
-  cursor: col-resize !important;
+  cursor: url('./cursors/Cur_MoveHorizontal_9_9.svg'), ew-resize !important;
 }
 .resize-e * {
-  cursor: e-resize !important;
+  cursor: url('./cursors/Cur_MoveToRight_9_9.svg'), e-resize !important;
 }
 .resize-w * {
-  cursor: w-resize !important;
+  cursor: url('./cursors/Cur_MoveToLeft_9_9.svg'), w-resize !important;
+}
+.spectrum-Table-columnResizer--ewresize {
+  cursor: url('./cursors/Cur_MoveHorizontal_9_9.svg'), ew-resize;
+}
+.spectrum-Table-columnResizer--eresize {
+  cursor: url('./cursors/Cur_MoveToRight_9_9.svg'), e-resize;
+}
+.spectrum-Table-columnResizer--wresize {
+  cursor: url('./cursors/Cur_MoveToLeft_9_9.svg'), w-resize;
 }
