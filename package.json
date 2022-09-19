@@ -51,7 +51,6 @@
   "devDependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0",
-    "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/node": "^7.12.10",
@@ -159,6 +158,7 @@
     "react-axe": "^3.0.2",
     "react-dom": "^18.0.0",
     "react-test-renderer": "^16.9.0",
+    "recast": "^0.20",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",

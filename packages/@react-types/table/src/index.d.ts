@@ -38,9 +38,15 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   renderEmptyState?: () => JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
-  /** Handler that is called when a user performs a column resize. */
+  /**
+   * Handler that is called when a user performs a column resize.
+   * @private
+   */
   onColumnResize?: (affectedColumns: {key: Key, width: number}[]) => void,
-  /** Handler that is called when a column resize ends. */
+  /**
+   * Handler that is called when a column resize ends.
+   * @private
+   */
   onColumnResizeEnd?: (affectedColumns: {key: Key, width: number}[]) => void
 }
 
@@ -66,9 +72,15 @@ export interface ColumnProps<T> {
   minWidth?: number | string,
   /** The maximum width of the column. */
   maxWidth?: number | string,
-  /** The default width of the column. */
+  /**
+   * The default width of the column.
+   * @private
+   */
   defaultWidth?: number | string,
-  /** Whether the column allows resizing. */
+  /**
+   * Whether the column allows resizing.
+   * @private
+   */
   allowsResizing?: boolean,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,

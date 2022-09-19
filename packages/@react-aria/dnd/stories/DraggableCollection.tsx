@@ -153,7 +153,7 @@ function DraggableCollectionItem({item, state, dragState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -175,7 +175,7 @@ function DraggableCollectionItem({item, state, dragState}) {
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...buttonProps}
               ref={buttonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />

@@ -40,15 +40,15 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
 
-  let inputRef = useRef();
-  let trackRef = useRef();
+  let inputRef = useRef(null);
+  let trackRef = useRef(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let state = useColorSliderState({...props, locale});
 
   // If vertical and a label is provided, use it as an aria-label instead.
   if (vertical && label) {
-    ariaLabel = ariaLabel || (typeof label === 'string' ? label : null);
+    ariaLabel = ariaLabel || (typeof label === 'string' ? label : undefined);
     label = null;
   }
 

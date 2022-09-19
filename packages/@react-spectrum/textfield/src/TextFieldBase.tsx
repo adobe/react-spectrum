@@ -38,7 +38,6 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {
-    label,
     validationState,
     icon,
     isQuiet = false,
@@ -51,7 +50,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     descriptionProps,
     errorMessageProps,
-    inputRef,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
     validationIconClassName
@@ -59,7 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
+  let inputRef = userInputRef || defaultInputRef;
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -138,18 +137,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     </div>
   );
 
-  if (label) {
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
-    }));
-  }
-
   return (
     <Field
       {...props}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      wrapperClassName={classNames(styles, 'spectrum-Textfield-wrapper')}
       showErrorIcon={false}
       ref={domRef}>
       {textField}

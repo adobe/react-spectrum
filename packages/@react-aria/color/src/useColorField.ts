@@ -24,7 +24,7 @@ import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface ColorFieldAria {
+export interface ColorFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */

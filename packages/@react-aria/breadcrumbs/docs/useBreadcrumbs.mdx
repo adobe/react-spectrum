@@ -114,10 +114,10 @@ function BreadcrumbItem(props) {
         {...itemProps}
         ref={ref}
         style={{
-          color: 'var(--blue)',
-          textDecoration: props.isCurrent ? null : 'underline',
+          color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
+          textDecoration: props.isCurrent || props.isDisabled ? 'none' : 'underline',
           fontWeight: props.isCurrent ? 'bold' : null,
-          cursor: props.isCurrent ? 'default' : 'pointer'
+          cursor: props.isCurrent || props.isDisabled ? 'default' : 'pointer'
         }}>
         {props.children}
       </span>
@@ -137,13 +137,12 @@ function BreadcrumbItem(props) {
 
 ## Navigation links
 
-This example is similar to the previous one, except the individual breadcrumbs
-are native navigation links to other pages rather than handled by JavaScript.
+To render breadcrumbs that navigate to other pages rather than handle events via `onPress`, use an `<a>` element
+for each BreadcrumbItem. This is the default `elementType`, so the option can be omitted from `useBreadcrumbItem`.
 
-```tsx example
-function Breadcrumbs(props) {
-  // Same as in the previous example...
+```tsx example export=true
 ///- begin collapse -///
+function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
@@ -156,9 +155,8 @@ function Breadcrumbs(props) {
       </ol>
     </nav>
   );
-///- end collapse -///
 }
-
+///- end collapse -///
 function BreadcrumbItem(props) {
   let ref = React.useRef();
   let {itemProps} = useBreadcrumbItem(props, ref);
@@ -169,9 +167,10 @@ function BreadcrumbItem(props) {
         ref={ref}
         href={props.href}
         style={{
-          color: 'var(--blue)',
+          color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
+          textDecoration: props.isCurrent || props.isDisabled ? 'none' : 'underline',
           fontWeight: props.isCurrent ? 'bold' : null,
-          cursor: props.isCurrent ? 'default' : 'pointer'
+          cursor: props.isCurrent || props.isDisabled ? 'default' : 'pointer'
         }}>
         {props.children}
       </a>
@@ -194,10 +193,11 @@ function BreadcrumbItem(props) {
 If you use breadcrumbs in the context where a heading would normally be used,
 you should make sure that the proper `elementType` for each breadcrumb is communicated to
 `useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
-This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
-breadcrumbs are of type `a`.
+This can be seen in the example below where we update the `BreadcrumbItem` component to specify that
+the current has elementType `h3` and all other breadcrumbs are of type `a`.
 
 ```tsx example
+///- begin collapse -///
 function Breadcrumbs(props) {
   let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
@@ -206,19 +206,19 @@ function Breadcrumbs(props) {
     <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
         {children.map((child, i) =>
-          React.cloneElement(child, {
-            isCurrent: i === children.length - 1,
-            elementType: i === children.length - 1 ? 'h3' : 'a'
-          })
+          React.cloneElement(child, {isCurrent: i === children.length - 1})
         )}
       </ol>
     </nav>
-  );
+  )
 }
-
+///- end collapse -///
 function BreadcrumbItem(props) {
   let ref = React.useRef();
-  let {itemProps} = useBreadcrumbItem(props, ref);
+  let {itemProps} = useBreadcrumbItem({
+    ...props,
+    elementType: props.isCurrent ? 'h3' : 'a'
+  }, ref);
   let breadcrumbContent;
   if (props.isCurrent) {
     breadcrumbContent = (
@@ -242,8 +242,9 @@ function BreadcrumbItem(props) {
           href={props.href}
           style={{
             color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
+            textDecoration: props.isCurrent || props.isDisabled ? 'none' : 'underline',
             fontWeight: props.isCurrent ? 'bold' : null,
-            cursor: props.isCurrent ? 'default' : 'pointer'
+            cursor: props.isCurrent || props.isDisabled ? 'default' : 'pointer'
           }}>
           {props.children}
         </a>
@@ -261,6 +262,22 @@ function BreadcrumbItem(props) {
 
 <Breadcrumbs>
   <BreadcrumbItem href="/">Home</BreadcrumbItem>
+  <BreadcrumbItem href="/react-aria">React Aria</BreadcrumbItem>
+  <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
+</Breadcrumbs>
+```
+
+## Usage
+
+The following examples show how to use the `Breadcrumbs` component created in the above examples.
+
+### Disabled
+
+Breadcrumbs can be disabled using the `isDisabled` prop, passed to each disabled BreadcrumbItem. This indicates that navigation is not currently available. When a breadcrumb is disabled, `onPress` will not be triggered, navigation will not occur, and links will be marked as `aria-disabled` for assistive technologies.
+
+```tsx example
+<Breadcrumbs>
+  <BreadcrumbItem href="/" isDisabled>Home</BreadcrumbItem>
   <BreadcrumbItem href="/react-aria">React Aria</BreadcrumbItem>
   <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
 </Breadcrumbs>

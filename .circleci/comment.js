@@ -40,6 +40,19 @@ async function run() {
             break;
           }
         }
+      } else if (process.env.CIRCLE_BRANCH === 'main') {
+        //If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
+        await octokit.repos.createCommitComment({
+          owner: 'adobe',
+          repo: 'react-spectrum',
+          commit_sha: process.env.CIRCLE_SHA1,
+          body: `Verdaccio builds:
+      [Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
+      [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
+      [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
+      [Size diff since last release](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/size-diff.txt)
+      [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)`
+        });
       }
     } catch (error) {
       console.error(error);

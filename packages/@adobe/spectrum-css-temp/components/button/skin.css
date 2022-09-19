@@ -1337,6 +1337,8 @@ governing permissions and limitations under the License.
   --spectrum-logicbutton-or-text-color: ButtonText;
   --spectrum-button-primary-focus-ring-color-key-focus: CanvasText;
   --spectrum-button-primary-focus-ring-size-key-focus: 3px;
+  --spectrum-dropdown-border-color-key-focus: Highlight;
+
   }
 
   .spectrum-Button--overBackground {
@@ -1370,5 +1372,17 @@ governing permissions and limitations under the License.
     &.is-active {
       --spectrum-actionbutton-emphasized-icon-color-key-focus: HighlightText;
     }
+  }
+  .spectrum-FieldButton { 
+    &:focus-ring,
+    &.is-focused {
+      &:not(.spectrum-FieldButton--quiet) {
+        outline:2px solid Highlight;
+      }
+      &.spectrum-FieldButton--quiet {
+        forced-color-adjust: none;
+        box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
+      } 
+    } 
   }
 }

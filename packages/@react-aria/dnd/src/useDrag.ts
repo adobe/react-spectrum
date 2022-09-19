@@ -17,21 +17,22 @@ import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {setGlobalAllowedDropOperations, useDragModality} from './utils';
 import {useDescription, useGlobalListeners} from '@react-aria/utils';
-import {useDragModality} from './utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {writeToDataTransfer} from './utils';
 
-interface DragOptions {
+export interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
   onDragMove?: (e: DragMoveEvent) => void,
   onDragEnd?: (e: DragEndEvent) => void,
   getItems: () => DragItem[],
   preview?: RefObject<DragPreviewRenderer>,
-  getAllowedDropOperations?: () => DropOperation[]
+  getAllowedDropOperations?: () => DropOperation[],
+  hasDragButton?: boolean
 }
 
-interface DragResult {
+export interface DragResult {
   dragProps: HTMLAttributes<HTMLElement>,
   dragButtonProps: AriaButtonProps,
   isDragging: boolean
@@ -53,7 +54,8 @@ const MESSAGES = {
 };
 
 export function useDrag(options: DragOptions): DragResult {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let {hasDragButton} = options;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let state = useRef({
     options,
     x: 0,
@@ -62,9 +64,18 @@ export function useDrag(options: DragOptions): DragResult {
   state.options = options;
   let [isDragging, setDragging] = useState(false);
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+  let modalityOnPointerDown = useRef<string>(null);
 
   let onDragStart = (e: DragEvent) => {
     if (e.defaultPrevented) {
+      return;
+    }
+
+    // If this drag was initiated by a mobile screen reader (e.g. VoiceOver or TalkBack), enter virtual dragging mode.
+    if (modalityOnPointerDown.current === 'virtual') {
+      e.preventDefault();
+      startDragging(e.target as HTMLElement);
+      modalityOnPointerDown.current = null;
       return;
     }
 
@@ -79,15 +90,17 @@ export function useDrag(options: DragOptions): DragResult {
     let items = options.getItems();
     writeToDataTransfer(e.dataTransfer, items);
 
+    let allowed = DROP_OPERATION.all;
     if (typeof options.getAllowedDropOperations === 'function') {
       let allowedOperations = options.getAllowedDropOperations();
-      let allowed = DROP_OPERATION.none;
+      allowed = DROP_OPERATION.none;
       for (let operation of allowedOperations) {
         allowed |= DROP_OPERATION[operation] || DROP_OPERATION.none;
       }
-
-      e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
     }
+
+    setGlobalAllowedDropOperations(allowed);
+    e.dataTransfer.effectAllowed = EFFECT_ALLOWED[allowed] || 'none';
 
     // If there is a preview option, use it to render a custom preview image that will
     // appear under the pointer while dragging. If not, the element itself is dragged by the browser.
@@ -161,6 +174,7 @@ export function useDrag(options: DragOptions): DragResult {
 
     setDragging(false);
     removeAllGlobalListeners();
+    setGlobalAllowedDropOperations(DROP_OPERATION.none);
   };
 
   let onPress = (e: PressEvent) => {
@@ -168,8 +182,12 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
+    startDragging(e.target as HTMLElement);
+  };
+
+  let startDragging = (target: HTMLElement) => {
     if (typeof state.options.onDragStart === 'function') {
-      let rect = (e.target as HTMLElement).getBoundingClientRect();
+      let rect = target.getBoundingClientRect();
       state.options.onDragStart({
         type: 'dragstart',
         x: rect.x + (rect.width / 2),
@@ -178,7 +196,7 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     DragManager.beginDragging({
-      element: e.target as HTMLElement,
+      element: target,
       items: state.options.getItems(),
       allowedDropOperations: typeof state.options.getAllowedDropOperations === 'function'
         ? state.options.getAllowedDropOperations()
@@ -189,18 +207,75 @@ export function useDrag(options: DragOptions): DragResult {
           state.options.onDragEnd(e);
         }
       }
-    }, formatMessage);
+    }, stringFormatter);
 
     setDragging(true);
   };
 
   let modality = useDragModality();
-  let descriptionProps = useDescription(
-    formatMessage(!isDragging ? MESSAGES[modality].start : MESSAGES[modality].end)
-  );
+  let message: string;
+  if (!isDragging) {
+    if (modality === 'touch' && !hasDragButton) {
+      message = 'dragDescriptionLongPress';
+    } else {
+      message = MESSAGES[modality].start;
+    }
+  } else {
+    message = MESSAGES[modality].end;
+  }
+
+  let descriptionProps = useDescription(stringFormatter.format(message));
+
+  let interactions: HTMLAttributes<HTMLElement>;
+  if (!hasDragButton) {
+    // If there's no separate button to trigger accessible drag and drop mode,
+    // then add event handlers to the draggable element itself to start dragging.
+    // For keyboard, we use the Enter key in a capturing listener to prevent other
+    // events such as selection from also occurring. We attempt to infer whether a
+    // pointer event (e.g. long press) came from a touch screen reader, and then initiate
+    // dragging in the native onDragStart listener above.
+
+    interactions = {
+      ...descriptionProps,
+      onPointerDown(e) {
+        // Try to detect virtual drags.
+        if (e.width < 1 && e.height < 1) {
+          // iOS VoiceOver.
+          modalityOnPointerDown.current = 'virtual';
+        } else {
+          let rect = e.currentTarget.getBoundingClientRect();
+          let offsetX = e.clientX - rect.x;
+          let offsetY = e.clientY - rect.y;
+          let centerX = rect.width / 2;
+          let centerY = rect.height / 2;
+
+          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
+            // Android TalkBack.
+            modalityOnPointerDown.current = 'virtual';
+          } else {
+            modalityOnPointerDown.current = e.pointerType;
+          }
+        }
+      },
+      onKeyDownCapture(e) {
+        if (e.target === e.currentTarget && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      onKeyUpCapture(e) {
+        if (e.target === e.currentTarget && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          startDragging(e.target as HTMLElement);
+        }
+      }
+    };
+  }
 
   return {
     dragProps: {
+      ...interactions,
       draggable: 'true',
       onDragStart,
       onDrag,
