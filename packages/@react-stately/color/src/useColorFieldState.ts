@@ -149,6 +149,7 @@ export function useColorFieldState(
 
   let increment = () => {
     let newValue = addColorValue(parsed.current, step);
+    newValue = newValue.withChannelValue('alpha', parsed.current.getChannelValue('alpha'));
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -160,6 +161,7 @@ export function useColorFieldState(
   };
   let decrement = () => {
     let newValue = addColorValue(parsed.current, -step);
+    newValue = newValue.withChannelValue('alpha', parsed.current.getChannelValue('alpha'));
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
