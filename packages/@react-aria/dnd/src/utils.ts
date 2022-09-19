@@ -336,6 +336,13 @@ export function setGlobalDnDState(state: DnDState) {
   globalDndState = state;
 }
 
+// Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
+// Allows a droppable ref arg in case the global drop collection ref hasn't been set
+export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+  let {draggingCollectionRef, dropCollectionRef} = globalDndState;
+  return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
+}
+
 type DropEffect = 'none' | 'copy' | 'link' | 'move';
 export let globalDropEffect: DropEffect;
 export function setGlobalDropEffect(dropEffect: DropEffect) {

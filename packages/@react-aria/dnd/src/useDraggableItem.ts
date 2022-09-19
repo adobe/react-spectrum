@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearGlobalDnDState, globalDndState, setDraggingKeys} from './utils';
+import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys} from './utils';
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
@@ -77,8 +77,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       state.moveDrag(e);
     },
     onDragEnd(e) {
-      let {draggingCollectionRef, dropCollectionRef} = globalDndState;
-      let isInternal = draggingCollectionRef?.current != null && draggingCollectionRef.current === dropCollectionRef?.current;
+      let isInternal = isInternalDropOperation();
       state.endDrag({...e, keys: state.draggingKeys, isInternal});
       clearGlobalDnDState();
     }
