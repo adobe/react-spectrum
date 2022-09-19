@@ -1788,28 +1788,6 @@ export function DragBetweenListsComplex(props) {
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        // TODO: this logic will need to be updated for files/directories,
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        } else if (item.types.size === 1 && item.types.has('text/plain')) {
-          // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-          // Multiple drag items are contained in a single string so we need to split them out
-          text = await item.getText('text/plain');
-          processedItems = text.split('\n').map(val => JSON.parse(val));
-          break;
-        }
-      }
-    }
-    return processedItems;
-  };
-
   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dndHooks: dndHooksList1} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
