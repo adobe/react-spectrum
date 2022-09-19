@@ -15,6 +15,7 @@ import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Flex} from '@adobe/react-spectrum';
 
 storiesOf('RadioGroup', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -99,7 +100,7 @@ storiesOf('RadioGroup', module)
     () => render({errorMessage: 'Please select a pet.', validationState: 'invalid', showErrorIcon: true})
   )
   .add(
-    'with description, error message and validation',
+    'with description, error message and validation, fixed width',
     () => renderWithDescriptionErrorMessageAndValidation()
   )
   .add(
@@ -186,26 +187,28 @@ function renderWithDescriptionErrorMessageAndValidation() {
     let isValid = selected === 'dogs';
   
     return (
-      <RadioGroup
-        aria-label="Favorite pet"
-        onChange={setSelected}
-        validationState={isValid ? 'valid' : 'invalid'}
-        description="Please select a pet."
-        errorMessage={
+      <Flex width="480px">
+        <RadioGroup
+          aria-label="Favorite pet"
+          onChange={setSelected}
+          validationState={isValid ? 'valid' : 'invalid'}
+          description="Please select a pet."
+          errorMessage={
           selected === 'cats'
             ? 'No cats allowed.'
             : 'Please select dogs.'
         }>
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
-      </RadioGroup>
+          <Radio value="dogs">
+            Dogs
+          </Radio>
+          <Radio value="cats">
+            Cats
+          </Radio>
+          <Radio value="dragons">
+            Dragons
+          </Radio>
+        </RadioGroup>
+      </Flex>
     );
   }
 

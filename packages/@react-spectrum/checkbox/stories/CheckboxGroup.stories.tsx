@@ -15,6 +15,7 @@ import {Checkbox, CheckboxGroup} from '../';
 import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 import {storiesOf} from '@storybook/react';
+import {Flex} from '@adobe/react-spectrum';
 
 storiesOf('CheckboxGroup', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -111,7 +112,7 @@ storiesOf('CheckboxGroup', module)
     () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
   )
   .add(
-    'with description, error message and validation',
+    'with description, error message and validation, fixed width',
     () => renderWithDescriptionErrorMessageAndValidation()
   )
   .add(
@@ -158,21 +159,23 @@ function renderWithDescriptionErrorMessageAndValidation() {
     let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
   
     return (
-      <CheckboxGroup
-        label="Pets"
-        onChange={setChecked}
-        value={checked}
-        validationState={isValid ? 'valid' : 'invalid'}
-        description="Select only dogs and dragons."
-        errorMessage={
+      <Flex width="480px">
+        <CheckboxGroup
+          label="Pets"
+          onChange={setChecked}
+          value={checked}
+          validationState={isValid ? 'valid' : 'invalid'}
+          description="Select only dogs and dragons."
+          errorMessage={
           checked.includes('cats')
             ? 'No cats allowed.'
             : 'Select only dogs and dragons.'
         }>
-        <Checkbox value="dogs">Dogs</Checkbox>
-        <Checkbox value="cats">Cats</Checkbox>
-        <Checkbox value="dragons">Dragons</Checkbox>
-      </CheckboxGroup>
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+      </Flex>
     );
   }
 
