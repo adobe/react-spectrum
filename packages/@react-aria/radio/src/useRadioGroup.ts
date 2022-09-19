@@ -14,7 +14,7 @@ import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {radioGroupNames} from './utils';
+import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -54,6 +54,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
+  radioGroupDescriptionIds.set(state, descriptionProps.id);
+  radioGroupErrorMessageIds.set(state, errorMessageProps.id);
 
   let domProps = filterDOMProps(props, {labelable: true});
 
