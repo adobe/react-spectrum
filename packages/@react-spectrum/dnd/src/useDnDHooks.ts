@@ -68,45 +68,46 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
 }
 
 export function useDnDHooks(options: DnDOptions): DnDHooks {
-  let {
-    onDrop,
-    onInsert,
-    onItemDrop,
-    onReorder,
-    onRootDrop,
-    getItems
-   } = options;
+  let dndHooks = useMemo(() => {
+    let {
+      onDrop,
+      onInsert,
+      onItemDrop,
+      onReorder,
+      onRootDrop,
+      getItems
+     } = options;
 
-  let dragHooks: DragHooks = useMemo(() => ({
-    useDraggableCollectionState(props: DraggableCollectionStateOptions) {
-      return useDraggableCollectionState({...props, ...options});
-    },
-    useDraggableCollection,
-    useDraggableItem,
-    DragPreview
-  }), [options]);
+    let isDraggable = !!getItems;
+    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
+    let dragHooks: DragHooks = {
+      useDraggableCollectionState(props: DraggableCollectionStateOptions) {
+        return useDraggableCollectionState({...props, ...options});
+      },
+      useDraggableCollection,
+      useDraggableItem,
+      DragPreview
+    };
 
-  let dropHooks: DropHooks = useMemo(() => ({
-    useDroppableCollectionState(props) {
-      return useDroppableCollectionState({...props, ...options});
-    },
-    useDroppableItem,
-    useDroppableCollection(props, state, ref) {
-      return useDroppableCollection({...props, ...options}, state, ref);
-    },
-    useDropIndicator
-  }), [options]);
+    let dropHooks: DropHooks = {
+      useDroppableCollectionState(props) {
+        return useDroppableCollectionState({...props, ...options});
+      },
+      useDroppableItem,
+      useDroppableCollection(props, state, ref) {
+        return useDroppableCollection({...props, ...options}, state, ref);
+      },
+      useDropIndicator
+    };
 
-  let isDraggable = !!getItems;
-  let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
-
-  let mergedHooks = {
-    ...(isDraggable ? dragHooks : {}),
-    ...(isDroppable ? dropHooks : {}),
-    ...(isDraggable || isDroppable ? {isVirtualDragging} : {})
-  };
+    return {
+      ...(isDraggable ? dragHooks : {}),
+      ...(isDroppable ? dropHooks : {}),
+      ...(isDraggable || isDroppable ? {isVirtualDragging} : {})
+    };
+  }, [options]);
 
   return {
-    dndHooks: mergedHooks
+    dndHooks: dndHooks
   };
 }
