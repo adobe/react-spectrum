@@ -11,7 +11,7 @@
  */
 
 import {AriaCheckboxGroupProps} from '@react-types/checkbox';
-import {checkboxGroupNames} from './utils';
+import {checkboxGroupDescriptionIds, checkboxGroupErrorMessageIds, checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
@@ -43,6 +43,8 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
+  checkboxGroupDescriptionIds.set(state, descriptionProps.id);
+  checkboxGroupErrorMessageIds.set(state, errorMessageProps.id);
 
   let domProps = filterDOMProps(props, {labelable: true});
 

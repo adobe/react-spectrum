@@ -62,7 +62,7 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps {}
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps, Validation {}
 
 export interface CheckboxProps extends ToggleProps {
   /**
