@@ -112,8 +112,9 @@
 
 .spectrum-ColorSlider-labelContainer {
   display: grid;
-  grid-template-areas: "label contextualHelp . value";
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
 }
 
 .spectrum-ColorSlider-contextualHelp {

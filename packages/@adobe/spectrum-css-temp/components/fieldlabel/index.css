@@ -67,11 +67,12 @@ governing permissions and limitations under the License.
 
   &.spectrum-Field--positionTop {
     display: inline-grid;
-    grid-template-areas: "label contextualHelp ."
-                         "field field field"
-                         "helpText helpText helpText";
-    grid-template-columns: auto auto 1fr;
+    grid-template-areas: "label contextualHelp"
+                         "field field"
+                         "helpText helpText";
+    grid-template-columns: auto 1fr;
     align-content: start;
+    justify-items: start;
     width: var(--spectrum-field-default-width);
 
     .spectrum-Field-field {
