@@ -10,38 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
+import type {DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {filterDOMProps} from '@react-aria/utils';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {RefObject} from 'react';
+import React, {ReactNode, RefObject} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 
-interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
+// NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
+
+export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, DOMProps {
+  /** The content to display as the label. */
+  label: ReactNode
+}
 
 type NumberValue = number | RangeValue<number>;
 interface NumberProps<T extends NumberValue> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
 
-type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
+export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
 type RangeDateTime = RangeValue<DateTime>;
 type DateTimeValue = DateTime | RangeDateTime;
 interface DateProps<T extends DateTimeValue> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: Intl.DateTimeFormatOptions
 }
 
 interface StringProps<T extends string> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: never
 }
 
 interface StringListProps<T extends string[]> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   // @ts-ignore
   formatOptions?: Intl.ListFormatOptions
 }
@@ -89,7 +102,7 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
   }
 
   return (
-    <Field {...props as any} wrapperProps={filterDOMProps(props)} ref={ref} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
+    <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={ref} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
       <span>{children}</span>
     </Field>
   );
@@ -170,5 +183,8 @@ function convertValue(value: Time) {
   return toCalendarDateTime(date, value);
 }
 
+/**
+ * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
+ */
 let _LabeledValue = React.forwardRef(LabeledValue);
 export {_LabeledValue as LabeledValue};
