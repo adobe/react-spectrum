@@ -165,17 +165,12 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     selectionManager: gridState.selectionManager,
     getDropOperation: props.getDropOperation || defaultGetDropOperation,
     onDropEnter: props.onDropEnter,
-    onDropMove: props.onDropMove,
-    onDropExit: props.onDropExit,
-    onDropActivate: props.onDropActivate
+    onDropExit: props.onDropExit
   });
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
     dropTargetDelegate: new ListDropTargetDelegate(gridState.collection, domRef),
-    onDropEnter: props.onDropEnter,
-    onDropMove: props.onDropMove,
-    onDropExit: props.onDropExit,
     onDropActivate: props.onDropActivate,
     onDrop: props.onDrop
   }, dropState, domRef);
