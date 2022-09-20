@@ -167,7 +167,6 @@ governing permissions and limitations under the License.
     }
 
     .spectrum-Field-field {
-      display: table-cell;
       width: auto;
       min-width: var(--spectrum-component-single-line-width);
     }
