@@ -11,9 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Flex} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('RadioGroup', module)
@@ -85,6 +86,22 @@ storiesOf('RadioGroup', module)
   .add(
     'validationState: "invalid"',
     () => render({validationState: 'invalid'})
+  )
+  .add(
+    'with description',
+    () => render({description: 'Please select a pet.'})
+  )
+  .add(
+    'with error message',
+    () => render({errorMessage: 'Please select a pet.', validationState: 'invalid'})
+  )
+  .add(
+    'with error message and error icon',
+    () => render({errorMessage: 'Please select a pet.', validationState: 'invalid', showErrorIcon: true})
+  )
+  .add(
+    'with description, error message and validation, fixed width',
+    () => renderWithDescriptionErrorMessageAndValidation()
   )
   .add(
     'no visible label',
@@ -162,4 +179,38 @@ function renderFormControl() {
       </RadioGroup>
     </Provider>
   );
+}
+
+function renderWithDescriptionErrorMessageAndValidation() {
+  function Example() {
+    let [selected, setSelected] = useState('dogs');
+    let isValid = selected === 'dogs';
+  
+    return (
+      <Flex width="480px">
+        <RadioGroup
+          aria-label="Favorite pet"
+          onChange={setSelected}
+          validationState={isValid ? 'valid' : 'invalid'}
+          description="Please select a pet."
+          errorMessage={
+          selected === 'cats'
+            ? 'No cats allowed.'
+            : 'Please select dogs.'
+        }>
+          <Radio value="dogs">
+            Dogs
+          </Radio>
+          <Radio value="cats">
+            Cats
+          </Radio>
+          <Radio value="dragons">
+            Dragons
+          </Radio>
+        </RadioGroup>
+      </Flex>
+    );
+  }
+
+  return <Example />;
 }
