@@ -316,16 +316,4 @@ describe('LabeledValue', function () {
     expect(ref.current).toBe(staticField);
     expect(within(ref.current).getByText('Field label')).toBeInTheDocument();
   });
-
-  it('renders when no visible label is provided', function () {
-    let {getByTestId} = render(
-      <LabeledValue
-        data-testid="test-id"
-        value="test" />
-    );
-
-    let staticField = getByTestId('test-id');
-    expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('test');
-  });
 });

@@ -94,7 +94,6 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -114,13 +113,15 @@ describe('useDraggableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
         type: 'dragend',
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -180,6 +181,8 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+
+      // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -214,7 +217,8 @@ describe('useDraggableCollection', () => {
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -271,7 +275,6 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -291,13 +294,15 @@ describe('useDraggableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
         type: 'dragend',
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -385,7 +390,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -483,7 +489,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -569,7 +576,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -662,7 +670,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
     });
 
@@ -757,7 +766,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
     });
   });
@@ -838,7 +848,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -924,7 +935,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -1000,7 +1012,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternalDrop: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -1086,7 +1099,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       delete window.ontouchstart;
@@ -1185,7 +1199,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternalDrop: false
       });
 
       delete window.ontouchstart;

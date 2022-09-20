@@ -15,6 +15,9 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
+  "devDependencies": {
+    "@react-spectrum/dnd": "3.0.0-alpha.6"
+  },
   "publishConfig": {
     "access": "public"
   }

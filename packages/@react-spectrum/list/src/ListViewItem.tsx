@@ -42,7 +42,16 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     item,
     isEmphasized
   } = props;
-  let {state, dragState, dropState, isListDraggable, isListDroppable, layout, dragHooks, dropHooks, loadingState} = useContext(ListViewContext);
+  let {
+    state,
+    dragState,
+    dropState,
+    isListDraggable,
+    isListDroppable,
+    layout,
+    dndHooks,
+    loadingState
+  } = useContext(ListViewContext);
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement>();
   let {
@@ -73,7 +82,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dragHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+    draggableItem = dndHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
@@ -86,7 +95,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    dropIndicator = dndHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -129,7 +138,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
-  let isVirtualDragging = dropHooks?.isVirtualDragging() || dragHooks?.isVirtualDragging();
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
@@ -139,7 +147,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps,
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
-    isVirtualDragging && {tabIndex: null}
+    dndHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;
