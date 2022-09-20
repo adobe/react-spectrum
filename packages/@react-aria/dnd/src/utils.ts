@@ -18,6 +18,8 @@ import {Key, RefObject} from 'react';
 import {useId} from '@react-aria/utils';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
+export const directorySymbol = Symbol();
+export type DirectorySymbolType = typeof directorySymbol;
 
 export function useDroppableCollectionId(state: DroppableCollectionState) {
   let id = useId();
@@ -159,12 +161,12 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string) {
-    if (this.includesUnknownTypes || (type === 'directory' && this.types.has(GENERIC_TYPE))) {
+  has(type: string | DirectorySymbolType) {
+    if (this.includesUnknownTypes || (type === directorySymbol && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 
-    return this.types.has(type);
+    return typeof type === 'string' && this.types.has(type);
   }
 }
 

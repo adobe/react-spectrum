@@ -9,6 +9,7 @@ import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {directorySymbol} from '@react-aria/dnd';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
@@ -1708,7 +1709,7 @@ function FinderDropUtilHandlers(props) {
   });
 
   let {dndHooks: list1Hooks} = useDnDHooks({
-    acceptedDragTypes: ['directory'],
+    acceptedDragTypes: [directorySymbol],
     onInsert: async (e) => {
       action('onInsertList1')(e);
     },

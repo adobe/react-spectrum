@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import type {DirectorySymbolType} from '@react-aria/dnd';
 import {Key, RefObject} from 'react';
 
 export interface DragDropEvent {
@@ -139,7 +140,7 @@ interface DroppableCollectionReorderEvent {
 }
 
 export interface DragTypes {
-  has(type: string): boolean
+  has(type: string | DirectorySymbolType): boolean
 }
 
 export interface DropTargetDelegate {
@@ -184,9 +185,9 @@ export interface DroppableCollectionProps {
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
-   * The drag types that the droppable collection accepts. If directories are accepted, include 'directory' in the array of allowed types.
+   * The drag types that the droppable collection accepts. If directories are accepted, include the directorySymbol from @react-aria/dnd in the array of allowed types.
    */
-  acceptedDragTypes?: 'all' | Array<string>,
+  acceptedDragTypes?: 'all' | Array<string | DirectorySymbolType>,
   /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
