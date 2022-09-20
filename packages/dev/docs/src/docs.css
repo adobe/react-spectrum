@@ -92,6 +92,7 @@ html, body {
   --anatomy-gray-100: #f4f6fc;
   --anatomy-gray-75: #FDFDFE;
   --anatomy-gray-50: #FFFFFF;
+  --docsearch-logo-color: #5468FF;
 }
 
 .dark {
@@ -109,6 +110,7 @@ html, body {
   --anatomy-gray-100: #141e35;
   --anatomy-gray-75: #0e1525;
   --anatomy-gray-50: #0c1220;
+  --docsearch-logo-color: #fff;
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
@@ -643,6 +645,47 @@ h2.sectionHeader {
   font-weight: bold;
   background: var(--spectrum-alias-text-highlight-color);
   color: var(--spectrum-global-color-blue-700);
+}
+
+.docSearchFooter {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+  justify-content: space-between;
+
+  border-top-color: var(--spectrum-global-color-gray-300);
+  border-top-style: solid;
+  border-top-width: var(--spectrum-alias-border-size-thick);
+  margin-left: var(--spectrum-global-dimension-size-150);
+  margin-right: var(--spectrum-global-dimension-size-150);
+  margin-top: var(--spectrum-global-dimension-size-40);
+}
+
+.docSearchLogo {
+  padding-top: var(--spectrum-global-dimension-size-75);
+  padding-bottom: var(--spectrum-global-dimension-size-75);
+}
+
+.docSearchLogo a {
+  color: var(--spectrum-global-color-gray-700);
+  display: flex;
+  text-decoration: none;
+}
+
+.docSearchLogoLabel {
+  font-size: var(--spectrum-global-dimension-font-size-75);
+  line-height: 1.6em;
+}
+
+.docSearchLogo a:hover .docSearchLogoLabel,
+.docSearchLogo a:focus .docSearchLogoLabel {
+  text-decoration: underline;
+}
+
+.docSearchLogo svg {
+  color: var(--docsearch-logo-color);
+  margin-left: var(--spectrum-global-dimension-size-100);
 }
 
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
