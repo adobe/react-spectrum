@@ -11,12 +11,12 @@
  */
 
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
-import {classNames} from '@react-spectrum/utils';
-import type {DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import type {DOMProps, DOMRef, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {filterDOMProps} from '@react-aria/utils';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {ReactNode, RefObject} from 'react';
+import React, {ReactNode} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 
 // NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
@@ -69,11 +69,12 @@ type LabeledValueProps<T> =
 type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
-function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: RefObject<HTMLDivElement>) {
+function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
   let {
     value,
     formatOptions
   } = props;
+  let domRef = useDOMRef(ref);
 
   let children;
   if (Array.isArray(value)) {
@@ -102,7 +103,7 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
   }
 
   return (
-    <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={ref} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
+    <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={domRef} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
       <span>{children}</span>
     </Field>
   );
