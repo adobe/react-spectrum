@@ -32,12 +32,21 @@ governing permissions and limitations under the License.
 svg.spectrum-Table-sortedIcon {
   display: none;
   flex: 0 0 auto;
-  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
   transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
 }
 
 .spectrum-Table-headWrapper {
@@ -104,6 +113,12 @@ svg.spectrum-Table-sortedIcon {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+    }
+  }
+  &.is-hovered,
+  &.is-cell-focused {
+    .spectrum-Table-menuChevron {
+      display: inline-block;
     }
   }
 }
@@ -284,6 +299,10 @@ svg.spectrum-Table-sortedIcon {
       border-radius: calc(var(--spectrum-table-cell-border-radius-key-focus) - 1px);
     }
   }
+}
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
 }
 
 .spectrum-Table-headCell,
