@@ -17,7 +17,7 @@ import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, useFocus, useFocusWithin, useHover, usePress} from '@react-aria/interactions';
+import {getInteractionModality, useFocusWithin, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
