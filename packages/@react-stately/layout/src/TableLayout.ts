@@ -103,6 +103,9 @@ export class TableLayout<T> extends ListLayout<T> {
       height = Math.max(height, layoutNode.layoutInfo.rect.height);
       columns.push(layoutNode);
     }
+    for (let [i, layout] of columns.entries()) {
+      layout.layoutInfo.zIndex = columns.length - i + 1;
+    }
 
     this.setChildHeights(columns, height);
 

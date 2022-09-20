@@ -288,10 +288,21 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-divider-border-color);
   }
 
+  /* don't want the divider to add to the resizer's width since it's */
   &:active,
   &:focus-ring {
     &::after {
-      background-color: var(--spectrum-global-color-blue-400);
+      background-color: unset;
     }
   }
+}
+
+.spectrum-Table-colResizeIndicator {
+  &.spectrum-Table-colResizeIndicator--resizing {
+    background-color: var(--spectrum-global-color-blue-600);
+  }
+}
+.spectrum-Table-colResizeNubbin {}
+.spectrum-Table-bodyResizeIndicator {
+  background-color: var(--spectrum-global-color-blue-600);
 }

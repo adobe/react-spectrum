@@ -60,6 +60,10 @@ storiesOf('RadioGroup', module)
   .add(
     'long radio label',
     () => renderLongLabel({value: 'dragons'})
+  )
+  .add(
+    'show error icon',
+    () => render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true})
   );
 
 // do not supply a name, let it be uniquely generated, otherwise controlled won't work when many are rendered to the chromatic story

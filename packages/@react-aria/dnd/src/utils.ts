@@ -14,6 +14,7 @@ import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from 
 import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
+import {Key, RefObject} from 'react';
 import {useId} from '@react-aria/utils';
 
 const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
@@ -159,7 +160,7 @@ export class DragTypes implements IDragTypes {
   }
 
   has(type: string) {
-    if (this.includesUnknownTypes) {
+    if (this.includesUnknownTypes || (type === 'directory' && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 
@@ -301,6 +302,44 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileIt
 
 function getEntryFile(entry: FileSystemFileEntry): Promise<File> {
   return new Promise((resolve, reject) => entry.file(resolve, reject));
+}
+
+// Global DnD collection state tracker.
+export interface DnDState {
+  /** A ref for the  of the drag items in the current drag session if any. */
+  draggingCollectionRef?: RefObject<HTMLElement>,
+  /** The set of currently dragged keys. */
+  draggingKeys: Set<Key>,
+  /** A ref for the collection that is targeted for a drop operation, if any. */
+  dropCollectionRef?: RefObject<HTMLElement>
+}
+
+export let globalDndState: DnDState = {draggingKeys: new Set()};
+
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.draggingCollectionRef = ref;
+}
+
+export function setDraggingKeys(keys: Set<Key>) {
+  globalDndState.draggingKeys = keys;
+}
+
+export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.dropCollectionRef = ref;
+}
+
+export function clearGlobalDnDState() {
+  globalDndState = {draggingKeys: new Set()};
+}
+
+export function setGlobalDnDState(state: DnDState) {
+  globalDndState = state;
+}
+
+type DropEffect = 'none' | 'copy' | 'link' | 'move';
+export let globalDropEffect: DropEffect;
+export function setGlobalDropEffect(dropEffect: DropEffect) {
+  globalDropEffect = dropEffect;
 }
 
 export let globalAllowedDropOperations = DROP_OPERATION.none;
