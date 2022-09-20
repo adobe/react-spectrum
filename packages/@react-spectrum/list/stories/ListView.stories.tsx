@@ -21,11 +21,11 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDnDHooks} from '@react-spectrum/dnd';
 
 const parameters = {
   args: {
@@ -422,6 +422,67 @@ storiesOf('ListView/Drag and Drop', module)
     ), {description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}}
   );
 
+storiesOf('ListView/Drag and Drop/Util Handlers', module)
+  .addParameters(parameters)
+  .add(
+    'drag out of list',
+    args => (
+      <Flex direction="row" wrap alignItems="center">
+        <input />
+        <Droppable />
+        <DragExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      </Flex>
+    )
+  )
+  .add(
+    'drag within list (reorder)',
+    args => (
+      <ReorderExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+    )
+  )
+  .add(
+    'drop onto item/folder',
+    args => (
+      <ItemDropExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+    ), {description: {data: 'Allows dropping on items and folders. Dropping on a item is a no op (action fires still). Dropping external items is also a no op'}}
+  )
+  .add(
+    'drop onto root',
+    args => (
+      <RootDropExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+    ), {description: {data: 'Allows one way dragging from first list to root of second list. Copy and link operations shouldnt remove items from the first list'}}
+  )
+  .add(
+    'drop between items',
+    args => (
+      <InsertExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+    ), {description: {data: 'Allows one way dragging from first list to between items of second list. Copy and link operations shouldnt remove items from the first list'}}
+  )
+  .add(
+    'allows directories and files from finder',
+    args => (
+      <FinderDropUtilHandlers listViewProps={args} />
+    ), {description: {data: 'The first list should allow only directory drops. The second list should allow all drag type drops (directory, files).'}}
+  )
+  .add(
+    'complex drag between lists',
+    args => (
+      <DragBetweenListsComplex
+        listViewProps={args}
+        firstListDnDOptions={{
+          onDragStart: action('dragStartList1')
+        }}
+        secondListDnDOptions={{
+          onDragStart: action('dragStartList2')
+        }} />
+    ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
+  )
+  .add(
+    'util handlers overridden by onDrop and getDropOperations',
+    args => <DragBetweenListsOverride {...args} />,
+    {description: {data: 'The first list should be draggable, the second list should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}}
+  );
+
 function renderActionsExample(renderActions, props?) {
   return (
     <ListView width="300px" selectionMode="single" {...props} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')} aria-label="render actions ListView">
@@ -593,7 +654,7 @@ export function DragExample(props?) {
     };
   });
 
-  let dragHooks = useDragHooks({
+  let {dndHooks} = useDnDHooks({
     getItems,
     getAllowedDropOperations() {
       getAllowedDropOperationsAction();
@@ -609,7 +670,7 @@ export function DragExample(props?) {
       selectionMode="multiple"
       items={items}
       disabledKeys={['f']}
-      dragHooks={dragHooks}
+      dndHooks={dndHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
@@ -671,7 +732,7 @@ export function ReorderExample(props) {
     }
   };
 
-  let dragHooks = useDragHooks({
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -686,11 +747,9 @@ export function ReorderExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: onDragStart,
-    onDragEnd: onDragEnd
-  });
-
-  let dropHooks = useDropHooks({
+    onDragEnd: onDragEnd,
     async onDrop(e) {
+      onDrop(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -707,7 +766,6 @@ export function ReorderExample(props) {
             }
           }
         }
-        onDrop(e);
         onMove(keys, e.target);
       }
     },
@@ -728,8 +786,7 @@ export function ReorderExample(props) {
       width="300px"
       items={list.items}
       disabledKeys={disabledKeys}
-      dragHooks={dragHooks}
-      dropHooks={dropHooks}
+      dndHooks={dndHooks}
       {...otherprops}>
       {(item: any) => (
         <Item>
@@ -776,7 +833,7 @@ export function DragIntoItemExample(props) {
     list.remove(...keys);
   };
 
-  let dragHooks = useDragHooks({
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -791,11 +848,9 @@ export function DragIntoItemExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let dropHooks = useDropHooks({
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -812,7 +867,6 @@ export function DragIntoItemExample(props) {
             }
           }
         }
-        onDropAction(e);
         if (!keys.includes(e.target.key)) {
           onMove(keys, e.target);
         }
@@ -834,8 +888,7 @@ export function DragIntoItemExample(props) {
       width="300px"
       items={list.items}
       disabledKeys={disabledKeys}
-      dragHooks={dragHooks}
-      dropHooks={dropHooks}
+      dndHooks={dndHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
@@ -854,7 +907,7 @@ export function DragIntoItemExample(props) {
 
 export function DragBetweenListsExample(props) {
   let {onDragStart, onDragEnd, onDrop} = props;
-  onDrop = chain(action('onDrop'), onDrop);
+  let onDropAction = chain(action('onDrop'), onDrop);
   onDragStart = chain(action('dragStart'), onDragStart);
   onDragEnd = chain(action('dragEnd'), onDragEnd);
 
@@ -888,7 +941,10 @@ export function DragBetweenListsExample(props) {
     }
   };
 
-  let dragHooks = useDragHooks({
+  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+
+  let {dndHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -903,14 +959,9 @@ export function DragBetweenListsExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart,
-    onDragEnd
-  });
-
-  // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-
-  let dropHooks = useDropHooks({
+    onDragEnd,
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
         let keys = [];
         for (let item of e.items) {
@@ -927,7 +978,6 @@ export function DragBetweenListsExample(props) {
             }
           }
         }
-        onDrop(e);
         onMove(keys, e.target);
       }
     },
@@ -950,8 +1000,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dragHooks={dragHooks}
-          dropHooks={dropHooks}
+          dndHooks={dndHooks}
           {...props}>
           {(item: any) => (
             <Item>
@@ -968,8 +1017,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dragHooks={dragHooks}
-          dropHooks={dropHooks}
+          dndHooks={dndHooks}
           {...props}>
           {(item: any) => (
             <Item>
@@ -1008,7 +1056,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     destinationList.append(...items);
   };
 
-  let dragHooksFirst = useDragHooks({
+  let {dndHooks: dndHooksFirst} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1023,29 +1071,9 @@ export function DragBetweenListsRootOnlyExample(props) {
       return ['move', 'cancel'];
     },
     onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let dragHooksSecond = useDragHooks({
-    getItems(keys) {
-      return [...keys].map(key => {
-        key = JSON.stringify(key);
-        return {
-          'list2': key,
-          'text/plain': key
-        };
-      });
-    },
-    getAllowedDropOperations() {
-      getAllowedDropOperationsAction();
-      return ['move', 'cancel'];
-    },
-    onDragStart: chain(action('dragStart'), onDragStart),
-    onDragEnd: chain(action('dragEnd'), onDragEnd)
-  });
-
-  let dropHooksFirst = useDropHooks({
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
@@ -1062,7 +1090,6 @@ export function DragBetweenListsRootOnlyExample(props) {
             }
           }
         }
-        onDropAction(e);
         onMove(keys, list1);
       }
     },
@@ -1075,8 +1102,24 @@ export function DragBetweenListsRootOnlyExample(props) {
     }
   });
 
-  let dropHooksSecond = useDropHooks({
+  let {dndHooks: dndHooksSecond} = useDnDHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        key = JSON.stringify(key);
+        return {
+          'list2': key,
+          'text/plain': key
+        };
+      });
+    },
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
+    onDragStart: chain(action('dragStart'), onDragStart),
+    onDragEnd: chain(action('dragEnd'), onDragEnd),
     onDrop: async e => {
+      onDropAction(e);
       if (e.target.type === 'root') {
         let keys = [];
         for (let item of e.items) {
@@ -1093,7 +1136,6 @@ export function DragBetweenListsRootOnlyExample(props) {
             }
           }
         }
-        onDropAction(e);
         onMove(keys, list2);
       }
     },
@@ -1116,8 +1158,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dragHooks={dragHooksFirst}
-          dropHooks={dropHooksFirst}
+          dndHooks={dndHooksFirst}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1134,8 +1175,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dragHooks={dragHooksSecond}
-          dropHooks={dropHooksSecond}
+          dndHooks={dndHooksSecond}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1238,5 +1278,866 @@ function ActionBarExample(props?) {
         </Item>
       </ActionBar>
     </ActionBarContainer>
+  );
+}
+
+// Util Handler stories
+let itemProcessor = async (items, acceptedDragTypes) => {
+  let processedItems = [];
+  let text;
+  for (let item of items) {
+    for (let type of acceptedDragTypes) {
+      if (item.kind === 'text' && item.types.has(type)) {
+        text = await item.getText(type);
+        processedItems.push(JSON.parse(text));
+        break;
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        text = await item.getText('text/plain');
+        processedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+  }
+  return processedItems;
+};
+
+let folderList1 = [
+  {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+  {identifier: '2', type: 'file', name: 'Adobe XD'},
+  {identifier: '3', type: 'folder', name: 'Documents',  childNodes: []},
+  {identifier: '4', type: 'file', name: 'Adobe InDesign'},
+  {identifier: '5', type: 'folder', name: 'Utilities',  childNodes: []},
+  {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
+];
+
+let folderList2 = [
+  {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+  {identifier: '8', type: 'file', name: 'Adobe Fresco'},
+  {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+  {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
+  {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+  {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
+  {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
+];
+
+function DragExampleUtilHandlers(props) {
+  let {listViewProps, dndOptions} = props;
+  let list = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dndHooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    acceptedDragTypes,
+    ...dndOptions
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView with dnd hook util handlers"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      {...listViewProps}
+      dndHooks={dndHooks}>
+      {(item: any) => (
+        <Item textValue={item.name} key={item.identifier}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function ReorderExampleUtilHandlers(props) {
+  let {listViewProps, dndOptions} = props;
+  let list = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dndHooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onReorder: async (e) => {
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
+      action('onReorder')(e);
+
+      let itemsToCopy = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item = {...list.getItem(key)};
+          item.identifier = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    acceptedDragTypes,
+    ...dndOptions
+  });
+
+  return (
+    <ListView
+      aria-label="Reorderable ListView from util handlers"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      {...listViewProps}
+      dndHooks={dndHooks}>
+      {(item: any) => (
+        <Item textValue={item.name} key={item.identifier}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function ItemDropExampleUtilHandlers(props) {
+  let {listViewProps, dndOptions} = props;
+  let list = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dndHooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternalDrop,
+        dropOperation
+      } = e;
+      action('onItemDrop')(e);
+      if (isInternalDrop) {
+        let processedItems = await itemProcessor(items, acceptedDragTypes);
+        let targetItem = list.getItem(target.key);
+        if (targetItem?.childNodes != null) {
+          list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+          if (isInternalDrop && dropOperation === 'move') {
+            let keysToRemove = processedItems.map(item => item.identifier);
+            list.remove(...keysToRemove);
+          }
+        }
+      }
+    },
+    acceptedDragTypes,
+    ...dndOptions
+  });
+
+  return (
+    <ListView
+      aria-label="Item and folder droppable ListView from dnd hook util handlers"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      {...listViewProps}
+      dndHooks={dndHooks}>
+      {(item: any) => (
+        <Item textValue={item.name} key={item.identifier}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function RootDropExampleUtilHandlers(props) {
+  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let list1 = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+  let list2 = useListData({
+    initialItems: folderList2,
+    getKey: (item) => item.identifier
+  });
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dndHooks: list1Hooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEnd')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
+    },
+    acceptedDragTypes,
+    ...firstListDnDOptions
+  });
+
+  let {dndHooks: list2Hooks} = useDnDHooks({
+    onRootDrop: async (e) => {
+      action('onRootDropList1')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list2.append(...processedItems);
+    },
+    acceptedDragTypes,
+    ...secondListDnDOptions
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable ListView"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        {...listViewProps}
+        dndHooks={list1Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Root droppable ListView from dnd hook util handlers"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        {...listViewProps}
+        dndHooks={list2Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+
+function InsertExampleUtilHandlers(props) {
+  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let list1 = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+  let list2 = useListData({
+    initialItems: folderList2,
+    getKey: (item) => item.identifier
+  });
+
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+  let {dndHooks: list1Hooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEnd')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
+    },
+    acceptedDragTypes,
+    ...firstListDnDOptions
+  });
+
+  let {dndHooks: list2Hooks} = useDnDHooks({
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
+    },
+    acceptedDragTypes,
+    ...secondListDnDOptions
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable ListView"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        {...listViewProps}
+        dndHooks={list1Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Insert droppable ListView from dnd hook util handlers"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        {...listViewProps}
+        dndHooks={list2Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+
+function FinderDropUtilHandlers(props) {
+  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let list1 = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+  let list2 = useListData({
+    initialItems: folderList2,
+    getKey: (item) => item.identifier
+  });
+
+  let {dndHooks: list1Hooks} = useDnDHooks({
+    acceptedDragTypes: ['directory'],
+    onInsert: async (e) => {
+      action('onInsertList1')(e);
+    },
+    onItemDrop: async (e) => {
+      action('onItemDropList1')(e);
+    },
+    ...firstListDnDOptions
+  });
+
+  let {dndHooks: list2Hooks} = useDnDHooks({
+    onInsert: async (e) => {
+      action('onInsertList2')(e);
+    },
+    onItemDrop: async (e) => {
+      action('onItemDropList2')(e);
+    },
+    acceptedDragTypes: 'all',
+    ...secondListDnDOptions
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="ListView that accepts directory drops only"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        {...listViewProps}
+        dndHooks={list1Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="ListView that accepts all drag types"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        {...listViewProps}
+        dndHooks={list2Hooks}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+
+export function DragBetweenListsComplex(props) {
+  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let list1 = useListData({
+    initialItems: folderList1,
+    getKey: (item) => item.identifier
+  });
+
+  let list2 = useListData({
+    initialItems: folderList2,
+    getKey: (item) => item.identifier
+  });
+  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+
+  let itemProcessor = async (items, acceptedDragTypes) => {
+    let processedItems = [];
+    let text;
+    for (let item of items) {
+      for (let type of acceptedDragTypes) {
+        // TODO: this logic will need to be updated for files/directories,
+        if (item.kind === 'text' && item.types.has(type)) {
+          text = await item.getText(type);
+          processedItems.push(JSON.parse(text));
+          break;
+        } else if (item.types.size === 1 && item.types.has('text/plain')) {
+          // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+          // Multiple drag items are contained in a single string so we need to split them out
+          text = await item.getText('text/plain');
+          processedItems = text.split('\n').map(val => JSON.parse(val));
+          break;
+        }
+      }
+    }
+    return processedItems;
+  };
+
+  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  let {dndHooks: dndHooksList1} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      return {
+        [`${item.type}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list1.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list1.insertAfter(target.key, ...processedItems);
+      }
+
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropList1')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list1.append(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternalDrop,
+        dropOperation
+      } = e;
+      action('onItemDropList1')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list1.getItem(target.key);
+      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      if (isInternalDrop && dropOperation === 'move') {
+        // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
+        // TODO: dig into other libraries to see how they handle this
+        let keysToRemove = processedItems.map(item => item.identifier);
+        list1.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEndList1')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        list1.remove(...keys);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).childNodes,
+    ...firstListDnDOptions
+  });
+
+  // List 2 should allow reordering, on folder drops, and on root drops
+  let {dndHooks: dndHooksList2} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list2.getItem(key);
+      let dragItem = {};
+      let itemString = JSON.stringify(item);
+      dragItem[`${item.type}`] = itemString;
+      if (item.type !== 'unique_type') {
+        dragItem['text/plain'] = itemString;
+      }
+
+      return dragItem;
+    }),
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      action('onInsertList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        list2.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list2.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target,
+        dropOperation
+      } = e;
+      action('onReorderList2')(e);
+
+      let itemsToCopy = [];
+      if (dropOperation === 'copy') {
+        for (let key of keys) {
+          let item = {...list2.getItem(key)};
+          item.identifier = Math.random().toString(36).slice(2);
+          itemsToCopy.push(item);
+        }
+      }
+
+      if (target.dropPosition === 'before') {
+        if (dropOperation === 'move') {
+          list2.moveBefore(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertBefore(target.key, ...itemsToCopy);
+        }
+      } else if (target.dropPosition === 'after') {
+        if (dropOperation === 'move') {
+          list2.moveAfter(target.key, [...keys]);
+        } else if (dropOperation === 'copy') {
+          list2.insertAfter(target.key, ...itemsToCopy);
+        }
+      }
+    },
+    onRootDrop: async (e) => {
+      action('onRootDropList2')(e);
+      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+      list2.prepend(...processedItems);
+    },
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target,
+        isInternalDrop,
+        dropOperation
+      } = e;
+      action('onItemDropList2')(e);
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let targetItem = list2.getItem(target.key);
+      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      if (isInternalDrop && dropOperation === 'move') {
+        let keysToRemove = processedItems.map(item => item.identifier);
+        list2.remove(...keysToRemove);
+      }
+    },
+    acceptedDragTypes,
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        isInternalDrop,
+        keys
+      } = e;
+      action('onDragEndList2')(e);
+      if (dropOperation === 'move' && !isInternalDrop) {
+        let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
+        list2.remove(...keysToRemove);
+      }
+    },
+    getAllowedDropOperations: () => ['move', 'copy'],
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
+    ...secondListDnDOptions
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="First ListView in drag between list example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        {...listViewProps}
+        dndHooks={dndHooksList1}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Second ListView in drag between list example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        {...listViewProps}
+        dndHooks={dndHooksList2}
+        {...props}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+
+function DragBetweenListsOverride(props) {
+  let list1 = useListData({
+    initialItems: [
+      {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+      {identifier: '2', type: 'file', name: 'Adobe XD'},
+      {identifier: '3', type: 'file', name: 'Adobe InDesign'},
+      {identifier: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ],
+    getKey: (item) => item.identifier
+  });
+
+  let list2 = useListData({
+    initialItems: [
+      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+      {identifier: '8', type: 'file', name: 'Adobe Fresco'},
+      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+      {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
+      {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+      {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
+    ],
+    getKey: (item) => item.identifier
+  });
+
+  let {dndHooks: dndHooksList1} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list1.getItem(key);
+      let dragType = `list-1-adobe-${item.type}`;
+      return {
+        [`${dragType}`]: JSON.stringify(item),
+        'text/plain': JSON.stringify(item)
+      };
+    }),
+    onDragEnd: (e) => {
+      action('onDragEnd')(e);
+      if (e.dropOperation === 'move') {
+        list1.remove(...e.keys);
+      }
+    }
+  });
+
+  let {dndHooks: dndHooksList2} = useDnDHooks({
+    getDropOperation: (target, types) => {
+      if (target.type !== 'root' || !(types.has('list-1-adobe-file') || types.has('text/plain'))) {
+        return 'cancel';
+      }
+
+      return 'move';
+    },
+    onDrop: async (e) => {
+      action('onDrop')(e);
+      let {
+        items
+      } = e;
+      let itemsToAdd = [];
+      let text;
+      for (let item of items) {
+        if (item.kind === 'text') {
+          if (item.types.size === 1 && item.types.has('text/plain')) {
+            text = await item.getText('text/plain');
+            itemsToAdd = text.split('\n').map(val => JSON.parse(val));
+          } else {
+            text = await item.getText('list-1-adobe-file');
+            itemsToAdd.push(JSON.parse(text));
+          }
+        }
+      }
+
+      list2.append(...itemsToAdd);
+    },
+    // the below utility handlers shouldn't be called because onDrop is defined
+    // shouldAcceptItemDrop and acceptedDragTypes shouldn't affect the behavior either
+    onInsert: () => action('onInsert'),
+    onReorder: () => action('onReorder'),
+    onRootDrop: () => action('onRootDrop'),
+    onItemDrop: () => action('onItemDrop'),
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
+    acceptedDragTypes: 'all'
+  });
+
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable listview"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list1.items}
+        dndHooks={dndHooksList1}
+        {...props}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' && <Folder />}
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="droppable listview"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-3600"
+        items={list2.items}
+        dndHooks={dndHooksList2}
+        {...props}>
+        {(item: any) => (
+          <Item textValue={item.name} key={item.identifier}>
+            <Text>{item.name}</Text>
+            {item.type === 'folder' &&
+              <>
+                <Folder />
+                <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
+              </>
+            }
+          </Item>
+        )}
+      </ListView>
+    </Flex>
   );
 }
