@@ -77,7 +77,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       state.moveDrag(e);
     },
     onDragEnd(e) {
-      let isInternal = isInternalDropOperation();
+      let {dropOperation} = e;
+      let isInternal = dropOperation === 'cancel' ? false : isInternalDropOperation();
       state.endDrag({...e, keys: state.draggingKeys, isInternal});
       clearGlobalDnDState();
     }
