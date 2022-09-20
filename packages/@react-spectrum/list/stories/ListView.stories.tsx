@@ -463,7 +463,7 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
     'allows directories and files from finder',
     args => (
       <FinderDropUtilHandlers listViewProps={args} />
-    ), {description: {data: 'The first list should allow only directory drops. The second list should allow all drag type drops (directory, files).'}}
+    ), {description: {data: 'The first list should allow only directory drops (e.g. folders from finder). The second list should allow all drag type drops (directory/files from finder, any drag items).'}}
   )
   .add(
     'complex drag between lists',
