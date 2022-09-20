@@ -46,8 +46,6 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
   checkboxGroupDescriptionIds.set(state, descriptionProps.id);
   checkboxGroupErrorMessageIds.set(state, errorMessageProps.id);
 
-  let {descriptionProps, errorMessageProps} = useField(props);
-
   let domProps = filterDOMProps(props, {labelable: true});
 
   // Pass name prop from group to all items by attaching to the state.

@@ -57,8 +57,6 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   radioGroupDescriptionIds.set(state, descriptionProps.id);
   radioGroupErrorMessageIds.set(state, errorMessageProps.id);
 
-  let {descriptionProps, errorMessageProps} = useField(props);
-
   let domProps = filterDOMProps(props, {labelable: true});
 
   // When the radio group loses focus, reset the focusable radio to null if
