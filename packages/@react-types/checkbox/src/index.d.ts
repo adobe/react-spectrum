@@ -62,7 +62,7 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps, Validation {}
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps, HelpTextProps, Validation {}
 
 export interface CheckboxProps extends ToggleProps {
   /**
@@ -74,7 +74,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, HelpTextProps, Validation {
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {
   /**
    * The name of the CheckboxGroup, used when submitting an HTML form.
    */
