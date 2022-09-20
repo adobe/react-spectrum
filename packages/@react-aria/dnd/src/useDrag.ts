@@ -15,12 +15,11 @@ import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEve
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
+import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {setGlobalAllowedDropOperations, useDragModality} from './utils';
-import {useDescription, useGlobalListeners} from '@react-aria/utils';
+import {useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {writeToDataTransfer} from './utils';
 
 export interface DragOptions {
   onDragStart?: (e: DragStartEvent) => void,
@@ -62,7 +61,12 @@ export function useDrag(options: DragOptions): DragResult {
     y: 0
   }).current;
   state.options = options;
-  let [isDragging, setDragging] = useState(false);
+  let isDraggingRef = useRef(false);
+  let [, setDraggingState] = useState(false);
+  let setDragging = (isDragging) => {
+    isDraggingRef.current = isDragging;
+    setDraggingState(isDragging);
+  };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
   let modalityOnPointerDown = useRef<string>(null);
 
@@ -164,18 +168,49 @@ export function useDrag(options: DragOptions): DragResult {
 
   let onDragEnd = (e: DragEvent) => {
     if (typeof options.onDragEnd === 'function') {
-      options.onDragEnd({
+      let event: DragEndEvent = {
         type: 'dragend',
         x: e.clientX,
         y: e.clientY,
         dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
-      });
+      };
+
+      // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
+      // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+      if (globalDropEffect) {
+        event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect];
+      }
+      options.onDragEnd(event);
     }
 
     setDragging(false);
     removeAllGlobalListeners();
     setGlobalAllowedDropOperations(DROP_OPERATION.none);
+    setGlobalDropEffect(undefined);
   };
+
+  // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+  // In this case, we need to manually call onDragEnd on cleanup
+  // eslint-disable-next-line arrow-body-style
+  useLayoutEffect(() => {
+    return () => {
+      if (isDraggingRef.current) {
+        if (typeof state.options.onDragEnd === 'function') {
+          let event: DragEndEvent = {
+            type: 'dragend',
+            x: 0,
+            y: 0,
+            dropOperation: DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect || 'none']
+          };
+          state.options.onDragEnd(event);
+        }
+
+        setDragging(false);
+        setGlobalAllowedDropOperations(DROP_OPERATION.none);
+        setGlobalDropEffect(undefined);
+      }
+    };
+  }, [state]);
 
   let onPress = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
@@ -214,7 +249,7 @@ export function useDrag(options: DragOptions): DragResult {
 
   let modality = useDragModality();
   let message: string;
-  if (!isDragging) {
+  if (!isDraggingRef.current) {
     if (modality === 'touch' && !hasDragButton) {
       message = 'dragDescriptionLongPress';
     } else {
@@ -285,6 +320,6 @@ export function useDrag(options: DragOptions): DragResult {
       ...descriptionProps,
       onPress
     },
-    isDragging
+    isDragging: isDraggingRef.current
   };
 }

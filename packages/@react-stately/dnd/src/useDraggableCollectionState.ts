@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
+import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
 import {Key, RefObject, useRef, useState} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-export interface DraggableCollectionOptions extends DraggableCollectionProps {
+export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
   collection: Collection<Node<unknown>>,
   selectionManager: MultipleSelectionManager
 }
@@ -31,10 +31,10 @@ export interface DraggableCollectionState {
   getAllowedDropOperations?: () => DropOperation[],
   startDrag(key: Key, event: DragStartEvent): void,
   moveDrag(event: DragMoveEvent): void,
-  endDrag(event: DragEndEvent): void
+  endDrag(event: DraggableCollectionEndEvent): void
 }
 
-export function useDraggableCollectionState(props: DraggableCollectionOptions): DraggableCollectionState {
+export function useDraggableCollectionState(props: DraggableCollectionStateOptions): DraggableCollectionState {
   let {
     getItems,
     collection,
@@ -101,10 +101,15 @@ export function useDraggableCollectionState(props: DraggableCollectionOptions): 
       }
     },
     endDrag(event) {
+      let {
+        isInternalDrop
+      } = event;
+
       if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
-          keys: draggingKeys.current
+          keys: draggingKeys.current,
+          isInternalDrop
         });
       }
 

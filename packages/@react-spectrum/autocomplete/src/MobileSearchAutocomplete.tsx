@@ -279,6 +279,10 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
               classNames(
                 searchStyles,
                 'spectrum-Search-input'
+              ),
+              classNames(
+                searchAutocompleteStyles,
+                'mobile-input'
               )
             )
           }>
