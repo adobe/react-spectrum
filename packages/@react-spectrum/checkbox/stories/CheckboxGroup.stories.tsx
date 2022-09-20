@@ -165,7 +165,7 @@ function renderWithDescriptionErrorMessageAndValidation() {
           onChange={setChecked}
           value={checked}
           validationState={isValid ? 'valid' : 'invalid'}
-          description="Select only dogs and dragons."
+          description="Select a pet."
           errorMessage={
           checked.includes('cats')
             ? 'No cats allowed.'
