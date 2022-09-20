@@ -91,7 +91,10 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
         return;
     }
     e.preventDefault();
-    let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
+    let walker = getFocusableTreeWalker(e.currentTarget, {
+      from: e.target,
+      accept: node =>  node instanceof HTMLInputElement && node.type === 'radio'
+    })
     let nextElem;
     if (nextDir === 'next') {
       nextElem = walker.nextNode();
