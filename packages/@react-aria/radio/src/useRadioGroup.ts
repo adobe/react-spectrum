@@ -14,9 +14,9 @@ import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {radioGroupNames} from './utils';
+import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
-import {useField, useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
@@ -25,7 +25,7 @@ export interface RadioGroupAria {
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
   labelProps: DOMAttributes,
-  /** Props for the radio grouop description element, if any. */
+  /** Props for the radio group description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the radio group error message element, if any. */
   errorMessageProps: DOMAttributes
@@ -48,12 +48,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });
+  radioGroupDescriptionIds.set(state, descriptionProps.id);
+  radioGroupErrorMessageIds.set(state, errorMessageProps.id);
 
   let {descriptionProps, errorMessageProps} = useField(props);
 

@@ -141,9 +141,9 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function onColumnResizeEnd(column: GridNode<T>) {
+    props.onColumnResizeEnd && isResizing.current && props.onColumnResizeEnd(affectedColumnWidthsRef.current);
     setCurrentlyResizingColumn(null);
     isResizing.current = false;
-    props.onColumnResizeEnd && props.onColumnResizeEnd(affectedColumnWidthsRef.current);
     affectedColumnWidthsRef.current = [];
 
     let widths = new Map<Key, number>(columnWidthsRef.current);

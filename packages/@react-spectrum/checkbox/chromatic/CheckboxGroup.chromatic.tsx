@@ -10,15 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Checkbox, CheckboxGroup} from '../';
-import {Flex} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
-import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
+import {Checkbox, CheckboxGroup, SpectrumCheckboxGroupProps} from '..';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('CheckboxGroup', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
   .add(
     'Default',
     () => render()
@@ -26,10 +22,6 @@ storiesOf('CheckboxGroup', module)
   .add(
     'defaultValue: dragons',
     () => render({defaultValue: ['dragons']})
-  )
-  .add(
-    'controlled: dragons',
-    () => render({value: ['dragons']})
   )
   .add(
     'labelPosition: side',
@@ -112,10 +104,6 @@ storiesOf('CheckboxGroup', module)
     () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
   )
   .add(
-    'with description, error message and validation, fixed width',
-    () => renderWithDescriptionErrorMessageAndValidation()
-  )
-  .add(
     'no visible label',
     () => render({label: null, 'aria-label': 'Pets'})
   )
@@ -128,13 +116,13 @@ storiesOf('CheckboxGroup', module)
     () => render({name: 'pets'})
   )
   .add(
-    'controlled',
-    () => <ControlledCheckboxGroup />
+    'show error icon',
+    () => render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true})
   );
 
 function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
   return (
-    <CheckboxGroup label="Pets" {...props} onChange={action('onChange')}>
+    <CheckboxGroup label="Pets" {...props}>
       <Checkbox value="dogs" {...checkboxProps[0]}>Dogs</Checkbox>
       <Checkbox value="cats" {...checkboxProps[1]}>Cats</Checkbox>
       <Checkbox value="dragons" {...checkboxProps[2]}>Dragons</Checkbox>
@@ -142,42 +130,4 @@ function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkb
   );
 }
 
-function ControlledCheckboxGroup() {
-  let [checked, setChecked] = useState<string[]>([]);
-  return (
-    <CheckboxGroup label="Pets" onChange={setChecked} value={checked}>
-      <Checkbox value="dogs">Dogs</Checkbox>
-      <Checkbox value="cats">Cats</Checkbox>
-      <Checkbox value="dragons">Dragons</Checkbox>
-    </CheckboxGroup>
-  );
-}
 
-function renderWithDescriptionErrorMessageAndValidation() {
-  function Example() {
-    let [checked, setChecked] = useState<string[]>(['dogs', 'dragons']);
-    let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
-  
-    return (
-      <Flex width="480px">
-        <CheckboxGroup
-          label="Pets"
-          onChange={setChecked}
-          value={checked}
-          validationState={isValid ? 'valid' : 'invalid'}
-          description="Select a pet."
-          errorMessage={
-          checked.includes('cats')
-            ? 'No cats allowed.'
-            : 'Select only dogs and dragons.'
-        }>
-          <Checkbox value="dogs">Dogs</Checkbox>
-          <Checkbox value="cats">Cats</Checkbox>
-          <Checkbox value="dragons">Dragons</Checkbox>
-        </CheckboxGroup>
-      </Flex>
-    );
-  }
-
-  return <Example />;
-}

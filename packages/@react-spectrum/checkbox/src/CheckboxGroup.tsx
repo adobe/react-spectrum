@@ -105,6 +105,15 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
           </CheckboxGroupContext.Provider>
         </Provider>
       </div>
+      {hasHelpText &&
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          showErrorIcon={showErrorIcon} />
+      }
     </div>
   );
 }

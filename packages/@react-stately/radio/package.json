@@ -19,7 +19,8 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-stately/utils": "^3.5.1",
-    "@react-types/radio": "^3.2.3"
+    "@react-types/radio": "^3.2.3",
+    "@react-types/shared": "^3.14.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
