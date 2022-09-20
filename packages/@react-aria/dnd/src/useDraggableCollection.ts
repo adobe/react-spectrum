@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {DraggableCollectionState} from '@react-stately/dnd';
+import {globalDndState, setDraggingCollectionRef} from './utils';
+import {RefObject} from 'react';
 
-export type {DnDOptions, DnDHooks} from './useDnDHooks';
-export {useDnDHooks} from './useDnDHooks';
+export interface DraggableCollectionOptions {}
+
+export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) {
+  // Update global DnD state if this keys within this collection are dragged
+  let {draggingCollectionRef} = globalDndState;
+  if  (state.draggingKeys.size > 0 && draggingCollectionRef?.current !== ref.current) {
+    setDraggingCollectionRef(ref);
+  }
+}

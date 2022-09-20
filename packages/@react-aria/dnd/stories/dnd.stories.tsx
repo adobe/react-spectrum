@@ -40,7 +40,7 @@ import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {storiesOf} from '@storybook/react';
 import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
-import {useClipboard, useDrag, useDraggableItem, useDrop} from '..';
+import {useClipboard, useDrag, useDraggableCollection, useDraggableItem, useDrop} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
@@ -388,6 +388,7 @@ function DraggableCollection(props) {
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
+  useDraggableCollection({}, dragState, ref);
 
   let {gridProps} = useGrid({
     ...props,
