@@ -22,6 +22,7 @@ import React from 'react';
 import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {mergeProps, useLabels} from '@react-aria/utils';
 
 function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
@@ -41,20 +42,15 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
   };
 
-  let ariaLabel = otherProps['aria-label'];
-  if (!ariaLabel && !otherProps['aria-labelledby']) {
-    ariaLabel = stringFormatter.format(variant);
-  }
+  let labelProps = useLabels(otherProps, stringFormatter.format(variant));
 
   return (
     <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        {...styleProps}
+        {...mergeProps(styleProps, labelProps)}
         ref={ref}
         UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', styleProps.className)}
-        isQuiet
-        aria-label={ariaLabel}
-        aria-labelledby={otherProps['aria-labelledby']}>
+        isQuiet>
         {icon}
       </ActionButton>
       <SlotProvider slots={slots}>
