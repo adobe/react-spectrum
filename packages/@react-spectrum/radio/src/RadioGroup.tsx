@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
+import {HelpText, Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {RadioContext} from './context';
 import React from 'react';
@@ -36,13 +36,17 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
     validationState,
     children,
     orientation = 'vertical',
+    description,
+    errorMessage,
+    showErrorIcon,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
+  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
   return (
     <div
@@ -94,6 +98,15 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
           {children}
         </RadioContext.Provider>
       </div>
+      {hasHelpText &&
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          showErrorIcon={showErrorIcon} />
+      }
     </div>
   );
 }

@@ -13,7 +13,7 @@
 import {CheckboxGroupContext} from './context';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
+import {HelpText, Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
@@ -36,12 +36,16 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
     children,
     orientation = 'vertical',
     validationState,
+    description,
+    errorMessage,
+    showErrorIcon,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let state = useCheckboxGroupState(props);
-  let {labelProps, groupProps} = useCheckboxGroup(props, state);
+  let {labelProps, groupProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
+  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
   return (
     <div
@@ -92,6 +96,15 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
           </CheckboxGroupContext.Provider>
         </Provider>
       </div>
+      {hasHelpText &&
+        <HelpText
+          descriptionProps={descriptionProps}
+          errorMessageProps={errorMessageProps}
+          description={description}
+          errorMessage={errorMessage}
+          validationState={validationState}
+          showErrorIcon={showErrorIcon} />
+      }
     </div>
   );
 }
