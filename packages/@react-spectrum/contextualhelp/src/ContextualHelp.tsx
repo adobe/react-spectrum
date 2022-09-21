@@ -19,7 +19,7 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
-import {SlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -51,13 +51,13 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
       <ActionButton
         {...styleProps}
         ref={ref}
-        UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
+        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', styleProps.className)}
         isQuiet
         aria-label={ariaLabel}>
         {icon}
       </ActionButton>
       <SlotProvider slots={slots}>
-        <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
+        <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
           {children}
         </Dialog>
       </SlotProvider>
