@@ -71,7 +71,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       isInternal,
       draggingKeys
     } = e;
-
+    console.log('type', types)
     if (acceptedDragTypes === 'all' || acceptedDragTypes.some(type => types.has(type))) {
       let isValidInsert = onInsert && target.type === 'item' && !isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');
       let isValidReorder = onReorder && target.type === 'item' && isInternal && (target.dropPosition === 'before' || target.dropPosition === 'after');

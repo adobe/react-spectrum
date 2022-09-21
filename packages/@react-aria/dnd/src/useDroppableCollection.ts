@@ -12,8 +12,7 @@
 
 import {clearGlobalDnDState, globalDndState, isInternalDropOperation, setDropCollectionRef, useDroppableCollectionId} from './utils';
 import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
-import {directorySymbol, getTypes} from './utils';
-import type {DirectorySymbolType} from './utils';
+import {DIRECTORY_DRAG_TYPE, getTypes} from './utils';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -71,9 +70,9 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     let filteredItems = items;
     if (acceptedDragTypes) {
       filteredItems = items.filter(item => {
-        let itemTypes: Set<string | DirectorySymbolType>;
+        let itemTypes: Set<string | symbol>;
         if (item.kind === 'directory') {
-          itemTypes = new Set([directorySymbol]);
+          itemTypes = new Set([DIRECTORY_DRAG_TYPE]);
         } else {
           itemTypes = item.kind === 'file' ? new Set([item.type]) : item.types;
         }

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export type {DirectorySymbolType} from './utils';
 export type {DroppableCollectionOptions, DroppableCollectionResult} from './useDroppableCollection';
 export type {DroppableItemOptions, DroppableItemResult} from './useDroppableItem';
 export type {DropIndicatorProps, DropIndicatorAria} from './useDropIndicator';
@@ -22,7 +21,7 @@ export type {DropOptions, DropResult} from './useDrop';
 export type {ClipboardProps, ClipboardResult} from './useClipboard';
 export type {DropTargetDelegate} from '@react-types/shared';
 
-export {directorySymbol} from './utils';
+export {DIRECTORY_DRAG_TYPE} from './utils';
 export {useDrag} from './useDrag';
 export {useDrop} from './useDrop';
 export {useDroppableCollection} from './useDroppableCollection';

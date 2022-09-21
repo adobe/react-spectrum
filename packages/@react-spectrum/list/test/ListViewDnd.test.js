@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
-import {directorySymbol} from '@react-aria/dnd';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {globalDndState} from '@react-aria/dnd/src/utils';
@@ -1272,9 +1272,9 @@ describe('ListView', function () {
           ]);
         });
 
-        it('should accept Folder drops if acceptedDragTypes contains the directorySymbol', async function () {
+        it('should accept Folder drops if acceptedDragTypes contains the DIRECTORY_DRAG_TYPE', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: [directorySymbol]}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: [DIRECTORY_DRAG_TYPE]}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1381,7 +1381,7 @@ describe('ListView', function () {
 
         it('should accept a drop that contains a mix of allowed and disallowed drag types (directories and file case)', function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: [directorySymbol, 'text/plain']}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: [DIRECTORY_DRAG_TYPE, 'text/plain']}} />
           );
 
           let grids = getAllByRole('grid');
