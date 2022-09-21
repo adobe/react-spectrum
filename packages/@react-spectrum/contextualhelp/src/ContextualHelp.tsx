@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
