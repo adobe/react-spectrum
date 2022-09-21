@@ -164,6 +164,11 @@ governing permissions and limitations under the License.
         display: table-cell;
       }
 
+      .spectrum-Field-labelCell {
+        /* This fixes vertical alignment in safari */
+        vertical-align: top;
+      }
+
       &.spectrum-Field--alignEnd .spectrum-Field-labelCell {
         text-align: end;
       }
