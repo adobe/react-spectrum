@@ -675,7 +675,11 @@ h2.sectionHeader {
 
 .docSearchLogoLabel {
   font-size: var(--spectrum-global-dimension-font-size-75);
-  line-height: 1.6em;
+  line-height: 1.6;
+}
+
+[role="dialog"] .docSearchLogoLabel {
+  line-height: 1.2;
 }
 
 .docSearchLogo a:hover .docSearchLogoLabel,
