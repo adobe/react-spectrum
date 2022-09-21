@@ -991,6 +991,56 @@ describe('ListView', function () {
           expect(onInsert).toHaveBeenCalledTimes(0);
         });
 
+        it('should default acceptedDragTypes to "all" if not provided by the user', function () {
+          let shouldAcceptItemDrop = jest.fn();
+          shouldAcceptItemDrop.mockReturnValue(true);
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: undefined, shouldAcceptItemDrop}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+
+          // Called twice from getDropOperation and twice in onDrop when performing item filtering
+          expect(shouldAcceptItemDrop).toHaveBeenCalledTimes(4);
+          expect(shouldAcceptItemDrop.mock.calls[0][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[1][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][1]).toEqual(new Set(['text/plain', 'folder']));
+          expect(shouldAcceptItemDrop.mock.calls[3][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[3][1]).toEqual(new Set(['text/plain', 'file']));
+        });
+
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex

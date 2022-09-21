@@ -185,6 +185,7 @@ export interface DroppableCollectionProps {
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
   /**
    * The drag types that the droppable collection accepts. If directories are accepted, include the DIRECTORY_DRAG_TYPE from @react-aria/dnd in the array of allowed types.
+   * @default 'all'
    */
   acceptedDragTypes?: 'all' | Array<string | symbol>,
   /**

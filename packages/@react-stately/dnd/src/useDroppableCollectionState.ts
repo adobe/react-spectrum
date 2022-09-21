@@ -38,7 +38,7 @@ export interface DroppableCollectionState {
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let {
-    acceptedDragTypes,
+    acceptedDragTypes = 'all',
     onInsert,
     onRootDrop,
     onItemDrop,

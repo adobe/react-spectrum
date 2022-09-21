@@ -55,7 +55,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       onRootDrop,
       onItemDrop,
       onReorder,
-      acceptedDragTypes,
+      acceptedDragTypes = 'all',
       shouldAcceptItemDrop
     } = localState.props;
 
@@ -90,22 +90,24 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       });
     }
 
-    if (target.type === 'root' && onRootDrop) {
-      await onRootDrop({items: filteredItems, dropOperation});
-    }
-
-    if (target.type === 'item') {
-      if (target.dropPosition === 'on' && onItemDrop) {
-        await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
+    if (filteredItems.length > 0) {
+      if (target.type === 'root' && onRootDrop) {
+        await onRootDrop({items: filteredItems, dropOperation});
       }
 
-      if (target.dropPosition !== 'on') {
-        if (!isInternal && onInsert) {
-          await onInsert({items: filteredItems, dropOperation, target});
+      if (target.type === 'item') {
+        if (target.dropPosition === 'on' && onItemDrop) {
+          await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
         }
 
-        if (isInternal && onReorder) {
-          await onReorder({keys: draggingKeys, dropOperation, target});
+        if (target.dropPosition !== 'on') {
+          if (!isInternal && onInsert) {
+            await onInsert({items: filteredItems, dropOperation, target});
+          }
+
+          if (isInternal && onReorder) {
+            await onReorder({keys: draggingKeys, dropOperation, target});
+          }
         }
       }
     }
