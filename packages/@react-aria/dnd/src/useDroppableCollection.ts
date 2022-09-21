@@ -68,7 +68,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     } = e;
 
     let filteredItems = items;
-    if (acceptedDragTypes) {
+    if (acceptedDragTypes !== 'all' || shouldAcceptItemDrop) {
       filteredItems = items.filter(item => {
         let itemTypes: Set<string | symbol>;
         if (item.kind === 'directory') {
