@@ -479,6 +479,23 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
     ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
   )
   .add(
+    'using getDropOperations to determine default drop operation',
+    args => (
+      <DragBetweenListsComplex
+        listViewProps={args}
+        firstListDnDOptions={{
+          onDragStart: action('dragStartList1'),
+          getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+          getAllowedDropOperations: () => ['link']
+        }}
+        secondListDnDOptions={{
+          onDragStart: action('dragStartList2'),
+          getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+          getAllowedDropOperations: () => ['move', 'copy', 'link']
+        }} />
+    ), {description: {data: 'Dragging from the first to the second list should automatically set a link operation and all other drop operations should be disabled. Dragging from the second to first list should support copy and link operations, with copy being the default.'}}
+  )
+  .add(
     'util handlers overridden by onDrop and getDropOperations',
     args => <DragBetweenListsOverride {...args} />,
     {description: {data: 'The first list should be draggable, the second list should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}}

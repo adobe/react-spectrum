@@ -81,12 +81,16 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       let isValidOnItemDrop = onItemDrop && target.type === 'item' && target.dropPosition === 'on' && !(isInternal && draggingKeys.has(target.key)) && (!shouldAcceptItemDrop || shouldAcceptItemDrop(target, types));
 
       if (onDrop || isValidInsert || isValidReorder || isValidRootDrop || isValidOnItemDrop) {
-        return allowedOperations[0];
+        if (getDropOperation) {
+          return getDropOperation(target, types, allowedOperations);
+        } else {
+          return allowedOperations[0];
+        }
       }
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
+  }, [acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
 
   return {
     collection,
@@ -141,10 +145,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
       return false;
     },
     getDropOperation(e) {
-      let {target, types, allowedOperations} = e;
-      return typeof getDropOperation === 'function'
-        ? getDropOperation(target, types, allowedOperations)
-        : defaultGetDropOperation(e);
+      return defaultGetDropOperation(e);
     }
   };
 }

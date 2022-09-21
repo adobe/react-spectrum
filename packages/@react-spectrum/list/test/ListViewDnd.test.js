@@ -636,7 +636,7 @@ describe('ListView', function () {
 
       it('should reset the global drop state on drop if a dragged item is a non RSP drag target', function () {
         let {getAllByRole} = render(
-          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
+          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop, acceptedDragTypes: 'all'}} />
         );
 
         let grids = getAllByRole('grid');
@@ -1625,6 +1625,46 @@ describe('ListView', function () {
             name: 'Adobe Fresco'
           });
         });
+
+        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+          // Take what ever drop operation is allowed except move
+          let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, getDropOperation}} secondListDnDOptions={{getAllowedDropOperations: () => ['move', 'link']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'link',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+        });
       });
     });
 
@@ -2348,6 +2388,44 @@ describe('ListView', function () {
             identifier: '1',
             type: 'file',
             name: 'Adobe Photoshop'
+          });
+        });
+
+        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+          // Take what ever drop operation is allowed except move
+          let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
+          let tree = render(
+            <DragBetweenListsComplex firstListDnDOptions={{getAllowedDropOperations: () => ['move', 'link']}} secondListDnDOptions={{...mockUtilityOptions, getDropOperation}} />
+          );
+
+          beginDrag(tree);
+          // Move to 2nd list's first insert indicator
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'link',
+            target: {
+              key: '7',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
           });
         });
       });
