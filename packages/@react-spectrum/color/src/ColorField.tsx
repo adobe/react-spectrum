@@ -22,7 +22,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
-  console.log(props)
   let {
     // These disabled props are handled by the state hook
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
