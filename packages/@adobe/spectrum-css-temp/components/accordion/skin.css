@@ -19,15 +19,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-itemHeader {
-  color: var(--spectrum-accordion-text-color);
+  color: var(--spectrum-alias-text-color);
 
   &:hover {
-    color: var(--spectrum-accordion-text-color-hover);
+    color: var(--spectrum-alias-text-color-hover);
 
     background-color: var(--spectrum-accordion-background-color-hover);
 
     + .spectrum-Accordion-itemIndicator {
-      color: var(--spectrum-accordion-icon-color-hover);
+      color: var(--spectrum-alias-text-color-hover);
     }
   }
 
