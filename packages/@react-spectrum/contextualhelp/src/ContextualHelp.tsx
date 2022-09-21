@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
@@ -18,11 +19,10 @@ import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import React from 'react';
-import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {mergeProps, useLabels} from '@react-aria/utils';
 
 function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
@@ -31,7 +31,6 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
@@ -47,9 +46,9 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
   return (
     <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        {...mergeProps(styleProps, labelProps)}
+        {...mergeProps(otherProps, labelProps)}
         ref={ref}
-        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', styleProps.className)}
+        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', otherProps.UNSAFE_className)}
         isQuiet>
         {icon}
       </ActionButton>

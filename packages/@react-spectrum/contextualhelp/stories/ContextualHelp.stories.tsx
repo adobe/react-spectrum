@@ -103,13 +103,14 @@ export const WithButton: ContextualHelpStory = {
   render: (args) => (
     <Flex alignItems="center">
       <Button variant="primary" isDisabled>Create</Button>
-      <ContextualHelp {...args}>
+      <ContextualHelp {...args} UNSAFE_className="foo">
         <Heading>Help title</Heading>
         <Content>{helpText()}</Content>
       </ContextualHelp>
     </Flex>
   ),
-  name: 'with button'
+  name: 'with button',
+  parameters: {description: {data: 'Custom classname foo is on the contextual help button.'}}
 };
 
 export const AriaLabelledyBy: ContextualHelpStory = {
