@@ -120,7 +120,7 @@ function getItems(keys) {
 }
 ```
 
-We also create an `onDragEnd` event handler for `useDragHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
+We also create an `onDragEnd` event handler for `useDnDHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
 the `.remove` method provided by `useListData` to remove the dropped items from our list.
 
 ```tsx
@@ -131,12 +131,12 @@ function onDragEnd(e) {
 }
 ```
 
-Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDragHooks`, providing us with a set of `dragHooks` that we can pass to our ListView directly.
-Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [API section](#usedraghooks-props) below.
+Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDnDHooks`, providing us with a set of `dragHooks` that we can pass to our ListView directly.
+Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [API section](#useDnDHooks) below.
 
 ```tsx example export=true render=false
 import {Item, ListView} from '@react-spectrum/list';
-import {useDragHooks} from '@react-spectrum/dnd';
+import {useDnDHooks} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 function DraggableList(props) {
@@ -154,7 +154,7 @@ function DraggableList(props) {
     ]
   });
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
@@ -231,11 +231,11 @@ async function onDrop(e) {
 }
 ```
 
-Finally, we provide our `getDropOperation` and `onDrop` functions as options to `useDropHooks`, providing us with a set of `dropHooks` that we can pass to our ListView directly.
-Below is what our droppable ListView would look like after combining everything together. For more info on `getDropOperation` and `onDrop`, see the [API section](#usedrophook-props) below.
+Finally, we provide our `getDropOperation` and `onDrop` functions as options to `useDnDHooks`, providing us with a set of `dropHooks` that we can pass to our ListView directly.
+Below is what our droppable ListView would look like after combining everything together. For more info on `getDropOperation` and `onDrop`, see the [API section](#useDnDHooks) below.
 
 ```tsx example export=true render=false
-import {useDropHooks} from '@react-spectrum/dnd';
+import {useDnDHooks} from '@react-spectrum/dnd';
 
 function DroppableList(props) {
   let {
@@ -252,7 +252,7 @@ function DroppableList(props) {
     ]
   });
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     getDropOperation: (target, types) => {
       if (target.type !== 'root' || !types.has('adobe-app')) {
         return 'cancel';
@@ -292,23 +292,18 @@ function DroppableList(props) {
 ## API
 
 As seen in the [example](#example) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
-Instead of providing each event handler directly to the component, you must first import `useDragHooks` and `useDropHooks` from the `@react-spectrum/dnd` package
-and provide those hooks with your desired options. `useDragHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
-Drop operations are then enabled in the same way by passing the hooks from `useDropHooks` to the component's `dropHooks` prop. This approach allows the drag and drop implementation to be included only when used,
+Instead of providing each event handler directly to the component, you must first import `useDnDHooks` from the `@react-spectrum/dnd` package and provide this hook with your desired options.
+`useDnDHooks` will then provide you with a set of drag hooks that you can pass to the component via its `dragHooks` prop, thus enabling drag operations for the component.
+Drop operations are then enabled in the same way by passing the drop hooks from `useDnDHooks` to the component's `dropHooks` prop. This approach allows the drag and drop implementation to be included only when used,
 keeping bundle sizes small when unused by an application.
 
-### useDragHooks
+### useDnDHooks
 
-<FunctionAPI function={docs.exports.useDragHooks} links={docs.links} />
+TODO: Update this section to better separate the util handlers from the lower level props
+
+<FunctionAPI function={docs.exports.useDnDHooks} links={docs.links} />
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.exports.DragHookOptions.properties} />
-</TypeContext.Provider>
-
-### useDropHooks
-
-<FunctionAPI function={docs.exports.useDropHooks} links={docs.links} />
-<TypeContext.Provider value={dndDocs.links}>
-  <InterfaceType properties={dndDocs.exports.DroppableCollectionProps.properties} />
+  <InterfaceType properties={docs.exports.DnDOptions.properties} />
 </TypeContext.Provider>
 
 Of the various hook options above, `getAllowedDropOperations` and `getDropOperation` may be of particular interest since it allows you to specify what kinds of drag and drop operations you want to allow.

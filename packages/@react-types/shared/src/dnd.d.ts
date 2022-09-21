@@ -114,6 +114,39 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
+interface DroppableCollectionInsertDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
+interface DroppableCollectionRootDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation
+}
+
+interface DroppableCollectionOnItemDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  isInternalDrop: boolean,
+  target: {
+    key: Key,
+    dropPosition: 'on'
+  }
+}
+
+interface DroppableCollectionReorderEvent {
+  keys: Set<Key>,
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
 export interface DragTypes {
   has(type: string): boolean
 }
@@ -142,7 +175,31 @@ export interface DroppableCollectionProps {
   /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
   /** Handler that is called when a valid drag is dropped on the drop target. */
-  onDrop?: (e: DroppableCollectionDropEvent) => void
+  onDrop?: (e: DroppableCollectionDropEvent) => void,
+  /**
+   * Handler called when external items are dropped "between" the droppable collection's items.
+   */
+  onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
+  /**
+   * Handler called when external items are dropped on the droppable collection's root.
+   */
+  onRootDrop?: (e: DroppableCollectionRootDropEvent) => void,
+  /**
+   * Handler called when items are dropped "on" a droppable collection's item.
+   */
+  onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
+  /**
+   * Handler called when items are reordered via drag in the source collection.
+   */
+  onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /**
+   * The drag types that the droppable collection accepts. If your collection accepts directories, include 'directory' in your array of allowed types.
+   */
+  acceptedDragTypes?: 'all' | Array<string>,
+  /**
+   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
+   */
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
@@ -154,7 +211,8 @@ interface DraggableCollectionMoveEvent extends DragMoveEvent {
 }
 
 interface DraggableCollectionEndEvent extends DragEndEvent {
-  keys: Set<Key>
+  keys: Set<Key>,
+  isInternalDrop: boolean
 }
 
 export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;

@@ -14,6 +14,7 @@ export type {DroppableCollectionOptions, DroppableCollectionResult} from './useD
 export type {DroppableItemOptions, DroppableItemResult} from './useDroppableItem';
 export type {DropIndicatorProps, DropIndicatorAria} from './useDropIndicator';
 export type {DraggableItemProps, DraggableItemResult} from './useDraggableItem';
+export type {DraggableCollectionOptions} from './useDraggableCollection';
 export type {DragPreviewProps} from './DragPreview';
 export type {DragOptions, DragResult} from './useDrag';
 export type {DropOptions, DropResult} from './useDrop';
@@ -26,6 +27,7 @@ export {useDroppableCollection} from './useDroppableCollection';
 export {useDroppableItem} from './useDroppableItem';
 export {useDropIndicator} from './useDropIndicator';
 export {useDraggableItem} from './useDraggableItem';
+export {useDraggableCollection} from './useDraggableCollection';
 export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
