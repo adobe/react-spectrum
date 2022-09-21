@@ -80,31 +80,33 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
-    let dragHooks: DragHooks = {
-      useDraggableCollectionState(props: DraggableCollectionStateOptions) {
-        return useDraggableCollectionState({...props, ...options});
-      },
-      useDraggableCollection,
-      useDraggableItem,
-      DragPreview
-    };
 
-    let dropHooks: DropHooks = {
-      useDroppableCollectionState(props) {
+    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean};
+    if (isDraggable) {
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
+        return useDraggableCollectionState({...props, ...options});
+      };
+      hooks.useDraggableCollection = useDraggableCollection;
+      hooks.useDraggableItem = useDraggableItem;
+      hooks.DragPreview = DragPreview;
+    }
+
+    if (isDroppable) {
+      hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
         return useDroppableCollectionState({...props, ...options});
       },
-      useDroppableItem,
-      useDroppableCollection(props, state, ref) {
+      hooks.useDroppableItem = useDroppableItem;
+      hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);
-      },
-      useDropIndicator
-    };
+      };
+      hooks.useDropIndicator = useDropIndicator;
+    }
 
-    return {
-      ...(isDraggable ? dragHooks : {}),
-      ...(isDroppable ? dropHooks : {}),
-      ...(isDraggable || isDroppable ? {isVirtualDragging} : {})
-    };
+    if (isDraggable || isDroppable) {
+      hooks.isVirtualDragging = isVirtualDragging;
+    }
+
+    return hooks;
   }, [options]);
 
   return {
