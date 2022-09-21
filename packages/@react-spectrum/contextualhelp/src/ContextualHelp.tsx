@@ -19,7 +19,7 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
-import {SlotProvider} from '@react-spectrum/utils';
+import {SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -30,6 +30,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     children,
     ...otherProps
   } = props;
+  let {styleProps} = useStyleProps(otherProps);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
@@ -48,7 +49,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
   return (
     <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        {...otherProps}
+        {...styleProps}
         ref={ref}
         UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
         isQuiet
