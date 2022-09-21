@@ -22,7 +22,9 @@ import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
-  props = useFormProps(props);
+  let formProps = useFormProps(props);
+  let isInForm = formProps !== props;
+  props = formProps;
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -102,12 +104,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       );
     };
 
-    return (
-      <div
-        {...styleProps}
-        {...wrapperProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
+    let labelAndContextualHelp = (
+      <>
         {label && (
           <Label
             {...labelProps}
@@ -132,6 +130,28 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             {contextualHelp}
           </SlotProvider>
         }
+      </>
+    );
+
+    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
+    // so that the table layout works inside forms.
+    if (isInForm && labelPosition === 'side' && label && contextualHelp) {
+      labelAndContextualHelp = (
+        <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
+          <div className={classNames(labelStyles, 'spectrum-Field-labelWrapper')}>
+            {labelAndContextualHelp}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        {...styleProps}
+        {...wrapperProps}
+        ref={ref as RefObject<HTMLDivElement>}
+        className={labelWrapperClass}>
+        {labelAndContextualHelp}
         {renderChildren()}
       </div>
     );

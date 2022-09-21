@@ -156,10 +156,26 @@ governing permissions and limitations under the License.
     .spectrum-Field {
       display: table-row;
       width: 100%;
-    }
 
-    .spectrum-FieldLabel {
-      display: table-cell;
+      /* if the field has contextual help, there's an extra wrapper to apply table-cell to.
+       * otherwise, apply to the label itself. */
+      &:not(.spectrum-Field--hasContextualHelp) .spectrum-FieldLabel,
+      &.spectrum-Field--hasContextualHelp .spectrum-Field-labelCell {
+        display: table-cell;
+      }
+
+      &.spectrum-Field--alignEnd .spectrum-Field-labelCell {
+        text-align: end;
+      }
+
+      /* can't have an element with both display: table-cell and inline-flex, so this wrapper lives inside the cell. */
+      .spectrum-Field-labelWrapper {
+        display: inline-flex;
+
+        .spectrum-FieldLabel {
+          flex: 1;
+        }
+      }
     }
 
     .spectrum-Field-wrapper {
