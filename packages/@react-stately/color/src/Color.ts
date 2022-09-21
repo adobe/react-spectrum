@@ -94,7 +94,7 @@ class RGBColor extends Color {
       while (values.length > 0) {
         colors.push(parseInt(values.splice(0, 2).join(''), 16));
       }
-      colors[3] = colors[3] !== undefined ? colors[3] / 255 : undefined;
+      colors[3] = colors[3] !== undefined ? colors[3] / 255 : 1;
     }
 
     // matching rgb(rrr, ggg, bbb), rgba(rrr, ggg, bbb, 0.a)
@@ -119,6 +119,8 @@ class RGBColor extends Color {
       case 'css':
       case 'rgba':
         return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
+      case undefined:
+        return this.toString('hex');
       default:
         return this.toFormat(format).toString(format);
     }
@@ -305,6 +307,8 @@ class HSBColor extends Color {
         return `hsb(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.brightness, 2)}%)`;
       case 'hsba':
         return `hsba(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.brightness, 2)}%, ${this.alpha})`;
+      case undefined:
+        return this.toString('hex');
       default:
         return this.toFormat(format).toString(format);
     }
@@ -446,6 +450,8 @@ class HSLColor extends Color {
       case 'css':
       case 'hsla':
         return `hsla(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.lightness, 2)}%, ${this.alpha})`;
+      case undefined:
+        return this.toString('hex');
       default:
         return this.toFormat(format).toString(format);
     }

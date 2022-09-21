@@ -13,126 +13,132 @@
 import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-const parameters = {
-  args: {
-    allowsAlpha: false
-  },
+export default {
+  title: 'ColorField',
+  component: ColorField,
   argTypes: {
-    allowsAlpha: {
-      control: {type: 'boolean'}
+    onChange: {
+      action: 'change'
     }
+  },
+  args: {
+    allowsAlpha: false,
+    isQuiet: false,
+    isReadOnly: false,
+    isDisabled: false
   }
+} as ComponentMeta<typeof ColorField>;
+
+export type ColorFieldStory = ComponentStoryObj<typeof ColorField>;
+
+export const Default: ColorFieldStory = {
+  args: {label: 'Primary Color'}
 };
 
-storiesOf('ColorField', module)
-  .addParameters(parameters)
-  .add(
-    'Default',
-    (args) => render(args)
-  )
-  .add(
-    'has default value',
-    (args) => render({...args, defaultValue: '#abcdef'})
-  )
-  .add(
-    'value',
-    (args) => render({
-      ...args,
-      value: '#FF00AA',
-      onChange: action('change')
-    })
-  )
-  .add(
-    'isQuiet',
-    (args) => render({...args, isQuiet: true})
-  )
-  .add(
-    'isReadOnly',
-    (args) => render({...args, isReadOnly: true, defaultValue: '#abcdef'})
-  )
-  .add(
-    'isDisabled',
-    (args) => render({...args, isDisabled: true, defaultValue: '#abcdef'})
-  )
-  .add(
-    'validationState valid',
-    (args) => render({...args, validationState: 'valid'})
-  )
-  .add(
-    'validationState invalid',
-    (args) => render({...args, validationState: 'invalid'})
-  )
-  .add(
-    'required, label, optional',
-    (args) => (
-      <Flex direction="column" gap="size-100">
-        {render({...args, isRequired: 'true'})}
-        {render({...args, isRequired: 'true', necessityIndicator: 'label'})}
-        {render({...args, necessityIndicator: 'label'})}
-      </Flex>
-    )
-  )
-  .add(
-    'controlled value',
-    (args) => (
-      <ControlledColorField
-        {...args}
-        value={parseColor('#FF00AA')}
-        onChange={action('change')} />
-    )
-  )
-  .add(
-    'autofocus',
-    (args) => render({...args, autoFocus: true})
-  )
-  .add(
-    'label side',
-    (args) => render({...args, labelPosition: 'side'})
-  )
-  .add(
-    'no visible label',
-    (args) => renderNoLabel({...args, isRequired: true, 'aria-label': 'Primary Color'})
-  )
-  .add(
-    'aria-labelledby',
-    (args) => (
-      <>
-        <label htmlFor="colorfield" id="label">Primary Color</label>
-        {renderNoLabel({...args, isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
-      </>
-    )
-  )
-  .add(
-    'custom width',
-    (args) => render({...args, width: 'size-3000'})
-  )
-  .add(
-    'custom width no visible label',
-    (args) => renderNoLabel({...args, width: 'size-3000', isRequired: true, 'aria-label': 'Primary Color'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    (args) => render({...args, width: 'size-3000', labelPosition: 'side'})
-  )
-  .add(
-    'custom width, 10px for min-width',
-    (args) => (
-      <Flex direction="column" gap="size-100">
-        {render({...args, width: '10px'})}
-        <div style={{width: '10px'}}>
-          {render(args)}
-        </div>
-      </Flex>
-    )
-  );
+export const DefaultValue: ColorFieldStory = {
+  args: {...Default.args, defaultValue: '#abcdef'},
+  name: 'has default value'
+};
+
+export const Value: ColorFieldStory = {
+  args: {...Default.args, value: '#FF00AA'},
+  name: 'value'
+};
+
+export const ValidationStateValid: ColorFieldStory = {
+  args: {...Default.args, validationState: 'valid'},
+  name: 'validationState valid'
+};
+
+export const ValidationStateInvalid: ColorFieldStory = {
+  args: {...Default.args, validationState: 'invalid'},
+  name: 'validationState invalid'
+};
+
+export const RequiredLabelOptional: ColorFieldStory = {
+  args: {...Default.args},
+  render: (args) => (
+    <Flex direction="column" gap="size-100">
+      {render({...args, isRequired: 'true'})}
+      {render({...args, isRequired: 'true', necessityIndicator: 'label'})}
+      {render({...args, necessityIndicator: 'label'})}
+    </Flex>
+  ),
+  name: 'required, label, optional'
+};
+
+export const ControlledValue: ColorFieldStory = {
+  args: {...Default.args},
+  render: (args) => (
+    <ControlledColorField
+      {...args}
+      value={parseColor('#FF00AA')} />
+  ),
+  name: 'controlled value'
+};
+
+export const AutoFocus: ColorFieldStory = {
+  args: {...Default.args, autoFocus: true},
+  name: 'autofocus'
+};
+
+export const LabelSide: ColorFieldStory = {
+  args: {...Default.args, labelPosition: 'side'},
+  name: 'label side'
+};
+
+export const NoVisibleLabel: ColorFieldStory = {
+  args: {isRequired: true, 'aria-label': 'Primary Color'},
+  name: 'no visible label'
+};
+
+export const LabelledBy: ColorFieldStory = {
+  args: {},
+  render: (args) => (
+    <>
+      <label htmlFor="colorfield" id="label">Primary Color</label>
+      {renderNoLabel({...args, isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
+    </>
+  ),
+  name: 'aria-labelledby'
+};
+
+export const CustomWidth: ColorFieldStory = {
+  args: {...Default.args, width: 'size-3000'},
+  name: 'custom width'
+};
+
+export const CustomWidthNoVisibleLabel: ColorFieldStory = {
+  args: {...NoVisibleLabel.args, width: 'size-3000'},
+  name: 'custom width no visible label'
+};
+
+export const CustomWidthLabelPositionSide: ColorFieldStory = {
+  args: {...Default.args, width: 'size-3000', labelPosition: 'side'},
+  name: 'custom width, labelPosition=side'
+};
+
+export const CustomWidth10pxMin: ColorFieldStory = {
+  args: {...Default.args},
+  render: (args) => (
+    <Flex direction="column" gap="size-100">
+      {render({...args, width: '10px'})}
+      <div style={{width: '10px'}}>
+        {render(args)}
+      </div>
+    </Flex>
+  ),
+  name: 'custom width, 10px for min-width'
+};
+
 
 function ControlledColorField(props: SpectrumColorFieldProps) {
   let [color, setColor] = useState<string | Color | null | undefined>(props.value);
