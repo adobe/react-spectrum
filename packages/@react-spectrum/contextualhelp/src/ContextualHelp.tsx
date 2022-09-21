@@ -53,7 +53,8 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
         ref={ref}
         UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', styleProps.className)}
         isQuiet
-        aria-label={ariaLabel}>
+        aria-label={ariaLabel}
+        aria-labelledby={otherProps['aria-labelledby']}>
         {icon}
       </ActionButton>
       <SlotProvider slots={slots}>

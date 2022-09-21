@@ -111,3 +111,16 @@ export const WithButton: ContextualHelpStory = {
   ),
   name: 'with button'
 };
+
+export const AriaLabelledyBy: ContextualHelpStory = {
+  render: (args) => (
+    <Flex alignItems="center">
+      <div id="foo">I label the contextual help button</div>
+      <ContextualHelp {...args} aria-labelledby="foo">
+        <Heading>Help title</Heading>
+        <Content>{helpText()}</Content>
+      </ContextualHelp>
+    </Flex>
+  ),
+  name: 'aria-labelledyby'
+};
