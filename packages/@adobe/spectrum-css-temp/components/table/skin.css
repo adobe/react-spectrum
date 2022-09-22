@@ -22,7 +22,7 @@ governing permissions and limitations under the License.
   &.is-sortable,
   &.is-resizable {
     .spectrum-Table-sortedIcon {
-      color: var(--spectrum-table-header-sort-icon-color);
+      color: var(--spectrum-alias-text-color);
     }
 
     &.is-hovered {
