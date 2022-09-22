@@ -16,7 +16,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
-import {Flex} from '@react-spectrum/layout';
+import {Flex, Grid} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
@@ -25,6 +25,7 @@ import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
+import {View} from '@react-spectrum/view';
 
 // Dialogs mostly compose of other components, so we won't worry about themes
 // Dialogs are really only meant to have one visible at a time, so we must make individual stories for each one
@@ -157,6 +158,105 @@ storiesOf('Dialog', module)
     }
   );
 
+storiesOf('Dialog/Popover', module)
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
+  .add(
+    'position start default (12px) padding',
+    () => (
+      <View width="100%" overflow="auto">
+        <Grid
+          areas={[
+            'top    top',
+            'start  end',
+            'bottom bottom'
+          ]}
+          columns={['auto', 'auto']}
+          rows={['size-450', 'auto', 'size-450']}
+          height="100%"
+          marginTop="20px"
+          gap="size-100">
+          <View gridArea="start" justifySelf="start" alignSelf="center" paddingStart="20px">
+            <DialogTrigger type="popover" placement="bottom end" shouldFlip={false} isOpen>
+              <ActionButton>T</ActionButton>
+              <Dialog><Content>Placement Top</Content></Dialog>
+            </DialogTrigger>
+          </View>
+        </Grid>
+      </View>
+    )
+  )
+  .add(
+    'position start adjusted 6px padding',
+    () => (
+      <View width="calc(100% + 16px)" overflow="auto" margin="-8px">
+        <Grid
+          areas={[
+            'top    top',
+            'start  end',
+            'bottom bottom'
+          ]}
+          columns={['auto', 'auto']}
+          rows={['size-450', 'auto', 'size-450']}
+          height="100%"
+          marginTop="20px"
+          gap="size-100">
+          <View gridArea="start" justifySelf="start" alignSelf="center">
+            <DialogTrigger type="popover" placement="bottom end" shouldFlip={false} isOpen>
+              <ActionButton>T</ActionButton>
+              <Dialog><Content>Placement Top</Content></Dialog>
+            </DialogTrigger>
+          </View>
+        </Grid>
+      </View>
+    )
+  )
+  .add(
+    'position end adjusted 6px padding, no arrow',
+    () => (
+      <View width="calc(100% + 40px)" overflow="auto" margin="-20px">
+        <Grid
+          areas={[
+            'top    top',
+            'start  end',
+            'bottom bottom'
+          ]}
+          columns={['auto', 'auto']}
+          rows={['size-450', 'auto', 'size-450']}
+          height="100%"
+          marginTop="20px"
+          gap="size-100">
+          <View gridArea="end" justifySelf="end" alignSelf="center">
+            <DialogTrigger type="popover" shouldFlip={false} isOpen>
+              <ActionButton>T</ActionButton>
+              <Dialog><Content>Placement Top</Content></Dialog>
+            </DialogTrigger>
+          </View>
+        </Grid>
+      </View>
+    )
+  )
+  .add(
+    'position bottom adjusted 6px padding',
+    () => (
+      <View overflow="auto" height="1000px" top="0">
+        <Grid
+          areas={[
+            'top',
+            'bottom'
+          ]}
+          columns={['auto']}
+          rows={['auto', 'size-450']}
+          height="100%">
+          <View gridArea="bottom" justifySelf="center">
+            <DialogTrigger type="popover" placement="end" shouldFlip={false} isOpen>
+              <ActionButton>Trigger</ActionButton>
+              <Dialog><Content>Placement End</Content></Dialog>
+            </DialogTrigger>
+          </View>
+        </Grid>
+      </View>
+    )
+  )
 
 storiesOf('Dialog/Alert', module)
   .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
