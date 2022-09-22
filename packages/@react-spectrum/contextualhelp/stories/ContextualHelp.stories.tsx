@@ -10,58 +10,118 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {Button, Content, Flex, Footer, Heading, Link, Text} from '@adobe/react-spectrum';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {ContextualHelp} from '../src';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('ContextualHelp', module)
-.add(
-  'default',
-  () => render({heading: 'Help title', description: helpText()})
-)
-.add(
-  'type: info',
-  () => render({heading: 'Help title', description: helpText(), variant: 'info'})
-)
-.add(
-  'with link',
-  () => render({heading: 'Help title', description: helpText(), link: <Link>Learn more</Link>})
-)
-.add(
-  'with button',
-  () => (<Flex alignItems="center">
-    <Button variant="primary" isDisabled>Create</Button>
-    <ContextualHelp marginStart="size-100">
-      <Heading>Help title</Heading>
-      <Content>{helpText()}</Content>
-    </ContextualHelp>
-  </Flex>)
-)
-.add(
-  'trigger events',
-  () => render({heading: 'Help title', description: helpText(), onOpenChange: action('open change')})
-)
-.add(
-  'placement: bottom',
-  () => render({heading: 'Help title', description: helpText(), placement: 'bottom'})
-)
-.add(
-  'placement: bottom start',
-  () => render({heading: 'Help title', description: helpText(), placement: 'bottom start'})
-);
+export default {
+  title: 'ContextualHelp',
+  component: ContextualHelp,
+  argTypes: {
+    onOpenChange: {
+      action: 'openChange',
+      table: {disable: true}
+    },
+    placement: {
+      control: 'select',
+      defaultValue: 'bottom',
+      options: [
+        'bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
+        'top', 'top left', 'top right', 'top start', 'top end',
+        'left', 'left top', 'left bottom',
+        'start', 'start top', 'start bottom',
+        'right', 'right top', 'right bottom',
+        'end', 'end top', 'end bottom'
+      ]
+    },
+    variant: {
+      control: 'select',
+      defaultValue: 'help',
+      options: ['help', 'info']
+    },
+    offset: {
+      control: 'number',
+      defaultValue: 0,
+      min: -500,
+      max: 500
+    },
+    crossOffset: {
+      control: 'number',
+      defaultValue: 0,
+      min: -500,
+      max: 500
+    },
+    containerPadding: {
+      control: 'number',
+      defaultValue: 0,
+      min: -500,
+      max: 500
+    },
+    shouldFlip: {
+      control: 'boolean',
+      defaultValue: true
+    },
+    children: {
+      table: {disable: true}
+    }
+  }
+} as ComponentMeta<typeof ContextualHelp>;
+
+export type ContextualHelpStory = ComponentStoryObj<typeof ContextualHelp>;
 
 const helpText = () => <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem.</Text>;
 
-function render(props: any = {}) {
-  let {heading, description, link, ...otherProps} = props;
+export const Default: ContextualHelpStory = {
+  args: {
+    children: (
+      <>
+        <Heading>Help title</Heading>
+        <Content>{helpText()}</Content>
+      </>
+    )
+  }
+};
 
-  return (
-    <ContextualHelp {...otherProps}>
-      {heading && <Heading>{heading}</Heading>}
-      {description && <Content>{description}</Content>}
-      {link && <Footer>{link}</Footer>}
-    </ContextualHelp>
-  );
-}
+export const WithLink: ContextualHelpStory = {
+  args: {
+    children: (
+      <>
+        <Heading>Help title</Heading>
+        <Content>{helpText()}</Content>
+        <Footer><Link>Learn more</Link></Footer>
+      </>
+    )
+  },
+  name: 'with link'
+};
+
+export const WithButton: ContextualHelpStory = {
+  args: {
+    marginStart: 'size-100'
+  },
+  render: (args) => (
+    <Flex alignItems="center">
+      <Button variant="primary" isDisabled>Create</Button>
+      <ContextualHelp {...args} UNSAFE_className="foo">
+        <Heading>Help title</Heading>
+        <Content>{helpText()}</Content>
+      </ContextualHelp>
+    </Flex>
+  ),
+  name: 'with button',
+  parameters: {description: {data: 'Custom classname foo is on the contextual help button.'}}
+};
+
+export const AriaLabelledyBy: ContextualHelpStory = {
+  render: (args) => (
+    <Flex alignItems="center">
+      <div id="foo">I label the contextual help button</div>
+      <ContextualHelp {...args} aria-labelledby="foo">
+        <Heading>Help title</Heading>
+        <Content>{helpText()}</Content>
+      </ContextualHelp>
+    </Flex>
+  ),
+  name: 'aria-labelledyby'
+};
