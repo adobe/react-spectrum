@@ -65,7 +65,6 @@ svg.spectrum-Table-sortedIcon {
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
   min-height: var(--spectrum-table-header-min-height);
-  letter-spacing: var(--spectrum-table-header-text-letter-spacing);
   padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
   outline: 0;

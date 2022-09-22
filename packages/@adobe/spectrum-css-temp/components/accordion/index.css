@@ -74,7 +74,6 @@ governing permissions and limitations under the License.
 
   font-size: var(--spectrum-global-dimension-font-size-100);
   line-height: var(--spectrum-accordion-item-line-height);
-  letter-spacing: var(--spectrum-accordion-item-title-tracking-actual);
 
   text-overflow: ellipsis;
   cursor: default;
