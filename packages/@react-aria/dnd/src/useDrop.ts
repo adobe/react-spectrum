@@ -251,7 +251,7 @@ export function useDrop(options: DropOptions): DropResult {
     if (dndStateSnapshot.draggingCollectionRef == null) {
       setGlobalDropEffect(undefined);
     } else {
-      // Otherwise we need to preserve the global dnd state for onDragEnd's isInternalDrop check.
+      // Otherwise we need to preserve the global dnd state for onDragEnd's isInternal check.
       // At the moment fireDropExit may clear dropCollectionRef (i.e. useDroppableCollection's provided onDropExit, required to clear dropCollectionRef when exiting a valid drop target)
       setGlobalDnDState(dndStateSnapshot);
     }
