@@ -66,13 +66,26 @@ governing permissions and limitations under the License.
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
 
   &.spectrum-Field--positionTop {
-    display: inline-flex;
-    flex-direction: column;
+    display: inline-grid;
+    grid-template-areas: "label contextualHelp ."
+                         "field field field"
+                         "helpText helpText helpText";
+    grid-template-columns: auto auto 1fr;
+    align-content: start;
     width: var(--spectrum-field-default-width);
 
     .spectrum-Field-field {
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
+      grid-area: field;
+    }
+
+    &.spectrum-Field--alignEnd {
+      grid-template-columns: 1fr auto 0;
+    }
+
+    .spectrum-FieldLabel {
+      grid-area: label;
     }
   }
 
@@ -106,6 +119,23 @@ governing permissions and limitations under the License.
       flex: 1;
       min-width: 0;
     }
+
+    .spectrum-Field-contextualHelp {
+      margin-top: var(--spectrum-global-dimension-size-65);
+      margin-inline-end: var(--spectrum-fieldlabel-side-padding-x);
+    }
+  }
+
+  &.spectrum-Field--hasContextualHelp {
+    .spectrum-FieldLabel {
+      padding-inline-end: 0;
+    }
+  }
+
+  .spectrum-Field-contextualHelp {
+    grid-area: contextualHelp;
+    margin-inline-start: var(--spectrum-global-dimension-size-50);
+    margin-top: var(--spectrum-global-dimension-size-25);
   }
 }
 
@@ -126,10 +156,31 @@ governing permissions and limitations under the License.
     .spectrum-Field {
       display: table-row;
       width: 100%;
-    }
 
-    .spectrum-FieldLabel {
-      display: table-cell;
+      /* if the field has contextual help, there's an extra wrapper to apply table-cell to.
+       * otherwise, apply to the label itself. */
+      &:not(.spectrum-Field--hasContextualHelp) .spectrum-FieldLabel,
+      &.spectrum-Field--hasContextualHelp .spectrum-Field-labelCell {
+        display: table-cell;
+      }
+
+      .spectrum-Field-labelCell {
+        /* This fixes vertical alignment in safari */
+        vertical-align: top;
+      }
+
+      &.spectrum-Field--alignEnd .spectrum-Field-labelCell {
+        text-align: end;
+      }
+
+      /* can't have an element with both display: table-cell and inline-flex, so this wrapper lives inside the cell. */
+      .spectrum-Field-labelWrapper {
+        display: inline-flex;
+
+        .spectrum-FieldLabel {
+          flex: 1;
+        }
+      }
     }
 
     .spectrum-Field-wrapper {
@@ -137,7 +188,6 @@ governing permissions and limitations under the License.
     }
 
     .spectrum-Field-field {
-      display: table-cell;
       width: auto;
       min-width: var(--spectrum-component-single-line-width);
     }
@@ -181,5 +231,10 @@ governing permissions and limitations under the License.
   .spectrum-Field-field {
     overflow: hidden;
     word-break: break-word;
+  }
+
+  .spectrum-Field-contextualHelp {
+    /* align with label */
+    margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
   }
 }

@@ -11,6 +11,7 @@
  */
 
 import {Checkbox, CheckboxGroup, SpectrumCheckboxGroupProps} from '..';
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -102,6 +103,18 @@ storiesOf('CheckboxGroup', module)
   .add(
     'with error message and error icon',
     () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
+  )
+  .add(
+    'contextual help',
+    args => render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        </ContextualHelp>
+      )
+    })
   )
   .add(
     'no visible label',

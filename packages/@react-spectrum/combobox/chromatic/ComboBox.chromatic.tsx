@@ -11,8 +11,11 @@
  */
 
 import {ComboBox, Item} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -28,7 +31,7 @@ let states = [
   {necessityIndicator: 'label'}
 ];
 
-let combinations = generatePowerset(states);
+let combinations = generatePowerset(states, v => v.validationState && v.contextualHelp);
 
 function shortName(key, value) {
   let returnVal = '';
@@ -132,3 +135,15 @@ PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
+
+export const PropContextualHelp = Template.bind({});
+PropContextualHelp.storyName = 'contextual help';
+PropContextualHelp.args = {
+  ...PropDefaults.args,
+  contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )
+};
