@@ -47,13 +47,13 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   let isMobile = useIsMobileDevice();
   if (isMobile) {
     // menuTrigger=focus/manual don't apply to mobile searchwithin
-    return <MobileSearchAutocomplete {...props} menuTrigger="input" ref={ref} />;
+    return <MobileSearchAutocomplete {...props} menuTrigger="input" domRef={ref} />;
   } else {
-    return <SearchAutocompleteBase {...props} ref={ref} />;
+    return <SearchAutocompleteBase {...props} domRef={ref} />;
   }
 }
 
-const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T> & {domRef: FocusableRef<HTMLElement>}) {
   props = useProviderProps(props);
 
   let {
@@ -63,15 +63,16 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     isQuiet,
     loadingState,
     onLoadMore,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    domRef: ref
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
-  let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement>();
+  let listBoxRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -111,7 +112,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   });
 
   // Measure the width of the inputfield to inform the width of the menu (below).
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<number>(0);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
@@ -141,7 +142,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
 
   let style = {
     ...overlayProps.style,
-    width: isQuiet ? null : menuWidth,
+    width: isQuiet ? undefined : menuWidth,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
@@ -186,9 +187,9 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
       </Popover>
     </>
   );
-});
+}
 
-interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<unknown> {
+interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   style?: React.CSSProperties,
@@ -197,7 +198,7 @@ interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<u
   clearButtonProps: AriaButtonProps
 }
 
-const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: SearchAutocompleteInputProps, ref: RefObject<HTMLElement>) {
+function SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -220,7 +221,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let timeout = useRef(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
@@ -272,8 +273,10 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
-      clearTimeout(timeout.current);
-      timeout.current = null;
+      if (timeout.current != null) {
+        clearTimeout(timeout.current);
+        timeout.current = null;
+      }
     }
 
     lastInputValue.current = inputValue;
@@ -288,7 +291,6 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
         style={style}
         className={
           classNames(
@@ -324,13 +326,13 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           isQuiet={isQuiet}
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
-          loadingIndicator={loadingState != null && loadingCircle}
+          loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
+          wrapperChildren={(inputValue !== '' && !isReadOnly) ? clearButton : undefined} />
       </div>
     </FocusRing>
   );
-});
+}
 
 
 /**

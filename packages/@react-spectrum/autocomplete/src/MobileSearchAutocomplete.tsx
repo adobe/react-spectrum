@@ -45,7 +45,7 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
-export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+export function MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T> & {domRef: FocusableRef<HTMLElement>}) {
   props = useProviderProps(props);
 
   let {
@@ -53,7 +53,8 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     isDisabled,
     validationState,
     isReadOnly,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    domRef: ref
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -71,7 +72,7 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     defaultSelectedKey: undefined
   });
 
-  let buttonRef = useRef<HTMLElement>();
+  let buttonRef = useRef<HTMLDivElement>(null);
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
@@ -82,7 +83,7 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
 
   // Focus the button and show focus ring when clicking on the label
   labelProps.onClick = () => {
-    if (!props.isDisabled) {
+    if (!props.isDisabled && buttonRef.current) {
       buttonRef.current.focus();
       setInteractionModality('keyboard');
     }
@@ -100,7 +101,7 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
         includeNecessityIndicatorInAccessibilityName>
         <SearchAutocompleteButton
           {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus, icon: props.icon})}
-          ref={buttonRef}
+          buttonRef={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
@@ -121,10 +122,10 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
       </Tray>
     </>
   );
-});
+}
 
 interface SearchAutocompleteButtonProps extends AriaButtonProps {
-  icon?: ReactElement,
+  icon?: ReactElement | null,
   isQuiet?: boolean,
   isDisabled?: boolean,
   isReadOnly?: boolean,
@@ -134,13 +135,15 @@ interface SearchAutocompleteButtonProps extends AriaButtonProps {
   clearInput?: () => void,
   children?: ReactNode,
   style?: React.CSSProperties,
-  className?: string
+  className?: string,
+  buttonRef: RefObject<HTMLDivElement>
 }
 
-const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteButton(props: SearchAutocompleteButtonProps, ref: RefObject<HTMLElement>) {
+function SearchAutocompleteButton(props: SearchAutocompleteButtonProps) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
+  let ref = props.buttonRef;
 
   let {
     icon = searchIcon,
@@ -175,8 +178,8 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
   let clearButton = (
     <ClearButton
       onPress={(e) => {
-        clearInput();
-        props.onPress(e);
+        clearInput?.();
+        props?.onPress?.(e);
       }}
       preventFocus
       aria-label={stringFormatter.format('clear')}
@@ -219,7 +222,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     <div
       {...mergeProps(hoverProps, focusProps, buttonProps)}
       aria-haspopup="dialog"
-      ref={ref as RefObject<HTMLDivElement>}
+      ref={ref}
       style={{...style, outline: 'none'}}
       className={
         classNames(
@@ -303,16 +306,16 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
       </div>
     </div>
   );
-});
+}
 
-interface SearchAutocompleteTrayProps extends SpectrumSearchAutocompleteProps<unknown> {
-  state: ComboBoxState<unknown>,
+interface SearchAutocompleteTrayProps<T> extends SpectrumSearchAutocompleteProps<T> {
+  state: ComboBoxState<T>,
   overlayProps: HTMLAttributes<HTMLElement>,
   loadingIndicator?: ReactElement,
   onClose: () => void
 }
 
-function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
+function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -331,15 +334,15 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     onSubmit
   } = props;
 
-  let timeout = useRef(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
-  let inputRef = useRef<HTMLInputElement>();
-  let popoverRef = useRef<HTMLDivElement>();
-  let listBoxRef = useRef<HTMLDivElement>();
+  let inputRef = useRef<HTMLInputElement>(null);
+  let popoverRef = useRef<HTMLDivElement>(null);
+  let listBoxRef = useRef<HTMLDivElement>(null);
   let layout = useListBoxLayout(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete<T>(
     {
       ...props,
       keyboardDelegate: layout,
@@ -351,7 +354,9 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
   );
 
   React.useEffect(() => {
-    focusSafely(inputRef.current);
+    if (inputRef.current) {
+      focusSafely(inputRef.current);
+    }
 
     // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
     // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
@@ -423,7 +428,9 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
       return;
     }
 
-    popoverRef.current.focus();
+    if (popoverRef.current) {
+      popoverRef.current.focus();
+    }
   }, [inputRef, popoverRef, isTouchDown]);
 
   let inputValue = inputProps.value;
@@ -446,8 +453,10 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
-      clearTimeout(timeout.current);
-      timeout.current = null;
+      if (timeout.current !== null) {
+        clearTimeout(timeout.current);
+        timeout.current = null;
+      }
     }
 
     lastInputValue.current = inputValue;
@@ -456,11 +465,17 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
   let onKeyDown = (e) => {
     // Close virtual keyboard, close tray, and fire onSubmit if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
-      popoverRef.current.focus();
-      onClose();
-      onSubmit(inputValue.toString(), null);
+      popoverRef.current?.focus();
+      if (onClose) {
+        onClose();
+      }
+      if (onSubmit) {
+        onSubmit(inputValue == null ? null : inputValue.toString(), null);
+      }
     } else {
-      inputProps.onKeyDown(e);
+      if (inputProps.onKeyDown) {
+        inputProps.onKeyDown(e);
+      }
     }
   };
 
@@ -493,9 +508,9 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
-          loadingIndicator={loadingState != null && loadingCircle}
+          loadingIndicator={loadingState != null ? loadingCircle : undefined}
           validationState={validationState}
-          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
+          wrapperChildren={((state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly) ? clearButton : undefined}
           icon={icon}
           UNSAFE_className={
             classNames(

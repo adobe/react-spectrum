@@ -349,7 +349,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.contentSize;
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(key: Key): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
@@ -363,7 +363,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
@@ -377,7 +377,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyPageAbove(key: Key) {
+  getKeyPageAbove(key: Key): Key | null {
     let layoutInfo = this.getLayoutInfo(key);
 
     if (layoutInfo) {
@@ -395,7 +395,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.getFirstKey();
   }
 
-  getKeyPageBelow(key: Key) {
+  getKeyPageBelow(key: Key): Key | null {
     let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
 
     if (layoutInfo) {
@@ -413,7 +413,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.getLastKey();
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     let collection = this.collection;
     let key = collection.getFirstKey();
     while (key != null) {
@@ -426,7 +426,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let collection = this.collection;
     let key = collection.getLastKey();
     while (key != null) {
@@ -439,7 +439,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key): Key | null {
     if (!this.collator) {
       return null;
     }
