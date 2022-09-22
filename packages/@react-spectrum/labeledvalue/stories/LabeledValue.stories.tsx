@@ -12,7 +12,11 @@
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
 import {LabeledValue} from '..';
+import React from 'react';
 
 type LabeledValueStory = ComponentStoryObj<typeof LabeledValue>;
 
@@ -114,4 +118,18 @@ export let Number: LabeledValueStory = {
 export let NumberRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: 10, end: 20}},
   name: 'RangeValue<Number>'
+};
+
+export let WithContextualHelp: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: 25,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )
+  },
+  name: 'contextual help'
 };
