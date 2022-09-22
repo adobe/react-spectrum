@@ -64,7 +64,7 @@ export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectA
     checkboxProps: {
       'aria-label': stringFormatter.format(selectionMode === 'single' ? 'select' : 'selectAll'),
       isSelected: isSelectAll,
-      isDisabled: selectionMode !== 'multiple',
+      isDisabled: selectionMode !== 'multiple' || state.collection.size === 0,
       isIndeterminate: !isEmpty && !isSelectAll,
       onChange: () => state.selectionManager.toggleSelectAll()
     }

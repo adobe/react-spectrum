@@ -76,7 +76,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    isKeyboardNavigationDisabled,
+    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({

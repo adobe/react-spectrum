@@ -14,9 +14,12 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -202,6 +205,15 @@ storiesOf('Date and Time/DatePicker/styling', module)
   .add(
     'invalid with time',
     () => render({validationState: 'invalid', granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add(
     'shouldFlip: false',

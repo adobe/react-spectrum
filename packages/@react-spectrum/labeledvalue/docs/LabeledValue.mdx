@@ -1,0 +1,137 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/labeledvalue';
+import types from 'docs:./types.ts';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/labeledvalue/package.json';
+
+```jsx import
+import {LabeledValue} from '@react-spectrum/labeledvalue';
+```
+
+---
+category: Status
+keywords: [label, value, read only]
+after_version: 3.0.0
+---
+
+# LabeledValue
+
+<PageDescription>{docs.exports.LabeledValue.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['LabeledValue']} />
+
+## Example
+
+```tsx example
+<LabeledValue label="File name" value="Budget.xls" />
+```
+
+## Value
+
+In addition to a string as shown above, a `LabeledValue` accepts numbers, dates, times, and lists of strings in the `value` prop.
+
+### Numbers
+
+When the `value` prop is set to a number, `LabeledValue` formats it according to the user's locale.
+
+```tsx example
+<LabeledValue label="Number of cookies" value={1024} />
+```
+
+Custom `formatOptions` can also be provided to format the value as a percentage, unit, currency, etc. This prop is compatible
+with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat).
+
+```tsx example
+<LabeledValue label="File size" value={1.2} formatOptions={{style: 'unit', unit: 'megabyte'}} />
+```
+
+An object with `start` and `end` properties may also be provided to format a numeric range.
+
+```tsx example
+<LabeledValue label="Price range" value={{start: 150, end: 400}} formatOptions={{style: 'currency', currency: 'USD', minimumFractionDigits: 0}} />
+```
+
+### Dates and times
+
+The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](../internationalized/date/index.html) to display a date or time, which is formatted according to the user's locale.
+
+```tsx example
+import {today, getLocalTimeZone} from '@internationalized/date';
+
+<LabeledValue label="Date modified" value={today(getLocalTimeZone()).subtract({weeks: 1})} />
+```
+
+By default, the formatting depends on the type of value provided. Above, a [CalendarDate](../internationalized/date/CalendarDate.html) is provided, so only the date is displayed. To display a time, pass a [Time](../internationalized/date/Time.html) object. You can also provide a [CalendarDateTime](../internationalized/date/CalendarDateTime.html) or [ZonedDateTime](../internationalized/date/ZonedDateTime.html) to display a date with a time.
+
+```tsx example
+import {now} from '@internationalized/date';
+
+<LabeledValue label="Page load time" value={now()} />
+```
+
+An object with `start` and `end` properties may also be provided to format a date or time range.
+
+```tsx example
+import {Time} from '@internationalized/date';
+
+<LabeledValue label="Business hours" value={{start: new Time(8, 30), end: new Time(18)}} />
+```
+
+Custom `formatOptions` can also be provided control the exact date format. This prop is compatible
+with the option parameter of [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat).
+
+```tsx example
+<LabeledValue label="Appointment date" value={new Date(2022, 6, 5)} formatOptions={{dateStyle: 'short'}} />
+```
+
+### Lists
+
+When the `value` prop is set to an array of strings, they are rendered as a comma-separated list according to the user's locale.
+
+```tsx example
+<LabeledValue label="Pizza toppings" value={['Pepperoni', 'Pineapple', 'Mushroom', 'Garlic']} />
+```
+
+By default, the list is displayed as a conjunction (an "and"-based grouping of items). This may be changed to a disjunction (an "or"-based grouping), or a pure comma-separated list using the `formatOptions` prop. This is compatible with the option parameter of [Intl.ListFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat).
+
+```tsx example
+<LabeledValue label="Interests" value={['Travel', 'Hiking', 'Snorkeling', 'Camping']} formatOptions={{type: 'unit'}} />
+```
+
+## Labeling
+
+A visual label must be provided to the `LabeledValue` using the `label` prop.
+
+### Internationalization
+
+In order to internationalize a `LabeledValue`, a localized string should be passed to the `label` prop.
+
+`LabeledValue` automatically formats numbers, dates, times, and lists according to the user's locale, as defined by the [Provider](Provider.html#locales) component. String values provided to a `LabeledValue` should be translated accordingly.
+
+## Props
+
+<PropTable component={{props: types.exports.LabeledValueProps}} links={types.links} />
+
+## Visual options
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/field-label/#Label-position)
+
+By default, the label is positioned above the `LabeledValue`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `LabeledValue` and "end" refers to the right-most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<LabeledValue label="File name" value="Onboarding.pdf" labelPosition="side" labelAlign="end" />
+```

@@ -27,8 +27,8 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
+import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useId} from '@react-aria/utils';
 import {useListData} from '@react-stately/data';
@@ -107,6 +107,7 @@ function ReorderableGrid(props) {
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
+  useDraggableCollection({}, dragState, ref);
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
@@ -123,9 +124,6 @@ function ReorderableGrid(props) {
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
     dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDropEnter: chain(action('onDropEnter'), console.log),
-    // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
     onDropActivate: chain(action('onDropActivate'), console.log),
     onDrop: async e => {
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
@@ -223,7 +221,7 @@ function CollectionItem({item, state, dragState, dropState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -239,10 +237,10 @@ function CollectionItem({item, state, dragState, dropState}) {
   let id = useId();
 
   return (
-    <div {...rowProps} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
+    <div {...mergeProps(rowProps, dragProps)} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(gridCellProps, dragProps)}
+          {...gridCellProps}
           aria-labelledby={id}
           ref={cellRef}
           className={classNames(dndStyles, 'draggable', 'droppable', {
