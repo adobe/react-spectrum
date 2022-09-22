@@ -134,15 +134,15 @@ Dialog.
 
 ```tsx example
 function Example() {
-  let [state, setState] = React.useState(false);
+  let [isOpen, setOpen] = React.useState(false);
 
   return (
     <Flex alignItems="center" gap="size-100">
-      <TooltipTrigger onOpenChange={(isOpen) => setState(isOpen)}>
+      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
         <ActionButton aria-label="Resize"><Resize /></ActionButton>
         <Tooltip>Resize text.</Tooltip>
       </TooltipTrigger>
-      <Text>Current open state: {state.toString()}</Text>
+      <Text>Tooltip is {isOpen ? 'showing' : 'not showing'}</Text>
     </Flex>
   );
 }

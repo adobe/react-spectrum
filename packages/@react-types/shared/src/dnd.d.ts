@@ -114,8 +114,50 @@ interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
+interface DroppableCollectionInsertDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
+interface DroppableCollectionRootDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation
+}
+
+interface DroppableCollectionOnItemDropEvent {
+  items: DropItem[],
+  dropOperation: DropOperation,
+  isInternalDrop: boolean,
+  target: {
+    key: Key,
+    dropPosition: 'on'
+  }
+}
+
+interface DroppableCollectionReorderEvent {
+  keys: Set<Key>,
+  dropOperation: DropOperation,
+  target: {
+    key: Key,
+    dropPosition: Omit<DropPosition, 'on'>
+  }
+}
+
 export interface DragTypes {
   has(type: string): boolean
+}
+
+export interface DropTargetDelegate {
+  /**
+   * Returns a drop target within a collection for the given x and y coordinates.
+   * The point is provided relative to the top left corner of the collection container.
+   * A drop target can be checked to see if it is valid using the provided `isValidDropTarget` function.
+   */
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
 }
 
 export interface DroppableCollectionProps {
@@ -124,16 +166,40 @@ export interface DroppableCollectionProps {
    * on the drop target.
    */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
-  /** Handler that is called when a valid drag element enters the drop target. */
+  /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
-  /** Handler that is called when a valid drag element is moved within the drop target. */
+  /** Handler that is called when a valid drag is moved within the drop target. */
   onDropMove?: (e: DroppableCollectionMoveEvent) => void,
-  /** Handler that is called after a valid drag element is held over the drop target for a period of time. */
+  /** Handler that is called after a valid drag is held over the drop target for a period of time. */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
-  /** Handler that is called when a valid drag element exits the drop target. */
+  /** Handler that is called when a valid drag exits the drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
-  /** Handler that is called when a valid drag element is dropped on the drop target. */
-  onDrop?: (e: DroppableCollectionDropEvent) => void
+  /** Handler that is called when a valid drag is dropped on the drop target. */
+  onDrop?: (e: DroppableCollectionDropEvent) => void,
+  /**
+   * Handler called when external items are dropped "between" the droppable collection's items.
+   */
+  onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
+  /**
+   * Handler called when external items are dropped on the droppable collection's root.
+   */
+  onRootDrop?: (e: DroppableCollectionRootDropEvent) => void,
+  /**
+   * Handler called when items are dropped "on" a droppable collection's item.
+   */
+  onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
+  /**
+   * Handler called when items are reordered via drag in the source collection.
+   */
+  onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /**
+   * The drag types that the droppable collection accepts. If your collection accepts directories, include 'directory' in your array of allowed types.
+   */
+  acceptedDragTypes?: 'all' | Array<string>,
+  /**
+   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
+   */
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
@@ -145,7 +211,8 @@ interface DraggableCollectionMoveEvent extends DragMoveEvent {
 }
 
 interface DraggableCollectionEndEvent extends DragEndEvent {
-  keys: Set<Key>
+  keys: Set<Key>,
+  isInternalDrop: boolean
 }
 
 export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;

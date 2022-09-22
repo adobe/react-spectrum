@@ -24,7 +24,6 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
-import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
@@ -148,12 +147,15 @@ function AsyncList() {
 
 <Anatomy />
 
-Items within a ListView also allow for additional content used to add context or provide additional actions to items. Descriptions, icons, and thumbnails can be added to
+Items within a ListView also allow for additional content used to add context or provide additional actions to items. Descriptions, illustrations, and thumbnails can be added to
 the children of `<Item>` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 Additionally, components such as `<ActionButton>`, `<ActionGroup>`, and `<ActionMenu>` will be styled appropriately if included within an item. Providing the `hasChildItems` prop
 to an `<Item>` will add a chevron icon to the end of the row to visually indicate that the row has children.
 
 ```tsx example
+import File from '@spectrum-icons/illustrations/File';
+import Folder from '@spectrum-icons/illustrations/Folder';
+
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
     <Folder />
@@ -188,6 +190,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
     </ActionMenu>
   </Item>
   <Item key="3" textValue="readme">
+    <File />
     <Text>readme.txt</Text>
     <Text slot="description">TXT</Text>
     <ActionMenu>
@@ -202,6 +205,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
     </ActionMenu>
   </Item>
   <Item key="4" textValue="Onboarding">
+    <File />
     <Text>Onboarding</Text>
     <Text slot="description">PDF</Text>
     <ActionMenu>
@@ -307,7 +311,7 @@ If you set the `disabledBehavior` prop to `selection`, interactions such as focu
     disabledKeys={[3]}
     defaultSelectedKeys={[]}
     disabledBehavior="all"
-    aria-label="ListView with all interaction disabled for disabled rows" 
+    aria-label="ListView with all interaction disabled for disabled rows"
     width="size-2400"
     onAction={key => alert(`Opening item ${key}...`)}
   />
@@ -361,7 +365,7 @@ This behavior is slightly different in the highlight selection style, where sing
 
 ## Drag and drop
 
-To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDragHooks` and `useDropHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
+To enable drag and drop in a ListView, you must provide the respective drag and drop hooks sourced from `useDnDHooks` to the ListView's `dragHooks` and `dropHooks` props respectively.
 See the examples below for various common drag and drop use cases. For more information on the hooks themselves and the various supported ways to perform a drag and drop interaction,
 please see the [drag and drop documentation](dnd.html).
 
@@ -371,7 +375,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useDragHooks, useDropHooks} from '@react-spectrum/dnd';
+import {useDnDHooks} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 function DragIntoListExample() {
@@ -414,7 +418,7 @@ function DragIntoListExample() {
     sourceList.remove(...keys);
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
 
@@ -427,7 +431,7 @@ function DragIntoListExample() {
     }
   });
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -471,7 +475,7 @@ function DragIntoListExample() {
       <ListView
         aria-label="Droppable ListView in drag into list example"
         width="size-3600"
-         height="size-2400"
+        height="size-2400"
         items={targetList.items}
         dropHooks={dropHooks}>
         {item => (
@@ -544,7 +548,7 @@ function DragIntoListFilesOnly() {
     sourceList.remove(...keys);
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
 
@@ -557,7 +561,7 @@ function DragIntoListFilesOnly() {
     }
   });
 
-  let dropHooks = useDropHooks({
+  let {dropHooks} = useDnDHooks({
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -597,7 +601,6 @@ function DragIntoListFilesOnly() {
         dragHooks={dragHooks}>
         {item => (
           <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
           </Item>
         )}
@@ -610,6 +613,7 @@ function DragIntoListFilesOnly() {
         dropHooks={dropHooks}>
         {item => (
           <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+            {item.type === 'folder' && <Folder />}
             <Text>{item.name}</Text>
             {item.type === 'folder' &&
               <>
@@ -670,7 +674,7 @@ function ReorderableList() {
     }
   };
 
-  let dragHooks = useDragHooks({
+  let {dragHooks, dropHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         let item = list.getItem(key);
@@ -679,10 +683,7 @@ function ReorderableList() {
           [`${dragType}-${item.type}`]: JSON.stringify(item)
         };
       });
-    }
-  });
-
-  let dropHooks = useDropHooks({
+    },
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -725,12 +726,10 @@ function ReorderableList() {
       dropHooks={dropHooks}>
       {item => (
         <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          {item.type === 'folder' && <Folder />}
           <Text>{item.name}</Text>
           {item.type === 'folder' &&
-            <>
-              <Folder />
-              <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-            </>
+            <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
           }
         </Item>
       )}
@@ -795,14 +794,14 @@ function DragBetweenListsExample() {
         destinationList.append(...keys.map(key => sourceList.getItem(key)));
       } else if (dropEventTarget.dropPosition === 'before') {
         destinationList.insertBefore(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
-      } else if (dropEventTarget.dropPosition === 'after'){
+      } else if (dropEventTarget.dropPosition === 'after') {
         destinationList.insertAfter(dropEventTarget.key, ...keys.map(key => sourceList.getItem(key)));
       }
       sourceList.remove(...keys);
     }
   };
 
-  let dragHooksList1 = useDragHooks({
+  let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
         let item = list1.getItem(key);
@@ -811,22 +810,7 @@ function DragBetweenListsExample() {
           [`${dragType}-${item.type}`]: JSON.stringify(item)
         };
       });
-    }
-  });
-
-  let dragHooksList2 = useDragHooks({
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list2.getItem(key);
-        // Setup the info for each item that will be propagated upon drag
-        return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item)
-        };
-      });
-    }
-  });
-
-  let dropHooksList1 = useDropHooks({
+    },
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move
@@ -855,7 +839,16 @@ function DragBetweenListsExample() {
     }
   });
 
-  let dropHooksList2 = useDropHooks({
+  let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list2.getItem(key);
+        // Setup the info for each item that will be propagated upon drag
+        return {
+          [`${dragType}-${item.type}`]: JSON.stringify(item)
+        };
+      });
+    },
     async onDrop(e) {
       let keysToMove = [];
       // Only add the dropped item to the list of keys to move

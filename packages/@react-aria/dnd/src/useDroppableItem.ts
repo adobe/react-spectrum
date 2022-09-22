@@ -13,7 +13,7 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
-import {getTypes} from './utils';
+import {getTypes, globalDndState} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -22,7 +22,8 @@ export interface DroppableItemOptions {
 }
 
 export interface DroppableItemResult {
-  dropProps: HTMLAttributes<HTMLElement>
+  dropProps: HTMLAttributes<HTMLElement>,
+  isDropTarget: boolean
 }
 
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
@@ -34,22 +35,30 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         element: ref.current,
         target: options.target,
         getDropOperation(types, allowedOperations) {
-          return state.getDropOperation(
-            options.target,
+          let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
+          let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+          return state.getDropOperation({
+            target: options.target,
             types,
-            allowedOperations
-          );
+            allowedOperations,
+            isInternalDrop,
+            draggingKeys
+          });
         }
       });
     }
   }, [ref, options.target, state]);
 
   let dragSession = DragManager.useDragSession();
-  let isValidDropTarget = dragSession && state.getDropOperation(
-    options.target,
-    getTypes(dragSession.dragTarget.items),
-    dragSession.dragTarget.allowedDropOperations
-  ) !== 'cancel';
+  let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
+  let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+  let isValidDropTarget = dragSession && state.getDropOperation({
+    target: options.target,
+    types: getTypes(dragSession.dragTarget.items),
+    allowedOperations: dragSession.dragTarget.allowedDropOperations,
+    isInternalDrop,
+    draggingKeys
+  }) !== 'cancel';
 
   let isDropTarget = state.isDropTarget(options.target);
   useEffect(() => {
@@ -62,6 +71,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
     dropProps: {
       ...dropProps,
       'aria-hidden': !dragSession || isValidDropTarget ? undefined : 'true'
-    }
+    },
+    isDropTarget
   };
 }

@@ -16,11 +16,11 @@ import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 
-interface ActionGroupItemProps {
+export interface AriaActionGroupItemProps {
   key: Key
 }
 
-interface ActionGroupItemAria {
+export interface ActionGroupItemAria {
   buttonProps: DOMAttributes & PressProps
 }
 
@@ -31,7 +31,7 @@ const BUTTON_ROLES = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement>): ActionGroupItemAria {
+export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement>): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]

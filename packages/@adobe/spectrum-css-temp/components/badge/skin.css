@@ -1,0 +1,56 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Badge {
+  color: var(--spectrum-label-colored-text-color);
+}
+
+.spectrum-Badge--neutral {
+  background-color: var(--spectrum-label-colored-gray-background-color);
+}
+
+.spectrum-Badge--negative {
+  background-color: var(--spectrum-label-colored-red-background-color);
+}
+
+.spectrum-Badge--yellow {
+  color: var(--spectrum-global-color-static-black);
+  background-color: var(--spectrum-global-color-static-yellow-600);
+}
+
+.spectrum-Badge--seafoam  {
+  background-color: var(--spectrum-global-color-static-seafoam-700);
+}
+
+.spectrum-Badge--positive {
+  background-color: var(--spectrum-global-color-static-green-700);
+}
+
+.spectrum-Badge--info  {
+  background-color: var(--spectrum-label-colored-blue-background-color);
+}
+
+.spectrum-Badge--fuchsia  {
+  background-color: var(--spectrum-global-color-static-fuchsia-600);
+}
+
+.spectrum-Badge--indigo  {
+  background-color: var(--spectrum-global-color-static-indigo-600);
+}
+
+.spectrum-Badge--magenta  {
+  background-color: var(--spectrum-global-color-static-magenta-600);
+}
+
+.spectrum-Badge--purple  {
+  background-color: var(--spectrum-global-color-static-purple-600);
+}

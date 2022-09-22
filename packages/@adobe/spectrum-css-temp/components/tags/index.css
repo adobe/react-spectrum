@@ -47,6 +47,12 @@ governing permissions and limitations under the License.
   &.is-disabled {
     pointer-events: none;
   }
+
+  .spectrum-Tag-action {
+    grid-area: action;
+    height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
+    width: var(--spectrum-global-dimension-size-300);
+  }
 }
 
 .spectrum-Tag-icon {
@@ -70,11 +76,5 @@ governing permissions and limitations under the License.
 
 .tags-removable {
   margin-inline-end: 0;
-}
-
-.spectrum-Tag-action {
-  grid-area: action;
-  height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
-  width: var(--spectrum-global-dimension-size-300);
 }
 

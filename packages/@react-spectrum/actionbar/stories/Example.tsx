@@ -16,8 +16,9 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Duplicate from '@spectrum-icons/workflow/Duplicate';
 import Edit from '@spectrum-icons/workflow/Edit';
+import {mergeProps} from '@react-aria/utils';
 import Move from '@spectrum-icons/workflow/Move';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import {Text} from '@react-spectrum/text';
 
@@ -27,7 +28,7 @@ let columns = [
   {name: 'Baz', key: 'baz'}
 ];
 
-let items = [
+let defaultItems = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
   {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
@@ -48,9 +49,13 @@ let items = [
 
 export function Example(props: any = {}) {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
+  let [items, setItems] = useState(defaultItems);
+
+  let ref = useRef(null);
   return (
     <ActionBarContainer height={props.containerHeight || 300}>
       <TableView
+        ref={ref}
         aria-label="Table"
         isQuiet={props.isQuiet}
         width={props.tableWidth}
@@ -73,24 +78,37 @@ export function Example(props: any = {}) {
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        {...props}>
-        <Item key="edit">
+        {...mergeProps(props, {
+          onAction: (key) => {
+            if (key === 'delete') {
+              let newItems = items;
+              if (selectedKeys instanceof Set) {
+                newItems = items.filter(item => !selectedKeys.has(item.foo));
+              } else if (selectedKeys === 'all') {
+                newItems = [];
+              }
+              setItems(newItems);
+              setSelectedKeys(new Set());
+            }
+          }
+        })}>
+        <Item key="edit" textValue="Edit">
           <Edit />
           <Text>Edit</Text>
         </Item>
-        <Item key="copy">
+        <Item key="copy" textValue="Copy">
           <Copy />
           <Text>Copy</Text>
         </Item>
-        <Item key="delete">
+        <Item key="delete" textValue="Delete">
           <Delete />
           <Text>Delete</Text>
         </Item>
-        <Item key="move">
+        <Item key="move" textValue="Move">
           <Move />
           <Text>Move</Text>
         </Item>
-        <Item key="duplicate">
+        <Item key="duplicate" textValue="Duplicate">
           <Duplicate />
           <Text>Duplicate</Text>
         </Item>

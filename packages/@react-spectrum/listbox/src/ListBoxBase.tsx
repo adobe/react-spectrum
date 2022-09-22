@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
 import {AriaListBoxOptions, useListBox} from '@react-aria/listbox';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
@@ -105,66 +106,68 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 
   return (
     <ListBoxContext.Provider value={state}>
-      <Virtualizer
-        {...styleProps}
-        {...mergeProps(listBoxProps, domProps)}
-        ref={ref}
-        focusedKey={state.selectionManager.focusedKey}
-        sizeToFit="height"
-        scrollDirection="vertical"
-        className={
-          classNames(
-            styles,
-            'spectrum-Menu',
-            styleProps.className
-          )
-        }
-        layout={layout}
-        collection={state.collection}
-        renderWrapper={renderWrapper}
-        transitionDuration={transitionDuration}
-        isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}
-        shouldUseVirtualFocus={shouldUseVirtualFocus}
-        onScroll={onScroll}>
-        {(type, item: Node<T>) => {
-          if (type === 'item') {
-            return (
-              <ListBoxOption
-                item={item}
-                shouldSelectOnPressUp={shouldSelectOnPressUp}
-                shouldFocusOnHover={focusOnPointerEnter}
-                shouldUseVirtualFocus={shouldUseVirtualFocus} />
-            );
-          } else if (type === 'loader') {
-            return (
-              // aria-selected isn't needed here since this option is not selectable.
-              // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-              <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                <ProgressCircle
-                  isIndeterminate
-                  size="S"
-                  aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
-                  UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-              </div>
-            );
-          } else if (type === 'placeholder') {
-            let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
-            if (emptyState == null) {
-              return null;
-            }
-
-            return (
-              <div
+      <FocusScope>
+        <Virtualizer
+          {...styleProps}
+          {...mergeProps(listBoxProps, domProps)}
+          ref={ref}
+          focusedKey={state.selectionManager.focusedKey}
+          sizeToFit="height"
+          scrollDirection="vertical"
+          className={
+            classNames(
+              styles,
+              'spectrum-Menu',
+              styleProps.className
+            )
+          }
+          layout={layout}
+          collection={state.collection}
+          renderWrapper={renderWrapper}
+          transitionDuration={transitionDuration}
+          isLoading={props.isLoading}
+          onLoadMore={props.onLoadMore}
+          shouldUseVirtualFocus={shouldUseVirtualFocus}
+          onScroll={onScroll}>
+          {(type, item: Node<T>) => {
+            if (type === 'item') {
+              return (
+                <ListBoxOption
+                  item={item}
+                  shouldSelectOnPressUp={shouldSelectOnPressUp}
+                  shouldFocusOnHover={focusOnPointerEnter}
+                  shouldUseVirtualFocus={shouldUseVirtualFocus} />
+              );
+            } else if (type === 'loader') {
+              return (
                 // aria-selected isn't needed here since this option is not selectable.
                 // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                role="option">
-                {emptyState}
-              </div>
-            );
-          }
-        }}
-      </Virtualizer>
+                <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                  <ProgressCircle
+                    isIndeterminate
+                    size="S"
+                    aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')}
+                    UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+                </div>
+              );
+            } else if (type === 'placeholder') {
+              let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+              if (emptyState == null) {
+                return null;
+              }
+
+              return (
+                <div
+                  // aria-selected isn't needed here since this option is not selectable.
+                  // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+                  role="option">
+                  {emptyState}
+                </div>
+              );
+            }
+          }}
+        </Virtualizer>
+      </FocusScope>
     </ListBoxContext.Provider>
   );
 }

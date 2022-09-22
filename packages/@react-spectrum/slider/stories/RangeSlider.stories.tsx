@@ -11,7 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
+import {Heading} from '@react-spectrum/text';
 import {RangeSlider} from '../';
 import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
@@ -23,54 +26,70 @@ storiesOf('Slider/RangeSlider', module)
   .addDecorator(story => (
     <ErrorBoundary message={message}>{story()}</ErrorBoundary>
   ))
+  .addParameters({
+    args: {
+      label: 'Label',
+      isDisabled: false,
+      labelPosition: 'top'
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render({'aria-label': 'Label'})
+    args => render({...args, 'aria-label': 'Label'})
   )
   .add(
     'label',
-    () => render({label: 'Label'})
-  )
-  .add(
-    'isDisabled',
-    () => render({label: 'Label', defaultValue: {start: 30, end: 70}, isDisabled: true})
+    args => render(args)
   )
   .add(
     'custom width',
-    () => render({label: 'Label', width: '300px'})
+    args => render({...args, width: '300px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
+    args => render({...args, label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
-    () => render({label: 'Label', showValueLabel: false})
+    args => render({...args, showValueLabel: false})
   )
   .add(
     'formatOptions percent',
-    () => render({label: 'Label', minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
+    args => render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
   )
   .add(
     'formatOptions centimeter',
     // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    () => render({label: 'Label', maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
+    args => render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
   )
   .add(
     'custom valueLabel',
-    () => render({label: 'Label', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
+    args => render({...args, getValueLabel: (value) => `${value.start} <-> ${value.end}`})
   )
   .add(
     'custom valueLabel with label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({label: 'Label', labelPosition: 'side'})
+    args => render({...args, label: 'This is a rather long label for this narrow slider element.', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
   )
   .add(
     'min/max',
-    () => render({label: 'Label', minValue: 30, maxValue: 70})
+    args => render({...args, minValue: 30, maxValue: 70})
+  )
+  .add(
+    'contextual help',
+    args => render({...args, label: 'Label', contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
 
 function render(props: SpectrumRangeSliderProps = {}) {

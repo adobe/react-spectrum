@@ -31,8 +31,11 @@ const DOC_LINKS = {
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
   CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
+  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
   'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
   'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
@@ -368,6 +371,10 @@ export function LinkType({id}) {
   let value = links[id];
   if (!value) {
     return null;
+  }
+
+  if (DOC_LINKS[value.name]) {
+    return <Identifier name={value.name} />;
   }
 
   registered.set(id, {type: value, links});

@@ -19,12 +19,12 @@ import {DOMAttributes, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
 import {useSyntheticBlurEvent} from './utils';
 
-interface FocusProps extends FocusEvents {
+export interface FocusProps extends FocusEvents {
   /** Whether the focus events should be disabled. */
   isDisabled?: boolean
 }
 
-interface FocusResult {
+export interface FocusResult {
   /** Props to spread onto the target element. */
   focusProps: DOMAttributes
 }

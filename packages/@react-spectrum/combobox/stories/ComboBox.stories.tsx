@@ -18,9 +18,13 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
@@ -241,6 +245,15 @@ storiesOf('ComboBox', module)
   .add(
     'with error message, labelPosition: side',
     () => render({errorMessage: 'You did not select a valid spirit animal.', validationState: 'invalid', labelPosition: 'side'})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add(
     'isRequired',
@@ -467,6 +480,14 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </Flex>
     )
+  )
+  .add(
+    'within a dialog',
+    () => <ComboBoxWithinDialog />
+  )
+  .add(
+    'within a dialog, allowsCustomValue: true',
+    () => <ComboBoxWithinDialog allowsCustomValue />
   )
   .add(
     'WHCM test',
@@ -942,7 +963,7 @@ function renderRow(props = {}) {
         </Item>
         <Item key="three">Option 3</Item>
       </ComboBox>
-    </Flex>  
+    </Flex>
   );
 }
 
@@ -972,5 +993,66 @@ function ComboBoxWithMap(props) {
         ))}
       </ComboBox>
     </Flex>
+  );
+}
+
+function ComboBoxWithinDialog(props) {
+  let {allowsCustomValue} = props;
+  let items = [
+    {name: 'Animals', id: 's1', children: [
+      {name: 'Aardvark', id: '1'},
+      {name: 'Kangaroo', id: '2'},
+      {name: 'Snake', id: '3'}
+    ]},
+    {name: 'People', id: 's2', children: [
+      {name: 'Danni', id: '4'},
+      {name: 'Devon', id: '5'},
+      {name: 'Ross', id: '6'}
+    ]}
+  ];
+  let [selectedKey, setSelectedKey] = useState(null);
+  return (
+    <DialogTrigger>
+      <ActionButton>Show ComboBox</ActionButton>
+      {(close) => (
+        <Dialog>
+          <Content>
+            <ComboBox
+              label="Combo Box"
+              defaultItems={items}
+              placeholder="choose wisely"
+              width="size-3000"
+              allowsCustomValue={allowsCustomValue}
+              selectedKey={selectedKey}
+              onSelectionChange={setSelectedKey}
+              onKeyDown={
+                e => {
+                  if (
+                    e.key === 'Escape' &&
+                    (
+                      selectedKey !== null ||
+                      (e.target as HTMLInputElement).value === '' ||
+                      allowsCustomValue
+                    )
+                  ) {
+                    e.continuePropagation();
+                  }
+                }
+              }>
+              {(item) => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {(item) => <Item key={item.name}>{item.name}</Item>}
+                </Section>
+              )}
+            </ComboBox>
+          </Content>
+          <ButtonGroup>
+            <Button onPress={close} variant="secondary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </Dialog>
+      )}
+    </DialogTrigger>
   );
 }

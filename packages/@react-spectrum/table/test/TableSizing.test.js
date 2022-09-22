@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {fireEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -322,10 +324,15 @@ describe('TableViewSizing', function () {
 
       it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
         let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
+        let [headerRow, ...bodyRows] = tree.getAllByRole('row');
+        expect(bodyRows).toHaveLength(2);
 
-        for (let row of rows) {
+        for (let [index, cell] of headerRow.childNodes.entries()) {
+          // 4 because there is a checkbox column
+          expect(Number(cell.style.zIndex)).toBe(4 - index + 1);
+        }
+
+        for (let row of bodyRows) {
           for (let [index, cell] of row.childNodes.entries()) {
             if (index === 0) {
               expect(cell.style.zIndex).toBe('2');
@@ -629,8 +636,9 @@ describe('TableViewSizing', function () {
 
       it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -648,7 +656,7 @@ describe('TableViewSizing', function () {
 
         // trigger pointer modality
         fireEvent.pointerMove(tree.container);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -661,8 +669,8 @@ describe('TableViewSizing', function () {
         let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         fireEvent.pointerEnter(resizer);
 
@@ -677,6 +685,19 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 595
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -689,16 +710,31 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 620
+          }, {
+            key: 'bar',
+            width: 190
+          }, {
+            key: 'baz',
+            width: 190
+          }
+        ]);
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+        act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -716,7 +752,7 @@ describe('TableViewSizing', function () {
 
         // trigger pointer modality
         fireEvent.pointerMove(tree.container);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -729,8 +765,8 @@ describe('TableViewSizing', function () {
         let resizableHeader = tree.getAllByRole('columnheader')[0];
 
         fireEvent.pointerEnter(resizableHeader);
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         fireEvent.pointerEnter(resizer);
 
@@ -745,6 +781,19 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 595
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -757,11 +806,25 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 620
+          }, {
+            key: 'bar',
+            width: 190
+          }, {
+            key: 'baz',
+            width: 190
+          }
+        ]);
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
+        act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
 
@@ -769,9 +832,11 @@ describe('TableViewSizing', function () {
       installPointerEvent();
 
       it('dragging the resizer works - desktop', () => {
+        setInteractionModality('pointer');
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -787,11 +852,10 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        fireEvent.pointerDown(document.body, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(document.body);
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -801,20 +865,19 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
 
-        fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizableHeader);
         act(() => {jest.runAllTimers();});
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
-        fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizeMenuItem);
         act(() => {jest.runAllTimers();});
 
-        expect(tree.getByRole('separator')).toBeVisible();
-        let resizer = tree.getByRole('separator');
+        expect(tree.getByRole('slider')).toBeVisible();
+        let resizer = tree.getByRole('slider');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'touch', pointerId: 1, pageX: 600, pageY: 30});
@@ -840,16 +903,32 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('190px');
         }
 
-        // tapping on the document.body doesn't cause a blur because the body isn't focusable, so just call blur
+        // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 620
+          }, {
+            key: 'bar',
+            width: 190
+          }, {
+            key: 'baz',
+            width: 190
+          }
+        ]);
+
+        expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
+        setInteractionModality('pointer');
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -869,7 +948,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(document.body, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -879,7 +958,8 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
 
         fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
         fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
@@ -891,7 +971,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
         expect(document.activeElement).toBe(resizer);
 
@@ -919,19 +999,34 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('190px');
         }
 
-        // tapping on the document.body doesn't cause a blur because the body isn't focusable, so just call blur
+        // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 620
+          }, {
+            key: 'bar',
+            width: 190
+          }, {
+            key: 'baz',
+            width: 190
+          }
+        ]);
+
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
 
     describe('keyboard', () => {
       it('arrow keys the resizer works - desktop', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -951,9 +1046,10 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -971,7 +1067,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -999,16 +1095,54 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('620px');
+          expect(row.childNodes[1].style.width).toBe('190px');
+          expect(row.childNodes[2].style.width).toBe('190px');
+        }
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('600px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('200px');
+        }
+
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 600
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('arrow keys the resizer works - mobile', async () => {
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1028,9 +1162,10 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
         let rows = tree.getAllByRole('row');
 
@@ -1048,7 +1183,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
@@ -1078,15 +1213,29 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([
+          {
+            key: 'foo',
+            width: 600
+          }, {
+            key: 'bar',
+            width: 200
+          }, {
+            key: 'baz',
+            width: 200
+          }
+        ]);
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Enter', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1106,9 +1255,10 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1119,21 +1269,24 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1153,9 +1306,10 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1166,20 +1320,23 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab();
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via shift Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let onColumnResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table">
+          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1199,9 +1356,10 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-        let resizableHeader = tree.getAllByRole('columnheader')[0];
+        let header = tree.getAllByRole('columnheader')[0];
+        let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
 
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1212,15 +1370,17 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
-        let resizer = tree.getByRole('separator');
+        let resizer = tree.getByRole('slider');
 
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab({shift: true});
+        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
 
         expect(document.activeElement).toBe(resizableHeader);
 
-        expect(tree.queryByRole('separator')).toBeNull();
+        expect(tree.queryByRole('slider')).toBeNull();
       });
     });
   });

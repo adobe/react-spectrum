@@ -15,7 +15,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, ReactNode, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
-interface AriaTagGroupProps extends DOMProps {
+export interface AriaTagGroupProps extends DOMProps {
   children: ReactNode,
   disabledKeys?: Iterable<Key>,
   isDisabled?: boolean,
@@ -23,7 +23,7 @@ interface AriaTagGroupProps extends DOMProps {
   validationState?: 'valid' | 'invalid'
 }
 
-interface TagGroupAria {
+export interface TagGroupAria {
   tagGroupProps: DOMAttributes
 }
 

@@ -119,12 +119,10 @@ and another for the dropdown arrow icon (hidden from screen readers with `aria-h
 A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native
 `<select>`, which enables browser form autofill support.
 
-The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
-and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
-list of options. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
-is used to automatically restore focus to the trigger
-when the popup closes. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
-is added at the start and end of the popup to allow screen reader users to dismiss the popup.
+The same `Popover`, `ListBox`, and `Button` components created with [useOverlay](useOverlay.html), [useListBox](useListBox.html),
+and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
+components such as a `ComboBox` created with [useComboBox](useComboBox.html) or a `Dialog` popover created with [useDialog](useDialog.html).
+The code for these components is also included below in the collapsed sections.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
@@ -136,11 +134,10 @@ options. For an example of the description and error message elements, see [useT
 ```tsx example export=true
 import {HiddenSelect, useSelect} from '@react-aria/select';
 import {Item} from '@react-stately/collections';
-import {useButton} from '@react-aria/button';
 import {useSelectState} from '@react-stately/select';
 
-// Reuse the ListBox and Popover from your component library. See below for details.
-import {ListBox, Popover} from 'your-component-library';
+// Reuse the ListBox, Popover, and Button from your component library. See below for details.
+import {ListBox, Popover, Button} from 'your-component-library';
 
 function Select(props) {
   // Create state based on the incoming props
@@ -155,9 +152,6 @@ function Select(props) {
     menuProps
   } = useSelect(props, state, ref);
 
-  // Get props for the button based on the trigger props from useSelect
-  let {buttonProps} = useButton(triggerProps, ref);
-
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
@@ -166,9 +160,9 @@ function Select(props) {
         triggerRef={ref}
         label={props.label}
         name={props.name} />
-      <button
-        {...buttonProps}
-        ref={ref}
+      <Button
+        {...triggerProps}
+        buttonRef={ref}
         style={{height: 30, fontSize: 14}}>
         <span {...valueProps}>
           {state.selectedItem
@@ -181,7 +175,7 @@ function Select(props) {
           style={{paddingLeft: 5}}>
           ▼
         </span>
-      </button>
+      </Button>
       {state.isOpen &&
         <Popover isOpen={state.isOpen} onClose={state.close}>
           <ListBox
@@ -211,7 +205,7 @@ function Select(props) {
 
 The `Popover` component is used to contain the popup listbox for the Select.
 It can be shared between many other components, including [ComboBox](useComboBox.html),
-[Menu](useMenuTrigger.html), [Dialog](useOverlayTrigger.html), and others.
+[Menu](useMenu.html), [Dialog](useOverlayTrigger.html), and others.
 See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
 
 <details>
@@ -337,6 +331,25 @@ function Option({item, state}) {
 
 </details>
 
+### Button
+
+The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
+
 ## Styled examples
 
 <ExampleCard
@@ -356,6 +369,160 @@ function Option({item, state}) {
   preview={popupExamplePreview}
   title="Popup positioning"
   description="A Select with custom macOS-style popup positioning." />
+
+## Usage
+
+The following examples show how to use the Select component created in the above example.
+
+### Dynamic collections
+
+`Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the Select using the `items` prop. Each item accepts a `key` prop, which
+is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and a `key` prop is not required.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+
+  return (
+    <>
+      <Select label="Pick an engineering major" items={options}>
+        {(item) => <Item>{item.name}</Item>}
+      </Select>
+    </>
+  );
+}
+```
+
+### Controlled selection
+
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item.
+When `Select` is used with a dynamic collection as described above, the key of each item is derived from the data.
+See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+
+```tsx example
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = React.useState("Bison");
+
+  return (
+    <Select
+      label="Pick an animal (controlled)"
+      items={options}
+      selectedKey={animal}
+      onSelectionChange={selected => setAnimal(selected)}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </Select>
+  );
+}
+```
+
+### Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <Select label="Pick a Pokemon" items={list.items} selectionMode="single">
+      {(item) => <Item key={item.name}>{item.name}</Item>}
+    </Select>
+  );
+}
+```
+
+### Disabled
+
+A Select can be fully disabled using the `isDisabled` prop.
+
+```tsx example
+<Select label="Choose frequency" isDisabled>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
+</Select>
+```
+
+### Disabled options
+
+`useSelect` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
+
+Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
+`useOption` can be used to style the item appropriately.
+
+```tsx example
+<Select label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</Select>
+```
+
+### Controlled open state
+
+The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <p>Select is {open ? 'open' : 'closed'}</p>
+      <Select label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
+        <Item key="rarely">Rarely</Item>
+        <Item key="sometimes">Sometimes</Item>
+        <Item key="always">Always</Item>
+      </Select>
+    </>
+  );
+}
+```
+
 
 ## Internationalization
 
