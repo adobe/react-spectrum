@@ -26,7 +26,7 @@ import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useSelectableList} from '@react-aria/selection';
 
-interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
