@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
   display: block;
 
   padding-inline-start: var(--spectrum-accordion-icon-spacing);
-  padding-inline-end: var(--spectrum-accordion-icon-spacing);
+  padding-inline-end: var(--spectrum-accordion-icon-gap);
 
   transition: transform ease var(--spectrum-global-animation-duration-100);
 }
@@ -72,12 +72,12 @@ governing permissions and limitations under the License.
 
   min-height: var(--spectrum-accordion-item-height-actual);
 
-  font-size: var(--spectrum-global-dimension-font-size-100);
+  font-size: var(--spectrum-global-dimension-font-size-300);
   line-height: var(--spectrum-accordion-item-line-height);
 
   text-overflow: ellipsis;
   cursor: default;
-  font-weight: 500;
+  font-weight: var(--spectrum-global-font-weight-bold);
 
   /* reset styling if button element is used */
   -webkit-appearance: none;
