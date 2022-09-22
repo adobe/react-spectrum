@@ -18,7 +18,7 @@ import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {DOMRef, FocusableRef, ValidationState} from '@react-types/shared';
+import {FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {FocusScope, useFocusRing} from '@react-aria/focus';
 // @ts-ignore
@@ -52,7 +52,6 @@ import {useLabel} from '@react-aria/label';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
-import {SpectrumPickerProps} from '@react-types/select';
 
 function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);

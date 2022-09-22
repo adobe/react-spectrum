@@ -209,6 +209,8 @@ interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProp
   clearButtonProps: AriaButtonProps
 }
 
+// any type is because we don't want to call useObjectRef because this is an internal component and we know
+// we are always passing an object ref
 function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
