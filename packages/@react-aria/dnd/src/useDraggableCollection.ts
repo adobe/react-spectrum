@@ -16,7 +16,7 @@ import {RefObject} from 'react';
 
 export interface DraggableCollectionOptions {}
 
-export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) {
+export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>): void {
   // Update global DnD state if this keys within this collection are dragged
   let {draggingCollectionRef} = globalDndState;
   if  (state.draggingKeys.size > 0 && draggingCollectionRef?.current !== ref.current) {

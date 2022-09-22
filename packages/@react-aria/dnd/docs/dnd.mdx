@@ -22,6 +22,7 @@ export default Layout;
 category: Drag and Drop
 keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
 navigationTitle: Introduction
+after_version: 3.0.0
 ---
 
 # Drag and Drop
@@ -80,7 +81,7 @@ React Aria implements keyboard and screen reader friendly interactions for drag 
 
 Collection components such as lists or tables are treated as a single drop target, so that users can easily tab past them to get to the next drop target without going through every item. Instead, within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a drop position, such as on an item, or between items. The exact interactions may vary depending on the layout of the collection component. Drag and drop for collections is implemented by the [useDraggableCollection](useDraggableCollection.html) and [useDroppableCollection](useDroppableCollection.html) hooks.
 
-Draggable elements sometimes have other interactions that conflict with the keyboard and screen reader interactions needed to initiate a drag, such as the <Keyboard>Enter</Keyboard> key. In these cases, an explicit **drag affordance** may be added. Keyboard and screen reader users can focus this element, and use it to initiate drag and drop for the parent item. In addition, this has the added benefit of making drag and drop more discoverable.
+Draggable elements can sometimes have other interactions that conflict with the keyboard and screen reader interactions needed to initiate a drag, such as the <Keyboard>Enter</Keyboard> key. In these cases, an explicit **drag affordance** may be added. Keyboard and screen reader users can focus this element, and use it to initiate drag and drop for the parent item. In addition, this has the added benefit of making drag and drop more discoverable.
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
   <DragAffordance role="img" aria-labelledby="drag-affordance-caption" />

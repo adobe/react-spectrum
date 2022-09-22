@@ -22,6 +22,7 @@ import {Keyboard} from '@react-spectrum/text';
 ---
 category: Drag and Drop
 keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
+after_version: 3.0.0
 ---
 
 # useDraggableCollection
@@ -30,11 +31,12 @@ keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useDraggableItem']} />
+  componentNames={['useDraggableCollection', 'useDraggableItem']} />
 
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useDroppableCollectionState} links={statelyDocs.links} />
+<FunctionAPI function={statelyDocs.exports.useDraggableCollectionState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDraggableCollection} links={docs.links} />
 <FunctionAPI function={docs.exports.useDraggableItem} links={docs.links} />
 
 ## Introduction
@@ -47,7 +49,7 @@ See the [drag and drop introduction](dnd.html) to learn more.
 
 ### Implementation
 
-The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} /> hook manages state for drag interactions within any [collection component](../react-stately/collections.html). The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](../react-stately/selection.html) system to enable dragging multiple selected items at once.
+The <TypeLink links={docs.links} type={docs.exports.useDraggableCollection} /> hook implements drag interactions within any [collection component](../react-stately/collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDraggableCollectionState} />. The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](../react-stately/selection.html) system to enable dragging multiple selected items at once.
 
 ## Example
 
@@ -60,7 +62,7 @@ import {Item} from '@react-stately/collections';
 import {useFocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem} from '@react-aria/dnd';
+import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
 
 function ListBox(props) {
   // Setup listbox as normal. See the useListBox docs for more details.
@@ -96,6 +98,8 @@ function ListBox(props) {
       });
     })
   });
+
+  useDraggableCollection(props, dragState, ref);
   ///- end highlight -///
 
   return (
@@ -332,6 +336,8 @@ function ListBox(props) {
     },
   });
 
+  useDraggableCollection(props, dragState, ref);
+
   return (
     <ul {...listBoxProps} ref={ref}>
       {[...state.collection].map((item) => (
@@ -490,22 +496,24 @@ function ReorderableListBox(props) {
       });
     }),
   });
+
+  useDraggableCollection(props, dragState, ref);
   ///- end collapse -///
   // ...
 
   ///- begin highlight -///
    // Setup react-stately and react-aria hooks for dropping.
   let dropState = useDroppableCollectionState({
+    ...props,
     collection: state.collection,
-    selectionManager: state.selectionManager,
-    getDropOperation: props.getDropOperation,
+    selectionManager: state.selectionManager
   });
 
   let {collectionProps} = useDroppableCollection({
+    ...props,
     // Provide drop targets for keyboard and pointer-based drag and drop.
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDrop: props.onDrop
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
   }, dropState, ref);
   ///- end highlight -///
 
@@ -590,7 +598,7 @@ function DropIndicator(props) {
 ///- end highlight -///
 ```
 
-Now, we can render an example ListBox, which allows the user to reorder items.
+Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](../react-stately/useListData.html) is used to manage the list items in this example, but it is not a requirement.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -606,20 +614,11 @@ function Example() {
     ]
   });
 
-  let draggedKeys = React.useRef(null);
-  let onDragStart = e => {
-    draggedKeys.current = [...e.keys];
-  };
-
-  let onDragEnd = e => {
-    draggedKeys.current = null;
-  };
-
-  let onDrop = async e => {
+  let onReorder = e => {
     if (e.target.dropPosition === 'before') {
-      list.moveBefore(e.target.key, draggedKeys.current);
+      list.moveBefore(e.target.key, e.keys);
     } else if (e.target.dropPosition === 'after') {
-      list.moveAfter(e.target.key, draggedKeys.current);
+      list.moveAfter(e.target.key, e.keys);
     }
   };
 
@@ -627,12 +626,12 @@ function Example() {
     <ReorderableListBox
       aria-label="Favorite animals"
       selectionMode="multiple"
-
+      selectionBehavior="replace"
       items={list.items}
-      getDropOperation={target => draggedKeys.current && target.type === 'item' && target.dropPosition !== 'on' ? 'move' : 'cancel'}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDrop={onDrop}>
+      ///- begin highlight -///
+      onReorder={onReorder}
+      ///- end highlight -///
+    >
       {item => <Item>{item.name}</Item>}
     </ReorderableListBox>
   );
@@ -658,3 +657,11 @@ function Example() {
 ```
 
 </details>
+
+## Props
+
+The full list of props supported by draggable collections is available below.
+
+<TypeContext.Provider value={sharedDocs.links}>
+  <InterfaceType properties={sharedDocs.exports.DraggableCollectionProps.properties} />
+</TypeContext.Provider>

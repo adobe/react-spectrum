@@ -38,7 +38,7 @@ export interface DroppableCollectionState {
 
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let {
-    acceptedDragTypes,
+    acceptedDragTypes = 'all',
     onInsert,
     onRootDrop,
     onItemDrop,
@@ -116,8 +116,8 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         });
       }
 
-      setTarget(newTarget);
       targetRef.current = newTarget;
+      setTarget(newTarget);
     },
     isDropTarget(dropTarget) {
       let target = targetRef.current;

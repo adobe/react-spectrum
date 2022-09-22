@@ -22,6 +22,7 @@ import {Keyboard} from '@react-spectrum/text';
 ---
 category: Drag and Drop
 keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
+after_version: 3.0.0
 ---
 
 # useDroppableCollection
@@ -34,6 +35,7 @@ keywords: [drag, drop, dnd, drag and drop, aria, accessibility]
 
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useDroppableCollectionState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useDroppableCollection} links={docs.links} />
 <FunctionAPI function={docs.exports.useDroppableItem} links={docs.links} />
 <FunctionAPI function={docs.exports.useDropIndicator} links={docs.links} />
@@ -50,7 +52,7 @@ See the [drag and drop introduction](dnd.html) to learn more.
 
 ### Implementation
 
-The <TypeLink links={docs.links} type={docs.exports.useDroppableCollection} /> hook implements drop interactions within any [collection component](../react-stately/collections.html). The props it returns should be combined with those from the collection component you're using, such as `useListBox`. The <TypeLink links={docs.links} type={docs.exports.useDroppableItem} /> hook should be added to each individual item within the collection, combining props from the relevant hook (e.g. `useOption`).
+The <TypeLink links={docs.links} type={docs.exports.useDroppableCollection} /> hook implements drop interactions within any [collection component](../react-stately/collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDroppableCollectionState} />. The props it returns should be combined with those from the collection component you're using, such as `useListBox`. The <TypeLink links={docs.links} type={docs.exports.useDroppableItem} /> hook should be added to each individual item within the collection, combining props from the relevant hook (e.g. `useOption`).
 
 To support dropping between items, the <TypeLink links={docs.links} type={docs.exports.useDropIndicator} /> hook can be used to add additional elements between each item, for example, rendering a line when a user drags between two items. These elements must be implemented according to the relevant ARIA pattern. For example, within a listbox, drop indicators must be implemented using `role="option"`, and within a grid, they must use `role="row"` and `role="gridcell"` to ensure the accessibility tree is valid.
 
@@ -79,17 +81,17 @@ function ListBox(props) {
   ///- begin highlight -///
   // Setup react-stately and react-aria hooks for drag and drop.
   let dropState = useDroppableCollectionState({
+    ...props,
     // Collection and selection manager come from list state.
     collection: state.collection,
-    selectionManager: state.selectionManager,
-    getDropOperation: props.getDropOperation,
+    selectionManager: state.selectionManager
   });
 
   let {collectionProps} = useDroppableCollection({
+    ...props,
     // Provide drop targets for keyboard and pointer-based drag and drop.
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDrop: props.onDrop
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
   }, dropState, ref);
   ///- end highlight -///
 
@@ -141,10 +143,10 @@ function Option({ item, state, dropState }) {
 }
 
 <Draggable>Octopus</Draggable>
-<ListBox aria-label="Categories" selectionMode="single" getDropOperation={target => target.dropPosition === 'on' ? 'copy' : 'cancel'}>
-  <Item>Animals</Item>
-  <Item>People</Item>
-  <Item>Plants</Item>
+<ListBox aria-label="Categories" selectionMode="single" onItemDrop={e => alert(`Dropped on ${e.target.key}`)}>
+  <Item key="animals">Animals</Item>
+  <Item key="people">People</Item>
+  <Item key="plants">Plants</Item>
 </ListBox>
 ```
 
@@ -202,6 +204,7 @@ import {useButton} from '@react-aria/button';
 
 function Draggable({children}) {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
+    getAllowedDropOperations: () => ['copy'],
     getItems() {
       return [{
         'text/plain': children,
@@ -284,15 +287,15 @@ function ListBox(props) {
   let { listBoxProps } = useListBox(props, state, ref);
 
   let dropState = useDroppableCollectionState({
+    ...props,
     collection: state.collection,
-    selectionManager: state.selectionManager,
-    getDropOperation: props.getDropOperation,
+    selectionManager: state.selectionManager
   });
 
   let {collectionProps} = useDroppableCollection({
+    ...props,
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDrop: props.onDrop
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
   }, dropState, ref);
 
   return (
@@ -349,7 +352,7 @@ function Option({ item, state, dropState }) {
 }
 ```
 
-Now, we can render an example ListBox, which inserts a new item on drop.
+Now, we can render an example ListBox, which inserts a new item on drop. This uses the [useListData](../react-stately/useListData.html) hook to manage the list of items, which is updated in the `onInsert` event. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -363,7 +366,7 @@ function Example() {
     ]
   });
 
-  let onDrop = async e => {
+  let onInsert = async e => {
     let name = await e.items[0].getText('text/plain');
     let item = {id: list.items.length + 1, name};
     if (e.target.dropPosition === 'before') {
@@ -376,7 +379,15 @@ function Example() {
   return (
     <>
       <Draggable>Octopus</Draggable>
-      <ListBox aria-label="Favorite animals" selectionMode="single" items={list.items} getDropOperation={target => target.type === 'item' && target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+      <ListBox
+        aria-label="Favorite animals"
+        selectionMode="single"
+        items={list.items}
+        acceptedDragTypes={['text/plain']}
+        ///- begin highlight -///
+        onInsert={onInsert}
+        ///- end highlight -///
+      >
         {item => <Item>{item.name}</Item>}
       </ListBox>
     </>
@@ -408,6 +419,8 @@ function Example() {
 
 To add support for dropping on the collection as a whole, an additional `DropIndicator` can be rendered at the start of the list, representing the `root` target. The `isDropTarget` method of the state object can be used to apply a class to the list when the root target is active.
 
+The `onRootDrop` event is triggered when the user drops on the collection. This example also accepts drops on the "Documents" item, by implementing `onItemDrop` as well as `shouldAcceptItemDrop` to limit which items allow drops.
+
 ```tsx example export=true
 function ListBox(props) {
   ///- begin collapse -///
@@ -416,15 +429,15 @@ function ListBox(props) {
   let { listBoxProps } = useListBox(props, state, ref);
 
   let dropState = useDroppableCollectionState({
+    ...props,
     collection: state.collection,
-    selectionManager: state.selectionManager,
-    getDropOperation: props.getDropOperation,
+    selectionManager: state.selectionManager
   });
 
   let {collectionProps} = useDroppableCollection({
+    ...props,
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDrop: props.onDrop
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
   }, dropState, ref);
   ///- end collapse -///
   // ...
@@ -487,7 +500,15 @@ function Option({ item, state, dropState }) {
 ///- end collapse -///
 
 <Draggable>budget.xls</Draggable>
-<ListBox aria-label="Files" selectionMode="single" getDropOperation={target => target.type === 'root' || (target.key === 'documents' && target.dropPosition === 'on') ? 'copy' : 'cancel'}>
+<ListBox
+  aria-label="Files"
+  selectionMode="single"
+  ///- begin highlight -///
+  onRootDrop={() => alert('Dropped on root')}
+  onItemDrop={e => alert(`Dropped on ${e.target.key}`)}
+  shouldAcceptItemDrop={target => target.key === 'documents'}
+  ///- end highlight -///
+>
   <Item key="documents">Documents</Item>
   <Item>proposal.doc</Item>
   <Item>presentation.ppt</Item>
@@ -508,11 +529,11 @@ function Option({ item, state, dropState }) {
 
 ## Reordering
 
-Drag and drop can be combined in the same collection component to allow reordering items. This example builds on the [dropping between items](#dropping-between-items) example above to add support for dragging items as well. This is done using the `useDraggableCollectionState` and `useDraggableItem` hooks. See the [docs](useDraggableCollection.html) for more details on these hooks.
+Drag and drop can be combined in the same collection component to allow reordering items. This example builds on the [dropping between items](#dropping-between-items) example above to add support for dragging items as well. This is done using the `useDraggableCollection` and `useDraggableItem` hooks. See the [docs](useDraggableCollection.html) for more details on these hooks.
 
 ```tsx example export=true render=false
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem} from '@react-aria/dnd';
+import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
 
 function ReorderableListBox(props) {
   // See useListBox docs for more details.
@@ -526,15 +547,15 @@ function ReorderableListBox(props) {
   }, state, ref);
 
   let dropState = useDroppableCollectionState({
+    ...props,
     collection: state.collection,
-    selectionManager: state.selectionManager,
-    getDropOperation: props.getDropOperation,
+    selectionManager: state.selectionManager
   });
 
   let {collectionProps} = useDroppableCollection({
+    ...props,
     keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDrop: props.onDrop
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
   }, dropState, ref);
 
   ///- begin highlight -///
@@ -556,6 +577,8 @@ function ReorderableListBox(props) {
       });
     }),
   });
+
+  useDraggableCollection(props, dragState, ref);
   ///- end highlight -///
 
   return (
@@ -617,7 +640,7 @@ function ReorderableOption({ item, state, dragState, dropState }) {
 }
 ```
 
-Now, we can render an example ListBox, which allows the user to reorder items.
+Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](../react-stately/useListData.html) is used to manage the list items in this example, but it is not a requirement.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -633,20 +656,11 @@ function Example() {
     ]
   });
 
-  let draggedKeys = React.useRef(null);
-  let onDragStart = e => {
-    draggedKeys.current = [...e.keys];
-  };
-
-  let onDragEnd = e => {
-    draggedKeys.current = null;
-  };
-
-  let onDrop = async e => {
+  let onReorder = e => {
     if (e.target.dropPosition === 'before') {
-      list.moveBefore(e.target.key, draggedKeys.current);
+      list.moveBefore(e.target.key, e.keys);
     } else if (e.target.dropPosition === 'after') {
-      list.moveAfter(e.target.key, draggedKeys.current);
+      list.moveAfter(e.target.key, e.keys);
     }
   };
 
@@ -656,10 +670,10 @@ function Example() {
       selectionMode="multiple"
       selectionBehavior="replace"
       items={list.items}
-      getDropOperation={target => draggedKeys.current && target.type === 'item' && target.dropPosition !== 'on' ? 'move' : 'cancel'}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDrop={onDrop}>
+      ///- begin highlight -///
+      onReorder={onReorder}
+      ///- end highlight -///
+    >
       {item => <Item>{item.name}</Item>}
     </ReorderableListBox>
   );
@@ -678,7 +692,7 @@ function Example() {
 
 A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
 
-The example below finds the first available item that includes a custom app-specific type. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead.
+The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
 ```tsx example
 function Example() {
@@ -690,14 +704,9 @@ function Example() {
     ]
   });
 
-  let onDrop = async e => {
+  let onInsert = async e => {
     /*- begin highlight -*/
-    let dragItem = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type'));
-    if (!dragItem) {
-      return;
-    }
-
-    let value = JSON.parse(await dragItem.getText('my-app-custom-type'));
+    let value = JSON.parse(await e.items[0].getText('my-app-custom-type'));
     let item = {id: list.items.length + 1, name: value.message};
     /*- end highlight -*/
 
@@ -711,7 +720,14 @@ function Example() {
   return (
     <>
       <Draggable>Octopus</Draggable>
-      <ListBox aria-label="Favorite animals" selectionMode="single" items={list.items} getDropOperation={target => target.type === 'item' && target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+      <ListBox
+        aria-label="Favorite animals"
+        selectionMode="single"
+        items={list.items}
+        ///- begin highlight -///
+        acceptedDragTypes={['my-app-custom-type']}
+        ///- end highlight -///
+        onInsert={onInsert}>
         {item => <Item>{item.name}</Item>}
       </ListBox>
     </>
@@ -728,30 +744,39 @@ This example accepts JPEG and PNG image files, and renders them by creating a lo
 ```tsx example
 function Example() {
   let list = useListData({});
-  let onDrop = async e => {
+  let getItems = e => {
     /*- begin highlight -*/
-    let items = await Promise.all(
-      e.items
-        .filter(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'))
-        .map(async item => ({
-          id: Math.random(),
-          url: URL.createObjectURL(await item.getFile()),
-          name: item.name
-        }))
+    return Promise.all(
+      e.items.map(async item => ({
+        id: Math.random(),
+        url: URL.createObjectURL(await item.getFile()),
+        name: item.name
+      }))
     );
     /*- end highlight -*/
+  };
 
-    if (e.target.type === 'root') {
-      list.prepend(...items);
-    } else if (e.target.dropPosition === 'before') {
-      list.insertBefore(e.target.key, ...items);
+  let onRootDrop = async e => {
+    list.prepend(...await getItems(e));
+  };
+
+  let onInsert = async e => {
+    if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, ...await getItems(e));
     } else if (e.target.dropPosition === 'after') {
-      list.insertAfter(e.target.key, ...items);
+      list.insertAfter(e.target.key, ...await getItems(e));
     }
   };
 
   return (
-    <ListBox aria-label="Images" items={list.items} getDropOperation={target => target.dropPosition !== 'on' ? 'copy' : 'cancel'} onDrop={onDrop}>
+    <ListBox
+      aria-label="Images"
+      items={list.items}
+      ///- begin highlight -///
+      acceptedDragTypes={['image/jpeg', 'image/png']}
+      ///- end highlight -///
+      onRootDrop={onRootDrop}
+      onInsert={onInsert}>
       {item => (
         <Item>
           <div className="image-item">
@@ -803,26 +828,28 @@ import Folder from '@spectrum-icons/workflow/Folder';
 
 function Example() {
   let [files, setFiles] = React.useState([]);
-  let onDrop = async e => {
-    // Find the first dropped item that is a directory.
-    let dir = e.items.find(item => item.kind === 'directory');
-    if (dir) {
-      /*- begin highlight -*/
-      // Read entries in directory and update state with relevant info.
-      let files = [];
-      for await (let entry of dir.getEntries()) {
-        files.push({
-          name: entry.name,
-          kind: entry.kind
-        });
-      }
-      setFiles(files);
-      /*- end highlight -*/
+  let onRootDrop = async e => {
+    /*- begin highlight -*/
+    // Read entries in directory and update state with relevant info.
+    let files = [];
+    for await (let entry of e.items[0].getEntries()) {
+      files.push({
+        name: entry.name,
+        kind: entry.kind
+      });
     }
+    setFiles(files);
+    /*- end highlight -*/
   };
 
   return (
-    <ListBox aria-label="Directory contents" items={files} getDropOperation={target => target.type === 'root' ? 'copy' : 'cancel'} onDrop={onDrop}>
+    <ListBox
+      aria-label="Directory contents"
+      items={files}
+      ///- begin highlight -///
+      acceptedDragTypes={['directory']}
+      ///- end highlight -///
+      onRootDrop={onRootDrop}>
       {item => (
         <Item key={item.name}>
           <div className="dir-item">
@@ -875,9 +902,7 @@ The drag source can specify which drop operations are allowed for the dragged da
 
 ### getDropOperation
 
-The `getDropOperation` function passed to `useDroppableCollection` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement `getDropOperation` and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true.
-
-When the data is supported, either return one of the drop operations in `allowedOperation` or a specific drop operation if only that drop operation is supported. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+The `getDropOperation` function passed to `useDroppableCollection` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. This function receives the drop target, set of types contained in the drag, and a list of allowed drop operations as specified by the drag source. It should return one of the drop operations in `allowedOperations`, or a specific drop operation if only that drop operation is supported. It may also return `'cancel'` to reject the drop. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
 
 In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
 
@@ -928,9 +953,9 @@ function Example() {
 }
 ```
 
-### onDrop
+### Drop events
 
-The `onDrop` event also includes the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+Drop events such as `onInsert`, `onItemDrop`, etc. also include the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
 
 ```tsx
 let onDrop = async (e) => {
@@ -955,3 +980,104 @@ let onDrop = async (e) => {
   /*- end highlight -*/
 };
 ```
+
+## Low level API
+
+The above examples have used high level events such as `onInsert`, `onItemDrop`, and `onReorder`, along with props such as `acceptedDragTypes`. Based on these props, `useDroppableCollection` automatically determines whether drag data is accepted and where (e.g. on items, between items, etc.). It also automatically filters the dropped items based on their types. For more complex scenarios, the lower level `getDropOperation` and `onDrop` functions can be used instead.
+
+To programmatically determine whether a drop is accepted based on the dragged types, target key, and drop position, implement the `getDropOperation` function. `acceptedDragTypes` and `shouldAcceptItemDrop` may also be used in combination with `getDropOperation` as a pre-filter. See the section on [drop operations](#drop-operations) above for more details.
+
+To handle all accepted drops in a single function, implement the `onDrop` event rather than `onInsert`, `onItemDrop`, etc. When defined, this overrides any other drop handlers. The provided <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DroppableCollectionDropEvent.id]} /> includes details on the drop target, dropped items, drop operation, etc.
+
+This example allows directories to be dropped between items, and only files of certain types to be dropped on the pre-existing directories.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Images', contains: 0, accept: ['image/png', 'image/jpeg']},
+      {id: 2, name: 'Videos', contains: 0, accept: ['video/mp4']},
+      {id: 3, name: 'Documents', contains: 0, accept: ['text/plain', 'application/pdf']}
+    ]
+  });
+
+  let getDropOperation = (target, types, allowedOperations) => {
+    // When dropping on an item, check whether the item accepts the drag types and cancel if not.
+    if (target.dropPosition === 'on') {
+      let item = list.getItem(target.key);
+      return item.accept && item.accept.some(type => types.has(type)) ? allowedOperations[0] : 'cancel';
+    }
+
+    // If dropping between items, support a copy operation.
+    return types.has('directory') ? 'copy' : 'cancel';
+  };
+
+  let onDrop = async e => {
+    let items = await Promise.all(
+      e.items
+        .filter(item => {
+          // Check if dropped item is accepted.
+          if (e.target.dropPosition === 'on') {
+            let folder = list.getItem(e.target.key);
+            return folder.accept.includes(item.type)
+          }
+
+          return item.kind === 'directory';
+        })
+        .map(async item => {
+          // Collect child count from dropped directories.
+          let contains = 0;
+          if (item.kind === 'directory') {
+            for await (let _ of item.getEntries()) {
+              contains++;
+            }
+          }
+
+          return {
+            id: Math.random(),
+            name: item.name,
+            contains
+          };
+        })
+    );
+
+    // Update item count if dropping on an item, otherwise insert the new items in the list.
+    if (e.target.dropPosition === 'on') {
+      let item = list.getItem(e.target.key);
+      list.update(e.target.key, {
+        ...item,
+        contains: item.contains + items.length
+      });
+    } else if (e.target.dropPosition === 'before') {
+      list.insertBefore(e.target.key, ...items);
+    } else if (e.target.dropPosition === 'after') {
+      list.insertAfter(e.target.key, ...items);
+    }
+  };
+
+  return (
+    <ListBox
+      aria-label="Folders"
+      items={list.items}
+      getDropOperation={getDropOperation}
+      onDrop={onDrop}>
+      {item => (
+        <Item>
+          <div className="dir-item">
+            <Folder />
+            <span>{item.name} ({item.contains} items)</span>
+          </div>
+        </Item>
+      )}
+    </ListBox>
+  );
+}
+```
+
+## Props
+
+The full list of props supported by droppable collections is available below.
+
+<TypeContext.Provider value={sharedDocs.links}>
+  <InterfaceType properties={sharedDocs.exports.DroppableCollectionProps.properties} />
+</TypeContext.Provider>

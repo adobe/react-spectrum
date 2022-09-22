@@ -82,7 +82,7 @@ export interface DropEvent extends DragDropEvent {
 }
 
 export type DropPosition = 'on' | 'before' | 'after';
-interface RootDropTarget {
+export interface RootDropTarget {
   type: 'root'
 }
 
@@ -94,23 +94,23 @@ export interface ItemDropTarget {
 
 export type DropTarget = RootDropTarget | ItemDropTarget;
 
-interface DroppableCollectionEnterEvent extends DropEnterEvent {
+export interface DroppableCollectionEnterEvent extends DropEnterEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionMoveEvent extends DropMoveEvent {
+export interface DroppableCollectionMoveEvent extends DropMoveEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionActivateEvent extends DropActivateEvent {
+export interface DroppableCollectionActivateEvent extends DropActivateEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionExitEvent extends DropExitEvent {
+export interface DroppableCollectionExitEvent extends DropExitEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionDropEvent extends DropEvent {
+export interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
@@ -162,44 +162,46 @@ export interface DropTargetDelegate {
 
 export interface DroppableCollectionProps {
   /**
-   * A function returning the drop operation to be performed when items matching the given types are dropped
-   * on the drop target.
-   */
-  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation,
-  /** Handler that is called when a valid drag enters the drop target. */
-  onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
-  /** Handler that is called when a valid drag is moved within the drop target. */
-  onDropMove?: (e: DroppableCollectionMoveEvent) => void,
-  /** Handler that is called after a valid drag is held over the drop target for a period of time. */
-  onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
-  /** Handler that is called when a valid drag exits the drop target. */
-  onDropExit?: (e: DroppableCollectionExitEvent) => void,
-  /** Handler that is called when a valid drag is dropped on the drop target. */
-  onDrop?: (e: DroppableCollectionDropEvent) => void,
-  /**
-   * Handler called when external items are dropped "between" the droppable collection's items.
-   */
-  onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
-  /**
-   * Handler called when external items are dropped on the droppable collection's root.
-   */
-  onRootDrop?: (e: DroppableCollectionRootDropEvent) => void,
-  /**
-   * Handler called when items are dropped "on" a droppable collection's item.
-   */
-  onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
-  /**
-   * Handler called when items are reordered via drag in the source collection.
-   */
-  onReorder?: (e: DroppableCollectionReorderEvent) => void,
-  /**
-   * The drag types that the droppable collection accepts. If your collection accepts directories, include 'directory' in your array of allowed types.
+   * The drag types that the droppable collection accepts. If the collection accepts directories, include 'directory' in your array of allowed types.
+   * @default 'all'
    */
   acceptedDragTypes?: 'all' | Array<string>,
   /**
+   * Handler that is called when external items are dropped "between" items.
+   */
+  onInsert?: (e: DroppableCollectionInsertDropEvent) => void,
+  /**
+   * Handler that is called when external items are dropped on the droppable collection's root.
+   */
+  onRootDrop?: (e: DroppableCollectionRootDropEvent) => void,
+  /**
+   * Handler that is called when items are dropped "on" an item.
+   */
+  onItemDrop?: (e: DroppableCollectionOnItemDropEvent) => void,
+  /**
+   * Handler that is called when items are reordered via drag in the source collection.
+   */
+  onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /** Handler that is called when a valid drag enters a drop target. */
+  onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
+  /** Handler that is called after a valid drag is held over a drop target for a period of time. */
+  onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
+  /** Handler that is called when a valid drag exits a drop target. */
+  onDropExit?: (e: DroppableCollectionExitEvent) => void,
+  /**
+   * Handler that is called when a valid drag is dropped on a drop target. When defined, this overrides other
+   * drop handlers such as `onInsert`, and `onItemDrop`.
+   */
+  onDrop?: (e: DroppableCollectionDropEvent) => void,
+  /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
-  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean,
+  /**
+   * A function returning the drop operation to be performed when items matching the given types are dropped
+   * on the drop target.
+   */
+  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {

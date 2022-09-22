@@ -20,6 +20,7 @@ import {Keyboard} from '@react-spectrum/text';
 ---
 category: Drag and Drop
 keywords: [clipboard, copy, cut, paste, aria, accessibility]
+after_version: 3.0.0
 ---
 
 # useClipboard
@@ -36,7 +37,7 @@ keywords: [clipboard, copy, cut, paste, aria, accessibility]
 
 ## Introduction
 
-Copy and paste is a common way to transfer data between locations, either within or between apps. Browsers support copy and paste of selected text content by default, but rich objects with custom data can also be copied and pasted using the [clipboard events](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent) API. For example, an app could support copying and pasting a selected card representing an rich object to a new location, or allow a user to paste files from their device to upload them. This can provide a keyboard accessible alternative to drag and drop.
+Copy and paste is a common way to transfer data between locations, either within or between apps. Browsers support copy and paste of selected text content by default, but rich objects with custom data can also be copied and pasted using the [clipboard events](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent) API. For example, an app could support copying and pasting a selected card representing a rich object to a new location, or allow a user to paste files from their device to upload them. This can provide a keyboard accessible alternative to drag and drop.
 
 The <TypeLink links={docs.links} type={docs.exports.useClipboard} /> hook provides a simple way to implement copy and paste for a focusable element. When focused, users can press keyboard shortcuts like <Keyboard>⌘C</Keyboard> and <Keyboard>⌘V</Keyboard>, or even use the browser's "Copy" and "Paste" menu commands, to trigger clipboard events. Multiple items can be copied and pasted at once, each represented in one or more different data formats. Because it uses native browser APIs under the hood, copy and paste uses the operating system clipboard, which means it works between applications (e.g. Finder, Windows Explorer, a native email app, etc.) in addition to within the app.
 
@@ -64,7 +65,7 @@ function Copyable() {
   );
 }
 
-function Pastable() {
+function Pasteable() {
   let [pasted, setPasted] = React.useState(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
@@ -88,7 +89,7 @@ function Pastable() {
 }
 
 <Copyable />
-<Pastable />
+<Pasteable />
 ```
 
 <details>
@@ -171,7 +172,7 @@ function Copyable() {
   );
 }
 ///- begin collapse -///
-function Pastable() {
+function Pasteable() {
   let [pasted, setPasted] = React.useState(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
@@ -212,7 +213,7 @@ function Pastable() {
 }
 
 <Copyable />
-<Pastable />
+<Pasteable />
 ///- end collapse -///
 ```
 
@@ -264,7 +265,7 @@ function Copyable() {
   );
 }
 ///- end collapse -///
-function Pastable() {
+function Pasteable() {
   let [pasted, setPasted] = React.useState(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
@@ -305,7 +306,7 @@ function Pastable() {
 }
 ///- begin collapse -///
 <Copyable />
-<Pastable />
+<Pasteable />
 ///- end collapse -///
 ```
 
