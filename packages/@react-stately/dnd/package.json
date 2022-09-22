@@ -19,7 +19,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-stately/selection": "^3.10.3",
-    "@react-stately/utils": "^3.5.1",
     "@react-types/shared": "^3.14.1"
   },
   "peerDependencies": {

@@ -121,7 +121,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -218,7 +218,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -302,7 +302,7 @@ describe('useDraggableCollection', () => {
         y: 2,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -391,7 +391,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -490,7 +490,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -577,7 +577,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -671,7 +671,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
     });
 
@@ -767,7 +767,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
     });
   });
@@ -849,7 +849,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -936,7 +936,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -1013,7 +1013,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -1100,7 +1100,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       delete window.ontouchstart;
@@ -1200,7 +1200,7 @@ describe('useDraggableCollection', () => {
         y: 25,
         dropOperation: 'move',
         keys: new Set(['foo', 'bar']),
-        isInternalDrop: false
+        isInternal: false
       });
 
       delete window.ontouchstart;
