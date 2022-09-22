@@ -18,7 +18,7 @@ import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {DismissButton} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, ValidationState} from '@react-types/shared';
+import {DOMRef, FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {FocusScope, useFocusRing} from '@react-aria/focus';
 // @ts-ignore
@@ -27,7 +27,15 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
@@ -44,8 +52,9 @@ import {useLabel} from '@react-aria/label';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
+import {SpectrumPickerProps} from '@react-types/select';
 
-export function MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T> & {domRef: FocusableRef<HTMLElement>}) {
+function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -53,8 +62,7 @@ export function MobileSearchAutocomplete<T extends object>(props: SpectrumSearch
     isDisabled,
     validationState,
     isReadOnly,
-    onSubmit = () => {},
-    domRef: ref
+    onSubmit = () => {}
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -101,7 +109,7 @@ export function MobileSearchAutocomplete<T extends object>(props: SpectrumSearch
         includeNecessityIndicatorInAccessibilityName>
         <SearchAutocompleteButton
           {...mergeProps(triggerProps, fieldProps, {autoFocus: props.autoFocus, icon: props.icon})}
-          buttonRef={buttonRef}
+          ref={buttonRef}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
@@ -124,6 +132,9 @@ export function MobileSearchAutocomplete<T extends object>(props: SpectrumSearch
   );
 }
 
+export let MobileSearchAutocomplete = React.forwardRef(_MobileSearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+
+
 interface SearchAutocompleteButtonProps extends AriaButtonProps {
   icon?: ReactElement | null,
   isQuiet?: boolean,
@@ -135,15 +146,15 @@ interface SearchAutocompleteButtonProps extends AriaButtonProps {
   clearInput?: () => void,
   children?: ReactNode,
   style?: React.CSSProperties,
-  className?: string,
-  buttonRef: RefObject<HTMLDivElement>
+  className?: string
 }
 
-function SearchAutocompleteButton(props: SearchAutocompleteButtonProps) {
+// any type is because we don't want to call useObjectRef because this is an internal component and we know
+// we are always passing an object ref
+const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteButton(props: SearchAutocompleteButtonProps, ref: any) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
-  let ref = props.buttonRef;
 
   let {
     icon = searchIcon,
@@ -192,7 +203,6 @@ function SearchAutocompleteButton(props: SearchAutocompleteButtonProps) {
       }
       isDisabled={isDisabled} />
   );
-
 
   let validation = React.cloneElement(validationIcon, {
     UNSAFE_className: classNames(
@@ -306,7 +316,7 @@ function SearchAutocompleteButton(props: SearchAutocompleteButtonProps) {
       </div>
     </div>
   );
-}
+});
 
 interface SearchAutocompleteTrayProps<T> extends SpectrumSearchAutocompleteProps<T> {
   state: ComboBoxState<T>,

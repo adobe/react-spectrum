@@ -24,7 +24,16 @@ import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  forwardRef,
+  InputHTMLAttributes,
+  ReactElement,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -47,13 +56,13 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   let isMobile = useIsMobileDevice();
   if (isMobile) {
     // menuTrigger=focus/manual don't apply to mobile searchwithin
-    return <MobileSearchAutocomplete {...props} menuTrigger="input" domRef={ref} />;
+    return <MobileSearchAutocomplete {...props} menuTrigger="input" ref={ref} />;
   } else {
-    return <SearchAutocompleteBase {...props} domRef={ref} />;
+    return <SearchAutocompleteBase {...props} ref={ref} />;
   }
 }
 
-function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T> & {domRef: FocusableRef<HTMLElement>}) {
+function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -63,8 +72,7 @@ function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompl
     isQuiet,
     loadingState,
     onLoadMore,
-    onSubmit = () => {},
-    domRef: ref
+    onSubmit = () => {}
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -189,6 +197,9 @@ function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompl
   );
 }
 
+let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+
+
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
@@ -198,7 +209,7 @@ interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProp
   clearButtonProps: AriaButtonProps
 }
 
-function SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>) {
+function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -291,6 +302,7 @@ function SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>) {
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
+        ref={ref as RefObject<HTMLDivElement>}
         style={style}
         className={
           classNames(
@@ -333,6 +345,8 @@ function SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>) {
     </FocusRing>
   );
 }
+
+let SearchAutocompleteInput = React.forwardRef(_SearchAutocompleteInput) as <T>(props: SearchAutocompleteInputProps<T> & {ref?: any}) => ReactElement;
 
 
 /**
