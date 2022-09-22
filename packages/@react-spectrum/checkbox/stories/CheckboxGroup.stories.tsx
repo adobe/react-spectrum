@@ -12,48 +12,71 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox, CheckboxGroup} from '../';
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Flex} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('CheckboxGroup', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {
+      label: 'Pets',
+      isEmphasized: false,
+      isDisabled: false,
+      isReadOnly: false,
+      isRequired: false,
+      necessityIndicator: 'icon',
+      labelPosition: 'top',
+      labelAlign: 'start',
+      validationState: null,
+      orientation: 'vertical'
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      },
+      necessityIndicator: {
+        control: {
+          type: 'radio',
+          options: ['icon', 'label']
+        }
+      },
+      labelAlign: {
+        control: {
+          type: 'radio',
+          options: ['start', 'end']
+        }
+      },
+      validationState: {
+        control: {
+          type: 'radio',
+          options: [null, 'valid', 'invalid']
+        }
+      },
+      orientation: {
+        control: {
+          type: 'radio',
+          options: ['horizontal', 'vertical']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render()
+    args => render(args)
   )
   .add(
     'defaultValue: dragons',
-    () => render({defaultValue: ['dragons']})
+    args => render({...args, defaultValue: ['dragons']})
   )
   .add(
     'controlled: dragons',
-    () => render({value: ['dragons']})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'horizontal',
-    () => render({orientation: 'horizontal'})
-  )
-  .add(
-    'horizontal, labelPosition: side',
-    () => render({orientation: 'horizontal', labelPosition: 'side'})
-  )
-  .add(
-    'horizontal, labelAlign: end',
-    () => render({orientation: 'horizontal', labelAlign: 'end'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
+    args => render({...args, value: ['dragons']})
   )
   .add(
     'isDisabled on one checkbox',
@@ -61,75 +84,59 @@ storiesOf('CheckboxGroup', module)
   )
   .add(
     'isDisabled two checkboxes and one checked',
-    () => render({defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
+    args => render({...args, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
   )
   .add(
     'isEmphasized, isDisabled two checkboxes and one checked',
-    () => render({isEmphasized: true, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
-  )
-  .add(
-    'isDisabled on one checkbox horizontal',
-    () => render({orientation: 'horizontal'}, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'necessityIndicator: label, labelPosition: side',
-    () => render({necessityIndicator: 'label', labelPosition: 'side'})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
+    args => render({...args, isEmphasized: true, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}])
   )
   .add(
     'validationState: "invalid" on one checkbox',
-    () => render({}, [{}, {validationState: 'invalid'}, {}])
+    args => render(args, [{}, {validationState: 'invalid'}, {}])
   )
   .add(
     'with description',
-    () => render({description: 'Please select some pets.'})
+    args => render({...args, description: 'Please select some pets.'})
   )
   .add(
     'with error message',
-    () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid'})
+    args => render({...args, errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid'})
   )
   .add(
     'with error message and error icon',
-    () => render({errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
+    args => render({...args, errorMessage: 'Please select a valid combination of pets.', validationState: 'invalid', showErrorIcon: true})
   )
   .add(
     'with description, error message and validation, fixed width',
     () => renderWithDescriptionErrorMessageAndValidation()
   )
   .add(
+    'contextual help',
+    args => render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        </ContextualHelp>
+      )
+    })
+  )
+  .add(
     'no visible label',
-    () => render({label: null, 'aria-label': 'Pets'})
+    args => render({...args, label: null, 'aria-label': 'Pets'})
   )
   .add(
     'autoFocus on one checkbox',
-    () => render({}, [{}, {autoFocus: true}, {}])
+    args => render(args, [{}, {autoFocus: true}, {}])
   )
   .add(
     'form name',
-    () => render({name: 'pets'})
+    args => render({...args, name: 'pets'})
   )
   .add(
     'controlled',
-    () => <ControlledCheckboxGroup />
+    args => <ControlledCheckboxGroup {...args} />
   );
 
 function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
@@ -142,10 +149,10 @@ function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkb
   );
 }
 
-function ControlledCheckboxGroup() {
+function ControlledCheckboxGroup(props) {
   let [checked, setChecked] = useState<string[]>([]);
   return (
-    <CheckboxGroup label="Pets" onChange={setChecked} value={checked}>
+    <CheckboxGroup label="Pets" {...props} onChange={setChecked} value={checked}>
       <Checkbox value="dogs">Dogs</Checkbox>
       <Checkbox value="cats">Cats</Checkbox>
       <Checkbox value="dragons">Dragons</Checkbox>
@@ -157,7 +164,7 @@ function renderWithDescriptionErrorMessageAndValidation() {
   function Example() {
     let [checked, setChecked] = useState<string[]>(['dogs', 'dragons']);
     let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
-  
+
     return (
       <Flex width="480px">
         <CheckboxGroup

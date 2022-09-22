@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -64,6 +65,18 @@ storiesOf('RadioGroup', module)
   .add(
     'show error icon',
     () => render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true})
+  )
+  .add(
+    'contextual help',
+    args => render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        </ContextualHelp>
+      )
+    })
   );
 
 // do not supply a name, let it be uniquely generated, otherwise controlled won't work when many are rendered to the chromatic story
