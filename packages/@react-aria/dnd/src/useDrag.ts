@@ -248,17 +248,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-
-  let message: string;
-  if (!isDraggingRef.current) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
+  let message = !isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end;
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
