@@ -16,6 +16,7 @@ module.exports = {
     [
       require("postcss-logical")(),
       require("postcss-dir-pseudo-class")(),
+      require("./lib/postcss-inline-svgs"),
 
       // Use the hover media query in the docs because of SSR - some components have no client JS available.
       // Otherwise, convert :hover to .is-hovered.

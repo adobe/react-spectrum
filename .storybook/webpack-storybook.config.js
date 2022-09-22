@@ -60,9 +60,6 @@ module.exports = () => {
                 ident: 'postcss',
                 plugins: require('../postcss.config').plugins
               }
-            },
-            {
-              loader: path.resolve(__dirname, './css-url-rename-plugin/loader.js')
             }
           ],
           include: path.resolve(__dirname, '../')
