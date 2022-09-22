@@ -19,7 +19,6 @@ import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, u
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
-import {setGlobalAllowedDropOperations, useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
