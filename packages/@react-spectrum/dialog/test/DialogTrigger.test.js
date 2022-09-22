@@ -214,6 +214,156 @@ describe('DialogTrigger', function () {
     });
   });
 
+  describe('popover repositionn', function () {
+    it('should trigger a near top edge start popover with default padding of 12', async function () {
+      let dialogRef = React.createRef({current: {}});
+      jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => ({
+        width: 120,
+        height: 120,
+        top: dialogRef?.current?.style.top ||  dialogRef?.current?.UNSAFE_getDOMNode().style.top,
+        left: dialogRef?.current?.style.left || dialogRef?.current?.UNSAFE_getDOMNode().style.left
+      }));
+
+      let {getByRole, queryByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type="popover" placement="end">
+            <ActionButton>Trigger</ActionButton>
+            <Dialog ref={dialogRef}>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+
+      expect(queryByRole('dialog')).toBeNull();
+
+      let button = getByRole('button');
+      // set position and size since the testing framework isn't doing that
+      jest.spyOn(button, 'getBoundingClientRect').mockImplementation(() => ({
+        left: 210, top: 20, width: 65, height: 32
+      }));
+      jest.spyOn(document.body, 'getBoundingClientRect').mockImplementation(() => ({
+        top: 0, bottom: 1640, left: 0, right: 840, height: 1640, width: 840
+      }));
+      jest.spyOn(document, 'documentElement', 'get').mockImplementation(() => ({
+        clientWidth: 840, clientHeight: 587, scrollTop: 0, scrollLeft: 0, clientTop: 0, clientLeft: 0
+      }));
+
+      // using key events because mouse events seem to have a default click position and this test moves the button
+      fireEvent.keyDown(button, {key: 'Enter', code: 13});
+      fireEvent.keyUp(button, {key: 'Enter', code: 13});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let popover = getByTestId('popover');
+      expect(popover).toBeVisible();
+      expect(popover).toHaveAttribute('style');
+
+      // fragile, but important, part of the test for the popover repositioning code
+      // the math is the the scrollTop (0) plus the default padding of 12 pixels
+      expect(popover).toHaveStyle('top: 12px');
+    });
+
+    it('should trigger a top edge end popover with adjusted to 6px padding, when arrow should show', async function () {
+      let dialogRef = React.createRef({current: {}});
+      jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => ({
+        width: 120,
+        height: 120,
+        top: dialogRef?.current?.style.top ||  dialogRef?.current?.UNSAFE_getDOMNode().style.top,
+        left: dialogRef?.current?.style.left || dialogRef?.current?.UNSAFE_getDOMNode().style.left
+      }));
+
+      let {getByRole, queryByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type="popover" placement="end">
+            <ActionButton>Trigger</ActionButton>
+            <Dialog ref={dialogRef}>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+
+      expect(queryByRole('dialog')).toBeNull();
+
+      let button = getByRole('button');
+      // set position and size since the testing framework isn't doing that
+      jest.spyOn(button, 'getBoundingClientRect').mockImplementation(() => ({
+        left: 154, top: -0.5, width: 65, height: 32
+      }));
+      jest.spyOn(document.body, 'getBoundingClientRect').mockImplementation(() => ({
+        top: -20.5, bottom: 1619.5, left: 0, right: 840, height: 1640, width: 840
+      }));
+      jest.spyOn(document, 'documentElement', 'get').mockImplementation(() => ({
+        clientWidth: 840, clientHeight: 587, scrollTop: 20.5, scrollLeft: 0, clientTop: 0, clientLeft: 0
+      }));
+
+      // using key events because mouse events seem to have a default click position and this test moves the button
+      fireEvent.keyDown(button, {key: 'Enter', code: 13});
+      fireEvent.keyUp(button, {key: 'Enter', code: 13});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let popover = getByTestId('popover');
+      expect(popover).toBeVisible();
+      expect(popover).toHaveAttribute('style');
+
+      // fragile, but important, part of the test for the popover repositioning code
+      // the math is the the scrollTop (20.5) plus the new padding of 6 pixels
+      expect(popover).toHaveStyle('top: 26.5px');
+    });
+
+    it('should trigger a near top edge start popover with adjusted padding of 6px, when arrow would be removed', async function () {
+      let {getByRole, queryByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type="popover" placement="end">
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+
+      expect(queryByRole('dialog')).toBeNull();
+
+      let button = getByRole('button');
+      // set position and size since the testing framework isn't doing that
+      jest.spyOn(button, 'getBoundingClientRect').mockImplementation(() => ({
+        left: 210, top: -17, width: 65, height: 32
+      }));
+      jest.spyOn(document.body, 'getBoundingClientRect').mockImplementation(() => ({
+        top: -37, bottom: 1603, left: 0, right: 840, height: 1640, width: 840
+      }));
+      jest.spyOn(document, 'documentElement', 'get').mockImplementation(() => ({
+        clientWidth: 840, clientHeight: 587, scrollTop: 37, scrollLeft: 0, clientTop: 0, clientLeft: 0
+      }));
+
+      // using key events because mouse events seem to have a default click position and this test moves the button
+      fireEvent.keyDown(button, {key: 'Enter', code: 13});
+      fireEvent.keyUp(button, {key: 'Enter', code: 13});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let popover = getByTestId('popover');
+      expect(popover).toBeVisible();
+      expect(popover).toHaveAttribute('style');
+
+      // fragile, but important, part of the test for the popover repositioning code
+      // the math is the the scrollTop (37) plus the adjusted padding of 6 pixels
+      expect(popover).toHaveStyle('top: 43px');
+    });
+  });
+
   it('popovers should be closeable', function () {
     let {getByRole, getByText, queryByRole} = render(
       <Provider theme={theme}>

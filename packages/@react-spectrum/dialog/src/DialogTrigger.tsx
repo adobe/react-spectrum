@@ -147,18 +147,24 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
   let isCloserPadding = false;
 
-  // For popover triggers close to the edge, decrease the overlay to container padding
+  // For popover triggers close to the edge, decrease the container padding allowing popovers to
+  // move closer to their trigger.
   if (triggerRef?.current) {
-    // The popover ref is not defined here so we don't know the arrow size to include in this.
+    // The popover ref is not defined here, we don't know the arrow size to factor into the below.
     let triggerRect = triggerRef.current.getBoundingClientRect();
     let documentRect = document.body.getBoundingClientRect();
+    // 'bottom' is the default when no value is provided
     let [axisPlacement] = props.placement?.split(' ') || ['bottom']; // Flip and RTL don't matter
+
+    // The following is the math that gets the desired beavhior in both scales, but isn't as logical
+    // as desired. For example, would love to not multiple the default padding by 2.
     if (axisPlacement === 'start' || axisPlacement === 'end' || axisPlacement === 'right' || axisPlacement === 'left') {
       // top edge start/end math
       if ((DEFAULT_MODAL_PADDING * 2) - (triggerRect.height / 2) > triggerRect.top) {
         isCloserPadding = true;
       }
       // bottom edge start/end math
+      // The documentRect doesn't work for this which is why we're using the window.innerHright.
       if (triggerRect.top + (DEFAULT_MODAL_PADDING * 2) + (triggerRect.height / 2) > window.innerHeight) {
         isCloserPadding = true;
       }

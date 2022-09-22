@@ -105,7 +105,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let [isHideArrow, setIsHideArrow] = useState(hideArrow);
 
   useLayoutEffect(() => {
-    // check position of arrow and popover boundries
+    // check position of arrow and popover proximety to boundry edge
     if (ref.current && arrowProps) {
       let propsHideArrow = hideArrow;
 
@@ -130,6 +130,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         ref.current.style.margin = '0';
       }
 
+      // if we are already hiding the arrow no reason change it.
       if (propsHideArrow !== isHideArrow) {
         setIsHideArrow(propsHideArrow);
       }
