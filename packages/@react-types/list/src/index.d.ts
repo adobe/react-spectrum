@@ -10,57 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  AriaLabelingProps,
-  AsyncLoadable,
-  CollectionBase,
-  DisabledBehavior,
-  DOMProps,
-  LoadingState,
-  MultipleSelection,
-  SpectrumSelectionProps,
-  StyleProps
-} from '@react-types/shared';
-import type {DnDHooks} from '@react-spectrum/dnd';
-import {Key} from 'react';
-
-export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
-   */
-  onAction?: (key: Key) => void,
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
-}
-
-export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {}
-
-export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
-  /**
-   * Sets the amount of vertical padding within each cell.
-   * @default 'regular'
-   */
-  density?: 'compact' | 'regular' | 'spacious',
-  /** Whether the ListView should be displayed with a quiet style. */
-  isQuiet?: boolean,
-  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState,
-  /**
-   * Sets the text behavior for the row contents.
-   * @default 'truncate'
-   */
-  overflowMode?: 'truncate' | 'wrap',
-  /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionStyle` prop and the interaction modality.
-   */
-  onAction?: (key: Key) => void,
-  /**
-   * The drag and drop hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
-   * @private
-   */
-  dndHooks?: DnDHooks['dndHooks']
-}
+export type {AriaGridListProps, GridListProps} from '@react-aria/gridlist';
+export type {SpectrumListViewProps} from '@react-spectrum/list';

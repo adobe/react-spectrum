@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, mergeRefs} from '@react-aria/utils';
+import {mergeProps, mergeRefs, useId} from '@react-aria/utils';
 import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
-  props = useFormProps(props);
+  let formProps = useFormProps(props);
+  let isInForm = formProps !== props;
+  props = formProps;
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -35,6 +37,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     errorMessage,
     isDisabled,
     showErrorIcon,
+    contextualHelp,
     children,
     labelProps,
     // Not every component that uses <Field> supports help text.
@@ -42,12 +45,13 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     errorMessageProps = {},
     elementType,
     wrapperClassName,
-
+    wrapperProps = {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
   let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
+  let contextualHelpId = useId();
 
   if (label || hasHelpText) {
     let labelWrapperClass = classNames(
@@ -55,7 +59,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       'spectrum-Field',
       {
         'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
+        'spectrum-Field--positionSide': labelPosition === 'side',
+        'spectrum-Field--alignEnd': labelAlign === 'end',
+        'spectrum-Field--hasContextualHelp': !!props.contextualHelp
       },
       styleProps.className,
       wrapperClassName
@@ -76,7 +82,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
         errorMessage={errorMessage}
         validationState={validationState}
         isDisabled={isDisabled}
-        showErrorIcon={showErrorIcon} />
+        showErrorIcon={showErrorIcon}
+        gridArea="helpText" />
     );
 
     let renderChildren = () => {
@@ -97,11 +104,8 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       );
     };
 
-    return (
-      <div
-        {...styleProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
+    let labelAndContextualHelp = (
+      <>
         {label && (
           <Label
             {...labelProps}
@@ -114,6 +118,40 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
             {label}
           </Label>
         )}
+        {label && contextualHelp &&
+          <SlotProvider
+            slots={{
+              actionButton: {
+                UNSAFE_className: classNames(labelStyles, 'spectrum-Field-contextualHelp'),
+                id: contextualHelpId,
+                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined
+              }
+            }}>
+            {contextualHelp}
+          </SlotProvider>
+        }
+      </>
+    );
+
+    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
+    // so that the table layout works inside forms.
+    if (isInForm && labelPosition === 'side' && label && contextualHelp) {
+      labelAndContextualHelp = (
+        <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
+          <div className={classNames(labelStyles, 'spectrum-Field-labelWrapper')}>
+            {labelAndContextualHelp}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        {...styleProps}
+        {...wrapperProps}
+        ref={ref as RefObject<HTMLDivElement>}
+        className={labelWrapperClass}>
+        {labelAndContextualHelp}
         {renderChildren()}
       </div>
     );
@@ -121,6 +159,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 
   return React.cloneElement(children, mergeProps(children.props, {
     ...styleProps,
+    ...wrapperProps,
     ref: mergedRefs
   }));
 }

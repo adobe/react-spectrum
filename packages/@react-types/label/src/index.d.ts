@@ -33,8 +33,10 @@ export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttribut
 export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps {
   children: ReactElement,
   label?: ReactNode,
+  contextualHelp?: ReactNode,
   labelProps?: HTMLAttributes<HTMLElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
-  wrapperClassName?: string
+  wrapperClassName?: string,
+  wrapperProps?: HTMLAttributes<HTMLElement>
 }

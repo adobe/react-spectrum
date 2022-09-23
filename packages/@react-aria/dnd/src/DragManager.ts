@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {getDragModality, getTypes, setDropCollectionRef} from './utils';
+import {getDragModality, getTypes} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
@@ -518,7 +518,6 @@ class DragSession {
   }
 
   cancel() {
-    setDropCollectionRef(undefined);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();
