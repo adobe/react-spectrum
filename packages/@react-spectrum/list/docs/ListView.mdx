@@ -838,9 +838,11 @@ function DragBetweenListsExample() {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        keys
+        keys,
+        isInternal
       } = e;
-      if (dropOperation === 'move') {
+      // Only remove the dragged items if they are dropped inside the source list
+      if (dropOperation === 'move' && isInternal) {
         list1.remove(...keys);
       }
     },
