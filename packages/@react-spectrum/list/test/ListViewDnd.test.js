@@ -3020,6 +3020,48 @@ describe('ListView', function () {
       }
     });
 
+    it('should focus an item if it is dropped on', async function () {
+      let {getByRole} = render(
+        <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+      );
+
+      let grid = getByRole('grid');
+      let rows = within(grid).getAllByRole('row');
+      expect(rows).toHaveLength(9);
+
+      userEvent.tab();
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+      expect(document.activeElement).toBe(rows[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      act(() => jest.runAllTimers());
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Folder 2');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      await act(async () => Promise.resolve());
+      expect(onDrop).toHaveBeenCalledTimes(1);
+
+      act(() => jest.runAllTimers());
+
+      grid = getByRole('grid');
+      rows = within(grid).getAllByRole('row');
+      expect(rows).toHaveLength(8);
+
+      expect(document.activeElement).toBe(rows[7]);
+    });
+
     it('should support getAllowedDropOperations to limit allowed operations', () => {
       let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
       let {getAllByRole, getByText} = render(
