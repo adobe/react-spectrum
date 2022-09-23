@@ -119,11 +119,19 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         let arrowStyle = {...arrowProps.style};
         arrowStyle[offset] = DEFAULT_MODAL_PADDING;
         arrowProps.style = arrowStyle;
+        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden
+        if (ref.current.style.margin === '0px') {
+          ref.current.style.removeProperty('margin');
+        }
       } else if (arrowProps.style[offset] > overlayCrossSize - DEFAULT_MODAL_PADDING && arrowProps.style[offset] + 2 <= overlayCrossSize) {
         // for the end and bottom, keep the arrow pointing at the button and within the popover
         let arrowStyle = {...arrowProps.style};
         arrowStyle[offset] = overlayCrossSize - DEFAULT_MODAL_PADDING;
         arrowProps.style = arrowStyle;
+        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden
+        if (ref.current.style.margin === '0px') {
+          ref.current.style.removeProperty('margin');
+        }
       } else if (arrowProps.style[offset] <= 0 || arrowProps.style[offset] + 2 > overlayCrossSize) {
         // trigger is too far off the page, hiding the arrow per Spectrum
         propsHideArrow = true;
