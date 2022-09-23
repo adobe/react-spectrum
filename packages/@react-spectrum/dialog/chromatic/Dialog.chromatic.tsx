@@ -161,24 +161,26 @@ storiesOf('Dialog', module)
 storiesOf('Dialog/Popover', module)
   .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
   .add(
-    'position start default (12px) padding',
+    'trigger location start edge, default (12px) padding',
     () => (
       <View width="100%" overflow="auto">
         <Grid
           areas={[
-            'top    top',
-            'start  end',
-            'bottom bottom'
+            'start  end'
           ]}
           columns={['auto', 'auto']}
-          rows={['size-450', 'auto', 'size-450']}
           height="100%"
-          marginTop="20px"
-          gap="size-100">
+          marginTop="20px">
           <View gridArea="start" justifySelf="start" alignSelf="center" paddingStart="20px">
             <DialogTrigger type="popover" placement="bottom end" shouldFlip={false} isOpen>
               <ActionButton>T</ActionButton>
-              <Dialog><Content>Placement Top</Content></Dialog>
+              <Dialog>
+                <Content>
+                  <p>Placement: bottom end</p>
+                  <p>Arrow: shown</p>
+                  <p>Padding: default (12px))</p>
+                </Content>
+              </Dialog>
             </DialogTrigger>
           </View>
         </Grid>
@@ -186,24 +188,26 @@ storiesOf('Dialog/Popover', module)
     )
   )
   .add(
-    'position start adjusted 6px padding',
+    'trigger location start edge, adjusted 6px padding',
     () => (
       <View width="calc(100% + 16px)" overflow="auto" margin="-8px">
         <Grid
           areas={[
-            'top    top',
-            'start  end',
-            'bottom bottom'
+            'start  end'
           ]}
           columns={['auto', 'auto']}
-          rows={['size-450', 'auto', 'size-450']}
           height="100%"
-          marginTop="20px"
-          gap="size-100">
+          marginTop="20px">
           <View gridArea="start" justifySelf="start" alignSelf="center">
-            <DialogTrigger type="popover" placement="bottom end" shouldFlip={false} isOpen>
+            <DialogTrigger type="popover" placement="bottom" shouldFlip={false} isOpen>
               <ActionButton>T</ActionButton>
-              <Dialog><Content>Placement Top</Content></Dialog>
+              <Dialog>
+                <Content>
+                  <p>Placement: bottom</p>
+                  <p>Arrow: shown</p>
+                  <p>Padding: adjusted (6px)</p>
+                </Content>
+              </Dialog>
             </DialogTrigger>
           </View>
         </Grid>
@@ -211,24 +215,26 @@ storiesOf('Dialog/Popover', module)
     )
   )
   .add(
-    'position end adjusted 6px padding, no arrow',
+    'trigger location end edge, adjusted 6px padding, no arrow',
     () => (
       <View width="calc(100% + 40px)" overflow="auto" margin="-20px">
         <Grid
           areas={[
-            'top    top',
-            'start  end',
-            'bottom bottom'
+            'start  end'
           ]}
           columns={['auto', 'auto']}
-          rows={['size-450', 'auto', 'size-450']}
           height="100%"
-          marginTop="20px"
-          gap="size-100">
+          marginTop="20px">
           <View gridArea="end" justifySelf="end" alignSelf="center">
             <DialogTrigger type="popover" shouldFlip={false} isOpen>
               <ActionButton>T</ActionButton>
-              <Dialog><Content>Placement Top</Content></Dialog>
+              <Dialog>
+                <Content>
+                  <p>Placement: default (bottom)</p>
+                  <p>Arrow: hidden</p>
+                  <p>Padding: adjusted (6px)</p>
+                </Content>
+              </Dialog>
             </DialogTrigger>
           </View>
         </Grid>
@@ -236,9 +242,9 @@ storiesOf('Dialog/Popover', module)
     )
   )
   .add(
-    'position top adjusted 6px padding',
+    'trigger location top edge, adjusted 6px padding',
     () => (
-      <View overflow="auto" height="calc(100% + 48px + " marginTop="-56px">
+      <View overflow="auto" height="calc(100% + 48px)" marginTop="-55px">
         <Grid
           areas={[
             'top',
@@ -250,7 +256,13 @@ storiesOf('Dialog/Popover', module)
           <View gridArea="top" justifySelf="center">
             <DialogTrigger type="popover" placement="end" shouldFlip={false} isOpen>
               <ActionButton>Trigger</ActionButton>
-              <Dialog><Content>Placement End</Content></Dialog>
+              <Dialog>
+                <Content>
+                  <p>Placement: end</p>
+                  <p>Arrow: shown</p>
+                  <p>Padding: adjusted (6px)</p>
+                </Content>
+              </Dialog>
             </DialogTrigger>
           </View>
         </Grid>
