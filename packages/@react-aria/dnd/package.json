@@ -26,7 +26,6 @@
     "@react-aria/utils": "^3.13.3",
     "@react-aria/visually-hidden": "^3.4.1",
     "@react-stately/dnd": "3.0.0-alpha.10",
-    "@react-stately/selection": "^3.10.3",
     "@react-types/button": "^3.6.1",
     "@react-types/shared": "^3.14.1"
   },

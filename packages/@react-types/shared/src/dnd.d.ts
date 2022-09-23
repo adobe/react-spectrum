@@ -117,10 +117,7 @@ export interface DroppableCollectionDropEvent extends DropEvent {
 interface DroppableCollectionInsertDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
-  target: {
-    key: Key,
-    dropPosition: Omit<DropPosition, 'on'>
-  }
+  target: ItemDropTarget
 }
 
 interface DroppableCollectionRootDropEvent {
@@ -131,24 +128,18 @@ interface DroppableCollectionRootDropEvent {
 interface DroppableCollectionOnItemDropEvent {
   items: DropItem[],
   dropOperation: DropOperation,
-  isInternalDrop: boolean,
-  target: {
-    key: Key,
-    dropPosition: 'on'
-  }
+  isInternal: boolean,
+  target: ItemDropTarget
 }
 
 interface DroppableCollectionReorderEvent {
   keys: Set<Key>,
   dropOperation: DropOperation,
-  target: {
-    key: Key,
-    dropPosition: Omit<DropPosition, 'on'>
-  }
+  target: ItemDropTarget
 }
 
 export interface DragTypes {
-  has(type: string): boolean
+  has(type: string | symbol): boolean
 }
 
 export interface DropTargetDelegate {
@@ -165,7 +156,7 @@ export interface DroppableCollectionProps {
    * The drag types that the droppable collection accepts. If the collection accepts directories, include 'directory' in your array of allowed types.
    * @default 'all'
    */
-  acceptedDragTypes?: 'all' | Array<string>,
+  acceptedDragTypes?: 'all' | Array<string | symbol>,
   /**
    * Handler that is called when external items are dropped "between" items.
    */
@@ -214,7 +205,7 @@ interface DraggableCollectionMoveEvent extends DragMoveEvent {
 
 interface DraggableCollectionEndEvent extends DragEndEvent {
   keys: Set<Key>,
-  isInternalDrop: boolean
+  isInternal: boolean
 }
 
 export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLElement) => void) => void;
