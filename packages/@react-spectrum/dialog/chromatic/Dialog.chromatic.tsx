@@ -236,9 +236,9 @@ storiesOf('Dialog/Popover', module)
     )
   )
   .add(
-    'position bottom adjusted 6px padding',
+    'position top adjusted 6px padding',
     () => (
-      <View overflow="auto" height="1000px" top="0">
+      <View overflow="auto" height="calc(100% + 48px + " marginTop="-56px">
         <Grid
           areas={[
             'top',
@@ -247,7 +247,7 @@ storiesOf('Dialog/Popover', module)
           columns={['auto']}
           rows={['auto', 'size-450']}
           height="100%">
-          <View gridArea="bottom" justifySelf="center">
+          <View gridArea="top" justifySelf="center">
             <DialogTrigger type="popover" placement="end" shouldFlip={false} isOpen>
               <ActionButton>Trigger</ActionButton>
               <Dialog><Content>Placement End</Content></Dialog>
