@@ -362,6 +362,8 @@ This behavior is slightly different in the highlight selection style, where sing
 </Flex>
 ```
 
+// TODO: comment this section out again
+
 ## Drag and drop
 
 To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDnDHooks} /> to the ListView's `dndHooks` prop.
@@ -392,7 +394,7 @@ function DragIntoListExample() {
       {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
       {id: '6', type: 'file', name: 'Adobe Fresco'},
       {id: '7', type: 'file', name: 'Adobe Connect'},
-      {key: '8', type: 'file', name: 'Adobe Lightroom'}
+      {id: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
   });
 
@@ -763,7 +765,7 @@ function ReorderableList() {
 ```
 
 The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
-the ability to drop into a folder.
+the ability to drop into a folder. Each list is internally reorderable as well.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
@@ -835,14 +837,26 @@ function DragBetweenListsExample() {
         list1.insertAfter(target.key, ...processedItems);
       }
     },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+
+      if (target.dropPosition === 'before') {
+        list1.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list1.moveAfter(target.key, [...keys]);
+      }
+    },
     onDragEnd: (e) => {
       let {
         dropOperation,
         keys,
         isInternal
       } = e;
-      // Only remove the dragged items if they are dropped inside the source list
-      if (dropOperation === 'move' && isInternal) {
+      // Only remove the dragged items if they aren't dropped inside the source list
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -873,12 +887,26 @@ function DragBetweenListsExample() {
         list2.insertAfter(target.key, ...processedItems);
       }
     },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+
+      if (target.dropPosition === 'before') {
+        list2.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list2.moveAfter(target.key, [...keys]);
+      }
+    },
     onDragEnd: (e) => {
       let {
         dropOperation,
-        keys
+        keys,
+        isInternal
       } = e;
-      if (dropOperation === 'move') {
+      // Only remove the dragged items if they aren't dropped inside the source list
+      if (dropOperation === 'move' && !isInternal) {
         list2.remove(...keys);
       }
     },
@@ -924,6 +952,135 @@ function DragBetweenListsExample() {
 
 ```tsx example
 <DragBetweenListsExample />
+```
+
+The example below demonstrates how to use `getDropOperation` to specify the default drop operation of the droppable list.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+function DragIntoListDefaultCopy() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: '6', type: 'file', name: 'Adobe Fresco'},
+      {id: '7', type: 'file', name: 'Adobe Connect'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom'}
+    ]
+  });
+
+  // Append a generated key to the item type so they can only be dragged between these two lists
+  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let acceptedDragTypes = [`${dragType}-file`];
+
+  // Utility function for processing the data returned by the drop handlers
+  let itemProcessor = async (items, acceptedDragTypes) => {
+    let processedItems = [];
+    let text;
+    for (let item of items) {
+      for (let type of acceptedDragTypes) {
+        if (item.kind === 'text' && item.types.has(type)) {
+          text = await item.getText(type);
+          let parsed = JSON.parse(text);
+          parsed.id = Math.random().toString(36).slice(2);
+          processedItems.push(parsed);
+          break;
+        }
+      }
+    }
+    return processedItems;
+  };
+
+  let {dndHooks: dragListHooks} = useDnDHooks({
+    getItems: (keys) => [...keys].map(key => {
+      let item = sourceList.getItem(key);
+      // Setup the info for each item that will be propagated upon drag
+      return {
+        [`${dragType}-${item.type}`]: JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+      if (dropOperation === 'move') {
+        sourceList.remove(...keys);
+      }
+    }
+  });
+
+  let {dndHooks: dropListHooks} = useDnDHooks({
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      if (target.dropPosition === 'before') {
+        targetList.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        targetList.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      targetList.append(...processedItems);
+    },
+    getDropOperation: () => 'copy',
+    acceptedDragTypes
+  });
+
+  return (
+    <Flex wrap gap="size-300">
+      <ListView
+        aria-label="Draggable ListView in default copy operation example"
+        selectionMode="multiple"
+        width="size-3600"
+        height="size-2400"
+        items={sourceList.items}
+        dndHooks={dragListHooks}>
+        {item => (
+          <Item textValue={item.name}>
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+      <ListView
+        aria-label="Droppable ListView in default copy operation example"
+        width="size-3600"
+        height="size-2400"
+        items={targetList.items}
+        dndHooks={dropListHooks}>
+        {item => (
+          <Item textValue={item.name}>
+            <Text>{item.name}</Text>
+          </Item>
+        )}
+      </ListView>
+    </Flex>
+  );
+}
+```
+</details>
+
+```tsx example
+<DragIntoListDefaultCopy />
 ```
 
 ## Props
