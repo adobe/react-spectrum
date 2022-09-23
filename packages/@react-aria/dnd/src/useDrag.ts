@@ -298,13 +298,13 @@ export function useDrag(options: DragOptions): DragResult {
         if (e.target === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
+          startDragging(e.target as HTMLElement);
         }
       },
       onKeyUpCapture(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
-          startDragging(e.target as HTMLElement);
         }
       },
       onClick(e) {
