@@ -12,7 +12,10 @@
 
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
@@ -66,7 +69,15 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       </Picker>
     </SearchWithin>
     <TextArea label="Comments" placeholder="How do you feel?" />
-    <TextField label="City" placeholder="San Francisco" />
+    <TextField
+      label="City"
+      placeholder="San Francisco"
+      contextualHelp={(
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        </ContextualHelp>
+      )} />
   </Form>
 );
 
