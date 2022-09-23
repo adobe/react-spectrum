@@ -256,7 +256,7 @@ storiesOf('Dialog/Popover', module)
         </Grid>
       </View>
     )
-  )
+  );
 
 storiesOf('Dialog/Alert', module)
   .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
