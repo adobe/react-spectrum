@@ -9,12 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
+import {AsyncLoadable, DOMRef, LoadingState, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DnDHooks} from '@react-spectrum/dnd';
-import {DOMRef, LoadingState} from '@react-types/shared';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DroppableCollectionResult} from '@react-aria/dnd';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
@@ -23,16 +25,42 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
-import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
-import {SpectrumListViewProps} from '@react-types/list';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useGridList} from '@react-aria/gridlist';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer} from '@react-aria/virtualizer';
+
+export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * Sets the amount of vertical padding within each cell.
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious',
+  /** Whether the ListView should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** The current loading state of the ListView. Determines whether or not the progress circle should be shown. */
+  loadingState?: LoadingState,
+  /**
+   * Sets the text behavior for the row contents.
+   * @default 'truncate'
+   */
+  overflowMode?: 'truncate' | 'wrap',
+  /** Sets what the ListView should render when there is no content to display. */
+  renderEmptyState?: () => JSX.Element,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionStyle` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void,
+  /**
+   * The drag and drop hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
+   * @private
+   */
+  dndHooks?: DnDHooks['dndHooks']
+}
 
 interface ListViewContextValue<T> {
   state: ListState<T>,

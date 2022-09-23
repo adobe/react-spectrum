@@ -11,7 +11,10 @@
  */
 
 import {CalendarDate, CalendarDateTime, parseZonedDateTime} from '@internationalized/date';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateField} from '../';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 
 export default {
@@ -76,3 +79,13 @@ export const QuietCustomWidthLabelPositionSide = () => <DateField label="Date" v
 export const CustomWidthSmall = () => <DateField label="Time" value={zonedDateTime} width={50} />;
 export const CustomWidthSmallInvalid = () => <DateField label="Time" value={zonedDateTime} width={50} validationState="invalid" />;
 export const CustomWidthSmallNoLabel = () => <DateField aria-label="Time" value={zonedDateTime} width={50} />;
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = () => <DateField label="Date" contextualHelp={contextualHelp} value={date} />;
+export const ContextualHelpSideLabel = () => <DateField label="Date" labelPosition="side" contextualHelp={contextualHelp} value={date} />;

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
@@ -167,6 +167,17 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       {(props.label) &&
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
           {props.label && labelNode}
+          {props.contextualHelp &&
+            <SlotProvider
+              slots={{
+                actionButton: {
+                  isDisabled,
+                  UNSAFE_className: classNames(styles, 'spectrum-Slider-contextualHelp')
+                }
+              }}>
+              {props.contextualHelp}
+            </SlotProvider>
+          }
           {labelPosition === 'top' && showValueLabel && valueNode}
         </div>
       }

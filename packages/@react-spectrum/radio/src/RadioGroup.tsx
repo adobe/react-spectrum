@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, LabelPosition} from '@react-types/shared';
-import {HelpText, Label} from '@react-spectrum/label';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {RadioContext} from './context';
 import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
@@ -23,63 +22,31 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
 
-function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
+function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
     isEmphasized,
-    isRequired,
-    necessityIndicator,
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
     validationState,
     children,
-    orientation = 'vertical',
-    description,
-    errorMessage,
-    showErrorIcon,
-    ...otherProps
+    orientation = 'vertical'
   } = props;
-  let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
 
+  let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
   return (
-    <div
-      {...styleProps}
-      {...radioGroupProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
-          },
-          // This is so radio works inside a <Form>
-          classNames(
-            labelStyles,
-            'spectrum-Field'
-          ),
-          styleProps.className
-        )
-      }
-      ref={domRef}>
-      {label &&
-        <Label
-          {...labelProps}
-          elementType="span"
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
-      }
+    <Field
+      {...props}
+      ref={domRef}
+      wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      elementType="span">
       <div
+        {...radioGroupProps}
         className={
           classNames(
             styles,
@@ -98,16 +65,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
           {children}
         </RadioContext.Provider>
       </div>
-      {hasHelpText &&
-        <HelpText
-          descriptionProps={descriptionProps}
-          errorMessageProps={errorMessageProps}
-          description={description}
-          errorMessage={errorMessage}
-          validationState={validationState}
-          showErrorIcon={showErrorIcon} />
-      }
-    </div>
+    </Field>
   );
 }
 

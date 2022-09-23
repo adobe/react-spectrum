@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
 import {Meta, Story} from '@storybook/react';
 import {RangeSlider} from '../';
 import React from 'react';
@@ -50,3 +53,16 @@ LabelAlignEnd.args = {...Default.args, labelAlign: 'end', showValueLabel: false}
 
 export const LabelAlignEnd = Template().bind({});
 LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = Template().bind({});
+_ContextualHelp.args = {label: 'Slider label', contextualHelp};
+
+export const ContextualHelpSideLabel = Template().bind({});
+ContextualHelpSideLabel.args = {label: 'Slider label', contextualHelp, labelPosition: 'side'};

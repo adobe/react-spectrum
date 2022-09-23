@@ -102,14 +102,14 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     },
     endDrag(event) {
       let {
-        isInternalDrop
+        isInternal
       } = event;
 
       if (typeof onDragEnd === 'function') {
         onDragEnd({
           ...event,
           keys: draggingKeys.current,
-          isInternalDrop
+          isInternal
         });
       }
 
