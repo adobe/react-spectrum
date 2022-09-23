@@ -248,16 +248,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message: string;
-  if (!isDraggingRef.current) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
+  let message = !isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end;
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
@@ -298,13 +289,13 @@ export function useDrag(options: DragOptions): DragResult {
         if (e.target === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
-          startDragging(e.target as HTMLElement);
         }
       },
       onKeyUpCapture(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
+          startDragging(e.target as HTMLElement);
         }
       },
       onClick(e) {

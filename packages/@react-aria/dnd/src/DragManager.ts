@@ -149,7 +149,6 @@ const CANCELED_EVENTS = [
   'touchstart',
   'touchmove',
   'touchend',
-  'keyup',
   'focusin',
   'focusout'
 ];
@@ -184,6 +183,7 @@ class DragSession {
     this.stringFormatter = stringFormatter;
 
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -194,6 +194,7 @@ class DragSession {
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
+    document.addEventListener('keyup', this.onKeyUp, true);
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
@@ -225,6 +226,7 @@ class DragSession {
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
+    document.removeEventListener('keyup', this.onKeyUp, true);
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
@@ -257,15 +259,6 @@ class DragSession {
       return;
     }
 
-    if (e.key === 'Enter') {
-      if (e.altKey) {
-        this.activate();
-      } else {
-        this.drop();
-      }
-      return;
-    }
-
     if (e.key === 'Tab' && !(e.metaKey || e.altKey || e.ctrlKey)) {
       if (e.shiftKey) {
         this.previous();
@@ -276,6 +269,18 @@ class DragSession {
 
     if (typeof this.currentDropTarget?.onKeyDown === 'function') {
       this.currentDropTarget.onKeyDown(e, this.dragTarget);
+    }
+  }
+
+  onKeyUp(e: KeyboardEvent) {
+    this.cancelEvent(e);
+
+    if (e.key === 'Enter') {
+      if (e.altKey) {
+        this.activate();
+      } else {
+        this.drop();
+      }
     }
   }
 

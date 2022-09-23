@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {isAndroid} from './platform';
+
 // Original licensing for the following method can be found in the
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
@@ -25,6 +27,13 @@ export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
   // JAWS/NVDA with Firefox.
   if ((event as any).mozInputSource === 0 && event.isTrusted) {
     return true;
+  }
+
+  // Android TalkBack's detail value varies depending on the event listener providing the event so we have specific logic here instead
+  // If pointerType is defined, event is from a click listener. For events from mousedown listener, detail === 0 is a sufficient check
+  // to detect TalkBack virtual clicks.
+  if (isAndroid() && (event as PointerEvent).pointerType) {
+    return event.type === 'click' && event.buttons === 1;
   }
 
   return event.detail === 0 && !(event as PointerEvent).pointerType;

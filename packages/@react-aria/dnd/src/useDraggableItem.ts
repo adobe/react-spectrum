@@ -104,7 +104,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       description = stringFormatter.format(msg);
     }
 
-    // Remove the onClick handler frmo useDrag. Long pressing will be required on touch devices,
+    // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
     // and NVDA/JAWS are always in forms mode within collection components.
     delete dragProps.onClick;
   } else {
