@@ -219,14 +219,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       // focus that item and show the focus ring to give the user feedback that the drop occurred.
       // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
       let {state} = localState;
-      if (state.selectionManager.focusedKey === focusedKey) {
-        if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
-          state.selectionManager.setFocusedKey(target.key);
-          state.selectionManager.setFocused(true);
-          setInteractionModality('keyboard');
-        } else if (!state.selectionManager.isSelected(focusedKey)) {
-          setInteractionModality('keyboard');
-        }
+
+      if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
+        state.selectionManager.setFocusedKey(target.key);
+        state.selectionManager.setFocused(true);
+        setInteractionModality('keyboard');
+      } else if (!state.selectionManager.isSelected(focusedKey)) {
+        setInteractionModality('keyboard');
       }
 
       droppingState.current = null;
