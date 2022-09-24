@@ -585,8 +585,9 @@ let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
   let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
   return (
-    <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
+    <div className={classNames(styles, 'spectrum-Table-headCellContents', {'is-hovered': isHovered})} {...hoverProps}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...buttonProps} ref={domRef}>{props.children}</div>
       </FocusRing>
@@ -608,11 +609,10 @@ function ResizableTableColumnHeader(props) {
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
-  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
   let [isFocused, setIsFocused] = useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setIsFocused, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps, pressProps, focusWithinProps];
+  const allProps = [columnHeaderProps, pressProps, focusWithinProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -681,7 +681,6 @@ function ResizableTableColumnHeader(props) {
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
-              'is-hovered': isHovered,
               'is-cell-focused': isFocused && isFocusVisible(),
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
@@ -702,10 +701,10 @@ function ResizableTableColumnHeader(props) {
             }
             {columnProps.hideHeader ?
               <VisuallyHidden>{column.rendered}</VisuallyHidden> :
-              column.rendered
+              <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
             }
             {
-              columnProps.allowsResizing && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
+              columnProps.allowsResizing && columnState.currentlyResizingColumn === null && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
           <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>

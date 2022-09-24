@@ -115,7 +115,7 @@ svg.spectrum-Table-sortedIcon {
       text-overflow: ellipsis;
     }
   }
-  &.is-hovered,
+  .is-hovered,
   &.is-cell-focused {
     .spectrum-Table-menuChevron {
       display: inline-block;
@@ -303,6 +303,14 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-headCellButton {
   display: flex;
   align-items: center;
+}
+
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .spectrum-Table-headCell,
