@@ -93,7 +93,7 @@ const Overlay = forwardRef(({children, restoreFocus, className, style, state, ..
       <div
         {...popoverProps}
         ref={ref as RefObject<HTMLDivElement>}
-        className={className}
+        className={className ?? 'react-aria-Popover'}
         style={style}>
         <DismissButton onDismiss={state.close} />
         {children}

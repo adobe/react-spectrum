@@ -53,7 +53,7 @@ import {ListBox, Item} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-[role=listbox] {
+.react-aria-ListBox {
   max-height: inherit;
   overflow: auto;
   padding: 2px;
@@ -65,54 +65,54 @@ import {ListBox, Item} from 'react-aria-components';
   max-width: 250px;
   max-height: 300px;
   box-sizing: border-box;
-}
 
-[role=option] {
-  margin: 2px;
-  padding: 4px 8px 4px 8px;
-  border-radius: 6px;
-  outline: none;
-  cursor: default;
-  color: var(--spectrum-global-color-gray-800);
-  font-size: 1.072rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-
-  &[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px slateblue;
+  & section:not(:first-child) {
+    margin-top: 12px;
   }
 
-  &[aria-selected=true] {
-    background: slateblue;
-    color: white;
+  & section header {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0 8px;
+  }
+
+  & .react-aria-Item {
+    margin: 2px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--spectrum-global-color-gray-800);
+    font-size: 1.072rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px slateblue, inset 0 0 0 4px white;
+      box-shadow: inset 0 0 0 2px slateblue;
+    }
+
+    &[aria-selected=true] {
+      background: slateblue;
+      color: white;
+
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 2px slateblue, inset 0 0 0 4px white;
+      }
+    }
+
+    &[aria-disabled] {
+      opacity: 0.4;
+    }
+
+    & [slot=label] {
+      font-weight: bold;
+    }
+
+    & [slot=description] {
+      font-size: small;
     }
   }
-
-  &[aria-disabled] {
-    opacity: 0.4;
-  }
-
-  & [slot=label] {
-    font-weight: bold;
-  }
-
-  & [slot=description] {
-    font-size: small;
-  }
-}
-
-[role=group]:not(:first-child) {
-  margin-top: 12px;
-}
-
-[role=group] header {
-  font-size: 16px;
-  font-weight: bold;
-  padding: 0 8px;
 }
 ```
 
@@ -162,30 +162,30 @@ An `<Item>` defines a single option within a `<ListBox>`. If the `children` are 
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<ListBox className="listbox">
-  {/* ... */}
-</ListBox>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=listbox] {
+.react-aria-ListBox {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ListBox className="my-listbox">
+  {/* ... */}
+</ListBox>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.item[aria-selected=true] {
+.react-aria-Item[aria-selected=true] {
   /* ... */
 }
 
-.item[data-focused] {
+.react-aria-Item[data-focused] {
   /* ... */
 }
 ```
@@ -215,15 +215,15 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `[role=listbox]` CSS selector, or by adding a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
 
 ### Section
 
-A `Section` can be targeted with the `[role=group]` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `section` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
 
 ### Item
 
-An `Item` can be targeted with the `[role=option]` CSS selector, or by adding a custom `className`. It supports the following states:
+An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ItemStates.properties} />
 
@@ -247,7 +247,7 @@ function MyListBox({children, ...props}) {
 }
 
 function MyItem(props) {
-  return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+  return <Item {...props} className={({isFocusVisible, isSelected}) => `my-item ${isFocusVisible ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
 <MyListBox aria-label="Ice cream flavor" selectionMode="single">
@@ -257,6 +257,46 @@ function MyItem(props) {
   <MyItem>Vanilla</MyItem>
 </MyListBox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-listbox {
+  max-height: inherit;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  border-radius: 6px;
+  background: var(--page-background);
+  outline: none;
+  min-width: var(--button-width);
+  max-width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+}
+
+.my-item {
+  margin: 2px;
+  padding: 4px 8px 4px 8px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--spectrum-global-color-gray-800);
+  font-size: 1.072rem;
+
+  &.selected {
+    background: #e70073;
+    color: white;
+  }
+
+  &.focused {
+    box-shadow: 0 0 0 2px var(--page-background), 0 0 0 4px #e70073;
+  }
+}
+```
+
+</details>
 
 ## Usage
 

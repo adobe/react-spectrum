@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
+import statelyDocs from 'docs:@react-stately/datepicker';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -42,8 +43,8 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 
 <TimeField>
   <Label>Event time</Label>
-  <DateInput className="input">
-    {segment => <DateSegment segment={segment} className="segment" />}
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
   </DateInput>
 </TimeField>
 ```
@@ -52,7 +53,7 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.input {
+.react-aria-DateInput {
   display: flex;
   padding: 4px;
   border: 1px solid var(--spectrum-global-color-gray-400);
@@ -60,34 +61,34 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
   background: var(--spectrum-global-color-gray-50);
   width: fit-content;
   min-width: 150px;
+
+  &:focus-within {
+    border-color: slateblue;
+    box-shadow: 0 0 0 1px slateblue;
+  }
 }
 
-.input:focus-within {
-  border-color: slateblue;
-  box-shadow: 0 0 0 1px slateblue;
-}
-
-.segment {
+.react-aria-DateSegment {
   padding: 0 2px;
   font-variant-numeric: tabular-nums;
   text-align: end;
-}
 
-.segment[data-type=literal] {
+  &[data-type=literal] {
   padding: 0;
 }
 
-.segment[data-placeholder] {
-  color: var(--spectrum-global-color-gray-700);
-  font-style: italic;
-}
+  &[data-placeholder] {
+    color: var(--spectrum-global-color-gray-700);
+    font-style: italic;
+  }
 
-.segment:focus {
-  color: white;
-  background: slateblue;
-  outline: none;
-  border-radius: 4px;
-  caret-color: transparent;
+  &:focus {
+    color: white;
+    background: slateblue;
+    outline: none;
+    border-radius: 4px;
+    caret-color: transparent;
+  }
 }
 ```
 
@@ -154,30 +155,30 @@ The `<DateSegment>` component renders an individual segment.
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<DateInput className="date-input">
-  {/* ... */}
-</DateInput>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=group] {
+.react-aria-TimeField {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DateInput className="my-date-input">
+  {/* ... */}
+</DateInput>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.segment[data-placeholder] {
+.react-aria-DateSegment[data-placeholder] {
   /* ... */
 }
 
-.segment[aria-readonly] {
+.react-aria-DateSegment[aria-readonly] {
   /* ... */
 }
 ```
@@ -205,27 +206,19 @@ The states, selectors, and render props for each component used in a `TimeField`
 
 ### TimeField
 
-The `TimeField` component itself does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<TimeField>`.
-
-```jsx
-<TimeField>
-  <div className="my-date-field">
-    {/* ... */}
-  </div>
-</TimeField>
-```
+A `TimeField` can be targeted with the `.react-aria-TimeField` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DateFieldState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### Label
 
-A `Label` can be targeted by adding a custom `className`.
+A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
 
 ### DateInput
 
-A `DateInput` can be targeted using the `[role=group]` selector, or by adding a custom `className`.
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`.
 
 ### DateSegment
 
-A `DateSegment` can be targeted by adding a custom `className`. It supports the following states and render props:
+A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
 
@@ -240,8 +233,8 @@ function MyTimeField({label, ...props}) {
   return (
     <TimeField {...props}>
       <Label>{label}</Label>
-      <DateInput className="input">
-        {segment => <DateSegment segment={segment} className="segment" />}
+      <DateInput>
+        {segment => <DateSegment segment={segment} />}
       </DateInput>
     </TimeField>
   );

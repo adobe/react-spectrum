@@ -3,22 +3,18 @@ import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
+import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DateValue} from '@react-types/datepicker';
 import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import {Provider, useSlot} from './utils';
-import React, {ReactNode, useRef} from 'react';
-import {useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
+import React, {useRef} from 'react';
 
-interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label'> {
-  children: ReactNode
-}
+interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label'>, RenderProps<DatePickerState> {}
 
-interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label'> {
-  children: ReactNode
-}
+interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label'>, RenderProps<DateRangePickerState> {}
 
 export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   let state = useDatePickerState(props);
@@ -43,6 +39,12 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   let fieldRef = useRef();
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-DatePicker'
+  });
+
   return (
     <Provider
       values={[
@@ -54,7 +56,9 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
         [DialogContext, dialogProps]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
@@ -92,6 +96,12 @@ export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps
   let endFieldRef = useRef();
   let {fieldProps: endDateFieldProps} = useDateField({...startFieldProps, label}, endFieldState, endFieldRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-DateRangePicker'
+  });
+
   return (
     <Provider
       values={[
@@ -116,7 +126,9 @@ export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps
           }
         }]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
     </Provider>
   );
 }

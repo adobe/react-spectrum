@@ -40,11 +40,11 @@ type: component
 ```tsx example
 import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
 
-<Slider defaultValue={30} className="slider">
+<Slider defaultValue={30}>
   <Label>Opacity</Label>
   <SliderOutput />
-  <SliderTrack className="track">
-    <SliderThumb className="thumb" />
+  <SliderTrack>
+    <SliderThumb />
   </SliderTrack>
 </Slider>
 ```
@@ -53,7 +53,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.slider {
+.react-aria-Slider {
   display: grid;
   grid-template-areas: "label output"
                        "track track";
@@ -68,7 +68,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     grid-area: output;
   }
 
-  & .track {
+  & .react-aria-SliderTrack {
     grid-area: track;
     position: relative;
 
@@ -81,7 +81,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     }
   }
 
-  & .thumb {
+  & .react-aria-SliderThumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -101,7 +101,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     flex-direction: column;
     width: 300px;
 
-    & .track {
+    & .react-aria-SliderTrack {
       height: 30px;
       width: 100%;
 
@@ -113,7 +113,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       }
     }
 
-    & .thumb {
+    & .react-aria-SliderThumb {
       top: 50%;
     }
   }
@@ -127,7 +127,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       display: none;
     }
 
-    & .track {
+    & .react-aria-SliderTrack {
       width: 30px;
       height: 100%;
 
@@ -139,13 +139,13 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       }
     }
 
-    & .thumb {
+    & .react-aria-SliderThumb {
       left: 50%;
     }
   }
 
   &[data-disabled] {
-    & .track {
+    & .react-aria-SliderTrack {
       opacity: 0.4;
     }
   }
@@ -219,7 +219,15 @@ The `<SliderThumb>` component renders an individual thumb within a `<SliderTrack
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Slider {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
 <Slider className="slider">
@@ -227,22 +235,14 @@ All React Aria components accept the `className` and `style` DOM attributes for 
 </Slider>
 ```
 
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
-
-```css
-[role=group] {
-  /* ... */
-}
-```
-
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.thumb[data-dragging] {
+.react-aria-SliderThumb[data-dragging] {
   /* ... */
 }
 
-.thumb[data-focused] {
+.react-aria-SliderThumb[data-focused] {
   /* ... */
 }
 ```
@@ -265,25 +265,25 @@ The states, selectors, and render props for each component used in a `Slider` ar
 
 ### Slider
 
-The `Slider` component can be targeted using the `[role=group]` selector, or by adding a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`. In addition, it provides the following states as DOM attributes.
+The `Slider` component can be targeted with the `.react-aria-Slider` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`. In addition, it provides the following states as DOM attributes.
 
 <StateTable properties={docs.exports.SliderRenderProps.properties} />
 
 ### Label
 
-A `Label` can be targeted by adding a custom `className`.
+A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
 
 ### SliderOutput
 
-The `SliderOutput` component can be targeted using the `output` selector, or by adding a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+The `SliderOutput` component can be targeted with the `output` CSS selector, or by adding a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### SliderTrack
 
-The `SliderTrack` component can be targeted by adding a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+The `SliderTrack` component can be targeted with the `.react-aria-SliderTrack` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### SliderThumb
 
-The `SliderTrack` component can be targeted by adding a custom `className`. It provides the following render props and states:
+The `SliderThumb` component can be targeted with the `.react-aria-SliderThumb` CSS selector, or by overriding with a custom `className`. It provides the following render props and states:
 
 <StateTable properties={docs.exports.SliderThumbRenderProps.properties} />
 
@@ -296,14 +296,14 @@ This example wraps `Slider` and all of its children together into a single compo
 ```tsx example export=true
 function MySlider({label, ...props}) {
   return (
-    <Slider {...props} className="slider">
+    <Slider {...props}>
       <Label>{label}</Label>
       <SliderOutput>
         {state => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
-      <SliderTrack className="track">
+      <SliderTrack>
         {state => state.values.map((_, i) => (
-          <SliderThumb key={i} index={i} className="thumb" />
+          <SliderThumb key={i} index={i} />
         ))}
       </SliderTrack>
     </Slider>

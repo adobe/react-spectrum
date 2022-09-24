@@ -50,7 +50,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   
   return (
     <FocusScope contain restoreFocus autoFocus>
-      <section {...dialogProps} ref={ref} style={props.style} className={props.className}>
+      <section {...dialogProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-Dialog'}>
         <Provider
           values={[
             [ButtonContext, undefined],

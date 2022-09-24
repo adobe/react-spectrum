@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
+import statelyDocs from 'docs:@react-stately/calendar';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -37,16 +38,16 @@ type: component
 ## Example
 
 ```tsx example
-import {Calendar, Button, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
 
-<Calendar aria-label="Appointment date" className="calendar">
+<Calendar aria-label="Appointment date">
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
     <Button slot="next">▶</Button>
   </header>
   <CalendarGrid>
-    {date => <CalendarCell date={date} className="cell" />}
+    {date => <CalendarCell date={date} />}
   </CalendarGrid>
 </Calendar>
 ```
@@ -55,7 +56,7 @@ import {Calendar, Button, Heading, Button, CalendarGrid, CalendarCell} from 'rea
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.calendar {
+.react-aria-Calendar {
   width: fit-content;
 
   & header {
@@ -99,7 +100,7 @@ import {Calendar, Button, Heading, Button, CalendarGrid, CalendarCell} from 'rea
     margin: 0 -4px;
   }
 
-  & .cell {
+  & .react-aria-CalendarCell {
     width: 2rem;
     line-height: 2rem;
     text-align: center;
@@ -160,6 +161,21 @@ A calendar consists of a grouping element containing one or more date grids (e.g
 
 <PropTable component={docs.exports.Calendar} links={docs.links} />
 
+### Heading
+
+A `<Heading>` accepts all HTML attributes.
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `Calendar`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
 ### CalendarGrid
 
 A `<CalendarGrid>` renders an individual month within a `<Calendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
@@ -184,30 +200,30 @@ A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<CalendarGrid className="calendar-grid">
-  {/* ... */}
-</CalendarGrid>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=grid] {
+.react-aria-Calendar {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<CalendarGrid className="my-calendar-grid">
+  {/* ... */}
+</CalendarGrid>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.cell[data-selected] {
+.react-aria-CalendarCell[data-selected] {
   /* ... */
 }
 
-.cell[aria-invalid] {
+.react-aria-CalendarCell[aria-invalid] {
   /* ... */
 }
 ```
@@ -235,15 +251,21 @@ The states, selectors, and render props for each component used in a `Calendar` 
 
 ### Calendar
 
-A `Calendar` can be targeted by adding a custom `className`. The next and previous buttons can be targeted using the `[slot=previous]` and `[slot=next]` selectors.
+A `Calendar` can be targeted with the `.react-aria-Calendar` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.CalendarState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+
+### Button
+
+A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. The next and previous buttons can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ### CalendarGrid
 
-A `CalendarGrid` can be targeted using the `[role=grid]` CSS selector, or by adding a custom `className`.
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`.
 
 ### CalendarCell
 
-A `CalendarCell` can be targeted using the `[role=button]` CSS selector, or by adding a custom `className`. It supports the following states:
+A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
 
@@ -252,7 +274,7 @@ A `CalendarCell` can be targeted using the `[role=button]` CSS selector, or by a
 Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `Calendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
 
 ```tsx example
-<Calendar aria-label="Appointment date" visibleDuration={{months: 2}} className="calendar">
+<Calendar aria-label="Appointment date" visibleDuration={{months: 2}}>
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
@@ -260,10 +282,10 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
   </header>
   <div style={{display: 'flex', gap: 30}}>
     <CalendarGrid>
-      {date => <CalendarCell date={date} className="cell" />}
+      {date => <CalendarCell date={date} />}
     </CalendarGrid>
     <CalendarGrid offset={{months: 1}}>
-      {date => <CalendarCell date={date} className="cell" />}
+      {date => <CalendarCell date={date} />}
     </CalendarGrid>
   </div>
 </Calendar>
@@ -278,14 +300,14 @@ This example wraps `Calendar` and all of its children together into a single com
 ```tsx example export=true
 function MyCalendar(props) {
   return (
-    <Calendar {...props} className="calendar">
+    <Calendar {...props}>
       <header>
         <Button slot="previous">◀</Button>
         <Heading />
         <Button slot="next">▶</Button>
       </header>
       <CalendarGrid>
-        {date => <CalendarCell date={date} className="cell" />}
+        {date => <CalendarCell date={date} />}
       </CalendarGrid>
     </Calendar>
   );

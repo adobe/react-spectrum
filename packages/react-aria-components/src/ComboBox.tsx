@@ -4,16 +4,14 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, slotCallbackSymbol, useSlot} from './utils';
-import React, {ReactNode, useCallback, useRef, useState} from 'react';
+import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
+import React, {useCallback, useRef, useState} from 'react';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
 import {useComboBoxState} from 'react-stately';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label'> {
-  children: ReactNode
-}
+interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label'>, RenderProps<ComboBoxProps<T>> {}
 
 export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
@@ -68,6 +66,12 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     onResize: onResize
   });
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-ComboBox'
+  });
+
   return (
     <Provider
       values={[
@@ -85,7 +89,9 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
       {portal}
     </Provider>
   );

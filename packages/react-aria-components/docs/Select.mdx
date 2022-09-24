@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/select';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -68,52 +69,56 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-button[aria-haspopup=listbox] {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.072rem;
-  padding: 4px 4px 4px 8px;
-  margin: 0;
-  outline: none;
-  display: flex;
-  align-items: center;
-  max-width: 250px;
+.react-aria-Select {
+  & button {
+    background: var(--spectrum-global-color-gray-50);
+    border: 1px solid var(--spectrum-global-color-gray-400);
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    appearance: none;
+    vertical-align: middle;
+    font-size: 1.072rem;
+    padding: 4px 4px 4px 8px;
+    margin: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    max-width: 250px;
+
+    &[data-focus-visible] {
+      border-color: slateblue;
+      box-shadow: 0 0 0 1px slateblue;
+    }
+
+    &[data-pressed] {
+      background: var(--spectrum-global-color-gray-150);
+    }
+  }
+
+  & .react-aria-SelectValue {
+    &[data-placeholder] {
+      font-style: italic;
+      color: var(--spectrum-global-color-gray-700);
+    }
+
+    & [slot=description] {
+      display: none;
+    }
+  }
+
+  & span[aria-hidden] {
+    width: 1.5rem;
+    line-height: 1.375rem;
+    margin-left: 1rem;
+    padding: 1px;
+    background: slateblue;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.857rem;
+  }
 }
 
-button[data-focus-visible] {
-  border-color: slateblue;
-  box-shadow: 0 0 0 1px slateblue;
-}
-
-button[data-pressed] {
-  background: var(--spectrum-global-color-gray-150);
-}
-
-button [data-placeholder] {
-  font-style: italic;
-  color: var(--spectrum-global-color-gray-700);
-}
-
-button span[aria-hidden] {
-  width: 1.5rem;
-  line-height: 1.375rem;
-  margin-left: 1rem;
-  padding: 1px;
-  background: slateblue;
-  color: white;
-  border-radius: 4px;
-  font-size: 0.857rem;
-}
-
-button [slot=description] {
-  display: none;
-}
-
-[role=listbox] {
+.react-aria-ListBox {
   max-height: inherit;
   overflow: auto;
   padding: 2px;
@@ -125,60 +130,60 @@ button [slot=description] {
   min-width: var(--button-width);
   max-width: 250px;
   box-sizing: border-box;
-}
 
-[role=option] {
-  margin: 2px;
-  padding: 4px 8px 4px 22px;
-  border-radius: 6px;
-  outline: none;
-  cursor: default;
-  color: var(--spectrum-global-color-gray-800);
-  font-size: 1.072rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
+  & section:not(:first-child) {
+    margin-top: 12px;
+  }
 
-[role=option][aria-selected=true] {
-  font-weight: 600;
-}
+  & section header {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0 8px 0 22px;
+  }
 
-[role=option][aria-selected=true]::before {
-  content: '✓';
-  content: '✓' / '';
-  alt: ' ';
-  position: absolute;
-  top: 4px;
-  left: 4px;
-}
+  & .react-aria-Item {
+    margin: 2px;
+    padding: 4px 8px 4px 22px;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--spectrum-global-color-gray-800);
+    font-size: 1.072rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 
-[role=option][data-focused],
-[role=option][data-pressed] {
-  background: slateblue;
-  color: white;
-}
+    &[aria-selected=true] {
+      font-weight: 600;
 
-[role=option][aria-disabled] {
-  opacity: 0.4;
-}
+      &::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
+    }
 
-[role=option] [slot=label] {
-  font-weight: bold;
-}
+    &[data-focused],
+    &[data-pressed] {
+      background: slateblue;
+      color: white;
+    }
 
-[role=option] [slot=description] {
-  font-size: small;
-}
+    &[aria-disabled] {
+      opacity: 0.4;
+    }
 
-[role=group]:not(:first-child) {
-  margin-top: 12px;
-}
+    & [slot=label] {
+      font-weight: bold;
+    }
 
-[role=group] header {
-  font-size: 18px;
-  font-weight: bold;
-  padding: 0 8px 0 22px;
+    & [slot=description] {
+      font-size: small;
+    }
+  }
 }
 ```
 
@@ -313,30 +318,30 @@ An `<Item>` defines a single option within a `<ListBox>`. If the `children` are 
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<ListBox className="listbox">
-  {/* ... */}
-</ListBox>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=listbox] {
+.react-aria-Select {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ListBox className="my-listbox">
+  {/* ... */}
+</ListBox>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.item[aria-selected=true] {
+.react-aria-Item[aria-selected=true] {
   /* ... */
 }
 
-.item[data-focused] {
+.react-aria-Item[data-focused] {
   /* ... */
 }
 ```
@@ -366,19 +371,11 @@ The states and selectors for each component used in a `Select` are documented be
 
 ### Select
 
-The `Select` component itself does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<Select>`.
-
-```jsx
-<Select>
-  <div className="my-select">
-    {/* ... */}
-  </div>
-</Select>
-```
+A `Select` can be targeted with the `.react-aria-Select` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SelectState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### Label
 
-A `Label` can be targeted by adding a custom `className`.
+A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
 
 ### Button
 
@@ -388,33 +385,33 @@ A `Button` can be targeted with the `button` CSS selector, or by adding a custom
 
 ### SelectValue
 
-A `SelectValue` can be targed with a custom `className`. It supports the following states and render props:
+A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.SelectValueRenderProps.properties} />
 
 ### Popover
 
-The `Popover` component can be targeted with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
+The `Popover` component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
 
 The `--button-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
-```css
-.popover {
+```css render=false
+.react-aria-Popover {
   width: var(--button-width);
 }
 ```
 
 ### ListBox
 
-A `ListBox` can be targeted with the `[role=listbox]` CSS selector, or by adding a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
 
 ### Section
 
-A `Section` can be targeted with the `[role=group]` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `section` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
 
 ### Item
 
-An `Item` can be targeted with the `[role=option]` CSS selector, or by adding a custom `className`. It supports the following states:
+An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ItemStates.properties} />
 
@@ -433,12 +430,12 @@ function MySelect({label, children, ...props}) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
-      <Button className="my-select">
+      <Button>
         <SelectValue />
         <span aria-hidden="true">▼</span>
       </Button>
-      <Popover className="my-popover">
-        <ListBox className="my-listbox">
+      <Popover>
+        <ListBox>
           {children}
         </ListBox>
       </Popover>
@@ -457,6 +454,42 @@ function MyItem(props) {
   <MyItem>Vanilla</MyItem>
 </MySelect>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-item {
+  margin: 2px;
+  padding: 4px 8px 4px 22px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--spectrum-global-color-gray-800);
+  font-size: 1.072rem;
+  position: relative;
+
+  &.selected {
+    font-weight: 600;
+
+    &::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+    }
+  }
+
+  &.focused {
+    background: #e70073;
+    color: white;
+  }
+}
+```
+
+</details>
 
 ## Usage
 
@@ -489,7 +522,7 @@ function Example() {
   return (
     <>
       <MySelect label="Pick an engineering major" items={options}>
-        {(item) => <MyItem>{item.name}</MyItem>}
+        {(item) => <Item>{item.name}</Item>}
       </MySelect>
     </>
   );
@@ -618,7 +651,7 @@ function Example() {
       items={options}
       selectedKey={animal}
       onSelectionChange={selected => setAnimal(selected)}>
-      {item => <MyItem id={item.name}>{item.name}</MyItem>}
+      {item => <Item id={item.name}>{item.name}</Item>}
     </MySelect>
   );
 }
@@ -650,7 +683,7 @@ function AsyncLoadingExample() {
 
   return (
     <MySelect label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <MyItem id={item.name}>{item.name}</MyItem>}
+      {(item) => <Item id={item.name}>{item.name}</Item>}
     </MySelect>
   );
 }
@@ -662,9 +695,9 @@ A Select can be fully disabled using the `isDisabled` prop.
 
 ```tsx example
 <MySelect label="Choose frequency" isDisabled>
-  <MyItem id="rarely">Rarely</MyItem>
-  <MyItem id="sometimes">Sometimes</MyItem>
-  <MyItem id="always">Always</MyItem>
+  <Item id="rarely">Rarely</Item>
+  <Item id="sometimes">Sometimes</Item>
+  <Item id="always">Always</Item>
 </MySelect>
 ```
 
@@ -679,12 +712,12 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 
 ```tsx example
 <MySelect label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
-  <MyItem id="red panda">Red Panda</MyItem>
-  <MyItem id="cat">Cat</MyItem>
-  <MyItem id="dog">Dog</MyItem>
-  <MyItem id="aardvark">Aardvark</MyItem>
-  <MyItem id="kangaroo">Kangaroo</MyItem>
-  <MyItem id="snake">Snake</MyItem>
+  <Item id="red panda">Red Panda</Item>
+  <Item id="cat">Cat</Item>
+  <Item id="dog">Dog</Item>
+  <Item id="aardvark">Aardvark</Item>
+  <Item id="kangaroo">Kangaroo</Item>
+  <Item id="snake">Snake</Item>
 </MySelect>
 ```
 
@@ -700,9 +733,9 @@ function Example() {
     <>
       <p>Select is {open ? 'open' : 'closed'}</p>
       <MySelect label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
-        <MyItem id="rarely">Rarely</MyItem>
-        <MyItem id="sometimes">Sometimes</MyItem>
-        <MyItem id="always">Always</MyItem>
+        <Item id="rarely">Rarely</Item>
+        <Item id="sometimes">Sometimes</Item>
+        <Item id="always">Always</Item>
       </MySelect>
     </>
   );

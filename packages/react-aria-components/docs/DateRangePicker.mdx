@@ -12,6 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import i18nDocs from 'docs:@internationalized/date';
+import statelyDocs from 'docs:@react-stately/datepicker';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -47,26 +48,26 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 
 <DateRangePicker>
   <Label>Date</Label>
-  <Group className="group">
+  <Group>
     <DateInput slot="start">
-      {segment => <DateSegment segment={segment} className="segment" />}
+      {segment => <DateSegment segment={segment} />}
     </DateInput>
     <span aria-hidden="true">–</span>
     <DateInput slot="end">
-      {segment => <DateSegment segment={segment} className="segment" />}
+      {segment => <DateSegment segment={segment} />}
     </DateInput>
     <Button>▼</Button>
   </Group>
-  <Popover className="popover">
+  <Popover>
     <Dialog>
-      <RangeCalendar className="calendar">
+      <RangeCalendar>
         <header>
           <Button slot="previous">◀</Button>
           <Heading />
           <Button slot="next">▶</Button>
         </header>
         <CalendarGrid>
-          {date => <CalendarCell date={date} className="cell" />}
+          {date => <CalendarCell date={date} />}
         </CalendarGrid>
       </RangeCalendar>
     </Dialog>
@@ -78,79 +79,82 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.group {
+.react-aria-DateRangePicker {
+  & [role=group] {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-width: 220px;
+    padding: 2px 2px 2px 8px;
+    border: 1px solid var(--spectrum-global-color-gray-400);
+    border-radius: 6px;
+    background: var(--spectrum-global-color-gray-50);
+
+    &:focus-within {
+      border-color: slateblue;
+      box-shadow: 0 0 0 1px slateblue;
+    }
+  }
+
+  & [slot=start] + span {
+    padding: 0 4px;
+  }
+
+  & [slot=end] {
+    margin-right: 2rem;
+    flex: 1;
+  }
+
+  & button {
+    background: slateblue;
+    color: white;
+    border-radius: 4px;
+    border: none;
+    appearance: none;
+    margin-left: auto;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    vertical-align: middle;
+    font-size: 0.857rem;
+    outline: none;
+    box-sizing: content-box;
+    border: 2px solid var(--page-background);
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px slateblue;
+    }
+  }
+}
+
+.react-aria-DateInput {
   display: flex;
-  align-items: center;
-  width: fit-content;
-  min-width: 220px;
-  padding: 2px 2px 2px 8px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 6px;
-  background: var(--spectrum-global-color-gray-50);
 }
 
-.group [slot] + span {
-  padding: 0 4px;
-}
-
-.group [slot] {
-  display: flex;
-}
-
-.group [slot=end] {
-  margin-right: 2rem;
-}
-
-.group:focus-within {
-  border-color: slateblue;
-  box-shadow: 0 0 0 1px slateblue;
-}
-
-.segment {
+.react-aria-DateSegment {
   padding: 0 2px;
   font-variant-numeric: tabular-nums;
   text-align: end;
+
+  &[data-type=literal] {
+    padding: 0;
+  }
+
+  &[data-placeholder] {
+    color: var(--spectrum-global-color-gray-700);
+    font-style: italic;
+  }
+
+  &:focus {
+    color: white;
+    background: slateblue;
+    outline: none;
+    border-radius: 4px;
+    caret-color: transparent;
+  }
 }
 
-.segment[data-type=literal] {
-  padding: 0;
-}
-
-.segment[data-placeholder] {
-  color: var(--spectrum-global-color-gray-700);
-  font-style: italic;
-}
-
-.segment:focus {
-  color: white;
-  background: slateblue;
-  outline: none;
-  border-radius: 4px;
-  caret-color: transparent;
-}
-
-.group button {
-  background: slateblue;
-  color: white;
-  border-radius: 4px;
-  border: none;
-  appearance: none;
-  margin-left: auto;
-  width: 1.429rem;
-  height: 1.429rem;
-  padding: 0;
-  vertical-align: middle;
-  font-size: 0.857rem;
-  outline: none;
-  box-sizing: content-box;
-  border: 2px solid var(--page-background);
-}
-
-.group button[data-focus-visible] {
-  box-shadow: 0 0 0 2px slateblue;
-}
-
-.popover {
+.react-aria-Popover {
   overflow: auto;
   border: 1px solid var(--spectrum-global-color-gray-400);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -159,100 +163,104 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   padding: 1.25rem;
 }
 
-.calendar header {
-  display: flex;
-  align-items: center;
-  margin-bottom: .5rem;
-}
+.react-aria-RangeCalendar {
+  width: fit-content;
 
-.calendar header h2 {
-  flex: 1;
-  margin: 0;
-  text-align: center;
-  font-size: 1.375rem;
-}
+  & header {
+    display: flex;
+    align-items: center;
+    margin-bottom: .5rem;
 
-.calendar header button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  width: 1.75rem;
-  height: 1.75rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-}
+    & h2 {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: 1.375rem;
+    }
 
-.calendar header button[data-focus-visible] {
-  border-color: slateblue;
-  box-shadow: 0 0 0 1px slateblue;
-}
+    & button {
+      background: var(--spectrum-global-color-gray-50);
+      border: 1px solid var(--spectrum-global-color-gray-400);
+      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+      border-radius: 4px;
+      appearance: none;
+      vertical-align: middle;
+      font-size: 1rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      text-align: center;
+      margin: 0;
+      outline: none;
 
-.calendar header button[data-pressed] {
-  background: var(--spectrum-global-color-gray-100);
-}
+      &[data-focus-visible] {
+        border-color: slateblue;
+        box-shadow: 0 0 0 1px slateblue;
+      }
 
-.calendar table {
-  margin: 0 -4px;
-  border-collapse: collapse;
-}
+      &[data-pressed] {
+        background: var(--spectrum-global-color-gray-100);
+      }
+    }
+  }
 
-.calendar td {
-  padding: 2px 0;
-}
+  & table {
+    margin: 0 -4px;
+    border-collapse: collapse;
 
-.cell {
-  width: 2.286rem;
-  line-height: 2.286rem;
-  text-align: center;
-  border-radius: 6px;
-  cursor: default;
-  outline: none;
-}
+    & td {
+      padding: 2px 0;
+    }
+  }
 
-.cell[data-outside-month] {
-  display: none;
-}
+  & .react-aria-CalendarCell {
+    width: 2.286rem;
+    line-height: 2.286rem;
+    text-align: center;
+    border-radius: 6px;
+    cursor: default;
+    outline: none;
 
-.cell[data-pressed] {
-  background: var(--spectrum-global-color-gray-200);
-}
+    &[data-outside-month] {
+      display: none;
+    }
 
-.cell[data-selected] {
-  background: slateblue;
-  color: white;
-  border-radius: 0;
-}
+    &[data-pressed] {
+      background: var(--spectrum-global-color-gray-200);
+    }
 
-.cell[data-focus-visible] {
-  box-shadow: inset 0 0 0 2px slateblue;
-}
+    &[data-focus-visible] {
+      box-shadow: inset 0 0 0 2px slateblue;
+    }
 
-.cell[data-selected][data-focus-visible] {
-  box-shadow: inset 0 0 0 1px slateblue, inset 0 0 0 3px white;
-}
+    &[data-selected] {
+      background: slateblue;
+      color: white;
+      border-radius: 0;
 
-.cell[data-selection-start] {
-  border-start-start-radius: 6px;
-  border-end-start-radius: 6px;
-}
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 1px slateblue, inset 0 0 0 3px white;
+      }
+    }
 
-.cell[data-selection-end] {
-  border-start-end-radius: 6px;
-  border-end-end-radius: 6px;
-}
+    &[data-selection-start] {
+      border-start-start-radius: 6px;
+      border-end-start-radius: 6px;
+    }
 
-.cell[data-disabled] {
-  color: var(--spectrum-global-color-gray-600); 
-}
+    &[data-selection-end] {
+      border-start-end-radius: 6px;
+      border-end-end-radius: 6px;
+    }
 
-.cell[data-unavailable] {
-  text-decoration: line-through;
-  color: var(--spectrum-global-color-red-600);
+    &[data-disabled] {
+      color: var(--spectrum-global-color-gray-600); 
+    }
+
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--spectrum-global-color-red-600);
+    }
+  }
 }
 ```
 
@@ -358,7 +366,7 @@ The `<DateSegment>` component renders an individual segment.
 
 ### Button
 
-A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `Calendar`.
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `DateRangePicker` or `RangeCalendar`.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -424,30 +432,30 @@ A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<DateSegment className="date-segment">
-  {/* ... */}
-</DateSegment>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=group] {
+.react-aria-DateRangePicker {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DateInput className="my-date-input">
+  {/* ... */}
+</DateInput>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.segment[data-placeholder] {
+.react-aria-DateSegment[data-placeholder] {
   /* ... */
 }
 
-.segment[aria-readonly] {
+.react-aria-DateSegment[aria-readonly] {
   /* ... */
 }
 ```
@@ -475,31 +483,23 @@ The states, selectors, and render props for each component used in a `DateRangeP
 
 ### DateRangePicker
 
-The `DateRangePicker` component itself does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<DateRangePicker>`.
-
-```jsx
-<DateRangePicker>
-  <div className="my-date-range-picker">
-    {/* ... */}
-  </div>
-</DateRangePicker>
-```
+A `DateRangePicker` can be targeted with the `.react-aria-DateRangePicker` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DateRangePickerState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### Label
 
-A `Label` can be targeted by adding a custom `className`.
+A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
 
 ### Group
 
-A `Group` can be targeted using the `[role=group]` selector, or by adding a custom `className`.
+A `Group` can be targeted with the `[role=group]` selector, or by adding a custom `className`.
 
 ### DateInput
 
-A `DateInput` can be targeted by adding a custom `className`.
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`.
 
 ### DateSegment
 
-A `DateSegment` can be targeted by adding a custom `className`. It supports the following states and render props:
+A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
 
@@ -511,23 +511,23 @@ A `Button` can be targeted with the `button` CSS selector, or by adding a custom
 
 ### Popover
 
-The `Popover` component can be targeted with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM.
+The `Popover` component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM.
 
 ### Dialog
 
-A `Dialog` can be targeted with the `[role=dialog]` CSS selector, or by adding a custom `className`.
+A `Dialog` can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
 
 ### Calendar
 
-A `Calendar` can be targeted by adding a custom `className`. The next and previous buttons can be targeted using the `[slot=previous]` and `[slot=next]` selectors.
+A `Calendar` can be targeted with the `.react-aria-Calendar` CSS selector, or by overriding with a custom `className`. The next and previous buttons can be targeted with the `[slot=previous]` and `[slot=next]` selectors.
 
 ### CalendarGrid
 
-A `CalendarGrid` can be targeted using the `[role=grid]` CSS selector, or by adding a custom `className`.
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`.
 
 ### CalendarCell
 
-A `CalendarCell` can be targeted using the `[role=button]` CSS selector, or by adding a custom `className`. It supports the following states:
+A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
 
@@ -542,26 +542,26 @@ function MyDateRangePicker({label, ...props}) {
   return (
     <DateRangePicker {...props}>
       <Label>{label}</Label>
-      <Group className="group">
+      <Group>
         <DateInput slot="start">
-          {segment => <DateSegment segment={segment} className="segment" />}
+          {segment => <DateSegment segment={segment} />}
         </DateInput>
         <span aria-hidden="true">–</span>
         <DateInput slot="end">
-          {segment => <DateSegment segment={segment} className="segment" />}
+          {segment => <DateSegment segment={segment} />}
         </DateInput>
         <Button>▼</Button>
       </Group>
-      <Popover className="popover">
+      <Popover>
         <Dialog>
-          <RangeCalendar className="calendar">
+          <RangeCalendar>
             <header>
               <Button slot="previous">◀</Button>
               <Heading />
               <Button slot="next">▶</Button>
             </header>
             <CalendarGrid>
-              {date => <CalendarCell date={date} className="cell" />}
+              {date => <CalendarCell date={date} />}
             </CalendarGrid>
           </RangeCalendar>
         </Dialog>

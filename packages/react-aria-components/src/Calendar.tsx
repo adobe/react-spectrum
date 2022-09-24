@@ -4,11 +4,11 @@ import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
-import {DOMProps, Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {HeadingContext} from './Heading';
+import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React from 'react';
 
-interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, DOMProps {
+interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, RenderProps<CalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -16,7 +16,7 @@ interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, 
   visibleDuration?: DateDuration
 }
 
-interface RangeCalendarComponentProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps {
+interface RangeCalendarComponentProps<T extends DateValue> extends RangeCalendarProps<T>, RenderProps<RangeCalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -40,8 +40,14 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
 
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-Calendar'
+  });
+
   return (
-    <div {...calendarProps} ref={ref} style={props.style} className={props.className}>
+    <div {...renderProps} {...calendarProps} ref={ref}>
       <Provider
         values={[
           [ButtonContext, {
@@ -56,7 +62,7 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
         </VisuallyHidden>
-        {props.children}
+        {renderProps.children}
         <VisuallyHidden>
           <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
         </VisuallyHidden>
@@ -83,8 +89,14 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
     ref
   );
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-RangeCalendar'
+  });
+
   return (
-    <div {...calendarProps} ref={ref} style={props.style} className={props.className}>
+    <div {...renderProps} {...calendarProps} ref={ref}>
       <Provider
         values={[
           [ButtonContext, {
@@ -99,7 +111,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
         </VisuallyHidden>
-        {props.children}
+        {renderProps.children}
         <VisuallyHidden>
           <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
         </VisuallyHidden>
@@ -204,7 +216,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   return (
     <InternalCalendarGridContext.Provider value={startDate}>
-      <table {...gridProps} ref={ref} style={props.style} className={props.className}>
+      <table {...gridProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-CalendarGrid'}>
         <thead {...headerProps}>
           <tr>
             {weekDays.map((day, index) => <th key={index}>{day}</th>)}
@@ -257,6 +269,7 @@ export function CalendarCell({date, className, style, children}: CalendarCellPro
     style,
     children,
     defaultChildren: states.formattedDate,
+    defaultClassName: 'react-aria-CalendarCell',
     values: {
       date,
       isOutsideMonth,

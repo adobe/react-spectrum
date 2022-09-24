@@ -50,7 +50,8 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let renderProps = useRenderProps({
     ...props,
-    values: state
+    values: state,
+    defaultClassName: 'react-aria-Slider'
   });
 
   return (
@@ -81,6 +82,7 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
     style,
     children,
     defaultChildren: state.getThumbValueLabel(0),
+    defaultClassName: 'react-aria-SliderOutput',
     values: state
   });
 
@@ -99,6 +101,7 @@ function SliderTrack({children, style, className}: SliderTrackProps, ref: Forwar
     className,
     style,
     children,
+    defaultClassName: 'react-aria-SliderTrack',
     values: state
   });
 
@@ -153,6 +156,7 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
     className: props.className,
     style: props.style,
     children: props.children,
+    defaultClassName: 'react-aria-SliderThumb',
     values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 

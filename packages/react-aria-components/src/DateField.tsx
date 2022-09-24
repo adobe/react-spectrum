@@ -4,16 +4,12 @@ import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFie
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
-interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label'> {
-  children: ReactNode
-}
+interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label'>, RenderProps<DateFieldState> {}
 
-interface TimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T> {
-  children: ReactNode
-}
+interface TimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, RenderProps<DateFieldState> {}
 
 interface DateInputContextValue {
   state: DateFieldState,
@@ -35,13 +31,21 @@ export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
   let [labelRef, label] = useSlot();
   let {labelProps, fieldProps} = useDateField({...props, label}, state, fieldRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-DateField'
+  });
+
   return (
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef}],
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
@@ -57,13 +61,21 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
   let [labelRef, label] = useSlot();
   let {labelProps, fieldProps} = useTimeField({...props, label}, state, fieldRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-TimeField'
+  });
+
   return (
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
@@ -78,7 +90,7 @@ function DateInput({children, style, className, slot}: DateInputProps, ref: Forw
   let [{state, fieldProps}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
   return (
     <InternalDateInputContext.Provider value={state}>
-      <div {...fieldProps} ref={fieldRef} slot={slot} style={style} className={className}>
+      <div {...fieldProps} ref={fieldRef} slot={slot} style={style} className={className ?? 'react-aria-DateInput'}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </div>
     </InternalDateInputContext.Provider>
@@ -128,7 +140,8 @@ function DateSegment({segment, className, style, children}: DateSegmentProps, re
       isReadOnly: !segment.isEditable,
       isInvalid: state.validationState === 'invalid'
     },
-    defaultChildren: segment.text
+    defaultChildren: segment.text,
+    defaultClassName: 'react-aria-DateSegment'
   });
 
   return (

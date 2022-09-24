@@ -34,7 +34,7 @@ export const ButtonContext = createContext<ButtonContextValue>({});
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  let {isPressed: isPressedContext} = useContext(ButtonContext);
+  let {isPressed: isPressedContext} = useContext(ButtonContext) || {};
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
@@ -51,9 +51,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       slot={props.slot}
       data-pressed={isPressedContext || isPressed || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      {props.children}
-    </button>
+      data-focus-visible={isFocusVisible || undefined} />
   );
 }
 

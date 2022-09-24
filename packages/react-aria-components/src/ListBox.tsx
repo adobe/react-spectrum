@@ -77,7 +77,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       {...listBoxProps}
       ref={listBoxRef}
       style={props.style}
-      className={props.className}>
+      className={props.className ?? 'react-aria-ListBox'}>
       <Provider
         values={[
           [InternalListBoxContext, state],
@@ -143,6 +143,7 @@ function Option<T>({item, className, style, children}: OptionProps<T>) {
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
+    defaultClassName: 'react-aria-Item',
     values: {
       ...states,
       isFocusVisible: focusVisible

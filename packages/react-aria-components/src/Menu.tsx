@@ -74,7 +74,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
         {...menuProps}
         ref={ref}
         style={props.style}
-        className={props.className}>
+        className={props.className ?? 'react-aria-Menu'}>
         <Provider
           values={[
             [InternalMenuContext, state],
@@ -149,6 +149,7 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
     className: className || item.props.className,
     style: style || item.props.style,
     children: children || item.rendered,
+    defaultClassName: 'react-aria-Item',
     values: {
       ...states,
       isFocusVisible: focusVisible

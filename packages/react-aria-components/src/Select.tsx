@@ -11,9 +11,7 @@ import {SelectState, useSelectState} from 'react-stately';
 import {useCollection} from './Collection';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label'> {
-  children: ReactNode
-}
+interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label'>, RenderProps<SelectState<T>> {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -58,6 +56,12 @@ export function Select<T extends object>(props: SelectProps<T>) {
     onResize: onResize
   });
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-Select'
+  });
+
   return (
     <Provider
       values={[
@@ -73,7 +77,9 @@ export function Select<T extends object>(props: SelectProps<T>) {
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
       {portal}
       <HiddenSelect
         state={state}
@@ -101,6 +107,7 @@ export function SelectValue(props: SelectValueProps) {
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: state.selectedItem?.rendered || 'Select an item',
+    defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.rendered,
       isPlaceholder: !state.selectedItem

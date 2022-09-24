@@ -126,6 +126,10 @@ module.exports = new Transformer({
           }
 
           if (node.lang === 'css') {
+            if (node.meta && node.meta.includes('render=false')) {
+              return responsiveCode(node);
+            }
+
             let transformed = parcelCss.transform({
               filename: asset.filePath,
               code: Buffer.from(node.value),

@@ -49,10 +49,11 @@ export interface RenderProps<T> {
 
 interface RenderPropsHookOptions<T> extends RenderProps<T> {
   values: T,
-  defaultChildren?: ReactNode
+  defaultChildren?: ReactNode,
+  defaultClassName?: string
 }
 
-export function useRenderProps<T>({className, style, children, defaultChildren, values}: RenderPropsHookOptions<T>) {
+export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values}: RenderPropsHookOptions<T>) {
   if (typeof className === 'function') {
     className = className(values);
   }
@@ -68,7 +69,7 @@ export function useRenderProps<T>({className, style, children, defaultChildren, 
   }
 
   return {
-    className,
+    className: className ?? defaultClassName,
     style,
     children
   };

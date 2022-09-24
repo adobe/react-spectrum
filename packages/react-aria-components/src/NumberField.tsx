@@ -3,13 +3,11 @@ import {ButtonContext} from './Button';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {Provider, useSlot} from './utils';
-import React, {ReactNode, useRef} from 'react';
-import {useNumberFieldState} from 'react-stately';
+import {NumberFieldState, useNumberFieldState} from 'react-stately';
+import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
+import React, {useRef} from 'react';
 
-interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'> {
-  children: ReactNode
-}
+interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState> {}
 
 export function NumberField(props: NumberFieldProps) {
   let {locale} = useLocale();
@@ -24,6 +22,12 @@ export function NumberField(props: NumberFieldProps) {
     decrementButtonProps
   } = useNumberField({...props, label}, state, inputRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-NumberField'
+  });
+
   return (
     <Provider
       values={[
@@ -37,7 +41,9 @@ export function NumberField(props: NumberFieldProps) {
           }
         }]
       ]}>
-      {props.children}
+      <div {...renderProps}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
