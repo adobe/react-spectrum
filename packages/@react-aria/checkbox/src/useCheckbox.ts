@@ -18,8 +18,14 @@ import {useToggle} from '@react-aria/toggle';
 export interface CheckboxAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the checkbox is selected. */
+  isSelected: boolean,
   /** Whether the checkbox is in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean,
+  /** Whether the checkbox is disabled. */
+  isDisabled: boolean,
+  /** Whether the checkbox is read only. */
+  isReadOnly: boolean
 }
 
 /**
@@ -31,8 +37,7 @@ export interface CheckboxAria {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps, isPressed} = useToggle(props, state, inputRef);
-  let {isSelected} = state;
+  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle(props, state, inputRef);
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -49,6 +54,9 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
       checked: isSelected,
       'aria-checked': isIndeterminate ? 'mixed' : isSelected
     },
-    isPressed
+    isSelected,
+    isPressed,
+    isDisabled,
+    isReadOnly
   };
 }

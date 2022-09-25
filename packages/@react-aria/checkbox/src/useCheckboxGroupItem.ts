@@ -41,12 +41,10 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
-  let {inputProps} = useCheckbox({
+  return useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || checkboxGroupNames.get(state)
   }, toggleState, inputRef);
-
-  return {inputProps};
 }

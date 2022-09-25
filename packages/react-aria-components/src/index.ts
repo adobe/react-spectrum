@@ -1,6 +1,6 @@
 export {Button} from './Button';
 export {Calendar, RangeCalendar, CalendarGrid, CalendarCell} from './Calendar';
-export {Checkbox} from './Checkbox';
+export {Checkbox, CheckboxGroup} from './Checkbox';
 export {ComboBox} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField} from './DateField';
 export {DatePicker, DateRangePicker} from './DatePicker';

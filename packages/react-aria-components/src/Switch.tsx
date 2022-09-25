@@ -48,15 +48,15 @@ export const SwitchContext = createContext<WithRef<AriaSwitchProps, HTMLInputEle
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
-  let {inputProps, isPressed: isPressedKeyboard} = useSwitch(props, state, ref);
+  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch(props, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let isDisabled = props.isDisabled || props.isReadOnly;
+  let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
   // Handle press state for full label. Keyboard press state is returned by useSwitch
   // since it is handled on the <input> element itself.
   let [isPressed, setPressed] = useState(false);
   let {pressProps} = usePress({
-    isDisabled,
+    isDisabled: isInteractionDisabled,
     onPressStart(e) {
       if (e.pointerType !== 'keyboard') {
         setPressed(true);
@@ -70,35 +70,35 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled
+    isDisabled: isInteractionDisabled
   });
 
-  let pressed = isDisabled ? false : (isPressed || isPressedKeyboard);
+  let pressed = isInteractionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Switch',
     values: {
-      isSelected: state.isSelected,
+      isSelected,
       isPressed: pressed,
       isHovered,
       isFocused,
       isFocusVisible,
-      isDisabled: props.isDisabled || false,
-      isReadOnly: props.isReadOnly || false
+      isDisabled,
+      isReadOnly
     }
   });
 
   return (
     <label 
       {...mergeProps(pressProps, hoverProps, renderProps)}
-      data-selected={state.isSelected || undefined}
+      data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-disabled={props.isDisabled || undefined}
-      data-readonly={props.isReadOnly || undefined}>
+      data-disabled={isDisabled || undefined}
+      data-readonly={isReadOnly || undefined}>
       <VisuallyHidden>
         <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
