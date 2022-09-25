@@ -22,6 +22,7 @@ export {Separator} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
 export {Switch} from './Switch';
 export {Text} from './Text';
+export {TextField} from './TextField';
 export {ToggleButton} from './ToggleButton';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
 export {useContextProps} from './utils';
