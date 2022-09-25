@@ -1,5 +1,6 @@
 export {Button} from './Button';
 export {Calendar, RangeCalendar, CalendarGrid, CalendarCell} from './Calendar';
+export {Checkbox} from './Checkbox';
 export {ComboBox} from './ComboBox';
 export {DateField, DateInput, DateSegment, TimeField} from './DateField';
 export {DatePicker, DateRangePicker} from './DatePicker';
@@ -31,3 +32,4 @@ export type {CalendarCellRenderProps} from './Calendar';
 export type {SliderRenderProps, SliderThumbRenderProps} from './Slider';
 export type {MenuItemStates} from './Menu';
 export type {ToggleButtonRenderProps} from './ToggleButton';
+export type {CheckboxRenderProps} from './Checkbox';

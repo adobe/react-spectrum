@@ -21,7 +21,9 @@ export interface ToggleAria {
   /**
    * Props to be spread on the input element.
    */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the toggle is in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -54,7 +56,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   }
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
@@ -75,6 +77,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       name,
       type: 'checkbox',
       ...interactions
-    })
+    }),
+    isPressed
   };
 }
