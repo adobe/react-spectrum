@@ -13,6 +13,7 @@
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+import {ValidationState} from '@react-types/shared';
 
 export interface RadioGroupState {
   /**
@@ -27,6 +28,12 @@ export interface RadioGroupState {
 
   /** Whether the radio group is read only. */
   readonly isReadOnly: boolean,
+
+  /** Whether the radio group is required. */
+  readonly isRequired: boolean,
+
+  /** Whether the radio group is valid or invalid. */
+  readonly validationState: ValidationState | null,
 
   /** The currently selected value. */
   readonly selectedValue: string | null,
@@ -67,6 +74,8 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     lastFocusedValue,
     setLastFocusedValue,
     isDisabled: props.isDisabled || false,
-    isReadOnly: props.isReadOnly || false
+    isReadOnly: props.isReadOnly || false,
+    isRequired: props.isRequired || false,
+    validationState: props.validationState || null
   };
 }

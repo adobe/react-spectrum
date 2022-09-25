@@ -24,7 +24,9 @@ export interface RadioAria {
   /** Whether the radio is disabled. */
   isDisabled: boolean,
   /** Whether the radio is currently selected. */
-  isSelected: boolean
+  isSelected: boolean,
+  /** Whether the radio is in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -57,7 +59,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     state.setSelectedValue(value);
   };
 
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
@@ -83,6 +85,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       onChange
     }),
     isDisabled,
-    isSelected: checked
+    isSelected: checked,
+    isPressed
   };
 }
