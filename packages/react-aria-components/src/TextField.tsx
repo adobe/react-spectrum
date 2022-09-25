@@ -21,7 +21,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLInputElement>) {
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, inputProps],
+          [InputContext, {...inputProps, ref: domRef}],
           [TextContext, {
             slots: {
               description: descriptionProps,
