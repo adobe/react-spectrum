@@ -17,7 +17,9 @@ import {useToggle} from '@react-aria/toggle';
 
 export interface SwitchAria {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the switch is in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -28,7 +30,7 @@ export interface SwitchAria {
  * @param ref - Ref to the HTML input element.
  */
 export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement>): SwitchAria {
-  let {inputProps} = useToggle(props, state, ref);
+  let {inputProps, isPressed} = useToggle(props, state, ref);
   let {isSelected} = state;
 
   return {
@@ -37,6 +39,7 @@ export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefOb
       role: 'switch',
       checked: isSelected,
       'aria-checked': isSelected
-    }
+    },
+    isPressed
   };
 }
