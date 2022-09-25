@@ -19,6 +19,7 @@ export {Select, SelectValue} from './Select';
 export {Separator} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb} from './Slider';
 export {Text} from './Text';
+export {ToggleButton} from './ToggleButton';
 export {TooltipTrigger, Tooltip, TooltipArrow} from './Tooltip';
 export {useContextProps} from './utils';
 
@@ -29,3 +30,4 @@ export type {DateSegmentRenderProps} from './DateField';
 export type {CalendarCellRenderProps} from './Calendar';
 export type {SliderRenderProps, SliderThumbRenderProps} from './Slider';
 export type {MenuItemStates} from './Menu';
+export type {ToggleButtonRenderProps} from './ToggleButton';

@@ -22,7 +22,12 @@ export interface ButtonRenderProps {
    * Whether the button is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * Whether the button is disabled.
+   * @selector :disabled
+   */
+  isDisabled: boolean
 }
 
 interface ButtonProps extends Omit<AriaButtonProps, 'children'>, SlotProps, RenderProps<ButtonRenderProps> {}
@@ -40,7 +45,8 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isFocusVisible}
+    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false},
+    defaultClassName: 'react-aria-Button'
   });
 
   return (
