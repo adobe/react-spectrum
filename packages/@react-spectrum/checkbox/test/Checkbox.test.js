@@ -51,13 +51,13 @@ describe('Checkbox', function () {
 
   it.each`
     Name                       | Component   | props
-    ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true}}
-    ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true}}
+    ${'Checkbox'}              | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true, value: 'newsletter'}}
+    ${'Checkbox isEmphasized'} | ${Checkbox} | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true, value: 'newsletter'}}
   `('$Name can be default checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
-    expect(checkbox.value).toBe('on');
+    expect(checkbox.value).toBe('newsletter');
     expect(checkbox.checked).toBeTruthy();
 
     userEvent.click(checkbox);
