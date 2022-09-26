@@ -13,8 +13,11 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '../';
 import {Meta, Story} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -106,3 +109,16 @@ ValidationStateValid.args = {...Default.args, validationState: 'valid'};
 
 export const ComplexItems = ComplexItemsTemplate().bind({});
 ComplexItems.args = {...Default.args};
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = Template().bind({});
+_ContextualHelp.args = {...Default.args, contextualHelp};
+
+export const ContextualHelpSideLabel = Template().bind({});
+ContextualHelpSideLabel.args = {...Default.args, contextualHelp, labelPosition: 'side'};

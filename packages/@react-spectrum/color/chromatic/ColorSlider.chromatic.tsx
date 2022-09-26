@@ -11,8 +11,11 @@
  */
 
 import {ColorSlider} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
@@ -20,10 +23,16 @@ import {SpectrumColorSliderProps} from '@react-types/color';
 let states = [
   {isDisabled: true},
   {label: [null, 'custom label']},
-  {showValueLabel: false}
+  {showValueLabel: false},
+  {contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )}
 ];
 
-let combinations = generatePowerset(states, (merged) => merged.label === null && merged.showValueLabel === false);
+let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
 
 function shortName(key, value) {
   let returnVal = '';
