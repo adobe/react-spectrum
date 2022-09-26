@@ -135,7 +135,7 @@ function CustomSandpack(props) {
               onAction={(key) => {
                 if (key === 'copy') {
                   navigator.clipboard.writeText(code.trim());
-                } else if (key === 'edit') {
+                } else if (key === 'refresh') {
                   refresh()
                 } else if (key === 'open') {
                   openInCodeSandboxButtonRef.current.firstChild.click();
@@ -148,7 +148,7 @@ function CustomSandpack(props) {
               </Item>
               <Item key="refresh">
                 <Refresh size="S" />
-                <Text>Refresh code</Text>
+                <Text>Refresh example</Text>
               </Item>
               <Item key="open">
                 <LinkOut size="S" />
