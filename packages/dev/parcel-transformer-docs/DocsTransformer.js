@@ -398,6 +398,10 @@ module.exports = new Transformer({
         return bindings;
       }
 
+      if (path.isTSSymbolKeyword()) {
+        return Object.assign(node, {type: 'symbol'});
+      }
+
       if (path.isTSBooleanKeyword()) {
         return Object.assign(node, {type: 'boolean'});
       }
