@@ -437,6 +437,7 @@ div:global(.sandpack) {
 }
 
 div:global(.example-actions) {
+  margin-top: 5px;
   > div {
     justify-content: end;
   }
