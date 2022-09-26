@@ -14,3 +14,4 @@
 
 export type {DnDOptions, DnDHooks} from './useDnDHooks';
 export {useDnDHooks} from './useDnDHooks';
+export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';

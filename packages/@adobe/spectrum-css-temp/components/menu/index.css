@@ -14,10 +14,8 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-menu-margin-x: var(--spectrum-global-dimension-size-40);
-  --spectrum-selectlist-heading-text-size: var(--spectrum-global-dimension-font-size-50);
-  --spectrum-selectlist-heading-text-font-weight: 400;
-  --spectrum-selectlist-heading-text-transform: uppercase;
-  --spectrum-selectlist-heading-letter-spacing: 0.06em;
+  --spectrum-selectlist-heading-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-selectlist-heading-text-font-weight: var(--spectrum-global-font-weight-bold);
   --spectrum-selectlist-heading-margin: var(--spectrum-global-dimension-size-75) 0 0 0;
   --spectrum-selectlist-heading-padding-left: var(--spectrum-global-dimension-size-150);
   --spectrum-selectlist-heading-padding-right: var(--spectrum-global-dimension-size-450);
@@ -150,8 +148,6 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-selectlist-heading-text-size);
   font-weight: var(--spectrum-selectlist-heading-text-font-weight);
   line-height: var(--spectrum-text-body-line-height);
-  text-transform: var(--spectrum-selectlist-heading-text-transform);
-  letter-spacing: var(--spectrum-selectlist-heading-letter-spacing);
 }
 
 .spectrum-Menu .spectrum-Menu {
