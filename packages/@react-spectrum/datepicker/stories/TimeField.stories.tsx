@@ -12,6 +12,9 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDateTime, parseTime, parseZonedDateTime, Time, toZoned} from '@internationalized/date';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TimeField} from '../';
@@ -154,6 +157,23 @@ storiesOf('Date and Time/TimeField/styling', module)
   .add(
     'custom width, labelPosition=side',
     () => render({width: 'size-3000', labelPosition: 'side'})
+  )
+  .add(
+    'description',
+    () => render({description: 'Help text'})
+  )
+  .add(
+    'errorMessage',
+    () => render({errorMessage: 'Time must be between 9 AM and 5 PM', validationState: 'invalid'})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
 
 function render(props = {}) {

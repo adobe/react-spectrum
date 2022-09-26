@@ -13,8 +13,10 @@
 import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {useId} from '@react-aria/utils';
@@ -110,6 +112,20 @@ export const LabelledBy: ColorFieldStory = {
   ),
   name: 'aria-labelledby'
 };
+
+export const ContextualHelpStory: ColorFieldStory = {
+  args: {
+    ...Default.args,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )
+  },
+  name: 'contextual help'
+};
+
 
 export const CustomWidth: ColorFieldStory = {
   args: {...Default.args, width: 'size-3000'},

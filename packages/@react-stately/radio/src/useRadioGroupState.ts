@@ -13,6 +13,7 @@
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+import {ValidationState} from '@react-types/shared';
 
 export interface RadioGroupState {
   /**
@@ -38,7 +39,10 @@ export interface RadioGroupState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void
+  setLastFocusedValue(value: string): void,
+
+  /** The current validation state of the radio group. */
+  validationState: ValidationState
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -67,6 +71,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     lastFocusedValue,
     setLastFocusedValue,
     isDisabled: props.isDisabled || false,
-    isReadOnly: props.isReadOnly || false
+    isReadOnly: props.isReadOnly || false,
+    validationState: props.validationState
   };
 }

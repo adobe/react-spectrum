@@ -16,19 +16,20 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-headCell {
-  color: var(--spectrum-table-header-text-color);
+  color: var(--spectrum-alias-text-color);
   background-color: var(--spectrum-alias-background-color-default);
 
-  &.is-sortable {
+  &.is-sortable,
+  &.is-resizable {
     .spectrum-Table-sortedIcon {
-      color: var(--spectrum-table-header-sort-icon-color);
+      color: var(--spectrum-alias-text-color);
     }
 
     &.is-hovered {
-      color: var(--spectrum-table-header-text-color-hover);
+      color: var(--spectrum-alias-text-color-hover);
 
       .spectrum-Table-sortedIcon {
-        color: var(--spectrum-table-header-sort-icon-color-hover);
+        color: var(--spectrum-alias-text-color-hover);
       }
     }
 

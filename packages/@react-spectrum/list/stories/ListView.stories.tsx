@@ -9,6 +9,7 @@ import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
@@ -462,7 +463,7 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
     'allows directories and files from finder',
     args => (
       <FinderDropUtilHandlers listViewProps={args} />
-    ), {description: {data: 'The first list should allow only directory drops. The second list should allow all drag type drops (directory, files).'}}
+    ), {description: {data: 'The first list should allow only directory drops (e.g. folders from finder). The second list should allow all drag type drops (directory/files from finder, any drag items).'}}
   )
   .add(
     'complex drag between lists',
@@ -476,6 +477,23 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
           onDragStart: action('dragStartList2')
         }} />
     ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
+  )
+  .add(
+    'using getDropOperations to determine default drop operation',
+    args => (
+      <DragBetweenListsComplex
+        listViewProps={args}
+        firstListDnDOptions={{
+          onDragStart: action('dragStartList1'),
+          getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+          getAllowedDropOperations: () => ['link']
+        }}
+        secondListDnDOptions={{
+          onDragStart: action('dragStartList2'),
+          getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+          getAllowedDropOperations: () => ['move', 'copy', 'link']
+        }} />
+    ), {description: {data: 'Dragging from the first to the second list should automatically set a link operation and all other drop operations should be disabled. Dragging from the second to first list should support copy and link operations, with copy being the default.'}}
   )
   .add(
     'util handlers overridden by onDrop and getDropOperations',
@@ -1461,16 +1479,16 @@ function ItemDropExampleUtilHandlers(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDrop')(e);
-      if (isInternalDrop) {
+      if (isInternal) {
         let processedItems = await itemProcessor(items, acceptedDragTypes);
         let targetItem = list.getItem(target.key);
         if (targetItem?.childNodes != null) {
           list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-          if (isInternalDrop && dropOperation === 'move') {
+          if (isInternal && dropOperation === 'move') {
             let keysToRemove = processedItems.map(item => item.identifier);
             list.remove(...keysToRemove);
           }
@@ -1528,11 +1546,11 @@ function RootDropExampleUtilHandlers(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEnd')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1619,11 +1637,11 @@ function InsertExampleUtilHandlers(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEnd')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1708,7 +1726,7 @@ function FinderDropUtilHandlers(props) {
   });
 
   let {dndHooks: list1Hooks} = useDnDHooks({
-    acceptedDragTypes: ['directory'],
+    acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     onInsert: async (e) => {
       action('onInsertList1')(e);
     },
@@ -1788,28 +1806,6 @@ export function DragBetweenListsComplex(props) {
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        // TODO: this logic will need to be updated for files/directories,
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        } else if (item.types.size === 1 && item.types.has('text/plain')) {
-          // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-          // Multiple drag items are contained in a single string so we need to split them out
-          text = await item.getText('text/plain');
-          processedItems = text.split('\n').map(val => JSON.parse(val));
-          break;
-        }
-      }
-    }
-    return processedItems;
-  };
-
   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dndHooks: dndHooksList1} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
@@ -1843,7 +1839,7 @@ export function DragBetweenListsComplex(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDropList1')(e);
@@ -1851,7 +1847,7 @@ export function DragBetweenListsComplex(props) {
       let targetItem = list1.getItem(target.key);
       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternalDrop && dropOperation === 'move') {
+      if (isInternal && dropOperation === 'move') {
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
         // TODO: dig into other libraries to see how they handle this
         let keysToRemove = processedItems.map(item => item.identifier);
@@ -1862,11 +1858,11 @@ export function DragBetweenListsComplex(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEndList1')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
@@ -1942,7 +1938,7 @@ export function DragBetweenListsComplex(props) {
       let {
         items,
         target,
-        isInternalDrop,
+        isInternal,
         dropOperation
       } = e;
       action('onItemDropList2')(e);
@@ -1950,7 +1946,7 @@ export function DragBetweenListsComplex(props) {
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternalDrop && dropOperation === 'move') {
+      if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
         list2.remove(...keysToRemove);
       }
@@ -1959,11 +1955,11 @@ export function DragBetweenListsComplex(props) {
     onDragEnd: (e) => {
       let {
         dropOperation,
-        isInternalDrop,
+        isInternal,
         keys
       } = e;
       action('onDragEndList2')(e);
-      if (dropOperation === 'move' && !isInternalDrop) {
+      if (dropOperation === 'move' && !isInternal) {
         let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
         list2.remove(...keysToRemove);
       }

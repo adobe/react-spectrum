@@ -120,7 +120,7 @@ class RGBColor extends Color {
       case 'rgba':
         return `rgba(${this.red}, ${this.green}, ${this.blue}, ${this.alpha})`;
       case undefined:
-        return this.toString('hex');
+        return this.toString('rgba');
       default:
         return this.toFormat(format).toString(format);
     }
@@ -308,7 +308,7 @@ class HSBColor extends Color {
       case 'hsba':
         return `hsba(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.brightness, 2)}%, ${this.alpha})`;
       case undefined:
-        return this.toString('hex');
+        return this.toString('hsba');
       default:
         return this.toFormat(format).toString(format);
     }
@@ -451,7 +451,7 @@ class HSLColor extends Color {
       case 'hsla':
         return `hsla(${this.hue}, ${toFixedNumber(this.saturation, 2)}%, ${toFixedNumber(this.lightness, 2)}%, ${this.alpha})`;
       case undefined:
-        return this.toString('hex');
+        return this.toString('hsla');
       default:
         return this.toFormat(format).toString(format);
     }

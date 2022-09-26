@@ -16,9 +16,12 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -259,7 +262,14 @@ function render(props: any = {}) {
       </SearchWithin>
       <Switch>Low power mode</Switch>
       <TextArea label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
-      <TextField label="City" />
+      <TextField
+        label="City"
+        contextualHelp={(
+          <ContextualHelp>
+            <Heading>What is a segment?</Heading>
+            <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+          </ContextualHelp>
+        )} />
       <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
     </Form>
   );
