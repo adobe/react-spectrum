@@ -13,6 +13,14 @@ interface TooltipTriggerComponentProps extends TooltipTriggerProps, PositionProp
 
 interface TooltipProps extends DOMProps, AriaLabelingProps {}
 
+export interface TooltipRenderProps {
+  /**
+   * The placement of the tooltip relative to the trigger.
+   * @selector [data-placement="left | right | top | bottom"]
+   */
+  placement: PlacementAxis
+}
+
 interface TooltipContextValue {
   state: TooltipTriggerState,
   overlayRef: RefObject<HTMLDivElement>,
@@ -69,6 +77,7 @@ function TooltipInner(props: TooltipProps & {tooltipRef: ForwardedRef<HTMLDivEle
 
   let renderProps = useRenderProps({
     ...props,
+    defaultClassName: 'react-aria-Tooltip',
     values: {
       placement
     }
@@ -78,7 +87,12 @@ function TooltipInner(props: TooltipProps & {tooltipRef: ForwardedRef<HTMLDivEle
   let {tooltipProps} = useTooltip(props, state);
     
   return (
-    <div {...tooltipProps} ref={mergeRefs(overlayRef, props.tooltipRef)} {...renderProps} style={{...renderProps.style, ...overlayProps.style}} />
+    <div 
+      {...tooltipProps}
+      ref={mergeRefs(overlayRef, props.tooltipRef)}
+      {...renderProps}
+      style={{...renderProps.style, ...overlayProps.style}}
+      data-placement={placement} />
   );
 }
 
@@ -88,10 +102,11 @@ function TooltipArrow(props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<H
     ...arrowProps.style,
     position: 'absolute',
     [placement]: '100%',
+    transform: placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)',
     ...props.style
   };
   
-  return <div {...mergeProps(arrowProps, props)} style={style} ref={ref} />;
+  return <div {...mergeProps(arrowProps, props)} style={style} className={props.className ?? 'react-aria-TooltipArrow'} ref={ref} />;
 }
 
 const _TooltipArrow = forwardRef(TooltipArrow);

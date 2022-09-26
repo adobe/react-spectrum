@@ -40,3 +40,4 @@ export type {CheckboxRenderProps} from './Checkbox';
 export type {SwitchRenderProps} from './Switch';
 export type {RadioGroupRenderProps, RadioRenderProps} from './RadioGroup';
 export type {SearchFieldRenderProps} from './SearchField';
+export type {TooltipRenderProps} from './Tooltip';
