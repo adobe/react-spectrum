@@ -59,43 +59,43 @@
       <rect id="Frame-2" data-name="Frame" width="10" height="10" fill="rgba(255,0,0,0)"/>
       <path id="Path_29180-2" data-name="Path 29180" d="M6.548,5,9.631,1.918A1.094,1.094,0,0,0,8.084.371L5,3.454,1.918.371A1.094,1.094,0,1,0,.371,1.918L3.454,5,.371,8.083A1.094,1.094,0,1,0,1.918,9.63L5,6.547,8.084,9.63A1.094,1.094,0,1,0,9.631,8.083Z" fill="var(--anatomy-gray-700)"/>
     </g>
-    <line id="Line_1" data-name="Line 1" y2="18" transform="translate(57.5 72.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-    <line id="Line_2" data-name="Line 2" y2="18" transform="translate(277.5 72.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
+    <line id="Line_1" data-name="Line 1" y2="18" transform="translate(57.5 72.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+    <line id="Line_2" data-name="Line 2" y2="18" transform="translate(277.5 72.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
     <g id="Group_156026" data-name="Group 156026" transform="translate(-52 -28)">
-      <line id="Line_3" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      <g id="Ellipse_1" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+      <line id="Line_3" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      <g id="Ellipse_1" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <circle cx="2" cy="2" r="2" stroke="none"/>
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
     <text id="Label-4" data-name="Label" transform="translate(89 46)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="0" y="0">Input</tspan></text>
     <g id="Group_156027" data-name="Group 156027" transform="translate(33 -3)">
-      <line id="Line_3-2" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      <g id="Ellipse_1-2" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+      <line id="Line_3-2" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      <g id="Ellipse_1-2" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <circle cx="2" cy="2" r="2" stroke="none"/>
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
     <text id="Label-5" data-name="Label" transform="translate(172 127)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-12.108" y="0">Clear</tspan><tspan x="-15.456" y="15">Button</tspan></text>
     <g id="Group_156028" data-name="Group 156028" transform="translate(238 166.5) rotate(180)">
-      <line id="Line_3-3" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      <g id="Ellipse_1-3" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+      <line id="Line_3-3" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      <g id="Ellipse_1-3" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <circle cx="2" cy="2" r="2" stroke="none"/>
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
     <text id="Label-6" data-name="Label" transform="translate(26 127.25)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-15.744" y="0">Search</tspan><tspan x="-9.726" y="15">Icon</tspan></text>
     <g id="Group_156029" data-name="Group 156029" transform="translate(92 166.75) rotate(180)">
-      <line id="Line_3-4" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      <g id="Ellipse_1-4" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+      <line id="Line_3-4" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      <g id="Ellipse_1-4" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <circle cx="2" cy="2" r="2" stroke="none"/>
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
     </g>
     <text id="Label-7" data-name="Label" transform="translate(370 241)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-17.976" y="0">List box</tspan></text>
     <g id="Group_156030" data-name="Group 156030" transform="translate(436 280.5) rotate(180)">
-      <line id="Line_3-5" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
-      <g id="Ellipse_1-5" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1">
+      <line id="Line_3-5" data-name="Line 3" y2="22" transform="translate(68 51.5)" fill="none" stroke="var(--anatomy-gray-500)" stroke-width="1"/>
+      <g id="Ellipse_1-5" data-name="Ellipse 1" transform="translate(66 72)" fill="var(--anatomy-gray-500)" stroke="var(--anatomy-gray-500)" stroke-width="1">
         <circle cx="2" cy="2" r="2" stroke="none"/>
         <circle cx="2" cy="2" r="1.5" fill="none"/>
       </g>
