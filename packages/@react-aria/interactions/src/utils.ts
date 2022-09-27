@@ -33,7 +33,7 @@ export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
   // Android TalkBack's detail value varies depending on the event listener providing the event so we have specific logic here instead
   // If pointerType is defined, event is from a click listener. For events from mousedown listener, detail === 0 is a sufficient check
   // to detect TalkBack virtual clicks.
-  if (isAndroid() && (event as PointerEvent).pointerType != null) {
+  if (isAndroid() && (event as PointerEvent).pointerType) {
     return event.type === 'click' && event.buttons === 1;
   }
 

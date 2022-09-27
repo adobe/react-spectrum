@@ -13,6 +13,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export interface SliderProps<T = number | number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
   /**
@@ -71,7 +72,11 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string
+  getValueLabel?: (value: T) => string,
+  /**
+   * A ContextualHelp element to place next to the label.
+   */
+  contextualHelp?: ReactNode
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
