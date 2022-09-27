@@ -170,7 +170,7 @@ function SearchAutocomplete(props) {
             <button {...buttonProps}>❎</button>
           }
         {state.isOpen &&
-          <Popover state={state} triggerRef={inputRef} popoverRef={popoverRef} placement="bottom start">
+          <Popover state={state} triggerRef={inputRef} popoverRef={popoverRef} isNonModal placement="bottom start">
             <ListBox
               {...listBoxProps}
               listBoxRef={listBoxRef}
@@ -220,7 +220,7 @@ function Popover({children, state, ...props}) {
         ref={popoverRef}
         style={{
           ...popoverProps.style,
-          background: 'var(--page-background)',
+          background: 'lightgray',
           border: '1px solid gray'
         }}>
         {children}

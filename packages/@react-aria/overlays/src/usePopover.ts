@@ -31,6 +31,10 @@ export interface AriaPopoverProps extends Omit<PositionProps, 'isOpen'> {
   /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.
+   *
+   * Most popovers should not use this option as it may negatively impact the screen
+   * reader experience. Only use with components such as combobox, which are designed
+   * to handle this situation carefully.
    */
   isNonModal?: boolean
 }
