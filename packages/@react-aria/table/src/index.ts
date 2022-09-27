@@ -11,6 +11,7 @@
  */
 
 export {useTable} from './useTable';
+export {useTableBody} from './useTableBody';
 export {useTableColumnHeader} from './useTableColumnHeader';
 export {useTableRow} from './useTableRow';
 export {useTableHeaderRow} from './useTableHeaderRow';

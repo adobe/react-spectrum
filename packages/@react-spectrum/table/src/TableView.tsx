@@ -38,6 +38,7 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
   useTable,
+  useTableBody,
   useTableCell,
   useTableColumnHeader,
   useTableHeaderRow,
@@ -391,6 +392,8 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     transitionDuration: isLoading ? 160 : 220
   });
 
+  let tableBodyProps = useTableBody(domRef);
+
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
     scrollToItem(key) {
@@ -466,8 +469,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
+        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && tableBodyProps)}
         ref={domRef}>
         <div
           role="presentation"
