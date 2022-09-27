@@ -110,6 +110,14 @@ class LiveAnnouncer {
       return;
     }
 
+    // Make sure that the LiveAnnouncer is not hidden from assistive technology by aria-modal-polyfill.
+    if (this.node.hasAttribute('aria-hidden')) {
+      this.node.removeAttribute('aria-hidden');
+      if (this.node.dataset.ariaHidden) {
+        delete this.node.dataset.ariaHidden;
+      }
+    }
+
     let node = document.createElement('div');
     node.textContent = message;
 
