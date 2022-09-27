@@ -343,6 +343,13 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-line-height-text-label);
 }
 
+.spectrum-Slider-labelContainer {
+  display: grid;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+}
+
 .spectrum-Slider-label,
 .spectrum-Dial-label {
   padding-inline-start: 0;
@@ -361,6 +368,13 @@ governing permissions and limitations under the License.
 .spectrum-Slider-value {
   margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
   white-space: nowrap;
+  grid-area: value;
+}
+
+.spectrum-Slider-contextualHelp {
+  grid-area: contextualHelp;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+  margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
 }
 
 .spectrum-Slider-ticks {

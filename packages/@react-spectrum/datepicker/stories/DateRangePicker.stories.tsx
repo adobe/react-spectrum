@@ -14,9 +14,12 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@adobe/react-spectrum';
 import React from 'react';
@@ -188,6 +191,15 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
   .add(
     'invalid with time',
     () => render({validationState: 'invalid', granularity: 'minute', defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')}})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add(
     'in scrollable container',

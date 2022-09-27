@@ -12,8 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
@@ -192,6 +195,15 @@ storiesOf('NumberField', module)
   .add(
     'with error message, labelPosition: side',
     () => render({labelPosition: 'side', errorMessage: 'Please enter a positive number.', validationState: 'invalid'})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add(
     'custom width',
