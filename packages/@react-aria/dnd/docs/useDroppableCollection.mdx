@@ -985,7 +985,7 @@ let onItemDrop = async (e) => {
 
 The above examples have used high level events such as `onInsert`, `onItemDrop`, and `onReorder`, along with props such as `acceptedDragTypes`. Based on these props, `useDroppableCollection` automatically determines whether drag data is accepted and where (e.g. on items, between items, etc.). It also automatically filters the dropped items based on their types. For more complex scenarios, the lower level `getDropOperation` and `onDrop` functions can be used instead.
 
-To programmatically determine whether a drop is accepted based on the dragged types, target key, and drop position, implement the `getDropOperation` function. `acceptedDragTypes` and `shouldAcceptItemDrop` may also be used in combination with `getDropOperation` as a pre-filter. See the section on [drop operations](#drop-operations) above for more details.
+To programmatically determine whether a drop is accepted based on the dragged types, target key, and drop position, implement the `getDropOperation` function. `acceptedDragTypes` and `shouldAcceptItemDrop` (when `onItemDrop` is provided) may also be used in combination with `getDropOperation` as a pre-filter. See the section on [drop operations](#drop-operations) above for more details.
 
 To handle all accepted drops in a single function, implement the `onDrop` event rather than `onInsert`, `onItemDrop`, etc. When defined, this overrides any other drop handlers. The provided <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DroppableCollectionDropEvent.id]} /> includes details on the drop target, dropped items, drop operation, etc.
 
