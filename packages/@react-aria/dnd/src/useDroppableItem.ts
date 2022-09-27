@@ -13,7 +13,7 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
-import {getTypes} from './utils';
+import {getTypes, globalDndState, isInternalDropOperation} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -35,22 +35,30 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         element: ref.current,
         target: options.target,
         getDropOperation(types, allowedOperations) {
-          return state.getDropOperation(
-            options.target,
+          let {draggingKeys} = globalDndState;
+          let isInternal = isInternalDropOperation();
+          return state.getDropOperation({
+            target: options.target,
             types,
-            allowedOperations
-          );
+            allowedOperations,
+            isInternal,
+            draggingKeys
+          });
         }
       });
     }
   }, [ref, options.target, state]);
 
   let dragSession = DragManager.useDragSession();
-  let isValidDropTarget = dragSession && state.getDropOperation(
-    options.target,
-    getTypes(dragSession.dragTarget.items),
-    dragSession.dragTarget.allowedDropOperations
-  ) !== 'cancel';
+  let {draggingKeys} = globalDndState;
+  let isInternal = isInternalDropOperation();
+  let isValidDropTarget = dragSession && state.getDropOperation({
+    target: options.target,
+    types: getTypes(dragSession.dragTarget.items),
+    allowedOperations: dragSession.dragTarget.allowedDropOperations,
+    isInternal,
+    draggingKeys
+  }) !== 'cancel';
 
   let isDropTarget = state.isDropTarget(options.target);
   useEffect(() => {

@@ -283,7 +283,7 @@ describe('LabeledValue', function () {
     );
 
     let staticField = getByTestId('test-id');
-    expect(ref.current).toBe(staticField);
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(staticField);
   });
 
   it('attaches a user provided ref to the outer div with a label', function () {
@@ -297,8 +297,8 @@ describe('LabeledValue', function () {
     );
 
     let staticField = getByTestId('test-id');
-    expect(ref.current).toBe(staticField);
-    expect(within(ref.current).getByText('Field label')).toBeInTheDocument();
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(staticField);
+    expect(within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')).toBeInTheDocument();
   });
 
   it('labelPosition: side supports a ref', function () {
@@ -313,19 +313,7 @@ describe('LabeledValue', function () {
     );
 
     let staticField = getByTestId('test-id');
-    expect(ref.current).toBe(staticField);
-    expect(within(ref.current).getByText('Field label')).toBeInTheDocument();
-  });
-
-  it('renders when no visible label is provided', function () {
-    let {getByTestId} = render(
-      <LabeledValue
-        data-testid="test-id"
-        value="test" />
-    );
-
-    let staticField = getByTestId('test-id');
-    expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('test');
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(staticField);
+    expect(within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')).toBeInTheDocument();
   });
 });
