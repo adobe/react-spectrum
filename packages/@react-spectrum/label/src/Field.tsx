@@ -124,8 +124,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
               actionButton: {
                 UNSAFE_className: classNames(labelStyles, 'spectrum-Field-contextualHelp'),
                 id: contextualHelpId,
-                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
-                isDisabled: false
+                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined
               }
             }}>
             {contextualHelp}
