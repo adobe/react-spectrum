@@ -828,11 +828,14 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 
 The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} />, and you can access the contents of each file as discussed above.
 
-This example accepts directory drops over the whole collection, and renders the contents as items in the list.
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `@react-aria/dnd` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
 
 ```tsx example
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
+///- begin highlight -///
+import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+///- end highlight -///
 
 function Example() {
   let [files, setFiles] = React.useState([]);
@@ -855,7 +858,7 @@ function Example() {
       aria-label="Directory contents"
       items={files}
       ///- begin highlight -///
-      acceptedDragTypes={['directory']}
+      acceptedDragTypes={[DIRECTORY_DRAG_TYPE]}
       ///- end highlight -///
       onRootDrop={onRootDrop}>
       {item => (
@@ -989,6 +992,8 @@ To handle all accepted drops in a single function, implement the `onDrop` event 
 This example allows directories to be dropped between items, and only files of certain types to be dropped on the pre-existing directories.
 
 ```tsx example
+import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1006,7 +1011,7 @@ function Example() {
     }
 
     // If dropping between items, support a copy operation.
-    return types.has('directory') ? 'copy' : 'cancel';
+    return types.has(DIRECTORY_DRAG_TYPE) ? 'copy' : 'cancel';
   };
 
   let onDrop = async e => {

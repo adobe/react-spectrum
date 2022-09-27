@@ -153,7 +153,7 @@ export interface DropTargetDelegate {
 
 export interface DroppableCollectionProps {
   /**
-   * The drag types that the droppable collection accepts. If the collection accepts directories, include 'directory' in your array of allowed types.
+   * The drag types that the droppable collection accepts. If the collection accepts directories, include `DIRECTORY_DRAG_TYPE` in your array of allowed types.
    * @default 'all'
    */
   acceptedDragTypes?: 'all' | Array<string | symbol>,

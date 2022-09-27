@@ -67,8 +67,8 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
+              if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
                 code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
                 code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
