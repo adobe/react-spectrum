@@ -561,6 +561,48 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(list2rows[0]);
       });
 
+      it('should automatically focus an item after if it has been dropped on', async function () {
+        let {getByRole, getAllByRole} = render(
+          <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+        );
+
+        let grid = getByRole('grid');
+        let rows = getAllByRole('row');
+        let cell = within(rows[1]).getByRole('gridcell');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Folder 1 (Drop items here)');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(rows).toHaveLength(9);
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 350});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 350}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 350}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 350});
+
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 350}));
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 350}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Folder 1 (Drop items here)');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(rows).toHaveLength(8);
+        expect(document.activeElement).toBe(rows[7]);
+      });
+
       it('should update the global DnD state properly if dropping on a non-collection', function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView />
@@ -2646,6 +2688,48 @@ describe('ListView', function () {
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
 
         expect(document.activeElement).toBe(list2rows[0]);
+      });
+
+      it('should automatically focus an item after if it has been dropped on', async function () {
+        let {getByRole} = render(
+          <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+        );
+
+        let grid = getByRole('grid');
+        let rows = within(grid).getAllByRole('row');
+        expect(rows).toHaveLength(9);
+
+        userEvent.tab();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Folder 2');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        grid = getByRole('grid');
+        rows = within(grid).getAllByRole('row');
+        expect(rows).toHaveLength(8);
+
+        expect(document.activeElement).toBe(rows[7]);
       });
     });
 

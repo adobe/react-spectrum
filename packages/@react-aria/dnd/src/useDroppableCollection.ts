@@ -10,13 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {clearGlobalDnDState, globalDndState, isInternalDropOperation, setDropCollectionRef, useDroppableCollectionId} from './utils';
-import {Collection, DropEvent, DropOperation, DroppableCollectionDropEvent, DroppableCollectionProps, DropPosition, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
-import {DIRECTORY_DRAG_TYPE, getTypes} from './utils';
+import {
+  clearGlobalDnDState,
+  DIRECTORY_DRAG_TYPE,
+  droppableCollectionMap,
+  getTypes,
+  globalDndState,
+  isInternalDropOperation,
+  setDropCollectionRef
+} from './utils';
+import {
+  Collection,
+  DropEvent,
+  DropOperation,
+  DroppableCollectionDropEvent,
+  DroppableCollectionProps,
+  DropPosition,
+  DropTarget,
+  DropTargetDelegate,
+  KeyboardDelegate,
+  Node
+} from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
@@ -219,14 +237,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       // focus that item and show the focus ring to give the user feedback that the drop occurred.
       // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
       let {state} = localState;
-      if (state.selectionManager.focusedKey === focusedKey) {
-        if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
-          state.selectionManager.setFocusedKey(target.key);
-          state.selectionManager.setFocused(true);
-          setInteractionModality('keyboard');
-        } else if (!state.selectionManager.isSelected(focusedKey)) {
-          setInteractionModality('keyboard');
-        }
+
+      if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
+        state.selectionManager.setFocusedKey(target.key);
+        state.selectionManager.setFocused(true);
+        setInteractionModality('keyboard');
+      } else if (!state.selectionManager.isSelected(focusedKey)) {
+        setInteractionModality('keyboard');
       }
 
       droppingState.current = null;
@@ -618,7 +635,8 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     });
   }, [localState, ref, onDrop]);
 
-  let id = useDroppableCollectionId(state);
+  let id = useId();
+  droppableCollectionMap.set(state, {id, ref});
   return {
     collectionProps: mergeProps(dropProps, {
       id,
