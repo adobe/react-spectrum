@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, useLayoutEffect, useTabbableChild} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
@@ -38,7 +38,6 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
   useTable,
-  useTableBody,
   useTableCell,
   useTableColumnHeader,
   useTableHeaderRow,
@@ -392,7 +391,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     transitionDuration: isLoading ? 160 : 220
   });
 
-  let tableBodyProps = useTableBody(domRef);
+  let tabbableProps = useTabbableChild(domRef);
 
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
@@ -469,7 +468,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && tableBodyProps)}
+        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && tabbableProps)}
         ref={domRef}>
         <div
           role="presentation"

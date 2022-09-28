@@ -11,21 +11,23 @@
  */
 
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from './useLayoutEffect';
 import {RefObject, useState} from 'react';
 
-export interface TableBodyAria {
+export interface TabbleChildAria {
   /** Indicator of if the element can be focused */
   tabIndex?: number | undefined
 }
 
-export function useTableBody<T>(ref: RefObject<HTMLElement>): TableBodyAria {
+// This is based/coped from useTabPanel.ts
+export function useTabbableChild<T>(ref: RefObject<HTMLElement>): TabbleChildAria {
   let [tabIndex, setTabIndex] = useState(undefined);
 
-  // The tableBody should be tabble when it is empty (no rows) and has no tabbled children.
-  // Otherwise, tabbing from the focused table peer should go directly to the first tabbable element
-  // within the table, which is accomplished with tabIndex=-1. A -1 is used instead of undefined to
-  // get the desired behavior if this is wrapped by a FocusScope.
+  // A component with children (Collection/Virtualizer/Table/ListView/etc.) should be tabble when
+  // it is empty (no rows) and has no tabbled elements. Otherwise, tabbing from the focused component
+  // peer should go directly to the first tabbable element within the component, which is accomplished
+  // with tabIndex=-1.  A -1 is used instead of undefined to get the desired behavior if this is
+  // wrapped by a FocusScope.
   useLayoutEffect(() => {
     if (ref?.current) {
       let update = () => {
