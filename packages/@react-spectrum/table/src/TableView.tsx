@@ -161,7 +161,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   const columnState = useTableColumnResizeState({...mergeProps(props, {
     onResize: () => {
       if (virtualizer.current) {
-        virtualizer.current.relayoutNow({sizeChanged: true});
+        virtualizer.current.relayout({sizeChanged: true});
       }
     },
     onColumnResizeEnd: () => {
@@ -472,12 +472,7 @@ function TableVirtualizer({
   let prevContentSizeHeight = useRef(state.virtualizer.contentSize.height);
   useLayoutEffect(() => {
     if (!isLoading && onLoadMore && !state.isAnimating) {
-      if (prevContentSizeHeight.current > 0 && state.virtualizer.contentSize.height < state.virtualizer.visibleRect.height) {
-        // choosing
-        // - state.contentSize.height > 0 && state.contentSize.height // if height reduces (delete the page) then we want to load more
-        // - state.virtualizer.contentSize.height // not an entry in dependency array, so if we remove the state.contentSize, this won't work if we removed the dependency we aren't using
-        // - ref for initial render
-        // - ref to store content size from virtualizer and remove dependency array <-
+      if (prevContentSizeHeight.current > 0 && prevContentSizeHeight.current < state.virtualizer.visibleRect.height) {
         onLoadMore();
       }
     }

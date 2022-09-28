@@ -73,17 +73,26 @@ describe('TableViewSizing', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let rerender = (tree, children, scale = 'medium') => {
+    let newTree = tree.rerender(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    act(() => {jest.runAllTimers();});
+    return newTree;
+  };
 
   describe('layout', function () {
     describe('row heights', function () {
@@ -679,6 +688,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('595px');
@@ -704,6 +714,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -775,6 +786,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('595px');
@@ -800,6 +812,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -884,6 +897,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('595px');
@@ -896,6 +910,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -980,6 +995,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('595px');
@@ -992,6 +1008,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -1076,6 +1093,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -1088,6 +1106,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('600px');
@@ -1100,6 +1119,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -1112,6 +1132,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('600px');
@@ -1192,6 +1213,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('620px');
@@ -1204,6 +1226,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
+        act(() => {jest.runAllTimers();});
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('600px');

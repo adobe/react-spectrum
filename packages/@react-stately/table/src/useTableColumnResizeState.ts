@@ -116,14 +116,12 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
 
 
   const prevColKeys = columnsRef.current.map(col => col.key);
-  useLayoutEffect(() => {
-    const colKeys = columns.map(col => col.key);
-    if (prevColKeys.length !== colKeys.length || colKeys.some((col, i) => col !== prevColKeys[i])) {
-      columnsRef.current = columns;
-      const widths = buildColumnWidths(columns, tableWidth.current);
-      setColumnWidthsForRef(widths);
-    }
-  });
+  const colKeys = columns.map(col => col.key);
+  if (prevColKeys.length !== colKeys.length || colKeys.some((col, i) => col !== prevColKeys[i])) {
+    columnsRef.current = columns;
+    const widths = buildColumnWidths(columns, tableWidth.current);
+    setColumnWidthsForRef(widths);
+  }
 
   function setTableWidth(width: number) {
     if (width && width !== tableWidth.current) {
