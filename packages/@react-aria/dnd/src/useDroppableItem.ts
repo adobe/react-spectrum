@@ -47,7 +47,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         }
       });
     }
-  }, [ref, options.target, state]);
+  }, [ref, options.target, state, droppableCollectionRef]);
 
   let dragSession = DragManager.useDragSession();
   let {draggingKeys} = globalDndState;
