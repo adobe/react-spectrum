@@ -747,12 +747,10 @@ h2.sectionHeader {
 
   .propTable td[data-column]:before {
     content: attr(data-column);
-    font-size: var(--spectrum-table-header-text-size);
+    font-size: var(--spectrum-global-dimension-font-size-100);
     font-weight: var(--spectrum-table-header-text-font-weight);
     min-height: var(--spectrum-table-header-min-height);
-    letter-spacing: var(--spectrum-table-header-text-letter-spacing);
-    color: var(--spectrum-table-header-text-color);
-    text-transform: uppercase;
+    color: var(--spectrum-alias-text-color);
     width: 80px;
     display: inline-block;
     vertical-align: middle;

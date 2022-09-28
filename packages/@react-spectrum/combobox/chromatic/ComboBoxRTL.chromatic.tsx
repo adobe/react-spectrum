@@ -22,4 +22,4 @@ const meta: Meta = {
 
 export default meta;
 
-export {PropDefaults, PropSelectedKey, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth} from './ComboBox.chromatic';
+export {PropDefaults, PropSelectedKey, PropInputValue, PropAriaLabelled, PropLabelEnd, PropLabelSide, PropCustomWidth, PropContextualHelp} from './ComboBox.chromatic';

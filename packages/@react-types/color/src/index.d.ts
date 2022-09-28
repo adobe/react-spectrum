@@ -27,6 +27,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
@@ -139,7 +140,9 @@ export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLa
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
-  showValueLabel?: boolean
+  showValueLabel?: boolean,
+  /** A ContextualHelp element to place next to the label. */
+  contextualHelp?: ReactNode
 }
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
