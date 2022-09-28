@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.13.3",
     "@react-stately/collections": "^3.4.3",
     "@react-stately/grid": "^3.3.1",
     "@react-stately/selection": "^3.10.3",
