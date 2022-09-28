@@ -3883,7 +3883,7 @@ describe('TableView', function () {
       fireEvent.scroll(scrollView);
       act(() => {jest.runAllTimers();});
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -3908,7 +3908,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
 
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -159,9 +159,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   );
 
   const columnState = useTableColumnResizeState({...mergeProps(props, {
-    onResize: () => {
-      if (virtualizer.current) {
+    onResize: (inRender) => {
+      if (virtualizer.current && inRender) {
         virtualizer.current.relayout({sizeChanged: true});
+      } else if (virtualizer.current) {
+        virtualizer.current.relayoutNow({sizeChanged: true});
       }
     },
     onColumnResizeEnd: () => {

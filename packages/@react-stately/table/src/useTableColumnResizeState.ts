@@ -42,7 +42,7 @@ export interface TableColumnResizeStateProps {
   onColumnResizeEnd?: (affectedColumnWidths: AffectedColumnWidths) => void,
   /** The default table width. */
   tableWidth?: number,
-  onResize?: () => void
+  onResize?: (inRender: boolean) => void
 }
 
 interface ColumnState<T> {
@@ -66,10 +66,10 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
   const [currentlyResizingColumn, setCurrentlyResizingColumn] = useState<Key>(null);
 
   let prevWidths = useRef<Map<Key, number>>(columnWidthsRef.current);
-  function setColumnWidthsForRef(newWidths: Map<Key, number>) {
+  function setColumnWidthsForRef(newWidths: Map<Key, number>, inRender = false) {
     columnWidthsRef.current = newWidths;
     if (prevWidths.current !== newWidths && onResize) {
-      onResize();
+      onResize(inRender);
       prevWidths.current = newWidths;
     } else if (!onResize) {
       setColumnWidths(newWidths);
@@ -119,7 +119,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
   if (prevColKeys.length !== colKeys.length || colKeys.some((col, i) => col !== prevColKeys[i])) {
     columnsRef.current = columns;
     const widths = buildColumnWidths(columns, tableWidth.current);
-    setColumnWidthsForRef(widths);
+    setColumnWidthsForRef(widths, true);
   }
 
   function setTableWidth(width: number) {
