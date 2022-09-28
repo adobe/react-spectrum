@@ -13,7 +13,7 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
-import {getTypes, globalDndState, isInternalDropOperation} from './utils';
+import {getDroppableCollectionRef, getTypes, globalDndState, isInternalDropOperation} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -28,7 +28,7 @@ export interface DroppableItemResult {
 
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
-
+  let droppableCollectionRef = getDroppableCollectionRef(state);
   useEffect(() => {
     if (ref.current) {
       return DragManager.registerDropItem({
@@ -36,7 +36,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         target: options.target,
         getDropOperation(types, allowedOperations) {
           let {draggingKeys} = globalDndState;
-          let isInternal = isInternalDropOperation();
+          let isInternal = isInternalDropOperation(droppableCollectionRef);
           return state.getDropOperation({
             target: options.target,
             types,
@@ -47,11 +47,11 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
         }
       });
     }
-  }, [ref, options.target, state]);
+  }, [ref, options.target, state, droppableCollectionRef]);
 
   let dragSession = DragManager.useDragSession();
   let {draggingKeys} = globalDndState;
-  let isInternal = isInternalDropOperation();
+  let isInternal = isInternalDropOperation(droppableCollectionRef);
   let isValidDropTarget = dragSession && state.getDropOperation({
     target: options.target,
     types: getTypes(dragSession.dragTarget.items),
