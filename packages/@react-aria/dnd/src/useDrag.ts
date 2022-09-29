@@ -277,7 +277,7 @@ export function useDrag(options: DragOptions): DragResult {
           let centerX = rect.width / 2;
           let centerY = rect.height / 2;
 
-          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
+          if (Math.abs(offsetX - centerX) <= 0.5 && Math.abs(offsetY - centerY) <= 0.5) {
             // Android TalkBack.
             modalityOnPointerDown.current = 'virtual';
           } else {
