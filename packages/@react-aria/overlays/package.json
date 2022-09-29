@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.8.0",
     "@react-aria/i18n": "^3.6.0",
     "@react-aria/interactions": "^3.11.0",
     "@react-aria/ssr": "^3.3.0",

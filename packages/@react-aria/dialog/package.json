@@ -22,6 +22,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.8.0",
+    "@react-aria/overlays": "^3.10.1",
     "@react-aria/utils": "^3.13.3",
     "@react-stately/overlays": "^3.4.1",
     "@react-types/dialog": "^3.4.3",
