@@ -214,6 +214,11 @@ governing permissions and limitations under the License.
 
   &.spectrum-Field--positionSide {
     align-items: first baseline;
+    
+    .spectrum-Field-contextualHelp {
+      position: relative;
+      top: var(--spectrum-global-dimension-size-40);
+    }
   }
 
   &.spectrum-Field--positionTop {
