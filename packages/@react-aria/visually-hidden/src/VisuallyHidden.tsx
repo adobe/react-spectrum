@@ -13,7 +13,7 @@
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocusWithin} from '@react-aria/interactions';
 
 export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
