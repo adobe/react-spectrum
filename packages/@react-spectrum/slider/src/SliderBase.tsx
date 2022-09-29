@@ -171,7 +171,6 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
             <SlotProvider
               slots={{
                 actionButton: {
-                  isDisabled,
                   UNSAFE_className: classNames(styles, 'spectrum-Slider-contextualHelp')
                 }
               }}>
