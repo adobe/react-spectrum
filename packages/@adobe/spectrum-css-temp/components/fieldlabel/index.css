@@ -70,7 +70,7 @@ governing permissions and limitations under the License.
     grid-template-areas: "label contextualHelp ."
                          "field field field"
                          "helpText helpText helpText";
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto auto minmax(0, 1fr);
     align-content: start;
     width: var(--spectrum-field-default-width);
 
