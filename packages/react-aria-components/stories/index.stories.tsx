@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -356,11 +356,11 @@ export const TooltipExample = () => (
         padding: 5,
         borderRadius: 4
       }}>
-      <TooltipArrow style={{transform: 'translateX(-50%)'}}>
+      <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
           <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
-      </TooltipArrow>
+      </OverlayArrow>
       I am a tooltip
     </Tooltip>
   </TooltipTrigger>

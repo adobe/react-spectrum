@@ -1,104 +1,84 @@
-import {DismissButton, FocusScope, mergeProps, OverlayContainer, useModal, useOverlay, useOverlayPosition} from 'react-aria';
+import {AriaPopoverProps, Overlay, usePopover} from '@react-aria/overlays';
+import {DismissButton} from 'react-aria';
+import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
-import {PositionProps} from '@react-types/overlays';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext} from 'react';
-import {useContextProps, WithRef} from './utils';
+import {PlacementAxis, PositionProps} from '@react-types/overlays';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject, useContext} from 'react';
+import {RenderProps, useContextProps, useRenderProps, WithRef} from './utils';
 
-interface PopoverProps extends Omit<PositionProps, 'isOpen'>, HTMLAttributes<HTMLElement> {
+interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps> {
   /**
    * The ref for the element which the popover positions itself with respect to.
+   * 
+   * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc., 
+   * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<HTMLElement>,
-  /**
-   * Whether the popover is non-modal, i.e. elements outside the popover may be
-   * interacted with by assistive technologies.
-   */
-  isNonModal?: boolean,
+  triggerRef?: RefObject<Element>
+}
 
-  children?: ReactElement
+export interface PopoverRenderProps {
+  /**
+   * The placement of the tooltip relative to the trigger.
+   * @selector [data-placement="left | right | top | bottom"]
+   */
+  placement: PlacementAxis
 }
 
 interface PopoverContextValue extends WithRef<PopoverProps, HTMLElement> {
   state?: OverlayTriggerState,
-  preserveChildren?: boolean,
-  restoreFocus?: boolean
+  preserveChildren?: boolean
 }
 
 export const PopoverContext = createContext<PopoverContextValue>(null);
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, restoreFocus = true, state} = useContext(PopoverContext) || {};
+  let {preserveChildren, state} = useContext(PopoverContext) || {};
 
   if (state && !state.isOpen) {
-    return preserveChildren ? props.children : null;
+    return preserveChildren ? props.children as ReactElement : null;
   }
 
-  return (
-    <OverlayContainer>
-      <Overlay
-        {...props}
-        ref={ref}
-        restoreFocus={restoreFocus}
-        state={state} />
-    </OverlayContainer>
-  );
+  return <PopoverInner {...props} triggerRef={props.triggerRef} state={state} popoverRef={ref} />;
 }
 
 const _Popover = forwardRef(Popover);
 export {_Popover as Popover};
 
-function usePopover({
-  triggerRef,
-  placement = 'top',
-  offset = 5,
-  isNonModal
-}: PopoverProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>) {
-  let {overlayProps} = useOverlay(
-    {
-      isOpen: state.isOpen,
-      onClose: state.close,
-      shouldCloseOnBlur: true,
-      isDismissable: true
-    },
-    ref
-  );
-
-  let {overlayProps: positionProps} = useOverlayPosition({
-    targetRef: triggerRef,
-    overlayRef: ref,
-    placement,
-    offset,
-    isOpen: state.isOpen
-  });
-
-  let {modalProps} = useModal({
-    isDisabled: isNonModal || !state.isOpen
-  });
-
-  // TODO: useFocusScope
-
-  return {
-    popoverProps: mergeProps(overlayProps, positionProps, modalProps)
-  };
+interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps> {
+  state: OverlayTriggerState
 }
 
-const Overlay = forwardRef(({children, restoreFocus, className, style, state, ...props}: PopoverContextValue, ref: RefObject<HTMLElement>) => {
-  let {popoverProps} = usePopover(props, state, ref);
+function PopoverInner({children, state, ...props}: PopoverInnerProps) {
+  let {popoverProps, arrowProps, placement} = usePopover({
+    ...props,
+    offset: props.offset ?? 8
+  }, state);
 
-  style = {...style, ...popoverProps.style};
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-Popover',
+    values: {
+      placement
+    }
+  });
+
+  let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <FocusScope restoreFocus={restoreFocus}>
+    <Overlay>
       <div
         {...popoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={className ?? 'react-aria-Popover'}
-        style={style}>
+        {...renderProps}
+        ref={props.popoverRef as RefObject<HTMLDivElement>}
+        style={style}
+        data-placement={placement}>
         <DismissButton onDismiss={state.close} />
-        {children}
+        <OverlayArrowContext.Provider value={{arrowProps, placement}}>
+          {children}
+        </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
       </div>
-    </FocusScope>
+    </Overlay>
   );
-});
+}

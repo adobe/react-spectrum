@@ -14,7 +14,7 @@ import {ariaHideOutside} from './ariaHideOutside';
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {PositionProps} from '@react-types/overlays';
+import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import {RefObject, useEffect} from 'react';
 import {useOverlay} from './useOverlay';
 import {useOverlayPosition} from './useOverlayPosition';
@@ -43,7 +43,9 @@ export interface PopoverAria {
   /** Props for the popover element. */
   popoverProps: DOMAttributes,
   /** Props for the popover tip arrow if any. */
-  arrowProps: DOMAttributes
+  arrowProps: DOMAttributes,
+  /** Placement of the popover with respect to the trigger. */
+  placement: PlacementAxis
 }
 
 /**
@@ -68,7 +70,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
@@ -83,6 +85,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),
-    arrowProps
+    arrowProps,
+    placement
   };
 }

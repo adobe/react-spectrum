@@ -1,4 +1,4 @@
-import {AriaDialogProps, FocusScope, useDialog, useOverlayTrigger} from 'react-aria';
+import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
 import {DOMProps, Provider, useContextProps} from './utils';
 import {HeadingContext} from './Heading';
@@ -28,8 +28,8 @@ export function DialogTrigger(props: DialogTriggerProps) {
       values={[
         [ModalContext, {state}],
         [DialogContext, {...overlayProps, onClose: state.close}],
-        [ButtonContext, {...triggerProps, onPress: () => state.open(), ref: buttonRef}],
-        [PopoverContext, {state, triggerRef: buttonRef, restoreFocus: false}]
+        [ButtonContext, {...triggerProps, isPressed: state.isOpen, ref: buttonRef}],
+        [PopoverContext, {state, triggerRef: buttonRef}]
       ]}>
       {props.children}
     </Provider>
@@ -49,18 +49,16 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   }
   
   return (
-    <FocusScope contain restoreFocus autoFocus>
-      <section {...dialogProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-Dialog'}>
-        <Provider
-          values={[
-            [ButtonContext, undefined],
-            // TODO: clear context within dialog content?
-            [HeadingContext, {...titleProps, level: 2}]
-          ]}>
-          {children}
-        </Provider>
-      </section>
-    </FocusScope>
+    <section {...dialogProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-Dialog'}>
+      <Provider
+        values={[
+          [ButtonContext, undefined],
+          // TODO: clear context within dialog content?
+          [HeadingContext, {...titleProps, level: 2}]
+        ]}>
+        {children}
+      </Provider>
+    </section>
   );
 }
 
