@@ -15,7 +15,6 @@ import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
-import {getInteractionModality} from '@react-aria/interactions';
 import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {useEffect, useState} from 'react';
@@ -73,10 +72,7 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
   dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
     dragSession.setup();
-    if (
-      getDragModality() === 'keyboard' ||
-      (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
-    ) {
+    if (getDragModality() === 'keyboard') {
       let target = dragSession.findNearestDropTarget();
       dragSession.setCurrentDropTarget(target);
     }
