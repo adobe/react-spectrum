@@ -419,7 +419,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: add-next-build-to-ci
           requires:
             - install
       - deploy:
