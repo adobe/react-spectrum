@@ -15,24 +15,31 @@ import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} fr
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
-import {useId} from '@react-aria/utils';
 
-const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
-export const DIRECTORY_DRAG_TYPE = Symbol();
-
-export function useDroppableCollectionId(state: DroppableCollectionState) {
-  let id = useId();
-  droppableCollectionIds.set(state, id);
-  return id;
+interface DroppableCollectionMap {
+  id: string,
+  ref: RefObject<HTMLElement>
 }
 
+export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE = Symbol();
+
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let id = droppableCollectionIds.get(state);
+  let {id} = droppableCollectionMap.get(state);
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
 
   return id;
+}
+
+export function getDroppableCollectionRef(state: DroppableCollectionState) {
+  let {ref} = droppableCollectionMap.get(state);
+  if (!ref) {
+    throw new Error('Droppable item outside a droppable collection');
+  }
+
+  return ref;
 }
 
 export function getTypes(items: DragItem[]): Set<string> {

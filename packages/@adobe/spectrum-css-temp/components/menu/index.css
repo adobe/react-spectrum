@@ -55,8 +55,8 @@ governing permissions and limitations under the License.
 
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
-    margin-block-start: var(--spectrum-menu-margin-x);
-    margin-block-end: var(--spectrum-menu-margin-x);
+    margin-block-start: var(--spectrum-global-dimension-size-75);
+    margin-block-end: var(--spectrum-global-dimension-size-40);
   }
 
   &:focus {
