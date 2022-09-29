@@ -30,6 +30,7 @@ describe('Switch', function () {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -48,12 +49,13 @@ describe('Switch', function () {
 
   it.each`
     Name                     | Component    | props
-    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true}}
-    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true}}
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, value: 'newsletter'}}
+    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true, value: 'newsletter'}}
   `('$Name can be default checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('newsletter');
     expect(checkbox.checked).toBeTruthy();
 
     userEvent.click(checkbox);

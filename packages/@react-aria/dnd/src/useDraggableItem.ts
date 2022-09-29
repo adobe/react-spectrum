@@ -92,7 +92,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
 
   // Override description to include selected item count.
   let modality = useDragModality();
-  if (!props.hasDragButton) {
+  if (!props.hasDragButton && state.selectionManager.selectionMode !== 'none') {
     let msg = MESSAGES[modality][isSelected ? 'selected' : 'notSelected'];
     if (props.hasAction && modality === 'keyboard') {
       msg += 'Alt';
@@ -103,6 +103,10 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     } else {
       description = stringFormatter.format(msg);
     }
+
+    // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
+    // and NVDA/JAWS are always in forms mode within collection components.
+    delete dragProps.onClick;
   } else {
     if (isSelected) {
       dragButtonLabel = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});

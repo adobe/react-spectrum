@@ -71,7 +71,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-required': isRequired || undefined,
       onChange,
       disabled: isDisabled,
-      value,
+      ...(value == null ? {} : {value}),
       name,
       type: 'checkbox',
       ...interactions
