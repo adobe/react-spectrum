@@ -57,7 +57,6 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
   onAction?: (key: Key) => void,
   /**
    * The drag and drop hooks returned by `useDnDHooks` used to enable drag and drop behavior for the ListView.
-   * @private
    */
   dndHooks?: DnDHooks['dndHooks']
 }

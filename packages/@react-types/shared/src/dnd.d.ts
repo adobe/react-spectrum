@@ -151,7 +151,7 @@ export interface DropTargetDelegate {
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
 }
 
-export interface UtilityOptions {
+export interface DroppableCollectionUtilityOptions {
   /**
    * The drag types that the droppable collection accepts. If directories are accepted, include the DIRECTORY_DRAG_TYPE from @react-aria/dnd or @react-spectrum/dnd in the array of allowed types.
    * @default 'all'
@@ -179,8 +179,7 @@ export interface UtilityOptions {
   shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
-
-export interface DroppableCollectionProps extends UtilityOptions {
+export interface DroppableCollectionBaseProps {
   /** Handler that is called when a valid drag enters a drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
   /** Handler that is called after a valid drag is held over a drop target for a period of time. */
@@ -192,13 +191,14 @@ export interface DroppableCollectionProps extends UtilityOptions {
    * drop handlers such as `onInsert`, and `onItemDrop`.
    */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
-
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation
 }
+
+export interface DroppableCollectionProps extends DroppableCollectionUtilityOptions, DroppableCollectionBaseProps {}
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
   keys: Set<Key>

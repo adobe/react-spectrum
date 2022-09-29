@@ -37,7 +37,6 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from '@react-stately/dnd';
-
 import {DroppableCollectionProps} from '@react-types/shared';
 import {Key, RefObject, useMemo} from 'react';
 
