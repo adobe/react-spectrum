@@ -213,15 +213,7 @@ governing permissions and limitations under the License.
 .spectrum-LabeledValue {
 
   &.spectrum-Field--positionSide {
-    align-items: flex-start;
-    
-    .spectrum-FieldLabel.spectrum-FieldLabel {
-      padding-top: var(--spectrum-global-dimension-size-25);
-    }
-
-    .spectrum-Field-contextualHelp {
-      margin-top: 0;
-    }
+    align-items: first baseline;
   }
 
   &.spectrum-Field--positionTop {
