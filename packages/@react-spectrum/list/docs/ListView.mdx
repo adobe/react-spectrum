@@ -398,25 +398,10 @@ function DragIntoListExample() {
     ]
   });
 
+  /*- begin highlight -*/
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-file`];
-
-  // Utility function for processing the data returned by the drop handlers
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        }
-      }
-    }
-    return processedItems;
-  };
 
   let {dndHooks: dragListHooks} = useDnDHooks({
     getItems: (keys) => [...keys].map(key => {
@@ -445,7 +430,9 @@ function DragIntoListExample() {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+      );
 
       if (target.dropPosition === 'before') {
         targetList.insertBefore(target.key, ...processedItems);
@@ -457,12 +444,14 @@ function DragIntoListExample() {
       let {
         items
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+      );
       targetList.append(...processedItems);
     },
     acceptedDragTypes
   });
-
+  /*- end highlight -*/
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -526,28 +515,17 @@ function DragIntoListMultipleTypes() {
     ]
   });
 
+  // ...
+  ///- begin collapse -///
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  ///- end collapse -///
+  /*- begin highlight -*/
   let acceptedDragTypes = [`${dragType}-file`, `${dragType}-folder`];
-
-  // Utility function for processing the data returned by the drop handlers
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        }
-      }
-    }
-
-    return processedItems;
-  };
-
+  /*- end highlight -*/
   let {dndHooks: dragListHooks} = useDnDHooks({
+    // Same configuration as last example...
+    ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
       // Setup the info for each item that will be propagated upon drag
@@ -566,39 +544,84 @@ function DragIntoListMultipleTypes() {
       }
     },
     getAllowedDropOperations: () => ['move']
+    ///- end collapse -///
   });
 
   let {dndHooks: dropListHooks} = useDnDHooks({
     onInsert: async (e) => {
+      // ...
+      ///- begin collapse -///
       let {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      ///- end collapse -///
+      /*- begin highlight -*/
+      let processedItems = await Promise.all(
+        items.map(async item => {
+          for (let type of acceptedDragTypes) {
+            if (item.types.has(type)) {
+              return JSON.parse(await item.getText(type));
+            }
+          }
+        })
+      );
+      /*- end highlight -*/
+      // ...
+      ///- begin collapse -///
       if (target.dropPosition === 'before') {
         targetList.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
         targetList.insertAfter(target.key, ...processedItems);
       }
+      ///- end collapse -///
     },
     onRootDrop: async (e) => {
+      // ...
+      ///- begin collapse -///
       let {
         items
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      ///- end collapse -///
+      /*- begin highlight -*/
+      let processedItems = await Promise.all(
+        items.map(async item => {
+          for (let type of acceptedDragTypes) {
+            if (item.types.has(type)) {
+              return JSON.parse(await item.getText(type));
+            }
+          }
+        })
+      );
+      /*- end highlight -*/
+      // ...
+      ///- begin collapse -///
       targetList.append(...processedItems);
+      ///- end collapse -///
     },
+    /*- begin highlight -*/
     onItemDrop: async (e) => {
       let {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+
+      let processedItems = await Promise.all(
+        items.map(async item => {
+          for (let type of acceptedDragTypes) {
+            if (item.types.has(type)) {
+              return JSON.parse(await item.getText(type));
+            }
+          }
+        })
+      );
+
       let targetItem = targetList.getItem(target.key);
       targetList.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
     },
-    acceptedDragTypes,
-    shouldAcceptItemDrop: (target) => !!targetList.getItem(target.key).childNodes
+    shouldAcceptItemDrop: (target) => !!targetList.getItem(target.key).childNodes,
+    /*- end highlight -*/
+    acceptedDragTypes
   });
 
   return (
@@ -652,6 +675,8 @@ The example below demonstrates how to make a ListView draggable and droppable at
 ```tsx example export=true render=false
 function ReorderableList() {
   let list = useListData({
+    // Similar configuration as last example...
+    ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
@@ -660,30 +685,18 @@ function ReorderableList() {
       {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
+    ///- end collapse -///
   });
 
+  // Same acceptedDragTypes as last example...
+  ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
-
-  // Utility function for processing the data returned by the drop handlers
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        }
-      }
-    }
-
-    return processedItems;
-  };
-
+  ///- end collapse -///
   let {dndHooks} = useDnDHooks({
+    // Same getItems and acceptedDragTypes as last example's dragListHooks...
+    ///- begin collapse -///
     getItems(keys) {
       return [...keys].map(key => {
         let item = list.getItem(key);
@@ -694,15 +707,9 @@ function ReorderableList() {
         };
       });
     },
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list.getItem(target.key);
-      list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-    },
+    acceptedDragTypes,
+    ///- end collapse -///
+    /*- begin highlight -*/
     onReorder: async (e) => {
       let {
         keys,
@@ -732,9 +739,8 @@ function ReorderableList() {
           list.insertAfter(target.key, ...itemsToCopy);
         }
       }
-    },
-    acceptedDragTypes,
-    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes
+    }
+    /*- end highlight -*/
   });
 
   return (
@@ -746,12 +752,9 @@ function ReorderableList() {
       items={list.items}
       dndHooks={dndHooks}>
       {item => (
-        <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+        <Item textValue={item.name}>
           {item.type === 'folder' && <Folder />}
           <Text>{item.name}</Text>
-          {item.type === 'folder' &&
-            <Text slot="description">{`contains ${item.childNodes.length} dropped item(s)`}</Text>
-          }
         </Item>
       )}
     </ListView>
@@ -771,7 +774,9 @@ the ability to drop into a folder. Each list is internally reorderable as well.
 
 ```tsx example export=true render=false
 function DragBetweenListsExample() {
-    let list1 = useListData({
+  // Similar set list item data as previous examples
+  let list1 = useListData({
+    ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
@@ -780,9 +785,11 @@ function DragBetweenListsExample() {
       {id: '5', type: 'folder', name: 'Utilities'},
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
+    ///- end collapse -///
   });
 
   let list2 = useListData({
+    ///- begin collapse -///
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures'},
       {id: '8', type: 'file', name: 'Adobe Fresco'},
@@ -791,31 +798,19 @@ function DragBetweenListsExample() {
       {id: '11', type: 'file', name: 'Adobe Lightroom'},
       {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
     ]
+    ///- end collapse -///
   });
 
+  // Same acceptedDragTypes as previous examples...
+  ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
-
-  // Utility function for processing the data returned by the drop handlers
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          processedItems.push(JSON.parse(text));
-          break;
-        }
-      }
-    }
-
-    return processedItems;
-  };
-
+  ///- end collapse -///
   let {dndHooks: list1Hooks} = useDnDHooks({
     getItems(keys) {
+      // Same configuration as DragIntoListMultipleTypes but using list1
+      ///- begin collapse -///
       return [...keys].map(key => {
         let item = list1.getItem(key);
         // Setup the info for each item that will be propagated upon drag
@@ -824,20 +819,34 @@ function DragBetweenListsExample() {
           'text/plain': item.name
         };
       });
+      ///- end collapse -///
     },
     onInsert: async (e) => {
+      // Same configuration as DragIntoListMultipleTypes but using list1
+      ///- begin collapse -///
       let {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await Promise.all(
+        items.map(async item => {
+          for (let type of acceptedDragTypes) {
+            if (item.types.has(type)) {
+              return JSON.parse(await item.getText(type));
+            }
+          }
+        })
+      );
       if (target.dropPosition === 'before') {
         list1.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
         list1.insertAfter(target.key, ...processedItems);
       }
+      ///- end collapse -///
     },
     onReorder: async (e) => {
+      // Same configuration as ReorderableList but using list1
+      ///- begin collapse -///
       let {
         keys,
         target
@@ -848,7 +857,9 @@ function DragBetweenListsExample() {
       } else if (target.dropPosition === 'after') {
         list1.moveAfter(target.key, [...keys]);
       }
+      ///- end collapse -///
     },
+    /*- begin highlight -*/
     onDragEnd: (e) => {
       let {
         dropOperation,
@@ -861,10 +872,14 @@ function DragBetweenListsExample() {
       }
     },
     acceptedDragTypes,
+    // Only allow move operations
     getAllowedDropOperations: () => ['move']
+    /*- end highlight -*/
   });
 
   let {dndHooks: list2Hooks} = useDnDHooks({
+    // Same configuration as above but using list2
+    ///- begin collapse -///
     getItems(keys) {
       return [...keys].map(key => {
         let item = list2.getItem(key);
@@ -880,7 +895,15 @@ function DragBetweenListsExample() {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      let processedItems = await Promise.all(
+        items.map(async item => {
+          for (let type of acceptedDragTypes) {
+            if (item.types.has(type)) {
+              return JSON.parse(await item.getText(type));
+            }
+          }
+        })
+      );
       if (target.dropPosition === 'before') {
         list2.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
@@ -912,6 +935,7 @@ function DragBetweenListsExample() {
     },
     acceptedDragTypes,
     getAllowedDropOperations: () => ['move']
+    ///- end collapse -///
   });
 
   return (
@@ -962,46 +986,38 @@ The example below demonstrates how to use `getDropOperation` to specify the defa
 ```tsx example export=true render=false
 function DragIntoListDefaultCopy() {
   let sourceList = useListData({
+    // Similar configuration as last example...
+    ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
       {id: '3', type: 'file', name: 'Adobe InDesign'},
       {id: '4', type: 'file', name: 'Adobe AfterEffects'}
     ]
+    ///- end collapse -///
   });
 
   let targetList = useListData({
+    // Similar configuration as last example...
+    ///- begin collapse -///
     initialItems: [
       {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
       {id: '6', type: 'file', name: 'Adobe Fresco'},
       {id: '7', type: 'file', name: 'Adobe Connect'},
       {id: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
+    ///- end collapse -///
   });
 
+  // Same acceptedDragTypes as DragIntoListExample...
+  ///- begin collapse -///
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-file`];
-
-  // Utility function for processing the data returned by the drop handlers
-  let itemProcessor = async (items, acceptedDragTypes) => {
-    let processedItems = [];
-    let text;
-    for (let item of items) {
-      for (let type of acceptedDragTypes) {
-        if (item.kind === 'text' && item.types.has(type)) {
-          text = await item.getText(type);
-          let parsed = JSON.parse(text);
-          parsed.id = Math.random().toString(36).slice(2);
-          processedItems.push(parsed);
-          break;
-        }
-      }
-    }
-    return processedItems;
-  };
-
+  ///- end collapse -///
   let {dndHooks: dragListHooks} = useDnDHooks({
+    // Same getItems and onDragEnd as DragIntoListExample...
+    ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
       // Setup the info for each item that will be propagated upon drag
@@ -1019,30 +1035,56 @@ function DragIntoListDefaultCopy() {
         sourceList.remove(...keys);
       }
     }
+    ///- end collapse -///
   });
 
   let {dndHooks: dropListHooks} = useDnDHooks({
     onInsert: async (e) => {
+      // Similar onInsert as DragIntoListExample...
+      ///- begin collapse -///
       let {
         items,
         target
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-
+      ///- end collapse -///
+      /*- begin highlight -*/
+      let processedItems = await Promise.all(
+        items.map(async item => (
+          {...JSON.parse(await item.getText(acceptedDragTypes[0])), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      // ...
+      ///- begin collapse -///
       if (target.dropPosition === 'before') {
         targetList.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
         targetList.insertAfter(target.key, ...processedItems);
       }
+      ///- end collapse -///
     },
     onRootDrop: async (e) => {
+      // Similar onRootDrop as DragIntoListExample...
+      ///- begin collapse -///
       let {
         items
       } = e;
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+      ///- end collapse -///
+      /*- begin highlight -*/
+      let processedItems = await Promise.all(
+        items.map(async item => (
+          {...JSON.parse(await item.getText(acceptedDragTypes[0])), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      // ...
+      ///- begin collapse -///
       targetList.append(...processedItems);
+      ///- end collapse -///
     },
+    /*- begin highlight -*/
     getDropOperation: () => 'copy',
+    /*- end highlight -*/
     acceptedDragTypes
   });
 
