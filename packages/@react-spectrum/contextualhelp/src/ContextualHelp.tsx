@@ -46,7 +46,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
   return (
     <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        {...mergeProps(otherProps, labelProps)}
+        {...mergeProps(otherProps, labelProps, {isDisabled: false})}
         ref={ref}
         UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', otherProps.UNSAFE_className)}
         isQuiet>
