@@ -15,6 +15,11 @@ import docs from 'docs:@react-spectrum/dnd';
 import dndDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 import {FunctionAPI, PageDescription, TypeContext, InterfaceType} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
+import DragPreview from '@react-aria/dnd/docs/DragPreview.svg';
+import BetweenDropPosition from '@react-aria/dnd/docs/BetweenDropPosition.svg';
+import OnDropPosition from '@react-aria/dnd/docs/OnDropPosition.svg';
+import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
+import DragAffordance from '@react-aria/dnd/docs/DragAffordance.svg';
 
 ---
 category: Concepts
@@ -52,6 +57,15 @@ there will be a relationship established between the source and target locations
 no changes made to the source or target. The drag source can specify what drop operations are allowed for its data, allowing the drop source to decide what operation to perform on drop by using the restrictions
 set by the drag source as a guideline.
 
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 4}}>
+    <RootDropPosition role="img" aria-label="Root drop position" />
+    <OnDropPosition role="img" aria-label="On drop position" />
+    <BetweenDropPosition role="img" aria-label="Between drop position" />
+  </div>
+  <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
+</figure>
+
 Collection components, such as ListView, support multiple **drop positions**. The component may support a `"root"` drop position, allowing items to be dropped on the collection as a whole.
 It may also support `"on"` drop positions, such as when dropping into a folder in a list. If the collection allows reordering of its items, it could support `"between"` drop positions, allowing the
 user to insert or move items between other items. Any number of these drop positions can be allowed at the same time and the component can use the types of the dragged items to selectively allow or disallow certain positions.
@@ -64,6 +78,11 @@ removing your finger from the screen. In both cases, selecting and dragging an i
 or touch point. When multiple items are dragged at once, the drag preview displays a stack of items instead, accompanied by a badge reflecting the total number of dragged items. Drop targets are visually highlighted
 when dragged over, and the desired drop operation can be controlled via modifier key presses or drop activations via hovering over the drop target for a period of time.
 
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <DragPreview role="img" aria-labelledby="drag-preview-caption" />
+  <figcaption id="drag-preview-caption" style={{fontStyle: 'italic'}}>A custom drag preview representing multiple drag items.</figcaption>
+</figure>
+
 For keyboards, copy and paste shortcuts have traditionally been the alternative method to drag and drop. This comes with many limitations as it is often hard to know where pasting is allowed and difficult to control the
 exact positioning of the pasted items. Touch screen readers are even more limited in their ability to perform these operations since they often lack access to a keyboard and thus cannot copy paste in the same manner.
 
@@ -72,6 +91,11 @@ first select the items to be dragged by focusing the row and pressing <Keyboard>
 or <Keyboard>Space</Keyboard>. Once a drag operation is started, you will be automatically brought to the first valid drop target. <Keyboard>Tab</Keyboard> can then be used to cycle through other valid drop targets. For collection components like the ListView above,
 <Keyboard>Tab</Keyboard> will move you on or off the overall component itself whereas <Keyboard>ArrowUp</Keyboard> and <Keyboard>ArrowDown</Keyboard> will cycle through the valid drop targets within the component itself. Hitting <Keyboard>Enter</Keyboard>
 will then confirm the drop operation on the focused drop target. To cancel a drag operation, you can hit <Keyboard>Esc</Keyboard> at any time.
+
+<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
+  <DragAffordance role="img" aria-labelledby="drag-affordance-caption" />
+  <figcaption id="drag-affordance-caption" style={{fontStyle: 'italic'}}>A focusable drag affordance to initiate keyboard and screen reader drag and drop.</figcaption>
+</figure>
 
 For screen readers, please follow the custom instructions announced when focusing the row's drag handle to begin a drag operation. For screen readers on mobile devices, swiping left and right will
 move you between valid drop targets and double tapping will confirm a drop operation. Go ahead and try out drag and drop in the example below!
