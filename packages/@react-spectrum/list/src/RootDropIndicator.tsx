@@ -19,9 +19,8 @@ export default function RootDropIndicator() {
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
-        aria-selected="false"
-        {...visuallyHiddenProps}>
-        <div role="button" {...dropIndicatorProps} ref={ref} />
+        aria-selected="false">
+        <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
   );
