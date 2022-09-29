@@ -13,8 +13,9 @@
 import {Key, RefObject} from 'react';
 
 export interface DragDropEvent {
-  // Relative to the target element's position
+  /** The x coordinate of the event, relative to the target element. */
   x: number,
+  /** The y coordinate of the event, relative to the target element. */
   y: number
 }
 
@@ -25,120 +26,167 @@ export interface DragItem {
 }
 
 export interface DragStartEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dragstart'
 }
 
 export interface DragMoveEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dragmove'
 }
 
 export interface DragEndEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dragend',
+  /** The drop operation that occurred. */
   dropOperation: DropOperation
 }
 
 export interface DropEnterEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dropenter'
 }
 
 export interface DropMoveEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dropmove'
 }
 
 export interface DropActivateEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dropactivate'
 }
 
 export interface DropExitEvent extends DragDropEvent {
+  /** The event type. */
   type: 'dropexit'
 }
 
 export interface TextItem {
+  /** The item kind. */
   kind: 'text',
+  /**
+   * The drag types available for this item.
+   * These are often mime types, but may be custom app-specific types.
+   */
   types: Set<string>,
+  /** Returns the data for the given type as a string. */
   getText(type: string): Promise<string>
 }
 
 export interface FileItem {
+  /** The item kind. */
   kind: 'file',
+  /** The file type (usually a mime type). */
   type: string,
+  /** The file name. */
   name: string,
+  /** Returns the contents of the file as a blob. */
   getFile(): Promise<File>,
+  /** Returns the contents of the file as a string. */
   getText(): Promise<string>
 }
 
 export interface DirectoryItem {
+  /** The item kind. */
   kind: 'directory',
+  /** The directory name. */
   name: string,
+  /** Returns the entries contained within the directory. */
   getEntries(): AsyncIterable<FileItem | DirectoryItem>
 }
 
 export type DropItem = TextItem | FileItem | DirectoryItem;
 
 export interface DropEvent extends DragDropEvent {
+  /** The event type. */
   type: 'drop',
+  /** The drop operation that should occur. */
   dropOperation: DropOperation,
+  /** The dropped items. */
   items: DropItem[]
 }
 
 export type DropPosition = 'on' | 'before' | 'after';
 export interface RootDropTarget {
+  /** The event type. */
   type: 'root'
 }
 
 export interface ItemDropTarget {
+  /** The drop target type. */
   type: 'item',
+  /** The item key. */
   key: Key,
+  /** The drop position relative to the item. */
   dropPosition: DropPosition
 }
 
 export type DropTarget = RootDropTarget | ItemDropTarget;
 
 export interface DroppableCollectionEnterEvent extends DropEnterEvent {
+  /** The drop target. */
   target: DropTarget
 }
 
 export interface DroppableCollectionMoveEvent extends DropMoveEvent {
+  /** The drop target. */
   target: DropTarget
 }
 
 export interface DroppableCollectionActivateEvent extends DropActivateEvent {
+  /** The drop target. */
   target: DropTarget
 }
 
 export interface DroppableCollectionExitEvent extends DropExitEvent {
+  /** The drop target. */
   target: DropTarget
 }
 
 export interface DroppableCollectionDropEvent extends DropEvent {
+  /** The drop target. */
   target: DropTarget
 }
 
 interface DroppableCollectionInsertDropEvent {
+  /** The dropped items. */
   items: DropItem[],
+  /** The drop operation that should occur. */
   dropOperation: DropOperation,
+   /** The drop target. */
   target: ItemDropTarget
 }
 
 interface DroppableCollectionRootDropEvent {
+  /** The dropped items. */
   items: DropItem[],
+  /** The drop operation that should occur. */
   dropOperation: DropOperation
 }
 
 interface DroppableCollectionOnItemDropEvent {
+  /** The dropped items. */
   items: DropItem[],
+  /** The drop operation that should occur. */
   dropOperation: DropOperation,
+  /** Whether the drag originated within the same collection as the drop. */
   isInternal: boolean,
+  /** The drop target. */
   target: ItemDropTarget
 }
 
 interface DroppableCollectionReorderEvent {
+  /** The keys of the items that were reordered. */
   keys: Set<Key>,
+  /** The drop operation that should occur. */
   dropOperation: DropOperation,
+  /** The drop target. */
   target: ItemDropTarget
 }
 
 export interface DragTypes {
+  /** Returns whether the drag contains data of the given type. */
   has(type: string | symbol): boolean
 }
 
@@ -196,15 +244,19 @@ export interface DroppableCollectionProps {
 }
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
+  /** The keys of the items that were dragged. */
   keys: Set<Key>
 }
 
 interface DraggableCollectionMoveEvent extends DragMoveEvent {
+  /** The keys of the items that were dragged. */
   keys: Set<Key>
 }
 
 interface DraggableCollectionEndEvent extends DragEndEvent {
+  /** The keys of the items that were dragged. */
   keys: Set<Key>,
+  /** Whether the drop ended within the same collection as it originated. */
   isInternal: boolean
 }
 
@@ -213,7 +265,7 @@ export type DragPreviewRenderer = (items: DragItem[], callback: (node: HTMLEleme
 export interface DraggableCollectionProps {
   /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DraggableCollectionStartEvent) => void,
-  /** Handler that is called when the dragged element is moved. */
+  /** Handler that is called when the drag is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void,
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void,
