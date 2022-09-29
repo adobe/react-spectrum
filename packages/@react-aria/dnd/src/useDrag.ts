@@ -18,7 +18,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
@@ -248,16 +248,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message: string;
-  if (!isDraggingRef.current) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
+  let message = !isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end;
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
@@ -273,7 +264,9 @@ export function useDrag(options: DragOptions): DragResult {
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
-        // Try to detect virtual drags.
+        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
+
+        // Try to detect virtual drag passthrough gestures.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
@@ -284,7 +277,7 @@ export function useDrag(options: DragOptions): DragResult {
           let centerX = rect.width / 2;
           let centerY = rect.height / 2;
 
-          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
+          if (Math.abs(offsetX - centerX) <= 0.5 && Math.abs(offsetY - centerY) <= 0.5) {
             // Android TalkBack.
             modalityOnPointerDown.current = 'virtual';
           } else {
@@ -300,6 +293,14 @@ export function useDrag(options: DragOptions): DragResult {
       },
       onKeyUpCapture(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          startDragging(e.target as HTMLElement);
+        }
+      },
+      onClick(e) {
+        // Handle NVDA/JAWS in browse mode, and touch screen readers. In this case, no keyboard events are fired.
+        if (isVirtualClick(e.nativeEvent) || modalityOnPointerDown.current === 'virtual') {
           e.preventDefault();
           e.stopPropagation();
           startDragging(e.target as HTMLElement);

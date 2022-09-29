@@ -1484,9 +1484,10 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should cancel the drag when pressing Enter on the original drag target', () => {
+        let onDragStart = jest.fn();
         let onDragEnd = jest.fn();
         let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
+          <Draggable onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable />
         </>);
 
@@ -1500,15 +1501,18 @@ describe('useDrag and useDrop', function () {
         fireEvent.keyUp(draggable, {key: 'Enter'});
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
+        expect(onDragStart).toHaveBeenCalledTimes(1);
 
         userEvent.tab();
         expect(document.activeElement).toBe(draggable);
 
         fireEvent.keyDown(draggable, {key: 'Enter'});
         fireEvent.keyUp(draggable, {key: 'Enter'});
+        act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(draggable);
 
         expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledTimes(1);
       });
 
       it('should handle when a drop target is removed', () => {
@@ -2023,6 +2027,7 @@ describe('useDrag and useDrop', function () {
       let droppable = tree.getByText('Drop here');
       let droppable2 = tree.getByText('Drop here 2');
 
+      act(() => draggable.focus());
       fireEvent.focus(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
@@ -2421,7 +2426,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2474,6 +2479,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
+      act(() => draggable.focus());
       fireEvent.focus(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Double tap to start dragging');
