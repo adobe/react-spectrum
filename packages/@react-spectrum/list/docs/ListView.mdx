@@ -81,6 +81,7 @@ const items = [
   {id: 8, name: 'Adobe Fresco'},
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
+
 <ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
   {(item) => (
     <Item key={item.key}>
@@ -107,20 +108,25 @@ See the docs for more information.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
+
 function AsyncList() {
+
   let list = useAsyncList({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
+
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
       let json = await res.json();
+
       return {
         items: json.results,
         cursor: json.next
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"
@@ -150,6 +156,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
 ```tsx example
 import File from '@spectrum-icons/illustrations/File';
 import Folder from '@spectrum-icons/illustrations/Folder';
+
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
     <Folder />
@@ -255,7 +262,9 @@ function PokemonList(props) {
     {id: 3, name: 'Venusaur'},
     {id: 4, name: 'Pikachu'}
   ];
+
   let [selectedKeys, setSelectedKeys] = React.useState(props.defaultSelectedKeys || new Set([2]));
+
   return (
     <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
@@ -353,6 +362,8 @@ This behavior is slightly different in the highlight selection style, where sing
 </Flex>
 ```
 
+// TODO: comment this section out again
+
 ## Drag and drop
 
 To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the ListView's `dragAndDropHooks` prop.
@@ -367,6 +378,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 ```tsx example export=true render=false
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
+
 function DragIntoListExample() {
   let sourceList = useListData({
     initialItems: [
@@ -376,6 +388,7 @@ function DragIntoListExample() {
       {id: '4', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   let targetList = useListData({
     initialItems: [
       {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
@@ -384,10 +397,12 @@ function DragIntoListExample() {
       {id: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
   });
+
   /*- begin highlight -*/
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-file`];
+
   let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
@@ -408,6 +423,7 @@ function DragIntoListExample() {
     },
     getAllowedDropOperations: () => ['move']
   });
+
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       let {
@@ -417,6 +433,7 @@ function DragIntoListExample() {
       let processedItems = await Promise.all(
         items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
       );
+
       if (target.dropPosition === 'before') {
         targetList.insertBefore(target.key, ...processedItems);
       } else if (target.dropPosition === 'after') {
@@ -489,6 +506,7 @@ function DragIntoListMultipleTypes() {
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   let targetList = useListData({
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures', childNodes: []},
@@ -496,6 +514,7 @@ function DragIntoListMultipleTypes() {
       {id: '9', type: 'folder', name: 'Apps', childNodes: []}
     ]
   });
+
   // ...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be dragged between these two lists
@@ -527,6 +546,7 @@ function DragIntoListMultipleTypes() {
     getAllowedDropOperations: () => ['move']
     ///- end collapse -///
   });
+
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       // ...
@@ -585,6 +605,7 @@ function DragIntoListMultipleTypes() {
         items,
         target
       } = e;
+
       let processedItems = await Promise.all(
         items.map(async item => {
           for (let type of acceptedDragTypes) {
@@ -594,6 +615,7 @@ function DragIntoListMultipleTypes() {
           }
         })
       );
+
       let targetItem = targetList.getItem(target.key);
       targetList.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
     },
@@ -601,6 +623,7 @@ function DragIntoListMultipleTypes() {
     /*- end highlight -*/
     acceptedDragTypes
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -664,6 +687,7 @@ function ReorderableList() {
     ]
     ///- end collapse -///
   });
+
   // Same acceptedDragTypes as last example...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
@@ -692,6 +716,7 @@ function ReorderableList() {
         target,
         dropOperation
       } = e;
+
       let itemsToCopy = [];
       if (dropOperation === 'copy') {
         for (let key of keys) {
@@ -700,6 +725,7 @@ function ReorderableList() {
           itemsToCopy.push(item);
         }
       }
+
       if (target.dropPosition === 'before') {
         if (dropOperation === 'move') {
           list.moveBefore(target.key, [...keys]);
@@ -716,6 +742,7 @@ function ReorderableList() {
     }
     /*- end highlight -*/
   });
+
   return (
     <ListView
       aria-label="Reorderable ListView"
@@ -760,6 +787,7 @@ function DragBetweenListsExample() {
     ]
     ///- end collapse -///
   });
+
   let list2 = useListData({
     ///- begin collapse -///
     initialItems: [
@@ -772,6 +800,7 @@ function DragBetweenListsExample() {
     ]
     ///- end collapse -///
   });
+
   // Same acceptedDragTypes as previous examples...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
@@ -822,6 +851,7 @@ function DragBetweenListsExample() {
         keys,
         target
       } = e;
+
       if (target.dropPosition === 'before') {
         list1.moveBefore(target.key, [...keys]);
       } else if (target.dropPosition === 'after') {
@@ -846,6 +876,7 @@ function DragBetweenListsExample() {
     getAllowedDropOperations: () => ['move']
     /*- end highlight -*/
   });
+
   let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
     // Same configuration as above but using list2
     ///- begin collapse -///
@@ -884,6 +915,7 @@ function DragBetweenListsExample() {
         keys,
         target
       } = e;
+
       if (target.dropPosition === 'before') {
         list2.moveBefore(target.key, [...keys]);
       } else if (target.dropPosition === 'after') {
@@ -905,6 +937,7 @@ function DragBetweenListsExample() {
     getAllowedDropOperations: () => ['move']
     ///- end collapse -///
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -963,6 +996,7 @@ function DragIntoListDefaultCopy() {
     ]
     ///- end collapse -///
   });
+
   let targetList = useListData({
     // Similar configuration as last example...
     ///- begin collapse -///
@@ -974,6 +1008,7 @@ function DragIntoListDefaultCopy() {
     ]
     ///- end collapse -///
   });
+
   // Same acceptedDragTypes as DragIntoListExample...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be dragged between these two lists
@@ -1002,6 +1037,7 @@ function DragIntoListDefaultCopy() {
     }
     ///- end collapse -///
   });
+
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       // Similar onInsert as DragIntoListExample...
@@ -1051,6 +1087,7 @@ function DragIntoListDefaultCopy() {
     /*- end highlight -*/
     acceptedDragTypes
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -1112,6 +1149,7 @@ function ListExample(props) {
     </ListView>
   );
 }
+
 <ListExample isQuiet />
 ```
 
@@ -1141,6 +1179,7 @@ import {Content} from '@react-spectrum/view';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 import {Heading} from '@react-spectrum/text';
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -1150,6 +1189,7 @@ function renderEmptyState() {
     </IllustratedMessage>
   );
 }
+
 <ListView
   selectionMode="multiple"
   aria-label="Example ListView for empty state"
