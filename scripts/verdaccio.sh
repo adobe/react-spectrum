@@ -101,7 +101,7 @@ then
   yarn install
 
   # Build test app and move to dist folder. Store the size of the build in a text file.
-  yarn build && yarn export | tee next-build-stats.txt
+  yarn build:static | tee next-build-stats.txt
   du -ka out/ | tee -a next-build-stats.txt
   mv next-build-stats.txt ../../
   mv out ../../$verdaccio_path/next
