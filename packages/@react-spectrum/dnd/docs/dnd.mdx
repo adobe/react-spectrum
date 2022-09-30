@@ -292,9 +292,8 @@ function DroppableList() {
     ]
   });
 
-  let acceptedDragTypes = ['adobe-app'];
   let {dragAndDropHooks} = useDragAndDrop({
-    acceptedDragTypes,
+    acceptedDragTypes: ['adobe-app'],
     shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
     onInsert: async (e) => {
       let {
