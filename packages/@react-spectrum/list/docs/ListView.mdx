@@ -80,6 +80,7 @@ const items = [
   {id: 8, name: 'Adobe Fresco'},
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
+
 <ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
   {(item) => (
     <Item key={item.key}>
@@ -106,20 +107,25 @@ See the docs for more information.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
+
 function AsyncList() {
+
   let list = useAsyncList({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
+
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=`, {signal});
       let json = await res.json();
+
       return {
         items: json.results,
         cursor: json.next
       };
     }
   });
+
   return (
     <ListView
       selectionMode="multiple"
@@ -149,6 +155,7 @@ to an `<Item>` will add a chevron icon to the end of the row to visually indicat
 ```tsx example
 import File from '@spectrum-icons/illustrations/File';
 import Folder from '@spectrum-icons/illustrations/Folder';
+
 <ListView selectionMode="multiple" maxWidth="size-6000" aria-label="ListView example with complex items" onAction={key => alert(`Triggering action on item ${key}`)}>
   <Item key="1" textValue="Utilities" hasChildItems>
     <Folder />
@@ -254,7 +261,9 @@ function PokemonList(props) {
     {id: 3, name: 'Venusaur'},
     {id: 4, name: 'Pikachu'}
   ];
+
   let [selectedKeys, setSelectedKeys] = React.useState(props.defaultSelectedKeys || new Set([2]));
+
   return (
     <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
       {(item) => (
@@ -368,6 +377,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 ```tsx example export=true render=false
 import {useDnDHooks} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
+
 function DragIntoListExample() {
   let sourceList = useListData({
     initialItems: [
@@ -377,6 +387,7 @@ function DragIntoListExample() {
       {id: '4', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   let targetList = useListData({
     initialItems: [
       {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
@@ -385,9 +396,11 @@ function DragIntoListExample() {
       {key: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
   });
+
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = `${dragType}-file`;
+
   // Update the target and source list upon successful drop
   let onMove = (keys, target) => {
     if (target.type === 'root') {
@@ -404,9 +417,11 @@ function DragIntoListExample() {
     }
     sourceList.remove(...keys);
   };
+
   let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
+
         let item = sourceList.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
@@ -415,6 +430,7 @@ function DragIntoListExample() {
       });
     }
   });
+
   let {dropHooks} = useDnDHooks({
     async onDrop(e) {
       let keysToMove = [];
@@ -436,9 +452,11 @@ function DragIntoListExample() {
       if (!draggedTypes.every(type => acceptedDragTypes === type) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
+
       return 'move';
     }
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -494,6 +512,7 @@ function DragIntoListFilesOnly() {
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   let targetList = useListData({
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures', childNodes: []},
@@ -501,9 +520,11 @@ function DragIntoListFilesOnly() {
       {id: '9', type: 'folder', name: 'Apps', childNodes: []}
     ]
   });
+
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = `${dragType}-file`;
+
   // Update the target and source list upon successful drop
   let onMove = (keys, target) => {
     if (target.type === 'root') {
@@ -526,9 +547,11 @@ function DragIntoListFilesOnly() {
     }
     sourceList.remove(...keys);
   };
+
   let {dragHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
+
         let item = sourceList.getItem(key);
         // Setup the info for each item that will be propagated upon drag
         return {
@@ -537,6 +560,7 @@ function DragIntoListFilesOnly() {
       });
     }
   });
+
   let {dropHooks} = useDnDHooks({
     async onDrop(e) {
       let keysToMove = [];
@@ -561,9 +585,11 @@ function DragIntoListFilesOnly() {
       ) {
         return 'cancel';
       }
+
       return 'move';
     }
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -624,9 +650,11 @@ function ReorderableList() {
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
+
   // Update the list order based on the position of the drop and the set of rows that were dropped
   let onMove = (keys, target) => {
     switch (target.dropPosition) {
@@ -645,6 +673,7 @@ function ReorderableList() {
       }
     }
   };
+
   let {dragHooks, dropHooks} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
@@ -681,9 +710,11 @@ function ReorderableList() {
       ) {
         return 'cancel';
       }
+
       return 'move';
     }
   });
+
   return (
     <ListView
       aria-label="Reorderable ListView"
@@ -729,6 +760,7 @@ function DragBetweenListsExample() {
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
   });
+
   let list2 = useListData({
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures'},
@@ -739,9 +771,11 @@ function DragBetweenListsExample() {
       {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
     ]
   });
+
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
+
   // Update the list order based on the position of the drop and the set of rows that were dropped
   let onMove = (keys, destinationList, dropEventTarget) => {
     let sourceList = list1.getItem(keys[0]) ? list1 : list2;
@@ -766,6 +800,7 @@ function DragBetweenListsExample() {
       sourceList.remove(...keys);
     }
   };
+
   let {dragHooks: dragHooksList1, dropHooks: dropHooksList1} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
@@ -788,6 +823,7 @@ function DragBetweenListsExample() {
           }
         }
       }
+
       onMove(keysToMove, list1, e.target);
     },
     getDropOperation(target, types) {
@@ -798,9 +834,11 @@ function DragBetweenListsExample() {
       if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
+
       return 'move';
     }
   });
+
   let {dragHooks: dragHooksList2, dropHooks: dropHooksList2} = useDnDHooks({
     getItems(keys) {
       return [...keys].map(key => {
@@ -823,6 +861,7 @@ function DragBetweenListsExample() {
           }
         }
       }
+
       onMove(keysToMove, list2, e.target);
     },
     getDropOperation(target, types) {
@@ -833,9 +872,11 @@ function DragBetweenListsExample() {
       if (!draggedTypes.every(type => acceptedDragTypes.includes(type)) || (target.type === 'item' && target.dropPosition === 'on')) {
         return 'cancel';
       }
+
       return 'move';
     }
   });
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -904,6 +945,7 @@ function ListExample(props) {
     </ListView>
   );
 }
+
 <ListExample isQuiet />
 ```
 
@@ -933,6 +975,7 @@ import {Content} from '@react-spectrum/view';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 import {Heading} from '@react-spectrum/text';
+
 function renderEmptyState() {
   return (
     <IllustratedMessage>
@@ -942,6 +985,7 @@ function renderEmptyState() {
     </IllustratedMessage>
   );
 }
+
 <ListView
   selectionMode="multiple"
   aria-label="Example ListView for empty state"
