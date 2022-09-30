@@ -126,7 +126,7 @@ function pointerEvent(type, opts) {
   return evt;
 }
 
-describe('TableView', function () {
+describe.skip('TableView', function () {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {

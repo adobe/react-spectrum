@@ -55,7 +55,7 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
-describe('TableViewSizing', function () {
+describe.skip('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
 
   beforeAll(function () {
