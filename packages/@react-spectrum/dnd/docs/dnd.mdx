@@ -142,7 +142,7 @@ let getItems = (keys) => [...keys].map(key => {
 })
 ```
 
-We also create an `onDragEnd` event handler for `useDnDHooks` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
+We also create an `onDragEnd` event handler for `useDragAndDrop` that handles removing the dragged items from the draggable list upon a successful drop operation. Note how we use
 the `.remove` method provided by `useListData` to remove the dropped items from our list.
 
 ```tsx
@@ -153,13 +153,13 @@ let onDragEnd = (e) => {
 }
 ```
 
-Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDnDHooks`, providing us with a set of `dndHooks` that we can pass to our ListView directly.
+Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDragAndDrop`, providing us with a set of `dragAndDropHooks` that we can pass to our ListView directly.
 Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [props section](#props) below and the
 [React Aria docs](../react-aria/useDraggableCollection.html#drag-data).
 
 ```tsx example export=true render=false
 import {Item, ListView} from '@react-spectrum/list';
-import {useDnDHooks} from '@react-spectrum/dnd';
+import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 function DraggableList() {
@@ -173,7 +173,7 @@ function DraggableList() {
     ]
   });
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
@@ -194,7 +194,7 @@ function DraggableList() {
       height="size-3600"
       selectionMode="multiple"
       items={list.items}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {item => (
         <Item textValue={item.name}>
           {item.name}
@@ -223,7 +223,7 @@ let list = useListData({
 });
 ```
 
-Since we only want to accept items from the first ListView, we set up an array containing our custom type that will be provided to `useDnDHooks`'s `acceptedDragTypes` option.
+Since we only want to accept items from the first ListView, we set up an array containing our custom type that will be provided to `useDragAndDrop`'s `acceptedDragTypes` option.
 
 ```tsx
 let acceptedDragTypes = ['adobe-app'];
@@ -271,14 +271,14 @@ let onItemDrop = async (e) => {
 let shouldAcceptItemDrop = (target) => !!list.getItem(target.key).childNodes;
 ```
 
-Below is what our droppable ListView would look like after combining everything together. By not supplying an `onRootDrop` handler to `useDnDHooks`, we automatically
+Below is what our droppable ListView would look like after combining everything together. By not supplying an `onRootDrop` handler to `useDragAndDrop`, we automatically
 exclude the root of the droppable list from the drop targets reachable via any of the drag and drop interaction modes. For more information on the options used above,
 please see the [API section](#high-level-drop-handlers-and-options) below.
 
 ```tsx example export=true render=false
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Text} from '@react-spectrum/text';
-import {useDnDHooks} from '@react-spectrum/dnd';
+import {useDragAndDrop} from '@react-spectrum/dnd';
 
 function DroppableList() {
   let list = useListData({
@@ -292,7 +292,7 @@ function DroppableList() {
     ]
   });
   let acceptedDragTypes = ['adobe-app'];
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     onInsert: async (e) => {
       let {
         items,
@@ -330,7 +330,7 @@ function DroppableList() {
       height="size-3600"
       selectionMode="multiple"
       items={list.items}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {item => (
         <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' && <Folder />}
@@ -347,7 +347,7 @@ function DroppableList() {
 
 ### Low-level API
 
-The above example makes use of several high-level events and options supported by `useDnDHooks` to define the droppable ListView's behavior. However, you may have complex operations
+The above example makes use of several high-level events and options supported by `useDragAndDrop` to define the droppable ListView's behavior. However, you may have complex operations
 that would be difficult or impossible to implement using the high-level options alone. For situations like this, you can use `getDropOperation` and `onDrop` instead, granting you
 complete control over what drop operations should be returned and how any drop on your collection should be handled. For a more general explanation of these low-level options and how they work,
 see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](../react-aria/useDroppableCollection.html#low-level-api).
@@ -364,7 +364,7 @@ function DroppableListLowLevelAPI() {
     ]
   });
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     onDrop: async (e) => {
       let items = await Promise.all(
         e.items
@@ -436,7 +436,7 @@ function DroppableListLowLevelAPI() {
       height="size-3600"
       selectionMode="multiple"
       items={list.items}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {item => (
         <Item textValue={item.name} hasChildItems>
           <Folder />
@@ -452,19 +452,19 @@ function DroppableListLowLevelAPI() {
 ## API
 
 As seen in the [examples](#examples) above, enabling drag and drop for a supported React Spectrum component differs slightly from the typical event handler prop pattern that you may be familiar with.
-Instead of providing each event handler directly to the component, you must first import `useDnDHooks` from the `@react-spectrum/dnd` package and provide this hook with your desired options.
-`useDnDHooks` then provides you with a set of hooks that you can pass to the component via its `dndHooks` prop, thus enabling drag and drop operations for the component. This approach allows the drag and drop
+Instead of providing each event handler directly to the component, you must first import `useDragAndDrop` from the `@react-spectrum/dnd` package and provide this hook with your desired options.
+`useDragAndDrop` then provides you with a set of hooks that you can pass to the component via its `dragAndDropHooks` prop, thus enabling drag and drop operations for the component. This approach allows the drag and drop
 implementation to be included only when used, keeping bundle sizes small when unused by an application.
 
-Whether the component supports drag operations, drop operations, or both all depends on the options you provide to the `useDnDHooks`. If you omit the `getItems` option, the component will not be draggable. Alternatively, if
-you don't provide an `onDrop` handler or any of the high-level drop handlers (`onInsert`/`onItemDrop`/`onReorder`/`onRootDrop`) to `useDnDHooks` then the component will not be droppable.
+Whether the component supports drag operations, drop operations, or both all depends on the options you provide to the `useDragAndDrop`. If you omit the `getItems` option, the component will not be draggable. Alternatively, if
+you don't provide an `onDrop` handler or any of the high-level drop handlers (`onInsert`/`onItemDrop`/`onReorder`/`onRootDrop`) to `useDragAndDrop` then the component will not be droppable.
 
 ### High-level drop handlers and options
 <TypeContext.Provider value={dndDocs.links}>
   <InterfaceType properties={dndDocs.exports.DroppableCollectionUtilityOptions.properties} />
 </TypeContext.Provider>
 
-As demonstrated in this [example](#creating-the-droppable-list), `useDnDHooks` accepts a set of high-level drop handlers and options. Providing any of these high-level drop handlers will enable the corresponding
+As demonstrated in this [example](#creating-the-droppable-list), `useDragAndDrop` accepts a set of high-level drop handlers and options. Providing any of these high-level drop handlers will enable the corresponding
 drop behavior in your component (e.g. if you provide `onReorder`, internal insertion drop operations are enabled, provided the component is draggable as well). `acceptedDragTypes` allows
 you to control what types of drag items your droppable component should accept and `shouldAcceptItemDrop` gives you a greater degree of control over whether an item in your component is a valid drop target. Providing
 these two options will also automatically filter out any invalid drag items from the list of items provided to the drop handlers.
@@ -482,11 +482,11 @@ two options serve as a pre-filter, preemptively canceling any attempted drop ope
 
 ### Props
 
-The full list of options for `useDnDHooks` is available below.
+The full list of options for `useDragAndDrop` is available below.
 
-<FunctionAPI function={docs.exports.useDnDHooks} links={docs.links} />
+<FunctionAPI function={docs.exports.useDragAndDrop} links={docs.links} />
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.exports.DnDOptions.properties} />
+  <InterfaceType properties={docs.exports.DragAndDropOptions.properties} />
 </TypeContext.Provider>
 
 Of the various drag-specific options above, `getAllowedDropOperations` may be of particular interest. When the dragged items are dropped on a drop target created using the React Aria drag and drop hooks,
