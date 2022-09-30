@@ -57,6 +57,7 @@ interface DropHooks {
 }
 
 export interface DragAndDropHooks {
+  /** Drag and drop hooks for the collection element.  */
   dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
 }
 
@@ -68,6 +69,9 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
   getItems?: (keys: Set<Key>) => DragItem[]
 }
 
+/**
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible React Spectrum component.
+ */
 export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
   let dragAndDropHooks = useMemo(() => {
     let {
