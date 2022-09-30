@@ -39,7 +39,9 @@ export interface DraggableItemProps {
 }
 
 export interface DraggableItemResult {
+  /** Props for the draggable item. */
   dragProps: HTMLAttributes<HTMLElement>,
+  /** Props for the explicit drag button affordance, if any. */
   dragButtonProps: AriaButtonProps
 }
 
@@ -58,6 +60,9 @@ const MESSAGES = {
   }
 };
 
+/**
+ * Handles drag interactions for an item within a draggable collection.
+ */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isDisabled = state.selectionManager.isDisabled(props.key);
