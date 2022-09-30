@@ -182,7 +182,10 @@ export interface DroppableCollectionUtilityOptions {
 export interface DroppableCollectionBaseProps {
   /** Handler that is called when a valid drag enters a drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
-  /** Handler that is called after a valid drag is held over a drop target for a period of time. */
+  /**
+   * Handler that is called after a valid drag is held over a drop target for a period of time.
+   * @private
+   */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits a drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
