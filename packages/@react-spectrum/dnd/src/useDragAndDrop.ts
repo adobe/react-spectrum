@@ -56,11 +56,11 @@ interface DropHooks {
   useDropIndicator?: (props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DropIndicatorAria
 }
 
-export interface DnDHooks {
-  dndHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
+export interface DragAndDropHooks {
+  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
 }
 
-export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
@@ -68,8 +68,8 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
   getItems?: (keys: Set<Key>) => DragItem[]
 }
 
-export function useDnDHooks(options: DnDOptions): DnDHooks {
-  let dndHooks = useMemo(() => {
+export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
+  let dragAndDropHooks = useMemo(() => {
     let {
       onDrop,
       onInsert,
@@ -111,6 +111,6 @@ export function useDnDHooks(options: DnDOptions): DnDHooks {
   }, [options]);
 
   return {
-    dndHooks: dndHooks
+    dragAndDropHooks: dragAndDropHooks
   };
 }

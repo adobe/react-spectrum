@@ -366,8 +366,8 @@ This behavior is slightly different in the highlight selection style, where sing
 
 ## Drag and drop
 
-To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDnDHooks} /> to the ListView's `dndHooks` prop.
-See the examples below for various common drag and drop use cases. For more information on `useDnDHooks` and the various supported ways to perform a drag and drop interaction,
+To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the ListView's `dragAndDropHooks` prop.
+See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
 please see the [drag and drop documentation](dnd.html).
 
 The example below demonstrates how to create a draggable ListView and a droppable ListView.
@@ -376,7 +376,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useDnDHooks} from '@react-spectrum/dnd';
+import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 function DragIntoListExample() {
@@ -403,7 +403,7 @@ function DragIntoListExample() {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-file`];
 
-  let {dndHooks: dragListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
       // Setup the info for each item that will be propagated upon drag
@@ -424,7 +424,7 @@ function DragIntoListExample() {
     getAllowedDropOperations: () => ['move']
   });
 
-  let {dndHooks: dropListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       let {
         items,
@@ -460,7 +460,7 @@ function DragIntoListExample() {
         width="size-3600"
         height="size-2400"
         items={sourceList.items}
-        dndHooks={dragListHooks}>
+        dragAndDropHooks={dragListHooks}>
         {item => (
           <Item textValue={item.name}>
             <Text>{item.name}</Text>
@@ -472,7 +472,7 @@ function DragIntoListExample() {
         width="size-3600"
         height="size-2400"
         items={targetList.items}
-        dndHooks={dropListHooks}>
+        dragAndDropHooks={dropListHooks}>
         {item => (
           <Item textValue={item.name}>
             <Text>{item.name}</Text>
@@ -523,7 +523,7 @@ function DragIntoListMultipleTypes() {
   /*- begin highlight -*/
   let acceptedDragTypes = [`${dragType}-file`, `${dragType}-folder`];
   /*- end highlight -*/
-  let {dndHooks: dragListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
     // Same configuration as last example...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
@@ -547,7 +547,7 @@ function DragIntoListMultipleTypes() {
     ///- end collapse -///
   });
 
-  let {dndHooks: dropListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       // ...
       ///- begin collapse -///
@@ -632,7 +632,7 @@ function DragIntoListMultipleTypes() {
         width="size-3600"
         height="size-3600"
         items={sourceList.items}
-        dndHooks={dragListHooks}>
+        dragAndDropHooks={dragListHooks}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
@@ -645,7 +645,7 @@ function DragIntoListMultipleTypes() {
         width="size-3600"
         height="size-3600"
         items={targetList.items}
-        dndHooks={dropListHooks}>
+        dragAndDropHooks={dropListHooks}>
         {item => (
           <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
             <Text>{item.name}</Text>
@@ -694,7 +694,7 @@ function ReorderableList() {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
   ///- end collapse -///
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     // Same getItems and acceptedDragTypes as last example's dragListHooks...
     ///- begin collapse -///
     getItems(keys) {
@@ -750,7 +750,7 @@ function ReorderableList() {
       width="size-3600"
       height="size-3600"
       items={list.items}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {item => (
         <Item textValue={item.name}>
           {item.type === 'folder' && <Folder />}
@@ -807,7 +807,7 @@ function DragBetweenListsExample() {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
   ///- end collapse -///
-  let {dndHooks: list1Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
     getItems(keys) {
       // Same configuration as DragIntoListMultipleTypes but using list1
       ///- begin collapse -///
@@ -877,7 +877,7 @@ function DragBetweenListsExample() {
     /*- end highlight -*/
   });
 
-  let {dndHooks: list2Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
     // Same configuration as above but using list2
     ///- begin collapse -///
     getItems(keys) {
@@ -946,7 +946,7 @@ function DragBetweenListsExample() {
         width="size-3600"
         height="size-3600"
         items={list1.items}
-        dndHooks={list1Hooks}>
+        dragAndDropHooks={list1Hooks}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
@@ -960,7 +960,7 @@ function DragBetweenListsExample() {
         width="size-3600"
         height="size-3600"
         items={list2.items}
-        dndHooks={list2Hooks}>
+        dragAndDropHooks={list2Hooks}>
         {item => (
           <Item textValue={item.name}>
             {item.type === 'folder' && <Folder />}
@@ -1015,7 +1015,7 @@ function DragIntoListDefaultCopy() {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-file`];
   ///- end collapse -///
-  let {dndHooks: dragListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
     // Same getItems and onDragEnd as DragIntoListExample...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
@@ -1038,7 +1038,7 @@ function DragIntoListDefaultCopy() {
     ///- end collapse -///
   });
 
-  let {dndHooks: dropListHooks} = useDnDHooks({
+  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
     onInsert: async (e) => {
       // Similar onInsert as DragIntoListExample...
       ///- begin collapse -///
@@ -1096,7 +1096,7 @@ function DragIntoListDefaultCopy() {
         width="size-3600"
         height="size-2400"
         items={sourceList.items}
-        dndHooks={dragListHooks}>
+        dragAndDropHooks={dragListHooks}>
         {item => (
           <Item textValue={item.name}>
             <Text>{item.name}</Text>
@@ -1108,7 +1108,7 @@ function DragIntoListDefaultCopy() {
         width="size-3600"
         height="size-2400"
         items={targetList.items}
-        dndHooks={dropListHooks}>
+        dragAndDropHooks={dropListHooks}>
         {item => (
           <Item textValue={item.name}>
             <Text>{item.name}</Text>
