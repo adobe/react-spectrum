@@ -90,7 +90,10 @@ export function DroppableListBoxExample(props) {
 
 export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
-  let onDrop = action('onDrop');
+  let onDrop = async (e) => {
+    action('onDrop')(e);
+    props.onDrop?.(e);
+  };
   let state = useListState({...props, selectionMode: 'multiple'});
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), domRef);
 
@@ -104,7 +107,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   let dropState = useDroppableCollectionState({
     collection: state.collection,
     selectionManager: state.selectionManager,
-    getDropOperation(target, allowedOperations) {
+    getDropOperation: (target, _, allowedOperations) => {
       if (target.type === 'root') {
         return 'move';
       }
@@ -114,17 +117,15 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
       }
 
       return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
-    }
+    },
+    onDrop
   });
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
     dropTargetDelegate: new ListDropTargetDelegate(state.collection, domRef),
     onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      onDrop(e);
-      props.onDrop?.(e);
-    }
+    onDrop
   }, dropState, domRef);
 
   let {listBoxProps} = useListBox({
