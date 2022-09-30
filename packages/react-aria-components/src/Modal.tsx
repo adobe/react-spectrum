@@ -1,86 +1,96 @@
-import {AriaOverlayProps, mergeProps, OverlayContainer, useModal, useOverlay, usePreventScroll} from 'react-aria';
+import {AriaModalOverlayProps, Overlay, useModalOverlay} from '@react-aria/overlays';
 import {DOMAttributes} from '@react-types/shared';
 import {DOMProps} from './utils';
 import {mergeRefs} from '@react-aria/utils';
-import {OverlayTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, RefObject, useContext, useRef} from 'react';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 
-interface ModalOverlayProps extends Omit<AriaOverlayProps, 'isOpen' | 'onClose'>, DOMProps {}
+interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, DOMProps {}
 
 interface ModalContextValue {
   state?: OverlayTriggerState
 }
 
 interface InternalModalContextValue {
-  overlayProps: DOMAttributes,
-  overlayRef: RefObject<HTMLDivElement>,
-  underlayProps: DOMAttributes
+  modalProps: DOMAttributes,
+  modalRef: RefObject<HTMLDivElement>
 }
 
 export const ModalContext = createContext<ModalContextValue>(null);
 const InternalModalContext = createContext<InternalModalContextValue>(null);
 
-function ModalOverlay(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state} = useContext(ModalContext);
-  if (!state.isOpen) {
-    return null;
+function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
+  let ctx = useContext(InternalModalContext);
+
+  if (ctx) {
+    return <ModalContent {...props} modalRef={ref}>{props.children}</ModalContent>;
   }
+
+  let {className, style, ...otherProps} = props;
   
   return (
-    <OverlayContainer>
-      <ModalInner {...props} underlayRef={ref} />
-    </OverlayContainer>
-  );
-}
-
-const _ModalOverlay = forwardRef(ModalOverlay);
-export {_ModalOverlay as ModalOverlay};
-
-function useModalOverlay(props: ModalOverlayProps, state, ref) {
-  let {overlayProps, underlayProps} = useOverlay({
-    ...props,
-    isOpen: state.isOpen,
-    onClose: state.close,
-    isDismissable: true
-  }, ref);
-
-  let {modalProps} = useModal({
-    isDisabled: !state.isOpen
-  });
-
-  usePreventScroll({
-    isDisabled: !state.isOpen
-  });
-
-  return {
-    overlayProps: mergeProps(overlayProps, modalProps),
-    underlayProps
-  };
-}
-
-function ModalInner(props: ModalOverlayProps & {underlayRef: ForwardedRef<HTMLDivElement>}) {    
-  let {state} = useContext(ModalContext);
-  let overlayRef = useRef();
-  let {overlayProps, underlayProps} = useModalOverlay(props, state, overlayRef);
-  
-  return (
-    <div {...underlayProps} style={props.style} className={props.className}>
-      <InternalModalContext.Provider
-        value={{
-          overlayProps,
-          overlayRef,
-          underlayProps
-        }}>
+    <ModalOverlay {...otherProps}>
+      <ModalContent className={className} style={style} modalRef={ref}>
         {props.children}
-      </InternalModalContext.Provider>
-    </div>
+      </ModalContent>
+    </ModalOverlay>
   );
 }
 
-function Modal(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
-  let {overlayProps, overlayRef} = useContext(InternalModalContext);
-  return <div {...mergeProps(overlayProps, props)} ref={mergeRefs(overlayRef, ref)} />;
+interface ModalOverlayInnerProps extends ModalOverlayProps {
+  overlayRef: ForwardedRef<HTMLDivElement>
 }
 
 const _Modal = forwardRef(Modal);
 export {_Modal as Modal};
+
+export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) => {
+  let ctx = useContext(ModalContext);
+  let isOpen = props.isOpen ?? ctx?.state?.isOpen;
+  if (!isOpen) {
+    return null;
+  }
+
+  return <ModalOverlayInner {...props} overlayRef={ref} />;
+});
+
+function ModalOverlayInner(props: ModalOverlayInnerProps) {
+  let ctx = useContext(ModalContext);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let state = ctx?.state ?? useOverlayTriggerState(props);
+  let modalRef = useRef(null);
+  let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
+  
+  return (
+    <Overlay>
+      <div
+        {...underlayProps}
+        ref={props.overlayRef}
+        style={props.style}
+        className={props.className ?? 'react-aria-ModalOverlay'}>
+        <InternalModalContext.Provider value={{modalProps, modalRef}}>
+          {props.children}
+        </InternalModalContext.Provider>
+      </div>
+    </Overlay>
+  );
+}
+
+interface ModalContentProps extends DOMProps {
+  modalRef: ForwardedRef<HTMLDivElement>
+}
+
+function ModalContent(props: ModalContentProps) {
+  let {modalProps, modalRef} = useContext(InternalModalContext);
+  let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
+
+  return (
+    <div 
+      {...modalProps}
+      ref={mergedRefs}
+      className={props.className ?? 'react-aria-Modal'}
+      style={props.style}>
+      {props.children}
+    </div>
+  );
+}

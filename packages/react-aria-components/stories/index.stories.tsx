@@ -346,9 +346,10 @@ SliderCSS.argTypes = {
 };
 
 export const TooltipExample = () => (
-  <TooltipTrigger offset={5}>
+  <TooltipTrigger>
     <Button>Tooltip trigger</Button>
     <Tooltip
+      offset={5}
       style={{
         background: 'Canvas',
         color: 'CanvasText',

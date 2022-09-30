@@ -133,11 +133,13 @@ module.exports = new Transformer({
             let transformed = parcelCss.transform({
               filename: asset.filePath,
               code: Buffer.from(node.value),
+              minify: true,
               drafts: {
                 nesting: true
               },
               targets: {
-                chrome: 95 << 16
+                chrome: 95 << 16,
+                safari: 15 << 16
               }
             });
             let css = transformed.code.toString();

@@ -1,0 +1,262 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/overlays';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/listbox/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Overlays
+keywords: [dialog, popover, aria]
+type: component
+---
+
+# Modal
+
+<PageDescription>{docs.exports.Modal.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Modal']} />
+
+## Example
+
+```tsx example
+import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button>Open modal</Button>
+  <Modal>
+    <Dialog>
+      {({close}) => (
+        <form style={{display: 'flex', flexDirection: 'column'}}>
+          <Heading style={{marginTop: 0}}>Sign up</Heading>
+          <label>
+            First Name: <input placeholder="John" autoFocus />
+          </label>
+          <label>
+            Last Name: <input placeholder="Smith" />
+          </label>
+          <Button onPress={close} style={{marginTop: 10}}>
+            Submit
+          </Button>
+        </form>
+      )}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0 0 0 / .5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.react-aria-Modal {
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  outline: none;
+  padding: 30px;
+  max-width: 250px;
+}
+
+.react-aria-Dialog {
+  outline: none;
+
+  & h2 {
+    line-height: 1em;
+    margin-top: 0;
+  }
+}
+
+.react-aria-Button {
+  background: var(--spectrum-global-color-gray-50);
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px;
+  transition: border-color 200ms;
+
+  &[data-hovered] {
+    border-color: var(--spectrum-global-color-gray-500);
+  }
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--spectrum-global-color-gray-100);
+    border-color: var(--spectrum-global-color-gray-600);
+  }
+
+  &[data-focus-visible] {
+    border-color: slateblue;
+    box-shadow: 0 0 0 1px slateblue;
+  }
+}
+```
+
+</details>
+
+## Anatomy
+
+A modal consists of an overlay container element, and an underlay. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
+
+## Props
+
+<PropTable component={docs.exports.Modal} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Modal {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Modal className="my-modal">
+  {/* ... */}
+</Modal>
+```
+
+### Modal
+
+A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overriding with a custom `className`.
+
+### ModalOverlay
+
+By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` explicitly and place a `Modal` inside.
+
+```tsx example
+import {ModalOverlay} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button>Open modal</Button>
+  <ModalOverlay className="my-overlay">
+    <Modal>
+      <Dialog>
+        {({close}) => <>
+          <Heading>Notice</Heading>
+          <p>This is a modal with a custom modal overlay.</p>
+          <Button onPress={close}>Close</Button>
+        </>}
+      </Dialog>
+    </Modal>
+  </ModalOverlay>
+</DialogTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45 0 0 / .3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+
+</details>
+
+## Usage
+
+The following examples show how to use the `Modal` API.
+
+### Dismissable
+
+If your modal doesn't require the user to make a confirmation, you can set `isDismissable`
+on the `Modal`. This allows the user to click outside to close the dialog.
+
+```tsx example
+<DialogTrigger>
+  <Button>Open dialog</Button>
+  <Modal isDismissable>
+    <Dialog>
+      <Heading>Notice</Heading>
+      <p>Click outside to close this dialog.</p>
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+### Keyboard dismiss disabled
+
+By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key. This can be disabled with the `isKeyboardDismissDisabled` prop.
+
+```tsx example
+<DialogTrigger>
+  <Button>Open dialog</Button>
+  <Modal isKeyboardDismissDisabled>
+    <Dialog>
+      {({close}) => <>
+        <Heading>Notice</Heading>
+        <p>You must close this dialog using the button below.</p>
+        <Button onPress={close}>Close</Button>
+      </>}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+### Controlled open state
+
+The above examples have shown `Modal` used within a `<DialogTrigger>`, which handles opening the modal when a button is clicked. This is convenient, but there are cases where you want to show a modal programmatically rather than as a result of a user action, or render the `<Modal>` in a different part of the JSX tree.
+
+To do this, you can manage the modal's `isOpen` state yourself and provide it as a prop to the `<Modal>` element. The `onOpenChange` prop will be called when the user closes the modal, and should be used to update your state.
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Open dialog</Button>
+      <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+        <Dialog>
+          <Heading>Notice</Heading>
+          <p>Click outside to close this dialog.</p>
+        </Dialog>
+      </Modal>
+    </>
+  );
+}
+```
