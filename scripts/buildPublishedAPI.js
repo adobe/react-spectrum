@@ -28,6 +28,9 @@ build().catch(err => {
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
 async function build() {
+  let distDir = path.join(__dirname, '..', 'dist', 'published-api');
+  // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
+  fs.removeSync(distDir);
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building published api into ${dir}...`);
@@ -86,6 +89,7 @@ async function build() {
     }
   };
 
+  console.log('add packages to download from npm');
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
@@ -93,7 +97,16 @@ async function build() {
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
-      pkg.dependencies[json.name] = 'latest';
+      try {
+        // this npm view will fail if the package isn't on npm
+        // otherwise we want to check if there is any version that isn't a nightly
+        let results = JSON.parse(await run('npm', ['view', json.name, '--json']));
+        if (results.versions.some(version => !version.includes('nightly'))) {
+          pkg.dependencies[json.name] = 'latest';
+        }
+      } catch (e) {
+        // continue
+      }
     }
   }
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
@@ -102,6 +115,7 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Install dependencies from npm
+  console.log('install our latest packages from npm');
   await run('yarn', {cwd: dir, stdio: 'inherit'});
 
   fs.writeFileSync(path.join(dir, 'babel.config.json'), `{
@@ -160,21 +174,25 @@ async function build() {
   // it probably means two different versions, so there may be a bug lurking here
   fs.removeSync(path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
-  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'published-api'));
+  fs.copySync(path.join(dir, 'packages'), distDir);
   fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {
     let child = spawn(cmd, args, opts);
+    let result = '';
+    child.stdout?.on('data', function(data) {
+      result += data.toString();
+    });
     child.on('error', reject);
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code !== 0) {
         reject(new Error('Child process failed'));
         return;
       }
 
-      resolve();
+      resolve(result);
     });
   });
 }

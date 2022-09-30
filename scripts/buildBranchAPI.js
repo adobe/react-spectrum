@@ -28,6 +28,9 @@ build().catch(err => {
  * This is run against the current branch by copying the current branch into a temporary directory and building there
  */
 async function build() {
+  let distDir = path.join(__dirname, '..', 'dist', 'branch-api');
+  // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
+  fs.removeSync(distDir);
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building branch api into ${dir}...`);
@@ -125,7 +128,7 @@ async function build() {
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'branch-api'), {dereference: true});
+  fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});
   fs.removeSync(dir);
 }
 

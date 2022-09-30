@@ -80,11 +80,12 @@ async function compare() {
   let diffs = {};
   for (let pair of pairs) {
     let diff = getDiff(summaryMessages, pair);
-    if (diff.diff.length > 0) {
-      count += 1;
-      diffs[diff.name] = diff.diff;
-    }
+    // if (diff.diff.length > 0) {
+    //   count += 1;
+    //   diffs[diff.name] = diff.diff;
+    // }
   }
+  return;
   let modulesAdded = branchAPIs.length - privatePackages.length - publishedAPIs.length;
   if (modulesAdded !== 0) {
     summaryMessages.push({msg: `${Math.abs(modulesAdded)} modules ${modulesAdded > 0 ? 'added' : 'removed'}`, severity: modulesAdded > 0 ? 'warn' : 'error'});
@@ -131,6 +132,8 @@ function getDiff(summaryMessages, pair) {
   // console.log(`diffing ${name}`);
   let publishedApi = fs.readJsonSync(pair.pubApi);
   delete publishedApi.links;
+  rebuildInterfaces(publishedApi);
+  return;
   walkObject(publishedApi, ({value, location, isLeaf}) => {
     if (!isLeaf && value.id && typeof value.id === 'string') {
       value.id = value.id.replace(/.*(node_modules|packages)/, '');
@@ -344,6 +347,117 @@ function getRealName(diffName, type = 'ADD') {
 function simplifyModuleName(apiJsonPath) {
   return apiJsonPath.replace(/\/dist\/.*\.json/, '');
 }
+
+function processType(value) {
+  if (value.type === 'union') {
+    return value.elements.map(processType).join(' | ');
+  }
+  if (value.type === 'intersection') {
+    return `(${value.types.map(processType).join(' & ')})`;
+  }
+  if (value.type === 'array') {
+    return `Array<${processType(value.elementType)}>`;
+  }
+  if (value.type === 'tuple') {
+    return `[${value.elements.map(processType).join(', ')}]`;
+  }
+  if (value.type === 'string') {
+    if (value.value) {
+      return `'${value.value}'`;
+    }
+    return 'string';
+  }
+  if (value.type === 'parameter') {
+    return processType(value.value);
+  }
+  if (value.type === 'any') {
+    return 'any';
+  }
+  if (value.type === 'object') {
+    return '{}';
+  }
+  if (value.type === 'null') {
+    return 'null';
+  }
+  if (value.type === 'undefined') {
+    return 'undefined';
+  }
+  if (value.type === 'number') {
+    return 'number';
+  }
+  if (value.type === 'boolean') {
+    return 'boolean';
+  }
+  if (value.type === 'void') {
+    return 'void';
+  }
+  if (value.type === 'identifier') {
+    return value.name;
+  }
+  if (value.type === 'function') {
+    return `(${value.parameters.map(processType).join(', ')}) => ${processType(value.return)}`;
+  }
+  if (value.type === 'link') {
+    return value.id.substr(value.id.lastIndexOf(':') + 1);
+  }
+  if (value.type === 'application') {
+    let name = value.base.name;
+    if (!name) {
+      name = value.base.id.substr(value.base.id.lastIndexOf(':') + 1);
+    }
+    return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
+  }
+  console.log('unknown type', value)
+}
+
+function rebuildInterfaces(json) {
+  let exports = {};
+  Object.keys(json.exports).forEach((key) => {
+    let item = json.exports[key];
+    if (item?.type == null) {
+      // todo what to do here??
+      return;
+    }
+    if (item.props?.type === 'identifier') {
+      // todo what to do here??
+      return;
+    }
+    if (item.props == null) {
+      // todo what to do here??
+      return;
+    }
+    if (item.type === 'component') {
+      let compInterface = {};
+      Object.entries(item.props.properties).forEach(([, prop]) => {
+        let name = prop.name;
+        let optional = prop.optional;
+        let defaultVal = prop.default;
+        let value = processType(prop.value);
+        // TODO: what to do with defaultVal and optional
+        compInterface[name] = value;
+      });
+      exports[item.name] = compInterface;
+    } else if (item.type === 'function') {
+      let funcInterface = {};
+      Object.entries(item.props.properties).forEach(([, prop]) => {
+        let name = prop.name;
+        let optional = prop.optional;
+        let defaultVal = prop.default;
+        let value = processType(prop.value);
+        // TODO: what to do with defaultVal and optional
+        funcInterface[name] = value;
+      });
+      exports[item.name] = compInterface;
+    } else {
+      return;
+      // ignore interface and links?
+      // console.log(key, item.type);
+    }
+  });
+  console.log(exports);
+  return exports;
+}
+
 
 function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {

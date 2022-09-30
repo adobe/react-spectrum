@@ -513,6 +513,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSModuleDeclaration()) {
+        console.log(path);
         return node;
       }
 
