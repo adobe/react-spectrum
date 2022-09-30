@@ -109,11 +109,10 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-columnResizer {
   display: flex;
   position: absolute;
-  /* -9 aligns us with already existing cell dividers inside the table itself */
-  inset-inline-end: -9px;
+  inset-inline-end: -10px;
   justify-content: center;
   box-sizing: border-box;
-  inline-size: 20px;
+  inline-size: 21px;
   block-size: 100%;
   user-select: none;
 
@@ -430,10 +429,10 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-colResizeIndicator {
   display: none;
-  height: calc(100% + 1px);
+  height: 100%;
   width: 2px;
   position: absolute;
-  top: 0;
+  top: 1px;
   inset-inline-end: 0;
   pointer-events: none;
   &.spectrum-Table-colResizeIndicator--visible {
@@ -443,7 +442,9 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-colResizeNubbin {
   display: none;
   position: absolute;
-  top: 0px;
+  /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
+   down one pixel and the nubbin circle up one pixel to cover it completely */
+  top: -1px;
   width: 16px;
   height: 16px;
   inset-inline-start: -7px;

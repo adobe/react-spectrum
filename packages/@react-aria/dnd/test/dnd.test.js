@@ -2480,7 +2480,7 @@ describe('useDrag and useDrop', function () {
 
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(droppable);
+      expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Double tap to cancel drag.');
       expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then double tap to drop.');
