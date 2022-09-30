@@ -98,7 +98,10 @@ const acceptedTypes = ['item', 'folder'];
 
 export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
-  let onDrop = action('onDrop');
+  let onDrop = async (e) => {
+    action('onDrop')(e);
+    props.onDrop?.(e);
+  };
   let state = useListState({...props, selectionMode: 'multiple'});
 
   React.useImperativeHandle(ref, () => ({
@@ -131,7 +134,8 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
       }
 
       return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
-    }
+    },
+    onDrop
   });
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -151,10 +155,7 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
     keyboardDelegate: layout,
     dropTargetDelegate: layout,
     onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      onDrop(e);
-      props.onDrop?.(e);
-    }
+    onDrop
   }, dropState, domRef);
 
   let {listBoxProps} = useListBox({
