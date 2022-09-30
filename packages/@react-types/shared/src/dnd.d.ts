@@ -224,12 +224,7 @@ export interface DroppableCollectionUtilityOptions {
   /**
    * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
    */
-  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean,
-  /**
-   * A function returning the drop operation to be performed when items matching the given types are dropped
-   * on the drop target.
-   */
-  getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
 }
 
 export interface DroppableCollectionBaseProps {
