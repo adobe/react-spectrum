@@ -11,16 +11,16 @@
  */
 
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {useLayoutEffect} from './useLayoutEffect';
 import {RefObject, useState} from 'react';
+import {useLayoutEffect} from './useLayoutEffect';
 
 export interface TabbleChildAria {
-  /** Indicator of if the element can be focused */
+  /** Indicator of if the element can be focused. */
   tabIndex?: number | undefined
 }
 
 // This is based/coped from useTabPanel.ts
-export function useTabbableChild<T>(ref: RefObject<HTMLElement>): TabbleChildAria {
+export function useTabbableChild(ref: RefObject<HTMLElement>): TabbleChildAria {
   let [tabIndex, setTabIndex] = useState(undefined);
 
   // A component with children (Collection/Virtualizer/Table/ListView/etc.) should be tabble when
@@ -55,5 +55,5 @@ export function useTabbableChild<T>(ref: RefObject<HTMLElement>): TabbleChildAri
 
   return {
     tabIndex: tabIndex
-  }
+  };
 }
