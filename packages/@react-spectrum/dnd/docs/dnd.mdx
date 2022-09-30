@@ -155,7 +155,7 @@ let onDragEnd = (e) => {
 
 Finally, we provide our `getItems` and `onDragEnd` functions as options to `useDnDHooks`, providing us with a set of `dndHooks` that we can pass to our ListView directly.
 Below is what our draggable ListView would look like after combining everything together. For more info on `getItems` and `onDragEnd`, see the [props section](#props) below and the
-[React Aria docs](/react-aria/useDraggableCollection.html#drag-data).
+[React Aria docs](../react-aria/useDraggableCollection.html#drag-data).
 
 ```tsx example export=true render=false
 import {Item, ListView} from '@react-spectrum/list';
@@ -350,7 +350,7 @@ function DroppableList() {
 The above example makes use of several high-level events and options supported by `useDnDHooks` to define the droppable ListView's behavior. However, you may have complex operations
 that would be difficult or impossible to implement using the high-level options alone. For situations like this, you can use `getDropOperation` and `onDrop` instead, granting you
 complete control over what drop operations should be returned and how any drop on your collection should be handled. For a more general explanation of these low-level options and how they work,
-see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](/react-aria/useDroppableCollection.html#low-level-api).
+see the [API section](#low-level-drop-handlers-and-options) below and the `useDroppableCollection` [React Aria docs](../react-aria/useDroppableCollection.html#low-level-api).
 
 The ListView below allows external directories to be dropped at its root level or between existing items. Files of a specific type can be dropped on certain pre-existing directories only.
 
