@@ -240,7 +240,7 @@ let onInsert = async (e) => {
   } = e;
 
   let processedItems = await Promise.all(
-    items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+    items.map(async item => JSON.parse(await item.getText('adobe-app')))
   );
 
   if (target.dropPosition === 'before') {
@@ -262,7 +262,7 @@ let onItemDrop = async (e) => {
     target
   } = e;
   let processedItems = await Promise.all(
-    items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+    items.map(async item => JSON.parse(await item.getText('adobe-app')))
   );
   let targetItem = list.getItem(target.key);
   list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -291,15 +291,17 @@ function DroppableList() {
       {id: 'k', type: 'folder', name: 'Apps',  childNodes: []}
     ]
   });
-  let acceptedDragTypes = ['adobe-app'];
+
   let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['adobe-app'],
+    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
     onInsert: async (e) => {
       let {
         items,
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+        items.map(async item => JSON.parse(await item.getText('adobe-app')))
       );
 
       if (target.dropPosition === 'before') {
@@ -314,13 +316,11 @@ function DroppableList() {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+        items.map(async item => JSON.parse(await item.getText('adobe-app')))
       );
       let targetItem = list.getItem(target.key);
       list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-    },
-    acceptedDragTypes,
-    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes
+    }
   });
 
   return (
@@ -355,6 +355,8 @@ see the [API section](#low-level-drop-handlers-and-options) below and the `useDr
 The ListView below allows external directories to be dropped at its root level or between existing items. Files of a specific type can be dropped on certain pre-existing directories only.
 
 ```tsx example
+import {DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
+
 function DroppableListLowLevelAPI() {
   let list = useListData({
     initialItems: [
