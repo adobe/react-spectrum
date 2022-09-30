@@ -377,7 +377,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
-function DragIntoListExample() {
+function DragIntoList() {
   let sourceList = useListData({
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -395,11 +395,9 @@ function DragIntoListExample() {
       {id: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
   });
-
   /*- begin highlight -*/
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  let acceptedDragTypes = [`${dragType}-file`];
 
   let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
@@ -423,13 +421,14 @@ function DragIntoListExample() {
   });
 
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
+    acceptedDragTypes: [`${dragType}-file`],
     onInsert: async (e) => {
       let {
         items,
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+        items.map(async item => JSON.parse(await item.getText(`${dragType}-file`)))
       );
 
       if (target.dropPosition === 'before') {
@@ -443,13 +442,13 @@ function DragIntoListExample() {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(acceptedDragTypes[0])))
+        items.map(async item => JSON.parse(await item.getText(`${dragType}-file`)))
       );
       targetList.append(...processedItems);
-    },
-    acceptedDragTypes
+    }
   });
   /*- end highlight -*/
+
   return (
     <Flex wrap gap="size-300">
       <ListView
@@ -484,7 +483,7 @@ function DragIntoListExample() {
 </details>
 
 ```tsx example
-<DragIntoListExample />
+<DragIntoList />
 ```
 
 The example below replicates the previous example but demonstrates how to handle multiple item types and how to handle on item drops.
@@ -513,16 +512,12 @@ function DragIntoListMultipleTypes() {
     ]
   });
 
-  // ...
-  ///- begin collapse -///
+
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  ///- end collapse -///
-  /*- begin highlight -*/
-  let acceptedDragTypes = [`${dragType}-file`, `${dragType}-folder`];
-  /*- end highlight -*/
+
   let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
-    // Same configuration as last example...
+    // Same configuration as DragIntoList example...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
@@ -545,9 +540,16 @@ function DragIntoListMultipleTypes() {
     ///- end collapse -///
   });
 
+  /*- begin highlight -*/
+  let acceptedDragTypes = [`${dragType}-file`, `${dragType}-folder`];
+  /*- end highlight -*/
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    shouldAcceptItemDrop: (target) => !!targetList.getItem(target.key).childNodes,
+    /*- end highlight -*/
+    acceptedDragTypes,
     onInsert: async (e) => {
-      // ...
+      // Same configuration as DragIntoList example's dropListHooks...
       ///- begin collapse -///
       let {
         items,
@@ -575,7 +577,7 @@ function DragIntoListMultipleTypes() {
       ///- end collapse -///
     },
     onRootDrop: async (e) => {
-      // ...
+      // Same configuration as DragIntoList example's dropListHooks...
       ///- begin collapse -///
       let {
         items
@@ -616,10 +618,8 @@ function DragIntoListMultipleTypes() {
 
       let targetItem = targetList.getItem(target.key);
       targetList.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-    },
-    shouldAcceptItemDrop: (target) => !!targetList.getItem(target.key).childNodes,
+    }
     /*- end highlight -*/
-    acceptedDragTypes
   });
 
   return (
@@ -673,7 +673,7 @@ The example below demonstrates how to make a ListView draggable and droppable at
 ```tsx example export=true render=false
 function ReorderableList() {
   let list = useListData({
-    // Similar configuration as last example...
+    // Similar configuration as DragIntoListMultipleTypes example source list...
     ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -686,14 +686,14 @@ function ReorderableList() {
     ///- end collapse -///
   });
 
-  // Same acceptedDragTypes as last example...
+  // Same acceptedDragTypes as DragIntoListMultipleTypes example...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
   ///- end collapse -///
   let {dragAndDropHooks} = useDragAndDrop({
-    // Same getItems and acceptedDragTypes as last example's dragListHooks...
+    // Same getItems as DragIntoList example and same acceptedDragTypes as DragIntoListMultipleTypes example...
     ///- begin collapse -///
     getItems(keys) {
       return [...keys].map(key => {
@@ -766,13 +766,13 @@ function ReorderableList() {
 ```
 
 The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
-the ability to drop into a folder. Each list is internally reorderable as well.
+the ability to drop into a folder. Each list is internally reorderable and only support `move` drop operations.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 function DragBetweenListsExample() {
-  // Similar set list item data as previous examples
+  // Similar set of list item data as DragIntoListMultipleTypes example
   let list1 = useListData({
     ///- begin collapse -///
     initialItems: [
@@ -799,15 +799,20 @@ function DragBetweenListsExample() {
     ///- end collapse -///
   });
 
-  // Same acceptedDragTypes as previous examples...
+  // Same acceptedDragTypes as DragIntoListMultipleTypes example...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
   let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
   ///- end collapse -///
   let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
+    acceptedDragTypes,
+    /*- begin highlight -*/
+    // Only allow move operations
+    getAllowedDropOperations: () => ['move'],
+    /*- end highlight -*/
     getItems(keys) {
-      // Same configuration as DragIntoListMultipleTypes but using list1
+      // Same configuration as DragIntoListMultipleTypes example but using list1
       ///- begin collapse -///
       return [...keys].map(key => {
         let item = list1.getItem(key);
@@ -820,7 +825,7 @@ function DragBetweenListsExample() {
       ///- end collapse -///
     },
     onInsert: async (e) => {
-      // Same configuration as DragIntoListMultipleTypes but using list1
+      // Same configuration as DragIntoListMultipleTypes example but using list1
       ///- begin collapse -///
       let {
         items,
@@ -868,10 +873,7 @@ function DragBetweenListsExample() {
       if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
-    },
-    acceptedDragTypes,
-    // Only allow move operations
-    getAllowedDropOperations: () => ['move']
+    }
     /*- end highlight -*/
   });
 
@@ -984,7 +986,7 @@ The example below demonstrates how to use `getDropOperation` to specify the defa
 ```tsx example export=true render=false
 function DragIntoListDefaultCopy() {
   let sourceList = useListData({
-    // Similar configuration as last example...
+    // Similar configuration as DragIntoList example...
     ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -996,7 +998,7 @@ function DragIntoListDefaultCopy() {
   });
 
   let targetList = useListData({
-    // Similar configuration as last example...
+    // Similar configuration as DragIntoList example...
     ///- begin collapse -///
     initialItems: [
       {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
@@ -1007,14 +1009,13 @@ function DragIntoListDefaultCopy() {
     ///- end collapse -///
   });
 
-  // Same acceptedDragTypes as DragIntoListExample...
+  // Same dragType generation as DragIntoList example...
   ///- begin collapse -///
   // Append a generated key to the item type so they can only be dragged between these two lists
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  let acceptedDragTypes = [`${dragType}-file`];
   ///- end collapse -///
   let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
-    // Same getItems and onDragEnd as DragIntoListExample...
+    // Same getItems and onDragEnd as DragIntoList example...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => {
       let item = sourceList.getItem(key);
@@ -1037,8 +1038,12 @@ function DragIntoListDefaultCopy() {
   });
 
   let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
+    acceptedDragTypes: [`${dragType}-file`],
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
     onInsert: async (e) => {
-      // Similar onInsert as DragIntoListExample...
+      // Similar onInsert as DragIntoList example...
       ///- begin collapse -///
       let {
         items,
@@ -1048,7 +1053,7 @@ function DragIntoListDefaultCopy() {
       /*- begin highlight -*/
       let processedItems = await Promise.all(
         items.map(async item => (
-          {...JSON.parse(await item.getText(acceptedDragTypes[0])), id: Math.random().toString(36).slice(2)}
+          {...JSON.parse(await item.getText(`${dragType}-file`)), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/
@@ -1062,7 +1067,7 @@ function DragIntoListDefaultCopy() {
       ///- end collapse -///
     },
     onRootDrop: async (e) => {
-      // Similar onRootDrop as DragIntoListExample...
+      // Similar onRootDrop as DragIntoList example...
       ///- begin collapse -///
       let {
         items
@@ -1071,7 +1076,7 @@ function DragIntoListDefaultCopy() {
       /*- begin highlight -*/
       let processedItems = await Promise.all(
         items.map(async item => (
-          {...JSON.parse(await item.getText(acceptedDragTypes[0])), id: Math.random().toString(36).slice(2)}
+          {...JSON.parse(await item.getText(`${dragType}-file`)), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/
@@ -1079,11 +1084,7 @@ function DragIntoListDefaultCopy() {
       ///- begin collapse -///
       targetList.append(...processedItems);
       ///- end collapse -///
-    },
-    /*- begin highlight -*/
-    getDropOperation: () => 'copy',
-    /*- end highlight -*/
-    acceptedDragTypes
+    }
   });
 
   return (
