@@ -469,7 +469,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it.skip('components that already handle focus management, should handle focus themselves', function () {
+  it('components that already handle focus management, should handle focus themselves', function () {
     let tree = render(
       <Provider theme={theme}>
         <div>

@@ -3016,7 +3016,7 @@ describe('ListView', function () {
       fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
-    it.skip('should automatically focus the newly added dropped item', async function () {
+    it('should automatically focus the newly added dropped item', async function () {
       let {getAllByRole} = render(
         <DragBetweenListsRootOnlyExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
