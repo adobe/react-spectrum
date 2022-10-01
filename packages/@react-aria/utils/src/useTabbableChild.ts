@@ -11,8 +11,7 @@
  */
 
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {RefObject, useState} from 'react';
-import {useLayoutEffect} from './useLayoutEffect';
+import {RefObject} from 'react';
 
 export interface TabbleChildAria {
   /** Indicator of if the element can be focused. */
@@ -21,37 +20,18 @@ export interface TabbleChildAria {
 
 // This is based/coped from useTabPanel.ts
 export function useTabbableChild(ref: RefObject<HTMLElement>): TabbleChildAria {
-  let [tabIndex, setTabIndex] = useState(undefined);
+  let tabIndex = undefined;
 
   // A component with children (Collection/Virtualizer/Table/ListView/etc.) should be tabble when
   // it is empty (no rows) and has no tabbled elements. Otherwise, tabbing from the focused component
   // peer should go directly to the first tabbable element within the component, which is accomplished
   // with tabIndex=-1.  A -1 is used instead of undefined to get the desired behavior if this is
   // wrapped by a FocusScope.
-  useLayoutEffect(() => {
-    if (ref?.current) {
-      let update = () => {
-        // Detect if there are any tabbable elements and update the tabIndex accordingly.
-        let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-        setTabIndex(walker.nextNode() ? -1 : 0);
-      };
-
-      update();
-
-      // Update when new elements are inserted, or the tabIndex/disabled attribute updates.
-      let observer = new MutationObserver(update);
-      observer.observe(ref.current, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        attributeFilter: ['tabIndex', 'disabled']
-      });
-
-      return () => {
-        observer.disconnect();
-      };
-    }
-  }, [ref]);
+  if (ref?.current) {
+    // Detect if there are any tabbable elements and update the tabIndex accordingly.
+    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+    tabIndex = walker.nextNode() ? -1 : 0;
+  }
 
   return {
     tabIndex: tabIndex
