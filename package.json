@@ -107,6 +107,7 @@
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
     "css-loader": "^2.1.1",
+    "diff": "^5.1.0",
     "delta-e": "^0.0.8",
     "eslint": "^7.10.0",
     "eslint-plugin-import": "^2.22.1",

@@ -7,11 +7,13 @@ let util = require('util');
 let {walkObject} = require('walk-object');
 let chalk = require('chalk');
 let yargs = require('yargs');
+let Diff = require('diff');
 
 let argv = yargs
   .option('verbose', {alias: 'v', type: 'boolean'})
   .option('organizedBy', {choices: ['type', 'change']})
   .option('rawNames', {type: 'boolean'})
+  .option('package', {type: 'string'})
   .argv;
 
 compare().catch(err => {
@@ -80,6 +82,7 @@ async function compare() {
   let diffs = {};
   for (let pair of pairs) {
     let diff = getDiff(summaryMessages, pair);
+    // console.log(diff);
     // if (diff.diff.length > 0) {
     //   count += 1;
     //   diffs[diff.name] = diff.diff;
@@ -129,41 +132,55 @@ async function compare() {
 
 function getDiff(summaryMessages, pair) {
   let name = pair.branchApi.replace(/.*branch-api/, '');
-  // console.log(`diffing ${name}`);
+  if (argv.package && name !== argv.package) {
+    return {diff: {}, name};
+  }
+  console.log(`diffing ${name}`);
   let publishedApi = fs.readJsonSync(pair.pubApi);
-  delete publishedApi.links;
-  rebuildInterfaces(publishedApi);
-  return;
-  walkObject(publishedApi, ({value, location, isLeaf}) => {
-    if (!isLeaf && value.id && typeof value.id === 'string') {
-      value.id = value.id.replace(/.*(node_modules|packages)/, '');
-    }
-  });
   let branchApi = fs.readJsonSync(pair.branchApi);
-  delete branchApi.links;
-  walkObject(branchApi, ({value, location, isLeaf}) => {
-    if (!isLeaf && value.id && typeof value.id === 'string') {
-      value.id = value.id.replace(/.*(node_modules|packages)/, '');
-    }
-  });
-  let diff = changesets.diff(publishedApi, branchApi);
+  let publishedInterfaces = rebuildInterfaces(publishedApi);
+  let branchInterfaces = rebuildInterfaces(branchApi);
+  //console.log(publishedInterfaces)
+  //console.log(branchInterfaces)
+  let codeDiff = Diff.createPatch(name, JSON.stringify(publishedInterfaces, null, 2), JSON.stringify(branchInterfaces, null, 2));
+  let diff = changesets.diff(publishedInterfaces, branchInterfaces);
   if (diff.length > 0 && argv.verbose) {
     console.log(`diff found in ${name}`);
+    console.log(util.inspect(codeDiff, {depth: null}));
     // for now print the whole diff
-    console.log(util.inspect(diff, {depth: null}));
-  }
-
-  let publishedExports = publishedApi.exports;
-  let branchExports = branchApi.exports;
-  let addedExports = Object.keys(branchExports).filter(key => !publishedExports[key]);
-  let removedExports = Object.keys(publishedExports).filter(key => !branchExports[key]);
-  if (addedExports.length > 0) {
-    summaryMessages.push({msg: `added exports ${addedExports} to ${pair.branchApi}`, severity: 'warn'});
-  }
-  if (removedExports.length > 0) {
-    summaryMessages.push({msg: `removed exports ${removedExports} from ${pair.branchApi}`, severity: 'error'});
+    // console.log(util.inspect(diff, {depth: null}));
   }
   return {diff, name};
+  // walkObject(publishedApi, ({value, location, isLeaf}) => {
+  //   if (!isLeaf && value.id && typeof value.id === 'string') {
+  //     value.id = value.id.replace(/.*(node_modules|packages)/, '');
+  //   }
+  // });
+  // let branchApi = fs.readJsonSync(pair.branchApi);
+  // delete branchApi.links;
+  // walkObject(branchApi, ({value, location, isLeaf}) => {
+  //   if (!isLeaf && value.id && typeof value.id === 'string') {
+  //     value.id = value.id.replace(/.*(node_modules|packages)/, '');
+  //   }
+  // });
+  // let diff = changesets.diff(publishedApi, branchApi);
+  // if (diff.length > 0 && argv.verbose) {
+  //   console.log(`diff found in ${name}`);
+  //   // for now print the whole diff
+  //   console.log(util.inspect(diff, {depth: null}));
+  // }
+  //
+  // let publishedExports = publishedApi.exports;
+  // let branchExports = branchApi.exports;
+  // let addedExports = Object.keys(branchExports).filter(key => !publishedExports[key]);
+  // let removedExports = Object.keys(publishedExports).filter(key => !branchExports[key]);
+  // if (addedExports.length > 0) {
+  //   summaryMessages.push({msg: `added exports ${addedExports} to ${pair.branchApi}`, severity: 'warn'});
+  // }
+  // if (removedExports.length > 0) {
+  //   summaryMessages.push({msg: `removed exports ${removedExports} from ${pair.branchApi}`, severity: 'error'});
+  // }
+  // return {diff, name};
 }
 
 function analyzeDiffs(diffs) {
@@ -349,6 +366,12 @@ function simplifyModuleName(apiJsonPath) {
 }
 
 function processType(value) {
+  if (!value) {
+    return 'UNTYPED';
+  }
+  if (Object.keys(value).length === 0) {
+    return '{}';
+  }
   if (value.type === 'union') {
     return value.elements.map(processType).join(' | ');
   }
@@ -370,11 +393,20 @@ function processType(value) {
   if (value.type === 'parameter') {
     return processType(value.value);
   }
+  if (value.type === 'keyof') {
+    return `keyof ${processType(value.keyof)}`;
+  }
   if (value.type === 'any') {
     return 'any';
   }
+  if (value.type === 'unknown') {
+    return 'unknown';
+  }
   if (value.type === 'object') {
     return '{}';
+  }
+  if (value.type === 'symbol') {
+    return 'symbol';
   }
   if (value.type === 'null') {
     return 'null';
@@ -407,12 +439,29 @@ function processType(value) {
     }
     return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
   }
-  console.log('unknown type', value)
+  if (value.type === 'typeParameter') {
+    // if (value.default) {
+    //   return `${value.name}${value.constraint ? ` extends ${processType(value.default)}` : ''}`;
+    // }
+    let typeParam = value.name;
+    if (value.constraint) {
+      typeParam = typeParam + ` extends ${processType(value.constraint)}`;
+    }
+    if (value.default) {
+      typeParam = typeParam + ` = ${processType(value.default)}`;
+    }
+    return typeParam;
+  }
+  console.log('unknown type', value);
 }
 
 function rebuildInterfaces(json) {
   let exports = {};
   Object.keys(json.exports).forEach((key) => {
+    if (key === 'links') {
+      console.log('skipping links')
+      return;
+    }
     let item = json.exports[key];
     if (item?.type == null) {
       // todo what to do here??
@@ -422,39 +471,82 @@ function rebuildInterfaces(json) {
       // todo what to do here??
       return;
     }
-    if (item.props == null) {
-      // todo what to do here??
-      return;
-    }
     if (item.type === 'component') {
       let compInterface = {};
-      Object.entries(item.props.properties).forEach(([, prop]) => {
-        let name = prop.name;
-        let optional = prop.optional;
-        let defaultVal = prop.default;
-        let value = processType(prop.value);
-        // TODO: what to do with defaultVal and optional
-        compInterface[name] = value;
-      });
-      exports[item.name] = compInterface;
+      if (item.props) {
+        Object.entries(item.props.properties).forEach(([, prop]) => {
+          if (prop.access === 'private') {
+            return;
+          }
+          let name = prop.name;
+          if (item.name === null) {
+            name = key;
+          }
+          let optional = prop.optional;
+          let defaultVal = prop.default;
+          let value = processType(prop.value);
+          // TODO: what to do with defaultVal and optional
+          compInterface[name] = {optional, defaultVal, value};
+        });
+      }
+      let name = item.name ?? key;
+      if (item.typeParameters.length > 0) {
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+      }
+      exports[name] = compInterface;
     } else if (item.type === 'function') {
       let funcInterface = {};
-      Object.entries(item.props.properties).forEach(([, prop]) => {
-        let name = prop.name;
-        let optional = prop.optional;
-        let defaultVal = prop.default;
-        let value = processType(prop.value);
+      Object.entries(item.parameters).forEach(([, param]) => {
+        if (param.access === 'private') {
+          return;
+        }
+        let name = param.name;
+        let optional = param.optional;
+        let defaultVal = param.default;
+        let value = processType(param.value);
         // TODO: what to do with defaultVal and optional
-        funcInterface[name] = value;
+        funcInterface[name] = {optional, defaultVal, value};
       });
-      exports[item.name] = compInterface;
+      let returnVal = processType(item.return);
+      let name = item.name ?? key;
+      if (item.typeParameters.length > 0) {
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+      }
+      exports[name] = {...funcInterface, returnVal};
+    } else if (item.type === 'interface') {
+      let funcInterface = {};
+      Object.entries(item.properties).forEach(([, property]) => {
+        if (property.access === 'private') {
+          return;
+        }
+        let name = property.name;
+        let optional = property.optional;
+        let defaultVal = property.default;
+        let value = processType(property.value);
+        // TODO: what to do with defaultVal and optional
+        funcInterface[name] = {optional, defaultVal, value};
+      });
+      let name = item.name ?? key;
+      if (item.typeParameters.length > 0) {
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+      }
+      exports[name] = funcInterface;
+    } else if (item.type === 'link') {
+      let links = json.links;
+      if (links[item.id]) {
+        let link = links[item.id];
+
+        let name = link.name;
+        let optional = link.optional;
+        let defaultVal = link.default;
+        let value = processType(link.value);
+        let isType = true;
+        exports[name] = {isType, optional, defaultVal, value};
+      }
     } else {
-      return;
-      // ignore interface and links?
-      // console.log(key, item.type);
+      console.log('unknown top level export', item);
     }
   });
-  console.log(exports);
   return exports;
 }
 
