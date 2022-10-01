@@ -368,6 +368,8 @@ To enable drag and drop in a ListView, you must provide the drag and drop hooks 
 See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
 please see the [drag and drop documentation](dnd.html).
 
+### Draggable ListView and droppable ListView
+
 The example below demonstrates how to create a draggable ListView and a droppable ListView.
 
 <details>
@@ -376,6 +378,106 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 ```tsx example export=true render=false
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
+
+function DraggableListView(props) {
+  let {list, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this list
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <ListView
+      aria-label="Draggable ListView in drag into list example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListView(props) {
+  let {list, ...otherProps} = props;
+  /*- begin highlight -*/
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+    ...otherProps
+  });
+  /*- end highlight -*/
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in drag into list example"
+      width="size-3600"
+      height="size-2400"
+      /*- begin highlight -*/
+      dragAndDropHooks={dragAndDropHooks}
+      /*- end highlight -*/
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
 
 function DragIntoList() {
   let sourceList = useListData({
@@ -395,87 +497,12 @@ function DragIntoList() {
       {id: '8', type: 'file', name: 'Adobe Lightroom'}
     ]
   });
-  /*- begin highlight -*/
-  // Append a generated key to the item type so they can only be dragged between these two lists
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = sourceList.getItem(key);
-      // Setup the info for each item that will be propagated upon drag
-      return {
-        [`${dragType}-${item.type}`]: JSON.stringify(item),
-        'text/plain': item.name
-      };
-    }),
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys
-      } = e;
-      if (dropOperation === 'move') {
-        sourceList.remove(...keys);
-      }
-    },
-    getAllowedDropOperations: () => ['move']
-  });
-
-  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
-    acceptedDragTypes: [`${dragType}-file`],
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(`${dragType}-file`)))
-      );
-
-      if (target.dropPosition === 'before') {
-        targetList.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        targetList.insertAfter(target.key, ...processedItems);
-      }
-    },
-    onRootDrop: async (e) => {
-      let {
-        items
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText(`${dragType}-file`)))
-      );
-      targetList.append(...processedItems);
-    }
-  });
-  /*- end highlight -*/
 
   return (
     <Flex wrap gap="size-300">
-      <ListView
-        aria-label="Draggable ListView in drag into list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-2400"
-        items={sourceList.items}
-        dragAndDropHooks={dragListHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Droppable ListView in drag into list example"
-        width="size-3600"
-        height="size-2400"
-        items={targetList.items}
-        dragAndDropHooks={dropListHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
+      <DraggableListView list={sourceList} />
+      <DroppableListView list={targetList} />
     </Flex>
   );
 }
@@ -486,13 +513,134 @@ function DragIntoList() {
 <DragIntoList />
 ```
 
-The example below replicates the previous example but demonstrates how to handle multiple item types and how to handle on item drops.
+### Handling folder drops
+
+The example below replicates the previous example but demonstrates how to handle on item drops.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-function DragIntoListMultipleTypes() {
+function DraggableListViewFolder(props) {
+  let {list, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    // Only allow move operations when dropping items from this list
+    getAllowedDropOperations: () => ['move'],
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
+      return {
+        'custom-app-type-folder-drop': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys
+      } = e;
+
+      if (dropOperation === 'move') {
+        list.remove(...keys);
+      }
+    },
+
+    ...otherProps
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView in drag onto folder example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListViewFolder(props) {
+  let {list, ...otherProps} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    /*- begin highlight -*/
+    // Only allow drops on items with childNodes aka folders
+    shouldAcceptItemDrop: (target) => !!list.getItem(target.key).childNodes,
+    /*- end highlight -*/
+    // Only accept items with the following drag type
+    acceptedDragTypes: ['custom-app-type-folder-drop'],
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+      );
+
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+      );
+      list.append(...processedItems);
+    },
+    /*- begin highlight -*/
+    onItemDrop: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+      );
+
+      let targetItem = list.getItem(target.key);
+      list.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+    },
+    /*- end highlight -*/
+    ...otherProps
+  });
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in drop into folder example"
+      width="size-3600"
+      height="size-3600"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
+          <Text>{item.name}</Text>
+          {item.type === 'folder' &&
+            <>
+              <Folder />
+              <Text slot="description">{`contains ${item.childNodes?.length} dropped item(s)`}</Text>
+            </>
+          }
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragIntoListFolder() {
   let sourceList = useListData({
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -512,150 +660,10 @@ function DragIntoListMultipleTypes() {
     ]
   });
 
-
-  // Append a generated key to the item type so they can only be dragged between these two lists
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-
-  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
-    // Same configuration as DragIntoList example...
-    ///- begin collapse -///
-    getItems: (keys) => [...keys].map(key => {
-      let item = sourceList.getItem(key);
-      // Setup the info for each item that will be propagated upon drag
-      return {
-        [`${dragType}-${item.type}`]: JSON.stringify(item),
-        'text/plain': item.name
-      };
-    }),
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys
-      } = e;
-      if (dropOperation === 'move') {
-        sourceList.remove(...keys);
-      }
-    },
-    getAllowedDropOperations: () => ['move']
-    ///- end collapse -///
-  });
-
-  /*- begin highlight -*/
-  let acceptedDragTypes = [`${dragType}-file`, `${dragType}-folder`];
-  /*- end highlight -*/
-  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
-    /*- begin highlight -*/
-    shouldAcceptItemDrop: (target) => !!targetList.getItem(target.key).childNodes,
-    /*- end highlight -*/
-    acceptedDragTypes,
-    onInsert: async (e) => {
-      // Same configuration as DragIntoList example's dropListHooks...
-      ///- begin collapse -///
-      let {
-        items,
-        target
-      } = e;
-      ///- end collapse -///
-      /*- begin highlight -*/
-      let processedItems = await Promise.all(
-        items.map(async item => {
-          for (let type of acceptedDragTypes) {
-            if (item.types.has(type)) {
-              return JSON.parse(await item.getText(type));
-            }
-          }
-        })
-      );
-      /*- end highlight -*/
-      // ...
-      ///- begin collapse -///
-      if (target.dropPosition === 'before') {
-        targetList.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        targetList.insertAfter(target.key, ...processedItems);
-      }
-      ///- end collapse -///
-    },
-    onRootDrop: async (e) => {
-      // Same configuration as DragIntoList example's dropListHooks...
-      ///- begin collapse -///
-      let {
-        items
-      } = e;
-      ///- end collapse -///
-      /*- begin highlight -*/
-      let processedItems = await Promise.all(
-        items.map(async item => {
-          for (let type of acceptedDragTypes) {
-            if (item.types.has(type)) {
-              return JSON.parse(await item.getText(type));
-            }
-          }
-        })
-      );
-      /*- end highlight -*/
-      // ...
-      ///- begin collapse -///
-      targetList.append(...processedItems);
-      ///- end collapse -///
-    },
-    /*- begin highlight -*/
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-
-      let processedItems = await Promise.all(
-        items.map(async item => {
-          for (let type of acceptedDragTypes) {
-            if (item.types.has(type)) {
-              return JSON.parse(await item.getText(type));
-            }
-          }
-        })
-      );
-
-      let targetItem = targetList.getItem(target.key);
-      targetList.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
-    }
-    /*- end highlight -*/
-  });
-
   return (
     <Flex wrap gap="size-300">
-      <ListView
-        aria-label="Draggable ListView in drag into list multiple types example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={sourceList.items}
-        dragAndDropHooks={dragListHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Droppable ListView in drag into list multiple types example"
-        width="size-3600"
-        height="size-3600"
-        items={targetList.items}
-        dragAndDropHooks={dropListHooks}>
-        {item => (
-          <Item textValue={item.name} hasChildItems={item.type === 'folder'}>
-            <Text>{item.name}</Text>
-            {item.type === 'folder' &&
-              <>
-                <Folder />
-                <Text slot="description">{`contains ${item.childNodes?.length} dropped item(s)`}</Text>
-              </>
-            }
-          </Item>
-        )}
-      </ListView>
+      <DraggableListViewFolder list={sourceList} />
+      <DroppableListViewFolder list={targetList} />
     </Flex>
   );
 }
@@ -663,8 +671,10 @@ function DragIntoListMultipleTypes() {
 </details>
 
 ```tsx example
-<DragIntoListMultipleTypes />
+<DragIntoListFolder />
 ```
+
+### Reorderable
 
 The example below demonstrates how to make a ListView draggable and droppable at the same time. The ListView below supports reordering its own rows via drag and drop.
 <details>
@@ -673,8 +683,6 @@ The example below demonstrates how to make a ListView draggable and droppable at
 ```tsx example export=true render=false
 function ReorderableList() {
   let list = useListData({
-    // Similar configuration as DragIntoListMultipleTypes example source list...
-    ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
@@ -683,30 +691,21 @@ function ReorderableList() {
       {id: '5', type: 'folder', name: 'Utilities', childNodes: []},
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
-    ///- end collapse -///
   });
 
-  // Same acceptedDragTypes as DragIntoListMultipleTypes example...
-  ///- begin collapse -///
   // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
-  ///- end collapse -///
   let {dragAndDropHooks} = useDragAndDrop({
-    // Same getItems as DragIntoList example and same acceptedDragTypes as DragIntoListMultipleTypes example...
-    ///- begin collapse -///
     getItems(keys) {
       return [...keys].map(key => {
         let item = list.getItem(key);
-        // Setup the info for each item that will be propagated upon drag
+        // Setup the drag types and associated info for each dragged item.
         return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
+          'custom-app-type-reorder': JSON.stringify(item),
           'text/plain': item.name
         };
       });
     },
-    acceptedDragTypes,
-    ///- end collapse -///
+    acceptedDragTypes: ['custom-app-type-reorder'],
     /*- begin highlight -*/
     onReorder: async (e) => {
       let {
@@ -715,29 +714,13 @@ function ReorderableList() {
         dropOperation
       } = e;
 
-      let itemsToCopy = [];
-      if (dropOperation === 'copy') {
-        for (let key of keys) {
-          let item = {...list.getItem(key)};
-          item.id = Math.random().toString(36).slice(2);
-          itemsToCopy.push(item);
-        }
-      }
-
       if (target.dropPosition === 'before') {
-        if (dropOperation === 'move') {
-          list.moveBefore(target.key, [...keys]);
-        } else if (dropOperation === 'copy') {
-          list.insertBefore(target.key, ...itemsToCopy);
-        }
+        list.moveBefore(target.key, [...keys]);
       } else if (target.dropPosition === 'after') {
-        if (dropOperation === 'move') {
-          list.moveAfter(target.key, [...keys]);
-        } else if (dropOperation === 'copy') {
-          list.insertAfter(target.key, ...itemsToCopy);
-        }
+        list.moveAfter(target.key, [...keys]);
       }
-    }
+    },
+    getAllowedDropOperations: () => ['move']
     /*- end highlight -*/
   });
 
@@ -765,16 +748,91 @@ function ReorderableList() {
 <ReorderableList />
 ```
 
+### Bi-directional dragging
+
 The example below demonstrates how to create a pair of ListViews that supports dragging and dropping any items between each list, but disables
-the ability to drop into a folder. Each list is internally reorderable and only support `move` drop operations.
+the ability to drop into a folder. Each list is internally reorderable.
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+function BidirectionalDnDListView(props) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-bidirectional'],
+    // Only allow move operations
+    getAllowedDropOperations: () => ['move'],
+    getItems(keys) {
+      return [...keys].map(key => {
+        let item = list.getItem(key);
+        // Setup the drag types and associated info for each dragged item.
+        return {
+          'custom-app-type-bidirectional': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+      );
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onReorder: async (e) => {
+      let {
+        keys,
+        target
+      } = e;
+
+      if (target.dropPosition === 'before') {
+        list.moveBefore(target.key, [...keys]);
+      } else if (target.dropPosition === 'after') {
+        list.moveAfter(target.key, [...keys]);
+      }
+    },
+    /*- begin highlight -*/
+    onDragEnd: (e) => {
+      let {
+        dropOperation,
+        keys,
+        isInternal
+      } = e;
+      // Only remove the dragged items if they aren't dropped inside the source list
+      if (dropOperation === 'move' && !isInternal) {
+        list.remove(...keys);
+      }
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-3600"
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.type === 'folder' && <Folder />}
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
 function DragBetweenListsExample() {
-  // Similar set of list item data as DragIntoListMultipleTypes example
   let list1 = useListData({
-    ///- begin collapse -///
     initialItems: [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
       {id: '2', type: 'file', name: 'Adobe XD'},
@@ -783,11 +841,9 @@ function DragBetweenListsExample() {
       {id: '5', type: 'folder', name: 'Utilities'},
       {id: '6', type: 'file', name: 'Adobe AfterEffects'}
     ]
-    ///- end collapse -///
   });
 
   let list2 = useListData({
-    ///- begin collapse -///
     initialItems: [
       {id: '7', type: 'folder', name: 'Pictures'},
       {id: '8', type: 'file', name: 'Adobe Fresco'},
@@ -796,178 +852,13 @@ function DragBetweenListsExample() {
       {id: '11', type: 'file', name: 'Adobe Lightroom'},
       {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
     ]
-    ///- end collapse -///
   });
 
-  // Same acceptedDragTypes as DragIntoListMultipleTypes example...
-  ///- begin collapse -///
-  // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  let acceptedDragTypes = [`${dragType}-folder`, `${dragType}-file`];
-  ///- end collapse -///
-  let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
-    acceptedDragTypes,
-    /*- begin highlight -*/
-    // Only allow move operations
-    getAllowedDropOperations: () => ['move'],
-    /*- end highlight -*/
-    getItems(keys) {
-      // Same configuration as DragIntoListMultipleTypes example but using list1
-      ///- begin collapse -///
-      return [...keys].map(key => {
-        let item = list1.getItem(key);
-        // Setup the info for each item that will be propagated upon drag
-        return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
-          'text/plain': item.name
-        };
-      });
-      ///- end collapse -///
-    },
-    onInsert: async (e) => {
-      // Same configuration as DragIntoListMultipleTypes example but using list1
-      ///- begin collapse -///
-      let {
-        items,
-        target
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => {
-          for (let type of acceptedDragTypes) {
-            if (item.types.has(type)) {
-              return JSON.parse(await item.getText(type));
-            }
-          }
-        })
-      );
-      if (target.dropPosition === 'before') {
-        list1.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        list1.insertAfter(target.key, ...processedItems);
-      }
-      ///- end collapse -///
-    },
-    onReorder: async (e) => {
-      // Same configuration as ReorderableList but using list1
-      ///- begin collapse -///
-      let {
-        keys,
-        target
-      } = e;
-
-      if (target.dropPosition === 'before') {
-        list1.moveBefore(target.key, [...keys]);
-      } else if (target.dropPosition === 'after') {
-        list1.moveAfter(target.key, [...keys]);
-      }
-      ///- end collapse -///
-    },
-    /*- begin highlight -*/
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys,
-        isInternal
-      } = e;
-      // Only remove the dragged items if they aren't dropped inside the source list
-      if (dropOperation === 'move' && !isInternal) {
-        list1.remove(...keys);
-      }
-    }
-    /*- end highlight -*/
-  });
-
-  let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
-    // Same configuration as above but using list2
-    ///- begin collapse -///
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list2.getItem(key);
-        // Setup the info for each item that will be propagated upon drag
-        return {
-          [`${dragType}-${item.type}`]: JSON.stringify(item),
-          'text/plain': item.name
-        };
-      });
-    },
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => {
-          for (let type of acceptedDragTypes) {
-            if (item.types.has(type)) {
-              return JSON.parse(await item.getText(type));
-            }
-          }
-        })
-      );
-      if (target.dropPosition === 'before') {
-        list2.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        list2.insertAfter(target.key, ...processedItems);
-      }
-    },
-    onReorder: async (e) => {
-      let {
-        keys,
-        target
-      } = e;
-
-      if (target.dropPosition === 'before') {
-        list2.moveBefore(target.key, [...keys]);
-      } else if (target.dropPosition === 'after') {
-        list2.moveAfter(target.key, [...keys]);
-      }
-    },
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys,
-        isInternal
-      } = e;
-      // Only remove the dragged items if they aren't dropped inside the source list
-      if (dropOperation === 'move' && !isInternal) {
-        list2.remove(...keys);
-      }
-    },
-    acceptedDragTypes,
-    getAllowedDropOperations: () => ['move']
-    ///- end collapse -///
-  });
 
   return (
     <Flex wrap gap="size-300">
-      <ListView
-        aria-label="First ListView in drag between list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={list1.items}
-        dragAndDropHooks={list1Hooks}>
-        {item => (
-          <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Second ListView in drag between list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={list2.items}
-        dragAndDropHooks={list2Hooks}>
-        {item => (
-          <Item textValue={item.name}>
-            {item.type === 'folder' && <Folder />}
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
+      <BidirectionalDnDListView list={list1} aria-label="First ListView in drag between list example" />
+      <BidirectionalDnDListView list={list2} aria-label="Second ListView in drag between list example" />
     </Flex>
   );
 }
@@ -978,50 +869,22 @@ function DragBetweenListsExample() {
 <DragBetweenListsExample />
 ```
 
+### Overriding default drop operation
+
 The example below demonstrates how to use `getDropOperation` to specify the default drop operation of the droppable list.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-function DragIntoListDefaultCopy() {
-  let sourceList = useListData({
-    // Similar configuration as DragIntoList example...
-    ///- begin collapse -///
-    initialItems: [
-      {id: '1', type: 'file', name: 'Adobe Photoshop'},
-      {id: '2', type: 'file', name: 'Adobe XD'},
-      {id: '3', type: 'file', name: 'Adobe InDesign'},
-      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
-    ]
-    ///- end collapse -///
-  });
-
-  let targetList = useListData({
-    // Similar configuration as DragIntoList example...
-    ///- begin collapse -///
-    initialItems: [
-      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
-      {id: '6', type: 'file', name: 'Adobe Fresco'},
-      {id: '7', type: 'file', name: 'Adobe Connect'},
-      {id: '8', type: 'file', name: 'Adobe Lightroom'}
-    ]
-    ///- end collapse -///
-  });
-
-  // Same dragType generation as DragIntoList example...
-  ///- begin collapse -///
-  // Append a generated key to the item type so they can only be dragged between these two lists
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
-  ///- end collapse -///
-  let {dragAndDropHooks: dragListHooks} = useDragAndDrop({
-    // Same getItems and onDragEnd as DragIntoList example...
-    ///- begin collapse -///
+function DraggableListViewDefaultCopy(props) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = sourceList.getItem(key);
-      // Setup the info for each item that will be propagated upon drag
+      let item = list.getItem(key);
+      // Setup the drag types and associated info for each dragged item.
       return {
-        [`${dragType}-${item.type}`]: JSON.stringify(item),
+        'custom-app-type-copy-default': JSON.stringify(item),
         'text/plain': item.name
       };
     }),
@@ -1030,90 +893,115 @@ function DragIntoListDefaultCopy() {
         dropOperation,
         keys
       } = e;
-      if (dropOperation === 'move') {
-        sourceList.remove(...keys);
-      }
-    }
-    ///- end collapse -///
-  });
 
-  let {dragAndDropHooks: dropListHooks} = useDragAndDrop({
-    acceptedDragTypes: [`${dragType}-file`],
-    /*- begin highlight -*/
-    getDropOperation: () => 'copy',
-    /*- end highlight -*/
-    onInsert: async (e) => {
-      // Similar onInsert as DragIntoList example...
-      ///- begin collapse -///
-      let {
-        items,
-        target
-      } = e;
-      ///- end collapse -///
-      /*- begin highlight -*/
-      let processedItems = await Promise.all(
-        items.map(async item => (
-          {...JSON.parse(await item.getText(`${dragType}-file`)), id: Math.random().toString(36).slice(2)}
-        ))
-      );
-      /*- end highlight -*/
-      // ...
-      ///- begin collapse -///
-      if (target.dropPosition === 'before') {
-        targetList.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        targetList.insertAfter(target.key, ...processedItems);
+      if (dropOperation === 'move') {
+        list.remove(...keys);
       }
-      ///- end collapse -///
-    },
-    onRootDrop: async (e) => {
-      // Similar onRootDrop as DragIntoList example...
-      ///- begin collapse -///
-      let {
-        items
-      } = e;
-      ///- end collapse -///
-      /*- begin highlight -*/
-      let processedItems = await Promise.all(
-        items.map(async item => (
-          {...JSON.parse(await item.getText(`${dragType}-file`)), id: Math.random().toString(36).slice(2)}
-        ))
-      );
-      /*- end highlight -*/
-      // ...
-      ///- begin collapse -///
-      targetList.append(...processedItems);
-      ///- end collapse -///
     }
   });
 
   return (
+    <ListView
+      aria-label="Draggable ListView in default copy operation example"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DroppableListViewDefaultCopy(props) {
+  let {list} = props;
+  let {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['custom-app-type-copy-default'],
+    /*- begin highlight -*/
+    getDropOperation: () => 'copy',
+    /*- end highlight -*/
+    onInsert: async (e) => {
+      let {
+        items,
+        target
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async item => (
+          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      if (target.dropPosition === 'before') {
+        list.insertBefore(target.key, ...processedItems);
+      } else if (target.dropPosition === 'after') {
+        list.insertAfter(target.key, ...processedItems);
+      }
+    },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+
+      /*- begin highlight -*/
+      // Create random id to allow for multiple copies of the same item
+      let processedItems = await Promise.all(
+        items.map(async item => (
+          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        ))
+      );
+      /*- end highlight -*/
+      list.append(...processedItems);
+    }
+  });
+
+
+  return (
+    <ListView
+      aria-label="Droppable ListView in default copy operation example"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+        </Item>
+      )}
+    </ListView>
+  );
+}
+
+function DragIntoListDefaultCopy() {
+  let sourceList = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let targetList = useListData({
+    initialItems: [
+      {id: '5', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: '6', type: 'file', name: 'Adobe Fresco'},
+      {id: '7', type: 'file', name: 'Adobe Connect'},
+      {id: '8', type: 'file', name: 'Adobe Lightroom'}
+    ]
+  });
+
+
+  return (
     <Flex wrap gap="size-300">
-      <ListView
-        aria-label="Draggable ListView in default copy operation example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-2400"
-        items={sourceList.items}
-        dragAndDropHooks={dragListHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
-      <ListView
-        aria-label="Droppable ListView in default copy operation example"
-        width="size-3600"
-        height="size-2400"
-        items={targetList.items}
-        dragAndDropHooks={dropListHooks}>
-        {item => (
-          <Item textValue={item.name}>
-            <Text>{item.name}</Text>
-          </Item>
-        )}
-      </ListView>
+      <DraggableListViewDefaultCopy list={sourceList} />
+      <DroppableListViewDefaultCopy list={targetList} />
     </Flex>
   );
 }
@@ -1126,14 +1014,7 @@ function DragIntoListDefaultCopy() {
 
 ## Props
 
-<PropTable component={{
-  // Temporarily filter out dragHooks and dropHooks from docs.
-  ...docs.exports.ListView,
-  props: {
-    ...docs.exports.ListView.props,
-    properties: Object.fromEntries(Object.entries(docs.exports.ListView.props.properties).filter(([k, v]) => k !== 'dragHooks' && k !== 'dropHooks'))
-  }
-}} links={docs.links} />
+<PropTable component={docs.exports.ListView} links={docs.links} />
 
 ## Visual options
 ### Quiet
