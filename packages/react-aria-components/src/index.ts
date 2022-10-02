@@ -43,3 +43,5 @@ export type {RadioGroupRenderProps, RadioRenderProps} from './RadioGroup';
 export type {SearchFieldRenderProps} from './SearchField';
 export type {TooltipRenderProps} from './Tooltip';
 export type {PopoverRenderProps} from './Popover';
+export type {OverlayArrowRenderProps} from './OverlayArrow';
+export type {ModalRenderProps} from './Modal';

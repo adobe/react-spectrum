@@ -153,13 +153,43 @@ A custom `className` can also be specified on any component. This overrides the 
 </Modal>
 ```
 
+In addition, modals support entry and exit animations, which are exposed as states using DOM attributes that you can target with CSS selectors. `Modal` and `ModalOverlay` will automatically wait for any exit animations to complete before removing the element from the DOM.
+
+```css render=false
+.react-aria-Modal[data-entering] {
+  animation: slide 300ms;
+}
+
+.react-aria-Modal[data-exiting] {
+  animation: slide 300ms reverse;
+}
+
+@keyframes slide {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Modal className={({isEntering}) => isEntering ? 'slide-in' : ''}>
+  {/* ... */}
+</Modal>
+```
+
+The states, selectors, and render props for each component used in a `Modal` are documented below.
+
 ### Modal
 
-A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overriding with a custom `className`.
+A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ModalRenderProps.properties} />
 
 ### ModalOverlay
 
 By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` explicitly and place a `Modal` inside.
+
+This example also shows how to use a `Modal` to render other types of overlays such as a tray or drawer, as well as support for custom entry and exit animations.
 
 ```tsx example
 import {ModalOverlay} from 'react-aria-components';
@@ -167,7 +197,7 @@ import {ModalOverlay} from 'react-aria-components';
 <DialogTrigger>
   <Button>Open modal</Button>
   <ModalOverlay className="my-overlay">
-    <Modal>
+    <Modal className="my-modal">
       <Dialog>
         {({close}) => <>
           <Heading>Notice</Heading>
@@ -189,9 +219,57 @@ import {ModalOverlay} from 'react-aria-components';
   inset: 0;
   background: rgba(45 0 0 / .3);
   backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  &[data-entering] {
+    animation: blur 300ms;
+  }
+
+  &[data-exiting] {
+    animation: blur 300ms reverse ease-in;
+  }
+}
+
+.my-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 250px;
+  background: var(--page-background);
+  outline: none;
+  padding: 30px;
+  border-left: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
+
+  &[data-entering] {
+    animation: slide 300ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 300ms reverse ease-in;
+  }
+}
+
+@keyframes blur {
+  from {
+    background: rgba(45 0 0 / 0);
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    background: rgba(45 0 0 / .3);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 ```
 

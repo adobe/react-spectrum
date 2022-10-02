@@ -4,7 +4,7 @@ import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
 import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject, useContext} from 'react';
-import {RenderProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps, WithRef} from './utils';
 
 interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps> {
   /**
@@ -21,7 +21,17 @@ export interface PopoverRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis
+  placement: PlacementAxis,
+  /**
+   * Whether the popover is currently entering. Use this to apply animations.
+   * @selector [data-entering]
+   */
+  isEntering: boolean,
+  /**
+   * Whether the popover is currently exiting. Use this to apply animations.
+   * @selector [data-exiting]
+   */
+  isExiting: boolean
 }
 
 interface PopoverContextValue extends WithRef<PopoverProps, HTMLElement> {
@@ -34,32 +44,45 @@ export const PopoverContext = createContext<PopoverContextValue>(null);
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
   let {preserveChildren, state} = useContext(PopoverContext) || {};
+  let isExiting = useExitAnimation(ref, state.isOpen);
 
-  if (state && !state.isOpen) {
+  if (state && !state.isOpen && !isExiting) {
     return preserveChildren ? props.children as ReactElement : null;
   }
 
-  return <PopoverInner {...props} triggerRef={props.triggerRef} state={state} popoverRef={ref} />;
+  return (
+    <PopoverInner 
+      {...props}
+      triggerRef={props.triggerRef}
+      state={state}
+      popoverRef={ref}
+      isExiting={isExiting} />
+  );
 }
 
 const _Popover = forwardRef(Popover);
 export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps> {
-  state: OverlayTriggerState
+  state: OverlayTriggerState,
+  isExiting: boolean
 }
 
-function PopoverInner({children, state, ...props}: PopoverInnerProps) {
+function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps) {
   let {popoverProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
   }, state);
 
+  let ref = props.popoverRef as RefObject<HTMLDivElement>;
+  let isEntering = useEnterAnimation(ref, !!placement);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Popover',
     values: {
-      placement
+      placement,
+      isEntering,
+      isExiting
     }
   });
 
@@ -70,9 +93,11 @@ function PopoverInner({children, state, ...props}: PopoverInnerProps) {
       <div
         {...popoverProps}
         {...renderProps}
-        ref={props.popoverRef as RefObject<HTMLDivElement>}
+        ref={ref}
         style={style}
-        data-placement={placement}>
+        data-placement={placement}
+        data-entering={isEntering || undefined}
+        data-exiting={isExiting || undefined}>
         <DismissButton onDismiss={state.close} />
         <OverlayArrowContext.Provider value={{arrowProps, placement}}>
           {children}

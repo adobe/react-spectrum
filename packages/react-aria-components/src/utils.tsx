@@ -1,5 +1,5 @@
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, RefCallback, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 export const slotCallbackSymbol = Symbol('callback');
 
@@ -127,4 +127,69 @@ export function useSlot(): [RefCallback<Element>, boolean] {
   }, []);
 
   return [ref, hasSlot];
+}
+
+export function useEnterAnimation(ref: RefObject<HTMLElement>, isReady: boolean = true) {
+  let [isEntering, setEntering] = useState(true);
+  useAnimation(ref, isEntering && isReady, useCallback(() => setEntering(false), []));
+  return isEntering && isReady;
+}
+
+export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
+  // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
+  // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
+  let [isExiting, setExiting] = useState(false);
+  let exitState = useRef('idle');
+
+  // If isOpen becomes false, set isExiting to true.
+  if (!isOpen && ref.current && exitState.current === 'idle') {
+    isExiting = true;
+    setExiting(true);
+    exitState.current = 'exiting';
+  }
+
+  // If we exited, and the element has been removed, reset exit state to idle.
+  if (!ref.current && exitState.current === 'exited') {
+    exitState.current = 'idle';
+  }
+
+  useAnimation(
+    ref,
+    isExiting,
+    useCallback(() => {
+      exitState.current = 'exited';
+      setExiting(false);
+    }, [])
+  );
+
+  return isExiting;
+}
+
+function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
+  let prevAnimation = useRef(null);
+  if (isActive && ref.current) {
+    prevAnimation.current = window.getComputedStyle(ref.current).animation;
+  }
+
+  useLayoutEffect(() => {
+    if (isActive && ref.current) {
+      // Make sure there's actually an animation, and it wasn't there before we triggered the update.
+      let computedStyle = window.getComputedStyle(ref.current);
+      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+        let onAnimationEnd = (e: AnimationEvent) => {
+          if (e.target === ref.current) {
+            onEnd();
+          }
+        };
+
+        let element = ref.current;
+        element.addEventListener('animationend', onAnimationEnd, {once: true});
+        return () => {
+          element.removeEventListener('animationend', onAnimationEnd);
+        };
+      } else {
+        onEnd();
+      }
+    }
+  }, [ref, isActive, onEnd]);
 }

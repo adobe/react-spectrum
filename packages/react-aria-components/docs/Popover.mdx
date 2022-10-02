@@ -75,10 +75,12 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
   &[data-placement=top] {
     margin-bottom: 6px;
+    --origin: translateY(8px);
   }
 
   &[data-placement=bottom] {
     margin-top: 6px;
+    --origin: translateY(-8px);
     & .react-aria-OverlayArrow svg {
       transform: rotate(180deg);
     }
@@ -86,6 +88,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
   &[data-placement=right] {
     margin-left: 6px;
+    --origin: translateX(-8px);
     & .react-aria-OverlayArrow svg {
       transform: rotate(90deg);
     }
@@ -93,9 +96,30 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
   &[data-placement=left] {
     margin-right: 6px;
+    --origin: translateX(8px);
     & .react-aria-OverlayArrow svg {
       transform: rotate(-90deg);
     }
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -175,6 +199,30 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 }
 ```
 
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<OverlayArrow className={({placement}) => placement === 'left' || placement === 'right' ? 'rotate-90' : 'rotate-0'}>
+  {/* ... */}
+</OverlayArrow>
+```
+
+Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM.
+
+```css render=false
+.react-aria-Modal[data-entering] {
+  animation: slide 300ms;
+}
+
+.react-aria-Modal[data-exiting] {
+  animation: slide 300ms reverse;
+}
+
+@keyframes slide {
+  /* ... */
+}
+```
+
 The states, selectors, and render props for each component used in a `Popover` are documented below.
 
 ### Popover
@@ -185,7 +233,9 @@ A `Popover` can be targeted with the `.react-aria-Popover` CSS selector, or by o
 
 ### OverlayArrow
 
-A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selector, or by overriding with a custom `className`.
+A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.OverlayArrowRenderProps.properties} />
 
 ## Reusable wrappers
 
