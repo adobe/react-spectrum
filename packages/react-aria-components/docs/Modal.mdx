@@ -33,27 +33,32 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Modal']} />
+  componentNames={['Modal']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
 
 ## Example
 
 ```tsx example
-import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-components';
+import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button>Open modal</Button>
+  <Button>Sign up…</Button>
   <Modal>
     <Dialog>
       {({close}) => (
-        <form style={{display: 'flex', flexDirection: 'column'}}>
-          <Heading style={{marginTop: 0}}>Sign up</Heading>
-          <label>
-            First Name: <input placeholder="John" autoFocus />
-          </label>
-          <label>
-            Last Name: <input placeholder="Smith" />
-          </label>
-          <Button onPress={close} style={{marginTop: 10}}>
+        <form>
+          <Heading>Sign up</Heading>
+          <TextField autoFocus>
+            <Label>First Name: </Label>
+            <Input />
+          </TextField>
+          <TextField>
+            <Label>Last Name: </Label>
+            <Input />
+          </TextField>
+          <Button onPress={close}>
             Submit
           </Button>
         </form>
@@ -74,16 +79,47 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &[data-entering] {
+    animation: fade 200ms;
+  }
+
+  &[data-exiting] {
+    animation: fade 150ms reverse ease-in;
+  }
 }
 
 .react-aria-Modal {
-  border: 1px solid var(--spectrum-global-color-gray-400);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
   background: var(--page-background);
   outline: none;
   padding: 30px;
   max-width: 250px;
+
+  &[data-entering] {
+    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
+  }
 }
 
 .react-aria-Dialog {
@@ -92,6 +128,10 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   & h2 {
     line-height: 1em;
     margin-top: 0;
+  }
+
+  & button {
+    margin-top: 20px;
   }
 }
 
@@ -121,6 +161,15 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   &[data-focus-visible] {
     border-color: slateblue;
     box-shadow: 0 0 0 1px slateblue;
+  }
+}
+
+.react-aria-TextField {
+  margin-bottom: 8px;
+
+  & label {
+    display: inline-block;
+    width: 75px;
   }
 }
 ```
