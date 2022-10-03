@@ -96,6 +96,7 @@ export function useDragSession() {
   return session;
 }
 
+/** @private */
 export function isVirtualDragging(): boolean {
   return !!dragSession;
 }
