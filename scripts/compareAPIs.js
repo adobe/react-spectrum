@@ -440,9 +440,6 @@ function processType(value) {
     return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
   }
   if (value.type === 'typeParameter') {
-    // if (value.default) {
-    //   return `${value.name}${value.constraint ? ` extends ${processType(value.default)}` : ''}`;
-    // }
     let typeParam = value.name;
     if (value.constraint) {
       typeParam = typeParam + ` extends ${processType(value.constraint)}`;
@@ -474,7 +471,7 @@ function rebuildInterfaces(json) {
     if (item.type === 'component') {
       let compInterface = {};
       if (item.props) {
-        Object.entries(item.props.properties).forEach(([, prop]) => {
+        Object.entries(item.props.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, prop]) => {
           if (prop.access === 'private') {
             return;
           }
@@ -491,12 +488,12 @@ function rebuildInterfaces(json) {
       }
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = compInterface;
     } else if (item.type === 'function') {
       let funcInterface = {};
-      Object.entries(item.parameters).forEach(([, param]) => {
+      Object.entries(item.parameters).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, param]) => {
         if (param.access === 'private') {
           return;
         }
@@ -510,12 +507,12 @@ function rebuildInterfaces(json) {
       let returnVal = processType(item.return);
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = {...funcInterface, returnVal};
     } else if (item.type === 'interface') {
       let funcInterface = {};
-      Object.entries(item.properties).forEach(([, property]) => {
+      Object.entries(item.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, property]) => {
         if (property.access === 'private') {
           return;
         }
@@ -528,7 +525,7 @@ function rebuildInterfaces(json) {
       });
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = funcInterface;
     } else if (item.type === 'link') {
