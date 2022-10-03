@@ -103,6 +103,9 @@ export class TableLayout<T> extends ListLayout<T> {
       height = Math.max(height, layoutNode.layoutInfo.rect.height);
       columns.push(layoutNode);
     }
+    for (let [i, layout] of columns.entries()) {
+      layout.layoutInfo.zIndex = columns.length - i + 1;
+    }
 
     this.setChildHeights(columns, height);
 
@@ -451,11 +454,11 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let isChrome105;
     if (window.navigator['userAgentData']) {
-      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) >= 105);
+      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) === 105);
     } else {
       let regex = /Chrome\/(\d+)/;
       let matches = regex.exec(window.navigator.userAgent);
-      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) >= 105;
+      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) === 105;
     }
 
     return isChrome105;

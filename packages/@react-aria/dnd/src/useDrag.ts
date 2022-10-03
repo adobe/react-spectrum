@@ -15,26 +15,38 @@ import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEve
 import {DragEvent, HTMLAttributes, RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
+import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {setGlobalAllowedDropOperations, useDragModality} from './utils';
-import {useDescription, useGlobalListeners} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {writeToDataTransfer} from './utils';
 
 export interface DragOptions {
+  /** Handler that is called when a drag operation is started. */
   onDragStart?: (e: DragStartEvent) => void,
+  /** Handler that is called when the drag is moved. */
   onDragMove?: (e: DragMoveEvent) => void,
+  /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
   onDragEnd?: (e: DragEndEvent) => void,
+  /** A function that returns the items being dragged. */
   getItems: () => DragItem[],
+  /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer>,
+  /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
+  /**
+   * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
+   * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
+   */
   hasDragButton?: boolean
 }
 
 export interface DragResult {
+  /** Props for the draggable element. */
   dragProps: HTMLAttributes<HTMLElement>,
+  /** Props for the explicit drag button affordance, if any. */
   dragButtonProps: AriaButtonProps,
+  /** Whether the element is currently being dragged. */
   isDragging: boolean
 }
 
@@ -53,6 +65,10 @@ const MESSAGES = {
   }
 };
 
+/**
+ * Handles drag interactions for an element, with support for traditional mouse and touch
+ * based drag and drop, in addition to full parity for keyboard and screen reader users.
+ */
 export function useDrag(options: DragOptions): DragResult {
   let {hasDragButton} = options;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -62,7 +78,12 @@ export function useDrag(options: DragOptions): DragResult {
     y: 0
   }).current;
   state.options = options;
-  let [isDragging, setDragging] = useState(false);
+  let isDraggingRef = useRef(false);
+  let [, setDraggingState] = useState(false);
+  let setDragging = (isDragging) => {
+    isDraggingRef.current = isDragging;
+    setDraggingState(isDragging);
+  };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
   let modalityOnPointerDown = useRef<string>(null);
 
@@ -164,18 +185,49 @@ export function useDrag(options: DragOptions): DragResult {
 
   let onDragEnd = (e: DragEvent) => {
     if (typeof options.onDragEnd === 'function') {
-      options.onDragEnd({
+      let event: DragEndEvent = {
         type: 'dragend',
         x: e.clientX,
         y: e.clientY,
         dropOperation: DROP_EFFECT_TO_DROP_OPERATION[e.dataTransfer.dropEffect]
-      });
+      };
+
+      // Chrome Android always returns none as its dropEffect so we use the drop effect set in useDrop via
+      // onDragEnter/onDragOver instead. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+      if (globalDropEffect) {
+        event.dropOperation = DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect];
+      }
+      options.onDragEnd(event);
     }
 
     setDragging(false);
     removeAllGlobalListeners();
     setGlobalAllowedDropOperations(DROP_OPERATION.none);
+    setGlobalDropEffect(undefined);
   };
+
+  // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
+  // In this case, we need to manually call onDragEnd on cleanup
+  // eslint-disable-next-line arrow-body-style
+  useLayoutEffect(() => {
+    return () => {
+      if (isDraggingRef.current) {
+        if (typeof state.options.onDragEnd === 'function') {
+          let event: DragEndEvent = {
+            type: 'dragend',
+            x: 0,
+            y: 0,
+            dropOperation: DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect || 'none']
+          };
+          state.options.onDragEnd(event);
+        }
+
+        setDragging(false);
+        setGlobalAllowedDropOperations(DROP_OPERATION.none);
+        setGlobalDropEffect(undefined);
+      }
+    };
+  }, [state]);
 
   let onPress = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
@@ -213,16 +265,7 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let modality = useDragModality();
-  let message: string;
-  if (!isDragging) {
-    if (modality === 'touch' && !hasDragButton) {
-      message = 'dragDescriptionLongPress';
-    } else {
-      message = MESSAGES[modality].start;
-    }
-  } else {
-    message = MESSAGES[modality].end;
-  }
+  let message = !isDraggingRef.current ? MESSAGES[modality].start : MESSAGES[modality].end;
 
   let descriptionProps = useDescription(stringFormatter.format(message));
 
@@ -238,7 +281,9 @@ export function useDrag(options: DragOptions): DragResult {
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
-        // Try to detect virtual drags.
+        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
+
+        // Try to detect virtual drag passthrough gestures.
         if (e.width < 1 && e.height < 1) {
           // iOS VoiceOver.
           modalityOnPointerDown.current = 'virtual';
@@ -249,7 +294,7 @@ export function useDrag(options: DragOptions): DragResult {
           let centerX = rect.width / 2;
           let centerY = rect.height / 2;
 
-          if (Math.abs(offsetX - centerX) < 0.5 && Math.abs(offsetY - centerY) < 0.5) {
+          if (Math.abs(offsetX - centerX) <= 0.5 && Math.abs(offsetY - centerY) <= 0.5) {
             // Android TalkBack.
             modalityOnPointerDown.current = 'virtual';
           } else {
@@ -265,6 +310,14 @@ export function useDrag(options: DragOptions): DragResult {
       },
       onKeyUpCapture(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          startDragging(e.target as HTMLElement);
+        }
+      },
+      onClick(e) {
+        // Handle NVDA/JAWS in browse mode, and touch screen readers. In this case, no keyboard events are fired.
+        if (isVirtualClick(e.nativeEvent) || modalityOnPointerDown.current === 'virtual') {
           e.preventDefault();
           e.stopPropagation();
           startDragging(e.target as HTMLElement);
@@ -285,6 +338,6 @@ export function useDrag(options: DragOptions): DragResult {
       ...descriptionProps,
       onPress
     },
-    isDragging
+    isDragging: isDraggingRef.current
   };
 }

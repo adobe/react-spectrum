@@ -67,8 +67,8 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
+              if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
                 code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
                 code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
@@ -80,6 +80,10 @@ module.exports = new Transformer({
             }
 
             exampleCode.push(code);
+
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
+            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
 
             if (options.includes('render=false')) {
               node.meta = null;
@@ -103,9 +107,6 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
-            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
             node.meta = 'example';
 
             return [
@@ -130,10 +131,38 @@ module.exports = new Transformer({
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',
-                children: [
+                children: [],
+                attributes: [
                   {
-                    type: 'text',
-                    value: node.value
+                    type: 'mdxJsxAttribute',
+                    name: 'dangerouslySetInnerHTML',
+                    value: {
+                      type: 'mdxJsxAttributeValueExpression',
+                      value: JSON.stringify({__html: node.value}),
+                      data: {
+                        estree: {
+                          type: 'Program',
+                          body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'ObjectExpression',
+                              properties: [{
+                                type: 'Property',
+                                kind: 'init',
+                                key: {
+                                  type: 'Identifier',
+                                  name: '__html'
+                                },
+                                value: {
+                                  type: 'Literal',
+                                  value: node.value
+                                }
+                              }]
+                            }
+                          }]
+                        }
+                      }
+                    }
                   }
                 ]
               }
@@ -274,6 +303,81 @@ module.exports = new Transformer({
             node.data = {};
           }
           let highlighted = treeSitter.highlightHast(node.value, language);
+
+          // Add <mark> elements wrapping highlighted regions, marked by comments in the code.
+          if (node.value.includes('- begin highlight -')) {
+            let highlightParent = null;
+            let highlightedNodes = [];
+            flatMap(highlighted, (node, index, parent) => {
+              if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
+                // Handle JSX-style comments, e.g. {/* foo */}
+                let prev = parent.children[index - 1];
+                if (prev?.children?.[0]?.value === '{') {
+                  prev.children = [];
+                  prev = parent.children[index - 2];
+                }
+
+                // Remove extra newline before comment.
+                if (prev?.type === 'text') {
+                  prev.value = prev.value.replace(/\n( *)$/, '\n');
+                }
+
+                highlightParent = parent;
+                highlightedNodes = [];
+                return [];
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children[0].value)) {
+                highlightParent = null;
+                let res = [{
+                  type: 'element',
+                  tagName: 'mark',
+                  children: highlightedNodes
+                }];
+
+                // Remove closing brace from JSX-style starting comments, e.g. {/* foo */}
+                if (highlightedNodes[0]?.children?.[0]?.value === '}') {
+                  highlightedNodes.shift();
+                }
+
+                // Remove extra newline after starting comment, but keep indentation.
+                if (highlightedNodes[0].type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                  let node = highlightedNodes[0];
+                  node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
+                }
+
+                // Remove opening brace from JSX-style ending comments.
+                let last = highlightedNodes[highlightedNodes.length - 1];
+                if (last.children?.[0]?.value === '{') {
+                  highlightedNodes.pop();
+                }
+
+                // Remove extra newline before ending comment.
+                last = highlightedNodes[highlightedNodes.length - 1];
+                if (last.type === 'text' && /^\s+$/.test(last.value)) {
+                  highlightedNodes.pop();
+                }
+
+                // Remove closing brace from JSX-style ending comments.
+                let next = parent.children[index + 1];
+                if (next?.children?.[0]?.value === '}') {
+                  parent.children[index + 1] = {type: 'text', value: ''};
+                  next = parent.children[index + 2];
+                }
+
+                // Remove extra newline after ending comment.
+                if (next?.type === 'text') {
+                  next.value = next.value.replace(/^ *\n/, '');
+                }
+
+                return res;
+              } else if (highlightParent && parent === highlightParent) {
+                highlightedNodes.push(node);
+                return [];
+              }
+
+              return [node];
+            });
+          }
+
           node.data.hChildren = [highlighted];
         });
         return tree;

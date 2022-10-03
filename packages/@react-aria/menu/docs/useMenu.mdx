@@ -21,6 +21,8 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import packageData from '@react-aria/menu/package.json';
 import Anatomy from './menu-trigger-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindPreview from 'url:./tailwind.png';
 
 ---
 category: Collections
@@ -306,6 +308,14 @@ function Button(props) {
 ```
 
 </details>
+
+## Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/awesome-boyd-c0gbv5?file=/src/Menu.tsx"
+  preview={tailwindPreview}
+  title="Tailwind CSS"
+  description="An example of styling a Menu with Tailwind." />
 
 ## Dynamic collections
 
@@ -621,7 +631,7 @@ function MenuItem({item, state}) {
 
 `useMenu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
+to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
 
 Disabled items are not focusable or keyboard navigable, and do not trigger `onAction` or `onSelectionChange`.
 The `isDisabled` property returned by `useMenuItem` can be used to style the item appropriately.

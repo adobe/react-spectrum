@@ -16,7 +16,7 @@ import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef} from './utils';
 import {useLocale} from '@react-aria/i18n';
@@ -41,7 +41,8 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
     locale
   });
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, domRef);
+  let inputRef = useRef(null);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, inputRef);
 
   return (
     <Field
@@ -54,6 +55,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
       validationState={state.validationState}
       UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
       <Input
+        ref={inputRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
         isQuiet={isQuiet}

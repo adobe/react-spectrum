@@ -14,23 +14,32 @@ import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from 
 import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
+import {Key, RefObject} from 'react';
 
-const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
-
-export function useDroppableCollectionId(state: DroppableCollectionState) {
-  let id = useId();
-  droppableCollectionIds.set(state, id);
-  return id;
+interface DroppableCollectionMap {
+  id: string,
+  ref: RefObject<HTMLElement>
 }
 
+export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE = Symbol();
+
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let id = droppableCollectionIds.get(state);
+  let {id} = droppableCollectionMap.get(state);
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
 
   return id;
+}
+
+export function getDroppableCollectionRef(state: DroppableCollectionState) {
+  let {ref} = droppableCollectionMap.get(state);
+  if (!ref) {
+    throw new Error('Droppable item outside a droppable collection');
+  }
+
+  return ref;
 }
 
 export function getTypes(items: DragItem[]): Set<string> {
@@ -158,12 +167,12 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string) {
-    if (this.includesUnknownTypes) {
+  has(type: string | symbol) {
+    if (this.includesUnknownTypes || (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 
-    return this.types.has(type);
+    return typeof type === 'string' && this.types.has(type);
   }
 }
 
@@ -301,6 +310,51 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileIt
 
 function getEntryFile(entry: FileSystemFileEntry): Promise<File> {
   return new Promise((resolve, reject) => entry.file(resolve, reject));
+}
+
+// Global DnD collection state tracker.
+export interface DnDState {
+  /** A ref for the  of the drag items in the current drag session if any. */
+  draggingCollectionRef?: RefObject<HTMLElement>,
+  /** The set of currently dragged keys. */
+  draggingKeys: Set<Key>,
+  /** A ref for the collection that is targeted for a drop operation, if any. */
+  dropCollectionRef?: RefObject<HTMLElement>
+}
+
+export let globalDndState: DnDState = {draggingKeys: new Set()};
+
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.draggingCollectionRef = ref;
+}
+
+export function setDraggingKeys(keys: Set<Key>) {
+  globalDndState.draggingKeys = keys;
+}
+
+export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.dropCollectionRef = ref;
+}
+
+export function clearGlobalDnDState() {
+  globalDndState = {draggingKeys: new Set()};
+}
+
+export function setGlobalDnDState(state: DnDState) {
+  globalDndState = state;
+}
+
+// Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
+// Allows a droppable ref arg in case the global drop collection ref hasn't been set
+export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+  let {draggingCollectionRef, dropCollectionRef} = globalDndState;
+  return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
+}
+
+type DropEffect = 'none' | 'copy' | 'link' | 'move';
+export let globalDropEffect: DropEffect;
+export function setGlobalDropEffect(dropEffect: DropEffect) {
+  globalDropEffect = dropEffect;
 }
 
 export let globalAllowedDropOperations = DROP_OPERATION.none;
