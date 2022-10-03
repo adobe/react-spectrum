@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export type {DnDOptions, DnDHooks} from './useDnDHooks';
-export {useDnDHooks} from './useDnDHooks';
+export type {DragAndDropOptions, DragAndDropHooks} from './useDragAndDrop';
+export {useDragAndDrop} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';

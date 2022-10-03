@@ -199,7 +199,7 @@ export interface DropTargetDelegate {
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null
 }
 
-export interface DroppableCollectionProps {
+export interface DroppableCollectionUtilityOptions {
   /**
    * The drag types that the droppable collection accepts. If the collection accepts directories, include `DIRECTORY_DRAG_TYPE` in your array of allowed types.
    * @default 'all'
@@ -221,9 +221,19 @@ export interface DroppableCollectionProps {
    * Handler that is called when items are reordered via drag in the source collection.
    */
   onReorder?: (e: DroppableCollectionReorderEvent) => void,
+  /**
+   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
+   */
+  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean
+}
+
+export interface DroppableCollectionBaseProps {
   /** Handler that is called when a valid drag enters a drop target. */
   onDropEnter?: (e: DroppableCollectionEnterEvent) => void,
-  /** Handler that is called after a valid drag is held over a drop target for a period of time. */
+  /**
+   * Handler that is called after a valid drag is held over a drop target for a period of time.
+   * @private
+   */
   onDropActivate?: (e: DroppableCollectionActivateEvent) => void,
   /** Handler that is called when a valid drag exits a drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void,
@@ -233,15 +243,13 @@ export interface DroppableCollectionProps {
    */
   onDrop?: (e: DroppableCollectionDropEvent) => void,
   /**
-   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
-   */
-  shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean,
-  /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
   getDropOperation?: (target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation
 }
+
+export interface DroppableCollectionProps extends DroppableCollectionUtilityOptions, DroppableCollectionBaseProps {}
 
 interface DraggableCollectionStartEvent extends DragStartEvent {
   /** The keys of the items that were dragged. */
