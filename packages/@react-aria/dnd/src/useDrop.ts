@@ -12,19 +12,21 @@
 
 import {DragEvent, HTMLAttributes, RefObject,  useRef, useState} from 'react';
 import * as DragManager from './DragManager';
-import {DragTypes, globalAllowedDropOperations, readFromDataTransfer} from './utils';
+import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
 import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, DragTypes as IDragTypes} from '@react-types/shared';
 import {isIPad, isMac, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
+  /** A ref for the droppable element. */
   ref: RefObject<HTMLElement>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation,
+  /** A function that returns the drop operation for a specific point within the target. */
   getDropOperationForPoint?: (types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
   /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DropEnterEvent) => void,
@@ -33,6 +35,7 @@ export interface DropOptions {
   /**
    * Handler that is called after a valid drag is held over the drop target for a period of time.
    * This typically opens the item so that the user can drop within it.
+   * @private
    */
   onDropActivate?: (e: DropActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
@@ -42,12 +45,18 @@ export interface DropOptions {
 }
 
 export interface DropResult {
+  /** Props for the droppable element. */
   dropProps: HTMLAttributes<HTMLElement>,
-  isDropTarget: boolean // (??) whether the element is currently an active drop target
+  /** Whether the drop target is currently focused or hovered. */
+  isDropTarget: boolean
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
 
+/**
+ * Handles drop interactions for an element, with support for traditional mouse and touch
+ * based drag and drop, in addition to full parity for keyboard and screen reader users.
+ */
 export function useDrop(options: DropOptions): DropResult {
   let [isDropTarget, setDropTarget] = useState(false);
   let state = useRef({
@@ -222,6 +231,9 @@ export function useDrop(options: DropOptions): DropResult {
   let onDrop = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Track drop effect in global state for Chrome Android. https://bugs.chromium.org/p/chromium/issues/detail?id=1353951
+    // Android onDragEnd always returns "none" as its drop effect.
+    setGlobalDropEffect(state.dropEffect);
 
     if (typeof options.onDrop === 'function') {
       let dropOperation = DROP_EFFECT_TO_DROP_OPERATION[state.dropEffect];
@@ -236,18 +248,22 @@ export function useDrop(options: DropOptions): DropResult {
         dropOperation
       };
 
-      // Wait a frame to dispatch the drop event so that we ensure the dragend event fires first.
-      // Otherwise, if onDrop removes the original dragged element from the DOM, dragend will never be fired.
-      // This behavior is consistent across browsers, but see this issue for details:
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=460801
-      setTimeout(() => {
-        options.onDrop(event);
-      }, 0);
+      options.onDrop(event);
     }
 
+    let dndStateSnapshot = {...globalDndState};
     state.dragOverElements.clear();
     fireDropExit(e);
     clearTimeout(state.dropActivateTimer);
+    // If there wasn't a collection being tracked as a dragged collection, then we are in a case where a non RSP drag is dropped on a
+    // RSP collection and thus we don't need to preserve the global drop effect
+    if (dndStateSnapshot.draggingCollectionRef == null) {
+      setGlobalDropEffect(undefined);
+    } else {
+      // Otherwise we need to preserve the global dnd state for onDragEnd's isInternal check.
+      // At the moment fireDropExit may clear dropCollectionRef (i.e. useDroppableCollection's provided onDropExit, required to clear dropCollectionRef when exiting a valid drop target)
+      setGlobalDnDState(dndStateSnapshot);
+    }
   };
 
   let optionsRef = useRef(options);

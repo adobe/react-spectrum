@@ -14,86 +14,59 @@ import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
+import {mergeProps} from '@react-aria/utils';
 import React, {ElementType} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+
+const parameters = {
+  args: {
+    variant: 'cta'
+  },
+  argTypes: {
+    variant: {
+      control: {
+        type: 'radio',
+        options: ['cta', 'primary', 'secondary', 'negative', 'overBackground']
+      }
+    }
+  }
+};
+
+let actions = {
+  onPress: action('press'),
+  onPressStart: action('pressstart'),
+  onPressEnd: action('pressend')
+};
+
 
 storiesOf('Button', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({providerSwitcher: {status: 'positive'}, ...parameters})
   .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
+    'default',
+    (args) => render(args)
   )
   .add(
     'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add('icon only', () => (
-    <Button variant="cta">
-      <Bell />
-    </Button>
-  ))
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
+    (args) => renderIconText(args)
   )
   .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
+    'icon only',
+    (args) => renderIconOnly(args)
   )
   .add(
     'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
+    (args) => render({elementType: 'a', ...args})
   )
   .add(
     'element: a, href: \'//example.com\', target: \'_self\'',
-    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
+    (args) => render({elementType: 'a', href: '//example.com', target: '_self', ...args})
   )
   .add(
     'element: a, rel: \'noopener noreferrer\'',
-    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
+    (args) => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', ...args})
   )
   .add(
     'user-select:none on press test',
@@ -106,35 +79,105 @@ storiesOf('Button', module)
   );
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
-  return (
+  let buttonProps = mergeProps(props, actions);
+
+  let buttons = (
     <Flex gap="size-200">
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props}>
+      <Button {...buttonProps}>
         Default
       </Button>
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props}>
+      <Button {...buttonProps} isDisabled>
         Disabled
       </Button>
       {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
+        <Button {...buttonProps} isQuiet>
+          Quiet
+        </Button>
       )}
     </Flex>
   );
+
+  if (props.variant === 'overBackground') {
+    return (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttonProps = mergeProps(props, actions);
+
+  let buttons = (
+    <Flex gap="size-200">
+      <Button {...buttonProps}>
+        <Bell />
+        <Text>Default</Text>
+      </Button>
+      <Button {...buttonProps} isDisabled>
+        <Bell />
+        <Text>Disabled</Text>
+      </Button>
+      {props.variant !== 'cta' && (
+        <Button {...buttonProps} isQuiet>
+          <Bell />
+          <Text>Quiet</Text>
+        </Button>
+      )}
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground') {
+    return (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttonProps = mergeProps(props, actions);
+
+  let buttons = (
+    <Flex gap="size-200">
+      <TooltipTrigger offset={2}>
+        <Button {...buttonProps} aria-label="Notifications">
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger offset={2}>
+        <Button {...buttonProps} aria-label="Notifications (disabled)" isDisabled>
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+      {props.variant !== 'cta' && (
+        <TooltipTrigger offset={2}>
+          <Button {...buttonProps} isQuiet aria-label="Notifications (quiet)">
+            <Bell />
+          </Button>
+          <Tooltip>Notifications</Tooltip>
+        </TooltipTrigger>
+      )}
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground') {
+    return (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
 }
 
 function Example() {

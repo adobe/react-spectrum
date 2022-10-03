@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
 import {parseZonedDateTime, Time} from '@internationalized/date';
 import React from 'react';
 import {TimeField} from '../';
@@ -72,3 +75,13 @@ export const QuietCustomWidthLabelPositionSide = () => <TimeField label="Time" v
 export const CustomWidthSmall = () => <TimeField label="Time" value={zoned} width={50} />;
 export const CustomWidthSmallInvalid = () => <TimeField label="Time" value={zoned} width={50} validationState="invalid" />;
 export const CustomWidthSmallNoLabel = () => <TimeField aria-label="Time" value={zoned} width={50} />;
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = () => <TimeField label="Date" contextualHelp={contextualHelp} value={time} />;
+export const ContextualHelpSideLabel = () => <TimeField label="Date" labelPosition="side" contextualHelp={contextualHelp} value={time} />;
