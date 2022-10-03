@@ -49,5 +49,5 @@ const withTM = require("next-transpile-modules")([
 
 
 module.exports = withTM({
-  basePath: process.env.VERDACCIO && process.env.CIRCLE_SHA1 ? `${process.env.CIRCLE_SHA1}/verdaccio/next` : ''
+  basePath: process.env.VERDACCIO && process.env.CIRCLE_SHA1 ? `/${process.env.CIRCLE_SHA1}/verdaccio/next` : ''
 });
