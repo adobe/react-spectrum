@@ -47,4 +47,7 @@ const withTM = require("next-transpile-modules")([
   "@spectrum-icons/workflow"
 ]);
 
-module.exports = withTM({});
+
+module.exports = withTM({
+  basePath: process.env.verdaccio ? '/verdaccio/next' : ''
+});
