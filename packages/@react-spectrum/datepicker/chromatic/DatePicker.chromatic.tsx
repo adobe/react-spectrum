@@ -11,7 +11,10 @@
  */
 
 import {CalendarDate, CalendarDateTime, parseZonedDateTime} from '@internationalized/date';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 
 export default {
@@ -82,6 +85,16 @@ export const QuietCustomWidthLabelPositionSide = () => <DatePicker label="Date" 
 export const CustomWidthSmall = () => <DatePicker label="Date" value={zonedDateTime} width={50} />;
 export const CustomWidthSmallInvalid = () => <DatePicker label="Date" value={zonedDateTime} width={50} validationState="invalid" />;
 export const CustomWidthSmallNoLabel = () => <DatePicker aria-label="Date" value={zonedDateTime} width={50} />;
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = () => <DatePicker label="Date" contextualHelp={contextualHelp} value={date} />;
+export const ContextualHelpSideLabel = () => <DatePicker label="Date" labelPosition="side" contextualHelp={contextualHelp} value={date} />;
 
 export const OpenPlaceholder = () => <DatePicker label="Date" placeholderValue={date} isOpen shouldFlip={false} />;
 OpenPlaceholder.parameters = openParams;

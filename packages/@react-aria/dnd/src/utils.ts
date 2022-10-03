@@ -15,23 +15,31 @@ import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} fr
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
-import {useId} from '@react-aria/utils';
 
-const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
-
-export function useDroppableCollectionId(state: DroppableCollectionState) {
-  let id = useId();
-  droppableCollectionIds.set(state, id);
-  return id;
+interface DroppableCollectionMap {
+  id: string,
+  ref: RefObject<HTMLElement>
 }
 
+export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE = Symbol();
+
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let id = droppableCollectionIds.get(state);
+  let {id} = droppableCollectionMap.get(state);
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
 
   return id;
+}
+
+export function getDroppableCollectionRef(state: DroppableCollectionState) {
+  let {ref} = droppableCollectionMap.get(state);
+  if (!ref) {
+    throw new Error('Droppable item outside a droppable collection');
+  }
+
+  return ref;
 }
 
 export function getTypes(items: DragItem[]): Set<string> {
@@ -159,12 +167,12 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string) {
-    if (this.includesUnknownTypes || (type === 'directory' && this.types.has(GENERIC_TYPE))) {
+  has(type: string | symbol) {
+    if (this.includesUnknownTypes || (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 
-    return this.types.has(type);
+    return typeof type === 'string' && this.types.has(type);
   }
 }
 
@@ -334,6 +342,13 @@ export function clearGlobalDnDState() {
 
 export function setGlobalDnDState(state: DnDState) {
   globalDndState = state;
+}
+
+// Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
+// Allows a droppable ref arg in case the global drop collection ref hasn't been set
+export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+  let {draggingCollectionRef, dropCollectionRef} = globalDndState;
+  return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
 }
 
 type DropEffect = 'none' | 'copy' | 'link' | 'move';

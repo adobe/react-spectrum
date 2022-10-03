@@ -14,8 +14,8 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {getDragModality, getTypes, setDropCollectionRef} from './utils';
-import {getInteractionModality} from '@react-aria/interactions';
+import {getDragModality, getTypes} from './utils';
+import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {useEffect, useState} from 'react';
 
@@ -72,10 +72,7 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
   dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
     dragSession.setup();
-    if (
-      getDragModality() === 'keyboard' ||
-      (getDragModality() === 'touch' && getInteractionModality() === 'virtual')
-    ) {
+    if (getDragModality() === 'keyboard') {
       let target = dragSession.findNearestDropTarget();
       dragSession.setCurrentDropTarget(target);
     }
@@ -139,7 +136,6 @@ const CANCELED_EVENTS = [
   'touchstart',
   'touchmove',
   'touchend',
-  'keyup',
   'focusin',
   'focusout'
 ];
@@ -173,6 +169,7 @@ class DragSession {
     this.stringFormatter = stringFormatter;
 
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -183,6 +180,7 @@ class DragSession {
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
+    document.addEventListener('keyup', this.onKeyUp, true);
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
@@ -202,6 +200,7 @@ class DragSession {
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
+    document.removeEventListener('keyup', this.onKeyUp, true);
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
@@ -223,15 +222,6 @@ class DragSession {
       return;
     }
 
-    if (e.key === 'Enter') {
-      if (e.altKey) {
-        this.activate();
-      } else {
-        this.drop();
-      }
-      return;
-    }
-
     if (e.key === 'Tab' && !(e.metaKey || e.altKey || e.ctrlKey)) {
       if (e.shiftKey) {
         this.previous();
@@ -242,6 +232,18 @@ class DragSession {
 
     if (typeof this.currentDropTarget?.onKeyDown === 'function') {
       this.currentDropTarget.onKeyDown(e, this.dragTarget);
+    }
+  }
+
+  onKeyUp(e: KeyboardEvent) {
+    this.cancelEvent(e);
+
+    if (e.key === 'Enter') {
+      if (e.altKey) {
+        this.activate();
+      } else {
+        this.drop();
+      }
     }
   }
 
@@ -288,7 +290,7 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
-    if (e.detail === 0 || this.isVirtualClick) {
+    if (isVirtualClick(e) || this.isVirtualClick) {
       if (e.target === this.dragTarget.element) {
         this.cancel();
         return;
@@ -517,7 +519,6 @@ class DragSession {
   }
 
   cancel() {
-    setDropCollectionRef(undefined);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();
@@ -589,20 +590,4 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
-}
-
-function isVirtualPointerEvent(event: PointerEvent) {
-  // If the pointer size is zero, then we assume it's from a screen reader.
-  // Android TalkBack double tap will sometimes return a event with width and height of 1
-  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
-  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
-  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
-  return (
-    (event.width === 0 && event.height === 0) ||
-    (event.width === 1 &&
-      event.height === 1 &&
-      event.pressure === 0 &&
-      event.detail === 0
-    )
-  );
 }
