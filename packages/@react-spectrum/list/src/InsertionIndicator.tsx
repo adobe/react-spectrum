@@ -11,11 +11,11 @@ interface InsertionIndicatorProps {
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps) {
-  let {dropState, dndHooks} = useContext(ListViewContext);
+  let {dropState, dragAndDropHooks} = useContext(ListViewContext);
   const {target, isPresentationOnly} = props;
 
   let ref = useRef();
-  let {dropIndicatorProps} = dndHooks.useDropIndicator(props, dropState, ref);
+  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState.isDropTarget(target);

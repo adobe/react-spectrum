@@ -33,3 +33,4 @@ export {useEvent} from './useEvent';
 export {useValueEffect} from './useValueEffect';
 export {scrollIntoView} from './scrollIntoView';
 export {clamp, snapValueToStep} from '@react-stately/utils';
+export {isVirtualClick, isVirtualPointerEvent} from './isVirtualEvent';
