@@ -73,8 +73,7 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
   requestAnimationFrame(() => {
     dragSession.setup();
     if (getDragModality() === 'keyboard') {
-      let target = dragSession.findNearestDropTarget();
-      dragSession.setCurrentDropTarget(target);
+      dragSession.next();
     }
   });
 
@@ -338,6 +337,16 @@ class DragSession {
     }
 
     this.validDropTargets = findValidDropTargets(this.dragTarget);
+
+    // Shuffle drop target order based on starting drag target.
+    if (this.validDropTargets.length > 0) {
+      let nearestIndex = this.findNearestDropTarget();
+      this.validDropTargets = [
+        ...this.validDropTargets.slice(nearestIndex),
+        ...this.validDropTargets.slice(0, nearestIndex)
+      ];
+    }
+
     if (this.currentDropTarget && !this.validDropTargets.includes(this.currentDropTarget)) {
       this.setCurrentDropTarget(this.validDropTargets[0]);
     }
@@ -419,19 +428,20 @@ class DragSession {
     }
   }
 
-  findNearestDropTarget(): DropTarget {
+  findNearestDropTarget(): number {
     let dragTargetRect = this.dragTarget.element.getBoundingClientRect();
 
     let minDistance = Infinity;
-    let nearest = null;
-    for (let dropTarget of this.validDropTargets) {
+    let nearest = -1;
+    for (let i = 0; i < this.validDropTargets.length; i++) {
+      let dropTarget = this.validDropTargets[i];
       let rect = dropTarget.element.getBoundingClientRect();
       let dx = rect.left - dragTargetRect.left;
       let dy = rect.top - dragTargetRect.top;
       let dist = (dx * dx) + (dy * dy);
       if (dist < minDistance) {
         minDistance = dist;
-        nearest = dropTarget;
+        nearest = i;
       }
     }
 
