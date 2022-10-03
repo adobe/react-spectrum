@@ -49,5 +49,5 @@ const withTM = require("next-transpile-modules")([
 
 
 module.exports = withTM({
-  basePath: process.env.verdaccio_path ? '/verdaccio/next' : ''
+  basePath: process.env.VERDACCIO ? '/verdaccio/next' : ''
 });
