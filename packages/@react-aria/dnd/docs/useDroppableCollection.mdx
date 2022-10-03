@@ -266,16 +266,12 @@ function DropIndicator(props) {
     return null;
   }
 
-  let className = props.target.type === 'item'
-    ? `drop-indicator ${isDropTarget ? 'drop-target' : ''}`
-    : '';
-
   return (
     <li
       {...dropIndicatorProps}
       role="option"
       ref={ref}
-      className={className} />
+      className={`drop-indicator ${isDropTarget ? 'drop-target' : ''}`} />
   );
 }
 ```
