@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect /*, useTabbableChild*/} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useLayoutEffect, useTabbableChild} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
@@ -184,10 +184,11 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
   let tabIndex: number;
   if (!shouldUseVirtualFocus) {
-    // for collections that are empty, but have a link in the empty children we want to skip focusing this
+    // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
+    // For collections that are empty, but have a link in the empty children we want to skip focusing this
     // and let focus move to the link similar to link moving to children.
-    // let tabbableProps = useTabbableChild(ref);
-    tabIndex = focusedView ? -1 : 0;// tabbableProps.tabIndex;
+    let emptyTabIndex = virtualizer.collection.size === 0 ? useTabbableChild(ref).tabIndex : 0; 
+    tabIndex = focusedView ? -1 : emptyTabIndex;
   }
 
   return {
