@@ -72,6 +72,28 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 * Update simplified DnD handler api and memoize useDnDHooks - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3533)
 * Focus an item after it has been dropped on - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3549)
 
+## Drag and Drop Updates
+
+We have enhanced the drag and drop API in React Spectrum and React Aria in this release, and it is now entering RC status. This includes a few breaking changes.
+
+For React Spectrum:
+
+* useDragHooks and useDropHooks were merged into a single hook: useDragAndDrop which combines all options together, along with new some ones (see below).
+* The corresponding dragHooks and dropHooks props of ListView have been merged into the new dragAndDropHooks prop.
+
+For both React Spectrum and React Aria, we have added a new higher level API for drag and drop that makes it easier to build common experiences such as reordering, inserting items, dropping on folders, etc. The new options are:
+
+* onReorder
+* onInsert
+* onItemDrop
+* onRootDrop
+* acceptedDragTypes
+* shouldAcceptItemDrop
+
+The previous low level API is also still available, and useful for building more custom experiences.
+
+Check out the new drag and drop documentation for [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html) and [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) to learn more.
+
 ## Released packages
 
 ```
