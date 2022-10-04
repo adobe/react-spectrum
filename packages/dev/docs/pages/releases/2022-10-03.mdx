@@ -16,7 +16,8 @@ date: 2022-10-03
 ---
 
 # October 3, 2022 Release
-We have been busy this month with new components and plenty of drag and drop updates. This release we moved drag and drop to RC which comes  with some changes to our API as well as introducing a new set of higher level drag and drop hooks to make building common experiences even easier. See our [update](#drag-and-drop-updates) on drag and drop below for more information. Our new components are [Badge](https://react-spectrum.adobe.com/react-spectrum/Badge.html) and [LabeledValue](https://react-spectrum.adobe.com/react-spectrum/LabeledValue.html). Badges are handy for showing a small amount of color-categorized metadata and LabeledValue is for displaying a non-editable values with a label such as a properties panel. It also formats numbers, dates, times, and lists according to the user's locale.
+We have been busy this month with new components and plenty of drag and drop updates. Drag and drop has moved into RC status in this release, and includes many API improvements to make common experiences even easier to build. See [below](#drag-and-drop-updates) for more information on drag and drop below for more information. We have also added [Badge](/react-spectrum/Badge.html) and [LabeledValue](/react-spectrum/LabeledValue.html) in this release. Badges are handy for showing a small amount of color-categorized metadata and LabeledValue is for displaying a non-editable values with a label such as a properties panel. It also formats numbers, dates, times, and lists according to the user's locale. [CheckBoxGroup](/react-spectrum/CheckboxGroup.html#help-text) and [RadioGroup](react-spectrum/RadioGroup.html#help-text) have also been updated to include HelpText and [ContextualHelp](/react-spectrum/TextField.html#contextual-help) support has been added to all form components.
+
 
 
 ## New Components
@@ -57,6 +58,7 @@ We have been busy this month with new components and plenty of drag and drop upd
 ## Under construction
 Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
 
+* Adding utility handlers to DnD hooks to simplify implementation experience - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3266)
 * Skip row contents when cycling through droppable `ListView` rows via TalkBack - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3401)
 * Fix focus behavior after dropping `ListView` item - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3369)
 * Handle drag and drop modifier keys more consistently across browsers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3479)
@@ -278,22 +280,3 @@ Check out the new drag and drop documentation for [React Spectrum](https://react
 - react-aria@3.20.0
 - react-stately@3.18.0
 ```
-
-Do we need these?
-
-Call out dnd docs
-
-
-* TS Strictmode Textfield and batch of easy components  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3411)
-* TS strictmode ActionGroup and ActionBar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3416)
-* TS Strictmode color - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3417)
-* Fix dragging in Android Talkback - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3491)
-* Adding utility handlers to DnD hooks to simplify implementation experience - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3266)
-* New overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3561)
-* Properly hide invalid drop targets in reorderable only ListViews - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3565)
-* Don't disable ContextualHelp if Field is disabled - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3562)
-* Types audit for release - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3563)
-* Revert "DnD: Focus initial drop target when using iOS VO (#3283)" - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3570)
-* Prevent scrolling while popovers are open - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3475)
-* Fixing directory drop for docs low level DnD api example - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3582)
-* Revert "Prevent scrolling while popovers are open (#3475)" - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3583)
