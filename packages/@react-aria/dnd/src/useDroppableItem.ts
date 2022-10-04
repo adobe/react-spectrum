@@ -13,50 +13,56 @@
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {DropTarget} from '@react-types/shared';
-import {getTypes, globalDndState} from './utils';
+import {getDroppableCollectionRef, getTypes, globalDndState, isInternalDropOperation} from './utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DroppableItemOptions {
+  /** The drop target represented by the item. */
   target: DropTarget
 }
 
 export interface DroppableItemResult {
+  /** Props for the droppable element. */
   dropProps: HTMLAttributes<HTMLElement>,
+  /** Whether the item is currently the active drop target. */
   isDropTarget: boolean
 }
 
+/**
+ * Handles drop interactions for an item within a collection component.
+ */
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
-
+  let droppableCollectionRef = getDroppableCollectionRef(state);
   useEffect(() => {
     if (ref.current) {
       return DragManager.registerDropItem({
         element: ref.current,
         target: options.target,
         getDropOperation(types, allowedOperations) {
-          let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
-          let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+          let {draggingKeys} = globalDndState;
+          let isInternal = isInternalDropOperation(droppableCollectionRef);
           return state.getDropOperation({
             target: options.target,
             types,
             allowedOperations,
-            isInternalDrop,
+            isInternal,
             draggingKeys
           });
         }
       });
     }
-  }, [ref, options.target, state]);
+  }, [ref, options.target, state, droppableCollectionRef]);
 
   let dragSession = DragManager.useDragSession();
-  let {draggingCollectionRef, draggingKeys, dropCollectionRef} = globalDndState;
-  let isInternalDrop = draggingCollectionRef?.current != null && draggingCollectionRef?.current === dropCollectionRef?.current;
+  let {draggingKeys} = globalDndState;
+  let isInternal = isInternalDropOperation(droppableCollectionRef);
   let isValidDropTarget = dragSession && state.getDropOperation({
     target: options.target,
     types: getTypes(dragSession.dragTarget.items),
     allowedOperations: dragSession.dragTarget.allowedDropOperations,
-    isInternalDrop,
+    isInternal,
     draggingKeys
   }) !== 'cancel';
 

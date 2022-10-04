@@ -49,7 +49,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     isListDraggable,
     isListDroppable,
     layout,
-    dndHooks,
+    dragAndDropHooks,
     loadingState
   } = useContext(ListViewContext);
   let {direction} = useLocale();
@@ -82,7 +82,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dndHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
@@ -95,7 +95,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dndHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();
@@ -147,7 +147,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     focusProps,
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
-    dndHooks?.isVirtualDragging() && {tabIndex: null}
+    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
   let isFirstRow = item.prevKey == null;

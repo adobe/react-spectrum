@@ -18,6 +18,7 @@ import packageData from '@react-spectrum/button/package.json';
 import {Button} from '@react-spectrum/button';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {View} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -160,4 +161,15 @@ function Example() {
 
 ```tsx example
 <Button variant="cta" isDisabled>Save</Button>
+```
+
+### Icon only
+[View guidelines](https://spectrum.adobe.com/page/button/#Label-and-icon)
+
+```tsx example
+<Flex direction="row" gap={8}>
+  <Button variant="cta" aria-label="Ring for service"><Bell /></Button>
+  <Button variant="primary" aria-label="Ring for service"><Bell /></Button>
+  <Button variant="secondary" aria-label="Ring for service"><Bell /></Button>
+</Flex>
 ```
