@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import React from 'react';
-import { Badge, LabeledValue, Picker, ActionButton, Breadcrumbs, Button, ButtonGroup, Cell, Checkbox, CheckboxGroup, Column, Divider, Flex, Form, Heading, Image, Link, ListBox, LogicButton, NumberField, Radio, RadioGroup, Row, SearchField, Switch, TableBody, TableHeader, TableView, TabList, TabPanels, Tabs, Text, TextArea, TextField, ToggleButton, DialogTrigger, AlertDialog, ContextualHelp, Content, Dialog, Header, TooltipTrigger, Tooltip, ComboBox, RangeSlider, Slider, Meter, ProgressBar, ProgressCircle, StatusLight, Footer, IllustratedMessage, Keyboard, View, Well } from '@adobe/react-spectrum';
+import { Calendar, DateField, DatePicker, DateRangePicker, RangeCalendar, TimeField, Badge, LabeledValue, Picker, ActionButton, Breadcrumbs, Button, ButtonGroup, Cell, Checkbox, CheckboxGroup, Column, Divider, Flex, Form, Heading, Image, Link, ListBox, LogicButton, NumberField, Radio, RadioGroup, Row, SearchField, Switch, TableBody, TableHeader, TableView, TabList, TabPanels, Tabs, Text, TextArea, TextField, ToggleButton, DialogTrigger, AlertDialog, ContextualHelp, Content, Dialog, Header, TooltipTrigger, Tooltip, ComboBox, RangeSlider, Slider, Meter, ProgressBar, ProgressCircle, StatusLight, Footer, IllustratedMessage, Keyboard, View, Well } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import { ActionMenu, Item, Menu, MenuTrigger } from '@react-spectrum/menu';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
@@ -114,6 +114,21 @@ export default function Home() {
             </TableBody>
           </TableView>
         </Flex>
+
+        <Heading level={2}>Date and Time</Heading>
+        <Divider />
+
+        <Calendar aria-label="Event date" />
+
+        <DateField label="Event date" />
+
+        <DatePicker label="Event date" />
+
+        <DateRangePicker label="Date range" />
+
+        <RangeCalendar aria-label="Trip dates" />
+
+        <TimeField label="Event time" />
 
         <Heading level={2}>Forms</Heading>
         <Divider />
