@@ -157,9 +157,8 @@ Below is what our draggable ListView would look like after combining everything 
 [React Aria docs](../react-aria/useDraggableCollection.html#drag-data).
 
 ```tsx example export=true render=false
-import {Item, ListView} from '@react-spectrum/list';
+import {Item, ListView, useListData} from '@adobe/react-spectrum';
 import {useDragAndDrop} from '@react-spectrum/dnd';
-import {useListData} from '@react-stately/data';
 
 function DraggableList() {
   let list = useListData({
