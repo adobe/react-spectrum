@@ -1,6 +1,7 @@
 const withTM = require("next-transpile-modules")([
   "@adobe/react-spectrum",
   "@react-spectrum/actiongroup",
+  "@react-spectrum/badge",
   "@react-spectrum/breadcrumbs",
   "@react-spectrum/button",
   "@react-spectrum/buttongroup",
@@ -16,6 +17,7 @@ const withTM = require("next-transpile-modules")([
   "@react-spectrum/illustratedmessage",
   "@react-spectrum/image",
   "@react-spectrum/label",
+  "@react-spectrum/labeledvalue",
   "@react-spectrum/layout",
   "@react-spectrum/link",
   "@react-spectrum/list",
