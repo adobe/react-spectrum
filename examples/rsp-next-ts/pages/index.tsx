@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import React from 'react';
-import { Picker, ActionButton, Breadcrumbs, Button, ButtonGroup, Cell, Checkbox, CheckboxGroup, Column, Divider, Flex, Form, Heading, Image, Link, ListBox, LogicButton, NumberField, Radio, RadioGroup, Row, SearchField, Switch, TableBody, TableHeader, TableView, TabList, TabPanels, Tabs, Text, TextArea, TextField, ToggleButton, DialogTrigger, AlertDialog, ContextualHelp, Content, Dialog, Header, TooltipTrigger, Tooltip, ComboBox, RangeSlider, Slider, Meter, ProgressBar, ProgressCircle, StatusLight, Footer, IllustratedMessage, Keyboard, View, Well } from '@adobe/react-spectrum';
+import { Badge, LabeledValue, Picker, ActionButton, Breadcrumbs, Button, ButtonGroup, Cell, Checkbox, CheckboxGroup, Column, Divider, Flex, Form, Heading, Image, Link, ListBox, LogicButton, NumberField, Radio, RadioGroup, Row, SearchField, Switch, TableBody, TableHeader, TableView, TabList, TabPanels, Tabs, Text, TextArea, TextField, ToggleButton, DialogTrigger, AlertDialog, ContextualHelp, Content, Dialog, Header, TooltipTrigger, Tooltip, ComboBox, RangeSlider, Slider, Meter, ProgressBar, ProgressCircle, StatusLight, Footer, IllustratedMessage, Keyboard, View, Well } from '@adobe/react-spectrum';
 import Edit from '@spectrum-icons/workflow/Edit';
 import { ActionMenu, Item, Menu, MenuTrigger } from '@react-spectrum/menu';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
@@ -261,6 +261,10 @@ export default function Home() {
 
         <Heading level={2}>Status</Heading>
         <Divider />
+
+        <Badge variant="positive">Badge</Badge>
+
+        <LabeledValue label="Labeled Value" value="Budget.xls" />
 
         <Meter label="Storage space" variant="positive" value={35} />
 
