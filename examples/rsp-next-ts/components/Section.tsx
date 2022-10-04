@@ -1,4 +1,4 @@
-import { View, Heading, Divider, Flex } from "@adobe/react-spectrum";
+import { View, Heading, Divider } from "@adobe/react-spectrum";
 import React from "react";
 
 interface SectionProps {
