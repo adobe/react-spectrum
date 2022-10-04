@@ -11,11 +11,12 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect, useTabbableChild} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
+import {useTabbableChild} from './useTabbableChild';
 import {VirtualizerItem} from './VirtualizerItem';
 
 interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
@@ -189,7 +190,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
     // For collections that are empty, but have a link in the empty children we want to skip focusing this
     // and let focus move to the link similar to link moving to children.
-    let emptyTabIndex = virtualizer.collection.size === 0 ? tabbableChild.tabIndex : 0; 
+    let emptyTabIndex = virtualizer.collection.size === 0 ? tabbableChild.tabIndex : 0;
     tabIndex = focusedView ? -1 : emptyTabIndex;
   }
 

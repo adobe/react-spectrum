@@ -25,7 +25,6 @@ export {useUpdateEffect} from './useUpdateEffect';
 export {useLayoutEffect} from './useLayoutEffect';
 export {useResizeObserver} from './useResizeObserver';
 export {useSyncRef} from './useSyncRef';
-export {useTabbableChild} from './useTabbableChild';
 export {getScrollParent} from './getScrollParent';
 export {useViewportSize} from './useViewportSize';
 export {useDescription} from './useDescription';
