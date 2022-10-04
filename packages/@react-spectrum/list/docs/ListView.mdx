@@ -14,7 +14,7 @@ import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/list';
 import dndDocs from 'docs:@react-spectrum/dnd';
-import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
@@ -107,7 +107,7 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 See the docs for more information.
 
 ```tsx example
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList} from '@adobe/react-spectrum';
 
 function AsyncList() {
 
@@ -362,7 +362,7 @@ This behavior is slightly different in the highlight selection style, where sing
 </Flex>
 ```
 
-## Drag and drop
+## Drag and drop <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the ListView's `dragAndDropHooks` prop.
 See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
@@ -375,9 +375,9 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
-```tsx example export=true render=false
+```tsx example keepIndividualImports export=true render=false
 import {useDragAndDrop} from '@react-spectrum/dnd';
-import {useListData} from '@react-stately/data';
+import {useListData} from '@adobe/react-spectrum';
 
 function DraggableListView(props) {
   let {list, ...otherProps} = props;
