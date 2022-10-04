@@ -373,6 +373,23 @@ Both a description and an error message can be supplied to a `DateRangePicker`. 
 <DateRangePicker label="Date range" showFormatHelpText />
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a DateRangePicker.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<DateRangePicker
+  label="Trip dates"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Date changes</Heading>
+      <Content>Your trip dates cannot be changed once scheduled.</Content>
+    </ContextualHelp>
+  } />
+```
+
 ### Placeholder value
 
 When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.

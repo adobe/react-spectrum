@@ -258,6 +258,27 @@ function Example() {
 }
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a CheckboxGroup.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<CheckboxGroup
+  label="Favorite genres"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What does this do?</Heading>
+      <Content>Your musical taste is used to train our machine learning recommendation algorithm.</Content>
+    </ContextualHelp>
+  }>
+  <Checkbox value="rock">Rock</Checkbox>
+  <Checkbox value="pop">Pop</Checkbox>
+  <Checkbox value="classical">Classical</Checkbox>
+</CheckboxGroup>
+```
+
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
 

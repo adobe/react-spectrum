@@ -186,6 +186,23 @@ function Example() {
 }
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a SearchField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<SearchField
+  label="Search"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Search tips</Heading>
+      <Content>You can use modifiers like "date:" and "from:" to search by specific attributes.</Content>
+    </ContextualHelp>
+  } />
+```
+
 ### Custom width
 
 ```tsx example
