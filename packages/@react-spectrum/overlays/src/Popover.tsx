@@ -11,15 +11,14 @@
  */
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, FocusableElement} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import {PlacementAxis, PopoverProps} from '@react-types/overlays';
-import React, {DOMAttributes, forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {Underlay} from './Underlay';
-import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {useModal, useOverlay} from '@react-aria/overlays';
 
 interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -31,9 +30,7 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
   shouldCloseOnBlur?: boolean,
   isKeyboardDismissDisabled?: boolean,
   isNonModal?: boolean,
-  isDismissable?: boolean,
-  overlayProps: DOMAttributes<FocusableElement>,
-  preventScroll?: boolean
+  isDismissable?: boolean
 }
 
 /**
@@ -61,15 +58,13 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     isKeyboardDismissDisabled,
     isNonModal,
     isDismissable = true,
-    preventScroll,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  let {overlayProps, underlayProps} = useOverlay({...props, isDismissable: isDismissable && props.isOpen}, domRef);
+
   return (
     <Overlay {...otherProps}>
-      {preventScroll && <Underlay isTransparent {...underlayProps} /> }
       <PopoverWrapper
         {...styleProps}
         ref={domRef}
@@ -80,9 +75,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         hideArrow={hideArrow}
         isNonModal={isNonModal}
-        isDismissable={isDismissable}
-        overlayProps={overlayProps}
-        preventScroll={preventScroll}>
+        isDismissable={isDismissable}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -103,14 +96,12 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isNonModal,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isDismissable,
-    overlayProps,
-    preventScroll,
     ...otherProps
   } = props;
+  let {overlayProps} = useOverlay({...props, isDismissable: isDismissable && isOpen}, ref);
   let {modalProps} = useModal({
     isDisabled: isNonModal
   });
-  usePreventScroll({isDisabled: !preventScroll});
 
   return (
     <div
