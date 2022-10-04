@@ -11,16 +11,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.21.2",
-    "@spectrum-icons/illustrations": "^3.4.0",
-    "@spectrum-icons/workflow": "^4.0.2",
+    "@adobe/react-spectrum": "^3.22.0",
+    "@spectrum-icons/illustrations": "^3.5.0",
+    "@spectrum-icons/workflow": "^4.0.3",
     "next": "^12.3.1",
     "next-transpile-modules": "^9.0.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.7.23",
+    "@types/node": "^18.8.2",
     "@types/react": "^18.0.21",
     "eslint": "^8.24.0",
     "eslint-config-next": "^12.3.1",
