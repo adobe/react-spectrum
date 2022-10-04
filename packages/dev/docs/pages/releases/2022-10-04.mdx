@@ -16,7 +16,7 @@ date: 2022-10-04
 ---
 
 # October 4, 2022 Release
-We have been busy this month with new components and plenty of drag and drop updates. Drag and drop has moved into RC status in this release, and includes many API improvements to make common experiences even easier to build. See [below](#drag-and-drop-updates) for more information on drag and drop below for more information. We have also added [Badge](/react-spectrum/Badge.html) and [LabeledValue](/react-spectrum/LabeledValue.html) in this release. Badges are handy for showing a small amount of color-categorized metadata and LabeledValue is for displaying a non-editable values with a label such as in a properties panel. It also formats numbers, dates, times, and lists according to the user's locale. [CheckBoxGroup](/react-spectrum/CheckboxGroup.html#help-text) and [RadioGroup](react-spectrum/RadioGroup.html#help-text) have also been updated to include HelpText and [ContextualHelp](/react-spectrum/TextField.html#contextual-help) support has been added to all form components.
+We have been busy this month with new components and plenty of drag and drop updates. Drag and drop has moved into RC status in this release, and includes many API improvements to make common experiences even easier to build. See [below](#drag-and-drop-updates) for more information. We have also added [Badge](/react-spectrum/Badge.html) and [LabeledValue](/react-spectrum/LabeledValue.html) in this release. Badges are handy for showing a small amount of color-categorized metadata and LabeledValue is for displaying non-editable values with a label such as in a properties panel. It also formats numbers, dates, times, and lists according to the user's locale. [CheckBoxGroup](/react-spectrum/CheckboxGroup.html#help-text) and [RadioGroup](react-spectrum/RadioGroup.html#help-text) have also been updated to include HelpText and [ContextualHelp](/react-spectrum/TextField.html#contextual-help) support has been added to all form components.
 
 
 
@@ -29,31 +29,31 @@ We have been busy this month with new components and plenty of drag and drop upd
 
 ## New Features
 * Add icon-only variant for `Button` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3460)
-* Add HelpText to CheckboxGroup and RadioGroup - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3527)
+* Add HelpText to `CheckboxGroup` and `RadioGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3527)
 * Add `ContextualHelp` support to all form fields - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3521)
 * Support nested focusable elements in `VisuallyHidden` with `isFocusable` option - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3572)
 
 
 ## Fixes
 * Disabling TableView/ListView keyboard navigation and press interactions if collection is empty - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3422)
-* Focus first element in scope if nodeToRestore does not exist - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3385)
+* Focus first element in scope if `nodeToRestore` does not exist - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3385)
 * Fix `ActionGroup` more icon not rendering - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3501)
 * Drag and drop translation update, and fix on `Picker` for Spanish - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/3540)
 * Ensure checkboxes without explicit values render no `value` attribute in the DOM - [@brandonpittman](https://github.com/brandonpittman) - [PR](https://github.com/adobe/react-spectrum/pull/3554)
 * Fix `DatePicker` aria-live not announcing new months - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3564)
 * `ContextualHelp` style props - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3542)
-* Fix TableView infinite resize issue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3474)
+* Fix `TableView` infinite resize issue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3474)
 * Remove extra tabstop for `TableView` when using overflow: auto in Firefox - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3474)
-* Section and header style improvements for TableView and Menu - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3560)
+* Section and header style improvements for `TableView` and `Menu` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3560)
 * Fix wrapping of field label in Safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3566)
-* Confine TableView sticky column issue to Chrome version 105 only - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3475)
+* Confine `TableView` sticky column issue to Chrome version 105 only - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3475)
 * `Provider` props should not disable elements inside a `Dialog` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3587)
 
 
 ## Docs
-* Update textarea docs to remove old resizing info - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3485)
+* Update `TextArea` docs to remove old resizing info - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3485)
 * Update mentions of illustration support in `ListView` docs - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3486)
-* Add missing styled example to useMenu docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3541)
+* Add missing styled example to `useMenu` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3541)
 
 ## Under construction
 Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
@@ -81,7 +81,7 @@ We have enhanced the drag and drop API in React Spectrum and React Aria in this 
 
 For React Spectrum:
 
-* useDragHooks and useDropHooks were merged into a single hook: useDragAndDrop which combines all options together, along with new some ones (see below).
+* useDragHooks and useDropHooks were merged into a single hook: useDragAndDrop which combines all options together, along with some new ones (see below).
 * The corresponding dragHooks and dropHooks props of ListView have been merged into the new dragAndDropHooks prop.
 
 For both React Spectrum and React Aria, we have added a new higher level API for drag and drop that makes it easier to build common experiences such as reordering, inserting items, dropping on folders, etc. The new options are:
