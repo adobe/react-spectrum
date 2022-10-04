@@ -23,19 +23,30 @@ interface DropOperationEvent {
 }
 
 export interface DroppableCollectionStateOptions extends Omit<DroppableCollectionProps, 'onDropMove' | 'onDropActivate'> {
+  /** A collection of items. */
   collection: Collection<Node<unknown>>,
+  /** An interface for reading and updating multiple selection state. */
   selectionManager: MultipleSelectionManager
 }
 
 export interface DroppableCollectionState {
+  /** A collection of items. */
   collection: Collection<Node<unknown>>,
+  /** An interface for reading and updating multiple selection state. */
   selectionManager: MultipleSelectionManager,
-  target: DropTarget,
+  /** The current drop target. */
+  target: DropTarget | null,
+  /** Sets the current drop target. */
   setTarget(target: DropTarget): void,
+  /** Returns whether the given target is equivalent to the current drop target. */
   isDropTarget(target: DropTarget): boolean,
+  /** Returns the drop operation for the given parameters. */
   getDropOperation(e: DropOperationEvent): DropOperation
 }
 
+/**
+ * Manages state for a droppable collection.
+ */
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let {
     acceptedDragTypes = 'all',
@@ -120,8 +131,8 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
         });
       }
 
-      setTarget(newTarget);
       targetRef.current = newTarget;
+      setTarget(newTarget);
     },
     isDropTarget(dropTarget) {
       let target = targetRef.current;

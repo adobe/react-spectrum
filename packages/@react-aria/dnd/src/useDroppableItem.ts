@@ -18,14 +18,20 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DroppableItemOptions {
+  /** The drop target represented by the item. */
   target: DropTarget
 }
 
 export interface DroppableItemResult {
+  /** Props for the droppable element. */
   dropProps: HTMLAttributes<HTMLElement>,
+  /** Whether the item is currently the active drop target. */
   isDropTarget: boolean
 }
 
+/**
+ * Handles drop interactions for an item within a collection component.
+ */
 export function useDroppableItem(options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableItemResult {
   let {dropProps} = useVirtualDrop();
   let droppableCollectionRef = getDroppableCollectionRef(state);
