@@ -14,6 +14,7 @@ let argv = yargs
   .option('organizedBy', {choices: ['type', 'change']})
   .option('rawNames', {type: 'boolean'})
   .option('package', {type: 'string'})
+  .option('interface', {type: 'string'})
   .argv;
 
 compare().catch(err => {
@@ -142,13 +143,48 @@ function getDiff(summaryMessages, pair) {
   let branchInterfaces = rebuildInterfaces(branchApi);
   //console.log(publishedInterfaces)
   //console.log(branchInterfaces)
-  let codeDiff = Diff.createPatch(name, JSON.stringify(publishedInterfaces, null, 2), JSON.stringify(branchInterfaces, null, 2));
   let diff = changesets.diff(publishedInterfaces, branchInterfaces);
+  let changedInterfaces = [];
+  let formattedPublishedInterfaces = '';
+  let formattedBranchInterfaces = '';
+  if (diff.length > 0) {
+    changedInterfaces = diff.reduce((acc, item) => {
+      if (!acc.includes(item.key) && item.key !== 'links') {
+        acc.push(item.key);
+      }
+      return acc;
+    }, []);
+    formattedPublishedInterfaces = formatInterfaces(publishedInterfaces, changedInterfaces);
+    // console.log(formattedPublishedInterfaces);
+    formattedBranchInterfaces = formatInterfaces(branchInterfaces, changedInterfaces);
+    // console.log(formattedBranchInterfaces);
+  }
+
+  changedInterfaces.forEach((name, index) => {
+    if (argv.interface && argv.interface !== name) {
+      return;
+    }
+    let codeDiff = Diff.structuredPatch(name, name, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
+    let result = '';
+    let prevEnd = 0;
+    let lines = formattedPublishedInterfaces[index].split('\n');
+    codeDiff.hunks.forEach(hunk => {
+      if (hunk.oldStart - 1 > prevEnd) {
+        result = [result, ...lines.slice(prevEnd, hunk.oldStart).map((item, index) => ` ${item}`)].join('\n');
+      }
+      result = [result, ...hunk.lines].join('\n');
+      prevEnd = hunk.oldStart + hunk.oldLines;
+    });
+    result = [result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+    //console.log(util.inspect(codeDiff, {depth: null}));
+    console.log(result);
+  });
+
   if (diff.length > 0 && argv.verbose) {
-    console.log(`diff found in ${name}`);
-    console.log(util.inspect(codeDiff, {depth: null}));
+    //console.log(`diff found in ${name}`);
+    //console.log(util.inspect(codeDiff, {depth: null}));
     // for now print the whole diff
-    // console.log(util.inspect(diff, {depth: null}));
+    //console.log(util.inspect(diff, {depth: null}));
   }
   return {diff, name};
   // walkObject(publishedApi, ({value, location, isLeaf}) => {
@@ -367,6 +403,7 @@ function simplifyModuleName(apiJsonPath) {
 
 function processType(value) {
   if (!value) {
+    console.log(value);
     return 'UNTYPED';
   }
   if (Object.keys(value).length === 0) {
@@ -545,6 +582,22 @@ function rebuildInterfaces(json) {
     }
   });
   return exports;
+}
+
+function formatProp([name, prop]) {
+  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
+}
+
+function formatInterfaces(interfaces, changedInterfaces) {
+  return changedInterfaces.map(name => {
+    if (interfaces[name]) {
+      let output = `${name} {\n`;
+      output += Object.entries(interfaces[name]).map(formatProp).join('\n');
+      return `${output}\n}\n`;
+    } else {
+      return '';
+    }
+  });
 }
 
 
