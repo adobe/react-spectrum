@@ -87,24 +87,22 @@ then
   cd examples/rsp-cra-18
   yarn install
 
-  # Build test app and move to dist folder. Store the size of the build in a text file.
+  # Build CRA test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt
   du -ka build/ | tee -a build-stats.txt
   mkdir -p ../../$verdaccio_path/publish-stats
   mv build-stats.txt ../../
   mv build ../../$verdaccio_path
 
-  cd ../..
-
   # install packages in NextJS test app
-  cd examples/rsp-next-ts
+  cd ../../examples/rsp-next-ts
   yarn install
 
-  # Build test app and move to dist folder. Store the size of the build in a text file.
+  # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
   VERDACCIO=true yarn build | tee next-build-stats.txt
   yarn export
   du -ka out/ | tee -a next-build-stats.txt
-  mv next-build-stats.txt ../../
+  mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
   cd ../..
