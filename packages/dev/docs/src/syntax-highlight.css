@@ -23,6 +23,18 @@
   --hljs-variable-color: var(--spectrum-global-color-magenta-700);
   --hljs-title-color: var(--spectrum-global-color-indigo-700);
   --hljs-comment-color: var(--spectrum-global-color-gray-700);
+  --mark-background: rgba(20,115,230,0.1);
+}
+
+.spectrum.dark {
+  --hljs-literal-color: var(--spectrum-global-color-orange-400);
+  --hljs-function-color: var(--spectrum-global-color-blue-700);
+  --hljs-attribute-color: var(--spectrum-global-color-blue-700);
+  --hljs-title-color: var(--spectrum-global-color-blue-700);
+  --hljs-keyword-color: var(--spectrum-global-color-magenta-700);
+  --hljs-string-color: var(--spectrum-global-color-green-700);
+  --hljs-section-color: var(--spectrum-global-color-red-700);
+  --mark-background: rgba(38,128,235,0.1);
 }
 
 /** for now keep syntax highlighting different from prop table. we can join them later if need be,
@@ -117,9 +129,7 @@
 :global(.source),
 :global(.embedded) {
   display: block;
-  padding: 0.5em;
   color: var(--hljs-color);
-  background: var(--hljs-background);
 
   text-align: left;
   word-spacing: normal;
@@ -134,6 +144,10 @@
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+}
+
+:global(.source) {
+  background: var(--hljs-background);
 }
 
 :global(.embedded) {
@@ -189,4 +203,16 @@
   :global(.punctuation.bracket) {
     color: var(--hljs-attribute-color);
   }
+}
+
+:global(.source) mark {
+  display: block;
+  position: relative;
+  background: var(--mark-background);
+  border-left: 2px solid var(--spectrum-global-color-blue-400);
+  margin: 0 calc(var(--code-padding) * -1);
+  padding: 0 var(--code-padding) 0 calc(var(--code-padding) - 2px);
+  color: inherit;
+  --hljs-comment-color: var(--spectrum-global-color-gray-800);
+  --hljs-string-color: var(--spectrum-global-color-green-700);
 }

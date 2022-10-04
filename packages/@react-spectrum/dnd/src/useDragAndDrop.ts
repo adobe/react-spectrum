@@ -37,12 +37,13 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from '@react-stately/dnd';
-
 import {DroppableCollectionProps} from '@react-types/shared';
 import {Key, RefObject, useMemo} from 'react';
 
+interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
+
 interface DragHooks {
-  useDraggableCollectionState?: (props: Omit<DraggableCollectionStateOptions, 'getItems'>) => DraggableCollectionState,
+  useDraggableCollectionState?: (props: DraggableCollectionStateOpts) => DraggableCollectionState,
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview
@@ -55,11 +56,12 @@ interface DropHooks {
   useDropIndicator?: (props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DropIndicatorAria
 }
 
-export interface DnDHooks {
-  dndHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
+export interface DragAndDropHooks {
+  /** Drag and drop hooks for the collection element.  */
+  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean}
 }
 
-export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
@@ -67,46 +69,52 @@ export interface DnDOptions extends Omit<DraggableCollectionProps, 'preview' | '
   getItems?: (keys: Set<Key>) => DragItem[]
 }
 
-export function useDnDHooks(options: DnDOptions): DnDHooks {
-  let {
-    onDrop,
-    onInsert,
-    onItemDrop,
-    onReorder,
-    onRootDrop,
-    getItems
-   } = options;
+/**
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible React Spectrum component.
+ */
+export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
+  let dragAndDropHooks = useMemo(() => {
+    let {
+      onDrop,
+      onInsert,
+      onItemDrop,
+      onReorder,
+      onRootDrop,
+      getItems
+     } = options;
 
-  let dragHooks: DragHooks = useMemo(() => ({
-    useDraggableCollectionState(props: DraggableCollectionStateOptions) {
-      return useDraggableCollectionState({...props, ...options});
-    },
-    useDraggableCollection,
-    useDraggableItem,
-    DragPreview
-  }), [options]);
+    let isDraggable = !!getItems;
+    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-  let dropHooks: DropHooks = useMemo(() => ({
-    useDroppableCollectionState(props) {
-      return useDroppableCollectionState({...props, ...options});
-    },
-    useDroppableItem,
-    useDroppableCollection(props, state, ref) {
-      return useDroppableCollection({...props, ...options}, state, ref);
-    },
-    useDropIndicator
-  }), [options]);
+    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean};
+    if (isDraggable) {
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
+        return useDraggableCollectionState({...props, ...options});
+      };
+      hooks.useDraggableCollection = useDraggableCollection;
+      hooks.useDraggableItem = useDraggableItem;
+      hooks.DragPreview = DragPreview;
+    }
 
-  let isDraggable = !!getItems;
-  let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
+    if (isDroppable) {
+      hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
+        return useDroppableCollectionState({...props, ...options});
+      },
+      hooks.useDroppableItem = useDroppableItem;
+      hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
+        return useDroppableCollection({...props, ...options}, state, ref);
+      };
+      hooks.useDropIndicator = useDropIndicator;
+    }
 
-  let mergedHooks = {
-    ...(isDraggable ? dragHooks : {}),
-    ...(isDroppable ? dropHooks : {}),
-    ...(isDraggable || isDroppable ? {isVirtualDragging} : {})
-  };
+    if (isDraggable || isDroppable) {
+      hooks.isVirtualDragging = isVirtualDragging;
+    }
+
+    return hooks;
+  }, [options]);
 
   return {
-    dndHooks: mergedHooks
+    dragAndDropHooks: dragAndDropHooks
   };
 }

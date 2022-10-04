@@ -10,14 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaGridListProps} from '@react-types/list';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DisabledBehavior,
+  DOMAttributes,
+  DOMProps,
+  KeyboardDelegate,
+  MultipleSelection
+} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
-import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useSelectableList} from '@react-aria/selection';
+
+export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior
+}
+
+export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */

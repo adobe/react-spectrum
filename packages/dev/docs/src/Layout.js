@@ -146,11 +146,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
-                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
-                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'light';
               }
 
