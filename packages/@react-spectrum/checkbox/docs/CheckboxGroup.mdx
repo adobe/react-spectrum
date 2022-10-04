@@ -228,6 +228,36 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 </CheckboxGroup>
 ```
 
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/checkbox-group/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a CheckboxGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [checked, setChecked] = React.useState(['dogs', 'dragons']);
+  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
+
+  return (
+    <CheckboxGroup
+      label="Pets"
+      onChange={setChecked}
+      value={checked}
+      validationState={isValid ? 'valid' : 'invalid'}
+      description="Select your pets."
+      errorMessage={
+        checked.includes('cats')
+          ? 'No cats allowed.'
+          : 'Select only dogs and dragons.'
+      }>
+      <Checkbox value="dogs">Dogs</Checkbox>
+      <Checkbox value="cats">Cats</Checkbox>
+      <Checkbox value="dragons">Dragons</Checkbox>
+    </CheckboxGroup>
+  );
+}
+```
+
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
 
