@@ -1,13 +1,13 @@
 {
   "name": "parcel-resolver-docs",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "DocsResolver.js",
   "engines": {
     "parcel": "^2.1.1"
   },
   "dependencies": {
-    "@parcel/node-resolver-core": "^2.1.1",
-    "@parcel/plugin": "^2.1.1"
+    "@parcel/plugin": "^2.1.1",
+    "@parcel/node-resolver-core": "^2.1.1"
   }
 }

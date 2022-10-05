@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/test-utils",
-  "version": "3.0.0",
+  "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/ssr": "^3.4.0",
+    "@react-aria/ssr": "^3.0.0",
     "resolve": "^1.17.0"
   },
   "peerDependencies": {
@@ -43,7 +43,7 @@
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0"
+    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"
