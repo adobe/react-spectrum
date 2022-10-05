@@ -11,7 +11,7 @@
  */
 
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {RefObject} from 'react';
+import {RefObject, useEffect, useState} from 'react';
 
 export interface TabbleChildAria {
   /** Indicator of if the element can be focused. */
@@ -20,18 +20,20 @@ export interface TabbleChildAria {
 
 // This is based/coped from useTabPanel.ts
 export function useTabbableChild(ref: RefObject<HTMLElement>): TabbleChildAria {
-  let tabIndex = undefined;
+  let [tabIndex, setTabIndex] = useState(0);
 
   // A component with children (Collection/Virtualizer/Table/ListView/etc.) should be tabble when
   // it is empty (no rows) and has no tabbled elements. Otherwise, tabbing from the focused component
   // peer should go directly to the first tabbable element within the component, which is accomplished
   // with tabIndex=-1.  A -1 is used instead of undefined to get the desired behavior if this is
   // wrapped by a FocusScope.
-  if (ref?.current) {
-    // Detect if there are any tabbable elements and update the tabIndex accordingly.
-    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-    tabIndex = walker.nextNode() ? -1 : 0;
-  }
+  useEffect(() => {
+    if (ref?.current) {
+      // Detect if there are any tabbable elements and update the tabIndex accordingly.
+      let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+      setTabIndex(walker.nextNode() ? -1 : 0);
+    }
+  }, [ref?.current]);
 
   return {
     tabIndex: tabIndex
