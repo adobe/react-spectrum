@@ -558,6 +558,16 @@ module.exports = new Transformer({
 
     function isReactComponent(path) {
       if (path.isFunction()) {
+        if (
+          path.node.returnType &&
+          t.isTSTypeReference(path.node.returnType.typeAnnotation) && 
+          t.isTSQualifiedName(path.node.returnType.typeAnnotation.typeName) &&
+          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.left, {name: 'JSX'}) &&
+          t.isIdentifier(path.node.returnType.typeAnnotation.typeName.right, {name: 'Element'})
+        ) {
+          return true;
+        }
+
         let returnsJSX = false;
         path.traverse({
           ReturnStatement(path) {

@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionStateBase} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
 import {useRef} from 'react';
 
+export interface TabListStateOptions<T> extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface TabListState<T> extends SingleSelectListState<T> {
   /** Whether the tab list is disabled. */
@@ -24,7 +26,7 @@ export interface TabListState<T> extends SingleSelectListState<T> {
  * Provides state management for a Tabs component. Tabs include a TabList which tracks
  * which tab is currently selected and displays the content associated with that Tab in a TabPanel.
  */
-export function useTabListState<T extends object>(props: TabListProps<T>): TabListState<T> {
+export function useTabListState<T extends object>(props: TabListStateOptions<T>): TabListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
     suppressTextValueWarning: true
@@ -49,12 +51,15 @@ export function useTabListState<T extends object>(props: TabListProps<T>): TabLi
     if (state.disabledKeys.has(selectedKey) && selectedKey === collection.getLastKey()) {
       selectedKey = collection.getFirstKey();
     }
-    // directly set selection because replace/toggle selection won't consider disabled keys
-    selectionManager.setSelectedKeys([selectedKey]);
+
+    if (selectedKey != null) {
+      // directly set selection because replace/toggle selection won't consider disabled keys
+      selectionManager.setSelectedKeys([selectedKey]);
+    }
   }
 
   // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
-  if (selectionManager.focusedKey == null || (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)) {
+  if (selectedKey != null && selectionManager.focusedKey == null || (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)) {
     selectionManager.setFocusedKey(selectedKey);
   }
   lastSelectedKey.current = selectedKey;

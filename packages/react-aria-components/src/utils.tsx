@@ -41,9 +41,12 @@ export interface DOMProps extends StyleProps {
   children?: ReactNode
 }
 
-export interface RenderProps<T> {
+export interface StyleRenderProps<T> {
   className?: string | ((values: T) => string),
-  style?: CSSProperties | ((values: T) => CSSProperties),
+  style?: CSSProperties | ((values: T) => CSSProperties)
+}
+
+export interface RenderProps<T> extends StyleRenderProps<T> {
   children?: ReactNode | ((values: T) => ReactNode)
 }
 

@@ -1,12 +1,12 @@
 import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMProps, Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {DOMProps, Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
+import {useCachedChildren, useCollection} from './Collection';
 import {useListBox, useListBoxSection, useOption} from 'react-aria';
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, DOMProps {
@@ -125,11 +125,11 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   );
 }
 
-interface OptionProps<T> extends RenderProps<ItemStates> {
+interface OptionProps<T> {
   item: Node<T>
 }
 
-function Option<T>({item, className, style, children}: OptionProps<T>) {
+function Option<T>({item}: OptionProps<T>) {
   let ref = useRef();
   let state = useContext(InternalListBoxContext);
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
@@ -140,9 +140,9 @@ function Option<T>({item, className, style, children}: OptionProps<T>) {
 
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: className || item.props.className,
-    style: style || item.props.style,
-    children: children || item.rendered,
+    className: item.props.className,
+    style: item.props.style,
+    children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {
       ...states,

@@ -1,4 +1,4 @@
-import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -439,6 +439,27 @@ export const ModalExample = () => (
       </Modal>
     </ModalOverlay>
   </DialogTrigger>
+);
+
+export const TabsExample = () => (
+  <Tabs>
+    <TabList aria-label="History of Ancient Rome">
+      <Tab id="FoR">Founding of Rome</Tab>
+      <Tab id="MaR">Monarchy and Republic</Tab>
+      <Tab id="Emp">Empire</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 );
 
 function MyItem(props) {

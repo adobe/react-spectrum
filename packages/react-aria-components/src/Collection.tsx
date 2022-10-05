@@ -96,7 +96,7 @@ const TYPE_MAP = {
 };
 
 class ElementNode<T> extends BaseNode<T> implements Node<T> {
-  nodeType = 1; // ELEMENT_NODE;
+  nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   type: string;
   key: Key;
   value: T;
@@ -276,7 +276,7 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
   }
 }
 
-interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
+export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
