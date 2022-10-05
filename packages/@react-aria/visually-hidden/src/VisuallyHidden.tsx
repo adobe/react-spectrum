@@ -13,7 +13,7 @@
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useFocusWithin} from '@react-aria/interactions';
 
 export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
@@ -57,9 +57,9 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
   } = props;
 
   let [isFocused, setFocused] = useState(false);
-  let {focusProps} = useFocus({
+  let {focusWithinProps} = useFocusWithin({
     isDisabled: !isFocusable,
-    onFocusChange: setFocused
+    onFocusWithinChange: (val) => setFocused(val)
   });
 
   // If focused, don't hide the element.
@@ -75,7 +75,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
 
   return {
     visuallyHiddenProps: {
-      ...focusProps,
+      ...focusWithinProps,
       style: combinedStyles
     }
   };

@@ -382,6 +382,32 @@ function Example() {
 }
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a Picker.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<Picker
+  label="Engineering major"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Major changes</Heading>
+      <Content>Once you have changed your major, you cannot change it back.</Content>
+    </ContextualHelp>
+  }>
+  <Item>Aerospace</Item>
+  <Item>Mechanical</Item>
+  <Item>Civil</Item>
+  <Item>Nuclear</Item>
+  <Item>Industrial</Item>
+  <Item>Chemical</Item>
+  <Item>Agricultural</Item>
+  <Item>Electrical</Item>
+</Picker>
+```
+
 ### Custom widths
 ```tsx example
 <Flex direction="column" rowGap="size-150">

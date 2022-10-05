@@ -96,7 +96,7 @@ standalone checkbox, use the [useCheckbox](useCheckbox.html) hook instead.
 
 This example uses native input elements for the checkboxes, and React context to share state from the group
 to each checkbox. An HTML `<label>` element wraps the native input and the text to provide an implicit label
-for the radio.
+for the checkbox.
 
 ```tsx example export=true
 import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
@@ -105,9 +105,9 @@ import {useCheckboxGroupState} from '@react-stately/checkbox';
 let CheckboxGroupContext = React.createContext(null);
 
 function CheckboxGroup(props) {
-  let {children, label} = props;
+  let {children, label, description, errorMessage, validationState} = props;
   let state = useCheckboxGroupState(props);
-  let {groupProps, labelProps} = useCheckboxGroup(props, state);
+  let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
 
   return (
     <div {...groupProps}>
@@ -115,6 +115,10 @@ function CheckboxGroup(props) {
       <CheckboxGroupContext.Provider value={state}>
         {children}
       </CheckboxGroupContext.Provider>
+      {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
+      {errorMessage && validationState === 'invalid' &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      }
     </div>
   );
 }
@@ -194,6 +198,31 @@ function Example() {
     </CheckboxGroup>
   );
 }
+```
+
+### Description
+
+The `description` prop can be used to associate additional help text with a checkbox group.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" description="Select your favorite sports.">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Error message
+
+The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
+semantically mark the checkbox group as invalid for assistive technologies.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" errorMessage="Invalid selection of sports." validationState="invalid">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
 ```
 
 ### Disabled

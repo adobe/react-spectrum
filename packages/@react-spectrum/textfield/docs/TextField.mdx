@@ -197,6 +197,24 @@ function Example() {
 }
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TextField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TextField
+  label="Password"
+  type="password"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>Need help?</Heading>
+      <Content>If you're having trouble accessing your account, contact our customer support team for help.</Content>
+    </ContextualHelp>
+  } />
+```
+
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
