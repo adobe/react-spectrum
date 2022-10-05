@@ -143,6 +143,7 @@ function getDiff(summaryMessages, pair) {
   let branchInterfaces = rebuildInterfaces(branchApi);
   //console.log(publishedInterfaces)
   //console.log(branchInterfaces)
+  // getting a diff out of the json gives us a very clear set of which interfaces have changed by name
   let diff = changesets.diff(publishedInterfaces, branchInterfaces);
   let changedInterfaces = [];
   let formattedPublishedInterfaces = '';
@@ -485,6 +486,9 @@ function processType(value) {
       typeParam = typeParam + ` = ${processType(value.default)}`;
     }
     return typeParam;
+  }
+  if (value.type === 'indexedAccess') {
+    return `${processType(value.objectType)}[${processType(value.indexType)}]`;
   }
   console.log('unknown type', value);
 }

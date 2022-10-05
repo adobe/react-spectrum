@@ -517,6 +517,14 @@ module.exports = new Transformer({
         return node;
       }
 
+      if (path.isTSIndexedAccessType()) {
+        return Object.assign(node, {
+          type: 'indexedAccess',
+          objectType: processExport(path.get('objectType')),
+          indexType: processExport(path.get('indexType'))
+        });
+      }
+
       console.log('UNKNOWN TYPE', path.node.type);
     }
 

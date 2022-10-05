@@ -122,10 +122,20 @@ export function Type({type}) {
     }
     case 'conditional':
       return <ConditionalType {...type} />;
+    case 'indexedAccess':
+      return <IndexedAccess {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
+    case 'keyof':
+      return <Keyof {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function IndexedAccess({objectType, indexType}) {
+  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
 function StringLiteral({value}) {
@@ -138,6 +148,14 @@ function NumberLiteral({value}) {
 
 function BooleanLiteral({value}) {
   return <span className="token hljs-literal">{'' + value}</span>;
+}
+
+function Symbol() {
+  return <span className="token hljs-literal">symbol</span>;
+}
+
+function Keyof({keyof}) {
+  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
 }
 
 function Keyword({type}) {
