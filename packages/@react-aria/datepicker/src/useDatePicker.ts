@@ -54,6 +54,14 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let dialogId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
+  let passThroughEvents = {
+    onBlur: props.onBlur,
+    onFocus: props.onFocus,
+    onFocusChange: props.onFocusChange,
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
+  }
+
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span'
@@ -72,7 +80,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   return {
-    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
+    groupProps: mergeProps(passThroughEvents, domProps, groupProps, fieldProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,

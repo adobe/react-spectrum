@@ -63,6 +63,14 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
     labelElementType: 'span'
   });
 
+  let passThroughEvents = {
+    onBlur: props.onBlur,
+    onFocus: props.onFocus,
+    onFocusChange: props.onFocusChange,
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
+  }
+
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
       state.confirmPlaceholder();
@@ -126,7 +134,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps),
+    fieldProps: mergeProps(passThroughEvents, domProps, fieldDOMProps, groupProps, focusWithinProps),
     descriptionProps,
     errorMessageProps
   };

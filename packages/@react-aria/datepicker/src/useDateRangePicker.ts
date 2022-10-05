@@ -76,6 +76,14 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     'aria-labelledby': labelledBy
   };
 
+  let passThroughEvents = {
+    onBlur: props.onBlur,
+    onFocus: props.onFocus,
+    onFocusChange: props.onFocusChange,
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
+  }
+
   let buttonId = useId();
   let dialogId = useId();
 
@@ -106,7 +114,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let domProps = filterDOMProps(props);
 
   return {
-    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
+    groupProps: mergeProps(passThroughEvents, domProps, groupProps, fieldProps, descProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-describedby': ariaDescribedBy
