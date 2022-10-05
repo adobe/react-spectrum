@@ -1,0 +1,13 @@
+diff --git a/node_modules/@storybook/react/dist/esm/client/preview/render.js b/node_modules/@storybook/react/dist/esm/client/preview/render.js
+index 5bf30e1..647de90 100644
+--- a/node_modules/@storybook/react/dist/esm/client/preview/render.js
++++ b/node_modules/@storybook/react/dist/esm/client/preview/render.js
+@@ -135,7 +135,7 @@ var getReactRoot = /*#__PURE__*/function () {
+             return import('react-dom/client');
+ 
+           case 6:
+-            reactDomClient = _context2.sent.default;
++            reactDomClient = _context2.sent;
+             root = reactDomClient.createRoot(el);
+             nodes.set(el, root);
+ 

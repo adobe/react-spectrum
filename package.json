@@ -183,6 +183,7 @@
     "@babel/runtime": "7.12.5",
     "postcss-calc": "6.0.2",
     "jsdom": "16.7.0",
-    "postcss-modules": "^3.2.2"
+    "postcss-modules": "^3.2.2",
+    "react-refresh": "0.9.0"
   }
 }
