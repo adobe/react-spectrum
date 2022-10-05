@@ -18,10 +18,19 @@ module.exports = new Resolver({
     if (specifier === 'react-dom/client') {
       let specifier = reactVersion.startsWith('18') ? 'react-dom/client.js' : 'react-dom/index.js';
       return {
-        filePath: __filename,
+        filePath: __dirname + '/react.js',
         code: `
         export * from '${specifier}';
         export * as default from '${specifier}'
+        `
+      };
+    } else if (specifier === 'axe-core') {
+      // Work around interop issue with ESM and CJS.
+      return {
+        filePath: __dirname + '/axe-core.js',
+        code: `
+        export * from 'axe-core/axe.js';
+        export * as default from 'axe-core/axe.js'
         `
       };
     }
