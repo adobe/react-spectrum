@@ -277,7 +277,10 @@ jobs:
 
       - run:
           name: build storybook
-          command: make storybook
+          command: |
+            make storybook
+            pwd
+            ls -al dist
 
       - persist_to_workspace:
           root: dist
