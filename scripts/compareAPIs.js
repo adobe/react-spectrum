@@ -2,7 +2,6 @@
 let fs = require('fs-extra');
 let fg = require('fast-glob');
 let path = require('path');
-let changesets = require('json-diff-ts');
 let util = require('util');
 let chalk = require('chalk');
 let yargs = require('yargs');
@@ -15,7 +14,7 @@ let argv = yargs
   .option('package', {type: 'string'})
   .option('interface', {type: 'string'})
   .option('isCI', {type: 'boolean'})
-  .option('published-api-dir', {type: 'string'})
+  .option('base-api-dir', {type: 'string'})
   .option('branch-api-dir', {type: 'string'})
   .argv;
 
@@ -32,9 +31,9 @@ compare().catch(err => {
  */
 async function compare() {
   let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
-  let publishedDir = argv['published-api-dir'] || path.join(__dirname, '..', 'dist', 'published-api');
+  let publishedDir = argv['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
+    console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
     return;
   }
 

@@ -16,6 +16,13 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
+let yargs = require('yargs');
+
+
+let argv = yargs
+  .option('verbose', {alias: 'v', type: 'boolean'})
+  .option('output', {alias: 'o', type: 'string'})
+  .argv;
 
 build().catch(err => {
   console.error(err.stack);
@@ -28,7 +35,7 @@ build().catch(err => {
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
 async function build() {
-  let distDir = path.join(__dirname, '..', 'dist', 'published-api');
+  let distDir = argv.output ?? path.join(__dirname, '..', 'dist', argv.output ?? 'base-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
   fs.removeSync(distDir);
   // Create a temp directory to build the site in

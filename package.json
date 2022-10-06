@@ -130,7 +130,6 @@
     "jest-junit": "^12.0.0",
     "jest-matchmedia-mock": "^1.0.0",
     "jsdom": "^16.7.0",
-    "json-diff-ts": "^1.1.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",

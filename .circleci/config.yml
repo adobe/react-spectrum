@@ -231,15 +231,16 @@ jobs:
           paths:
             - 'branch-api/'
 
-  ts-build-published:
+  ts-build-fork-point:
     executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: build published apis
-          command: yarn build:api-published
+          name: build fork-point apis
+          command: |
+            yarn build:api-branch --githash="$(git merge-base --fork-point origin/main origin/$(git branch --show-current))" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
           root: dist
@@ -259,7 +260,7 @@ jobs:
           name: compare api
           command: |
             mkdir -p dist
-            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --published-api-dir="/tmp/dist/published-api" | tee dist/ts-diff.txt
+            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
@@ -451,16 +452,25 @@ workflows:
       - lint:
           requires:
             - install
-      - ts-build-published:
+      - ts-build-fork-point:
           requires:
             - install
+          filters:
+            branches:
+              ignore: main
       - ts-build-branch:
           requires:
             - install
+          filters:
+            branches:
+              ignore: main
       - ts-diff:
           requires:
-            - ts-build-published
+            - ts-build-fork-point
             - ts-build-branch
+          filters:
+            branches:
+              ignore: main
       - storybook:
           requires:
             - install
