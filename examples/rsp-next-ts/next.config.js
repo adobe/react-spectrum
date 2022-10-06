@@ -46,10 +46,12 @@ const withTM = require("next-transpile-modules")([
   "@react-spectrum/well",
   "@spectrum-icons/illustrations",
   "@spectrum-icons/ui",
-  "@spectrum-icons/workflow"
+  "@spectrum-icons/workflow",
 ]);
 
-
 module.exports = withTM({
-  basePath: process.env.VERDACCIO && process.env.CIRCLE_SHA1 ? `/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next` : ''
+  basePath:
+    process.env.VERDACCIO && process.env.CIRCLE_SHA1
+      ? `/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next`
+      : "",
 });
