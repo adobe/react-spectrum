@@ -342,7 +342,11 @@ export default function Home() {
 
             <ProgressBar label="Loading…" value={50} />
 
+            <ProgressBar label="Loading…" isIndeterminate />
+
             <ProgressCircle aria-label="Loading…" value={50} />
+
+            <ProgressCircle aria-label="Loading…" isIndeterminate />
 
             <StatusLight variant="positive">Ready</StatusLight>
           </Section>
