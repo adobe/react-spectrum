@@ -259,7 +259,7 @@ jobs:
           name: compare api
           command: |
             mkdir -p dist
-            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --published-api-dir="/tmp/dist/published-api" > dist/ts-diff.txt
+            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --published-api-dir="/tmp/dist/published-api" | tee dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
@@ -400,7 +400,7 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - attach_workspace:
-          at: /tmp/ts-diff_dist
+          at: /tmp/dist
 
       - run:
           name: comment on pr
