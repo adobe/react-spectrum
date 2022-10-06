@@ -63,7 +63,7 @@ async function run() {
   }
 
   if (pr != null) {
-    let diffs = fs.readFileSync('/tmp/ts-diff_dist/ts-diff.txt');
+    let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     await octokit.issues.createComment({
       owner: 'adobe',
       repo: 'react-spectrum',
