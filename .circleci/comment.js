@@ -42,7 +42,6 @@ async function run() {
           }
         }
       } else if (process.env.CIRCLE_BRANCH === 'main') {
-        let diffs = fs.readFileSync('/tmp/ts-diff_dist/ts-diff.txt');
         //If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
         await octokit.repos.createCommitComment({
           owner: 'adobe',
@@ -53,9 +52,7 @@ async function run() {
       [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
       [Size diff since last release](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/size-diff.txt)
-      [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)
-
-      ${diffs}`
+      [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)`
         });
       }
     } catch (error) {
@@ -66,6 +63,7 @@ async function run() {
   }
 
   if (pr != null) {
+    let diffs = fs.readFileSync('/tmp/ts-diff_dist/ts-diff.txt');
     await octokit.issues.createComment({
       owner: 'adobe',
       repo: 'react-spectrum',
@@ -77,5 +75,16 @@ async function run() {
   * [View the storybook-16](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-16/index.html)
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
     });
+    if (diffs.length > 0) {
+      await octokit.issues.createComment({
+        owner: 'adobe',
+        repo: 'react-spectrum',
+        issue_number: pr,
+        body: `API Changes
+\`\`\`diff
+${diffs}
+\`\`\`
+        `});
+    }
   }
 }

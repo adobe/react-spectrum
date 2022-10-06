@@ -224,12 +224,14 @@ jobs:
 
       - run:
           name: compare api
-          command: yarn check-apis --isCI > ts-diff/ts-diff.txt
+          command: |
+            mkdir -p ts-diff_dist
+            yarn check-apis --isCI > ts-diff_dist/ts-diff.txt
 
       - persist_to_workspace:
           root: ts-diff_dist
           paths:
-            - '*/ts-diff/'
+            - 'ts-diff.txt'
 
   storybook:
     executor: rsp-large
