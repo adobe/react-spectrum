@@ -38,7 +38,6 @@
     "@react-stately/overlays": "^3.4.1",
     "@react-types/overlays": "^3.6.3",
     "@react-types/shared": "^3.14.1",
-    "@types/react-transition-group": "2.9.0",
     "react-transition-group": "^2.2.0"
   },
   "devDependencies": {

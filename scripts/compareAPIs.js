@@ -37,7 +37,6 @@ async function compare() {
     console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
     return;
   }
-  let summaryMessages = [];
 
   let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
   let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
@@ -46,44 +45,39 @@ async function compare() {
   for (let pubApi of publishedAPIs) {
     let pubApiPath = pubApi.split(path.sep);
     let sharedPath = path.join(...pubApiPath.slice(pubApiPath.length - 4));
-    let matchingBranchFile;
+    let found = false;
     for (let branchApi of branchAPIs) {
       if (branchApi.includes(sharedPath)) {
-        matchingBranchFile = branchApi;
+        found = true;
         pairs.push({pubApi, branchApi});
         break;
       }
     }
-    if (!matchingBranchFile) {
-      summaryMessages.push({msg: `removed module ${pubApi}`, severity: 'error'});
+    if (!found) {
+      pairs.push({pubApi, branchApi: null});
     }
   }
-  let privatePackages = [];
+
   // don't care about not private APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
     let sharedPath = path.join(...branchApiPath.slice(branchApiPath.length - 4));
-    let matchingPubFile;
+    let found = false;
     for (let pubApi of publishedAPIs) {
       if (pubApi.includes(sharedPath)) {
-        matchingPubFile = pubApi;
-        // don't re-add to pairs
+        found = true;
         break;
       }
     }
-    if (!matchingPubFile) {
-      let json = JSON.parse(fs.readFileSync(path.join(branchApi, '..', '..', 'package.json')), 'utf8');
-      if (!json.private) {
-        summaryMessages.push({msg: `added module ${branchApi}`, severity: 'warn'});
-      } else {
-        privatePackages.push(branchApi);
-      }
+    let json = JSON.parse(fs.readFileSync(path.join(branchApi, '..', '..', 'package.json')), 'utf8');
+    if (!found && !json.private) {
+      pairs.push({pubApi: null, branchApi});
     }
   }
 
   let allDiffs = {};
   for (let pair of pairs) {
-    let {diffs, name} = getDiff(summaryMessages, pair);
+    let {diffs, name} = getDiff(pair);
     if (diffs.length > 0) {
       allDiffs[name] = diffs;
     }
@@ -95,16 +89,21 @@ async function compare() {
   }
 }
 
-function getDiff(summaryMessages, pair) {
-  let name = pair.branchApi.replace(/.*branch-api/, '');
+function getDiff(pair) {
+  let name;
+  if (pair.branchApi) {
+    name = pair.branchApi.replace(/.*branch-api/, '');
+  } else {
+    name = pair.pubApi.replace(/.*published-api/, '');
+  }
   if (argv.package && name !== argv.package) {
     return {diff: {}, name};
   }
   if (argv.verbose) {
     console.log(`diffing ${name}`);
   }
-  let publishedApi = fs.readJsonSync(pair.pubApi);
-  let branchApi = fs.readJsonSync(pair.branchApi);
+  let publishedApi = pair.pubApi === null ? {} : fs.readJsonSync(pair.pubApi);
+  let branchApi = pair.branchApi === null ? {} : fs.readJsonSync(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
   // getting a diff out of the json gives us a very clear set of which interfaces have changed by name
@@ -259,6 +258,9 @@ function processType(value) {
 
 function rebuildInterfaces(json) {
   let exports = {};
+  if (!json.exports) {
+    return exports;
+  }
   Object.keys(json.exports).forEach((key) => {
     if (key === 'links') {
       console.log('skipping links');
@@ -371,7 +373,7 @@ function formatInterfaces(interfaces, changedInterfaces) {
       output += Object.entries(interfaces[name]).map(formatProp).join('\n');
       return `${output}\n}\n`;
     } else {
-      return '';
+      return '\n';
     }
   });
 }
