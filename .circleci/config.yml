@@ -216,17 +216,50 @@ jobs:
           name: lint
           command: yarn lint
 
-  ts-diff:
+  ts-build-branch:
     executor: rsp-large
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: build branch apis
+          command: yarn build:api-branch
+
+      - persist_to_workspace:
+          root: branch-api
+          paths:
+            - '*/branch-api'
+
+  ts-build-published:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build branch apis
+          command: yarn build:api-published
+
+      - persist_to_workspace:
+          root: published-api
+          paths:
+            - '*/published-api'
+
+  ts-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/dist
+
+      - run:
           name: compare api
           command: |
             mkdir -p ts-diff_dist
-            yarn check-apis --isCI > ts-diff_dist/ts-diff.txt
+            yarn compare:apis --isCI > ts-diff_dist/ts-diff.txt
 
       - persist_to_workspace:
           root: ts-diff_dist
@@ -418,9 +451,16 @@ workflows:
       - lint:
           requires:
             - install
-      - ts-diff:
+      - ts-build-published:
           requires:
             - install
+      - ts-build-branch:
+          requires:
+            - install
+      - ts-diff:
+          requires:
+            - ts-build-published
+            - ts-build-branch
       - storybook:
           requires:
             - install
