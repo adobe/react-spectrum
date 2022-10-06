@@ -51,6 +51,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         childNodes
       };
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [listState.collection, isRemovable]);
   let state = useGridState({
     ...props,

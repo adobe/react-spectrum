@@ -79,6 +79,7 @@ export function useSSRSafeId(defaultId?: string): string {
     console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => defaultId || `react-aria${ctx.prefix}-${++ctx.current}`, [defaultId]);
 }
 
