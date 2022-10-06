@@ -528,8 +528,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSModuleDeclaration()) {
-        // TODO: fix
-        // console.log('TS MODULE DECLARATION', path);
+        // TODO: decide how we want to display something from a Global namespace
         return node;
       }
 

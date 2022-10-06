@@ -41,7 +41,8 @@ async function compare() {
   let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
   let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
   let pairs = [];
-  // we only care about changes to already published APIs, so find all matching pairs based on what's been published
+
+  // find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
     let pubApiPath = pubApi.split(path.sep);
     let sharedPath = path.join(...pubApiPath.slice(pubApiPath.length - 4));
@@ -58,7 +59,7 @@ async function compare() {
     }
   }
 
-  // don't care about not private APIs, but we do care if we're about to publish a new one
+  // don't care about private APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
     let sharedPath = path.join(...branchApiPath.slice(branchApiPath.length - 4));
@@ -82,9 +83,12 @@ async function compare() {
       allDiffs[name] = diffs;
     }
   }
+  // extra processing can be done between here
   for (let [, diffs] of Object.entries(allDiffs)) {
     for (let diff of diffs) {
-      console.log(diff);
+      if (diff.length > 0) {
+        console.log(diff);
+      }
     }
   }
 }
@@ -106,24 +110,14 @@ function getDiff(pair) {
   let branchApi = pair.branchApi === null ? {} : fs.readJsonSync(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  // getting a diff out of the json gives us a very clear set of which interfaces have changed by name
-  let diff = changesets.diff(publishedInterfaces, branchInterfaces);
-  let changedInterfaces = [];
+  let allInterfaces = [...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])];
   let formattedPublishedInterfaces = '';
   let formattedBranchInterfaces = '';
-  if (diff.length > 0) {
-    changedInterfaces = diff.reduce((acc, item) => {
-      if (!acc.includes(item.key) && item.key !== 'links') {
-        acc.push(item.key);
-      }
-      return acc;
-    }, []);
-    formattedPublishedInterfaces = formatInterfaces(publishedInterfaces, changedInterfaces);
-    formattedBranchInterfaces = formatInterfaces(branchInterfaces, changedInterfaces);
-  }
+  formattedPublishedInterfaces = formatInterfaces(publishedInterfaces, allInterfaces);
+  formattedBranchInterfaces = formatInterfaces(branchInterfaces, allInterfaces);
 
   let diffs = [];
-  changedInterfaces.forEach((name, index) => {
+  allInterfaces.forEach((name, index) => {
     if (argv.interface && argv.interface !== name) {
       return;
     }
@@ -152,7 +146,9 @@ function getDiff(pair) {
       }
       prevEnd = hunk.oldStart + hunk.oldLines;
     });
-    result = [result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+    if (codeDiff.hunks.length > 0) {
+      result = [result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+    }
     diffs.push(result);
   });
 
@@ -366,11 +362,11 @@ function formatProp([name, prop]) {
   return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
 }
 
-function formatInterfaces(interfaces, changedInterfaces) {
-  return changedInterfaces.map(name => {
+function formatInterfaces(interfaces, allInterfaces) {
+  return allInterfaces.map(name => {
     if (interfaces[name]) {
       let output = `${name} {\n`;
-      output += Object.entries(interfaces[name]).map(formatProp).join('\n');
+      output += interfaces[name].isType ? formatProp(name, interfaces[name]) : Object.entries(interfaces[name]).map(formatProp).join('\n');
       return `${output}\n}\n`;
     } else {
       return '\n';
