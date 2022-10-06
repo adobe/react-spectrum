@@ -55,6 +55,9 @@ export function HeaderInfo(props) {
     if (monopackages[scope]) {
       ({importName, version} = monopackages[scope]);
     }
+    if (since) {
+      version = since;
+    }
   }
 
   return (
@@ -66,7 +69,7 @@ export function HeaderInfo(props) {
             <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease ? "Added" : "Since"}</th>
+            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease ? "version" : "added"}</th>
             <td className={typographyStyles['spectrum-Body4']}>{version}</td>
           </tr>
           {componentNames &&
