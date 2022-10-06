@@ -15,6 +15,8 @@ let argv = yargs
   .option('package', {type: 'string'})
   .option('interface', {type: 'string'})
   .option('isCI', {type: 'boolean'})
+  .option('published-api-dir', {type: 'string'})
+  .option('branch-api-dir', {type: 'string'})
   .argv;
 
 compare().catch(err => {
@@ -29,8 +31,8 @@ compare().catch(err => {
  * We can high level some of this information in a series of summary messages that are color coded at the tail of the run.
  */
 async function compare() {
-  let branchDir = path.join(__dirname, '..', 'dist', 'branch-api');
-  let publishedDir = path.join(__dirname, '..', 'dist', 'published-api');
+  let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
+  let publishedDir = argv['published-api-dir'] || path.join(__dirname, '..', 'dist', 'published-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
     console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and publishedDir ${publishedDir}`));
     return;

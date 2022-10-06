@@ -224,10 +224,7 @@ jobs:
 
       - run:
           name: build branch apis
-          command: |
-            yarn build:api-branch
-            pwd
-            ls -al dist
+          command: yarn build:api-branch
 
       - persist_to_workspace:
           root: dist
@@ -261,8 +258,8 @@ jobs:
       - run:
           name: compare api
           command: |
-            mkdir -p ts-diff_dist
-            yarn compare:apis --isCI > dist/ts-diff.txt
+            mkdir -p dist
+            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --published-api-dir="/tmp/dist/published-api" > dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
@@ -277,10 +274,7 @@ jobs:
 
       - run:
           name: build storybook
-          command: |
-            make storybook
-            pwd
-            ls -al dist
+          command: make storybook
 
       - persist_to_workspace:
           root: dist
