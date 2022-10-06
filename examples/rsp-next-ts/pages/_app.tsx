@@ -6,6 +6,7 @@ import {
   lightTheme,
   ActionButton,
   Flex,
+  Grid,
   View,
 } from "@adobe/react-spectrum";
 import { ColorScheme } from "@react-types/provider";
@@ -22,8 +23,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SSRProvider>
       <Provider theme={lightTheme} colorScheme={theme}>
-        <View padding="size-100">
-          <Flex direction="row" gap="size-100" justifyContent="end">
+        <Grid
+          areas={["header", "content"]}
+          columns={["1fr"]}
+          rows={["size-200", "auto"]}
+          gap="size-100"
+        >
+          <Flex
+            direction="row"
+            gap="size-100"
+            justifyContent="end"
+            margin="size-100"
+          >
             <ActionButton
               aria-label={`Switch to ${otherTheme} mode.`}
               onPress={() => setTheme(otherTheme)}
@@ -31,8 +42,10 @@ function MyApp({ Component, pageProps }: AppProps) {
               {themeIcons[otherTheme]}
             </ActionButton>
           </Flex>
-        </View>
-        <Component {...pageProps} />
+          <View>
+            <Component {...pageProps} />
+          </View>
+        </Grid>
       </Provider>
     </SSRProvider>
   );
