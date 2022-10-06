@@ -232,7 +232,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/branch-api/'
+            - 'branch-api/'
 
   ts-build-published:
     executor: rsp-large
@@ -241,13 +241,13 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: build branch apis
+          name: build published apis
           command: yarn build:api-published
 
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/published-api/'
+            - 'published-api/'
 
   ts-diff:
     executor: rsp-large
