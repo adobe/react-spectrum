@@ -16,7 +16,7 @@ import {ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
-  readonly value: string[],
+  readonly value: readonly string[],
 
   /** Whether the checkbox group is disabled. */
   readonly isDisabled: boolean,
