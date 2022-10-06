@@ -66,10 +66,9 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
   let passThroughEvents = {
     onBlur: props.onBlur,
     onFocus: props.onFocus,
-    onFocusChange: props.onFocusChange,
     onKeyDown: props.onKeyDown,
     onKeyUp: props.onKeyUp
-  }
+  };
 
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {

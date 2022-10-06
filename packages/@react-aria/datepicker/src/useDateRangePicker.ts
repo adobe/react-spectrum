@@ -79,10 +79,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
   let passThroughEvents = {
     onBlur: props.onBlur,
     onFocus: props.onFocus,
-    onFocusChange: props.onFocusChange,
     onKeyDown: props.onKeyDown,
     onKeyUp: props.onKeyUp
-  }
+  };
 
   let buttonId = useId();
   let dialogId = useId();

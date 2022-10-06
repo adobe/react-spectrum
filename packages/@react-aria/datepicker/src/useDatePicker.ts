@@ -57,10 +57,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let passThroughEvents = {
     onBlur: props.onBlur,
     onFocus: props.onFocus,
-    onFocusChange: props.onFocusChange,
     onKeyDown: props.onKeyDown,
     onKeyUp: props.onKeyUp
-  }
+  };
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
