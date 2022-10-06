@@ -224,7 +224,10 @@ jobs:
 
       - run:
           name: build branch apis
-          command: yarn build:api-branch
+          command: |
+            yarn build:api-branch
+            pwd
+            ls -al
 
       - persist_to_workspace:
           root: dist
