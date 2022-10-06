@@ -238,9 +238,13 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: get most recent common ancestor with main
+          command: |
+            echo 'export FORKPOINT="$(git merge-base --fork-point origin/main origin/${CIRCLE_BRANCH})"' >> "$BASH_ENV"
+      - run:
           name: build fork-point apis
           command: |
-            yarn build:api-branch --githash="$(git merge-base --fork-point origin/main origin/$(git branch --show-current))" --output="base-api" && yarn build:api-branch && yarn compare:apis
+            yarn build:api-branch --githash="${FORKPOINT}" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
           root: dist
