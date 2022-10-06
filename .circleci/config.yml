@@ -232,7 +232,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/branch-api'
+            - '*/branch-api/'
 
   ts-build-published:
     executor: rsp-large
@@ -247,7 +247,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/published-api'
+            - '*/published-api/'
 
   ts-diff:
     executor: rsp-large
