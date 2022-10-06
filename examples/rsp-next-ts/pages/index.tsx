@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActionMenu,
   Item,
@@ -69,12 +69,14 @@ import {
   Keyboard,
   View,
   Well,
+  DialogContainer,
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
 
 export default function Home() {
+  let [isDialogOpen, setIsDialogOpen] = useState(false);
   return (
     <div className={styles.container}>
       <Head>
@@ -267,6 +269,21 @@ export default function Home() {
                 </Text>
               </Content>
             </ContextualHelp>
+
+            <ActionButton onPress={() => setIsDialogOpen(true)}>
+              Show Dialog
+            </ActionButton>
+            <DialogContainer onDismiss={() => setIsDialogOpen(false)}>
+              {isDialogOpen && (
+                <AlertDialog
+                  title="Delete"
+                  variant="destructive"
+                  primaryActionLabel="Delete"
+                >
+                  Are you sure you want to delete this item?
+                </AlertDialog>
+              )}
+            </DialogContainer>
 
             <DialogTrigger>
               <ActionButton>Check connectivity</ActionButton>
