@@ -42,12 +42,14 @@ export function HeaderInfo(props) {
   let {
     packageData,
     componentNames,
-    sourceData = []
+    sourceData = [],
+    since = ''
   } = props;
 
   let preRelease = packageData.version.match(/(alpha)|(beta)|(rc)/);
   let importName = packageData.name;
   let version = packageData.version;
+
   if (!preRelease) {
     let scope = importName.split('/')[0];
     if (monopackages[scope]) {
@@ -64,7 +66,7 @@ export function HeaderInfo(props) {
             <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
+            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease ? "Added" : "Since"}</th>
             <td className={typographyStyles['spectrum-Body4']}>{version}</td>
           </tr>
           {componentNames &&
