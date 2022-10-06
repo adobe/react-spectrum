@@ -354,12 +354,6 @@ export default function Home() {
               <Item key="sometimes">Sometimes</Item>
               <Item key="always">Always</Item>
             </Picker>
-{/* 
-            <SearchAutocomplete label="Search with Autocomplete">
-              <Item>Aardvark</Item>
-              <Item>Kangaroo</Item>
-              <Item>Snake</Item>
-            </SearchAutocomplete> */}
           </Section>
 
           <Section title="Sliders">
