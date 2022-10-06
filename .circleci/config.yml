@@ -242,7 +242,7 @@ jobs:
           command: |
             HASH=$(git merge-base --fork-point origin/main origin/${CIRCLE_BRANCH})
             echo $HASH
-            echo 'export FORKPOINT="$HASH"' >> "$BASH_ENV"
+            echo "export FORKPOINT=${HASH}" >> "$BASH_ENV"
       - run:
           name: build fork-point apis
           command: |
