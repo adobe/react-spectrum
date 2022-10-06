@@ -7,6 +7,7 @@ const withTM = require("next-transpile-modules")([
   "@react-spectrum/buttongroup",
   "@react-spectrum/calendar",
   "@react-spectrum/checkbox",
+  "@react-spectrum/color",
   "@react-spectrum/combobox",
   "@react-spectrum/contextualhelp",
   "@react-spectrum/datepicker",

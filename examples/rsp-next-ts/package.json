@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@adobe/react-spectrum": "^3.22.0",
+    "@react-spectrum/color": "^3.0.0-beta.16",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
     "next": "^12.3.1",

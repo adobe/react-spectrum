@@ -73,6 +73,12 @@ import {
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
+import {
+  ColorArea,
+  ColorField,
+  ColorSlider,
+  ColorWheel,
+} from "@react-spectrum/color";
 
 export default function Home() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -177,6 +183,13 @@ export default function Home() {
                 </Row>
               </TableBody>
             </TableView>
+          </Section>
+
+          <Section title="Color">
+            <ColorArea defaultValue="#7f0000" />
+            <ColorField label="Primary Color" />
+            <ColorSlider defaultValue="#7f0000" channel="red" />
+            <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
           </Section>
 
           <Section title="Date and Time">
@@ -341,6 +354,12 @@ export default function Home() {
               <Item key="sometimes">Sometimes</Item>
               <Item key="always">Always</Item>
             </Picker>
+{/* 
+            <SearchAutocomplete label="Search with Autocomplete">
+              <Item>Aardvark</Item>
+              <Item>Kangaroo</Item>
+              <Item>Snake</Item>
+            </SearchAutocomplete> */}
           </Section>
 
           <Section title="Sliders">

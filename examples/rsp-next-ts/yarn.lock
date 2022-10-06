@@ -358,6 +358,24 @@
     "@react-types/checkbox" "^3.4.0"
     "@react-types/shared" "^3.15.0"
 
+"@react-aria/color@3.0.0-beta.16":
+  version "3.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@react-aria/color/-/color-3.0.0-beta.16.tgz#b6470ba60096a5431af00e58ccecc8898b4dbcbe"
+  integrity sha512-Hp5AHufbpTQzWz6hjCb1d1oFJoJZeBgcBpnQMNRxAoDsqP+d/BsP6H8+YbDXrHWGLrKTew5WKJwKk4ZaLBGdJA==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-aria/i18n" "^3.6.1"
+    "@react-aria/interactions" "^3.12.0"
+    "@react-aria/slider" "^3.2.2"
+    "@react-aria/spinbutton" "^3.1.4"
+    "@react-aria/textfield" "^3.7.2"
+    "@react-aria/utils" "^3.14.0"
+    "@react-aria/visually-hidden" "^3.5.0"
+    "@react-stately/color" "^3.2.0"
+    "@react-types/color" "3.0.0-beta.13"
+    "@react-types/shared" "^3.15.0"
+    "@react-types/slider" "^3.3.0"
+
 "@react-aria/combobox@^3.4.2":
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/@react-aria/combobox/-/combobox-3.4.2.tgz#ad24c7a3c7425f1f668051dbe970e79b60ca0735"
@@ -957,6 +975,30 @@
     "@react-types/checkbox" "^3.4.0"
     "@react-types/shared" "^3.15.0"
     "@spectrum-icons/ui" "^3.3.3"
+
+"@react-spectrum/color@^3.0.0-beta.16":
+  version "3.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@react-spectrum/color/-/color-3.0.0-beta.16.tgz#ecc123cb459c35c5256491da8d9cc5b7d9206c3f"
+  integrity sha512-tRqNVmzjQgx4wRNQgOfb342DbxlCzsErIVALr32hYDKl+OEDLz47u23V3uDZu5ik5b7Yy2ZD+02RHeqoATPAAg==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-aria/color" "3.0.0-beta.16"
+    "@react-aria/focus" "^3.9.0"
+    "@react-aria/i18n" "^3.6.1"
+    "@react-aria/interactions" "^3.12.0"
+    "@react-aria/slider" "^3.2.2"
+    "@react-aria/utils" "^3.14.0"
+    "@react-spectrum/label" "^3.8.0"
+    "@react-spectrum/layout" "^3.4.2"
+    "@react-spectrum/textfield" "^3.8.0"
+    "@react-spectrum/utils" "^3.7.4"
+    "@react-stately/color" "^3.2.0"
+    "@react-stately/slider" "^3.2.2"
+    "@react-stately/utils" "^3.5.1"
+    "@react-types/color" "3.0.0-beta.13"
+    "@react-types/shared" "^3.15.0"
+    "@react-types/slider" "^3.3.0"
+    "@react-types/textfield" "^3.6.0"
 
 "@react-spectrum/combobox@^3.6.0":
   version "3.6.0"
@@ -1623,6 +1665,20 @@
     "@babel/runtime" "^7.6.2"
     "@react-types/shared" "^3.15.0"
 
+"@react-stately/color@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@react-stately/color/-/color-3.2.0.tgz#7fec2af02852eecac5b3c45ade954caabb99b668"
+  integrity sha512-v5jy62BnsQwV0je/rZe7ZtNuPYR3d3/+iGUVFxhGp5/EHBZPP1pKxSLVHSBNN1yyhmK2k+OpoChEqD/A50mjvg==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@internationalized/number" "^3.1.1"
+    "@internationalized/string" "^3.0.0"
+    "@react-stately/slider" "^3.2.2"
+    "@react-stately/utils" "^3.5.1"
+    "@react-types/color" "3.0.0-beta.13"
+    "@react-types/numberfield" "^3.3.4"
+    "@react-types/shared" "^3.15.0"
+
 "@react-stately/combobox@^3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@react-stately/combobox/-/combobox-3.2.2.tgz#fe331d75f6dca24fb03057b6657114f51043511f"
@@ -1897,6 +1953,14 @@
   integrity sha512-ZDqbtAYWWSGPjL4ydinaWHrD65Qft9yEGA6BCKQTxdJCgxiXxgGkA3pI7Sxwk+OulR+O0CYJ1JROExM9cSJyyQ==
   dependencies:
     "@react-types/shared" "^3.15.0"
+
+"@react-types/color@3.0.0-beta.13":
+  version "3.0.0-beta.13"
+  resolved "https://registry.yarnpkg.com/@react-types/color/-/color-3.0.0-beta.13.tgz#9e3eb80555ac231489cb257b4dd78c7c9257600f"
+  integrity sha512-TCEXZ41fkJPCjk4yGMcQf1rKEBD5Lp4Lijw8MuPsDBxmuUkDS9yaWg/fFSLOUFxuz/kf55z2khQiHrOM/sth8Q==
+  dependencies:
+    "@react-types/shared" "^3.15.0"
+    "@react-types/slider" "^3.3.0"
 
 "@react-types/combobox@^3.5.4":
   version "3.5.4"
