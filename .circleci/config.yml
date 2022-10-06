@@ -227,7 +227,7 @@ jobs:
           command: |
             yarn build:api-branch
             pwd
-            ls -al
+            ls -al dist
 
       - persist_to_workspace:
           root: dist
