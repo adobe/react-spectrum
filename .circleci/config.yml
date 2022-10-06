@@ -227,7 +227,7 @@ jobs:
           command: yarn build:api-branch
 
       - persist_to_workspace:
-          root: branch-api
+          root: dist
           paths:
             - '*/branch-api'
 
@@ -242,7 +242,7 @@ jobs:
           command: yarn build:api-published
 
       - persist_to_workspace:
-          root: published-api
+          root: dist
           paths:
             - '*/published-api'
 
@@ -259,10 +259,10 @@ jobs:
           name: compare api
           command: |
             mkdir -p ts-diff_dist
-            yarn compare:apis --isCI > ts-diff_dist/ts-diff.txt
+            yarn compare:apis --isCI > dist/ts-diff.txt
 
       - persist_to_workspace:
-          root: ts-diff_dist
+          root: dist
           paths:
             - 'ts-diff.txt'
 
