@@ -216,6 +216,21 @@ jobs:
           name: lint
           command: yarn lint
 
+  ts-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: compare api
+          command: yarn check-apis --isCI > ts-diff/ts-diff.txt
+
+      - persist_to_workspace:
+          root: ts-diff_dist
+          paths:
+            - '*/ts-diff/'
+
   storybook:
     executor: rsp-large
     steps:
@@ -349,6 +364,9 @@ jobs:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
+      - attach_workspace:
+          at: /tmp/ts-diff_dist
+
       - run:
           name: comment on pr
           command: |
@@ -396,6 +414,9 @@ workflows:
           requires:
             - install-17
       - lint:
+          requires:
+            - install
+      - ts-diff:
           requires:
             - install
       - storybook:
@@ -450,6 +471,7 @@ workflows:
             branches:
               ignore: main
           requires:
+            - ts-diff
             - deploy
       - comment:
           name: comment-verdaccio

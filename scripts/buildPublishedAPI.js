@@ -101,8 +101,9 @@ async function build() {
         // this npm view will fail if the package isn't on npm
         // otherwise we want to check if there is any version that isn't a nightly
         let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
-        if (results.versions.some(version => !version.includes('nightly'))) {
+        if (results.some(version => !version.includes('nightly'))) {
           pkg.dependencies[json.name] = 'latest';
+          console.log('added', json.name);
         }
       } catch (e) {
         // continue

@@ -4,7 +4,6 @@ let fg = require('fast-glob');
 let path = require('path');
 let changesets = require('json-diff-ts');
 let util = require('util');
-let {walkObject} = require('walk-object');
 let chalk = require('chalk');
 let yargs = require('yargs');
 let Diff = require('diff');
@@ -15,6 +14,7 @@ let argv = yargs
   .option('rawNames', {type: 'boolean'})
   .option('package', {type: 'string'})
   .option('interface', {type: 'string'})
+  .option('isCI', {type: 'boolean'})
   .argv;
 
 compare().catch(err => {
@@ -79,56 +79,18 @@ async function compare() {
     }
   }
 
-  let count = 0;
-  let diffs = {};
+  let allDiffs = {};
   for (let pair of pairs) {
-    let diff = getDiff(summaryMessages, pair);
-    // console.log(diff);
-    // if (diff.diff.length > 0) {
-    //   count += 1;
-    //   diffs[diff.name] = diff.diff;
-    // }
-  }
-  return;
-  let modulesAdded = branchAPIs.length - privatePackages.length - publishedAPIs.length;
-  if (modulesAdded !== 0) {
-    summaryMessages.push({msg: `${Math.abs(modulesAdded)} modules ${modulesAdded > 0 ? 'added' : 'removed'}`, severity: modulesAdded > 0 ? 'warn' : 'error'});
-  } else {
-    summaryMessages.push({msg: 'no modules removed or added', severity: 'info'});
-  }
-  if (count !== 0) {
-    summaryMessages.push({msg: `${count} modules had changes to their API ${Object.keys(diffs).map(key => `\n  - ${simplifyModuleName(key)}`)}`, severity: 'warn'});
-  } else {
-    summaryMessages.push({msg: 'no modules changed their API', severity: 'info'});
-  }
-  summaryMessages.push({});
-  let matches = analyzeDiffs(diffs);
-  let moreMessages = generateMessages(matches);
-  [...summaryMessages, ...moreMessages].forEach(({msg, severity}) => {
-    if (!msg) {
-      console.log('');
-      return;
+    let {diffs, name} = getDiff(summaryMessages, pair);
+    if (diffs.length > 0) {
+      allDiffs[name] = diffs;
     }
-    let color = 'default';
-    switch (severity) {
-      case 'info':
-        color = 'greenBright';
-        break;
-      case 'log':
-        color = 'blueBright';
-        break;
-      case 'warn':
-        color = 'yellowBright';
-        break;
-      case 'error':
-        color = 'redBright';
-        break;
-      default:
-        color = 'defaultBright';
-        break;
+  }
+  for (let [, diffs] of Object.entries(allDiffs)) {
+    for (let diff of diffs) {
+      console.log(diff);
     }
-    console[severity](chalk[color](msg));
-  });
+  }
 }
 
 function getDiff(summaryMessages, pair) {
@@ -136,13 +98,13 @@ function getDiff(summaryMessages, pair) {
   if (argv.package && name !== argv.package) {
     return {diff: {}, name};
   }
-  console.log(`diffing ${name}`);
+  if (argv.verbose) {
+    console.log(`diffing ${name}`);
+  }
   let publishedApi = fs.readJsonSync(pair.pubApi);
   let branchApi = fs.readJsonSync(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  //console.log(publishedInterfaces)
-  //console.log(branchInterfaces)
   // getting a diff out of the json gives us a very clear set of which interfaces have changed by name
   let diff = changesets.diff(publishedInterfaces, branchInterfaces);
   let changedInterfaces = [];
@@ -156,255 +118,49 @@ function getDiff(summaryMessages, pair) {
       return acc;
     }, []);
     formattedPublishedInterfaces = formatInterfaces(publishedInterfaces, changedInterfaces);
-    // console.log(formattedPublishedInterfaces);
     formattedBranchInterfaces = formatInterfaces(branchInterfaces, changedInterfaces);
-    // console.log(formattedBranchInterfaces);
   }
 
+  let diffs = [];
   changedInterfaces.forEach((name, index) => {
     if (argv.interface && argv.interface !== name) {
       return;
     }
     let codeDiff = Diff.structuredPatch(name, name, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
+    if (argv.verbose) {
+      console.log(util.inspect(codeDiff, {depth: null}));
+    }
     let result = '';
-    let prevEnd = 0;
+    let prevEnd = 1; // diff lines are 1 indexed
     let lines = formattedPublishedInterfaces[index].split('\n');
     codeDiff.hunks.forEach(hunk => {
-      if (hunk.oldStart - 1 > prevEnd) {
-        result = [result, ...lines.slice(prevEnd, hunk.oldStart).map((item, index) => ` ${item}`)].join('\n');
+      if (hunk.oldStart > prevEnd) {
+        result = [result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)].join('\n');
       }
-      result = [result, ...hunk.lines].join('\n');
+      if (argv.isCI) {
+        result = [result, ...hunk.lines].join('\n');
+      } else {
+        result = [result, ...hunk.lines.map(line => {
+          if (line.startsWith('+')) {
+            return chalk.whiteBright.bgGreen(line);
+          } else if (line.startsWith('-')) {
+            return chalk.whiteBright.bgRed(line);
+          }
+          return line;
+        })].join('\n');
+      }
       prevEnd = hunk.oldStart + hunk.oldLines;
     });
     result = [result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
-    //console.log(util.inspect(codeDiff, {depth: null}));
-    console.log(result);
+    diffs.push(result);
   });
 
-  if (diff.length > 0 && argv.verbose) {
-    //console.log(`diff found in ${name}`);
-    //console.log(util.inspect(codeDiff, {depth: null}));
-    // for now print the whole diff
-    //console.log(util.inspect(diff, {depth: null}));
-  }
-  return {diff, name};
-  // walkObject(publishedApi, ({value, location, isLeaf}) => {
-  //   if (!isLeaf && value.id && typeof value.id === 'string') {
-  //     value.id = value.id.replace(/.*(node_modules|packages)/, '');
-  //   }
-  // });
-  // let branchApi = fs.readJsonSync(pair.branchApi);
-  // delete branchApi.links;
-  // walkObject(branchApi, ({value, location, isLeaf}) => {
-  //   if (!isLeaf && value.id && typeof value.id === 'string') {
-  //     value.id = value.id.replace(/.*(node_modules|packages)/, '');
-  //   }
-  // });
-  // let diff = changesets.diff(publishedApi, branchApi);
-  // if (diff.length > 0 && argv.verbose) {
-  //   console.log(`diff found in ${name}`);
-  //   // for now print the whole diff
-  //   console.log(util.inspect(diff, {depth: null}));
-  // }
-  //
-  // let publishedExports = publishedApi.exports;
-  // let branchExports = branchApi.exports;
-  // let addedExports = Object.keys(branchExports).filter(key => !publishedExports[key]);
-  // let removedExports = Object.keys(publishedExports).filter(key => !branchExports[key]);
-  // if (addedExports.length > 0) {
-  //   summaryMessages.push({msg: `added exports ${addedExports} to ${pair.branchApi}`, severity: 'warn'});
-  // }
-  // if (removedExports.length > 0) {
-  //   summaryMessages.push({msg: `removed exports ${removedExports} from ${pair.branchApi}`, severity: 'error'});
-  // }
-  // return {diff, name};
-}
-
-function analyzeDiffs(diffs) {
-  let matches = new Map();
-  let used = new Map();
-  for (let [key, value] of Object.entries(diffs)) {
-    walkChanges(value, {
-      UPDATE: (change, path) => {
-        if (used.has(change) || !(change.key === 'type' && (change.value === 'link' || change.oldValue === 'link'))) {
-          return;
-        }
-        matches.set(change, [`${key}:${path}`]);
-        used.set(change, true);
-        for (let [name, diff] of Object.entries(diffs)) {
-          walkChanges(diff, {
-            UPDATE: (addChange, addPath) => {
-              let subDiff = changesets.diff(addChange, change);
-              if (subDiff.length === 0) {
-                // guaranteed to have the match because we added it before doing this walk
-                let match = matches.get(change);
-                if (name !== key && !used.has(addChange)) {
-                  match.push(`${name}:${addPath}`);
-                  used.set(addChange, true);
-                }
-              }
-            }
-          });
-        }
-      },
-      ADD: (change, path) => {
-        if (used.has(change)) {
-          return;
-        }
-        matches.set(change, [`${key}:${path}`]);
-        used.set(change, true);
-        for (let [name, diff] of Object.entries(diffs)) {
-          walkChanges(diff, {
-            ADD: (addChange, addPath) => {
-              let subDiff = changesets.diff(addChange, change);
-              if (subDiff.length === 0) {
-                // guaranteed to have the match because we added it before doing this walk
-                let match = matches.get(change);
-                if (name !== key && !used.has(addChange)) {
-                  match.push(`${name}:${addPath}`);
-                  used.set(addChange, true);
-                }
-              }
-            }
-          });
-        }
-      },
-      REMOVE: (change, path) => {
-        if (used.has(change)) {
-          return;
-        }
-        matches.set(change, [`${key}:${path}`]);
-        used.set(change, true);
-        for (let [name, diff] of Object.entries(diffs)) {
-          walkChanges(diff, {
-            REMOVE: (addChange, addPath) => {
-              let subDiff = changesets.diff(addChange, change);
-              if (subDiff.length === 0) {
-                // guaranteed to have the match because we added it before doing this walk
-                let match = matches.get(change);
-                if (name !== key && !used.has(addChange)) {
-                  match.push(`${name}:${addPath}`);
-                  used.set(addChange, true);
-                }
-              }
-            }
-          });
-        }
-      }
-    });
-  }
-  return matches;
-}
-
-// Recursively walks a json object and calls a processing function on each node based on its type ["ADD", "REMOVE", "UPDATE"]
-// tracks the path it's taken through the json object and passes that to the processing function
-function walkChanges(changes, process, path = '') {
-  for (let change of changes) {
-    if (process[change.type]) {
-      process[change.type](change, path);
-    }
-    if (change.changes && change.changes.length >= 0) {
-      walkChanges(change.changes, process, `${path}${path.length > 0 ? `.${change.key}` : change.key}`);
-    }
-  }
-}
-
-function generateMessages(matches) {
-  let summaryMessages = [];
-
-  if (argv.organizedBy === 'change') {
-    for (let [key, value] of matches) {
-      /** matches
-       * {"identifier UPDATED to link": ["/@react-aria/i18n:exports.useDateFormatter.return", "/@react-aria/textfield:exports.useTextField.parameters.1.value.base"]}
-       */
-      let targets = value.map(loc => simplifyModuleName(loc)).map(loc => {
-        if (!argv.rawNames) {
-          return `\n  - ${loc.split(':')[0]}:${getRealName(loc, loc.split(':')[1])}`;
-        } else {
-          return `\n  - ${loc}`;
-        }
-      });
-      let severity = 'log';
-      let message = `${key.key} ${key.type} to:${targets}`;
-      if (key.type === 'REMOVE') {
-        message = `${key.key} ${key.type} from:${targets}`;
-        severity = 'warn';
-      }
-      if (key.type === 'UPDATE') {
-        message = `${key.oldValue} UPDATED to ${key.value}:${targets}`;
-      }
-      summaryMessages.push({msg: message, severity});
-    }
-  } else {
-    let invertedMap = new Map();
-    /** invertedMap
-     * {"/@react-aria/i18n:exports.useDateFormatter.return": ["identifier UPDATED to link"],
-     *  "exports.useTextField.parameters.1.value.base": ["identifier UPDATED to link"]}
-     */
-    for (let [key, value] of matches) {
-      for (let loc of value.map(simplifyModuleName)) {
-        let entry = invertedMap.get(loc);
-        if (entry) {
-          entry.push(key);
-        } else {
-          invertedMap.set(loc, [key]);
-        }
-      }
-    }
-
-    for (let [key, value] of invertedMap) {
-      let realName = getRealName(key);
-      let targets = value.map(change => {
-        let message = '';
-        switch (change.type) {
-          case 'REMOVE':
-            message = chalk.redBright(`${change.key} ${change.type}D`);
-            break;
-          case 'UPDATE':
-            message = `${change.oldValue} UPDATED to ${change.value}`;
-            break;
-          default:
-            message = `${change.key} ${change.type}ED`;
-            break;
-        }
-        return `\n  - ${message}`;
-      });
-      let severity = 'log';
-      if (!argv.rawNames) {
-        summaryMessages.push({msg: `${key.split(':')[0]}:${realName}${targets}`, severity});
-      } else {
-        summaryMessages.push({msg: `${key}${targets}`, severity});
-      }
-    }
-  }
-  return summaryMessages;
-}
-
-/**
- * Looks up the path through the json object and tries to replace hard to read values with easier to read ones
- * @param diffName - /@react-aria/textfield:exports.useTextField.parameters.1.value.base
- * @param type - ["ADD", "REMOVE", "UPDATE"]
- * @returns {string} - /@react-aria/textfield:exports.useTextField.parameters.ref.value.base
- */
-function getRealName(diffName, type = 'ADD') {
-  let [file, jsonPath] = diffName.split(':');
-  let filePath = path.join(__dirname, '..', 'dist', type === 'REMOVE' ? 'published-api' : 'branch-api', file, 'dist', 'api.json');
-  let json = JSON.parse(fs.readFileSync(filePath), 'utf8');
-  let name = [];
-  for (let property of jsonPath.split('.')) {
-    json = json[property];
-    name.push(json.name ?? property);
-  }
-  return name.join('.');
-}
-
-function simplifyModuleName(apiJsonPath) {
-  return apiJsonPath.replace(/\/dist\/.*\.json/, '');
+  return {diffs, name};
 }
 
 function processType(value) {
   if (!value) {
-    console.log(value);
+    console.trace('UNTYPED', value);
     return 'UNTYPED';
   }
   if (Object.keys(value).length === 0) {
@@ -464,8 +220,14 @@ function processType(value) {
   if (value.type === 'identifier') {
     return value.name;
   }
+  if (value.type === 'this') {
+    return 'this';
+  }
+  if (value.type === 'typeOperator') {
+    return `${value.operator} ${processType(value.value)}`;
+  }
   if (value.type === 'function') {
-    return `(${value.parameters.map(processType).join(', ')}) => ${processType(value.return)}`;
+    return `(${value.parameters.map(processType).join(', ')}) => ${value.return ? processType(value.return) : 'void'}`;
   }
   if (value.type === 'link') {
     return value.id.substr(value.id.lastIndexOf(':') + 1);
@@ -497,7 +259,7 @@ function rebuildInterfaces(json) {
   let exports = {};
   Object.keys(json.exports).forEach((key) => {
     if (key === 'links') {
-      console.log('skipping links')
+      console.log('skipping links');
       return;
     }
     let item = json.exports[key];
@@ -511,7 +273,7 @@ function rebuildInterfaces(json) {
     }
     if (item.type === 'component') {
       let compInterface = {};
-      if (item.props) {
+      if (item.props && item.props.properties) {
         Object.entries(item.props.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, prop]) => {
           if (prop.access === 'private') {
             return;
@@ -523,9 +285,18 @@ function rebuildInterfaces(json) {
           let optional = prop.optional;
           let defaultVal = prop.default;
           let value = processType(prop.value);
-          // TODO: what to do with defaultVal and optional
           compInterface[name] = {optional, defaultVal, value};
         });
+      } else if (item.props && item.props.type === 'link') {
+        let prop = item.props;
+        let name = item.name;
+        if (item.name === null) {
+          name = key;
+        }
+        let optional = prop.optional;
+        let defaultVal = prop.default;
+        let value = processType(prop);
+        compInterface[name] = {optional, defaultVal, value};
       }
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
@@ -542,7 +313,6 @@ function rebuildInterfaces(json) {
         let optional = param.optional;
         let defaultVal = param.default;
         let value = processType(param.value);
-        // TODO: what to do with defaultVal and optional
         funcInterface[name] = {optional, defaultVal, value};
       });
       let returnVal = processType(item.return);
@@ -601,21 +371,5 @@ function formatInterfaces(interfaces, changedInterfaces) {
     } else {
       return '';
     }
-  });
-}
-
-
-function run(cmd, args, opts) {
-  return new Promise((resolve, reject) => {
-    let child = spawn(cmd, args, opts);
-    child.on('error', reject);
-    child.on('close', code => {
-      if (code !== 0) {
-        reject(new Error('Child process failed'));
-        return;
-      }
-
-      resolve();
-    });
   });
 }

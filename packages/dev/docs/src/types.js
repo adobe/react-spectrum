@@ -62,6 +62,8 @@ export function Type({type}) {
     case 'unknown':
     case 'never':
       return <Keyword {...type} />;
+    case 'this':
+      return <Keyword {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -88,6 +90,8 @@ export function Type({type}) {
       return <IntersectionType {...type} />;
     case 'application':
       return <TypeApplication {...type} />;
+    case 'typeOperator':
+      return <TypeOperator {...type} />;
     case 'function':
       return <FunctionType {...type} />;
     case 'parameter':
@@ -132,6 +136,10 @@ export function Type({type}) {
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function TypeOperator({operator, value}) {
+  return <span><span className="token hljs-literal">{operator}</span>{' '}<Type type={value} /></span>;
 }
 
 function IndexedAccess({objectType, indexType}) {

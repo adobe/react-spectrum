@@ -333,13 +333,28 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTypeOperator()) {
+        return Object.assign(node, {
+          type: 'typeOperator',
+          operator: path.node.operator,
+          value: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSThisType()) {
+        return Object.assign(node, {
+          type: 'this'
+        });
+      }
+
       if (path.isTSPropertySignature()) {
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
+        let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
           type: 'property',
           name,
-          value: processExport(path.get('typeAnnotation.typeAnnotation')),
+          value,
           optional: path.node.optional || false
         }, docs));
       }
@@ -513,7 +528,8 @@ module.exports = new Transformer({
       }
 
       if (path.isTSModuleDeclaration()) {
-        console.log(path);
+        // TODO: fix
+        // console.log('TS MODULE DECLARATION', path);
         return node;
       }
 
