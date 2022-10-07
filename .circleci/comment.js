@@ -47,8 +47,10 @@ async function run() {
           repo: 'react-spectrum',
           commit_sha: process.env.CIRCLE_SHA1,
           body: `Verdaccio builds:
-      [Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
-      [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
+      [CRA Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
+      [NextJS Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next/index.html)
+      [CRA Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
+      [NextJS App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/next-build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
       [Size diff since last release](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/size-diff.txt)
       [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)`
