@@ -152,6 +152,29 @@ Slider automatically uses the current locale to format the value label.
 <Slider label="Filter density" trackGradient={['white', 'rgba(177,141,32,1)']} defaultValue={.3} maxValue={1} step={0.01} formatOptions={{style: 'percent'}} isFilled  />
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a Slider.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<Slider
+  label="Exposure"
+  minValue={-100}
+  maxValue={100}
+  defaultValue={0}
+  formatOptions={{signDisplay: 'always'}}
+  isFilled
+  fillOffset={0}
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is exposure?</Heading>
+      <Content>Exposure adjusts how bright the image is.</Content>
+    </ContextualHelp>
+  } />
+```
+
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)
 

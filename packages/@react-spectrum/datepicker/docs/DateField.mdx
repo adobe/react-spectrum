@@ -295,6 +295,23 @@ Both a description and an error message can be supplied to a DateField. The desc
 <DateField label="Birth date" showFormatHelpText />
 ```
 
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a DateField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<DateField
+  label="Appointment date"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Appointment changes</Heading>
+      <Content>Your appointment date cannot be changed once it is scheduled.</Content>
+    </ContextualHelp>
+  } />
+```
+
 ### Placeholder value
 
 When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.

@@ -48,6 +48,8 @@ module.exports = new Transformer({
             return [];
           }
 
+          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
+
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
@@ -87,7 +89,7 @@ module.exports = new Transformer({
 
             if (options.includes('render=false')) {
               node.meta = null;
-              return transformExample(node, preRelease);
+              return transformExample(node, preRelease, keepIndividualImports);
             }
 
             if (meta === 'snippet') {
@@ -110,7 +112,7 @@ module.exports = new Transformer({
             node.meta = 'example';
 
             return [
-              ...transformExample(node, preRelease),
+              ...transformExample(node, preRelease, keepIndividualImports),
               {
                 type: 'mdxJsxFlowElement',
                 name: 'div',
@@ -169,7 +171,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return transformExample(node, preRelease);
+          return transformExample(node, preRelease, keepIndividualImports);
         }
 
         return [node];
@@ -497,7 +499,7 @@ export default {};
   }
 });
 
-function transformExample(node, preRelease) {
+function transformExample(node, preRelease, keepIndividualImports) {
   if (node.lang !== 'tsx') {
     return responsiveCode(node);
   }
@@ -530,7 +532,7 @@ function transformExample(node, preRelease) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
           if (!specifiers[lib]) {
             specifiers[lib] = [];
