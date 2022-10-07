@@ -69,6 +69,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
       ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
+      'aria-current': props['aria-current'],
       onClick: (e) => {
         pressProps.onClick(e);
         if (deprecatedOnClick) {

@@ -1,3 +1,4 @@
+export {Breadcrumbs} from './Breadcrumbs';
 export {Button} from './Button';
 export {Calendar, RangeCalendar, CalendarGrid, CalendarCell} from './Calendar';
 export {Checkbox, CheckboxGroup} from './Checkbox';
@@ -12,6 +13,7 @@ export {Input} from './Input';
 export {Item, Section} from './Collection';
 export {Keyboard} from './Keyboard';
 export {Label} from './Label';
+export {Link} from './Link';
 export {ListBox} from './ListBox';
 export {Menu, MenuTrigger} from './Menu';
 export {NumberField} from './NumberField';
@@ -47,3 +49,4 @@ export type {PopoverRenderProps} from './Popover';
 export type {OverlayArrowRenderProps} from './OverlayArrow';
 export type {ModalRenderProps} from './Modal';
 export type {TabsRenderProps, TabListRenderProps, TabRenderProps, TabPanelRenderProps} from './Tabs';
+export type {LinkRenderProps} from './Link';
