@@ -2,7 +2,7 @@ import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'reac
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {RenderProps, useContextProps, useRenderProps} from './utils';
 
-interface LinkProps extends AriaLinkOptions, RenderProps<LinkRenderProps> {}
+interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps> {}
 
 export interface LinkRenderProps {
   /**
