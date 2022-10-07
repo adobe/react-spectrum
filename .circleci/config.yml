@@ -240,7 +240,8 @@ jobs:
       - run:
           name: get most recent common ancestor with main
           command: |
-            echo $(git branch --show-current)
+            BRANCH=$(git branch --show-current)
+            echo "${BRANCH}"
       - run:
           name: build fork-point apis
           command: |
