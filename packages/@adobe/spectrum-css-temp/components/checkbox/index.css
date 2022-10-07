@@ -20,6 +20,22 @@ governing permissions and limitations under the License.
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-checkbox-label-line-height: 1.49;
+
+  --spectrum-checkbox-box-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-checkbox-box-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-checkbox-box-border-color-key-focus: var(--spectrum-alias-toggle-border-key-focus);
+  --spectrum-checkbox-quiet-box-border-color-selected: var(--spectrum-alias-toggle-color-default);
+  --spectrum-checkbox-quiet-box-border-color-selected-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-checkbox-quiet-box-border-color-selected-key-focus: var(--spectrum-alias-toggle-border-key-focus);
+
+  --spectrum-checkbox-emphasized-box-background-color-selected: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-checkbox-emphasized-box-background-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-checkbox-emphasized-box-background-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-checkbox-emphasized-box-background-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
+  --spectrum-checkbox-emphasized-box-border-color-selected: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-checkbox-emphasized-box-border-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-checkbox-emphasized-box-border-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
 }
 
 .spectrum-Checkbox {

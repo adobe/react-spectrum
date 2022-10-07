@@ -26,6 +26,18 @@ governing permissions and limitations under the License.
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-radio-label-line-height: 1.49;
+
+  --spectrum-radio-emphasized-circle-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-radio-emphasized-circle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-radio-emphasized-circle-border-color-key-focus: var(--spectrum-alias-toggle-border-key-focus);
+  --spectrum-radio-quiet-circle-border-color-selected: var(--spectrum-alias-toggle-color-default);
+  --spectrum-radio-quiet-circle-border-color-selected-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(--spectrum-alias-toggle-border-key-focus);
+
+  --spectrum-radio-emphasized-circle-border-color-selected: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-radio-emphasized-circle-border-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-radio-emphasized-circle-border-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
 }
 
 .spectrum-Radio {

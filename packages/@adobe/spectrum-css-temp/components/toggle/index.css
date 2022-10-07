@@ -20,6 +20,22 @@ governing permissions and limitations under the License.
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-switch-label-line-height: 1.49;
+
+  --spectrum-switch-emphasized-handle-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-switch-emphasized-handle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-switch-emphasized-handle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+  --spectrum-switch-quiet-track-color-selected: var(--spectrum-alias-toggle-color-default);
+  --spectrum-switch-quiet-track-color-selected-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-switch-quiet-track-color-selected-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+
+  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
+  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
 }
 
 .spectrum-ToggleSwitch {
@@ -60,10 +76,10 @@ governing permissions and limitations under the License.
 
   &:checked + .spectrum-ToggleSwitch-switch {
     [dir='ltr'] &::before {
-      transform: translateX(var(--spectrum-switch-handle-transform-x-ltr));
+      transform: translateX(calc(var(--spectrum-switch-track-width) - 100%));
     }
     [dir='rtl'] &::before {
-      transform: translateX(var(--spectrum-switch-handle-transform-x-rtl));
+      transform: translateX(calc(100% - var(--spectrum-switch-track-width)));
     }
   }
 
@@ -137,7 +153,7 @@ governing permissions and limitations under the License.
     inset-inline-start: 0;
 
     border-width: var(--spectrum-switch-handle-border-size);
-    border-radius: var(--spectrum-switch-handle-border-radius);
+    border-radius: calc(var(--spectrum-switch-handle-size) / 2);
     border-style: solid;
   }
 

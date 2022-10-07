@@ -5,6 +5,7 @@ import themeDark from '@adobe/spectrum-css-temp/vars/spectrum-dark.css';
 import themeDarkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
+import express from '@adobe/spectrum-css-temp/vars/express.css';
 
 const THEME = {
   global: themeGlobal,
@@ -20,7 +21,7 @@ export const scales = {
 };
 
 export let defaultTheme = {
-  global: themeGlobal,
+  global: THEME.global,
   light: THEME.light,
   dark: THEME.darkest,
   medium: scales.medium,
@@ -28,7 +29,7 @@ export let defaultTheme = {
 };
 
 export let altTheme = {
-  global: themeGlobal,
+  global: THEME.global,
   light: THEME.lightest,
   dark: THEME.dark,
   medium: scales.medium,
@@ -41,6 +42,27 @@ export let themes = {
   lightest: altTheme,
   darkest: defaultTheme
 };
+
+export let expressThemes = {};
+for (let key in themes) {
+  expressThemes[key] = {
+    ...themes[key],
+    global: {
+      ...themes[key].global,
+      express: express.express
+    },
+    medium: {
+      ...themes[key].medium,
+      express: express.medium
+    },
+    large: {
+      ...themes[key].large,
+      express: express.large
+    }
+  };
+}
+
+console.log(expressThemes)
 
 // Based on https://adobe.sharepoint.com/sites/global/SitePages/Languages%20Supported.aspx
 export let locales = [

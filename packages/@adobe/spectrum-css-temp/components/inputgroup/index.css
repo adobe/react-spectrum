@@ -34,20 +34,69 @@ governing permissions and limitations under the License.
   flex-wrap: nowrap;
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
+  background: var(--spectrum-textfield-background-color);
+
+  /* :after is used for the focus halo (express) */
+  &:after {
+    border-radius: calc(calc(var(--spectrum-textfield-border-radius) / 2) + var(--spectrum-alias-input-focusring-gap) * 2);
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: 0;
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
+    pointer-events: none;
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
+
+  &:focus-ring {
+    &:after {
+      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1);
+    }
+  }
 
   .spectrum-FieldButton {
-    padding: 0;
+    padding: var(--spectrum-combobox-fieldbutton-inset);
+    border-radius: calc(var(--spectrum-alias-border-radius-regular) + var(--spectrum-alias-input-border-size));
+    background-clip: content-box;
     inline-size: var(--spectrum-combobox-button-width);
-    border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
-    border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
-    border-width: 1px;
     flex-shrink: 0;
+    position: relative;
+    border-width: 0;
+    --spectrum-alias-input-focusring-gap: calc(-1 * var(--spectrum-alias-input-border-size));
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
+      border: var(--spectrum-alias-input-border-size) solid;
+      border-inline-start-width: var(--spectrum-combobox-fieldbutton-border-left-width);
+      transition: inherit;
+      z-index: -1;
+    }
+
+    &:after {
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-focus-ring-border-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-focus-ring-border-radius);
+    }
   }
 
   /* Quiet or invalid inputgroup field button should always have a border width. */
   &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) {
     .spectrum-FieldButton {
       border-width: 0;
+      padding: 0;
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
     }
   }
 
@@ -77,6 +126,17 @@ governing permissions and limitations under the License.
 .spectrum-InputGroup--quiet {
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));
+  background: transparent;
+
+  &:after {
+    border-radius: 0;
+  }
+
+  &:focus-ring {
+    &:after {
+      margin: 0 0 calc(var(--spectrum-alias-input-focusring-gap) * -1) 0;
+    }
+  }
 
   .spectrum-FieldButton {
     inline-size: auto;
@@ -84,9 +144,13 @@ governing permissions and limitations under the License.
 
     padding-inline-start: var(--spectrum-combobox-quiet-fieldbutton-padding-left);
     padding-inline-end: var(--spectrum-combobox-quiet-fieldbutton-padding-right);
-    border-width: 0;
-    border-bottom: var(--spectrum-textfield-quiet-affixed-border-size) solid;
-    border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+
+    &:before {
+      border-width: 0;
+      border-inline-start-width: 0;
+      border-bottom: var(--spectrum-alias-input-border-size) solid;
+      border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+    }
 
     /* More hitarea */
     &:after {

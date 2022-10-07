@@ -147,8 +147,16 @@ governing permissions and limitations under the License.
     content: '';
     display: block;
     block-size: 100%;
+  }
 
-    border-radius: var(--spectrum-slider-track-border-radius);
+  &:first-of-type::before {
+    border-start-start-radius: var(--spectrum-slider-track-border-radius);;
+    border-end-start-radius: var(--spectrum-slider-track-border-radius);
+  }
+
+  &:last-of-type::before {
+    border-start-end-radius: var(--spectrum-slider-track-border-radius);
+    border-end-end-radius: var(--spectrum-slider-track-border-radius);
   }
 }
 
@@ -156,6 +164,7 @@ governing permissions and limitations under the License.
   margin-inline-start: 0;
   padding-block: 0;
   padding-inline: calc(var(--spectrum-slider-controls-margin) + var(--spectrum-slider-track-handleoffset)) 0;
+  z-index: 2;
 }
 
 .spectrum-Slider-fill--right {
@@ -205,8 +214,6 @@ governing permissions and limitations under the License.
       padding-inline: var(--spectrum-slider-track-middle-handleoffset) var(--spectrum-slider-track-middle-handleoffset);
       inset-inline-start: auto;
       inset-inline-end: auto;
-      margin-inline: var(--spectrum-slider-range-track-reset);
-      margin-block: var(--spectrum-slider-range-track-reset);
     }
     &:last-of-type {
       padding-block: 0;

@@ -21,6 +21,9 @@ type SwitchStory = ComponentStoryObj<typeof Switch>;
 export default {
   title: 'Switch',
   component: Switch,
+  args: {
+    isEmphasized: false,
+  },
   argTypes: {
     onChange: {
       action: 'change'

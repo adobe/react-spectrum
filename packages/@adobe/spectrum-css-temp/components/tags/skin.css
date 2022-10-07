@@ -25,7 +25,10 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-key-focus);
     color: var(--spectrum-tag-text-color-key-focus);
     border-color: var(--spectrum-tag-border-color-key-focus);
-    box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
+
+    &:after {
+      box-shadow: 0 0 0 var(--spectrum-alias-input-focusring-size) var(--spectrum-alias-focus-ring-color);
+    }
   }
 
   &.is-selected {
@@ -69,7 +72,6 @@ governing permissions and limitations under the License.
     &.focus-ring {
       color: var(--spectrum-tag-icon-color-error-hover);
       border-color: var(--spectrum-tag-border-color-key-focus);
-      box-shadow: 0 0 0 1px var(--spectrum-tag-border-color-key-focus);
     }
 
     .spectrum-Tags-itemIcon,
@@ -182,7 +184,7 @@ governing permissions and limitations under the License.
     --spectrum-tag-removable-button-background-color-hover: ButtonFace;
     --spectrum-tag-removable-button-background-color-key-focus: ButtonFace;
     --spectrum-tag-removable-button-background-color-selected-hover: Highlight;
-    --spectrum-tag-removable-button-icon-color-hover: Highlight;  
+    --spectrum-tag-removable-button-icon-color-hover: Highlight;
     --spectrum-tag-removable-button-icon-color-key-focus: Highlight;
     --spectrum-tag-removable-button-icon-color-selected: HighlightText;
     --spectrum-tag-removable-button-icon-color-selected-hover: HighlightText;

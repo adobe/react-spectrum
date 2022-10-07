@@ -104,6 +104,7 @@
   --spectrum-global-color-static-indigo-500: rgb(109, 115, 246);
   --spectrum-global-color-static-indigo-600: rgb(87, 93, 232);
   --spectrum-global-color-static-indigo-700: rgb(68, 74, 208);
+  --spectrum-global-color-static-indigo-800: rgb(53, 58, 176);
   --spectrum-global-color-static-seafoam-200: rgb(75, 206, 199);
   --spectrum-global-color-static-seafoam-300: rgb(32, 187, 180);
   --spectrum-global-color-static-seafoam-400: rgb(0, 166, 160);
@@ -355,6 +356,7 @@
   --spectrum-alias-border-size-thick: var(--spectrum-global-dimension-static-size-25);
   --spectrum-alias-border-size-thicker: var(--spectrum-global-dimension-static-size-50);
   --spectrum-alias-border-size-thickest: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-alias-input-border-size: var(--spectrum-global-dimension-static-size-10);
   --spectrum-alias-border-offset-thin: var(--spectrum-global-dimension-static-size-25);
   --spectrum-alias-border-offset-thick: var(--spectrum-global-dimension-static-size-50);
   --spectrum-alias-border-offset-thicker: var(--spectrum-global-dimension-static-size-100);
@@ -447,10 +449,11 @@
   --spectrum-alias-heading-margin-bottom: var(--spectrum-global-font-multiplier-25);
   --spectrum-alias-body-margin-bottom: var(--spectrum-global-font-multiplier-75);
   --spectrum-alias-focus-ring-gap: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-input-focusring-gap: var(--spectrum-global-dimension-static-size-0);
   --spectrum-alias-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-input-focusring-size: var(--spectrum-global-dimension-static-size-10);
   --spectrum-alias-loupe-entry-animation-duration: var(--spectrum-global-animation-duration-300);
   --spectrum-alias-loupe-exit-animation-duration: var(--spectrum-global-animation-duration-300);
-
 }
 
 .spectrum--medium,
@@ -610,4 +613,43 @@
   --spectrum-alias-categorical-color-14: var(--spectrum-global-color-static-fuchsia-500);
   --spectrum-alias-categorical-color-15: var(--spectrum-global-color-static-magenta-200);
   --spectrum-alias-categorical-color-16: var(--spectrum-global-color-static-yellow-200);
+
+  --spectrum-alias-emphasized-selection-color: var(--spectrum-global-color-blue-500);
+  --spectrum-alias-emphasized-selection-color-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-alias-emphasized-selection-color-key-focus: var(--spectrum-global-color-blue-600);
+  --spectrum-alias-emphasized-selection-color-down: var(--spectrum-global-color-blue-700);
+  --spectrum-alias-toggle-color-default: var(--spectrum-global-color-gray-700);
+  --spectrum-alias-toggle-color-hover: var(--spectrum-global-color-gray-800);
+  --spectrum-alias-toggle-color-key-focus: var(--spectrum-global-color-gray-800);
+
+  --spectrum-actionbutton-static-black-border-color: rgba(0, 0, 0, 0.4);
+  --spectrum-actionbutton-static-black-border-color-hover: rgba(0, 0, 0, 0.55);
+  --spectrum-actionbutton-static-black-border-color-key-focus: rgba(0, 0, 0, 0.55);
+  --spectrum-actionbutton-static-black-border-color-down: rgba(0, 0, 0, 0.7);
+  --spectrum-actionbutton-static-black-border-color-disabled: rgba(0, 0, 0, 0.25);
+  --spectrum-actionbutton-static-black-background-color: transparent;
+
+  --spectrum-actionbutton-static-white-border-color: rgba(255, 255, 255, 0.4);
+  --spectrum-actionbutton-static-white-border-color-hover: rgba(255, 255, 255, 0.55);
+  --spectrum-actionbutton-static-white-border-color-key-focus: rgba(255, 255, 255, 0.55);
+  --spectrum-actionbutton-static-white-border-color-down: rgba(255, 255, 255, 0.7);
+  --spectrum-actionbutton-static-white-border-color-disabled: rgba(255, 255, 255, 0.25);
+  --spectrum-actionbutton-static-white-background-color: transparent;
+
+  --spectrum-combobox-fieldbutton-inset: 0;
+  --spectrum-combobox-fieldbutton-border-left-width: var(--spectrum-alias-input-border-size);
+  --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+
+  /* Overridden to pass contrast */
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-alias-emphasized-selection-color);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-alias-emphasized-selection-color-hover);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
+
+  --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
+
+  --spectrum-datepicker-segment-background-color-focus: var(--spectrum-global-color-static-blue-600);
 }
