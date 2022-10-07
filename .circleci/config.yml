@@ -240,10 +240,7 @@ jobs:
       - run:
           name: get most recent common ancestor with main
           command: |
-            BRANCH=$(git branch --show-current)
-            HASH=$(git merge-base --fork-point origin/main origin/${BRANCH})
-            echo "${HASH}"
-            echo "export FORKPOINT=${HASH}" >> "$BASH_ENV"
+            echo $(git branch --show-current)
       - run:
           name: build fork-point apis
           command: |
