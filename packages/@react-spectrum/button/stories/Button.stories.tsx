@@ -74,6 +74,11 @@ storiesOf('Button', module)
     {description: {data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'}}
   )
   .add(
+    'button with associated external label',
+    () => <ButtonWithLabel />,
+    {description: {data: 'Pressing the label should trigger the buttons event handler as well'}}
+  )
+  .add(
     'styles to check WHCM support',
     () => renderStyles()
   );
@@ -197,6 +202,20 @@ function Example() {
         UNSAFE_style={show2 ? undefined : {background: 'red'}}
         onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
         Press and hold (no overwrite)
+      </Button>
+    </Flex>
+  );
+}
+
+function ButtonWithLabel() {
+  return (
+    <Flex gap="size-200">
+      <label htmlFor="ctaLabel">CTA Label</label>
+      <Button
+        id="ctaLabel"
+        variant="cta"
+        onPress={action('press')}>
+        CTA
       </Button>
     </Flex>
   );
