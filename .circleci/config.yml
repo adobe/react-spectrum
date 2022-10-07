@@ -245,7 +245,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - 'published-api/'
+            - 'base-api/'
 
   ts-diff:
     executor: rsp-large
