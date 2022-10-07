@@ -241,7 +241,7 @@ jobs:
           name: get most recent common ancestor with main
           command: |
             BRANCH=$(git branch --show-current)
-            git merge-base --fork-point origin/main origin/"${BRANCH}"
+            echo git merge-base --fork-point origin/main origin/"${BRANCH}"
       - run:
           name: build fork-point apis
           command: |
