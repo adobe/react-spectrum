@@ -327,7 +327,7 @@ module.exports = new Transformer({
                 highlightParent = parent;
                 highlightedNodes = [];
                 return [];
-              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children[0].value)) {
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
                 highlightParent = null;
                 let res = [{
                   type: 'element',
@@ -341,28 +341,28 @@ module.exports = new Transformer({
                 }
 
                 // Remove extra newline after starting comment, but keep indentation.
-                if (highlightedNodes[0].type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
                   let node = highlightedNodes[0];
                   node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
                 }
 
                 // Remove opening brace from JSX-style ending comments.
                 let last = highlightedNodes[highlightedNodes.length - 1];
-                if (last.children?.[0]?.value === '{') {
+                if (last?.children?.[0]?.value === '{') {
                   highlightedNodes.pop();
                 }
 
                 // Remove extra newline before ending comment.
                 last = highlightedNodes[highlightedNodes.length - 1];
-                if (last.type === 'text' && /^\s+$/.test(last.value)) {
+                if (last?.type === 'text' && /^\s+$/.test(last?.value)) {
                   highlightedNodes.pop();
                 }
 
                 // Remove closing brace from JSX-style ending comments.
-                let next = parent.children[index + 1];
+                let next = parent.children?.[index + 1];
                 if (next?.children?.[0]?.value === '}') {
                   parent.children[index + 1] = {type: 'text', value: ''};
-                  next = parent.children[index + 2];
+                  next = parent.children?.[index + 2];
                 }
 
                 // Remove extra newline after ending comment.
