@@ -70,7 +70,7 @@ export function HeaderInfo(props) {
             <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease || !since ? "version" : "added"}</th>
+            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease || !since ? 'version' : 'added'}</th>
             <td className={typographyStyles['spectrum-Body4']}>{version}</td>
           </tr>
           {componentNames &&
