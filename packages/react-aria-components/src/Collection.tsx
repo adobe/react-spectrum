@@ -31,9 +31,11 @@ class BaseNode<T> {
 
     if (this.lastChild) {
       this.lastChild.nextSibling = child;
+      child.index = this.lastChild.index + 1;
       child.previousSibling = this.lastChild;
     } else {
       child.previousSibling = null;
+      child.index = 0;
     }
 
     child.parentNode = this;
@@ -47,6 +49,13 @@ class BaseNode<T> {
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
+    newNode.index = referenceNode.index;
+
+    let node = referenceNode;
+    while (node) {
+      node.index++;
+      node = node.nextSibling;
+    }
 
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
@@ -78,7 +87,16 @@ class BaseNode<T> {
       this.lastChild = child.previousSibling;
     }
 
+    let node = child.nextSibling;
+    while (node) {
+      node.index--;
+      node = node.nextSibling;
+    }
+
     child.parentNode = null;
+    child.nextSibling = null;
+    child.previousSibling = null;
+    child.index = null;
 
     this.ownerDocument.removeNode(child);
     this.ownerDocument.update();
@@ -104,6 +122,7 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
   textValue: string;
   props: any;
   level: number;
+  index: number;
 
   constructor(type, ownerDocument) {
     super(ownerDocument);
@@ -134,8 +153,15 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
     return this.previousSibling?.key;
   }
 
+  get parentKey() {
+    if (this.parentNode instanceof ElementNode) {
+      return this.parentNode.key;
+    }
+
+    return null;
+  }
+
   set multiple(value) {
-    // this.props = {...this.props, ...value};
     this.props = value;
     this.rendered = value.rendered;
     this.value = value.value;
@@ -180,9 +206,6 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
 
     return new ElementNode(type, this);
   }
-
-  addEventListener() {}
-  removeEventListener() {}
 
   addNode(node: ElementNode<T>) {
     if (!this.keyMap.has(node.key)) {
@@ -318,11 +341,6 @@ interface CollectionResult<T> {
 export function useCollection<T extends object>(props: CollectionProps<T>): CollectionResult<T> {
   let isMounted = useRef(false);
   let [, queueUpdate] = useReducer(c => c + 1, 0);
-  let update = () => {
-    if (isMounted.current) {
-      queueUpdate();
-    }
-  };
 
   useLayoutEffect(() => {
     if (isMounted.current) {
@@ -333,7 +351,11 @@ export function useCollection<T extends object>(props: CollectionProps<T>): Coll
   }, []);
 
   let children = useCachedChildren(props);
-  let collection = useMemo(() => new Root<T>(update), []);
+  let collection = useMemo(() => new Root<T>(() => {
+    if (isMounted.current) {
+      queueUpdate();
+    }
+  }), []);
   let portal = createPortal(children, collection as unknown as Element);
   return {portal, collection};
 }
