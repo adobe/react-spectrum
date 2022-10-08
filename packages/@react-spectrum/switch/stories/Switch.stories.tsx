@@ -22,7 +22,7 @@ export default {
   title: 'Switch',
   component: Switch,
   args: {
-    isEmphasized: false,
+    isEmphasized: false
   },
   argTypes: {
     onChange: {
