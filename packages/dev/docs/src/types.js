@@ -64,6 +64,8 @@ export function Type({type}) {
       return <Keyword {...type} />;
     case 'this':
       return <Keyword {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -128,8 +130,6 @@ export function Type({type}) {
       return <ConditionalType {...type} />;
     case 'indexedAccess':
       return <IndexedAccess {...type} />;
-    case 'symbol':
-      return <Symbol {...type} />;
     case 'keyof':
       return <Keyof {...type} />;
     default:
@@ -548,21 +548,6 @@ function ObjectType({properties, exact}) {
 
         let optional = property.optional;
         let value = property.value;
-
-        // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'method') {
-          return (
-            <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-function">{k}</span>
-              <span className="token punctuation">(</span>
-              <JoinList elements={value.parameters} joiner=", " />
-              <span className="token punctuation">)</span>
-              <span className="token punctuation">{': '}</span>
-              <Type type={value.return} />
-              {i < arr.length - 1 ? ',' : ''}
-            </div>
-          );
-        }
 
         let punc = optional ? '?: ' : ': ';
         return (
