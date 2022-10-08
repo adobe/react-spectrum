@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 
 ---
 category: Navigation
@@ -121,6 +122,21 @@ icon between each item. The last link represents the current page in the hierarc
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
 triggered via the <Keyboard>Enter</Keyboard> key to navigate to that page. Optionally, breadcrumbs can be used
 in place of a page title, in which case the last breadcrumb acts as a heading.
+
+### Composed components
+
+`Breadcrumbs` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Link.html"
+  title="Link"
+  description="A link allows a user to navigate to another page.">
+  <Link />
+</ExampleCard>
+
+</section>
 
 ## Props
 

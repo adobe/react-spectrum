@@ -11,7 +11,7 @@ function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, LabelContext);
   let {elementType: ElementType = 'label', ...labelProps} = props;
   // @ts-ignore
-  return <ElementType {...labelProps} ref={ref} />;
+  return <ElementType className="react-aria-Label" {...labelProps} ref={ref} />;
 }
 
 const _Label = forwardRef(Label);
