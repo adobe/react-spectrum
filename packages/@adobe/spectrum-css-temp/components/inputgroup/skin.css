@@ -104,9 +104,9 @@ governing permissions and limitations under the License.
     but we don't want the border color to be the disabled quiet one
   */
   &:not(.is-disabled) {
-    .spectrum-FieldButton:before {
-      &:disabled,
-      &:disabled:hover {
+    .spectrum-FieldButton {
+      &:disabled:before,
+      &:disabled:hover:before {
         border-color: var(--spectrum-textfield-quiet-border-color);
       }
     }
