@@ -62,7 +62,7 @@ function mapModality(modality: string) {
     modality = 'virtual';
   }
 
-  if (modality === 'virtual' && 'ontouchstart' in window) {
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
 
