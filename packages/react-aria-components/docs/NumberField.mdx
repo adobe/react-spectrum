@@ -35,7 +35,10 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['NumberField']} />
+  componentNames={['NumberField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/'}
+  ]} />
 
 ## Example
 
@@ -57,11 +60,12 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
 
 ```css
 .react-aria-NumberField {
+  margin-bottom: 8px;
+
   & [role=group] {
     display: flex;
     width: fit-content;
     border-radius: 4px;
-    margin-bottom: 8px;
   }
 
   & button {
@@ -109,10 +113,34 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
       border-color: slateblue;
     }
   }
+
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 ```
 
 </details>
+
+## Features
+
+Number fields can be built with `<input type="number">`, but the behavior is very inconsistent across
+browsers and platforms, it supports limited localized formatting options, and it is challenging to style
+the stepper buttons. `NumberField` helps achieve accessible number fields that support internationalized
+formatting options and can be styled as needed.
+
+* **Customizable formatting** – Support for internationalized number formatting and parsing including decimals, percentages, currency values, and units. Multiple currency formats are supported, including symbol, code, and name in standard or accounting notation.
+* **International** – Support for the Latin, Arabic, and Han positional decimal numbering systems in [over 30 locales](internationalization.html#supported-locales). The numbering system is automatically detected from user input, and input method editors such as Pinyin are supported.
+* **Validation** – Keyboard input is validated as the user types so that only numeric input is accepted, according to the locale and numbering system. Values are automatically rounded and clamped according to configurable decimal, minimum, maximum, and step values.
+* **Mobile friendly** – An appropriate software keyboard is automatically selected based on the allowed values for ease of use.
+* **Accessible** – Follows the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) ARIA pattern, with support for arrow keys, scroll wheel, and stepper buttons to increment and decrement the value. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+
+Read our [blog post](../blog/how-we-internationalized-our-numberfield.html) for more details about the interactions and internationalization support implemented by `NumberField`.
 
 ## Anatomy
 
@@ -122,6 +150,13 @@ Number fields consist of an input element that shows the current value and allow
 optional stepper buttons to increment and decrement the value, a group containing the input and stepper buttons,
 and a label.
 
+`NumberField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
 ### Composed components
 
 A `NumberField` uses the following components, which may also be used standalone or reused in other components.
@@ -129,21 +164,21 @@ A `NumberField` uses the following components, which may also be used standalone
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
 </ExampleCard>
 
 <ExampleCard
-  url="useTextField.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input"
   title="Input"
   description="An input allows a user to enter a plain text value with a keyboard.">
   <Input />
 </ExampleCard>
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action.">
   <Button />
@@ -193,15 +228,15 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Group className="my-number-field">
+<NumberField className="my-number-field">
   {/* ... */}
-</Group>
+</NumberField>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-button[data-pressed] {
+.react-aria-Button[data-pressed] {
   /* ... */
 }
 ```
@@ -220,7 +255,7 @@ A `NumberField` can be targeted with the `.react-aria-NumberField` CSS selector,
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### Group
 
@@ -232,18 +267,24 @@ An `Input` can be targeted with the `input` CSS selector, or by adding a custom 
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. Within a `NumberField`, there are two slots, which can be targeted with the `[slot=increment]` and `[slot=decrement]` CSS selectors. Buttons support the following states:
+A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. Within a `NumberField`, there are two slots, which can be targeted with the `[slot=increment]` and `[slot=decrement]` CSS selectors. Buttons support the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### Text
+
+The help text elements within a `NumberField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Reusable wrappers
 
 If you will use a NumberField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place.
+This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
-function MyNumberField({label, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MyNumberField({label, description, errorMessage, ...props}) {
   return (
     <NumberField {...props}>
       <Label>{label}</Label>
@@ -252,6 +293,8 @@ function MyNumberField({label, ...props}) {
         <Input />
         <Button slot="increment">+</Button>
       </Group>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </NumberField>
   );
 }
@@ -427,6 +470,28 @@ The difference is that `isReadOnly` still allows the input to be focused, while 
 <MyNumberField label="Disabled" isDisabled value={25} />
 <MyNumberField label="Read only" isReadOnly value={32} />
 ```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the number field as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(1);
+  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+
+  return (
+    <MyNumberField
+      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      value={value}
+      onChange={setValue}
+      label="Positive numbers only"
+      description={isValid ? 'Enter a positive number.' : null}
+      errorMessage={isValid ? null : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
+  );
+}
+```
+
 
 ## Advanced customization
 

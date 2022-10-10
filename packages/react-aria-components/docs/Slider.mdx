@@ -20,6 +20,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import {Keyboard} from '@react-spectrum/text';
 
 ---
 category: Forms
@@ -154,6 +155,19 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 
 </details>
 
+## Features
+
+The [&lt;input type="range"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
+HTML element can be used to build a slider, however it is
+very difficult to style cross browser. `Slider` helps achieve accessible
+sliders that can be styled as needed.
+
+* **Customizable** – Support for one or multiple thumbs, in both horizontal and vertical orientations. The whole slider, or individual thumbs can be disabled. Custom minimum, maximum, and step values are supported as well.
+* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the nearest thumb to that position. Text selection and touch scrolling are prevented while dragging.
+* **Touch friendly** – Multiple thumbs or sliders can be dragged at once on multi-touch screens.
+* **Accessible** – Slider thumbs use visually hidden `<input>` elements for mobile screen reader support, and HTML form integration. `<label>` and `<output>` elements are automatically associated to provide context for assistive technologies.
+* **International** – Output value is formatted as a percentage or custom format according to the user's locale. The slider automatically mirrors all interactions in right-to-left languages.
+
 ## Anatomy
 
 <Anatomy />
@@ -165,6 +179,9 @@ element displaying the current values textually, and a label.
 The thumbs can be dragged to allow a user to change their value. In addition, the
 track can be clicked to move the nearest thumb to that position.
 
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the slider and thumbs to screen readers.
+
 ### Composed components
 
 A `Slider` uses the following components, which may also be used standalone or reused in other components.
@@ -172,7 +189,7 @@ A `Slider` uses the following components, which may also be used standalone or r
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
@@ -230,7 +247,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Slider className="slider">
+<Slider className="my-slider">
   {/* ... */}
 </Slider>
 ```
@@ -271,11 +288,11 @@ The `Slider` component can be targeted with the `.react-aria-Slider` CSS selecto
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### SliderOutput
 
-The `SliderOutput` component can be targeted with the `output` CSS selector, or by adding a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+The `SliderOutput` component can be targeted with the `.react-aria-SliderOutput` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SliderState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
 
 ### SliderTrack
 

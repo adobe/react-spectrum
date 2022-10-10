@@ -40,6 +40,11 @@ interface TooltipContextValue {
 
 const TooltipContext = createContext<TooltipContextValue>(null);
 
+/**
+ * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
+ * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
+ * relative to the trigger.
+ */
 export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   let state = useTooltipTriggerState(props);
   let ref = useRef();
@@ -69,6 +74,9 @@ function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * A tooltip displays a description of an element on hover or focus.
+ */
 const _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 

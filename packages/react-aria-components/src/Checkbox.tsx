@@ -3,9 +3,10 @@ import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-s
 import {LabelContext} from './Label';
 import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
+import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
-interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label'>, RenderProps<CheckboxGroupState> {}
+interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupState> {}
 interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps> {}
 
 export interface CheckboxRenderProps {
@@ -66,7 +67,7 @@ const CheckboxGroupContext = createContext<CheckboxGroupState>(null);
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useCheckboxGroupState(props);
   let [labelRef, label] = useSlot();
-  let {groupProps, labelProps} = useCheckboxGroup({
+  let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup({
     ...props,
     label
   }, state);
@@ -85,7 +86,13 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       <Provider
         values={[
           [CheckboxGroupContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}]
+          [LabelContext, {...labelProps, ref: labelRef}],
+          [TextContext, {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
+          }]
         ]}>
         {renderProps.children}
       </Provider>
@@ -147,7 +154,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly,
-      validationState: props.validationState,
+      validationState: props.validationState || groupState?.validationState,
       isRequired: props.isRequired || false
     }
   });
@@ -163,7 +170,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
-      data-validation-state={props.validationState || undefined}
+      data-validation-state={props.validationState || groupState?.validationState || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden>
         <input {...inputProps} {...focusProps} ref={ref} />
@@ -173,6 +180,15 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   );
 }
 
+/**
+ * A checkbox allows a user to select multiple items from a list of individual items, or
+ * to mark one individual item as selected.
+ */
 const _Checkbox = forwardRef(Checkbox);
+
+/**
+ * A checkbox group allows a user to select multiple items from a list of options.
+ */
 const _CheckboxGroup = forwardRef(CheckboxGroup);
+
 export {_Checkbox as Checkbox, _CheckboxGroup as CheckboxGroup};

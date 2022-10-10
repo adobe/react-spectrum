@@ -86,6 +86,19 @@ import {Meter, Label} from 'react-aria-components';
 
 </details>
 
+## Features
+
+The [&lt;meter&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meter)
+HTML element can be used to build a meter, however it is
+very difficult to style cross browser. `Meter` helps achieve accessible
+meters that can be styled as needed.
+
+* **Accessible** – Follows the [ARIA meter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/meter/), with fallback to `progressbar` where unsupported. A nested label is automatically associated with the meter semantically.
+* **International** – The value is formatted as a percentage or custom format according to the user's locale.
+
+Note: Meters are similar to progress bars, but represent a quantity as opposed to progress over time.
+See [ProgressBar](useProgressBar.html) for more details about progress bars.
+
 ## Anatomy
 
 <Anatomy />
@@ -106,7 +119,7 @@ A `Meter` uses the following components, which may also be used standalone or re
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an element.">
   <Label />
@@ -218,3 +231,9 @@ The `valueLabel` prop allows the formatted value to be replaced with a custom st
   valueLabel="54 of 60GB"
   value={90} />
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useMeter](useMeter.html) for more details.

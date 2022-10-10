@@ -58,5 +58,9 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
   );
 }
 
+/**
+ * Progress bars show either determinate or indeterminate progress of an operation
+ * over time.
+ */
 const _ProgressBar = forwardRef(ProgressBar);
 export {_ProgressBar as ProgressBar};

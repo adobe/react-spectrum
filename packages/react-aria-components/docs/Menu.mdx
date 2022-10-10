@@ -33,7 +33,10 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Menu']} />
+  componentNames={['MenuTrigger', 'Menu']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/menu/'}
+  ]} />
 
 ## Example
 
@@ -68,6 +71,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   text-align: center;
   margin: 0;
   outline: none;
+  padding: 4px 12px;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -173,6 +177,16 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 
 </details>
 
+## Features
+
+There is no native element to implement a menu in HTML that is widely supported. `MenuTrigger` and `Menu`
+help achieve accessible menu components that can be styled as needed.
+
+* **Keyboard navigation** – Menu items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and disabled items are supported as well.
+* **Item selection** – Single or multiple selection can be optionally enabled.
+* **Trigger interactions** – Menus can be triggered by pressing with a mouse or touch, or optionally, with a long press interaction. The arrow keys also open the menu with a keyboard, automatically focusing the first or last item accordingly.
+* **Accessible** – Follows the [ARIA menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu/), with support for items and sections, and slots for label, description, and keyboard shortcut elements within each item for improved screen reader announcement.
+
 ## Anatomy
 
 <Anatomy />
@@ -194,14 +208,14 @@ A `Menu` uses the following components, which may also be used standalone or reu
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action.">
   <Button />
 </ExampleCard>
 
 <ExampleCard
-  url="useOverlayTrigger.html"
+  url="Popover.html"
   title="Popover"
   description="A popover displays content in context with a trigger element.">
   <Popover />
@@ -341,13 +355,15 @@ The `MenuTrigger` component does not render any DOM elements (it only passes thr
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ### Popover
 
-The `Popover` component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the MenuTrigger in the DOM.
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the MenuTrigger in the DOM. It supports the following states and render props:
+
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
 ### Menu
 
@@ -355,7 +371,7 @@ A `Menu` can be targeted with the `.react-aria-Menu` CSS selector, or by overrid
 
 ### Section
 
-A `Section` can be targeted with the `section` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a menu are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a menu are not allowed. See [sections](#sections) for examples.
 
 ### Item
 
@@ -369,13 +385,13 @@ Note that items may not contain interactive children such as buttons, as screen 
 
 ### Separator
 
-A `Separator` can be targeted with the `[role=separator]` CSS selector, or by adding a custom `className`.
+A `Separator` can be targeted with the `.react-aria-Separator` CSS selector, or by overriding with a custom `className`.
 
 ## Reusable wrappers
 
 If you will use a Menu in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `MenuTrigger` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as descibed [above](#styling).
+This example wraps `MenuTrigger` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
 function MyMenuButton({label, children, ...props}) {
@@ -435,9 +451,9 @@ The following examples show how to use the `MyMenuButton` component created in t
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the ComboBox using the `items` prop. Each item accepts a `key` prop, which
+As seen below, an iterable list of options is passed to the Menu using the `items` prop. Each item accepts an `id` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
-as shown in the example below, then this is used automatically and a `key` prop is not required.
+as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
 function Example() {
@@ -462,7 +478,7 @@ function Example() {
 ### Selection
 
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
-Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
 See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
 
 #### Single
@@ -526,11 +542,9 @@ import {Separator} from 'react-aria-components';
 
 ### Sections
 
-Menu supports sections with separators and headings in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
+Menu supports sections with separators and headings in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` prop.
 
 #### Static items
-
-With this in place, we can now render a static menu with multiple sections:
 
 ```tsx example
 import {Section} from 'react-aria-components';
@@ -640,7 +654,7 @@ Disabled items are not focusable or keyboard navigable, and do not trigger `onAc
 
 ### Controlled open state
 
-The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
+The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props.
 
 ```tsx example
 function Example() {
@@ -683,7 +697,6 @@ and keep using the others.
 
 `Menu` uses the following hooks. See the linked documentation for more details.
 
-* [useMenuTrigger](useMenuTrigger.html)
 * [useMenu](useMenu.html)
 * [usePopover](usePopover.html)
 * [useButton](useButton.html)

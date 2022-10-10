@@ -118,6 +118,14 @@ import {Switch} from 'react-aria-components';
 
 </details>
 
+## Features
+
+There is no native HTML element with switch styling. `<input type="checkbox">` is the closest semantically, but isn't styled or exposed to assistive technology as a switch. `Switch` helps achieve accessible switches that can be styled as needed.
+
+* **Styleable** – Hover, press, keyboard focus, and selection states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+* **Accessible** – Uses a visually hidden `<input>` element with `role="switch"` under the hood, which also enables HTML form integration and autofill. A label element is built-in to ensure the switch is usable with assistive technologies.
+* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
+
 ## Anatomy
 
 <Anatomy />

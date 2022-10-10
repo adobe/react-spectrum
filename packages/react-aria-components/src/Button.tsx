@@ -30,7 +30,7 @@ export interface ButtonRenderProps {
   isDisabled: boolean
 }
 
-interface ButtonProps extends Omit<AriaButtonProps, 'children'>, SlotProps, RenderProps<ButtonRenderProps> {}
+interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
 interface ButtonContextValue extends WithRef<AriaButtonProps, HTMLButtonElement> {
   isPressed?: boolean
 }
@@ -61,5 +61,8 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   );
 }
 
+/**
+ * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
+ */
 const _Button = forwardRef(Button);
 export {_Button as Button};

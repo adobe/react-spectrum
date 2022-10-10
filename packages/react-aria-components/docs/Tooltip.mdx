@@ -153,6 +153,17 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 
 </details>
 
+## Features
+
+The HTML `title` attribute can be used to create a tooltip, but it cannot be styled. Custom styled
+tooltips can be hard to build in an accessible way. `TooltipTrigger` and `Tooltip` help build
+fully accessible tooltips that can be styled as needed.
+
+* **Styleable** – States for entry and exit animations are included for easy styling, and an optional arrow element can be rendered.
+* **Accessible** – The trigger element is automatically associated with the tooltip via `aria-describedby`. Tooltips are displayed when an element receives focus.
+* **Hover behavior** – Tooltips display after a global delay on hover of the first tooltip, with no delay on subsequent tooltips to avoid unintended flickering. Emulated hover events on touch devices are ignored.
+* **Positioning** – The tooltip is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window.
+
 ## Anatomy
 
 <Anatomy />
@@ -353,17 +364,14 @@ prop. See the props table for a full list of available placement combinations.
     <Button>⬅️</Button>
     <MyTooltip placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyTooltip>
   </TooltipTrigger>
-
   <TooltipTrigger>
     <Button>⬆️</Button>
     <MyTooltip placement="top">This tooltip is above the button.</MyTooltip>
   </TooltipTrigger>
-
   <TooltipTrigger>
     <Button>⬇️</Button>
     <MyTooltip placement="bottom">This tooltip is below the button.</MyTooltip>
   </TooltipTrigger>
-
   <TooltipTrigger>
     <Button>➡️</Button>
     <MyTooltip placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyTooltip>

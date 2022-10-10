@@ -21,7 +21,14 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
    * How the menu is triggered.
    * @default 'press'
    */
-  trigger?: MenuTriggerType,
+  trigger?: MenuTriggerType
+}
+
+export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger - a trigger and a Menu.
+   */
+  children: ReactElement[],
   /**
    * Alignment of the menu relative to the trigger.
    * @default 'start'
@@ -33,22 +40,15 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
    */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
   /**
-   * Whether the Menu closes when a selection is made.
-   * @default true
-   */
-  closeOnSelect?: boolean,
-  /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
-}
-
-export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+   shouldFlip?: boolean,
   /**
-   * The contents of the MenuTrigger - a trigger and a Menu.
+   * Whether the Menu closes when a selection is made.
+   * @default true
    */
-  children: ReactElement[]
+  closeOnSelect?: boolean
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {

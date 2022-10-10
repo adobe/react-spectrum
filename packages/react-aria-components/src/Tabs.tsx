@@ -109,6 +109,9 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them.
+ */
 const _Tabs = forwardRef(Tabs);
 export {_Tabs as Tabs};
 
@@ -158,9 +161,16 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
   );
 }
 
+/**
+ * A TabList is used within Tabs to group tabs that a user can switch between.
+ * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
+ */
 const _TabList = forwardRef(TabList);
 export {_TabList as TabList};
 
+/**
+ * A Tab provides a title for an individual item within a TabList.
+ */
 export function Tab(props: TabProps): JSX.Element {
   return Item(props);
 }
@@ -203,7 +213,7 @@ interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'> {}
 
 /**
  * TabPanels is used within Tabs as a container for the content of each tab.
- * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
+ * The ids of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
   const {state} = useContext(InternalTabsContext);
@@ -218,6 +228,9 @@ export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
   );
 }
 
+/**
+ * A TabPanel provides the content for a tab.
+ */
 export function TabPanel(props: TabPanelProps): JSX.Element {
   return Item(props);
 }

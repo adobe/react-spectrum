@@ -66,6 +66,15 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     flex-direction: row;
     align-items: center;
   }
+
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 
 .react-aria-Radio {
@@ -102,7 +111,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   }
 
   &[data-validation-state=invalid]:before {
-    border-color: red;
+    border-color: var(--spectrum-global-color-static-red-600);
   }
 
   &[data-focus-visible]:before {
@@ -117,6 +126,18 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Radio groups can be built in HTML with the
+[&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset)
+and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) elements,
+however these can be difficult to style. `RadioGroup` and `Radio` help achieve accessible
+radio groups that can be styled as needed.
+
+* **Accessible** – Radio groups are exposed to assistive technology via ARIA, and automatically associate a nested `<Label>`. Description and error message help text slots are supported as well.
+* **HTML form integration** – Each individual radio uses a visually hidden `<input>` element under the hood, which enables HTML form integration and autofill.
+* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
+
 ## Anatomy
 
 <Anatomy />
@@ -126,6 +147,10 @@ includes a label and a visual selection indicator. A single radio button
 within the group can be selected at a time. Users may click or touch a radio
 button to select it, or use the <Keyboard>Tab</Keyboard> key to navigate to the group, the arrow keys
 to navigate within the group, and the <Keyboard>Space</Keyboard> key to select an option.
+
+`RadioGroup` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+inputs via the `aria-describedby` attribute.
 
 Individual radio buttons must have a visual label. If the radio group does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
@@ -138,7 +163,7 @@ A `RadioGroup` uses the following components, which may also be used standalone 
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
@@ -215,18 +240,32 @@ A `Radio` can be targeted with the `.react-aria-Radio` CSS selector, or by overr
 
 <StateTable properties={docs.exports.RadioRenderProps.properties} />
 
+### Text
+
+The help text elements within a `RadioGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
 ## Reusable wrappers
 
 If you will use a RadioGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place.
+This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
-function MyRadioGroup({label, children, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MyRadioGroup({
+  label,
+  description,
+  errorMessage,
+  children,
+  ...props
+}) {
   return (
     <RadioGroup {...props}>
       {label}
       {children}
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </RadioGroup>
   );
 }
@@ -286,6 +325,52 @@ function Example() {
 }
 ```
 
+### Validation
+
+RadioGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+
+```tsx example
+<MyRadioGroup label="Favorite avatar" validationState="invalid">
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</MyRadioGroup>
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the radio group as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <MyRadioGroup
+      aria-label="Favorite pet"
+      onChange={setSelected}
+      validationState={isValid ? 'valid' : 'invalid'}
+      description={isValid ? 'Please select a pet.' : null}
+      errorMessage={isValid ? null :
+        selected === 'cats'
+          ? 'No cats allowed.'
+          : 'Please select dogs.'
+      }>
+      <Radio value="dogs">
+        Dogs
+      </Radio>
+      <Radio value="cats">
+        Cats
+      </Radio>
+      <Radio value="dragons">
+        Dragons
+      </Radio>
+    </MyRadioGroup>
+  );
+}
+```
+
 ### Disabled
 
 The entire RadioGroup can be disabled with the `isDisabled` prop.
@@ -318,18 +403,6 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
 </MyRadioGroup>
-```
-
-### Validation
-
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
-
-```tsx example
-<RadioGroup label="Favorite avatar" validationState="invalid">
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</RadioGroup>
 ```
 
 ### HTML forms

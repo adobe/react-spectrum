@@ -113,6 +113,15 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Breadcrumbs provide a list of links to parent pages of the current page in hierarchical order.
+`Breadcrumbs` helps implement these in an accessible way.
+
+* **Flexible** – Support for navigation links, JavaScript handled links, or custom element types (e.g. router links).
+* **Accessible** – Implemented as a navigation landmark with an ordered list of links. Optional support for using breadcrumbs as a heading is available as well.
+* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+
 ## Anatomy
 
 <Anatomy />
@@ -122,6 +131,12 @@ icon between each item. The last link represents the current page in the hierarc
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
 triggered via the <Keyboard>Enter</Keyboard> key to navigate to that page. Optionally, breadcrumbs can be used
 in place of a page title, in which case the last breadcrumb acts as a heading.
+
+### Concepts
+
+`Breadcrumbs` makes use of the following concepts:
+
+* [Collections](../react-stately/Collections.html)
 
 ### Composed components
 
@@ -206,7 +221,7 @@ A `Link` can be targeted with the `.react-aria-Link` CSS selector, or by overrid
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrum is pressed, the `onPress` event is triggered and the breadcrumbs array is updated.
+As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onPress` event is triggered and the breadcrumbs array is updated.
 
 ```tsx example
 function Example() {
@@ -230,7 +245,7 @@ function Example() {
 
 ### Heading
 
-The last breadcrumb may be used as a heading for the page by placing a `<Heading>` element within the `<Item>` instead of a `<Link>`.
+The last breadcrumb may be used as a heading for the page by placing a `<Heading>` element within the `<Item>` instead of a `<Link>`. By default, this is an `h3` element, but this can be changed with the `level` prop on the `Heading`.
 
 ```tsx example
 import {Heading} from 'react-aria-components';
@@ -305,3 +320,9 @@ Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to 
   <Item><Link>useBreadcrumbs</Link></Item>
 </Breadcrumbs>
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useBreadcrumbs](useBreadcrumbs.html) for more details.

@@ -12,7 +12,7 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
   isSelected: boolean
 }
 
-interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
+interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
 interface ToggleButtonContextValue extends WithRef<AriaToggleButtonProps, HTMLButtonElement> {}
 
 export const ToggleButtonContext = createContext<ToggleButtonContextValue>({});
@@ -41,5 +41,8 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
   );
 }
 
+/**
+ * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
+ */
 const _ToggleButton = forwardRef(ToggleButton);
 export {_ToggleButton as ToggleButton};

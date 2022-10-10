@@ -107,5 +107,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   );
 }
 
+/**
+ * A switch allows a user to turn a setting on or off.
+ */
 const _Switch = forwardRef(Switch);
 export {_Switch as Switch};

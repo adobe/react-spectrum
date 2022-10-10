@@ -5,11 +5,12 @@ import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
+import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
 
-interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label'>, RenderProps<DateFieldState> {}
+interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
 
-interface TimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T>, RenderProps<DateFieldState> {}
+interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
 
 interface DateInputContextValue {
   state: DateFieldState,
@@ -19,7 +20,7 @@ interface DateInputContextValue {
 
 export const DateInputContext = createContext<DateInputContextValue>(null);
 
-export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
+function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let {locale} = useLocale();
   let state = useDateFieldState({
     ...props,
@@ -29,7 +30,7 @@ export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
 
   let fieldRef = useRef();
   let [labelRef, label] = useSlot();
-  let {labelProps, fieldProps} = useDateField({...props, label}, state, fieldRef);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -41,16 +42,29 @@ export function DateField<T extends DateValue>(props: DateFieldProps<T>) {
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef}],
-        [LabelContext, {...labelProps, ref: labelRef}]
+        [LabelContext, {...labelProps, ref: labelRef}],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }]
       ]}>
-      <div {...renderProps}>
+      <div {...renderProps} ref={ref}>
         {props.children}
       </div>
     </Provider>
   );
 }
 
-export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
+/**
+ * A date field allows users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
+const _DateField = forwardRef(DateField);
+export {_DateField as DateField};
+
+function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let {locale} = useLocale();
   let state = useTimeFieldState({
     ...props,
@@ -59,7 +73,7 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
 
   let fieldRef = useRef();
   let [labelRef, label] = useSlot();
-  let {labelProps, fieldProps} = useTimeField({...props, label}, state, fieldRef);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField({...props, label}, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -71,15 +85,28 @@ export function TimeField<T extends TimeValue>(props: TimeFieldProps<T>) {
     <Provider
       values={[
         [DateInputContext, {state, fieldProps, ref: fieldRef}],
-        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}]
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }]
       ]}>
-      <div {...renderProps}>
+      <div {...renderProps} ref={ref}>
         {props.children}
       </div>
     </Provider>
   );
 }
 
+/**
+ * A time field allows users to enter and edit time values using a keyboard.
+ * Each part of a time value is displayed in an individually editable segment.
+ */
+const _TimeField = forwardRef(TimeField);
+export {_TimeField as TimeField};
+ 
 const InternalDateInputContext = createContext<DateFieldState>(null);
 
 interface DateInputProps extends SlotProps, StyleProps {
@@ -97,6 +124,9 @@ function DateInput({children, style, className, slot}: DateInputProps, ref: Forw
   );
 }
 
+/**
+ * A date input groups the editable date segments within a date field.
+ */
 const _DateInput = forwardRef(DateInput);
 export {_DateInput as DateInput};
 
@@ -153,5 +183,9 @@ function DateSegment({segment, className, style, children}: DateSegmentProps, re
   );
 }
 
+/**
+ * A date segment displays an individual unit of a date and time, and allows users to edit
+ * the value by typing or using the arrow keys to increment and decrement.
+ */
 const _DateSegment = forwardRef(DateSegment);
 export {_DateSegment as DateSegment};

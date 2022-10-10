@@ -60,6 +60,9 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   );
 }
 
+/**
+ * A popover is an overlay element positioned relative to a trigger.
+ */
 const _Popover = forwardRef(Popover);
 export {_Popover as Popover};
 

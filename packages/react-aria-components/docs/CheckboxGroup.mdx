@@ -21,6 +21,7 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 
 ---
 category: Forms
@@ -75,6 +76,15 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 
 .react-aria-Checkbox {
@@ -126,6 +136,27 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
     }
   }
 
+  &[data-validation-state=invalid] {
+    & .checkbox {
+      border-color: var(--spectrum-global-color-static-red-600);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--spectrum-global-color-static-red-700);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
+      & .checkbox {
+        background: var(--spectrum-global-color-static-red-600);
+      }
+
+      &[data-pressed] .checkbox {
+        background: var(--spectrum-global-color-static-red-700);
+      }
+    }
+  }
+
   &[data-indeterminate] {
     & svg {
       stroke: none;
@@ -145,6 +176,17 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Checkbox groups can be built in HTML with the
+[&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset)
+and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) elements,
+however these can be difficult to style. `CheckboxGroup` helps achieve accessible
+checkbox groups that can be styled as needed.
+
+* **Accessible** – Checkbox groups are exposed to assistive technology via ARIA, and automatically associate a nested `<Label>`. Description and error message help text slots are supported as well.
+* **HTML form integration** – Each individual checkbox uses a visually hidden `<input>` element under the hood, which enables HTML form integration and autofill.
+
 ## Anatomy
 
 <Anatomy />
@@ -155,9 +197,28 @@ within the group can be selected at a time. Users may click or touch a checkbox
 to select it, or use the <Keyboard>Tab</Keyboard> key to navigate to it
 and the <Keyboard>Space</Keyboard> key to toggle it.
 
+`CheckboxGroup` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+inputs via the `aria-describedby` attribute.
+
 Individual checkboxes must have a visual label. If the checkbox group does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
+
+### Composed components
+
+A `CheckboxGroup` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an element.">
+  <Label />
+</ExampleCard>
+
+</section>
 
 ## Props
 
@@ -181,7 +242,7 @@ Within a `<CheckboxGroup>`, most `<Checkbox>` props are set automatically. The `
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-.react-aria-Checkbox {
+.react-aria-CheckboxGroup {
   /* ... */
 }
 ```
@@ -233,18 +294,32 @@ A `Checkbox` can be targeted with the `.react-aria-Checkbox` CSS selector, or by
 
 <StateTable properties={docs.exports.CheckboxRenderProps.properties} />
 
+### Text
+
+The help text elements within a `CheckboxGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
 ## Reusable wrappers
 
-If you will use a Checkbox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+If you will use a CheckboxGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `CheckboxGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place.
+This example wraps `CheckboxGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
-function MyCheckboxGroup({label, children, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MyCheckboxGroup({
+  label,
+  description,
+  errorMessage,
+  children,
+  ...props
+}) {
   return (
     <CheckboxGroup {...props}>
       {label}
       {children}
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </CheckboxGroup>
   );
 }
@@ -299,6 +374,84 @@ function Example() {
       <MyCheckbox value="soccer">Soccer</MyCheckbox>
       <MyCheckbox value="baseball">Baseball</MyCheckbox>
       <MyCheckbox value="basketball">Basketball</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### Group validation
+
+CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the `validationState` prop to either
+the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
+
+If the group as a whole is invalid, for example if the user must choose at least one option but failed
+to do so, then pass `validationState="invalid"` to the `CheckboxGroup`.
+
+The following example shows how to require that at least one option is selected. It sets the `validationState`
+prop to `"invalid"` when no options are selected and removes it otherwise.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState([]);
+
+  return (
+    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : null}>
+      <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
+      <MyCheckbox value="tomato">Tomato</MyCheckbox>
+      <MyCheckbox value="onion">Onion</MyCheckbox>
+      <MyCheckbox value="sprouts">Sprouts</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### Individual Checkbox validation
+
+If an individual checkbox is invalid, for example if the user must select a particular option but failed
+to do so, then pass `validationState="invalid"` to the `Checkbox` element instead.
+
+The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
+element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
+indicates that the group is required, not any individual option. In addition, `validationState="invalid"` is set on each checkbox that is not yet checked.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState([]);
+
+  return (
+    <MyCheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
+      <MyCheckbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : null}>Terms and conditions</MyCheckbox>
+      <MyCheckbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : null}>Privacy policy</MyCheckbox>
+      <MyCheckbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : null}>Cookie policy</MyCheckbox>
+    </MyCheckboxGroup>
+  );
+}
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a checkbox group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the checkbox group as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [checked, setChecked] = React.useState(['dogs', 'dragons']);
+  let isValid = checked.length === 2 && checked.includes('dogs') && checked.includes('dragons');
+
+  return (
+    <MyCheckboxGroup
+      label="Pets"
+      onChange={setChecked}
+      value={checked}
+      validationState={isValid ? 'valid' : 'invalid'}
+      description={isValid ? 'Select your pets.' : null}
+      errorMessage={isValid ? null : checked.includes('cats')
+        ? 'No cats allowed.'
+        : 'Select only dogs and dragons.'}
+    >
+      <MyCheckbox value="dogs">Dogs</MyCheckbox>
+      <MyCheckbox value="cats">Cats</MyCheckbox>
+      <MyCheckbox value="dragons">Dragons</MyCheckbox>
     </MyCheckboxGroup>
   );
 }

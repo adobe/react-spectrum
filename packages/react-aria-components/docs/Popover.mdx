@@ -33,7 +33,10 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Popover']} />
+  componentNames={['Popover']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
 
 ## Example
 
@@ -159,6 +162,17 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 </details>
 
+## Features
+
+There is no built in way to create popovers in HTML. `Popover` helps achieve accessible popovers that can be styled as needed.
+
+* **Styleable** – States for entry and exit animations are included for easy styling, and an optional arrow element can be rendered.
+* **Accessible** – The trigger and popover are automatically associated semantically via ARIA. Content outside the popover is hidden from assistive technologies while it is open. The popover closes when interacting outside, or pressing the <Keyboard>Escape</Keyboard> key.
+* **Focus management** – Focus is moved into the popover on mount, and restored to the trigger element on unmount.
+* **Positioning** – The popover is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window.
+
+Note: `Popover` only provides the overlay itself. It should be combined with [Dialog](Dialog.html) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
+
 ## Anatomy
 
 A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html).
@@ -265,7 +279,7 @@ function MyPopover({children, ...props}) {
 
 ## Usage
 
-The following examples show how to use the `Popover` and `PopoverTrigger` components created in the above example.
+The following examples show how to use the `MyPopover` component created in the above example.
 
 ### Placement
 
@@ -278,17 +292,14 @@ prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.expo
     <Button>⬅️</Button>
     <MyPopover placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyPopover>
   </DialogTrigger>
-
   <DialogTrigger>
     <Button>⬆️</Button>
     <MyPopover placement="top">This popover is above the button.</MyPopover>
   </DialogTrigger>
-
   <DialogTrigger>
     <Button>⬇️</Button>
     <MyPopover placement="bottom">This popover is below the button.</MyPopover>
   </DialogTrigger>
-
   <DialogTrigger>
     <Button>➡️</Button>
     <MyPopover placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyPopover>
@@ -363,3 +374,9 @@ The example below will maintain at least 50px between the popover and the edge o
   </MyPopover>
 </DialogTrigger>
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [usePopover](usePopover.html) for more details.

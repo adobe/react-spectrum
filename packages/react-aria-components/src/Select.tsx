@@ -1,6 +1,6 @@
 import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
-import {createContext, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -8,10 +8,11 @@ import {PopoverContext} from './Popover';
 import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
+import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label'>, RenderProps<SelectState<T>> {}
+interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>> {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -20,7 +21,7 @@ interface SelectValueContext {
 
 const SelectContext = createContext<SelectValueContext>(null);
 
-export function Select<T extends object>(props: SelectProps<T>) {
+function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let [listBoxProps, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
 
   let {portal, collection} = useCollection({
@@ -34,25 +35,27 @@ export function Select<T extends object>(props: SelectProps<T>) {
   });
 
   // Get props for child elements from useSelect
-  let ref = useRef<HTMLButtonElement>(null);
+  let buttonRef = useRef<HTMLButtonElement>(null);
   let [labelRef, label] = useSlot();
   let {
     labelProps,
     triggerProps,
     valueProps,
-    menuProps
-  } = useSelect({...props, label}, state, ref);
+    menuProps,
+    descriptionProps,
+    errorMessageProps
+  } = useSelect({...props, label}, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState(null);
   let onResize = useCallback(() => {
-    if (ref.current) {
-      setButtonWidth(ref.current.offsetWidth + 'px');
+    if (buttonRef.current) {
+      setButtonWidth(buttonRef.current.offsetWidth + 'px');
     }
-  }, [ref]);
+  }, [buttonRef]);
 
   useResizeObserver({
-    ref,
+    ref: buttonRef,
     onResize: onResize
   });
 
@@ -67,28 +70,40 @@ export function Select<T extends object>(props: SelectProps<T>) {
       values={[
         [SelectContext, {state, valueProps}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref, isPressed: state.isOpen}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [PopoverContext, {
           state,
-          triggerRef: ref,
+          triggerRef: buttonRef,
           preserveChildren: true,
           placement: 'bottom start',
           style: {'--button-width': buttonWidth} as React.CSSProperties
         }],
-        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}]
+        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }]
       ]}>
-      <div {...renderProps}>
+      <div {...renderProps} ref={ref}>
         {props.children}
       </div>
       {portal}
       <HiddenSelect
         state={state}
-        triggerRef={ref}
+        triggerRef={buttonRef}
         label={label}
         name={props.name} />
     </Provider>
   );
 }
+
+/**
+ * A select displays a collapsible list of options and allows a user to select one of them.
+ */
+const _Select = forwardRef(Select);
+export {_Select as Select};
 
 export interface SelectValueRenderProps {
   /**
@@ -102,7 +117,7 @@ export interface SelectValueRenderProps {
 
 interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
-export function SelectValue(props: SelectValueProps) {
+function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
   let {state, valueProps} = useContext(SelectContext);
   let renderProps = useRenderProps({
     ...props,
@@ -115,6 +130,18 @@ export function SelectValue(props: SelectValueProps) {
   });
 
   return (
-    <span {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined} />
+    <span ref={ref} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
+      {/* clear description and error message slots */}
+      <TextContext.Provider value={undefined}>
+        {renderProps.children}
+      </TextContext.Provider>
+    </span>
   );
 }
+
+/**
+ * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
+ * It is usually placed within the button element.
+ */
+const _SelectValue = forwardRef(SelectValue);
+export {_SelectValue as SelectValue};

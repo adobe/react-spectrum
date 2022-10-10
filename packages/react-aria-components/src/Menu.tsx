@@ -1,8 +1,8 @@
 
-import {AriaMenuProps, MenuTriggerProps} from '@react-types/menu';
+import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
+import {CollectionProps, ItemStates, useCachedChildren, useCollection} from './Collection';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
@@ -16,11 +16,11 @@ import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
-interface MenuTriggerProps2 extends MenuTriggerProps {
+interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
 }
 
-export function MenuTrigger(props: MenuTriggerProps2) {
+export function MenuTrigger(props: MenuTriggerProps) {
   let state = useMenuTriggerState(props);
 
   let ref = useRef();
@@ -41,14 +41,15 @@ export function MenuTrigger(props: MenuTriggerProps2) {
   );
 }
 
-interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {}
+interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
   let {portal, collection} = useCollection(props);
   let state = useTreeState({
     ...props,
-    collection
+    collection,
+    children: null
   });
   let {menuProps} = useMenu(props, state, ref);
 
@@ -88,6 +89,9 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   );
 }
 
+/**
+ * A menu displays a list of actions or options that a user can choose.
+ */
 const _Menu = forwardRef(Menu);
 export {_Menu as Menu};
 

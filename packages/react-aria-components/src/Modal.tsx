@@ -58,9 +58,15 @@ interface ModalOverlayInnerProps extends ModalOverlayProps {
   isExiting: boolean
 }
 
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
 const _Modal = forwardRef(Modal);
 export {_Modal as Modal};
 
+/**
+ * A ModalOverlay is a wrapper for a Modal which allows customizing the backdrop element.
+ */
 export const ModalOverlay = forwardRef((props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) => {
   let ctx = useContext(ModalContext);
   // eslint-disable-next-line react-hooks/rules-of-hooks

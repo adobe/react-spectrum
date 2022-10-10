@@ -178,6 +178,17 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 </details>
 
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element
+can be used to build dialogs. However, it is not yet widely supported across browsers, and
+building fully accessible custom dialogs from scratch is very difficult and error prone.
+`Dialog` helps achieve accessible dialogs that can be styled as needed.
+
+* **Flexible** – Dialogs can be used within a [Modal](Modal.html) or [Popover](Popover.html) to create many types of overlay elements.
+* **Accessible** – Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA. The dialog is automatically labeled by a nested `<Heading>` element. Content outside the dialog is hidden from assistive technologies while it is open.
+* **Focus management** – Focus is moved into the dialog on mount, and restored to the trigger element on unmount. While open, focus is contained within the dialog, preventing the user from tabbing outside.
+
 ## Anatomy
 
 <Anatomy />
@@ -361,3 +372,9 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
   </Modal>
 </DialogTrigger>
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDialog](useDialog.html) for more details.

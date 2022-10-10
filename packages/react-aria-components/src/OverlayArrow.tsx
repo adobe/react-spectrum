@@ -50,5 +50,9 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
   );
 }
 
+/**
+ * An OverlayArrow renders a custom arrow element relative to an overlay element
+ * such as a popover or tooltip such that it aligns with a trigger element.
+ */
 const _OverlayArrow = forwardRef(OverlayArrow);
 export {_OverlayArrow as OverlayArrow};

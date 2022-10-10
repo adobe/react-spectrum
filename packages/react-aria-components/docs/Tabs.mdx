@@ -145,12 +145,28 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Tabs provide a list of tabs that a user can select from to switch between multiple tab panels. `Tabs` can be used to implement these in an accessible way.
+
+* **Flexible** – Support for both horizontal and vertical orientations, disabled tabs, customizable layout, and multiple keyboard activation modes.
+* **Accessible** – Follows the [ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/), automatically linking tabs and their associated tab panels semantically. The arrow keys can be used to navigate between tabs, and tab panels automatically become focusable when they don't contain any focusable children.
+* **International** – Keyboard navigation is automatically mirrored in right-to-left languages.
+* **Styleable** – Hover, press, keyboard focus, and selection states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+
 ## Anatomy
 
 <Anatomy />
 
 Tabs consist of a tab list with one or more visually separated tabs. Each tab has associated content, and only the selected tab's content is shown.
 Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on the `keyboardActivation` prop, the tab can be selected by receiving keyboard focus, or it can be selected with the <Keyboard>Enter</Keyboard> key.
+
+### Concepts
+
+`Tabs` makes use of the following concepts:
+
+* [Collections](../react-stately/Collections.html)
+* [Selection](../react-stately/Selection.html)
 
 ## Props
 
@@ -259,7 +275,7 @@ A `TabPanel` can be targeted with the `.react-aria-TabPanel` CSS selector, or by
 
 ### Default selection
 
-A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `key` prop provided to each item.
+A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `id` prop provided to each item.
 When `Tabs` is used with dynamic items as described below, the key of each item is derived from the data.
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
@@ -280,7 +296,7 @@ See the `react-stately` [Selection docs](../react-stately/selection.html) for mo
 
 ### Controlled selection
 
-Selection can be controlled using the `selectedKey` prop, paired with the `onSelectionChange` event. The `key` prop from the selected tab will be passed into the callback when the tab is selected, allowing you to update state accordingly.
+Selection can be controlled using the `selectedKey` prop, paired with the `onSelectionChange` event. The `id` prop from the selected tab will be passed into the callback when the tab is selected, allowing you to update state accordingly.
 
 ```tsx example
 function Example() {
@@ -339,7 +355,7 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 
 The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the `TabPanels` component returns a corresponding `<TabPanel>` for each tab.
 
-Each item accepts a `key` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
+Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
 
 ```tsx example
 function Example() {
@@ -447,7 +463,7 @@ All tabs can be disabled using the `isDisabled` prop.
 ### Disabled items
 
 Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 ```tsx example
@@ -464,3 +480,9 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
   </TabPanels>
 </Tabs>
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTabList](useTabList.html) for more details.

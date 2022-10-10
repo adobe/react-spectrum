@@ -1,19 +1,23 @@
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
+import {ComboBoxState, useComboBoxState} from 'react-stately';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
 import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
-import {useComboBoxState} from 'react-stately';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label'>, RenderProps<ComboBoxProps<T>> {}
+interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>> {
+  /** The filter function used to determine if a option should be included in the combo box list. */
+  defaultFilter?: (textValue: string, inputValue: string) => boolean
+}
 
-export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
+function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -22,7 +26,7 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     children: propsFromListBox.children
   });
   let state = useComboBoxState({
-    defaultFilter: contains,
+    defaultFilter: props.defaultFilter || contains,
     ...props,
     items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
     children: null,
@@ -38,7 +42,9 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
     buttonProps,
     inputProps,
     listBoxProps,
-    labelProps
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   } = useComboBox({
     ...props,
     label,
@@ -87,12 +93,24 @@ export function ComboBox<T extends object>(props: ComboBoxProps<T>) {
           isNonModal: true,
           style: {'--combobox-width': menuWidth} as React.CSSProperties
         }],
-        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}]
+        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }]
       ]}>
-      <div {...renderProps}>
+      <div {...renderProps} ref={ref}>
         {props.children}
       </div>
       {portal}
     </Provider>
   );
 }
+
+/**
+ * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ */
+const _ComboBox = forwardRef(ComboBox);
+export {_ComboBox as ComboBox};

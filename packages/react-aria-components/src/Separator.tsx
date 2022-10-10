@@ -23,7 +23,7 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
     <Element
       {...separatorProps}
       style={style}
-      className={className}
+      className={className ?? 'react-aria-Separator'}
       ref={ref} />
   );
 }

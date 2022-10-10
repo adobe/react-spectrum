@@ -89,16 +89,55 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
     border-radius: 4px;
     caret-color: transparent;
   }
+
+  &[aria-invalid] {
+    color: var(--spectrum-global-color-red-600);
+
+    &:focus {
+      background: var(--spectrum-global-color-static-red-600);
+      color: white;
+    }
+  }
+}
+
+.react-aria-TimeField {
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 ```
 
 </details>
 
+## Features
+
+A time field can be built using `<input type="time">`, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `TimeField` helps achieve accessible and international time fields that can be styled as needed.
+
+* **International** – Support for locale-specific formatting, number systems, hour cycles, and right-to-left layout.
+* **Time zone aware** – Times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
+* **Accessible** – Each time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit times using the keyboard, in any format and locale.
+* **Touch friendly** – Time segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `TimeField`.
+
+
 ## Anatomy
 
 <Anatomy />
 
-A date field consists of a label, and a group of segments representing each unit of a date and time (e.g. years, months, days, etc.). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value. This approach allows values to be formatted and parsed correctly regardless of the locale or date format, and offers an easy and error-free way to edit dates using the keyboard.
+A time field consists of a label, and a group of segments representing each unit of a time (e.g. hours, minutes, and seconds). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value. This approach allows values to be formatted and parsed correctly regardless of the locale or time format, and offers an easy and error-free way to edit times using the keyboard.
+
+`TimeField` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
+
+If the time field does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
+
+Note that most of this anatomy is shared with [DateField](DateField.html), so you can reuse many components between them if you have both.
 
 ### Concepts
 
@@ -113,7 +152,7 @@ A `TimeField` uses the following components, which may also be used standalone o
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
@@ -133,7 +172,7 @@ A `<Label>` accepts all HTML attributes.
 
 ### DateInput
 
-The `<DateInput>` component renders a group of date segments.
+The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -210,7 +249,7 @@ A `TimeField` can be targeted with the `.react-aria-TimeField` CSS selector, or 
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### DateInput
 
@@ -226,16 +265,20 @@ A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector,
 
 If you will use a TimeField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `TimeField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place.
+This example wraps `TimeField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
-function MyTimeField({label, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MyTimeField({label, description, errorMessage, ...props}) {
   return (
     <TimeField {...props}>
       <Label>{label}</Label>
       <DateInput>
         {segment => <DateSegment segment={segment} />}
       </DateInput>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </TimeField>
   );
 }
@@ -352,12 +395,35 @@ This example only accepts times between 9 AM and 5 PM.
   defaultValue={new Time(8)} />
 ```
 
+### Help text
+
+The `description` slot can be used to associate additional help text with a date field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the date field as invalid for assistive technologies.
+
+This example validates that the selected time is on a 15 minute increment.
+
+```tsx example
+function Example() {
+  let [time, setTime] = React.useState(new Time(9, 15));
+  let isInvalid = time.minute % 15;
+
+  return (
+    <MyTimeField
+      label="Meeting time"
+      value={time}
+      onChange={setTime}
+      validationState={isInvalid ? 'invalid' : 'valid'}
+      description={isInvalid ? null : 'Select a meeting time'}
+      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : null} />
+  );
+}
+```
+
 ### Placeholder value
 
 When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is midnight, but you can set it to a more appropriate value if needed.
 
 ```tsx example
-<TimeField label="Meeting time" placeholderValue={new Time(9)} />
+<MyTimeField label="Meeting time" placeholderValue={new Time(9)} />
 ```
 
 ### Hide time zone

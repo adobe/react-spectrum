@@ -1,5 +1,6 @@
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {mergeRefs} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {RenderProps, useContextProps, useRenderProps} from './utils';
 
 interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps> {}
@@ -66,16 +67,19 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
     : React.Children.only(renderProps.children);
 
   return React.cloneElement(element, {
-    ref,
-    ...element.props,
-    ...mergeProps(linkProps, hoverProps, focusProps),
-    ...renderProps,
-    children: element.props.children,
-    'data-hovered': isHovered || undefined,
-    'data-pressed': isPressed || undefined,
-    'data-focus-visible': isFocusVisible || undefined
+    ref: useMemo(() => element.ref ? mergeRefs(element.ref, ref) : ref, [element.ref, ref]),
+    ...mergeProps(renderProps, linkProps, hoverProps, focusProps, {
+      children: element.props.children,
+      'data-hovered': isHovered || undefined,
+      'data-pressed': isPressed || undefined,
+      'data-focus-visible': isFocusVisible || undefined  
+    }, element.props)
   });
 }
 
+/**
+ * A link allows a user to navigate to another page or resource within a web page
+ * or application.
+ */
 const _Link = forwardRef(Link);
 export {_Link as Link};

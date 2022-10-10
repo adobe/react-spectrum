@@ -9,21 +9,22 @@ interface SlottedValue<T> {
 }
 
 type ProviderValue<T> = [React.Context<T>, SlottedValue<T> | T];
-type ProviderValues<A, B, C, D, E, F, G> =
+type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>];
 
-interface ProviderProps<A, B, C, D, E, F, G> {
-  values: ProviderValues<A, B, C, D, E, F, G>,
+interface ProviderProps<A, B, C, D, E, F, G, H> {
+  values: ProviderValues<A, B, C, D, E, F, G, H>,
   children: React.ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G>({values, children}: ProviderProps<A, B, C, D, E, F, G>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -91,7 +92,7 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
     }
     if (!ctx.slots[props.slot]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(contextProps.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
     ctx = ctx.slots[props.slot];
   }

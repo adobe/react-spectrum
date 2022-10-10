@@ -2,13 +2,15 @@ import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {HeadingContext} from './Heading';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React from 'react';
+import {TextContext} from './Text';
+import {useObjectRef} from '@react-aria/utils';
 
-interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, RenderProps<CalendarState> {
+interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -16,7 +18,7 @@ interface CalendarComponentProps<T extends DateValue> extends CalendarProps<T>, 
   visibleDuration?: DateDuration
 }
 
-interface RangeCalendarComponentProps<T extends DateValue> extends RangeCalendarProps<T>, RenderProps<RangeCalendarState> {
+interface RangeCalendarComponentProps<T extends DateValue> extends Omit<RangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -38,7 +40,7 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
     createCalendar
   });
 
-  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
 
   let renderProps = useRenderProps({
     ...props,
@@ -57,7 +59,12 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
             }
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
-          [InternalCalendarContext, state]
+          [InternalCalendarContext, state],
+          [TextContext, {
+            slots: {
+              errorMessage: errorMessageProps
+            }
+          }]
         ]}>
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
@@ -71,6 +78,9 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
   );
 }
 
+/**
+ * A calendar displays one or more date grids and allows users to select a single date.
+ */
 const _Calendar = forwardRef(Calendar);
 export {_Calendar as Calendar};
 
@@ -83,7 +93,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
     createCalendar
   });
 
-  let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(
     props,
     state,
     ref
@@ -106,7 +116,12 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
             }
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
-          [InternalCalendarContext, state]
+          [InternalCalendarContext, state],
+          [TextContext, {
+            slots: {
+              errorMessage: errorMessageProps
+            }
+          }]
         ]}>
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
@@ -120,6 +135,9 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
   );
 }
 
+/**
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ */
 const _RangeCalendar = forwardRef(RangeCalendar);
 export {_RangeCalendar as RangeCalendar};
 
@@ -238,6 +256,10 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
   );
 }
 
+/**
+ * A calendar grid displays a single grid of days within a calendar or range calendar which
+ * can be keyboard navigated and selected by the user.
+ */
 const _CalendarGrid = forwardRef(CalendarGrid);
 export {_CalendarGrid as CalendarGrid};
 
@@ -245,14 +267,14 @@ interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
   date: CalendarDate
 }
 
-export function CalendarCell({date, className, style, children}: CalendarCellProps) {
+function CalendarCell({date, className, style, children}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(InternalCalendarContext);
   let currentMonth = useContext(InternalCalendarGridContext);
-  let ref = useRef();
+  let objectRef = useObjectRef(ref);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
     state,
-    ref
+    objectRef
   );
 
   let {focusProps, isFocusVisible} = useFocusRing();
@@ -294,7 +316,13 @@ export function CalendarCell({date, className, style, children}: CalendarCellPro
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(buttonProps, focusProps, dataAttrs, renderProps)} ref={ref} />
+      <div {...mergeProps(buttonProps, focusProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }
+
+/**
+ * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
+ */
+const _CalendarCell = forwardRef(CalendarCell);
+export {_CalendarCell as CalendarCell};

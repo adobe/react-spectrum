@@ -17,6 +17,9 @@ interface DialogProps extends AriaDialogProps, DOMProps {
 
 export const DialogContext = createContext<DialogProps>(null);
 
+/**
+ * A DialogTrigger opens a dialog when a trigger element is pressed.
+ */
 export function DialogTrigger(props: DialogTriggerProps) {
   let state = useOverlayTriggerState(props);
   
@@ -62,5 +65,8 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   );
 }
 
+/**
+ * A dialog is an overlay shown above other content in an application.
+ */
 const _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};

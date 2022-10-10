@@ -64,7 +64,7 @@ import {Link} from 'react-aria-components';
   position: relative;
 
   &[data-hovered] {
-    text-shadow: 0 0 10px currentColor;
+    text-decoration-style: wavy;
   }
 
   &[data-pressed] {
@@ -87,6 +87,17 @@ import {Link} from 'react-aria-components';
 ```
 
 </details>
+
+## Features
+
+Links can be created in HTML with the [&lt;a&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a)
+element with an `href` attribute. However, if the link does not have an href, and is
+handled client side with JavaScript instead, it will not be exposed to assistive technology properly.
+`Link` helps achieve accessible links with either native HTML elements or custom element types.
+
+* **Flexible** – Support for navigation links, JavaScript handled links, or custom element types (e.g. router links). Disabled links are also supported.
+* **Accessible** – Implemented as a custom ARIA link when handled via JavaScript, and otherwise as a native HTML link.
+* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
 ## Anatomy
 
@@ -206,3 +217,9 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 ```tsx example
 <Link isDisabled><a href="https://adobe.com" target="_blank">Disabled link</a></Link>
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useLink](useLink.html) for more details.

@@ -177,6 +177,20 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 </details>
 
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element
+can be used to build modals. However, it is not yet widely supported across browsers, and
+building fully accessible custom dialogs from scratch is very difficult and error prone.
+`Modal` helps achieve accessible modals that can be styled as needed.
+
+* **Styleable** – States for entry and exit animations are included for easy styling. Both the underlay and overlay elements can be customized.
+* **Accessible** – Content outside the model is hidden from assistive technologies while it is open. The modal optionally closes when interacting outside, or pressing the <Keyboard>Escape</Keyboard> key.
+* **Focus management** – Focus is moved into the modal on mount, and restored to the trigger element on unmount. While open, focus is contained within the modal, preventing the user from tabbing outside.
+* **Scroll locking** – Scrolling the page behind the modal is prevented while it is open, including in mobile browsers.
+
+Note: `Modal` only provides the overlay itself. It should be combined with [Dialog](Dialog.html) to create fully accessible modal dialogs. Other overlays such as menus may also be placed in a modal overlay.
+
 ## Anatomy
 
 A modal consists of an overlay container element, and an underlay. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
@@ -237,7 +251,7 @@ A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overr
 
 ### ModalOverlay
 
-By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` explicitly and place a `Modal` inside.
+By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` and place a `Modal` inside.
 
 This example also shows how to use a `Modal` to render other types of overlays such as a tray or drawer, as well as support for custom entry and exit animations.
 
@@ -327,8 +341,6 @@ import {ModalOverlay} from 'react-aria-components';
 
 ## Usage
 
-The following examples show how to use the `Modal` API.
-
 ### Dismissable
 
 If your modal doesn't require the user to make a confirmation, you can set `isDismissable`
@@ -388,3 +400,9 @@ function Example() {
   );
 }
 ```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useModalOverlay](useModalOverlay.html) for more details.

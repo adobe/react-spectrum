@@ -29,7 +29,7 @@ import {
   Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
+export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, Validation, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
   /** Sets the open state of the menu. */
   isOpen?: boolean,
   /** Sets the default open state of the menu. */
@@ -49,7 +49,7 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
   name?: string
 }
 
-export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.

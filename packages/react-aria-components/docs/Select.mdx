@@ -93,6 +93,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     &[data-pressed] {
       background: var(--spectrum-global-color-gray-150);
     }
+
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   & .react-aria-SelectValue {
@@ -116,6 +120,15 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     border-radius: 4px;
     font-size: 0.857rem;
   }
+
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 
 .react-aria-ListBox {
@@ -136,7 +149,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   }
 
   & section header {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     padding: 0 8px 0 22px;
   }
@@ -189,6 +202,19 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 
 </details>
 
+## Features
+
+A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is
+not possible to style consistently cross browser, especially the options. `Select` helps achieve accessible
+select components that can be styled as needed without compromising on high quality interactions.
+
+* **Flexible** – Support for controlled and uncontrolled state, async loading, disabled items, validation, sections, complex items, and more.
+* **Keyboard navigation** – Select can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. Auto scrolling, and typeahead both in the listbox and on the button, are supported as well.
+* **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
+* **HTML form integration** – A visually hidden `<select>` element is included to enable HTML form integration, autofill, and mobile form navigation via the software keyboard.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
 ## Anatomy
 
 <Anatomy />
@@ -196,6 +222,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
 popup. Users can click, touch, or use the keyboard on the button to open the listbox popup.
 
+`Select` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+If a select does not have a visible label, an `aria-label` or `aria-labelledby`
+prop must be passed instead to identify it to assistive technology.
 
 ### Concepts
 
@@ -211,28 +243,28 @@ A `Select` uses the following components, which may also be used standalone or r
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
 </ExampleCard>
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action.">
   <Button />
 </ExampleCard>
 
 <ExampleCard
-  url="useOverlayTrigger.html"
+  url="Popover.html"
   title="Popover"
   description="A popover displays content in context with a trigger element.">
   <Popover />
 </ExampleCard>
 
 <ExampleCard
-  url="useListBox.html"
+  url="ListBox.html"
   title="ListBox"
   description="A listbox allows a user to select one or more options from a list.">
   <ListBox />
@@ -329,9 +361,9 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<ListBox className="my-listbox">
+<Select className="my-select">
   {/* ... */}
-</ListBox>
+</Select>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
@@ -375,11 +407,11 @@ A `Select` can be targeted with the `.react-aria-Select` CSS selector, or by ove
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
@@ -391,7 +423,7 @@ A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, o
 
 ### Popover
 
-The `Popover` component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
 
 The `--button-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
@@ -407,7 +439,7 @@ A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by o
 
 ### Section
 
-A `Section` can be targeted with the `section` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`.  The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
 
 ### Item
 
@@ -419,14 +451,20 @@ Items also support two slots: a label, and a description. When provided using th
 
 Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
 
+### Text
+
+The help text elements within a `Select` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
 ## Reusable wrappers
 
 If you will use a Select in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as descibed [above](#styling).
+This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
-function MySelect({label, children, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MySelect({label, description, errorMessage, children, ...props}) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -434,6 +472,8 @@ function MySelect({label, children, ...props}) {
         <SelectValue />
         <span aria-hidden="true">▼</span>
       </Button>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       <Popover>
         <ListBox>
           {children}
@@ -501,9 +541,9 @@ The following examples show how to use the `MySelect` component created in the a
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the Select using the `items` prop. Each item accepts a `key` prop, which
+As seen below, an iterable list of options is passed to the Select using the `items` prop. Each item accepts an `id` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
-as shown in the example below, then this is used automatically and a `key` prop is not required.
+as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
 function Example() {
@@ -531,7 +571,7 @@ function Example() {
 
 ### Sections
 
-Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
+Select supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
 
 #### Static items
 
@@ -564,7 +604,7 @@ import {Section} from 'react-aria-components';
 
 #### Dynamic items
 
-Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only.
+Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Select, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
 function Example() {
@@ -629,7 +669,7 @@ import {Text} from 'react-aria-components';
 
 ### Controlled selection
 
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item.
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
 When `Select` is used with a dynamic collection as described above, the key of each item is derived from the data.
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
@@ -704,7 +744,7 @@ A Select can be fully disabled using the `isDisabled` prop.
 ### Disabled options
 
 `Select` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+corresponds with the `id` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
@@ -738,6 +778,46 @@ function Example() {
         <Item id="always">Always</Item>
       </MySelect>
     </>
+  );
+}
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the Select as invalid for assistive technologies.
+
+```tsx example
+function Example() {
+  let [animalId, setAnimalId] = React.useState();
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+  let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [
+    animalId
+  ]);
+
+  return (
+    <MySelect
+      validationState={isValid ? 'valid' : 'invalid'}
+      label="Favorite animal"
+      description={isValid ? 'Pick your favorite animal, you will be judged.' : null}
+      errorMessage={isValid ? null : animalId === 2
+        ? 'The author of this example is a dog person.'
+        : "Oh no it's a snake! Choose anything else."}
+      items={options}
+      selectedKey={animalId}
+      onSelectionChange={(selected) => setAnimalId(selected)}
+    >
+      {(item) => <Item>{item.name}</Item>}
+    </MySelect>
   );
 }
 ```

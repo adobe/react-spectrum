@@ -20,6 +20,7 @@ import Anatomy from '/packages/@react-aria/calendar/docs/calendar-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 
 ---
 category: Date and Time
@@ -135,11 +136,32 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       text-decoration: line-through;
       color: var(--spectrum-global-color-red-600);
     }
+
+    &[aria-invalid] {
+      background: var(--spectrum-global-color-static-red-600);
+      color: white;
+    }
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
   }
 }
 ```
 
 </details>
+
+## Features
+
+There is no standalone calendar element in HTML. `<input type="date">` is close, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `Calendar` helps achieve accessible and international calendar components that can be styled as needed.
+
+* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
+* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
+* **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `Calendar`.
 
 ## Anatomy
 
@@ -149,11 +171,30 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 
 A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
 
+`Calendar` also supports an optional error message element, which can be used to provide more context about any validation errors. This is linked with the calendar via the `aria-describedby` attribute.
+
+Note that much of this anatomy is shared with [range calendars](RangeCalendar.html). If you have both, the styling and internal components such as `CalendarCell` can be shared.
+
 ### Concepts
 
 `Calendar` makes use of the following concepts:
 
 * [@internationalized/date](../internationalized/date/index.html)
+
+### Composed components
+
+A `Calendar` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
 
 ## Props
 
@@ -255,7 +296,7 @@ A `Calendar` can be targeted with the `.react-aria-Calendar` CSS selector, or by
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. The next and previous buttons can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. It supports the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
@@ -268,6 +309,10 @@ A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selecto
 A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
+
+### Text
+
+The error message element within a `Calendar` can be targeted with the `[slot=errorMessage]` CSS selector, or by adding a custom `className`.
 
 ## Multi-month
 
@@ -295,10 +340,12 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 
 If you will use a Calendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Calendar` and all of its children together into a single component.
+This example also shows how to use the `errorMessage` slot to render help text in case of a validation error ([see below for details](#error-message)).
 
 ```tsx example export=true
-function MyCalendar(props) {
+import {Text} from 'react-aria-components';
+
+function MyCalendar({errorMessage, ...props}) {
   return (
     <Calendar {...props}>
       <header>
@@ -309,6 +356,7 @@ function MyCalendar(props) {
       <CalendarGrid>
         {date => <CalendarCell date={date} />}
       </CalendarGrid>
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </Calendar>
   );
 }
@@ -326,7 +374,7 @@ A `Calendar` has no selection by default. An initial, uncontrolled value can be 
 
 Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
 
-`useCalendar` supports values with both date and time components, but only allows users to modify the date. By default, `useCalendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
+`Calendar` supports values with both date and time components, but only allows users to modify the date. By default, `Calendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
 
 ```tsx example
 import {parseDate} from '@internationalized/date';
@@ -350,7 +398,7 @@ function Example() {
 
 ### Events
 
-`useCalendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+`Calendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
@@ -371,7 +419,7 @@ function Example() {
 
 ### International calendars
 
-`useCalendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+`Calendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
 
 Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 
@@ -393,7 +441,7 @@ function Example() {
 
 ### Validation
 
-By default, `useCalendar` allows selecting any date. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
+By default, `Calendar` allows selecting any date. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
 
 This example only accepts dates after today.
 
@@ -405,7 +453,7 @@ import {today} from '@internationalized/date';
 
 ### Unavailable dates
 
-`useCalendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+`Calendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
 
 This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
 
@@ -431,7 +479,7 @@ function Example() {
 
 ### Controlling the focused date
 
-By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `useCalendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
+By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `Calendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
 
 This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
 
@@ -465,6 +513,32 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 
 ```tsx example
 <MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Error message
+
+`Calendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date is invalid, the `validationState` prop can be set to `"invalid"`. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+
+function Example() {
+  let [date, setDate] = React.useState(today(getLocalTimeZone()));
+  let {locale} = useLocale();
+  let isInvalid = isWeekend(date, locale);
+
+  return (
+    <MyCalendar
+      aria-label="Appointment date"
+      value={date}
+      onChange={setDate}
+      validationState={isInvalid ? 'invalid' : 'valid'}
+      errorMessage={isInvalid ? 'We are closed on weekends' : null} />
+  );
+}
 ```
 
 ### Labeling

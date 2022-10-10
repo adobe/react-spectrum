@@ -51,5 +51,8 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * A meter represents a quantity within a known range, or a fractional value.
+ */
 const _Meter = forwardRef(Meter);
 export {_Meter as Meter};

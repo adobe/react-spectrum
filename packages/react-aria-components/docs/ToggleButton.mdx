@@ -91,6 +91,18 @@ import {ToggleButton} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Toggle buttons are similar to action buttons, but support an additional selection state
+that is toggled when a user presses the button. There is no built-in HTML element that
+represents a toggle button, so React Aria implements it using ARIA attributes.
+
+* **Styleable** – Hover, press, keyboard focus, and selection states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+* **Accessible** – Uses a native `<button>` element with the `aria-pressed `attribute, and supports the <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys to toggle the selection state.
+* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
+
+Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods to learn more.
+
 ## Anatomy
 
 Toggle buttons consist of a clickable area usually containing a textual label or an icon
@@ -125,7 +137,7 @@ A custom `className` can also be specified on any component. This overrides the 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.react-aria-ToggleButton[data-pressed] {
+.react-aria-ToggleButton[aria-pressed=true] {
   /* ... */
 }
 ```
@@ -154,8 +166,6 @@ The states, selectors, and render props for `ToggleButton` are documented below.
 <StateTable properties={docs.exports.ToggleButtonRenderProps.properties} />
 
 ## Usage
-
-The following examples show how to use the `ToggleButton` component created in the above example.
 
 ### Controlled selection state
 

@@ -1,15 +1,15 @@
 import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMProps, Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {CollectionProps, useCachedChildren, useCollection} from './Collection';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
+import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {useCachedChildren, useCollection} from './Collection';
 import {useListBox, useListBoxSection, useOption} from 'react-aria';
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, DOMProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior
 }
@@ -44,6 +44,9 @@ function ListBoxPortal({props, listBoxRef}) {
   );
 }
 
+/**
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ */
 const _ListBox = forwardRef(ListBox);
 export {_ListBox as ListBox};
 
@@ -113,7 +116,7 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   return (
     <section 
       {...groupProps}
-      className={className || section.props?.className}
+      className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
       {section.rendered &&
         <header {...headingProps}>

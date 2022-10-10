@@ -5,8 +5,9 @@ import {Orientation, ValidationState} from '@react-types/shared';
 import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {ForwardedRef, forwardRef, useState} from 'react';
+import {TextContext} from './Text';
 
-interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label'>, RenderProps<RadioGroupState> {}
+interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupState> {}
 interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
 
 export interface RadioGroupRenderProps {
@@ -90,7 +91,7 @@ let RadioContext = React.createContext<RadioGroupState>(null);
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
-  let {radioGroupProps, labelProps} = useRadioGroup({
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
     ...props,
     label
   }, state);
@@ -106,7 +107,13 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       <Provider
         values={[
           [RadioContext, state],
-          [LabelContext, {...labelProps, ref: labelRef}]
+          [LabelContext, {...labelProps, ref: labelRef}],
+          [TextContext, {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
+          }]
         ]}>
         {renderProps.children}
       </Provider>
@@ -179,6 +186,14 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   );
 }
 
+/**
+ * A radio group allows a user to select a single item from a list of mutually exclusive options.
+ */
 const _RadioGroup = forwardRef(RadioGroup);
+
+/**
+ * A radio represents an individual option within a radio group.
+ */
 const _Radio = forwardRef(Radio);
+
 export {_RadioGroup as RadioGroup, _Radio as Radio};

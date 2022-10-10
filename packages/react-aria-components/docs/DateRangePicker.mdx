@@ -24,7 +24,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
-import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
+import RangeCalendar from '@react-spectrum/docs/pages/assets/component-illustrations/RangeCalendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 
 ---
@@ -125,6 +125,15 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       box-shadow: 0 0 0 2px slateblue;
     }
   }
+
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
 }
 
 .react-aria-DateInput {
@@ -151,6 +160,15 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     outline: none;
     border-radius: 4px;
     caret-color: transparent;
+  }
+
+  &[aria-invalid] {
+    color: var(--spectrum-global-color-red-600);
+
+    &:focus {
+      background: var(--spectrum-global-color-static-red-600);
+      color: white;
+    }
   }
 }
 
@@ -260,17 +278,46 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       text-decoration: line-through;
       color: var(--spectrum-global-color-red-600);
     }
+
+    &[aria-invalid] {
+      background: var(--spectrum-global-color-static-red-600);
+      color: white;
+    }
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
   }
 }
 ```
 
 </details>
 
+## Features
+
+A date range picker can be built using two separate `<input type="date">` elements, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `DateRangePicker` helps achieve accessible and international date and time range pickers that can be styled as needed.
+
+* **Dates and times** – Support for dates and times with configurable granularity.
+* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
+* **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
+* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select date ranges in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
+* **Touch friendly** – Date segments are editable using an easy to use numeric keypad, date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `DateRangePicker`.
+
 ## Anatomy
 
 <Anatomy />
 
 A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
+
+`DateRangePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
+
+If the date range picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
+
+Note that most of this anatomy is shared with [DatePicker](DatePicker.html), so you can reuse many components between them if you have both.
 
 ### Concepts
 
@@ -285,7 +332,7 @@ A `DateRangePicker` uses the following components, which may also be used standa
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
@@ -299,31 +346,31 @@ A `DateRangePicker` uses the following components, which may also be used standa
 </ExampleCard>
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action.">
   <Button />
 </ExampleCard>
 
 <ExampleCard
-  url="useOverlayTrigger.html"
+  url="Popover.html"
   title="Popover"
   description="A popover displays content in context with a trigger element.">
   <Popover />
 </ExampleCard>
 
 <ExampleCard
-  url="useDialog.html"
+  url="Dialog.html"
   title="Dialog"
   description="A dialog is an overlay shown above other content in an application.">
   <Dialog />
 </ExampleCard>
 
 <ExampleCard
-  url="useCalendar.html"
-  title="Calendar"
-  description="A calendar allows a user to select a single date from a date grid.">
-  <Calendar />
+  url="RangeCalendar.html"
+  title="RangeCalendar"
+  description="A range calendar allows a user to select a contiguous range of dates.">
+  <RangeCalendar />
 </ExampleCard>
 
 </section>
@@ -344,7 +391,7 @@ A `<Group>` accepts all HTML attributes.
 
 ### DateInput
 
-The `<DateInput>` component renders a group of date segments. The `slot="start"` and `slot="end"` props distinguish the two instances within a `DateRangePicker`.
+The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment. The `slot="start"` and `slot="end"` props distinguish the two instances within a `DateRangePicker`.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -487,7 +534,7 @@ A `DateRangePicker` can be targeted with the `.react-aria-DateRangePicker` CSS s
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### Group
 
@@ -505,21 +552,23 @@ A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector,
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons within a range calendar can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ### Popover
 
-The `Popover` component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM.
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM. It supports the following states and render props:
+
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
 ### Dialog
 
-A `Dialog` can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
+A [Dialog](Dialog.html) can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
 
-### Calendar
+### RangeCalendar
 
-A `Calendar` can be targeted with the `.react-aria-Calendar` CSS selector, or by overriding with a custom `className`. The next and previous buttons can be targeted with the `[slot=previous]` and `[slot=next]` selectors.
+A [RangeCalendar](RangeCalendar.html) can be targeted with the `.react-aria-RangeCalendar` CSS selector, or by overriding with a custom `className`.
 
 ### CalendarGrid
 
@@ -531,14 +580,20 @@ A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selecto
 
 <StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
 
+### Text
+
+The help text elements within a `DateRangePicker` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
 ## Reusable wrappers
 
 If you will use a DateRangePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `DateRangePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place.
+This example wraps `DateRangePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
-function MyDateRangePicker({label, ...props}) {
+import {Text} from 'react-aria-components';
+
+function MyDateRangePicker({label, description, errorMessage, ...props}) {
   return (
     <DateRangePicker {...props}>
       <Label>{label}</Label>
@@ -552,6 +607,8 @@ function MyDateRangePicker({label, ...props}) {
         </DateInput>
         <Button>▼</Button>
       </Group>
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       <Popover>
         <Dialog>
           <RangeCalendar>
@@ -563,6 +620,7 @@ function MyDateRangePicker({label, ...props}) {
             <CalendarGrid>
               {date => <CalendarCell date={date} />}
             </CalendarGrid>
+            {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
           </RangeCalendar>
         </Dialog>
       </Popover>
@@ -808,6 +866,34 @@ function Example() {
   let {locale} = useLocale();
 
   return <MyDateRangePicker label="Time off request" isDateUnavailable={date => isWeekend(date, locale)} allowsNonContiguousRanges />
+}
+```
+
+### Help text
+
+The `description` slot can be used to associate additional help text with a date range picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to semantically mark the date range picker as invalid for assistive technologies.
+
+This example validates that the selected date range is a maximum of 1 week in duration.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+function Example() {
+  let [range, setRange] = React.useState({
+    start: today(getLocalTimeZone()),
+    end: today(getLocalTimeZone()).add({ weeks: 1, days: 3 })
+  });
+  let isInvalid = range.end.compare(range.start) > 7;
+
+  return (
+    <MyDateRangePicker
+      label="Trip dates"
+      value={range}
+      onChange={setRange}
+      validationState={isInvalid ? 'invalid' : 'valid'}
+      description={isInvalid ? null : 'Select your vacation dates'}
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : null} />
+  );
 }
 ```
 

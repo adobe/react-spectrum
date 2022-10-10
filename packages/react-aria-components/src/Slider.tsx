@@ -70,6 +70,9 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * A slider allows a user to select one or more values within a range.
+ */
 const _Slider = forwardRef(Slider);
 export {_Slider as Slider};
 
@@ -89,6 +92,9 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
   return <output {...outputProps} {...renderProps} ref={ref} />;
 }
 
+/**
+ * A slider output displays the current value of a slider as text.
+ */
 const _SliderOutput = forwardRef(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
@@ -108,6 +114,9 @@ function SliderTrack({children, style, className}: SliderTrackProps, ref: Forwar
   return <div {...trackProps} {...renderProps} ref={domRef} />;
 }
 
+/**
+ * A slider track is a container for one or more slider thumbs.
+ */
 const _SliderTrack = forwardRef(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
@@ -183,5 +192,8 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   );
 }
 
+/**
+ * A slider thumb represents an individual value that the user can adjust within a slider track.
+ */
 const _SliderThumb = forwardRef(SliderThumb);
 export {_SliderThumb as SliderThumb};

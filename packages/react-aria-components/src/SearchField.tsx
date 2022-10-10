@@ -3,10 +3,9 @@ import {ButtonContext} from './Button';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
-import React, {ForwardedRef, forwardRef} from 'react';
+import React, {ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
-import {useObjectRef} from '@react-aria/utils';
 
 interface SearchFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState> {}
 
@@ -18,14 +17,14 @@ export interface SearchFieldRenderProps {
   isEmpty: boolean
 }
 
-function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLInputElement>) {
-  let domRef = useObjectRef(ref);
+function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
     ...props,
     label
-  }, state, domRef);
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -36,11 +35,12 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLInputElement
   return (
     <div 
       {...renderProps}
+      ref={ref}
       data-empty={state.value === '' || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: domRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {
@@ -55,5 +55,8 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLInputElement
   );
 }
 
+/**
+ * A search field allows a user to enter and clear a search query.
+ */
 const _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};

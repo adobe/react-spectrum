@@ -99,7 +99,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
   & [slot=errorMessage] {
     grid-area: help;
     font-size: 12px;
-    color: red;
+    color: var(--spectrum-global-color-red-600);
   }
 
   & button {
@@ -130,6 +130,15 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
 </details>
 
+## Features
+
+Search fields can be built with `<input type="search">`, but these can be hard to
+style consistently cross browser. `SearchField` helps achieve accessible
+search fields that can be styled as needed.
+
+* **Clearable** – A custom clear button can be shown to allow the input to be easily reset.
+* **Accessible** – Uses a native `<input type="search">` element, with support for the <Keyboard>Enter</Keyboard> and <Keyboard>Escape</Keyboard> keys to submit and clear the field, respectively. Label, description, and error message elements are automatically associated with the field.
+
 ## Anatomy
 
 <Anatomy />
@@ -153,21 +162,21 @@ A `SearchField` uses the following components, which may also be used standalone
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="useLabel.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
   description="A label provides context for an input element.">
   <Label />
 </ExampleCard>
 
 <ExampleCard
-  url="useTextField.html"
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input"
   title="Input"
   description="An input allows a user to enter a plain text value with a keyboard.">
   <Input />
 </ExampleCard>
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action.">
   <Button />
@@ -264,7 +273,7 @@ A `SearchField` can be targeted with the `.react-aria-SearchField` CSS selector,
 
 ### Label
 
-A `Label` can be targeted with the `label` CSS selector, or by adding a custom `className`.
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
 
 ### Input
 
@@ -272,7 +281,7 @@ An `Input` can be targeted with the `input` CSS selector, or by adding a custom 
 
 ### Button
 
-A `Button` can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
@@ -367,7 +376,7 @@ function Example() {
 
 ### Description
 
-The `description` prop can be used to associate additional help text with a search field.
+The `description` slot can be used to associate additional help text with a search field.
 
 ```tsx example
 <MySearchField
@@ -377,7 +386,7 @@ The `description` prop can be used to associate additional help text with a sear
 
 ### Error message
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
+The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
 semantically mark the input element as invalid for assistive technologies.
 
 ```tsx example

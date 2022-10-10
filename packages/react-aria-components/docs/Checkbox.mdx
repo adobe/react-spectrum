@@ -106,6 +106,27 @@ import {Checkbox} from 'react-aria-components';
     }
   }
 
+  &[data-validation-state=invalid] {
+    & .checkbox {
+      border-color: var(--spectrum-global-color-static-red-600);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--spectrum-global-color-static-red-700);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
+      & .checkbox {
+        background: var(--spectrum-global-color-static-red-600);
+      }
+
+      &[data-pressed] .checkbox {
+        background: var(--spectrum-global-color-static-red-700);
+      }
+    }
+  }
+
   &[data-indeterminate] {
     & svg {
       stroke: none;
@@ -124,6 +145,14 @@ import {Checkbox} from 'react-aria-components';
 ```
 
 </details>
+
+## Features
+
+Checkboxes can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element, but this can be difficult to style. `Checkbox` helps achieve accessible checkboxes that can be styled as needed.
+
+* **Styleable** – Hover, press, keyboard focus, selection, and indeterminate states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+* **Accessible** – Uses a visually hidden `<input>` element under the hood, which also enables HTML form integration and autofill. A label element is built-in to ensure the checkbox is usable with assistive technologies.
+* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
 
 ## Anatomy
 
@@ -246,7 +275,7 @@ function Example() {
       <p>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</p>
     </>
   );
- }
+}
 ```
 
 ### Indeterminate
@@ -257,6 +286,15 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 
 ```tsx example
 <MyCheckbox isIndeterminate>Subscribe</MyCheckbox>
+```
+
+### Validation
+
+Checkboxes can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
+
+```tsx example
+<MyCheckbox validationState="invalid">I accept the terms and conditions</MyCheckbox>
 ```
 
 ### Disabled

@@ -81,6 +81,18 @@ import {Button} from 'react-aria-components';
 
 </details>
 
+## Features
+
+On the surface, building a custom styled button seems simple. However, there are many
+cross browser inconsistencies in interactions and accessibility features to consider.
+`Button` handles all of these interactions for you, so you can focus on the styling.
+
+* **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+* **Accessible** – Uses a native `<button>` element under the hood, with support for the <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys.
+* **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
+
+Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of building buttons that work well across devices and interaction methods to learn more.
+
 ## Anatomy
 
 Buttons consist of a clickable area usually containing a textual label or an icon
@@ -115,7 +127,7 @@ A custom `className` can also be specified on any component. This overrides the 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-button[data-pressed] {
+.react-aria-Button[data-pressed] {
   /* ... */
 }
 ```
@@ -144,8 +156,6 @@ The states, selectors, and render props for `Button` are documented below.
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
 ## Usage
-
-The following examples show how to use the `Button` component created in the above example.
 
 ### Events
 
