@@ -111,6 +111,16 @@ export const DescriptionAndCustomDescription = {
   )]
 };
 
+export let AriaLabelWithDynamicHelpText: HelpTextStory = {
+  args: {
+    label: null,
+    'aria-label': 'Password',
+    description: undefined
+  },
+  render: (props) => <TextFieldWithAriaLabelAndDynamicHelpText {...props} />,
+  parameters: {description: {data: 'For the case when there is no label and help text is added or removed dynamically. Focus should remain in the text field as the user types and the help text gets added or removed.'}}
+};
+
 function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
   let [valid, setValid] = useState(undefined);
@@ -132,5 +142,18 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
         <Radio value="">undefined</Radio>
       </RadioGroup>
     </Flex>
+  );
+}
+
+function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps) {
+  let [value, setValue] = useState('');
+
+  return (
+    <TextField
+      {...props}
+      value={value}
+      onChange={setValue}
+      validationState={value.length ? 'invalid' : undefined}
+      errorMessage="Invalid length." />
   );
 }
