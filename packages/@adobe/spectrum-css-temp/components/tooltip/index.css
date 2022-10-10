@@ -17,6 +17,10 @@ governing permissions and limitations under the License.
   --spectrum-tooltip-target-offset: var(--spectrum-global-dimension-size-40);
   /* This variable needs to be updated in Spectrum DNA. Using the height variable so it scales to spectrum-large */
   --spectrum-tooltip-tip-width: var(--spectrum-tooltip-tip-height);
+
+  --spectrum-tooltip-info-background-color: var(--spectrum-semantic-informative-color-background);
+  --spectrum-tooltip-positive-background-color: var(--spectrum-semantic-positive-color-background);
+  --spectrum-tooltip-negative-background-color: var(--spectrum-semantic-negative-color-background);
 }
 
 .spectrum-Tooltip {

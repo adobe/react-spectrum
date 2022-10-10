@@ -15,28 +15,28 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Badge--neutral {
-  background-color: var(--spectrum-label-colored-gray-background-color);
+  background-color: var(--spectrum-semantic-neutral-color-background);
 }
 
 .spectrum-Badge--negative {
-  background-color: var(--spectrum-label-colored-red-background-color);
+  background-color: var(--spectrum-semantic-negative-color-background);
 }
 
 .spectrum-Badge--yellow {
   color: var(--spectrum-global-color-static-black);
-  background-color: var(--spectrum-global-color-static-yellow-600);
+  background-color: var(--spectrum-global-color-static-yellow-300);
 }
 
 .spectrum-Badge--seafoam  {
-  background-color: var(--spectrum-global-color-static-seafoam-700);
+  background-color: var(--spectrum-global-color-static-seafoam-600);
 }
 
 .spectrum-Badge--positive {
-  background-color: var(--spectrum-global-color-static-green-700);
+  background-color: var(--spectrum-semantic-positive-color-background);
 }
 
 .spectrum-Badge--info  {
-  background-color: var(--spectrum-label-colored-blue-background-color);
+  background-color: var(--spectrum-semantic-informative-color-background);
 }
 
 .spectrum-Badge--fuchsia  {
