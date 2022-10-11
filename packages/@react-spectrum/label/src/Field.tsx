@@ -16,8 +16,8 @@ import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, mergeRefs, useId} from '@react-aria/utils';
-import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
+import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
@@ -50,7 +50,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
   let contextualHelpId = useId();
 
   let labelWrapperClass = classNames(
@@ -67,7 +66,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     );
 
   children = React.cloneElement(children, mergeProps(children.props, {
-    ref: mergedRefs,
     className: classNames(
         labelStyles,
         'spectrum-Field-field'
@@ -154,13 +152,6 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       {labelAndContextualHelp}
       {renderChildren()}
     </div>
-  );
-}
-
-function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
-  return useCallback(
-    mergeRefs(...refs) as (instance: (T | null)) => void,
-    [...refs]
   );
 }
 
