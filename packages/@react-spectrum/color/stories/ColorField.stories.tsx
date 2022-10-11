@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
