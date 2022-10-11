@@ -25,13 +25,13 @@ governing permissions and limitations under the License.
 
   &.is-invalid {
     .spectrum-Dropdown-invalidIcon {
-      color: var(--spectrum-dropdown-validation-icon-color-error);
+      fill: var(--spectrum-dropdown-validation-icon-color-error);
     }
 
     &.is-disabled {
       .spectrum-Icon,
       .spectrum-Dropdown-invalidIcon {
-        color: var(--spectrum-dropdown-icon-color-disabled);
+        fill: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
   }
