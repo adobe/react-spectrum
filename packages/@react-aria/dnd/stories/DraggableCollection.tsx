@@ -21,8 +21,8 @@ import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
+import {useDraggableCollection, useDraggableItem} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem} from '..';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
@@ -98,6 +98,7 @@ function DraggableCollection(props) {
     onDragMove: props.onDragMove,
     onDragEnd: props.onDragEnd
   });
+  useDraggableCollection({}, dragState, ref);
 
   let {gridProps} = useGrid({
     ...props,
@@ -153,7 +154,7 @@ function DraggableCollectionItem({item, state, dragState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -175,7 +176,7 @@ function DraggableCollectionItem({item, state, dragState}) {
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...buttonProps}
               ref={buttonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />

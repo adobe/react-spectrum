@@ -15,25 +15,32 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes, useCallback} from 'react';
-import {FocusEvents} from '@react-types/shared';
+import {DOMAttributes, FocusEvents} from '@react-types/shared';
+import {FocusEvent, useCallback} from 'react';
 import {useSyntheticBlurEvent} from './utils';
 
-interface FocusProps extends FocusEvents {
+export interface FocusProps extends FocusEvents {
   /** Whether the focus events should be disabled. */
   isDisabled?: boolean
 }
 
-interface FocusResult {
+export interface FocusResult {
   /** Props to spread onto the target element. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: DOMAttributes
 }
 
 /**
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus({isDisabled, onFocus: onFocusProp, onBlur: onBlurProp, onFocusChange}: FocusProps): FocusResult {
+export function useFocus(props: FocusProps): FocusResult {
+  let {
+    isDisabled,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
+    onFocusChange
+  } = props;
+
   const onBlur: FocusProps['onBlur'] = useCallback((e: FocusEvent) => {
     if (e.target === e.currentTarget) {
       if (onBlurProp) {

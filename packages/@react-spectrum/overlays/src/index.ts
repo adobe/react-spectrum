@@ -12,8 +12,8 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Overlay';
-export * from './Popover';
-export * from './Modal';
-export * from './Tray';
-export * from './OpenTransition';
+export {Overlay} from './Overlay';
+export {Popover} from './Popover';
+export {Modal} from './Modal';
+export {Tray} from './Tray';
+export {OpenTransition} from './OpenTransition';

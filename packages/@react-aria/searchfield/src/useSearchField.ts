@@ -13,14 +13,15 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {chain} from '@react-aria/utils';
-import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SearchFieldState} from '@react-stately/searchfield';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface SearchFieldAria {
+export interface SearchFieldAria {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -28,9 +29,9 @@ interface SearchFieldAria {
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps,
   /** Props for the searchfield's description element, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
   /** Props for the searchfield's error message element, if any. */
-  errorMessageProps: HTMLAttributes<HTMLElement>
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -44,9 +45,10 @@ export function useSearchField(
   state: SearchFieldState,
   inputRef: RefObject<HTMLInputElement>
 ): SearchFieldAria {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {
     isDisabled,
+    isReadOnly,
     onSubmit = () => {},
     onClear,
     type = 'search'
@@ -59,7 +61,7 @@ export function useSearchField(
       e.preventDefault();
     }
 
-    if (isDisabled) {
+    if (isDisabled || isReadOnly) {
       return;
     }
 
@@ -105,10 +107,11 @@ export function useSearchField(
       defaultValue: undefined
     },
     clearButtonProps: {
-      'aria-label': formatMessage('Clear search'),
+      'aria-label': stringFormatter.format('Clear search'),
       excludeFromTabOrder: true,
       // @ts-ignore
       preventFocusOnPress: true,
+      isDisabled: isDisabled || isReadOnly,
       onPress: onClearButtonClick,
       onPressStart
     },

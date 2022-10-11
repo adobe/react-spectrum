@@ -11,8 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {ErrorBoundary} from '@react-spectrum/story-utils';
-import {Flex} from '@adobe/react-spectrum';
+import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -24,97 +27,105 @@ storiesOf('Slider', module)
   .addDecorator(story => (
     <ErrorBoundary message={message}>{story()}</ErrorBoundary>
   ))
+  .addParameters({
+    args: {
+      label: 'Label',
+      isDisabled: false,
+      labelPosition: 'top'
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render({'aria-label': 'Label'})
+    args => render({...args, label: null, 'aria-label': 'Label'})
   )
   .add(
     'label',
-    () => render({label: 'Label'})
+    args => render(args)
   )
   .add(
     'multitouch',
-    () => (<Flex direction="column" gap="size-1000">
-      {render({label: 'Label'})}
-      {render({label: 'Label'})}
+    args => (<Flex direction="column" gap="size-1000">
+      {render({...args, label: 'Label'})}
+      {render({...args, label: 'Label'})}
     </Flex>)
   )
   .add(
-    'isDisabled',
-    () => render({label: 'Label', defaultValue: 50, isDisabled: true})
-  )
-  .add(
     'custom width',
-    () => render({label: 'Label', width: '300px'})
+    args => render({...args, width: '300px'})
   )
   .add(
     'custom width small',
-    () => render({label: 'Label', width: '30px'})
+    args => render({...args, width: '30px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
+    args => render({...args, label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
   )
   .add(
     'showValueLabel: false',
-    () => render({label: 'Label', showValueLabel: false})
+    args => render({...args, showValueLabel: false})
   )
   .add(
     'formatOptions percent',
-    () => render({label: 'Label', minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
+    args => render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
   )
   .add(
     'formatOptions centimeter',
     // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    () => render({label: 'Label', maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
+    args => render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
   )
   .add(
     'custom valueLabel',
-    () => render({label: 'Label', getValueLabel: state => `A ${state} B`})
+    args => render({...args, getValueLabel: state => `A ${state} B`})
   )
   .add(
     'custom valueLabel with label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', getValueLabel: state => `A ${state} B`})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({label: 'Label', labelPosition: 'side'})
-  )
-  .add(
-    'labelPosition: side, customWidth',
-    () => render({label: 'Label', labelPosition: 'side', width: '400px'})
-  )
-  .add(
-    'labelPosition: side, customWidth small',
-    () => render({label: 'Label', labelPosition: 'side', width: '30px'})
+    args => render({...args, label: 'This is a rather long label for this narrow slider element.', getValueLabel: state => `A ${state} B`})
   )
   .add(
     'min/max',
-    () => render({label: 'Label', minValue: 30, maxValue: 70})
+    args => render({...args, minValue: 30, maxValue: 70})
   )
   .add(
     'step',
-    () => render({label: 'Label', minValue: 0, maxValue: 100, step: 5})
+    args => render({...args, minValue: 0, maxValue: 100, step: 5})
   )
   .add(
     'isFilled: true',
-    () => render({label: 'Label', isFilled: true})
+    args => render({...args, isFilled: true})
   )
   .add(
     'fillOffset',
-    () => render({label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
+    args => render({...args, label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
   )
   .add(
     'trackGradient',
-    () => render({label: 'Label', trackGradient: ['blue', 'red']})
+    args => render({...args, trackGradient: ['blue', 'red']})
   )
   .add(
     'trackGradient with fillOffset',
-    () => render({label: 'Label', trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50})
+    args => render({...args, trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50})
+  )
+  .add(
+    'contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
   // .add(
   //   '* orientation: vertical',
-  //   () => render({label: 'Label', orientation: 'vertical'})
+  //   args => render({...args, orientation: 'vertical'})
   // );
 
 function render(props: SpectrumSliderProps = {}) {

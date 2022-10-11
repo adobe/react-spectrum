@@ -11,31 +11,32 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface AriaPositionProps extends PositionProps {
+export interface AriaPositionProps extends PositionProps {
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
    */
-  boundaryElement?: HTMLElement,
+  boundaryElement?: Element,
   /**
    * The ref for the element which the overlay positions itself with respect to.
    */
-  targetRef: RefObject<HTMLElement>,
+  targetRef: RefObject<Element>,
   /**
    * The ref for the overlay element.
    */
-  overlayRef: RefObject<HTMLElement>,
+  overlayRef: RefObject<Element>,
   /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<Element>,
   /**
    * Whether the overlay should update its position automatically.
    * @default true
@@ -44,17 +45,17 @@ interface AriaPositionProps extends PositionProps {
   /** Handler that is called when the overlay should close. */
   onClose?: () => void,
   /**
-   * The maxHeight specified for the overlay element. 
+   * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.
    */
   maxHeight?: number
 }
 
-interface PositionAria {
+export interface PositionAria {
   /** Props for the overlay container element. */
-  overlayProps: HTMLAttributes<Element>,
+  overlayProps: DOMAttributes,
   /** Props for the overlay tip arrow if any. */
-  arrowProps: HTMLAttributes<Element>,
+  arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
   /** Updates the position of the overlay. */
@@ -140,7 +141,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
   useLayoutEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     let onResize = () => {
       isResizing.current = true;
       clearTimeout(timeout);

@@ -12,23 +12,24 @@
 
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
+import {DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-interface ColorWheelAriaProps extends AriaColorWheelProps {
+export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
   outerRadius: number,
   /** The inner radius of the color wheel. */
   innerRadius: number
 }
 
-interface ColorWheelAria {
+export interface ColorWheelAria {
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
+  trackProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
@@ -37,7 +38,7 @@ interface ColorWheelAria {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
   let {
     isDisabled,
     innerRadius,
@@ -257,6 +258,11 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   });
 
   let {minValue, maxValue, step} = state.value.getChannelRange('hue');
+
+  let forcedColorAdjustNoneStyle = {
+    forcedColorAdjust: 'none'
+  };
+
   return {
     trackProps: {
       ...trackInteractions,
@@ -283,7 +289,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
             hsl(360, 100%, 50%)
           )
         `,
-        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`
+        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`,
+        ...forcedColorAdjustNoneStyle
       }
     },
     thumbProps: {
@@ -293,7 +300,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         left: '50%',
         top: '50%',
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
-        touchAction: 'none'
+        touchAction: 'none',
+        ...forcedColorAdjustNoneStyle
       }
     },
     inputProps: mergeProps(

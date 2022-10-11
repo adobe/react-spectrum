@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, render, waitFor, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../stories/DroppableGrid';
@@ -143,7 +143,7 @@ describe('useDroppableCollection', () => {
         type: 'dropenter',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       allCells = within(grid).getAllByRole('gridcell', {hidden: true});
@@ -157,31 +157,10 @@ describe('useDroppableCollection', () => {
         type: 'dropexit',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       expect(onDropEnter).toHaveBeenCalledTimes(4);
-      expect(onDropEnter).toHaveBeenLastCalledWith({
-        type: 'dropenter',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      allCells = within(grid).getAllByRole('gridcell', {hidden: true});
-      expect(allCells).toHaveLength(3);
-      expect(grid).toHaveAttribute('data-droptarget', 'true');
-
-      fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
-      expect(onDragExit).toHaveBeenCalledTimes(4);
-      expect(onDragExit).toHaveBeenLastCalledWith({
-        type: 'dropexit',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      expect(onDropEnter).toHaveBeenCalledTimes(5);
       expect(onDropEnter).toHaveBeenLastCalledWith({
         type: 'dropenter',
         x: 0,

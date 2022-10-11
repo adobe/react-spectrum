@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -105,11 +105,9 @@ describe('Tray', function () {
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
-    // The iOS Safari workaround blurs and refocuses the dialog after 0.5s
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(0);
 
     act(() => {dialog.blur();});
-    // (The iOS Safari workaround) + (the actual onClose) = 2
-    expect(onClose).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

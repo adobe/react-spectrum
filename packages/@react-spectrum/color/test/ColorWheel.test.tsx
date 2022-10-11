@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -36,10 +35,7 @@ describe('ColorWheel', () => {
 
   beforeAll(() => {
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    // @ts-ignore
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -224,7 +220,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -250,7 +246,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
       let thumb = slider.parentElement;
 
@@ -273,7 +269,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -296,7 +292,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -317,7 +313,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -331,5 +327,26 @@ describe('ColorWheel', () => {
       expect(document.activeElement).toBe(slider);
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('thumb background color should not include alpha channel', () => {
+    let defaultColor = parseColor('hsla(0, 100%, 50%, 0.5)');
+    let {container: _container} = render(<ColorWheel defaultValue={defaultColor} />);
+    /*
+     Current DOM structure for ColorWheel, starting at the container:
+
+     div
+       div.spectrum-ColorWheel
+         div.spectrum-ColorWheel-gradient
+         div.spectrum-ColorWheel-handle
+             div.spectrum-ColorHandle-color
+             svg.spectrum-ColorLoupe
+               ...
+             input.spectrum-ColorWheel-slider
+    */
+    let handleColorElement = _container?.firstChild?.firstChild?.nextSibling?.firstChild as HTMLElement;
+    let thumbColor = parseColor(handleColorElement.style.backgroundColor);
+    expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
+    expect(thumbColor.getChannelValue('alpha')).toEqual(1);
   });
 });

@@ -12,12 +12,12 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {useCallback, useEffect, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -31,7 +31,7 @@ export interface SpinButtonProps extends InputBase, Validation, ValueBase<number
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: HTMLAttributes<HTMLDivElement>,
+  spinButtonProps: DOMAttributes,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps
 }
@@ -55,7 +55,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
   const propsRef = useRef(props);
   propsRef.current = props;
 
@@ -128,7 +128,7 @@ export function useSpinButton(
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  textValue = textValue === '' ? formatMessage('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
 
   useEffect(() => {
     if (isFocused.current) {

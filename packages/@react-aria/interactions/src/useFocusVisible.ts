@@ -15,14 +15,13 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {isMac} from '@react-aria/utils';
-import {isVirtualClick} from './utils';
+import {isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 
-type Modality = 'keyboard' | 'pointer' | 'virtual';
+export type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
-type FocusVisibleHandler = (isFocusVisible: boolean) => void;
+export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
@@ -30,7 +29,7 @@ interface FocusVisibleProps {
   autoFocus?: boolean
 }
 
-interface FocusVisibleResult {
+export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
   isFocusVisible: boolean
 }

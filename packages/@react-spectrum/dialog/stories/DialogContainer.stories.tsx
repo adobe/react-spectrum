@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogContainerExample, MenuExample} from './DialogContainerExamples';
+import {DialogContainerExample, MenuExample, NestedDialogContainerExample} from './DialogContainerExamples';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -39,4 +39,8 @@ storiesOf('DialogContainer', module)
   .add(
     'isKeyboardDismissDisabled',
     () => <MenuExample isKeyboardDismissDisabled />
+  )
+  .add(
+    'Nested Dialog Containers',
+    () => <NestedDialogContainerExample />
   );

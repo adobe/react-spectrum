@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyDateTime, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -22,8 +22,8 @@ export function add(date: CalendarDateTime, duration: DateTimeDuration): Calenda
 export function add(date: CalendarDate, duration: DateDuration): CalendarDate;
 export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime;
 export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration) {
-  let mutableDate: Mutable<AnyCalendarDate> = date.copy();
-  let days = 'hour' in date ? addTimeFields(date, duration) : 0;
+  let mutableDate: Mutable<AnyCalendarDate | AnyDateTime> = date.copy();
+  let days = 'hour' in mutableDate ? addTimeFields(mutableDate, duration) : 0;
 
   addYears(mutableDate, duration.years || 0);
   if (mutableDate.calendar.balanceYearMonth) {
@@ -45,12 +45,42 @@ export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDur
     mutableDate.calendar.balanceDate(mutableDate);
   }
 
+  // Constrain in case adding ended up with a date outside the valid range for the calendar system.
+  // The behavior here is slightly different than when constraining in the `set` function in that
+  // we adjust smaller fields to their minimum/maximum values rather than constraining each field
+  // individually. This matches the general behavior of `add` vs `set` regarding how fields are balanced.
+  if (mutableDate.year < 1) {
+    mutableDate.year = 1;
+    mutableDate.month = 1;
+    mutableDate.day = 1;
+  }
+
+  let maxYear = mutableDate.calendar.getYearsInEra(mutableDate);
+  if (mutableDate.year > maxYear) {
+    let isInverseEra = mutableDate.calendar.isInverseEra?.(mutableDate);
+    mutableDate.year = maxYear;
+    mutableDate.month = isInverseEra ? 1 : mutableDate.calendar.getMonthsInYear(mutableDate);
+    mutableDate.day = isInverseEra ? 1 : mutableDate.calendar.getDaysInMonth(mutableDate);
+  }
+
+  if (mutableDate.month < 1) {
+    mutableDate.month = 1;
+    mutableDate.day = 1;
+  }
+
+  let maxMonth = mutableDate.calendar.getMonthsInYear(mutableDate);
+  if (mutableDate.month > maxMonth) {
+    mutableDate.month = maxMonth;
+    mutableDate.day = mutableDate.calendar.getDaysInMonth(mutableDate);
+  }
+
+  mutableDate.day = Math.max(1, Math.min(mutableDate.calendar.getDaysInMonth(mutableDate), mutableDate.day));
   return mutableDate;
 }
 
 function addYears(date: Mutable<AnyCalendarDate>, years: number) {
-  if (date.calendar.getYearsToAdd) {
-    years = date.calendar.getYearsToAdd(date, years);
+  if (date.calendar.isInverseEra?.(date)) {
+    years = -years;
   }
 
   date.year += years;
@@ -233,8 +263,8 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       break;
     }
     case 'year': {
-      if (mutable.calendar.getYearsToAdd) {
-        amount = mutable.calendar.getYearsToAdd(mutable, amount);
+      if (mutable.calendar.isInverseEra?.(mutable)) {
+        amount = -amount;
       }
 
       // The year field should not cycle within the era as that can cause weird behavior affecting other fields.

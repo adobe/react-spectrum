@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -66,7 +64,7 @@ describe('DatePickerBase', function () {
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
-      expect(button).toHaveAttribute('tabindex', '-1');
+      expect(button).not.toHaveAttribute('tabindex');
     });
 
     it.each`
@@ -383,12 +381,16 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component label="Date" />);
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();
@@ -408,12 +410,16 @@ describe('DatePickerBase', function () {
       );
 
       let segments = getAllByRole('spinbutton');
+      let button = getAllByRole('button')[0];
       act(() => {segments[0].focus();});
 
       for (let i = 0; i < segments.length; i++) {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
       }
+
+      expect(button).toHaveFocus();
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
 
       for (let i = segments.length - 1; i >= 0; i--) {
         expect(segments[i]).toHaveFocus();

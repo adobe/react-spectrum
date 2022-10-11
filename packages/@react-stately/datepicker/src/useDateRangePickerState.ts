@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {createPlaceholderDate, FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 
 export interface DateRangePickerStateOptions extends DateRangePickerProps<DateValue> {
   /**
@@ -27,7 +27,7 @@ export interface DateRangePickerStateOptions extends DateRangePickerProps<DateVa
 }
 
 type TimeRange = RangeValue<TimeValue>;
-export interface DateRangePickerState {
+export interface DateRangePickerState extends OverlayTriggerState {
   /** The currently selected date range. */
   value: DateRange,
   /** Sets the selected date range. */
@@ -63,9 +63,7 @@ export interface DateRangePickerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
-  /** Replaces the start and/or end value of the selected range with the placeholder value if unentered. */
-  confirmPlaceholder(): void
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
 }
 
 /**
@@ -85,11 +83,8 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
   }
 
   let value = controlledValue || placeholderValue;
-  let valueRef = useRef(value);
-  valueRef.current = value;
 
   let setValue = (value: DateRange) => {
-    valueRef.current = value;
     setPlaceholderValue(value);
     if (value?.start && value.end) {
       setControlledValue(value);
@@ -99,8 +94,8 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
   };
 
   let v = (value?.start || value?.end || props.placeholderValue);
-  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
-  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let [granularity] = useDefaultProps(v, props.granularity);
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
@@ -178,7 +173,7 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
     },
     setDateRange,
     setTimeRange,
-    isOpen: overlayState.isOpen,
+    ...overlayState,
     setOpen(isOpen) {
       // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time range was set and not the date range, don't commit. The state will be preserved until
@@ -207,7 +202,9 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
         granularity: startGranularity,
         timeZone: startTimeZone,
         hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle
+        hourCycle: props.hourCycle,
+        showEra: (value.start.calendar.identifier === 'gregory' && value.start.era === 'BC') ||
+          (value.end.calendar.identifier === 'gregory' && value.end.era === 'BC')
       });
 
       let startDate = value.start.toDate(startTimeZone || 'UTC');
@@ -266,19 +263,6 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
         start: startFormatter.format(startDate),
         end: endFormatter.format(endDate)
       };
-    },
-    confirmPlaceholder() {
-      // Need to use ref value here because the value can be set in the same tick as
-      // a blur, which means the component won't have re-rendered yet.
-      let value = valueRef.current;
-      if (value && Boolean(value.start) !== Boolean(value.end)) {
-        let calendar = (value.start || value.end).calendar;
-        let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
-        setValue({
-          start: value.start || placeholder,
-          end: value.end || placeholder
-        });
-      }
     }
   };
 }

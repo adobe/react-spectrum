@@ -24,6 +24,7 @@ build().catch(err => {
 });
 
 async function build() {
+  let publicUrlFlag = process.argv[2] ? `--public-url ${process.argv[2]}` : '';
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building into ${dir}...`);
@@ -45,16 +46,20 @@ async function build() {
           name.startsWith('@spectrum-css') ||
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
-          name === 'sharp'
+          name === 'sharp' ||
+          name === 'recast'
         )
     ),
     dependencies: {
-      '@adobe/react-spectrum': 'latest'
+      '@adobe/react-spectrum': 'latest',
+      'react-aria': 'latest',
+      'react-stately': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
-      build: "DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+      // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     }
   };
@@ -99,6 +104,7 @@ async function build() {
   // Copy necessary code and configuration over
   fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
+  fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
   fs.removeSync(path.join(dir, 'packages', 'dev', 'v2-test-deps'));
   fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));

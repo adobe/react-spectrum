@@ -30,7 +30,7 @@ keywords: [dialog, modal, aria]
 ## Introduction
 
 Certain browser + screen reader combinations do not implement aria-modal correctly, which may unintentionally allow users to navigate outside of the modal.
-`react-aria-modal` watches a container element for `aria-modal` nodes and hides the rest of the dom from screen readers with `aria-hidden` when one is open. See the [aria-hidden](https://www.npmjs.com/package/aria-hidden) package for more details.
+`@react-aria/aria-modal-polyfill` watches a container element for `aria-modal` nodes and hides the rest of the dom from screen readers with `aria-hidden` when one is open. See the [aria-hidden](https://www.npmjs.com/package/aria-hidden) package for more details.
 Most of the time you do not need this, it should only be necessary if your app is not mounted at the root of the page.
 
 ## API

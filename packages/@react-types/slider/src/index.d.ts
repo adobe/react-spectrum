@@ -13,8 +13,9 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 
-export interface SliderProps<T = number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
+export interface SliderProps<T = number | number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
@@ -46,6 +47,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
+   * @deprecated - pass to the slider instead.
    */
   orientation?: Orientation,
   /** Whether the Thumb is disabled. */
@@ -54,7 +56,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   index: number
 }
 
-export interface AriaSliderProps<T = number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
 export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {
@@ -70,7 +72,11 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string
+  getValueLabel?: (value: T) => string,
+  /**
+   * A ContextualHelp element to place next to the label.
+   */
+  contextualHelp?: ReactNode
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {

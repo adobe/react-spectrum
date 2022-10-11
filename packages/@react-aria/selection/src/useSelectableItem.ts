@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, Key, RefObject, useEffect, useRef} from 'react';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {LongPressEvent, PressEvent} from '@react-types/shared';
+import {Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
@@ -30,7 +30,7 @@ export interface SelectableItemOptions {
   /**
    * Ref to the item.
    */
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<FocusableElement>,
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).
@@ -78,7 +78,7 @@ export interface SelectableItemStates {
   allowsSelection: boolean,
   /**
    * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
-   * and `disabledBehavior. It may also change depending on the current selection state
+   * and `disabledBehavior`. It may also change depending on the current selection state
    * of the list (e.g. when selection is primary). This can be used to enable or disable hover
    * styles or other visual indications of interactivity.
    */
@@ -89,7 +89,7 @@ export interface SelectableItemAria extends SelectableItemStates {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: HTMLAttributes<HTMLElement>
+  itemProps: DOMAttributes
 }
 
 /**
@@ -135,8 +135,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 
   // Focus the associated DOM node when this item becomes the focusedKey
-  let isFocused = key === manager.focusedKey;
   useEffect(() => {
+    let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
       if (focus) {
         focus();
@@ -144,7 +144,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
-  }, [ref, isFocused, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
@@ -152,7 +152,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {};
   if (!shouldUseVirtualFocus) {
     itemProps = {
-      tabIndex: isFocused ? 0 : -1,
+      tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
@@ -290,7 +290,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent native drag and drop on long press if we also select on long press.
   // Once the user is in selection mode, they can long press again to drag.
-  let onDragStart = e => {
+  // Use a capturing listener to ensure this runs before useDrag, regardless of
+  // the order the props get merged.
+  let onDragStartCapture = e => {
     if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
       e.preventDefault();
     }
@@ -301,7 +303,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStart}
+      {onDoubleClick, onDragStartCapture}
     ),
     isPressed,
     isSelected: manager.isSelected(key),

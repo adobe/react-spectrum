@@ -22,7 +22,6 @@ import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {Rect} from '@react-stately/virtualizer';
 import {useCollator} from '@react-aria/i18n';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
@@ -99,7 +98,10 @@ const acceptedTypes = ['item', 'folder'];
 
 export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
   let domRef = React.useRef<HTMLDivElement>(null);
-  let onDrop = action('onDrop');
+  let onDrop = async (e) => {
+    action('onDrop')(e);
+    props.onDrop?.(e);
+  };
   let state = useListState({...props, selectionMode: 'multiple'});
 
   React.useImperativeHandle(ref, () => ({
@@ -132,7 +134,8 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
       }
 
       return target.dropPosition !== 'on' ? allowedOperations[0] : 'copy';
-    }
+    },
+    onDrop
   });
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -150,57 +153,9 @@ export const VirtualizedListBox = React.forwardRef(function (props: any, ref) {
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate: layout,
-    onDropEnter: chain(action('onDropEnter'), console.log),
-    // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
+    dropTargetDelegate: layout,
     onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      onDrop(e);
-      props.onDrop?.(e);
-    },
-    getDropTargetFromPoint(x, y) {
-      let closest = null;
-      let closestDistance = Infinity;
-      let closestDir = null;
-
-      x += domRef.current.scrollLeft;
-      y += domRef.current.scrollTop;
-      let visible = layout.getVisibleLayoutInfos(new Rect(x - 50, y - 50, x + 50, y + 50));
-
-      for (let layoutInfo of visible) {
-        let r = layoutInfo.rect;
-        let points: [number, number, string][] = [
-          [r.x, r.y + 4, 'before'],
-          [r.maxX, r.y + 4, 'before'],
-          [r.x, r.maxY - 8, 'after'],
-          [r.maxX, r.maxY - 8, 'after']
-        ];
-
-        for (let [px, py, dir] of points) {
-          let dx = px - x;
-          let dy = py - y;
-          let d = dx * dx + dy * dy;
-          if (d < closestDistance) {
-            closestDistance = d;
-            closest = layoutInfo;
-            closestDir = dir;
-          }
-        }
-
-        if (y >= r.y + 10 && y <= r.maxY - 10) {
-          closestDir = 'on';
-        }
-      }
-
-      let key = closest?.key;
-      if (key) {
-        return {
-          type: 'item',
-          key,
-          dropPosition: closestDir
-        };
-      }
-    }
+    onDrop
   }, dropState, domRef);
 
   let {listBoxProps} = useListBox({

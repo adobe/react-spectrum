@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useSearchFieldState';
+export {useSearchFieldState} from './useSearchFieldState';
+
+export type {SearchFieldProps} from '@react-types/searchfield';
+export type {SearchFieldState} from './useSearchFieldState';

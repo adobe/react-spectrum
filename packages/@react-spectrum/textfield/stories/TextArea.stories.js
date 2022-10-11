@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import Info from '@spectrum-icons/workflow/Info';
@@ -20,134 +21,117 @@ import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
 storiesOf('TextArea', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {
+      label: 'Comments',
+      isQuiet: false,
+      isDisabled: false,
+      isReadOnly: false,
+      isRequired: false,
+      necessityIndicator: 'icon',
+      labelPosition: 'top',
+      labelAlign: 'start',
+      validationState: null
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      },
+      necessityIndicator: {
+        control: {
+          type: 'radio',
+          options: ['icon', 'label']
+        }
+      },
+      labelAlign: {
+        control: {
+          type: 'radio',
+          options: ['start', 'end']
+        }
+      },
+      validationState: {
+        control: {
+          type: 'radio',
+          options: [null, 'valid', 'invalid']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render()
+    args => render(args)
   )
   .add(
     'value: Test (controlled)',
-    () => render({value: 'Test'})
+    args => render({...args, value: 'Test'})
   )
   .add(
     'defaultValue: Test (uncontrolled)',
-    () => render({defaultValue: 'Test'})
-  )
-  .add(
-    'isQuiet: true',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isQuiet, defaultValue',
-    () => render({isQuiet: true, defaultValue: 'foo  '.repeat(10)})
-  )
-  .add(
-    'isQuiet, value',
-    () => render({isQuiet: true, value: 'foo  '.repeat(10)})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled, isQuiet',
-    () => render({isDisabled: true, isQuiet: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid'})
-  )
-  .add(
-    'isReadOnly: true',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isReadOnly: true, value: read only value',
-    () => render({value: 'Read only value', isReadOnly: true})
-  )
-  .add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
+    args => render({...args, defaultValue: 'Test'})
   )
   .add(
     'autoFocus: true',
-    () => render({autoFocus: true})
+    args => render({...args, autoFocus: true})
   )
   .add(
     'icon: Info',
-    () => render({icon: <Info />})
-  )
-  .add(
-    'icon: Info, isQuiet',
-    () => render({icon: <Info />, isQuiet: true})
-  )
-  .add(
-    'icon: Info, isDisabled',
-    () => render({icon: <Info />, isDisabled: true})
-  )
-  .add(
-    'icon: Info, isQuiet, isDisabled',
-    () => render({icon: <Info />, isQuiet: true, isDisabled: true})
-  )
-  .add(
-    'icon: Info, validationState: invalid, isQuiet',
-    () => render({icon: <Info />, validationState: 'invalid', isQuiet: true})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
+    args => render({...args, icon: <Info />})
   )
   .add(
     'no visible label',
-    () => render({label: null, 'aria-label': 'Street address'})
+    args => render({...args, label: null, 'aria-label': 'Street address'})
   )
   .add('with description',
-    () => render({description: 'Enter product feedback.'})
+    args => render({...args, description: 'Enter product feedback.'})
   )
   .add('with error message',
-    () => render({errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'})
+    args => render({...args, errorMessage: 'Enter at least 250 characters.', validationState: 'invalid'})
+  )
+  .add(
+    'with contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add('custom width',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
+    args => render({...args, icon: <Info />, validationState: 'invalid', width: '300px'})
   )
   .add('custom width small',
-    () => render({icon: <Info />, validationState: 'invalid', width: '30px'})
-  )
-  .add('custom width, quiet',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
+    args => render({...args, icon: <Info />, validationState: 'invalid', width: '30px'})
   )
   .add(
     'custom height with label',
-    () => (
+    args => (
       <Form>
-        <TextArea label="Height size-2000" height="size-2000" />
-        <TextArea label="Height size-2000" height="size-2000" isQuiet />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" />
-        <TextArea labelPosition="side" label="Height size-2000" height="size-2000" isQuiet />
+        <TextArea {...args} label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea {...args} label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
+        <TextArea {...args} labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" />
+        <TextArea {...args} labelPosition="side" label="Custom height" description="height: size-2000" height="size-2000" isQuiet />
       </Form>
     )
   )
-  .add('controlled interactive',
-    () => <ControlledTextArea />
+  .add(
+    'changeable helptext',
+    args => <ValidationExample {...args} />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
   )
-  .add('in flex', () => renderInFlexRowAndBlock())
-  .add('in flex validation state', () => renderInFlexRowAndBlock({validationState: 'invalid'}));
+  .add(
+    'changeable helptext custom height',
+    args => <ValidationExample {...args} height="175px" minHeight="100px" maxHeight="50vh" />,
+    {description: {data: 'Verify that the changing size of the error message does not interfere with the height. To test, delete the input, then type the character "a". Height should update to match.'}}
+  )
+  .add('controlled interactive',
+    args => <ControlledTextArea {...args} />
+  )
+  .add('in flex', args => renderInFlexRowAndBlock(args))
+  .add('in flex validation state', args => renderInFlexRowAndBlock({...args, validationState: 'invalid'}));
 
 function render(props = {}) {
   return (
@@ -217,5 +201,22 @@ function renderInFlexRowAndBlock(props = {}) {
           {...props} />
       </div>
     </Flex>
+  );
+}
+
+function ValidationExample(props) {
+  let [value, setValue] = React.useState('0');
+  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+  return (
+    <TextArea
+      {...props}
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Favorite number"
+      maxLength={1}
+      description="Enter a single digit number."
+      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9. Lorem ipsum dolor.'} />
   );
 }

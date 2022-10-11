@@ -122,7 +122,7 @@ const Template = (): Story => ({columns, items, ...args}) => (
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>
@@ -197,6 +197,17 @@ HiddenColumns.args = {columns: hiddenColumns, items};
 export const NestedColumns = Template().bind({});
 NestedColumns.storyName = 'nested columns';
 NestedColumns.args = {columns: nestedColumns, items};
+
+export const MaxHeight = () => (
+  <TableView maxHeight="size-1200">
+    <TableHeader columns={columns}>
+      {(column: any) => <Column key={column.key}>{column.name}</Column>}
+    </TableHeader>
+    <TableBody items={items}>
+      {(item: any) => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+    </TableBody>
+  </TableView>
+  );
 
 export const Empty = EmptyTemplate().bind({});
 Empty.storyName = 'empty table';
