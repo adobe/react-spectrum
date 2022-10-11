@@ -39,7 +39,8 @@ keywords: [select, collections, dropdown]
   componentNames={['Picker', 'Item', 'Section']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/picker/'}
-  ]} />
+  ]}
+  since="3.0.0" />
 
 ## Example
 ```tsx example
@@ -380,6 +381,32 @@ function Example() {
     </Picker>
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a Picker.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<Picker
+  label="Engineering major"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Major changes</Heading>
+      <Content>Once you have changed your major, you cannot change it back.</Content>
+    </ContextualHelp>
+  }>
+  <Item>Aerospace</Item>
+  <Item>Mechanical</Item>
+  <Item>Civil</Item>
+  <Item>Nuclear</Item>
+  <Item>Industrial</Item>
+  <Item>Chemical</Item>
+  <Item>Agricultural</Item>
+  <Item>Electrical</Item>
+</Picker>
 ```
 
 ### Custom widths

@@ -133,3 +133,18 @@ export let WithContextualHelp: LabeledValueStory = {
   },
   name: 'contextual help'
 };
+
+export let LabelPostionSideWithContextualHelp: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: 25,
+    labelPosition: 'side',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )
+  },
+  name: 'contextual help, labelPosition: side'
+};

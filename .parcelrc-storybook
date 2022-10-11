@@ -1,0 +1,15 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-storybook", "..."],
+  "bundler": "@parcel/bundler-experimental",
+  "transformers": {
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  },
+  "optimizers": {
+    "*.css": ["@parcel/optimizer-css"]
+  }
+}
