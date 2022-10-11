@@ -50,7 +50,6 @@ Dynamic collections, as shown below, can be used when the options come from an e
 Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
 See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
 
-
 ```tsx example
 const items = [
   {id: 1, name: 'Adobe Photoshop'},
@@ -114,7 +113,8 @@ const items = [
 You can also disable specific tags by providing an array of keys to TagGroup via the `disabledKeys` prop. This will disable all interactions on disabled tags.
 
 ```tsx example
-const items = [
+function AppList() {
+const defaultItems = [
   {id: 1, name: 'Adobe Photoshop'},
   {id: 2, name: 'Adobe XD'},
   {id: 3, name: 'Adobe InDesign'},
@@ -126,15 +126,25 @@ const items = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<Flex width={500}>
-  <TagGroup items={items} disabledKeys={[2,4,5,8]} isRemovable aria-label="Disabled TagGroup example">
-    {(item) => (
-      <Item key={item.key}>
-        {item.name}
-      </Item>
-    )}
-  </TagGroup>
-</Flex>
+  const [items, setItems] = React.useState(defaultItems);
+  const removeItem = (tag) => {
+    const updatedItems = items.filter(item => item.name !== tag);
+    setItems(updatedItems);
+  }
+
+  return (
+    <Flex width={500}>
+      <TagGroup items={items} disabledKeys={[2,4,5,8]} isRemovable onRemove={removeItem} aria-label="Disable individual tags example">
+        {(item) => (
+          <Item key={item.key}>
+            {item.name}
+          </Item>
+        )}
+      </TagGroup>
+    </Flex>
+  );
+}
+
 ```
 
 ### Removing Tags
@@ -142,7 +152,8 @@ Adding the `isRemovable` prop will allow the tags to be removed from the group. 
 used to handle the remove logic.
 
 ```tsx example
-const items = [
+function AppList() {
+const defaultItems = [
   {id: 1, name: 'Adobe Photoshop'},
   {id: 2, name: 'Adobe XD'},
   {id: 3, name: 'Adobe InDesign'},
@@ -154,15 +165,24 @@ const items = [
   {id: 9, name: 'Adobe Dreamweaver'}
 ];
 
-<Flex width={500}>
-  <TagGroup items={items} isRemovable aria-label="Removable TagGroup example">
-    {(item) => (
-      <Item key={item.key}>
-        {item.name}
-      </Item>
-    )}
-  </TagGroup>
-</Flex>
+  const [items, setItems] = React.useState(defaultItems);
+  const removeItem = (tag) => {
+    const updatedItems = items.filter(item => item.name !== tag);
+    setItems(updatedItems);
+  }
+
+  return (
+    <Flex width={500}>
+      <TagGroup items={items} isRemovable onRemove={removeItem} aria-label="Removable TagGroup example">
+        {(item) => (
+          <Item key={item.key}>
+            {item.name}
+          </Item>
+        )}
+      </TagGroup>
+    </Flex>
+  );
+}
 
 ```
 
