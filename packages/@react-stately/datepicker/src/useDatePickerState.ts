@@ -57,7 +57,7 @@ export interface DatePickerState extends OverlayTriggerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
   /** Whether the date picker is currently focused. */
   readonly isFocused: boolean,
   /** Sets whether the date picker is focused. */
