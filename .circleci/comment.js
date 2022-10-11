@@ -80,7 +80,7 @@ async function run() {
         owner: 'adobe',
         repo: 'react-spectrum',
         issue_number: pr,
-        body: `API Changes
+        body: `## API Changes
 ${diffs}
 `});
     }
