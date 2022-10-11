@@ -100,20 +100,35 @@ async function compare() {
     }
   }
 
-  for (let [, diffs] of Object.entries(allDiffs)) {
+  let messages = [];
+  for (let [name, diffs] of Object.entries(allDiffs)) {
+    let changes = [];
     for (let {result: diff, simplifiedName} of diffs) {
       let changedByDeps = followDependencies(simplifiedName);
-      if (changedByDeps.length > 0) {
-        console.log('');
-        console.log(changedByDeps.join('\n'));
-        console.log('changed the interface');
-      }
-      if (diff.length > 0) {
-        console.log(diff);
-      } else if (changedByDeps.length > 0 && diff.length === 0) {
-        console.log(simplifiedName);
+      if (diff.length > 0 || changedByDeps.length > 0) {
+        // combine export change messages
+        changes.push(`
+${diff.length > 0 ? `${argv.isCI ? '' : ' '}${diff}` : simplifiedName}${changedByDeps.length > 0 ? `
+  changed by downstream interfaces: ${changedByDeps.join(',')}
+` : ''}
+`);
       }
     }
+    if (changes.length > 0) {
+      // combine the package change messages
+      messages.push(`
+--------------------------------------
+${name.replace('/dist/api.json', '')}
+--------------------------------------
+${changes.join('\n')}
+`
+      );
+    }
+  }
+  if (messages.length) {
+    messages.forEach(message => {
+      console.log(message);
+    });
   }
 }
 
@@ -203,6 +218,11 @@ function getDiff(pair) {
     });
     if (codeDiff.hunks.length > 0) {
       result = [result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+    }
+    if (argv.isCI && result.length > 0) {
+      result = `\`\`\`diff
+${result}
+\`\`\``;
     }
     diffs.push({iname, result, simplifiedName});
   });

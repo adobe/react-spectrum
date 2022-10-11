@@ -81,10 +81,8 @@ async function run() {
         repo: 'react-spectrum',
         issue_number: pr,
         body: `API Changes
-\`\`\`diff
 ${diffs}
-\`\`\`
-        `});
+`});
     }
   }
 }
