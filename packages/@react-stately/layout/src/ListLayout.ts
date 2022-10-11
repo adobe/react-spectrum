@@ -477,7 +477,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
     let key = this.virtualizer.keyAtPoint(new Point(x, y));
     if (key == null) {
-      return;
+      return {type: 'root'};
     }
 
     let layoutInfo = this.getLayoutInfo(key);

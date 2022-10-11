@@ -16,5 +16,5 @@ declare module '*.css' {
   }
 
   const content: CSSModule;
-  export default content;
+  export = content;
 }
