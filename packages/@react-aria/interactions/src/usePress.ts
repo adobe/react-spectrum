@@ -68,7 +68,8 @@ export interface PressResult {
   /** Whether the target is currently pressed. */
   isPressed: boolean,
   /** Props to spread on the target element. */
-  pressProps: DOMAttributes
+  pressProps: DOMAttributes,
+  wasPressed?: boolean
 }
 
 function usePressResponderContext(props: PressHookProps): PressHookProps {

@@ -100,7 +100,8 @@ export interface PressEvents {
    * Handler that is called when a press is released over the target, regardless of
    * whether it started on the target or not.
    */
-  onPressUp?: (e: PressEvent) => void
+  onPressUp?: (e: PressEvent) => void,
+  onPressDepress?: (e: PressEvent) => void
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {

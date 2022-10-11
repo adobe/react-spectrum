@@ -62,7 +62,9 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   type?: 'button' | 'submit' | 'reset'
 }
 
-export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
+export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {
+  foibles?: boolean
+}
 export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
 
 export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps, LinkButtonProps<T>, StyleProps {

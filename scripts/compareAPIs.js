@@ -19,6 +19,8 @@ let argv = yargs
   .argv;
 
 let allChanged = new Set();
+
+// {'useSliderState' => [ 'SliderStateOptions', 'SliderState' ], ... }
 let dependantOnLinks = new Map();
 let currentlyProcessing = '';
 let depth = 0;
@@ -97,25 +99,28 @@ async function compare() {
       if (diff.length > 0) {
         if (allChanged.has(simplifiedName)) {
           console.log(simplifiedName, 'already in set');
+        } else {
+          allChanged.add(simplifiedName);
         }
-        allChanged.add(simplifiedName);
       }
     }
   }
-
+  let invertedDeps = invertDependencies();
   let messages = [];
   for (let [name, diffs] of Object.entries(allDiffs)) {
     let changes = [];
     for (let {result: diff, simplifiedName} of diffs) {
       let changedByDeps = followDependencies(simplifiedName);
-      if (diff.length > 0 || changedByDeps.length > 0) {
+      if (diff.length > 0) {
+        let affected = followInvertedDependencies(simplifiedName, invertedDeps);
         // combine export change messages
         changes.push(`
 #### ${simplifiedName}
-${diff.length > 0 ? diff : ''}${changedByDeps.length > 0 ? `\
-\`\`\`
-changed by downstream interfaces: ${changedByDeps.join(',')}
-\`\`\`` : ''}
+${changedByDeps.length > 0 ? `changed by:
+ - ${changedByDeps.join('\n - ')}\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
+it changed:
+ - ${affected.join('\n - ')}
+` : ''}
 `);
       }
     }
@@ -123,8 +128,8 @@ changed by downstream interfaces: ${changedByDeps.join(',')}
       // combine the package change messages
       messages.push(`
 ### ${name.replace('/dist/api.json', '').replace(/^\//, '')}
------------------------------------
 ${changes.join('\n')}
+-----------------------------------
 `
       );
     }
@@ -158,6 +163,45 @@ function followDependencies(iname) {
   }
   visit(iname);
   return changedDeps;
+}
+
+function invertDependencies() {
+  let changedUpstream = new Map();
+  for (let [key, value] of dependantOnLinks.entries()) {
+    for (let name of value) {
+      if (changedUpstream.has(name)) {
+        changedUpstream.get(name).push(key);
+      } else {
+        changedUpstream.set(name, [key]);
+      }
+    }
+  }
+
+  return changedUpstream;
+}
+
+// takes an interface name and follows all the interfaces dependencies to
+// see if the interface changed as a result of a dependency changing
+function followInvertedDependencies(iname, deps) {
+  let visited = new Set();
+  let affectedInterfaces = [];
+  function visit(iname) {
+    if (visited.has(iname)) {
+      return;
+    }
+    visited.add(iname);
+    if (deps.has(iname)) {
+      let affected = deps.get(iname);
+      if (affected && affected.length > 0) {
+        for (let dep of affected) {
+          affectedInterfaces.push(dep);
+          visit(dep);
+        }
+      }
+    }
+  }
+  visit(iname);
+  return affectedInterfaces;
 }
 
 function getAPI(filePath) {
