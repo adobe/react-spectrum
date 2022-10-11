@@ -922,16 +922,28 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-fieldbutton-background-color);
   border-color: var(--spectrum-fieldbutton-border-color);
 
+  .spectrum-Icon {
+    fill: var(--spectrum-fieldbutton-icon-color);
+  }
+
   &:hover {
     color: var(--spectrum-fieldbutton-text-color-hover);
     background-color: var(--spectrum-fieldbutton-background-color-hover);
     border-color: var(--spectrum-fieldbutton-border-color-hover);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-fieldbutton-icon-color-hover);
+    }
   }
 
   &.is-active,
   &.is-selected {
     background-color: var(--spectrum-fieldbutton-background-color-down);
     border-color: var(--spectrum-fieldbutton-border-color-down);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-fieldbutton-icon-color-down);
+    }
   }
 
   &:focus-ring,
@@ -941,8 +953,12 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-fieldbutton-border-color-key-focus);
     color: var(--spectrum-fieldbutton-text-color-key-focus);
 
+    .spectrum-Icon {
+      fill: var(--spectrum-fieldbutton-icon-color-key-focus);
+    }
+
     &.is-placeholder {
-      color: var(--spectrum-fieldbutton-placeholder-text-color-key-focus);
+      fill: var(--spectrum-fieldbutton-placeholder-text-color-key-focus);
     }
   }
 
@@ -971,7 +987,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-fieldbutton-text-color-disabled);
 
     & .spectrum-Icon {
-        fill: var(--spectrum-fieldbutton-icon-color-disabled);
+      fill: var(--spectrum-fieldbutton-icon-color-disabled);
     }
   }
 }
@@ -1373,7 +1389,7 @@ governing permissions and limitations under the License.
       --spectrum-actionbutton-emphasized-icon-color-key-focus: HighlightText;
     }
   }
-  .spectrum-FieldButton { 
+  .spectrum-FieldButton {
     &:focus-ring,
     &.is-focused {
       &:not(.spectrum-FieldButton--quiet) {
@@ -1382,7 +1398,7 @@ governing permissions and limitations under the License.
       &.spectrum-FieldButton--quiet {
         forced-color-adjust: none;
         box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
-      } 
-    } 
+      }
+    }
   }
 }
