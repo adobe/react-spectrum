@@ -41,7 +41,8 @@
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
-    "bumpVersions": "node scripts/bumpVersions.js"
+    "bumpVersions": "node scripts/bumpVersions.js",
+    "supportESM": "node scripts/supportESM.js"
   },
   "workspaces": [
     "packages/react-stately",
