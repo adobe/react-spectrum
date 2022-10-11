@@ -15,6 +15,10 @@ const path = require('path');
 
 module.exports = new Namer({
   name({bundle, bundleGraph, options}) {
+    if (!process.env.DOCS_ENV) {
+      return null;
+    }
+
     let main = bundle.getMainEntry();
     if (main && main.meta.isMDX) {
       // A docs page. Generate the correct URL for it based on its location.

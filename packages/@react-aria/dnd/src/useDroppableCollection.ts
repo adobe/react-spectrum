@@ -39,12 +39,15 @@ import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 
-export interface DroppableCollectionOptions extends Omit<DroppableCollectionProps, 'onDropEnter' | 'onDropMove' | 'onDropExit' | 'getDropOperation'> {
+export interface DroppableCollectionOptions extends DroppableCollectionProps {
+  /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate: KeyboardDelegate,
+  /** A delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate: DropTargetDelegate
 }
 
 export interface DroppableCollectionResult {
+  /** Props for the collection element. */
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
@@ -57,6 +60,10 @@ interface DroppingState {
 
 const DROP_POSITIONS: DropPosition[] = ['before', 'on', 'after'];
 
+/**
+ * Handles drop interactions for a collection component, with support for traditional mouse and touch
+ * based drag and drop, in addition to full parity for keyboard and screen reader users.
+ */
 export function useDroppableCollection(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DroppableCollectionResult {
   let localState = useRef({
     props,

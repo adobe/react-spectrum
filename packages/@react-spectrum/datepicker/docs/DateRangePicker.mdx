@@ -32,7 +32,8 @@ keywords: [input, form, field, date, time]
 <HeaderInfo
   packageData={packageData}
   componentNames={['DateRangePicker']}
-  sourceData={[]} />
+  sourceData={[]}
+  since="3.19.0" />
 
 ## Example
 
@@ -371,6 +372,23 @@ Both a description and an error message can be supplied to a `DateRangePicker`. 
 
 ```tsx example
 <DateRangePicker label="Date range" showFormatHelpText />
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a DateRangePicker.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<DateRangePicker
+  label="Trip dates"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Date changes</Heading>
+      <Content>Your trip dates cannot be changed once scheduled.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Placeholder value
