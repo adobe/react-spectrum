@@ -4,7 +4,7 @@
   "description": "Localized string compiler for @internationalized/string",
   "license": "Apache-2.0",
   "main": "src/stringCompiler.js",
-  "exports": "src/stringCompiler.js",
+  "exports": "./src/stringCompiler.js",
   "types": "src/stringCompiler.d.ts",
   "files": [
     "src"
