@@ -61,6 +61,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
     selectionMode,
     columns: []
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
