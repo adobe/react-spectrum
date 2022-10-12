@@ -58,7 +58,7 @@ First, you’ll need to install an additional Next.js plugin:
 yarn add next-transpile-modules
 ```
 
-With this installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
+With this installed, add the following to your `next.config.mjs` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
 
 ```tsx
 const withTM = require("next-transpile-modules")([
