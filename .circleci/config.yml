@@ -419,7 +419,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: suport-esm
+              only: support-esm
           requires:
             - install
       - deploy:
