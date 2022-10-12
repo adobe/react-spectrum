@@ -15,13 +15,13 @@ import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
-import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
+import {FocusRing, FocusScope, useFocusRing, useHasTabbableChild} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useTabbableChild, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -391,7 +391,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     transitionDuration: isLoading ? 160 : 220
   });
 
-  let tabbableProps = useTabbableChild(domRef);
+  let hasTabbableChild = useHasTabbableChild(domRef);
 
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
@@ -468,7 +468,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && tabbableProps)}
+        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && hasTabbableChild ? {tabIndex: -1} : undefined)}
         ref={domRef}>
         <div
           role="presentation"
