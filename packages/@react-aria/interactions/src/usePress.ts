@@ -269,8 +269,9 @@ export function usePress(props: PressHookProps): PressResult {
           }
 
           // If triggered from a screen reader or by using element.click(),
-          // trigger as if it were a keyboard click.
-          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))) {
+          // trigger as if it were a keyboard click. Or, if in firefox, the event
+          // is retargeted from a label node https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget treat that similarly as a click (and check double check if label is associated with original target)
+          if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent) || (e as any).nativeEvent?.explicitOriginalTarget?.control?.contains(e.currentTarget))) {
             // Ensure the element receives focus (VoiceOver on iOS does not do this)
             if (!isDisabled && !preventFocusOnPress) {
               focusWithoutScrolling(e.currentTarget);
