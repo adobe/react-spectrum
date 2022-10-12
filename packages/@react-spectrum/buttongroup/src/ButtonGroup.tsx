@@ -64,6 +64,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
         yield computeHasOverflow();
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef, orientation, scale, setHasOverflow, children]);
 
   // There are two main reasons we need to remeasure:
@@ -78,6 +79,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef.current]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 

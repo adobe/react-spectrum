@@ -77,6 +77,7 @@ export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerPro
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => virtualizer.willUnmount();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
