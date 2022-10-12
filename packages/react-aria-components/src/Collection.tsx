@@ -1,4 +1,4 @@
-import {Collection, CollectionBase, ItemProps, Node, SectionProps} from '@react-types/shared';
+import {Collection, CollectionBase, ItemProps, Node, SectionProps, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
@@ -362,6 +362,11 @@ export function useCollection<T extends object>(props: CollectionProps<T>): Coll
 
 export interface ItemStates {
   /**
+   * Whether the item is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
    * Whether the item is currently in a pressed state.
    * @selector [data-pressed]
    */
@@ -386,10 +391,14 @@ export interface ItemStates {
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
    * @selector [aria-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /** The type of selection that is allowed in the collection. */
+  selectionMode: SelectionMode,
+  /** The selection behavior for the collection. */
+  selectionBehavior: SelectionBehavior
 }
 
-interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}
+export interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}
 
 export function Item<T extends object>(props: CollectionItemProps<T>) {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather

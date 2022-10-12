@@ -7,6 +7,7 @@ export {DateField, DateInput, DateSegment, TimeField} from './DateField';
 export {DatePicker, DateRangePicker} from './DatePicker';
 export {DialogTrigger, Dialog} from './Dialog';
 export {Modal, ModalOverlay} from './Modal';
+export {GridList} from './GridList';
 export {Group} from './Group';
 export {Heading} from './Heading';
 export {Input} from './Input';

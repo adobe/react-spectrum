@@ -172,6 +172,7 @@ export {_TabList as TabList};
  * A Tab provides a title for an individual item within a TabList.
  */
 export function Tab(props: TabProps): JSX.Element {
+  // @ts-ignore
   return Item(props);
 }
 

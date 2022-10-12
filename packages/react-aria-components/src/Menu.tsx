@@ -1,7 +1,7 @@
 
 import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
-import {CollectionProps, ItemStates, useCachedChildren, useCollection} from './Collection';
+import {CollectionItemProps, CollectionProps, ItemStates, useCachedChildren, useCollection} from './Collection';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
@@ -148,15 +148,19 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
+  let props: CollectionItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: className || item.props.className,
-    style: style || item.props.style,
+    className: className || props.className,
+    style: style || props.style,
     children: children || item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {
       ...states,
-      isFocusVisible: focusVisible
+      isHovered: states.isFocused,
+      isFocusVisible: focusVisible,
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
 
@@ -165,6 +169,7 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
       {...menuItemProps}
       {...renderProps}
       ref={ref}
+      data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={focusVisible || undefined}
       data-pressed={states.isPressed || undefined}>
