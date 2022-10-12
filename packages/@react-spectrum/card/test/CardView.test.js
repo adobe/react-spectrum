@@ -1190,7 +1190,6 @@ describe('CardView', function () {
       fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
         jest.runAllTimers();
-        jest.runAllTimers(); // added after empty Virtualizer focus change
       });
 
       let spinner = within(grid).getByRole('progressbar');
