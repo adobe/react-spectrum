@@ -71,6 +71,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
     } else {
       return styles;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   return {
