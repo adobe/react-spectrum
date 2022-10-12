@@ -117,7 +117,7 @@ async function compare() {
         changes.push(`
 #### ${simplifiedName}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
+ - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
 it changed:
  - ${affected.join('\n - ')}
 ` : ''}

@@ -30,8 +30,7 @@ export interface ButtonAria<T> {
   /** Props for the button element. */
   buttonProps: T,
   /** Whether the button is currently pressed. */
-  isPressed: boolean,
-  truly?: boolean
+  isPressed: boolean
 }
 
 // Order with overrides is important: 'button' should be default
