@@ -44,7 +44,7 @@ export interface SliderAria {
  * accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  * the track.
  */
-export function useSlider<T = number | number[]>(
+export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,
   trackRef: RefObject<Element>
