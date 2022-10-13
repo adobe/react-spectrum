@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionBase, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Key, useEffect, useMemo, useState} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
@@ -39,7 +39,7 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter} = props;
+  let {filter, items} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -51,13 +51,22 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   let collection = useCollection(props, factory, context, [filter]);
 
+  let [cachedItems, setCachedItems] = useState(items);
+  let cachedCollection = useCollection({...props, items: cachedItems}, factory, context, [filter]);
+
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(null);
+      let focusKey = cachedCollection.getKeyAfter(selectionState.focusedKey);
+      focusKey = focusKey ? focusKey : cachedCollection.getKeyBefore(selectionState.focusedKey);
+      selectionState.setFocusedKey(focusKey);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, selectionState.focusedKey]);
+
+  useEffect(() => {
+    setCachedItems(items);
+  }, [items]);
 
   return {
     collection,

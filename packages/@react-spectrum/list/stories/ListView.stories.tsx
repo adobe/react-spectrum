@@ -24,6 +24,7 @@ import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
+import RemoveCircle from '@spectrum-icons/workflow/RemoveCircle';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragAndDrop} from '@react-spectrum/dnd';
@@ -244,6 +245,9 @@ storiesOf('ListView', module)
         <Text slot="description">As a first grader, Mike Wazowski begins to dream of becoming a Scarer</Text>
       </Item>
     </ListView>
+  ))
+  .add('focus example', () => (
+    <FocusExample />
   ));
 
 storiesOf('ListView/Actions', module)
@@ -2137,3 +2141,24 @@ function DragBetweenListsOverride(props) {
     </Flex>
   );
 }
+
+const FocusExample = () => {
+  const list = useListData({
+    getKey: (item) => item.cheese,
+    initialItems: [{name: 'Aardvark', cheese: 1}, {name: 'Kangaroo', cheese: 2}, {name: 'Snake', cheese: 3}],
+    initialSelectedKeys: ['Kangaroo']
+  });
+
+  return (
+    <ListView width="250px" items={list.items}>
+      {(item) => (
+        <Item key={item.name}>
+          <Text>{item.name}</Text>
+          <ActionButton isQuiet onPress={() => list.remove(item.cheese)}>
+            <RemoveCircle />
+          </ActionButton>
+        </Item>
+      )}
+    </ListView>
+  );
+};
