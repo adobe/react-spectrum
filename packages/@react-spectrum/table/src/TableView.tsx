@@ -15,7 +15,7 @@ import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
-import {FocusRing, FocusScope, useFocusRing, useHasTabbableChild} from '@react-aria/focus';
+import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -391,8 +391,6 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     transitionDuration: isLoading ? 160 : 220
   });
 
-  let hasTabbableChild = useHasTabbableChild(domRef);
-
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
     scrollToItem(key) {
@@ -468,7 +466,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && hasTabbableChild ? {tabIndex: -1} : undefined)}
+        {...mergeProps(otherProps, virtualizerProps)}
         ref={domRef}>
         <div
           role="presentation"

@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {getFocusableTreeWalker} from './FocusScope';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {RefObject, useEffect, useState} from 'react';
+
+interface AriaHasTabbableChildProps {
+  isEmpty: boolean,
+  hasRenderedAnything: boolean
+}
 
 // This was created for a special empty case of a component that can have child or
 // be empty, like Collection/Virtualizer/Table/ListView/etc. When these components
@@ -19,16 +24,16 @@ import {RefObject, useEffect, useState} from 'react';
 // being not empty, when it comes to focus and tab order.
 //
 // This looks at the element's children and determines if any are tabbable.
-export function useHasTabbableChild(ref: RefObject<HTMLElement>): boolean {
+export function useHasTabbableChild({isEmpty, hasRenderedAnything}: AriaHasTabbableChildProps, ref: RefObject<HTMLElement>): boolean {
   let [hasTabbableChild, setHasTabbableChild] = useState(false);
 
   useEffect(() => {
-    if (ref?.current) {
+    if (ref?.current && isEmpty && hasRenderedAnything) {
       // Detect if there are any tabbable elements and update the tabIndex accordingly.
       let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
       setHasTabbableChild(!!walker.nextNode());
     }
-  }, [ref?.current]);
+  }, [ref, isEmpty, hasRenderedAnything]);
 
   return hasTabbableChild;
 }

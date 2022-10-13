@@ -16,7 +16,7 @@ import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
-import {useHasTabbableChild} from '@react-aria/focus';
+import {useHasTabbableChild} from './useHasTabbableChild';
 import {VirtualizerItem} from './VirtualizerItem';
 
 interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
@@ -179,7 +179,10 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   });
 
-  let hasTabbableChild = useHasTabbableChild(ref);
+  let hasTabbableChild = useHasTabbableChild({
+    isEmpty: virtualizer.collection.size === 0,
+    hasRenderedAnything: virtualizer.contentSize.height > 0 || virtualizer.contentSize.width > 0
+  }, ref);
 
   // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
   // itself is tabbable. When the collection receives focus, we scroll the focused item back into
@@ -190,7 +193,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
     // For collections that are empty, but have a link in the empty children we want to skip focusing this
     // and let focus move to the link similar to link moving to children.
-    tabIndex = focusedView || (virtualizer.collection.size === 0 && hasTabbableChild) ? -1 : 0;
+    tabIndex = focusedView || hasTabbableChild ? -1 : 0;
   }
 
   return {
