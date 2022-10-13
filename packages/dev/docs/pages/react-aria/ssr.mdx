@@ -44,16 +44,21 @@ When strict mode is enabled on React 16 or 17, it generates different IDs betwee
 
 ## Automatic ID Generation
 
+### React 18
+
 If you are using React 18, React Aria uses [React.useId](https://reactjs.org/docs/hooks-reference.html#useid) to generate unique IDs that are stable across the client and server.
+
+If your React app have multiple roots, you need to configure `identifierPrefix` option on `hydrateRoot` and `ReactDOMServer` to prevent collisions. For more information, please see the documentation of [React.useId](https://reactjs.org/docs/hooks-reference.html#useid).
+
+### React 16 and 17
 
 If you are using React 16 or 17, React Aria tries to generate consistent IDs by itself. In this case, when using SSR, only a single copy of React Aria can be on the page at a time, and React StrictMode cannot be supported.
 
-If you use React Aria’s [useId](useId.html) hook in your own components, `SSRProvider` will ensure the ids are consistent when server rendered. No additional changes in each component are required to enable
-SSR support.
+You may use React Aria’s [useId](useId.html) hook in your own components. `SSRProvider` will ensure the ids are consistent when server rendered. No additional changes in each component are required to enable SSR support.
 
 ## SSR specific rendering
 
-You can also use the [useIsSSR](useIsSSR.html) hook in your own components to determine whether they are running in an SSR context. This hook returns `true` both during server rendering and hydration, but updates immediately to `false` after hydration. You can use this to delay browser-specific code like media queries and feature detection until after the client has hydrated.
+You can use the [useIsSSR](useIsSSR.html) hook in your own components to determine whether they are running in an SSR context. This hook returns `true` both during server rendering and hydration, but updates immediately to `false` after hydration. You can use this to delay browser-specific code like media queries and feature detection until after the client has hydrated.
 
 ```tsx
 import {useIsSSR} from '@react-aria/ssr';
