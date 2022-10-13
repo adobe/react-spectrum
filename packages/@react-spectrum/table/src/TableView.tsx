@@ -440,6 +440,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
         onLoadMore();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
@@ -648,6 +649,7 @@ function ResizableTableColumnHeader(props) {
       }
     ];
     return options;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
   useEffect(() => {
@@ -659,6 +661,7 @@ function ResizableTableColumnHeader(props) {
         onFocusedResizer();
       }, 0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columnState.currentlyResizingColumn, column.key]);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null);
