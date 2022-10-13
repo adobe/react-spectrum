@@ -63,6 +63,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
         console.warn('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (type === 'popover') {

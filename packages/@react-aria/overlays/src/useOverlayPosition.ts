@@ -131,9 +131,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         maxHeight
       })
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize

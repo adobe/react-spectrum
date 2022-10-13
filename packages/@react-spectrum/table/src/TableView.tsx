@@ -440,6 +440,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
         onLoadMore();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
@@ -581,14 +582,13 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+  let {focusProps, ...otherProps} = props;
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
+  let {buttonProps} = useButton({...otherProps, elementType: 'div', isDisabled: isEmpty}, domRef);
   return (
     <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...buttonProps} ref={domRef}>{props.children}</div>
-      </FocusRing>
+      <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...mergeProps(buttonProps, focusProps)} ref={domRef}>{props.children}</div>
     </div>
   );
 };
@@ -616,6 +616,7 @@ function ResizableTableColumnHeader(props) {
   if (columnProps.width && columnProps.allowsResizing) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   const onMenuSelect = (key) => {
     switch (key) {
@@ -648,6 +649,7 @@ function ResizableTableColumnHeader(props) {
       }
     ];
     return options;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
   useEffect(() => {
@@ -659,6 +661,7 @@ function ResizableTableColumnHeader(props) {
         onFocusedResizer();
       }, 0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columnState.currentlyResizingColumn, column.key]);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null);
@@ -679,6 +682,7 @@ function ResizableTableColumnHeader(props) {
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
               'is-hovered': isHovered,
+              'focus-ring': isFocusVisible,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
@@ -692,7 +696,7 @@ function ResizableTableColumnHeader(props) {
           )
         }>
         <MenuTrigger>
-          <TableColumnHeaderButton ref={triggerRef}>
+          <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
             {columnProps.hideHeader ?
               <VisuallyHidden>{column.rendered}</VisuallyHidden> :
               column.rendered

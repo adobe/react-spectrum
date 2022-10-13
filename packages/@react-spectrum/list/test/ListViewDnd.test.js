@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
 import {globalDndState} from '@react-aria/dnd/src/utils';
@@ -223,7 +224,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -308,7 +309,7 @@ describe('ListView', function () {
           x: 1,
           y: 1,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -560,6 +561,48 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(list2rows[0]);
       });
 
+      it('should automatically focus an item after if it has been dropped on', async function () {
+        let {getByRole, getAllByRole} = render(
+          <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+        );
+
+        let grid = getByRole('grid');
+        let rows = getAllByRole('row');
+        let cell = within(rows[1]).getByRole('gridcell');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Folder 1 (Drop items here)');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item One');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(rows).toHaveLength(9);
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 350});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 350}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 350}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 350});
+
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 350}));
+        act(() => jest.runAllTimers());
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 350}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        rows = getAllByRole('row');
+        expect(within(rows[0]).getByRole('gridcell')).toHaveTextContent('Folder 1 (Drop items here)');
+        expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
+        expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
+
+        expect(rows).toHaveLength(8);
+        expect(document.activeElement).toBe(rows[7]);
+      });
+
       it('should update the global DnD state properly if dropping on a non-collection', function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView />
@@ -635,7 +678,7 @@ describe('ListView', function () {
 
       it('should reset the global drop state on drop if a dragged item is a non RSP drag target', function () {
         let {getAllByRole} = render(
-          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop}} />
+          <DragBetweenListsComplex secondListDnDOptions={{getDropOperation: () => 'copy', onDrop, acceptedDragTypes: 'all'}} />
         );
 
         let grids = getAllByRole('grid');
@@ -752,7 +795,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -799,7 +843,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '4',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             keys: new Set(['1', '2']),
             dropOperation: 'copy'
@@ -823,7 +868,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '4',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             keys: new Set(['1', '2']),
             dropOperation: 'move'
@@ -892,7 +938,7 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
@@ -901,9 +947,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -937,9 +984,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '3',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: true,
+            isInternal: true,
             dropOperation: 'move',
             items: [
               {
@@ -985,6 +1033,56 @@ describe('ListView', function () {
           expect(onInsert).toHaveBeenCalledTimes(0);
         });
 
+        it('should default acceptedDragTypes to "all" if not provided by the user', function () {
+          let shouldAcceptItemDrop = jest.fn();
+          shouldAcceptItemDrop.mockReturnValue(true);
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: undefined, shouldAcceptItemDrop}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+
+          // Called twice from getDropOperation and twice in onDrop when performing item filtering
+          expect(shouldAcceptItemDrop).toHaveBeenCalledTimes(4);
+          expect(shouldAcceptItemDrop.mock.calls[0][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[1][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][1]).toEqual(new Set(['text/plain', 'folder']));
+          expect(shouldAcceptItemDrop.mock.calls[3][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[3][1]).toEqual(new Set(['text/plain', 'file']));
+        });
+
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex
@@ -1006,7 +1104,7 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1017,7 +1115,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '5',
-              dropPosition: 'after'
+              dropPosition: 'after',
+              type: 'item'
             },
             items: [
               {
@@ -1135,7 +1234,8 @@ describe('ListView', function () {
             dropOperation: 'copy',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1180,7 +1280,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1215,7 +1316,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1262,9 +1364,9 @@ describe('ListView', function () {
           ]);
         });
 
-        it('should accept Folder drops if acceptedDragTypes contains "directory"', async function () {
+        it('should accept Folder drops if acceptedDragTypes contains the DIRECTORY_DRAG_TYPE', async function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['directory']}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: [DIRECTORY_DRAG_TYPE]}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1288,9 +1390,10 @@ describe('ListView', function () {
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1340,14 +1443,15 @@ describe('ListView', function () {
             x: 1,
             y: 1,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onInsert).toHaveBeenCalledWith({
             dropOperation: 'move',
             target: {
               key: '1',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1369,7 +1473,7 @@ describe('ListView', function () {
 
         it('should accept a drop that contains a mix of allowed and disallowed drag types (directories and file case)', function () {
           let {getAllByRole} = render(
-            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: ['directory', 'text/plain']}} />
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onInsert: null, acceptedDragTypes: [DIRECTORY_DRAG_TYPE, 'text/plain']}} />
           );
 
           let grids = getAllByRole('grid');
@@ -1530,16 +1634,17 @@ describe('ListView', function () {
             x: 1,
             y: 185,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Only has the file in onItemDrop, the folder item should have been filtered out
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '5',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1560,6 +1665,46 @@ describe('ListView', function () {
             identifier: '8',
             type: 'file',
             name: 'Adobe Fresco'
+          });
+        });
+
+        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+          // Take what ever drop operation is allowed except move
+          let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
+          let {getAllByRole} = render(
+            <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, getDropOperation}} secondListDnDOptions={{getAllowedDropOperations: () => ['move', 'link']}} />
+          );
+
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = within(grids[0]).getAllByRole('row')[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'link',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
           });
         });
       });
@@ -1613,7 +1758,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1676,7 +1821,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1714,7 +1859,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'move',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1769,7 +1914,7 @@ describe('ListView', function () {
         let dndState = globalDndState;
         expect(dndState.dropCollectionRef.current).toBe(list);
 
-        // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternalDrop = false
+        // Canceling the drop operation should clear dropCollectionRef before onDragEnd fires, resulting in isInternal = false
         fireEvent.keyDown(document.body, {key: 'Escape'});
         fireEvent.keyUp(document.body, {key: 'Escape'});
         dndState = globalDndState;
@@ -1781,7 +1926,7 @@ describe('ListView', function () {
           x: 50,
           y: 25,
           dropOperation: 'cancel',
-          isInternalDrop: false
+          isInternal: false
         });
       });
 
@@ -1825,7 +1970,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '7',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
               {
@@ -1863,7 +2009,8 @@ describe('ListView', function () {
           expect(onReorder).toHaveBeenCalledWith({
             target: {
               key: '3',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             keys: new Set(['1']),
             dropOperation: 'move'
@@ -1892,7 +2039,7 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onRootDrop).toHaveBeenCalledWith({
             dropOperation: 'move',
@@ -1938,15 +2085,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '7',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -1983,15 +2131,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: true
+            isInternal: true
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
               key: '3',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: true,
+            isInternal: true,
             dropOperation: 'move',
             items: [
               {
@@ -2055,15 +2204,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '8',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -2199,7 +2349,7 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -2209,7 +2359,8 @@ describe('ListView', function () {
             dropOperation: 'move',
             target: {
               key: '7',
-              dropPosition: 'before'
+              dropPosition: 'before',
+              type: 'item'
             },
             items: [
 
@@ -2255,15 +2406,16 @@ describe('ListView', function () {
             x: 50,
             y: 25,
             dropOperation: 'move',
-            isInternalDrop: false
+            isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '7',
-              dropPosition: 'on'
+              dropPosition: 'on',
+              type: 'item'
             },
-            isInternalDrop: false,
+            isInternal: false,
             dropOperation: 'move',
             items: [
               {
@@ -2278,6 +2430,44 @@ describe('ListView', function () {
             identifier: '1',
             type: 'file',
             name: 'Adobe Photoshop'
+          });
+        });
+
+        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+          // Take what ever drop operation is allowed except move
+          let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
+          let tree = render(
+            <DragBetweenListsComplex firstListDnDOptions={{getAllowedDropOperations: () => ['move', 'link']}} secondListDnDOptions={{...mockUtilityOptions, getDropOperation}} />
+          );
+
+          beginDrag(tree);
+          // Move to 2nd list's first insert indicator
+          userEvent.tab();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+          fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'link',
+            target: {
+              key: '7',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
           });
         });
       });
@@ -2498,6 +2688,48 @@ describe('ListView', function () {
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Seven');
 
         expect(document.activeElement).toBe(list2rows[0]);
+      });
+
+      it('should automatically focus an item after if it has been dropped on', async function () {
+        let {getByRole} = render(
+          <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
+        );
+
+        let grid = getByRole('grid');
+        let rows = within(grid).getAllByRole('row');
+        expect(rows).toHaveLength(9);
+
+        userEvent.tab();
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        act(() => jest.runAllTimers());
+
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Folder 2');
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+        await act(async () => Promise.resolve());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
+        act(() => jest.runAllTimers());
+
+        grid = getByRole('grid');
+        rows = within(grid).getAllByRole('row');
+        expect(rows).toHaveLength(8);
+
+        expect(document.activeElement).toBe(rows[7]);
       });
     });
 
@@ -2749,7 +2981,7 @@ describe('ListView', function () {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        isInternalDrop: true
+        isInternal: true
       });
       onSelectionChange.mockClear();
       onDragStart.mockClear();
