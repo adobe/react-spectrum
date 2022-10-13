@@ -19,11 +19,16 @@ function run() {
     if (json.exports) {
       delete json.exports;
     }
+    let main = json.main;
+    let module = json.module;
     let newPackageJSON = {};
     for (let [field, value] of Object.entries(json)) {
       newPackageJSON[field] = value;
       if (field === 'main') {
-        newPackageJSON.exports = `./${value}`;
+        newPackageJSON.exports = {
+          import: `./${module}`,
+          require: `./${main}`
+        };
 
         if (argv.dryRun) {
           console.log('setting main field in ', json.name);

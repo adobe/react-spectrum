@@ -5,7 +5,10 @@
   "license": "Apache-2.0",
   "private": true,
   "main": "dist/Alert.js",
-  "exports": "./dist/Alert.js",
+  "exports": {
+    "import": "./dist/Alert.module.js",
+    "require": "./dist/Alert.js"
+  },
   "module": "dist/Alert.module.js",
   "types": "dist/Alert.d.ts",
   "source": "src/index.ts",
