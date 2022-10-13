@@ -54,7 +54,7 @@ export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, D
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
 export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
-  /** The children of the <Tabs> element. Should include `<TabList>` and `<TabPanels>` elements. */
+  /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
   children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
   items?: Iterable<T>,
