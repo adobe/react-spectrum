@@ -30,7 +30,10 @@ keywords: [TagGroup, navigation]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Item', 'TagGroup']} />
+  componentNames={['Item', 'TagGroup']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tag/'}
+  ]} />
 
 ## Example
 ```tsx example
@@ -147,7 +150,7 @@ const defaultItems = [
 
 ```
 
-### Removing Tags
+### Removing tags
 Adding the `isRemovable` prop will allow the tags to be removed from the group. The `onRemove` callback is then
 used to handle the remove logic.
 
@@ -184,33 +187,6 @@ const defaultItems = [
   );
 }
 
-```
-
-### Overflow
-If the length of the text is longer than the width of the component, the text will truncate with an ellipsis.
-
-```tsx example
-const items = [
-  {id: 1, name: 'Adobe Photoshop'},
-  {id: 2, name: 'Adobe XD'},
-  {id: 3, name: 'Adobe InDesign'},
-  {id: 4, name: 'Adobe AfterEffects'},
-  {id: 5, name: 'Adobe Illustrator'},
-  {id: 6, name: 'Adobe Lightroom'},
-  {id: 7, name: 'Adobe Premiere Pro'},
-  {id: 8, name: 'Adobe Fresco'},
-  {id: 9, name: 'Adobe Dreamweaver'}
-];
-
-<Flex width={100}>
-  <TagGroup items={items} aria-label="Overflow TagGroup example">
-    {(item) => (
-      <Item key={item.key}>
-        {item.name}
-      </Item>
-    )}
-  </TagGroup>
-</Flex>
 ```
 
 ## Props

@@ -10,14 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, ItemProps, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
 import {GridState} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
 
-export interface TagGroupProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface TagGroupProps<T> extends CollectionBase<T> {
+  /** The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>,
+
+  /** Whether the TagGroup is disabled. */
   isDisabled?: boolean,
+
+  /** Whether the tags in the TagGroup are removable. */
   isRemovable?: boolean,
+
+  /** Handler called when a tag is removed. */
   onRemove?: (items: any[]) => void
 }
 
