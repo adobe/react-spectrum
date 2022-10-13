@@ -44,9 +44,9 @@ When strict mode is enabled on React 16 or 17, it generates different IDs betwee
 
 ## Automatic ID Generation
 
-If you are using React 18, React Aria uses [React.useId](https://reactjs.org/docs/hooks-reference.html#useid) to generate unique IDs that is stable across the client and server.
+If you are using React 18, React Aria uses [React.useId](https://reactjs.org/docs/hooks-reference.html#useid) to generate unique IDs that are stable across the client and server.
 
-If you are using React 16 or 17, React Aria tries to generate consistent IDs by itself. In this case, when using SSR, only a single copy of React Aria can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. These ids typically use a randomly generated seed plus an incrementing counter to ensure uniqueness even when multiple instances of React Aria are on the page. With SSR, we need to ensure that these ids are consistent between the server and client.  This means the counter resets on every request, and we use a consistent seed. Due to this, multiple copies of React Aria cannot be supported because the auto-generated ids would conflict.
+If you are using React 16 or 17, React Aria tries to generate consistent IDs by itself. In this case, when using SSR, only a single copy of React Aria can be on the page at a time, and React StrictMode cannot be supported.
 
 If you use React Aria’s [useId](useId.html) hook in your own components, `SSRProvider` will ensure the ids are consistent when server rendered. No additional changes in each component are required to enable
 SSR support.
