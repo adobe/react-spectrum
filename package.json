@@ -40,7 +40,8 @@
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
-    "check-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
+    "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
+    "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "bumpVersions": "node scripts/bumpVersions.js"
   },
   "workspaces": [
@@ -105,6 +106,7 @@
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
+    "diff": "^5.1.0",
     "delta-e": "^0.0.8",
     "eslint": "^7.10.0",
     "eslint-plugin-import": "^2.22.1",
@@ -126,7 +128,6 @@
     "jest-junit": "^12.0.0",
     "jest-matchmedia-mock": "^1.0.0",
     "jsdom": "^16.7.0",
-    "json-diff-ts": "^1.1.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",
