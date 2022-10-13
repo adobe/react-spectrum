@@ -165,6 +165,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
 }
 
 function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(
     mergeRefs(...refs) as (instance: (T | null)) => void,
     [...refs]

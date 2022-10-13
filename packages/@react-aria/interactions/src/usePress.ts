@@ -655,6 +655,7 @@ export function usePress(props: PressHookProps): PressResult {
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         restoreTextSelection(ref.current.target);
       }
     };

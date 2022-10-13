@@ -499,6 +499,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       document.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
@@ -578,6 +579,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         restoreFocus
         && nodeToRestore
         && (
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           isElementInScope(document.activeElement, scopeRef.current)
           || (document.activeElement === document.body && shouldRestoreFocus(scopeRef))
         )

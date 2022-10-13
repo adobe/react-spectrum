@@ -194,6 +194,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   // wait for layout to get accurate measurements
   let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
   let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (domRef.current) {
       // 2 is the width of the border which is not part of the box size
