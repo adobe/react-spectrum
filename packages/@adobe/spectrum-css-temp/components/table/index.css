@@ -482,13 +482,13 @@ svg.spectrum-Table-sortedIcon {
 
 .resize-ew *,
 .spectrum-Table-columnResizer--ewresize {
-  cursor: ew-resize !important;
+  cursor: url('data-url:./cursors/Cur_MoveHorizontal_9_9.svg'), ew-resize !important;
 }
 .resize-e *,
 .spectrum-Table-columnResizer--eresize {
-  cursor: e-resize !important;
+  cursor: url('data-url:./cursors/Cur_MoveToRight_9_9.svg'), e-resize !important;
 }
 .resize-w *,
 .spectrum-Table-columnResizer--wresize {
-  cursor: w-resize !important;
+  cursor: url('data-url:./cursors/Cur_MoveToLeft_9_9.svg'), w-resize !important;
 }
