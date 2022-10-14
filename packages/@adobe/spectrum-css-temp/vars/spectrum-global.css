@@ -128,6 +128,82 @@
   --spectrum-global-color-opacity-5: 0.05;
   --spectrum-global-color-opacity-4: 0.04;
 
+  /* mappings from v5 color indices to v6 color indices */
+  --spectrum-global-color-celery-400: var(--spectrum-celery-600);
+  --spectrum-global-color-celery-500: var(--spectrum-celery-700);
+  --spectrum-global-color-celery-600: var(--spectrum-celery-800);
+  --spectrum-global-color-celery-700: var(--spectrum-celery-900);
+  --spectrum-global-color-chartreuse-400: var(--spectrum-chartreuse-500);
+  --spectrum-global-color-chartreuse-500: var(--spectrum-chartreuse-600);
+  --spectrum-global-color-chartreuse-600: var(--spectrum-chartreuse-700);
+  --spectrum-global-color-chartreuse-700: var(--spectrum-chartreuse-800);
+  --spectrum-global-color-yellow-400: var(--spectrum-yellow-400);
+  --spectrum-global-color-yellow-500: var(--spectrum-yellow-500);
+  --spectrum-global-color-yellow-600: var(--spectrum-yellow-600);
+  --spectrum-global-color-yellow-700: var(--spectrum-yellow-700);
+  --spectrum-global-color-magenta-400: var(--spectrum-magenta-800);
+  --spectrum-global-color-magenta-500: var(--spectrum-magenta-900);
+  --spectrum-global-color-magenta-600: var(--spectrum-magenta-1000);
+  --spectrum-global-color-magenta-700: var(--spectrum-magenta-1100);
+  --spectrum-global-color-fuchsia-400: var(--spectrum-fuchsia-800);
+  --spectrum-global-color-fuchsia-500: var(--spectrum-fuchsia-900);
+  --spectrum-global-color-fuchsia-600: var(--spectrum-fuchsia-1000);
+  --spectrum-global-color-fuchsia-700: var(--spectrum-fuchsia-1100);
+  --spectrum-global-color-purple-400: var(--spectrum-purple-800);
+  --spectrum-global-color-purple-500: var(--spectrum-purple-900);
+  --spectrum-global-color-purple-600: var(--spectrum-purple-1000);
+  --spectrum-global-color-purple-700: var(--spectrum-purple-1100);
+  --spectrum-global-color-indigo-400: var(--spectrum-indigo-800);
+  --spectrum-global-color-indigo-500: var(--spectrum-indigo-900);
+  --spectrum-global-color-indigo-600: var(--spectrum-indigo-1000);
+  --spectrum-global-color-indigo-700: var(--spectrum-indigo-1100);
+  --spectrum-global-color-seafoam-400: var(--spectrum-seafoam-700);
+  --spectrum-global-color-seafoam-500: var(--spectrum-seafoam-800);
+  --spectrum-global-color-seafoam-600: var(--spectrum-seafoam-900);
+  --spectrum-global-color-seafoam-700: var(--spectrum-seafoam-1000);
+  --spectrum-global-color-red-400: var(--spectrum-red-800);
+  --spectrum-global-color-red-500: var(--spectrum-red-900);
+  --spectrum-global-color-red-600: var(--spectrum-red-1000);
+  --spectrum-global-color-red-700: var(--spectrum-red-1100);
+  --spectrum-global-color-orange-400: var(--spectrum-orange-600);
+  --spectrum-global-color-orange-500: var(--spectrum-orange-700);
+  --spectrum-global-color-orange-600: var(--spectrum-orange-800);
+  --spectrum-global-color-orange-700: var(--spectrum-orange-900);
+  --spectrum-global-color-green-400: var(--spectrum-green-800);
+  --spectrum-global-color-green-500: var(--spectrum-green-900);
+  --spectrum-global-color-green-600: var(--spectrum-green-1000);
+  --spectrum-global-color-green-700: var(--spectrum-green-1100);
+  --spectrum-global-color-blue-400: var(--spectrum-blue-800);
+  --spectrum-global-color-blue-500: var(--spectrum-blue-900);
+  --spectrum-global-color-blue-600: var(--spectrum-blue-1000);
+  --spectrum-global-color-blue-700: var(--spectrum-blue-1100);
+  --spectrum-global-color-gray-50: var(--spectrum-gray-50);
+  --spectrum-global-color-gray-75: var(--spectrum-gray-75);
+  --spectrum-global-color-gray-100: var(--spectrum-gray-100);
+  --spectrum-global-color-gray-200: var(--spectrum-gray-200);
+  --spectrum-global-color-gray-300: var(--spectrum-gray-300);
+  --spectrum-global-color-gray-400: var(--spectrum-gray-400);
+  --spectrum-global-color-gray-500: var(--spectrum-gray-500);
+  --spectrum-global-color-gray-600: var(--spectrum-gray-600);
+  --spectrum-global-color-gray-700: var(--spectrum-gray-700);
+  --spectrum-global-color-gray-800: var(--spectrum-gray-800);
+  --spectrum-global-color-gray-900: var(--spectrum-gray-900);
+
+  /* v6 aliases */
+  --spectrum-accent-color-100: var(--spectrum-blue-100);
+  --spectrum-accent-color-200: var(--spectrum-blue-200);
+  --spectrum-accent-color-300: var(--spectrum-blue-300);
+  --spectrum-accent-color-400: var(--spectrum-blue-400);
+  --spectrum-accent-color-500: var(--spectrum-blue-500);
+  --spectrum-accent-color-600: var(--spectrum-blue-600);
+  --spectrum-accent-color-700: var(--spectrum-blue-700);
+  --spectrum-accent-color-800: var(--spectrum-blue-800);
+  --spectrum-accent-color-900: var(--spectrum-blue-900);
+  --spectrum-accent-color-1000: var(--spectrum-blue-1000);
+  --spectrum-accent-color-1100: var(--spectrum-blue-1100);
+  --spectrum-accent-color-1200: var(--spectrum-blue-1200);
+  --spectrum-accent-color-1300: var(--spectrum-blue-1300);
+  --spectrum-accent-color-1400: var(--spectrum-blue-1400);
 
   /* spectrum-colorSemantics.css */
   --spectrum-semantic-negative-color-background: var(--spectrum-global-color-static-red-600);
@@ -465,6 +541,7 @@
 .spectrum--lightest {
   /* spectrum-colorAliases.css */
   --spectrum-alias-background-color-default: var(--spectrum-global-color-gray-100);
+  --spectrum-alias-background-color-disabled:  var(--spectrum-global-color-gray-200);
   --spectrum-alias-background-color-transparent: transparent;
   --spectrum-alias-background-color-label-gray: rgb(112, 112, 112);
   --spectrum-alias-background-color-quickactions-overlay: rgba(0,0,0,0.2);
