@@ -16,6 +16,13 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
+let yargs = require('yargs');
+
+
+let argv = yargs
+  .option('verbose', {alias: 'v', type: 'boolean'})
+  .option('output', {alias: 'o', type: 'string'})
+  .argv;
 
 build().catch(err => {
   console.error(err.stack);
@@ -28,6 +35,9 @@ build().catch(err => {
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
 async function build() {
+  let distDir = argv.output ?? path.join(__dirname, '..', 'dist', argv.output ?? 'base-api');
+  // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
+  fs.removeSync(distDir);
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building published api into ${dir}...`);
@@ -86,6 +96,7 @@ async function build() {
     }
   };
 
+  console.log('add packages to download from npm');
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
@@ -93,7 +104,17 @@ async function build() {
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
-      pkg.dependencies[json.name] = 'latest';
+      try {
+        // this npm view will fail if the package isn't on npm
+        // otherwise we want to check if there is any version that isn't a nightly
+        let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
+        if (results.some(version => !version.includes('nightly'))) {
+          pkg.dependencies[json.name] = 'latest';
+          console.log('added', json.name);
+        }
+      } catch (e) {
+        // continue
+      }
     }
   }
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
@@ -102,6 +123,7 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Install dependencies from npm
+  console.log('install our latest packages from npm');
   await run('yarn', {cwd: dir, stdio: 'inherit'});
 
   fs.writeFileSync(path.join(dir, 'babel.config.json'), `{
@@ -153,28 +175,32 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/*/'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   // dev/docs/node_modules has some react spectrum components, we don't want those, and i couldn't figure out how to not build them
   // it probably means two different versions, so there may be a bug lurking here
   fs.removeSync(path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
-  fs.copySync(path.join(dir, 'packages'), path.join(__dirname, '..', 'dist', 'published-api'));
+  fs.copySync(path.join(dir, 'packages'), distDir);
   fs.removeSync(dir);
 }
 
 function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {
     let child = spawn(cmd, args, opts);
+    let result = '';
+    child.stdout?.on('data', function(data) {
+      result += data.toString();
+    });
     child.on('error', reject);
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code !== 0) {
         reject(new Error('Child process failed'));
         return;
       }
 
-      resolve();
+      resolve(result);
     });
   });
 }
