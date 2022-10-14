@@ -79,6 +79,7 @@ import {
   ColorSlider,
   ColorWheel,
 } from "@react-spectrum/color";
+import ReorderableListView from "../components/ReorderableListView";
 
 export default function Home() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -134,6 +135,7 @@ export default function Home() {
               <Item>Adobe Illustrator</Item>
               <Item>Adobe Lightroom</Item>
             </ListView>
+            <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
               <Menu onAction={(key) => alert(key)}>
