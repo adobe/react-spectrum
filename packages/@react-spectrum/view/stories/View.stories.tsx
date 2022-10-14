@@ -9,17 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import React from 'react';
+import {View} from '../';
 
-import {ColorVersion, DOMProps, ViewStyleProps} from '@react-types/shared';
-import {JSXElementConstructor, ReactNode} from 'react';
+let meta = {
+  title: 'View',
+  component: View,
+  args: {
+    colorVersion: 5,
+    backgroundColor: 'blue-400'
+  }
+};
 
-export interface ViewProps<C extends ColorVersion> extends ViewStyleProps<C>, DOMProps {
-  /**
-   * The element to render as the node.
-   */
-  elementType?: string | JSXElementConstructor<any>,
-  /**
-   * Children to be displayed in the View.
-   */
-  children?: ReactNode
-}
+export default meta;
+
+export const Default = args => (
+  <View
+    {...args}
+    width="single-line-width"
+    height="size-500"
+    elementType="span" />
+);
