@@ -32,12 +32,21 @@ governing permissions and limitations under the License.
 svg.spectrum-Table-sortedIcon {
   display: none;
   flex: 0 0 auto;
-  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
   transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
 }
 
 .spectrum-Table-headWrapper {
@@ -102,6 +111,12 @@ svg.spectrum-Table-sortedIcon {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+    }
+  }
+  .is-hovered,
+  &.focus-ring {
+    .spectrum-Table-menuChevron {
+      display: inline-block;
     }
   }
 }
@@ -282,6 +297,18 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 }
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
+}
+
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .spectrum-Table-headCell,
 .spectrum-Table-headCellButton {
@@ -453,12 +480,15 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.resize-ew * {
-  cursor: col-resize !important;
+.resize-ew *,
+.spectrum-Table-columnResizer--ewresize {
+  cursor: url('data-url:./cursors/Cur_MoveHorizontal_9_9.svg'), ew-resize !important;
 }
-.resize-e * {
-  cursor: e-resize !important;
+.resize-e *,
+.spectrum-Table-columnResizer--eresize {
+  cursor: url('data-url:./cursors/Cur_MoveToRight_9_9.svg'), e-resize !important;
 }
-.resize-w * {
-  cursor: w-resize !important;
+.resize-w *,
+.spectrum-Table-columnResizer--wresize {
+  cursor: url('data-url:./cursors/Cur_MoveToLeft_9_9.svg'), w-resize !important;
 }
