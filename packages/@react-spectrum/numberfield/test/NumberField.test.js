@@ -98,7 +98,7 @@ describe('NumberField', function () {
     let ref = React.createRef();
     let {container, textField} = renderNumberField({ref});
 
-    expect(ref.current.UNSAFE_getDOMNode()).toBe(container);
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(container.parentElement);
     act(() => {
       ref.current.focus();
     });
