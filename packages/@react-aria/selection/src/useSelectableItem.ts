@@ -144,6 +144,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
