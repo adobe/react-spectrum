@@ -1710,13 +1710,12 @@ describe('NumberField', function () {
         </Provider>
       );
     }
-    let {container} = render(<NumberFieldControlled onChange={onChangeSpy} />);
+    let {container, getByRole} = render(<NumberFieldControlled onChange={onChangeSpy} />);
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = getByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
