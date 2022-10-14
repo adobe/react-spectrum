@@ -45,16 +45,19 @@ export const Default: AccordionStory = {
 
 export const DefaultExpandedKeys: AccordionStory = {
   args: {...Default.args, defaultExpandedKeys: ['files']},
+  render: Default.render,
   name: 'defaultExpandedKeys: files'
 };
 
 export const DisabledKeys: AccordionStory = {
   args: {...Default.args, disabledKeys: ['files', 'shared']},
+  render: Default.render,
   name: 'disabledKeys: files, shared'
 };
 
 export const DisabledDefaultExpandedKeys: AccordionStory = {
   args: {...Default.args, defaultExpandedKeys: ['files'], disabledKeys: ['files', 'shared']},
+  render: Default.render,
   name: 'defaultExpandedKeys: files, disabledKeys: files, shared'
 };
 
