@@ -402,7 +402,7 @@ describe('DateRangePicker', function () {
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
     });
 
-    it.only('should trigger key event in popover and focus/blur/key events are not called', function () {
+    it('should trigger key event in popover and focus/blur/key events are not called', function () {
       let {getByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let button = getByRole('button');
 
