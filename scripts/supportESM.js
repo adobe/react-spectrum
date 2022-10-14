@@ -24,11 +24,14 @@ function run() {
     let newPackageJSON = {};
     for (let [field, value] of Object.entries(json)) {
       newPackageJSON[field] = value;
-      if (field === 'main') {
-        newPackageJSON.exports = {
-          import: `./${module}`,
-          require: `./${main}`
-        };
+      if (field === 'main' && module) {
+        newPackageJSON.exports = {};
+        if (module) {
+          newPackageJSON.exports.import = `./${module}`;
+        }
+        if (main) {
+          newPackageJSON.exports.require = `./${main}`;
+        }
 
         if (argv.dryRun) {
           console.log('setting main field in ', json.name);
