@@ -170,7 +170,7 @@ describe('Field', function () {
 
         userEvent.tab();
         expect(document.activeElement).toBe(input);
-        userEvent.type('Test');
+        userEvent.type(input, 'Test');
         expect(document.activeElement).toBe(input);
 
         rerender(<ExampleField validationState="invalid" errorMessage="Error message" />);
