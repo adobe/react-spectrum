@@ -58,6 +58,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
       selectionState.setFocusedKey(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
