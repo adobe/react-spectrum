@@ -2810,6 +2810,16 @@
     cssnano "^5.0.15"
     postcss "^8.4.5"
 
+"@parcel/optimizer-data-url@2.2.1", "@parcel/optimizer-data-url@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@parcel/optimizer-data-url/-/optimizer-data-url-2.2.1.tgz#69e2bc7bb5164a82d9044a26758464a12c76e993"
+  integrity sha512-e1gbnGpc2wKGUmXEMXK8FfPGBjE1Ols3CQe06FUzq5dxocctcoEBdZas/cBew+b5LmuHqzTv4rYNWMqQnr7Izw==
+  dependencies:
+    "@parcel/plugin" "^2.2.1"
+    "@parcel/utils" "^2.2.1"
+    isbinaryfile "^4.0.2"
+    mime "^2.4.4"
+
 "@parcel/optimizer-htmlnano@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@parcel/optimizer-htmlnano/-/optimizer-htmlnano-2.2.1.tgz#781267e8b72033abc500e16ca032d24d56d7f2ce"
@@ -3088,6 +3098,13 @@
     "@parcel/plugin" "^2.2.1"
     "@parcel/workers" "^2.2.1"
     nullthrows "^1.1.1"
+
+"@parcel/transformer-inline-string@2.2.1", "@parcel/transformer-inline-string@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-inline-string/-/transformer-inline-string-2.2.1.tgz#a80a8a0221803b863e103340ea2e3b6546de14f3"
+  integrity sha512-yHhKmYEEyg3D5FfAz/yv+U4Ml6MPJvYfEgFowfeCTG2cJ9g7jVwsB66nAwOR1IP+MJh9ODmzf5OSjdR9MX6lYQ==
+  dependencies:
+    "@parcel/plugin" "^2.2.1"
 
 "@parcel/transformer-inline@^2.2.1":
   version "2.2.1"
@@ -12624,6 +12641,11 @@ isbinaryfile@^4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/isbinaryfile/-/isbinaryfile-4.0.2.tgz#bfc45642da645681c610cca831022e30af426488"
   integrity sha512-C3FSxJdNrEr2F4z6uFtNzECDM5hXk+46fxaa+cwBe5/XrWSmzdG8DDgyjfX6/NRdBB21q2JXuRAzPCUs+fclnQ==
+
+isbinaryfile@^4.0.2:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/isbinaryfile/-/isbinaryfile-4.0.10.tgz#0c5b5e30c2557a2f06febd37b7322946aaee42b3"
+  integrity sha512-iHrqe5shvBUcFbmZq9zOQHBoeOhZJu6RQGrDpBgenUm/Am+F3JM2MgQj+rK3Z601fzrL5gLZWtAPH2OBaSVcyw==
 
 isexe@^2.0.0:
   version "2.0.0"

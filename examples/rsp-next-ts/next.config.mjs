@@ -14,6 +14,7 @@ const withTM = ntm([
   "@react-spectrum/datepicker",
   "@react-spectrum/dialog",
   "@react-spectrum/divider",
+  "@react-spectrum/dnd",
   "@react-spectrum/form",
   "@react-spectrum/icon",
   "@react-spectrum/illustratedmessage",
