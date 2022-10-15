@@ -28,14 +28,14 @@ governing permissions and limitations under the License.
   --spectrum-switch-quiet-track-color-selected-hover: var(--spectrum-alias-toggle-color-hover);
   --spectrum-switch-quiet-track-color-selected-key-focus: var(--spectrum-alias-toggle-color-key-focus);
 
-  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-alias-emphasized-selection-color);
-  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-alias-emphasized-selection-color);
-  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
-  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-alias-emphasized-selection-color-hover);
-  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
-  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-alias-emphasized-selection-color-key-focus);
-  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
-  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-alias-emphasized-selection-color-down);
+  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-accent-color-1100);
+  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-accent-color-1100);
 }
 
 .spectrum-ToggleSwitch {
