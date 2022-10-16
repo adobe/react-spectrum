@@ -436,7 +436,8 @@ footer li:last-child:after {
 
 .article pre {
   background: var(--spectrum-global-color-gray-75);
-  padding: 18px;
+  --code-padding: 18px;
+  padding: var(--code-padding);
   border-radius: 4px;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -857,7 +858,7 @@ h2.sectionHeader {
   }
 
   .article pre {
-    padding: 8px;
+    --code-padding: 8px;
   }
 
   @mixin small-propTable;

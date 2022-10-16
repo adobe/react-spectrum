@@ -13,6 +13,7 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
@@ -440,6 +441,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
         onLoadMore();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
@@ -568,12 +570,12 @@ function TableColumnHeader(props) {
             )
           )
         }>
+        {columnProps.allowsSorting &&
+          <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
+        }
         {columnProps.hideHeader ?
           <VisuallyHidden>{column.rendered}</VisuallyHidden> :
           <div className={classNames(styles, 'spectrum-Table-headCellContents')}>{column.rendered}</div>
-        }
-        {columnProps.allowsSorting &&
-          <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
       </div>
     </FocusRing>
@@ -581,14 +583,14 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+  let {focusProps, ...otherProps} = props;
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
-  let {buttonProps} = useButton({...props, elementType: 'div', isDisabled: isEmpty}, domRef);
+  let {buttonProps} = useButton({...otherProps, elementType: 'div', isDisabled: isEmpty}, domRef);
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: isEmpty});
   return (
-    <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...buttonProps} ref={domRef}>{props.children}</div>
-      </FocusRing>
+    <div className={classNames(styles, 'spectrum-Table-headCellContents', {'is-hovered': isHovered})} {...hoverProps}>
+      <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...mergeProps(buttonProps, focusProps)} ref={domRef}>{props.children}</div>
     </div>
   );
 };
@@ -607,15 +609,17 @@ function ResizableTableColumnHeader(props) {
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
+
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps, pressProps];
+  const allProps = [columnHeaderProps, pressProps, hoverProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
   if (columnProps.width && columnProps.allowsResizing) {
     throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
   }
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   const onMenuSelect = (key) => {
     switch (key) {
@@ -648,6 +652,7 @@ function ResizableTableColumnHeader(props) {
       }
     ];
     return options;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
   useEffect(() => {
@@ -659,6 +664,7 @@ function ResizableTableColumnHeader(props) {
         onFocusedResizer();
       }, 0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columnState.currentlyResizingColumn, column.key]);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null);
@@ -679,6 +685,7 @@ function ResizableTableColumnHeader(props) {
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
               'is-hovered': isHovered,
+              'focus-ring': isFocusVisible,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader
             },
             classNames(
@@ -692,13 +699,16 @@ function ResizableTableColumnHeader(props) {
           )
         }>
         <MenuTrigger>
-          <TableColumnHeaderButton ref={triggerRef}>
-            {columnProps.hideHeader ?
-              <VisuallyHidden>{column.rendered}</VisuallyHidden> :
-              column.rendered
-            }
+          <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
+            }
+            {columnProps.hideHeader ?
+              <VisuallyHidden>{column.rendered}</VisuallyHidden> :
+              <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
+            }
+            {
+              columnProps.allowsResizing && columnState.currentlyResizingColumn === null && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
           <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
