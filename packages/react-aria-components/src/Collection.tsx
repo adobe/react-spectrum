@@ -328,6 +328,7 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
           if (rendered.key == null) {
             // @ts-ignore
             let key = rendered.props.id ?? item.key ?? item.id;
+            // eslint-disable-next-line max-depth
             if (key == null) {
               throw new Error('Could not determine key for item');
             }
