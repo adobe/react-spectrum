@@ -12,7 +12,7 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
   isSelected: boolean
 }
 
-interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
 interface ToggleButtonContextValue extends WithRef<AriaToggleButtonProps, HTMLButtonElement> {}
 
 export const ToggleButtonContext = createContext<ToggleButtonContextValue>({});

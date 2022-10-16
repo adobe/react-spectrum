@@ -1,7 +1,7 @@
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 import {useContextProps, WithRef} from './utils';
 
-interface HeadingProps extends HTMLAttributes<HTMLElement> {
+export interface HeadingProps extends HTMLAttributes<HTMLElement> {
   level?: number
 }
 

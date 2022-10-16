@@ -1,4 +1,4 @@
-import {Collection, CollectionBase, ItemProps, Node, SectionProps, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {Collection, CollectionBase, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
@@ -372,7 +372,7 @@ export function useCollection<T extends object>(props: CollectionProps<T>): Coll
   return {portal, collection};
 }
 
-export interface ItemStates {
+export interface ItemRenderProps {
   /**
    * Whether the item is currently hovered with a mouse.
    * @selector [data-hovered]
@@ -410,9 +410,9 @@ export interface ItemStates {
   selectionBehavior: SelectionBehavior
 }
 
-export interface CollectionItemProps<T> extends Omit<ItemProps<T>, 'children'>, RenderProps<ItemStates> {}
+export interface ItemProps<T> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {}
 
-export function Item<T extends object>(props: CollectionItemProps<T>) {
+export function Item<T extends object>(props: ItemProps<T>) {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
   // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
   // the props as an object. Once React supports custom elements, we can switch to that instead.
@@ -422,9 +422,9 @@ export function Item<T extends object>(props: CollectionItemProps<T>) {
   return <option multiple={{...props, rendered: props.children}} />;
 }
 
-interface CollectionSectionProps<T> extends Omit<SectionProps<T>, 'children'>, DOMProps {}
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {}
 
-export function Section<T extends object>(props: CollectionSectionProps<T>) {
+export function Section<T extends object>(props: SectionProps<T>) {
   let children = useCachedChildren(props);
 
   // @ts-ignore

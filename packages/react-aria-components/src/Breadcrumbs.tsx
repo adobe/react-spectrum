@@ -5,7 +5,7 @@ import {LinkContext} from './Link';
 import {Provider, StyleProps} from './utils';
 import React, {ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps {
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean
 }

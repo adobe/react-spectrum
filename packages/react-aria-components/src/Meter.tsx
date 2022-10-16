@@ -3,7 +3,7 @@ import {LabelContext} from './Label';
 import React, {ForwardedRef, forwardRef} from 'react';
 import {RenderProps, useRenderProps, useSlot} from './utils';
 
-interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps> {}
+export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps> {}
 
 export interface MeterRenderProps {
   /**

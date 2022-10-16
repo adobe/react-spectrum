@@ -30,7 +30,7 @@ export interface ButtonRenderProps {
   isDisabled: boolean
 }
 
-interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
 interface ButtonContextValue extends WithRef<AriaButtonProps, HTMLButtonElement> {
   isPressed?: boolean
 }

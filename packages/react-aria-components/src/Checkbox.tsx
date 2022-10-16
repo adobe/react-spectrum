@@ -6,8 +6,8 @@ import React, {createContext, ForwardedRef, forwardRef, useContext, useState} fr
 import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
-interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps> {}
-interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps> {}
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps> {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps> {}
 
 export interface CheckboxGroupRenderProps {
   /**

@@ -6,7 +6,7 @@ import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject, useContext} from 'react';
 import {RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps, WithRef} from './utils';
 
-interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps> {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps> {
   /**
    * The ref for the element which the popover positions itself with respect to.
    * 

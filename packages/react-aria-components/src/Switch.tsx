@@ -3,7 +3,7 @@ import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {RenderProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {useToggleState} from 'react-stately';
 
-interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps> {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps> {}
 
 export interface SwitchRenderProps {
   /**

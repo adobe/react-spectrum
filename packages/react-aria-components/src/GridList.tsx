@@ -1,13 +1,13 @@
 import {AriaGridListProps, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {CheckboxContext} from './Checkbox';
-import {CollectionItemProps, CollectionProps, useCachedChildren, useCollection} from './Collection';
+import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ListState, useListState} from 'react-stately';
 import {Node} from '@react-types/shared';
 import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
-interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
 
 export const GridListContext = createContext<WithRef<GridListProps<any>, HTMLUListElement>>(null);
 const InternalGridListContext = createContext<ListState<unknown>>(null);
@@ -75,7 +75,7 @@ function GridListItem({item}) {
     state
   );
   
-  let props: CollectionItemProps<unknown> = item.props;
+  let props: ItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,

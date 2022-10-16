@@ -8,7 +8,7 @@ import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React, {ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
-interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState> {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState> {}
 
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let {locale} = useLocale();

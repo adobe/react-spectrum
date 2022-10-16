@@ -1,7 +1,7 @@
 
 import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
-import {CollectionItemProps, CollectionProps, ItemStates, useCachedChildren, useCollection} from './Collection';
+import {CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
@@ -16,7 +16,7 @@ import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
-interface MenuTriggerProps extends BaseMenuTriggerProps {
+export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
 }
 
@@ -41,7 +41,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
@@ -131,7 +131,7 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
   );
 }
 
-export interface MenuItemStates extends ItemStates {
+export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item is currently selected.
    * @selector [aria-checked=true]
@@ -139,7 +139,7 @@ export interface MenuItemStates extends ItemStates {
    isSelected: boolean
 }
 
-interface MenuItemProps<T> extends RenderProps<ItemStates> {
+interface MenuItemProps<T> extends RenderProps<MenuItemRenderProps> {
   item: Node<T>
 }
 
@@ -148,7 +148,7 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
-  let props: CollectionItemProps<T> = item.props;
+  let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     className: className || props.className,

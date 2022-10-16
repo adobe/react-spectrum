@@ -7,8 +7,8 @@ import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
-interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps> {}
-interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps> {}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
 
 export interface RadioGroupRenderProps {
   /**

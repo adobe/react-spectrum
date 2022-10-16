@@ -2,7 +2,7 @@ import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 import {StyleProps, useContextProps} from './utils';
 
-interface SeparatorProps extends AriaSeparatorProps, StyleProps {}
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps {}
 
 export const SeparatorContext = createContext<SeparatorProps>({});
 

@@ -5,7 +5,7 @@ import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 
-interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps> {}
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps> {}
 
 interface ModalContextValue {
   state?: OverlayTriggerState

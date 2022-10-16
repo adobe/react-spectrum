@@ -8,11 +8,11 @@ import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, us
 import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 
-interface TooltipTriggerComponentProps extends TooltipTriggerProps {
+export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
 }
 
-interface TooltipProps extends PositionProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {}
+export interface TooltipProps extends PositionProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {}
 
 export interface TooltipRenderProps {
   /**

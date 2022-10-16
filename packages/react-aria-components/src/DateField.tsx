@@ -8,9 +8,8 @@ import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttrib
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
 
-interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
-
-interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
 
 interface DateInputContextValue {
   state: DateFieldState,
@@ -106,10 +105,10 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
  */
 const _TimeField = forwardRef(TimeField);
 export {_TimeField as TimeField};
- 
+
 const InternalDateInputContext = createContext<DateFieldState>(null);
 
-interface DateInputProps extends SlotProps, StyleProps {
+export interface DateInputProps extends SlotProps, StyleProps {
   children: (segment: IDateSegment) => ReactElement
 }
 
@@ -153,7 +152,7 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
   segment: IDateSegment
 }
 

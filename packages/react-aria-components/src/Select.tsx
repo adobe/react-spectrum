@@ -12,7 +12,7 @@ import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useResizeObserver} from '@react-aria/utils';
 
-interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>> {}
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>> {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
@@ -115,7 +115,7 @@ export interface SelectValueRenderProps {
   selectedItem: ReactNode
 }
 
-interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
+export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
 function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
   let {state, valueProps} = useContext(SelectContext);

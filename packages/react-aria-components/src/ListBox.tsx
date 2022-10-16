@@ -1,6 +1,6 @@
 import {AriaListBoxOptions, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {AriaListBoxProps} from '@react-types/listbox';
-import {CollectionItemProps, CollectionProps, useCachedChildren, useCollection} from './Collection';
+import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
@@ -155,7 +155,7 @@ function Option<T>({item}: OptionProps<T>) {
     isHovered = states.isFocused;
   }
 
-  let props: CollectionItemProps<T> = item.props;
+  let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     className: props.className,

@@ -3,7 +3,7 @@ import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {RenderProps, useContextProps, useRenderProps} from './utils';
 
-interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps> {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps> {}
 
 export interface LinkRenderProps {
   /**

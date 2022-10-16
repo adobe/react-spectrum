@@ -7,11 +7,11 @@ import {OverlayTriggerProps, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 
-interface DialogTriggerProps extends OverlayTriggerProps {
+export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
-interface DialogProps extends AriaDialogProps, DOMProps {
+export interface DialogProps extends AriaDialogProps, DOMProps {
   onClose?: () => void
 }
 

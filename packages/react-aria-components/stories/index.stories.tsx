@@ -443,10 +443,10 @@ export const ModalExample = () => (
 
 export const TabsExample = () => (
   <Tabs>
-    <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR">Founding of Rome</Tab>
-      <Tab id="MaR">Monarchy and Republic</Tab>
-      <Tab id="Emp">Empire</Tab>
+    <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
+      <CustomTab id="FoR">Founding of Rome</CustomTab>
+      <CustomTab id="MaR">Monarchy and Republic</CustomTab>
+      <CustomTab id="Emp">Empire</CustomTab>
     </TabList>
     <TabPanels>
       <TabPanel id="FoR">
@@ -489,5 +489,15 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
+  );
+}
+
+function CustomTab(props) {
+  return (
+    <Tab 
+      {...props} 
+      style={({isSelected}) => ({
+        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
+      })} />
   );
 }

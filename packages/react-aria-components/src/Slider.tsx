@@ -7,7 +7,7 @@ import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-interface SliderProps extends AriaSliderProps, RenderProps<SliderState> {
+export interface SliderProps extends AriaSliderProps, RenderProps<SliderState> {
   /**
    * The display format of the value label.
    */
@@ -76,7 +76,7 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
 const _Slider = forwardRef(Slider);
 export {_Slider as Slider};
 
-interface SliderOutputProps extends RenderProps<SliderState> {}
+export interface SliderOutputProps extends RenderProps<SliderState> {}
 
 function SliderOutput({children, style, className}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   let {state, outputProps} = useContext(InternalSliderContext);
@@ -98,7 +98,7 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
 const _SliderOutput = forwardRef(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
-interface SliderTrackProps extends RenderProps<SliderState> {}
+export interface SliderTrackProps extends RenderProps<SliderState> {}
 
 function SliderTrack({children, style, className}: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackProps, trackRef} = useContext(InternalSliderContext);
@@ -145,7 +145,7 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackRef} = useContext(InternalSliderContext);

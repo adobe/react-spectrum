@@ -6,7 +6,7 @@ import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {useObjectRef} from '@react-aria/utils';
 import {useTabListState} from 'react-stately';
 
-interface TabsProps extends RenderProps<TabsRenderProps> {
+export interface TabsProps extends RenderProps<TabsRenderProps> {
   /**
    * The orientation of the tabs.
    * @default 'horizontal'
@@ -22,7 +22,7 @@ export interface TabsRenderProps {
   orientation: Orientation
 }
 
-interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'orientation'>, StyleRenderProps<TabListRenderProps>, AriaLabelingProps, CollectionProps<T> {}
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'orientation'>, StyleRenderProps<TabListRenderProps>, AriaLabelingProps, CollectionProps<T> {}
 
 export interface TabListRenderProps {
   /**
@@ -32,7 +32,7 @@ export interface TabListRenderProps {
   orientation: Orientation
 }
 
-interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps {
   id?: Key
 }
 
@@ -69,7 +69,7 @@ export interface TabRenderProps {
   isDisabled: boolean
 }
 
-interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps> {}
+export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps> {}
 export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently focused.
@@ -210,7 +210,7 @@ function TabInner({item, state}) {
   );
 }
 
-interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'> {}
+export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'> {}
 
 /**
  * TabPanels is used within Tabs as a container for the content of each tab.

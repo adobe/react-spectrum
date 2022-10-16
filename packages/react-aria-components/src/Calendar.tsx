@@ -10,7 +10,7 @@ import React from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
 
-interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState> {
+export interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -18,7 +18,7 @@ interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps
   visibleDuration?: DateDuration
 }
 
-interface RangeCalendarComponentProps<T extends DateValue> extends Omit<RangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState> {
+export interface RangeCalendarComponentProps<T extends DateValue> extends Omit<RangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState> {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -217,7 +217,7 @@ export interface CalendarCellRenderProps {
   isInvalid: boolean
 }
 
-interface CalendarGridProps extends StyleProps {
+export interface CalendarGridProps extends StyleProps {
   children: (date: CalendarDate) => ReactElement,
   offset?: DateDuration
 }
@@ -268,7 +268,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 const _CalendarGrid = forwardRef(CalendarGrid);
 export {_CalendarGrid as CalendarGrid};
 
-interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
   date: CalendarDate
 }
 
