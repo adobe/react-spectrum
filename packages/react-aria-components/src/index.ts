@@ -43,7 +43,7 @@ export type {CalendarCellRenderProps} from './Calendar';
 export type {SliderRenderProps, SliderThumbRenderProps} from './Slider';
 export type {MenuItemStates} from './Menu';
 export type {ToggleButtonRenderProps} from './ToggleButton';
-export type {CheckboxRenderProps} from './Checkbox';
+export type {CheckboxGroupRenderProps, CheckboxRenderProps} from './Checkbox';
 export type {SwitchRenderProps} from './Switch';
 export type {RadioGroupRenderProps, RadioRenderProps} from './RadioGroup';
 export type {SearchFieldRenderProps} from './SearchField';

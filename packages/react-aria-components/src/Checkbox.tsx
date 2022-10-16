@@ -6,8 +6,31 @@ import React, {createContext, ForwardedRef, forwardRef, useContext, useState} fr
 import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
-interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupState> {}
+interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps> {}
 interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps> {}
+
+export interface CheckboxGroupRenderProps {
+  /**
+   * Whether the checkbox group is disabled.
+   * @selector [aria-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the checkbox group is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the checkbox group is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
+   * The validation state of the checkbox group.
+   * @selector [data-validation-state="invalid" | "valid"]
+   */
+  validationState: ValidationState
+}
 
 export interface CheckboxRenderProps {
   /**
@@ -74,7 +97,12 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly,
+      isRequired: props.isRequired || false,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-CheckboxGroup'
   });
 
@@ -82,7 +110,10 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
     <div 
       {...groupProps}
       {...renderProps}
-      ref={ref}>
+      ref={ref}
+      data-readonly={state.isReadOnly || undefined}
+      data-required={props.isRequired || undefined}
+      data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
           [CheckboxGroupContext, state],

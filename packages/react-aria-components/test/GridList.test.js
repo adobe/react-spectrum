@@ -1,0 +1,152 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {Checkbox, GridList, Item} from '../';
+import {fireEvent, render, within} from '@react-spectrum/test-utils';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
+
+let renderGridList = (listBoxProps, itemProps) => render(
+  <GridList {...listBoxProps} aria-label="Test">
+    <Item {...itemProps} id="cat"><Checkbox /> Cat</Item>
+    <Item {...itemProps} id="dog"><Checkbox /> Dog</Item>
+    <Item {...itemProps} id="kangaroo"><Checkbox /> Kangaroo</Item>
+  </GridList>
+);
+
+describe('GridList', () => {
+  it('should render with default classes', () => {
+    let {getByRole, getAllByRole} = renderGridList();
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', 'react-aria-GridList');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('class', 'react-aria-Item');
+    }
+  });
+
+  it('should render with custom classes', () => {
+    let {getByRole, getAllByRole} = renderGridList({className: 'gridlist'}, {className: 'item'});
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', 'gridlist');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('class', 'item');
+    }
+  });
+
+  it('should support hover', () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    userEvent.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    expect(row).toHaveClass('hover');
+
+    userEvent.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+  });
+
+  it('should not show hover state when item is not interactive', () => {
+    let {getAllByRole} = renderGridList({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    userEvent.hover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+  });
+
+  it('should support focus ring', () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let row = getAllByRole('row')[0];
+    
+    expect(row).not.toHaveAttribute('data-focus-visible');
+    expect(row).not.toHaveClass('focus');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(row);
+    expect(row).toHaveAttribute('data-focus-visible', 'true');
+    expect(row).toHaveClass('focus');
+
+    userEvent.tab();
+    expect(row).not.toHaveAttribute('data-focus-visible');
+    expect(row).not.toHaveClass('focus');
+  });
+
+  it('should support press state', () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-pressed');
+    expect(row).not.toHaveClass('pressed');
+
+    fireEvent.mouseDown(row);
+    expect(row).toHaveAttribute('data-pressed', 'true');
+    expect(row).toHaveClass('pressed');
+
+    fireEvent.mouseUp(row);
+    expect(row).not.toHaveAttribute('data-pressed');
+    expect(row).not.toHaveClass('pressed');
+  });
+
+  it('should not show press state when not interactive', () => {
+    let {getAllByRole} = renderGridList({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('data-pressed');
+    expect(row).not.toHaveClass('pressed');
+
+    fireEvent.mouseDown(row);
+    expect(row).not.toHaveAttribute('data-pressed');
+    expect(row).not.toHaveClass('pressed');
+
+    fireEvent.mouseUp(row);
+    expect(row).not.toHaveAttribute('data-pressed');
+    expect(row).not.toHaveClass('pressed');
+  });
+
+  it('should support selection state', () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).not.toHaveAttribute('aria-selected', 'true');
+    expect(row).not.toHaveClass('selected');
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+
+    userEvent.click(row);
+    expect(row).toHaveAttribute('aria-selected', 'true');
+    expect(row).toHaveClass('selected');
+    expect(within(row).getByRole('checkbox')).toBeChecked();
+
+    userEvent.click(row);
+    expect(row).not.toHaveAttribute('aria-selected', 'true');
+    expect(row).not.toHaveClass('selected');
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  });
+
+  it('should support disabled state', () => {
+    let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let row = getAllByRole('row')[0];
+
+    expect(row).toHaveAttribute('aria-disabled', 'true');
+    expect(row).toHaveClass('disabled');
+
+    expect(within(row).getByRole('checkbox')).toBeDisabled();
+  });
+});

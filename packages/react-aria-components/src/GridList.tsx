@@ -30,7 +30,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
         case 'item':
           return <GridListItem item={item} />;
         default:
-          throw new Error('Unsupported node type in Menu: ' + item.type);
+          throw new Error('Unsupported node type in GridList: ' + item.type);
       }
     }
   });

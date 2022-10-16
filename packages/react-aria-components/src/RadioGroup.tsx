@@ -7,7 +7,7 @@ import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
-interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupState> {}
+interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps> {}
 interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
 
 export interface RadioGroupRenderProps {
@@ -32,10 +32,10 @@ export interface RadioGroupRenderProps {
    */
   isRequired: boolean,
   /**
-   * Whether the radio group is in an invalid state.
+   * The validation state of the radio group.
    * @selector [aria-invalid]
    */
-  isInvalid: boolean
+  validationState: ValidationState
 }
 
 export interface RadioRenderProps {
@@ -98,7 +98,13 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      orientation: props.orientation || 'vertical',
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly,
+      isRequired: state.isRequired,
+      validationState: state.validationState
+    },
     defaultClassName: 'react-aria-RadioGroup'
   });
 
@@ -176,6 +182,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
       data-validation-state={state.validationState || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden>

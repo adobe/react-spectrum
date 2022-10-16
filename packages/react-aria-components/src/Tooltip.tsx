@@ -81,7 +81,7 @@ const _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: ForwardedRef<HTMLDivElement>}) {
-  let {state, triggerRef} = useContext(TooltipContext);
+  let {state, triggerRef, tooltipProps: triggerTooltipProps} = useContext(TooltipContext);
 
   let overlayRef = useRef();
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
@@ -109,7 +109,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
     
   return (
     <div 
-      {...tooltipProps}
+      {...mergeProps(triggerTooltipProps, tooltipProps)}
       ref={mergeRefs(overlayRef, props.tooltipRef)}
       {...renderProps}
       style={{...renderProps.style, ...overlayProps.style}}

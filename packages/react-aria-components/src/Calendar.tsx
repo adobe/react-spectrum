@@ -1,6 +1,6 @@
 import {ButtonContext} from './Button';
-import {CalendarDate, createCalendar, DateDuration, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
-import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
+import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
+import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
@@ -147,6 +147,11 @@ export interface CalendarCellRenderProps {
   /** The day number formatted according to the current locale. */
   formattedDate: string,
   /**
+   * Whether the cell is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+   isHovered: boolean,
+  /**
    * Whether the cell is currently being pressed.
    * @selector [data-pressed]
    */
@@ -226,7 +231,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
-    endDate: startDate.add({months: 1})
+    endDate: endOfMonth(startDate)
   }, state);
   let {locale} = useLocale();
 
@@ -277,6 +282,7 @@ function CalendarCell({date, className, style, children}: CalendarCellProps, ref
     objectRef
   );
 
+  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
   let isOutsideMonth = !isSameMonth(currentMonth, date);
   let isSelectionStart = false;
@@ -294,6 +300,7 @@ function CalendarCell({date, className, style, children}: CalendarCellProps, ref
     defaultClassName: 'react-aria-CalendarCell',
     values: {
       date,
+      isHovered,
       isOutsideMonth,
       isFocusVisible,
       isSelectionStart,
@@ -303,6 +310,7 @@ function CalendarCell({date, className, style, children}: CalendarCellProps, ref
   });
 
   let dataAttrs = {
+    'data-hovered': isHovered || undefined,
     'data-pressed': states.isPressed || undefined,
     'data-unavailable': states.isUnavailable || undefined,
     'data-disabled': states.isDisabled || undefined,
@@ -316,7 +324,7 @@ function CalendarCell({date, className, style, children}: CalendarCellProps, ref
 
   return (
     <td {...cellProps}>
-      <div {...mergeProps(buttonProps, focusProps, dataAttrs, renderProps)} ref={objectRef} />
+      <div {...mergeProps(buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
     </td>
   );
 }

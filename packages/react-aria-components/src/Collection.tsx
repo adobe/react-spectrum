@@ -25,6 +25,10 @@ class BaseNode<T> {
   }
 
   appendChild(child: ElementNode<T>) {
+    if (child.parentNode) {
+      child.parentNode.removeChild(child);
+    }
+      
     if (this.firstChild == null) {
       this.firstChild = child;
     }
@@ -47,15 +51,19 @@ class BaseNode<T> {
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
-    newNode.nextSibling = referenceNode;
-    newNode.previousSibling = referenceNode.previousSibling;
-    newNode.index = referenceNode.index;
+    if (newNode.parentNode) {
+      newNode.parentNode.removeChild(newNode);
+    }
 
     let node = referenceNode;
     while (node) {
       node.index++;
       node = node.nextSibling;
     }
+
+    newNode.nextSibling = referenceNode;
+    newNode.previousSibling = referenceNode.previousSibling;
+    newNode.index = referenceNode.index;
 
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
@@ -71,6 +79,16 @@ class BaseNode<T> {
   }
 
   removeChild(child: ElementNode<T>) {
+    if (child.parentNode !== this) {
+      return;
+    }
+
+    let node = child.nextSibling;
+    while (node) {
+      node.index--;
+      node = node.nextSibling;
+    }
+
     if (child.nextSibling) {
       child.nextSibling.previousSibling = child.previousSibling;
     }
@@ -85,12 +103,6 @@ class BaseNode<T> {
 
     if (this.lastChild === child) {
       this.lastChild = child.previousSibling;
-    }
-
-    let node = child.nextSibling;
-    while (node) {
-      node.index--;
-      node = node.nextSibling;
     }
 
     child.parentNode = null;

@@ -119,7 +119,7 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
   return (
     <section 
       {...groupProps}
-      className={className || section.props?.className}
+      className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
       {section.rendered &&
         <header {...headingProps}>
