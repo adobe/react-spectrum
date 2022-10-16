@@ -3,7 +3,7 @@ import {AriaSliderThumbProps} from '@react-types/slider';
 import {DOMAttributes, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
+import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
@@ -21,6 +21,7 @@ interface SliderContextValue {
   trackRef: RefObject<HTMLDivElement>
 }
 
+export const SliderContext = createContext<WithRef<SliderProps, HTMLDivElement>>(null);
 const InternalSliderContext = createContext<SliderContextValue>(null);
 
 export interface SliderRenderProps {
@@ -37,6 +38,7 @@ export interface SliderRenderProps {
 }
 
 function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});

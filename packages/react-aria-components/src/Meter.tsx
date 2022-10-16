@@ -1,7 +1,7 @@
 import {AriaMeterProps, useMeter} from 'react-aria';
 import {LabelContext} from './Label';
-import React, {ForwardedRef, forwardRef} from 'react';
-import {RenderProps, useRenderProps, useSlot} from './utils';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 
 export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps> {}
 
@@ -17,7 +17,10 @@ export interface MeterRenderProps {
   valueText: string
 }
 
+export const MeterContext = createContext<WithRef<MeterProps, HTMLDivElement>>(null);
+
 function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, MeterContext);
   let {
     value = 0,
     minValue = 0,

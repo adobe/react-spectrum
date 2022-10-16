@@ -9,14 +9,18 @@ import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
-import React, {ForwardedRef, forwardRef, useRef} from 'react';
+import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerState> {}
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerState> {}
 
+export const DatePickerContext = createContext<WithRef<DatePickerProps<any>, HTMLDivElement>>(null);
+export const DateRangePickerContext = createContext<WithRef<DateRangePickerProps<any>, HTMLDivElement>>(null);
+
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DatePickerContext);
   let state = useDatePickerState(props);
   let groupRef = useRef();
   let [labelRef, label] = useSlot();
@@ -78,6 +82,7 @@ const _DatePicker = forwardRef(DatePicker);
 export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let state = useDateRangePickerState(props);
   let groupRef = useRef();
   let [labelRef, label] = useSlot();

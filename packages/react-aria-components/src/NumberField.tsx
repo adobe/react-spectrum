@@ -4,13 +4,16 @@ import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
-import React, {ForwardedRef, forwardRef, useRef} from 'react';
+import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<NumberFieldState> {}
 
+export const NumberFieldContext = createContext<WithRef<NumberFieldProps, HTMLDivElement>>(null);
+
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef();

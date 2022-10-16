@@ -3,7 +3,7 @@ import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
@@ -17,9 +17,12 @@ interface DateInputContextValue {
   ref: RefObject<HTMLDivElement>
 }
 
+export const DateFieldContext = createContext<WithRef<DateFieldProps<any>, HTMLDivElement>>(null);
+export const TimeFieldContext = createContext<WithRef<TimeFieldProps<any>, HTMLDivElement>>(null);
 export const DateInputContext = createContext<DateInputContextValue>(null);
 
 function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DateFieldContext);
   let {locale} = useLocale();
   let state = useDateFieldState({
     ...props,
@@ -64,6 +67,7 @@ const _DateField = forwardRef(DateField);
 export {_DateField as DateField};
 
 function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, TimeFieldContext);
   let {locale} = useLocale();
   let state = useTimeFieldState({
     ...props,

@@ -5,8 +5,8 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
-import React, {ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import {Provider, RenderProps, slotCallbackSymbol, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
@@ -17,7 +17,10 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   defaultFilter?: (textValue: string, inputValue: string) => boolean
 }
 
+export const ComboBoxContext = createContext<WithRef<ComboBoxProps<any>, HTMLDivElement>>(null);
+
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
 
   let {contains} = useFilter({sensitivity: 'base'});

@@ -5,7 +5,7 @@ import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, slotCallbackSymbol, useRenderProps, useSlot} from './utils';
+import {Provider, RenderProps, slotCallbackSymbol, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
@@ -19,9 +19,11 @@ interface SelectValueContext {
   valueProps: HTMLAttributes<HTMLElement>
 }
 
-const SelectContext = createContext<SelectValueContext>(null);
+export const SelectContext = createContext<WithRef<SelectProps<any>, HTMLDivElement>>(null);
+const InternalSelectContext = createContext<SelectValueContext>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, SelectContext);
   let [listBoxProps, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
 
   let {portal, collection} = useCollection({
@@ -68,7 +70,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   return (
     <Provider
       values={[
-        [SelectContext, {state, valueProps}],
+        [InternalSelectContext, {state, valueProps}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
         [PopoverContext, {
@@ -118,7 +120,7 @@ export interface SelectValueRenderProps {
 export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
 function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(SelectContext);
+  let {state, valueProps} = useContext(InternalSelectContext);
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: state.selectedItem?.rendered || 'Select an item',

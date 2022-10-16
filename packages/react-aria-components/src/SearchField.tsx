@@ -2,8 +2,8 @@ import {AriaTextFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
-import React, {ForwardedRef, forwardRef, useRef} from 'react';
+import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
@@ -17,7 +17,10 @@ export interface SearchFieldRenderProps {
   isEmpty: boolean
 }
 
+export const SearchFieldContext = createContext<WithRef<SearchFieldProps, HTMLDivElement>>(null);
+
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);

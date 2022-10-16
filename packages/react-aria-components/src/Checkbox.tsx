@@ -85,9 +85,11 @@ export interface CheckboxRenderProps {
   isRequired: boolean
 }
 
-const CheckboxGroupContext = createContext<CheckboxGroupState>(null);
+export const CheckboxGroupContext = createContext<WithRef<CheckboxGroupProps, HTMLDivElement>>(null);
+const InternalCheckboxGroupContext = createContext<CheckboxGroupState>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let state = useCheckboxGroupState(props);
   let [labelRef, label] = useSlot();
   let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup({
@@ -116,7 +118,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       data-validation-state={state.validationState || undefined}>
       <Provider
         values={[
-          [CheckboxGroupContext, state],
+          [InternalCheckboxGroupContext, state],
           [LabelContext, {...labelProps, ref: labelRef}],
           [TextContext, {
             slots: {
@@ -131,11 +133,11 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   );
 }
 
-export const CheckboxContext = createContext<WithRef<AriaCheckboxProps, HTMLInputElement>>(null);
+export const CheckboxContext = createContext<WithRef<CheckboxProps, HTMLInputElement>>(null);
 
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
-  let groupState = useContext(CheckboxGroupContext);
+  let groupState = useContext(InternalCheckboxGroupContext);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({

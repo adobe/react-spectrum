@@ -1,7 +1,7 @@
 import {AriaProgressBarProps, useProgressBar} from 'react-aria';
 import {LabelContext} from './Label';
-import React, {ForwardedRef, forwardRef} from 'react';
-import {RenderProps, useRenderProps, useSlot} from './utils';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 
 export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps> {}
 
@@ -22,7 +22,10 @@ export interface ProgressBarRenderProps {
   isIndeterminate: boolean
 }
 
+export const ProgressBarContext = createContext<WithRef<ProgressBarProps, HTMLDivElement>>(null);
+
 function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, ProgressBarContext);
   let {
     value = 0,
     minValue = 0,

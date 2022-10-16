@@ -1,13 +1,16 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {DOMProps, Provider, useSlot} from './utils';
+import {DOMProps, Provider, useContextProps, useSlot, WithRef} from './utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, DOMProps {}
 
+export const TextFieldContext = createContext<WithRef<TextFieldProps, HTMLDivElement>>(null);
+
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, TextFieldContext);
   let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({

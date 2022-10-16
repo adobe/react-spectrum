@@ -2,9 +2,9 @@ import {AriaRadioGroupProps, AriaRadioProps, useFocusRing, useHover, usePress, u
 import {LabelContext} from './Label';
 import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {Orientation, ValidationState} from '@react-types/shared';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
+import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {ForwardedRef, forwardRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps> {}
@@ -86,9 +86,11 @@ export interface RadioRenderProps {
    isRequired: boolean 
 }
 
-let RadioContext = React.createContext<RadioGroupState>(null);
+export const RadioGroupContext = createContext<WithRef<RadioGroupProps, HTMLDivElement>>(null);
+let InternalRadioContext = createContext<RadioGroupState>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let state = useRadioGroupState(props);
   let [labelRef, label] = useSlot();
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
@@ -112,7 +114,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
     <div {...radioGroupProps} {...renderProps} ref={ref}>
       <Provider
         values={[
-          [RadioContext, state],
+          [InternalRadioContext, state],
           [LabelContext, {...labelProps, ref: labelRef}],
           [TextContext, {
             slots: {
@@ -128,7 +130,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
-  let state = React.useContext(RadioContext);
+  let state = React.useContext(InternalRadioContext);
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio(props, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();

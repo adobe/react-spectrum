@@ -38,7 +38,7 @@ interface TooltipContextValue {
   tooltipProps: DOMAttributes
 }
 
-const TooltipContext = createContext<TooltipContextValue>(null);
+const InternalTooltipContext = createContext<TooltipContextValue>(null);
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -51,16 +51,16 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
     
   return (
-    <TooltipContext.Provider value={{state, triggerRef: ref, tooltipProps}}>
+    <InternalTooltipContext.Provider value={{state, triggerRef: ref, tooltipProps}}>
       <FocusableProvider {...triggerProps} ref={ref}>
         {props.children}
       </FocusableProvider>
-    </TooltipContext.Provider>
+    </InternalTooltipContext.Provider>
   );
 }
 
 function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state} = useContext(TooltipContext);
+  let {state} = useContext(InternalTooltipContext);
   let objectRef = useObjectRef(ref);
   let isExiting = useExitAnimation(objectRef, state.isOpen);
   if (!state.isOpen && !isExiting) {
@@ -81,7 +81,7 @@ const _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: ForwardedRef<HTMLDivElement>}) {
-  let {state, triggerRef, tooltipProps: triggerTooltipProps} = useContext(TooltipContext);
+  let {state, triggerRef, tooltipProps: triggerTooltipProps} = useContext(InternalTooltipContext);
 
   let overlayRef = useRef();
   let {overlayProps, arrowProps, placement} = useOverlayPosition({

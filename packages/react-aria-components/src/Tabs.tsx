@@ -2,7 +2,7 @@ import {AriaLabelingProps, Node, Orientation} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
 import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
-import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
+import {RenderProps, StyleRenderProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {useObjectRef} from '@react-aria/utils';
 import {useTabListState} from 'react-stately';
 
@@ -83,9 +83,11 @@ export interface TabPanelRenderProps {
   isFocusVisible: boolean
 }
 
+export const TabsContext = createContext<WithRef<TabsProps, HTMLDivElement>>(null);
 const InternalTabsContext = createContext(null);
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
   let [state, setState] = useState(null);
 

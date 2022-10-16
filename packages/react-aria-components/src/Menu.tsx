@@ -13,7 +13,7 @@ import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
-const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
+export const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
