@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -348,7 +348,7 @@ describe('DateRangePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should open and close popover and only call blur when focus leaves picker', function () {
+    it('should open and close popover and only call blur when focus leaves picker', async function () {
       let {getByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let button = getByRole('button');
 
