@@ -34,12 +34,18 @@ export interface ListState<T> {
   selectionManager: SelectionManager
 }
 
+function getNextLogicalFocusKey<T extends object>(collection: ListCollection<T>, focusedKey: Key): Key {
+  let focusKey = collection.getKeyAfter(focusedKey);
+  focusKey = focusKey ? focusKey : collection.getKeyBefore(focusedKey);
+  return focusKey;
+}
+
 /**
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {filter, items} = props;
+  let {filter} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -51,22 +57,20 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   let collection = useCollection(props, factory, context, [filter]);
 
-  let [cachedItems, setCachedItems] = useState(items);
-  let cachedCollection = useCollection({...props, items: cachedItems}, factory, context, [filter]);
+  let [nextFocusKey, setNextFocusKey] = useState(getNextLogicalFocusKey(collection, selectionState.focusedKey));
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      let focusKey = cachedCollection.getKeyAfter(selectionState.focusedKey);
-      focusKey = focusKey ? focusKey : cachedCollection.getKeyBefore(selectionState.focusedKey);
-      selectionState.setFocusedKey(focusKey);
+      selectionState.setFocusedKey(nextFocusKey);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, selectionState.focusedKey]);
 
   useEffect(() => {
-    setCachedItems(items);
-  }, [items]);
+    getNextLogicalFocusKey(collection, selectionState.focusedKey);
+    setNextFocusKey(collection.getKeyAfter(selectionState.focusedKey));
+  }, [collection, selectionState.focusedKey]);
 
   return {
     collection,
