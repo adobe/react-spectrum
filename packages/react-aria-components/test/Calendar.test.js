@@ -56,6 +56,19 @@ describe('Calendar', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} = renderCalendar({'data-foo': 'bar'}, {'data-bar': 'baz'}, {'data-baz': 'foo'});
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-foo', 'bar');
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-bar', 'baz');
+
+    for (let cell of within(grid).getAllByRole('button')) {
+      expect(cell).toHaveAttribute('data-baz', 'foo');
+    }
+  });
+
   it('should support multi-month calendars', () => {
     let {getAllByRole} = render(
       <Calendar aria-label="Appointment date" visibleDuration={{months: 2}}>

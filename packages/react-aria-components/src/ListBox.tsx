@@ -1,6 +1,7 @@
 import {AriaListBoxOptions, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {AriaListBoxProps} from '@react-types/listbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
@@ -82,6 +83,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
 
   return (
     <div
+      {...filterDOMProps(props)}
       {...listBoxProps}
       ref={listBoxRef}
       style={props.style}
@@ -101,7 +103,7 @@ interface ListBoxSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
+function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
   let {headingProps, groupProps} = useListBoxSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -120,6 +122,7 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
 
   return (
     <section 
+      {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
@@ -158,8 +161,7 @@ function Option<T>({item}: OptionProps<T>) {
   let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {

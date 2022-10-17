@@ -20,8 +20,8 @@ describe('Dialog', () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
-        <Modal>
-          <Dialog role="alertdialog">
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
                 <Heading>Alert</Heading>
@@ -39,8 +39,9 @@ describe('Dialog', () => {
     let dialog = getByRole('alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
+    expect(dialog).toHaveAttribute('data-test', 'dialog');
 
-    expect(dialog.closest('.react-aria-Modal')).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Modal')).toHaveAttribute('data-test', 'modal');
     expect(dialog.closest('.react-aria-ModalOverlay')).toBeInTheDocument();
 
     let close = within(dialog).getByRole('button');
@@ -53,9 +54,9 @@ describe('Dialog', () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
-        <ModalOverlay className="underlay">
-          <Modal className="modal">
-            <Dialog role="alertdialog">
+        <ModalOverlay className="underlay" data-test="underlay">
+          <Modal className="modal" data-test="modal">
+            <Dialog role="alertdialog" data-test="dialog">
               {({close}) => (
                 <>
                   <Heading>Alert</Heading>
@@ -74,9 +75,10 @@ describe('Dialog', () => {
     let dialog = getByRole('alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
+    expect(dialog).toHaveAttribute('data-test', 'dialog');
 
-    expect(dialog.closest('.modal')).toBeInTheDocument();
-    expect(dialog.closest('.underlay')).toBeInTheDocument();
+    expect(dialog.closest('.modal')).toHaveAttribute('data-test', 'modal');
+    expect(dialog.closest('.underlay')).toHaveAttribute('data-test', 'underlay');
 
     let close = within(dialog).getByRole('button');
     userEvent.click(close);
@@ -88,11 +90,11 @@ describe('Dialog', () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button aria-label="Help">?⃝</Button>
-        <Popover>
-          <OverlayArrow>
+        <Popover data-test="popover">
+          <OverlayArrow data-test="arrow">
             <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
           </OverlayArrow>
-          <Dialog>
+          <Dialog data-test="dialog">
             <Heading>Help</Heading>
             <p>For help accessing your account, please contact support.</p>
           </Dialog>
@@ -106,12 +108,15 @@ describe('Dialog', () => {
     let dialog = getByRole('dialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
+    expect(dialog).toHaveAttribute('data-test', 'dialog');
 
     let popover = dialog.closest('.react-aria-Popover');
     expect(popover).toHaveStyle('position: absolute');
+    expect(popover).toHaveAttribute('data-test', 'popover');
 
     let arrow = popover.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');
+    expect(arrow).toHaveAttribute('data-test', 'arrow');
 
     userEvent.click(document.body);
 

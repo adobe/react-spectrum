@@ -15,11 +15,11 @@ import {Label, Slider, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderSlider = (props, thumbProps) => render(
+let renderSlider = (props, thumbProps, trackProps) => render(
   <Slider {...props}>
     <Label>Opacity</Label>
     <SliderOutput />
-    <SliderTrack>
+    <SliderTrack {...trackProps}>
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
@@ -41,6 +41,14 @@ describe('Slider', () => {
     let {getByRole} = renderSlider({className: 'test'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'test');
+  });
+
+  it('should support DOM props', () => {
+    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'});
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-foo', 'bar');
+    expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
+    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
   });
 
   it('should support focus ring', () => {

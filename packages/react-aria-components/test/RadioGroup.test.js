@@ -50,6 +50,15 @@ describe('RadioGroup', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderGroup({'data-foo': 'bar'}, {'data-test': 'test'});
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-foo', 'bar');
+    for (let radio of getAllByRole('radio')) {
+      expect(radio.closest('label')).toHaveAttribute('data-test', 'test');
+    }
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderGroup({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let radio = getAllByRole('radio')[0].closest('label');

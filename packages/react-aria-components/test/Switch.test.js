@@ -28,6 +28,12 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('class', 'test');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} =  render(<Switch data-foo="bar">Test</Switch>);
+    let s = getByRole('switch');
+    expect(s).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should support hover', () => {
     let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Switch>);
     let s = getByRole('switch').closest('label');

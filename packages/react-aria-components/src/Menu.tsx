@@ -2,11 +2,12 @@
 import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
 import {CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -72,6 +73,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   return (
     <>
       <div
+        {...filterDOMProps(props)}
         {...menuProps}
         ref={ref}
         style={props.style}
@@ -99,7 +101,7 @@ interface MenuSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
+function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
   let {headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -118,6 +120,7 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
 
   return (
     <section 
+      {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
@@ -139,11 +142,11 @@ export interface MenuItemRenderProps extends ItemRenderProps {
    isSelected: boolean
 }
 
-interface MenuItemProps<T> extends RenderProps<MenuItemRenderProps> {
+interface MenuItemProps<T> {
   item: Node<T>
 }
 
-function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
+function MenuItem<T>({item}: MenuItemProps<T>) {
   let state = useContext(InternalMenuContext);
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
@@ -151,9 +154,8 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
   let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: className || props.className,
-    style: style || props.style,
-    children: children || item.rendered,
+    ...props,
+    children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {
       ...states,

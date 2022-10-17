@@ -2,11 +2,11 @@ import {AriaDateFieldProps, AriaTimeFieldProps, useDateField, useDateSegment, us
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
-import {useObjectRef} from '@react-aria/utils';
 
 export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
@@ -116,11 +116,17 @@ export interface DateInputProps extends SlotProps, StyleProps {
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput({children, style, className, slot}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
+function DateInput({children, style, className, slot, ...otherProps}: DateInputProps, ref: ForwardedRef<HTMLDivElement>) {
   let [{state, fieldProps}, fieldRef] = useContextProps({slot} as DateInputProps & DateInputContextValue, ref, DateInputContext);
   return (
     <InternalDateInputContext.Provider value={state}>
-      <div {...fieldProps} ref={fieldRef} slot={slot} style={style} className={className ?? 'react-aria-DateInput'}>
+      <div
+        {...filterDOMProps(otherProps)}
+        {...fieldProps}
+        ref={fieldRef}
+        slot={slot}
+        style={style}
+        className={className ?? 'react-aria-DateInput'}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </div>
     </InternalDateInputContext.Provider>
@@ -160,14 +166,12 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
   segment: IDateSegment
 }
 
-function DateSegment({segment, className, style, children}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
+function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(InternalDateInputContext);
   let domRef = useObjectRef(ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let renderProps = useRenderProps({
-    className,
-    style,
-    children,
+    ...otherProps,
     values: {
       ...segment,
       isReadOnly: !segment.isEditable,

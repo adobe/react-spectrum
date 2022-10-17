@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 describe('ComboBox', () => {
   it('provides slots', () => {
     let {getByRole} = render(
-      <ComboBox defaultInputValue="C">
+      <ComboBox defaultInputValue="C" data-foo="bar">
         <Label>Favorite Animal</Label>
         <Input />
         <Button />
@@ -36,7 +36,9 @@ describe('ComboBox', () => {
 
     let input = getByRole('combobox');
     expect(input).toHaveValue('C');
-    expect(input.closest('.react-aria-ComboBox')).toBeInTheDocument();
+
+    let combobox = input.closest('.react-aria-ComboBox');
+    expect(combobox).toHaveAttribute('data-foo', 'bar');
 
     expect(input).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(input.getAttribute('aria-labelledby').split(' ')[0]);

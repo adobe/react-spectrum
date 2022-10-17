@@ -102,13 +102,11 @@ export {_SliderOutput as SliderOutput};
 
 export interface SliderTrackProps extends RenderProps<SliderState> {}
 
-function SliderTrack({children, style, className}: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackProps, trackRef} = useContext(InternalSliderContext);
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
-    className,
-    style,
-    children,
+    ...props,
     defaultClassName: 'react-aria-SliderTrack',
     values: state
   });
@@ -164,9 +162,7 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   let {focusProps, isFocusVisible} = useFocusRing();
 
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
-    children: props.children,
+    ...props,
     defaultClassName: 'react-aria-SliderThumb',
     values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
   });

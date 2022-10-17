@@ -1,6 +1,7 @@
 import {AriaGridListProps, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {filterDOMProps} from '@react-aria/utils';
 import {ListState, useListState} from 'react-stately';
 import {Node} from '@react-types/shared';
 import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
@@ -37,6 +38,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
 
   return (
     <ul 
+      {...filterDOMProps(props)}
       {...gridProps}
       ref={ref}
       style={props.style}
@@ -77,8 +79,7 @@ function GridListItem({item}) {
   
   let props: ItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {

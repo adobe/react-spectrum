@@ -50,6 +50,12 @@ describe('CheckboxGroup', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} = renderGroup({'data-foo': 'bar'});
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should support disabled state on checkbox', () => {
     let {getAllByRole} = renderGroup({}, {isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let checkbox = getAllByRole('checkbox')[0];

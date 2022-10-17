@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 describe('TextField', () => {
   it('provides slots', () => {
     let {getByRole} = render(
-      <TextField defaultValue="test">
+      <TextField defaultValue="test" data-foo="bar">
         <Label>Test</Label>
         <Input />
         <Text slot="description">Description</Text>
@@ -28,7 +28,7 @@ describe('TextField', () => {
     let input = getByRole('textbox');
     expect(input).toHaveValue('test');
 
-    expect(input.closest('.react-aria-TextField')).toBeInTheDocument();
+    expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-foo', 'bar');
 
     expect(input).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(input.getAttribute('aria-labelledby'));

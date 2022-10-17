@@ -40,12 +40,25 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     return <ModalContent {...props} modalRef={ref}>{props.children}</ModalContent>;
   }
 
-  let {className, style, ...otherProps} = props;
+  let {
+    isDismissable,
+    isKeyboardDismissDisabled,
+    isOpen,
+    defaultOpen,
+    onOpenChange,
+    children,
+    ...otherProps
+  } = props;
   
   return (
-    <ModalOverlay {...otherProps}>
-      <ModalContent className={className} style={style} modalRef={ref}>
-        {props.children}
+    <ModalOverlay
+      isDismissable={isDismissable}
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+      isOpen={isOpen}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}>
+      <ModalContent {...otherProps} modalRef={ref}>
+        {children}
       </ModalContent>
     </ModalOverlay>
   );

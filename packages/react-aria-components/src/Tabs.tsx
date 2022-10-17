@@ -188,8 +188,7 @@ function TabInner({item, state}) {
   });
 
   let renderProps = useRenderProps({
-    className: item.props.className,
-    style: item.props.style,
+    ...item.props,
     children: item.rendered,
     defaultClassName: 'react-aria-Tab',
     values: {
@@ -245,8 +244,7 @@ function SelectedTabPanel({item}: {item: Node<object>}) {
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
   let renderProps = useRenderProps({
-    className: item.props.className,
-    style: item.props.style,
+    ...item.props,
     children: item.rendered,
     defaultClassName: 'react-aria-TabPanel',
     values: {

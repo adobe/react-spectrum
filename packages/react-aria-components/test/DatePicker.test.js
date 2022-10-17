@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 describe('DatePicker', () => {
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
-      <DatePicker>
+      <DatePicker data-foo="bar">
         <Label>Birth date</Label>
         <Group>
           <DateInput>
@@ -51,7 +51,7 @@ describe('DatePicker', () => {
     expect(input).toHaveTextContent('mm/dd/yyyy');
     expect(button).toHaveAttribute('aria-label', 'Calendar');
 
-    expect(input.closest('.react-aria-DatePicker')).toBeInTheDocument();
+    expect(input.closest('.react-aria-DatePicker')).toHaveAttribute('data-foo', 'bar');
 
     expect(group).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(group.getAttribute('aria-labelledby'));

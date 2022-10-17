@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 let renderTooltip = () => render(
   <TooltipTrigger delay={0}>
     <Button><span aria-hidden="true">✏️</span></Button>
-    <Tooltip>
+    <Tooltip data-test="tooltip">
       <OverlayArrow>
         <svg width={8} height={8}>
           <path d="M0 0,L4 4,L8 0" />
@@ -47,6 +47,7 @@ describe('Tooltip', () => {
     expect(tooltip).toHaveClass('react-aria-Tooltip');
     expect(tooltip).toHaveAttribute('data-placement', 'top');
     expect(tooltip).toHaveStyle('position: absolute');
+    expect(tooltip).toHaveAttribute('data-test', 'tooltip');
 
     let arrow = tooltip.querySelector('.react-aria-OverlayArrow');
     expect(arrow).toHaveStyle('position: absolute');

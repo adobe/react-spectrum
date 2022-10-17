@@ -1,4 +1,4 @@
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 export const slotCallbackSymbol = Symbol('callback');
@@ -57,7 +57,7 @@ interface RenderPropsHookOptions<T> extends RenderProps<T> {
   defaultClassName?: string
 }
 
-export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values}: RenderPropsHookOptions<T>) {
+export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values, ...otherProps}: RenderPropsHookOptions<T>) {
   if (typeof className === 'function') {
     className = className(values);
   }
@@ -73,6 +73,7 @@ export function useRenderProps<T>({className, style, children, defaultClassName,
   }
 
   return {
+    ...filterDOMProps(otherProps),
     className: className ?? defaultClassName,
     style,
     children

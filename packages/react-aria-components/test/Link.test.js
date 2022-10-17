@@ -29,6 +29,12 @@ describe('Link', () => {
     expect(link).toHaveAttribute('class', 'test');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} =  render(<Link data-foo="bar">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should render a link with <a> element', () => {
     let {getByRole} = render(<Link><a href="test">Test</a></Link>);
     let link = getByRole('link');

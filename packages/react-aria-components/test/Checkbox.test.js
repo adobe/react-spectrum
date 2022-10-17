@@ -28,6 +28,12 @@ describe('Checkbox', () => {
     expect(checkbox).toHaveAttribute('class', 'test');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} =  render(<Checkbox data-foo="bar">Test</Checkbox>);
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should support hover', () => {
     let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');

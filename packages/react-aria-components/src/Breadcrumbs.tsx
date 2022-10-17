@@ -1,5 +1,6 @@
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {CollectionProps, useCollection} from './Collection';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
 import {Provider, StyleProps, useContextProps, WithRef} from './utils';
@@ -18,7 +19,12 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
   let {portal, collection} = useCollection(props);
 
   return (
-    <nav ref={ref} {...navProps} style={props.style} className={props.className ?? 'react-aria-Breadcrumbs'}>
+    <nav
+      ref={ref}
+      {...filterDOMProps(props)}
+      {...navProps}
+      style={props.style}
+      className={props.className ?? 'react-aria-Breadcrumbs'}>
       <ol>
         {[...collection].map((node, i) => (
           <BreadcrumbItem
@@ -48,7 +54,10 @@ function BreadcrumbItem({node, isCurrent, isDisabled}) {
   };
 
   return (
-    <li style={node.props.style} className={node.props.className ?? 'react-aria-Item'}>
+    <li
+      {...filterDOMProps(node.props)}
+      style={node.props.style}
+      className={node.props.className ?? 'react-aria-Item'}>
       <Provider 
         values={[
           [LinkContext, linkProps],

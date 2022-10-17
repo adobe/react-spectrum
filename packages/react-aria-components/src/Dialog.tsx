@@ -1,6 +1,7 @@
 import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
 import {DOMProps, Provider, useContextProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {ModalContext} from './Modal';
 import {OverlayTriggerProps, useOverlayTriggerState} from 'react-stately';
@@ -52,7 +53,12 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   }
   
   return (
-    <section {...dialogProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-Dialog'}>
+    <section
+      {...filterDOMProps(props)}
+      {...dialogProps}
+      ref={ref}
+      style={props.style}
+      className={props.className ?? 'react-aria-Dialog'}>
       <Provider
         values={[
           [ButtonContext, undefined],

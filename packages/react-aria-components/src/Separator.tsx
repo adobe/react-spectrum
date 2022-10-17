@@ -1,4 +1,5 @@
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 import {StyleProps, useContextProps} from './utils';
 
@@ -21,6 +22,7 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
 
   return (
     <Element
+      {...filterDOMProps(props)}
       {...separatorProps}
       style={style}
       className={className ?? 'react-aria-Separator'}

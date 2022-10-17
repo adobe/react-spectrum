@@ -44,6 +44,16 @@ describe('GridList', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderGridList({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-foo', 'bar');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];

@@ -28,6 +28,12 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('class', 'test');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} =  render(<ToggleButton data-foo="bar">Test</ToggleButton>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should support hover', () => {
     let {getByRole} = render(<ToggleButton className={({isHovered}) => isHovered ? 'hover' : ''}>Test</ToggleButton>);
     let button = getByRole('button');

@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 describe('SearchField', () => {
   it('provides slots', () => {
     let {getByRole} = render(
-      <SearchField defaultValue="test">
+      <SearchField defaultValue="test" data-foo="bar">
         <Label>Test</Label>
         <Input />
         <Button>x</Button>
@@ -29,7 +29,7 @@ describe('SearchField', () => {
     let input = getByRole('searchbox');
     expect(input).toHaveValue('test');
 
-    expect(input.closest('.react-aria-SearchField')).toBeInTheDocument();
+    expect(input.closest('.react-aria-SearchField')).toHaveAttribute('data-foo', 'bar');
 
     expect(input).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(input.getAttribute('aria-labelledby'));

@@ -17,7 +17,7 @@ import userEvent from '@testing-library/user-event';
 describe('DateRangePicker', () => {
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
-      <DateRangePicker>
+      <DateRangePicker data-foo="bar">
         <Label>Trip dates</Label>
         <Group>
           <DateInput slot="start">
@@ -55,7 +55,7 @@ describe('DateRangePicker', () => {
     expect(inputs[0]).toHaveTextContent('mm/dd/yyyy');
     expect(button).toHaveAttribute('aria-label', 'Calendar');
 
-    expect(group.closest('.react-aria-DateRangePicker')).toBeInTheDocument();
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-foo', 'bar');
 
     expect(group).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(group.getAttribute('aria-labelledby'));

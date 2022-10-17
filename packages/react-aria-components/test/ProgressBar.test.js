@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 describe('ProgressBar', () => {
   it('renders', () => {
     let {getByRole} = render(
-      <ProgressBar value={25}>
+      <ProgressBar value={25} data-foo="bar">
         {({percentage, valueText}) => (<>
           <Label>Loading…</Label>
           <span className="value">{valueText}</span>
@@ -30,6 +30,7 @@ describe('ProgressBar', () => {
     expect(progressbar).toHaveClass('react-aria-ProgressBar');
     expect(progressbar).toHaveAttribute('aria-valuenow', '25');
     expect(progressbar).toHaveAttribute('aria-labelledby');
+    expect(progressbar).toHaveAttribute('data-foo', 'bar');
     expect(document.getElementById(progressbar.getAttribute('aria-labelledby'))).toHaveTextContent('Loading…');
 
     let value = progressbar.querySelector('.value');

@@ -17,10 +17,10 @@ import {render} from '@react-spectrum/test-utils';
 describe('TimeField', () => {
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
-      <TimeField>
+      <TimeField data-foo="bar">
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
+        <DateInput data-bar="foo">
+          {segment => <DateSegment segment={segment} data-test="test" />}
         </DateInput>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
@@ -30,8 +30,9 @@ describe('TimeField', () => {
     let input = getByRole('group');
     expect(input).toHaveTextContent('––:–– AM');
     expect(input).toHaveAttribute('class', 'react-aria-DateInput');
+    expect(input).toHaveAttribute('data-bar', 'foo');
 
-    expect(input.closest('.react-aria-TimeField')).toBeInTheDocument();
+    expect(input.closest('.react-aria-TimeField')).toHaveAttribute('data-foo', 'bar');
 
     expect(input).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
@@ -45,6 +46,7 @@ describe('TimeField', () => {
       expect(segment).toHaveAttribute('class', 'react-aria-DateSegment');
       expect(segment).toHaveAttribute('data-placeholder', 'true');
       expect(segment).toHaveAttribute('data-type');
+      expect(segment).toHaveAttribute('data-test', 'test');
     }
   });
 

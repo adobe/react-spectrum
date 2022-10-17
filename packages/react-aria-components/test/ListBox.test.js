@@ -44,6 +44,16 @@ describe('ListBox', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderListbox({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-foo', 'bar');
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">

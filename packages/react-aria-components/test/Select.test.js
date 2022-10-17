@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 describe('Select', () => {
   it('provides slots', () => {
     let {getByRole} = render(
-      <Select>
+      <Select data-foo="bar">
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue />
@@ -37,7 +37,9 @@ describe('Select', () => {
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
-    expect(button.closest('.react-aria-Select')).toBeInTheDocument();
+
+    let select = button.closest('.react-aria-Select');
+    expect(select).toHaveAttribute('data-foo', 'bar');
 
     expect(button).toHaveAttribute('aria-labelledby');
     let label = document.getElementById(button.getAttribute('aria-labelledby').split(' ')[0]);

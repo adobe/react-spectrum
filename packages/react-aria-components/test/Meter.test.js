@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 describe('Meter', () => {
   it('renders', () => {
     let {getByRole} = render(
-      <Meter value={25}>
+      <Meter value={25} data-foo="bar">
         {({percentage, valueText}) => (<>
           <Label>Storage space</Label>
           <span className="value">{valueText}</span>
@@ -30,6 +30,7 @@ describe('Meter', () => {
     expect(meter).toHaveClass('react-aria-Meter');
     expect(meter).toHaveAttribute('aria-valuenow', '25');
     expect(meter).toHaveAttribute('aria-labelledby');
+    expect(meter).toHaveAttribute('data-foo', 'bar');
     expect(document.getElementById(meter.getAttribute('aria-labelledby'))).toHaveTextContent('Storage space');
 
     let value = meter.querySelector('.value');

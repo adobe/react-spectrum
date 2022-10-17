@@ -17,7 +17,7 @@ import {render} from '@react-spectrum/test-utils';
 describe('NumberField', () => {
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
-      <NumberField defaultValue={1024} minValue={0}>
+      <NumberField defaultValue={1024} minValue={0} data-foo="bar">
         <Label>Width</Label>
         <Group>
           <Button slot="decrement">-</Button>
@@ -32,7 +32,7 @@ describe('NumberField', () => {
     let group = getByRole('group');
     expect(group).toBeInTheDocument();
 
-    expect(group.closest('.react-aria-NumberField')).toBeInTheDocument();
+    expect(group.closest('.react-aria-NumberField')).toHaveAttribute('data-foo', 'bar');
 
     let input = getByRole('textbox');
     expect(input).toHaveValue('1,024');

@@ -28,6 +28,12 @@ describe('Button', () => {
     expect(button).toHaveAttribute('class', 'test');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole} =  render(<Button data-foo="bar">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('data-foo', 'bar');
+  });
+
   it('should support hover', () => {
     let {getByRole} = render(<Button className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Button>);
     let button = getByRole('button');

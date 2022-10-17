@@ -44,6 +44,16 @@ describe('Menu', () => {
     }
   });
 
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderMenu({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-foo', 'bar');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">

@@ -47,4 +47,14 @@ describe('Breadcrumbs', () => {
       expect(item).toHaveClass('item');
     }
   });
+
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('data-foo', 'bar');
+
+    for (let item of getAllByRole('listitem')) {
+      expect(item).toHaveAttribute('data-bar', 'foo');
+    }
+  });
 });

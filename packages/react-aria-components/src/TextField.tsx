@@ -1,5 +1,6 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {DOMProps, Provider, useContextProps, useSlot, WithRef} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -19,7 +20,11 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   }, inputRef);
 
   return (
-    <div ref={ref} className={props.className ?? 'react-aria-TextField'} style={props.style}>
+    <div
+      {...filterDOMProps(props)}
+      ref={ref}
+      className={props.className ?? 'react-aria-TextField'}
+      style={props.style}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

@@ -4,11 +4,11 @@ import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {DateValue, RangeCalendarProps} from '@react-types/calendar';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React from 'react';
 import {TextContext} from './Text';
-import {useObjectRef} from '@react-aria/utils';
 
 export interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState> {
   /**
@@ -239,7 +239,12 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
 
   return (
     <InternalCalendarGridContext.Provider value={startDate}>
-      <table {...gridProps} ref={ref} style={props.style} className={props.className ?? 'react-aria-CalendarGrid'}>
+      <table
+        {...filterDOMProps(props as any)}
+        {...gridProps}
+        ref={ref}
+        style={props.style}
+        className={props.className ?? 'react-aria-CalendarGrid'}>
         <thead {...headerProps}>
           <tr>
             {weekDays.map((day, index) => <th key={index}>{day}</th>)}
@@ -272,7 +277,7 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> 
   date: CalendarDate
 }
 
-function CalendarCell({date, className, style, children}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
+function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(InternalCalendarContext);
   let currentMonth = useContext(InternalCalendarGridContext);
   let objectRef = useObjectRef(ref);
@@ -293,9 +298,7 @@ function CalendarCell({date, className, style, children}: CalendarCellProps, ref
   }
 
   let renderProps = useRenderProps({
-    className,
-    style,
-    children,
+    ...otherProps,
     defaultChildren: states.formattedDate,
     defaultClassName: 'react-aria-CalendarCell',
     values: {

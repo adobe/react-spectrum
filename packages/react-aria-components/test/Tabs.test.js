@@ -61,6 +61,20 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('class', 'tabpanel');
   });
 
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderTabs({'data-test': 'tabs'}, {'data-test': 'tablist'}, {'data-test': 'tab'}, {'data-test': 'tabpanel'});
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-test', 'tabs');
+    expect(tablist).toHaveAttribute('data-test', 'tablist');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('data-test', 'tab');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
+  });
+
   it('should support hover', () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let tab = getAllByRole('tab')[0];
