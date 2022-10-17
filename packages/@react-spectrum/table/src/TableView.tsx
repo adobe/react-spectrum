@@ -468,8 +468,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
+        {...mergeProps(otherProps, virtualizerProps)}
         ref={domRef}>
         <div
           role="presentation"
