@@ -1,16 +1,16 @@
 import {AriaGridListProps, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {ListState, useListState} from 'react-stately';
 import {Node} from '@react-types/shared';
-import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
 
-export const GridListContext = createContext<WithRef<GridListProps<any>, HTMLUListElement>>(null);
+export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLUListElement>>(null);
 const InternalGridListContext = createContext<ListState<unknown>>(null);
 
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLUListElement>) {
@@ -41,6 +41,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
       {...filterDOMProps(props)}
       {...gridProps}
       ref={ref}
+      slot={props.slot}
       style={props.style}
       className={props.className ?? 'react-aria-GridList'}>
       <InternalGridListContext.Provider value={state}>

@@ -1,11 +1,11 @@
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
-import {StyleProps, useContextProps} from './utils';
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps {}
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
 
-export const SeparatorContext = createContext<SeparatorProps>({});
+export const SeparatorContext = createContext<ContextValue<SeparatorProps, Element>>({});
 
 function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
@@ -26,7 +26,8 @@ function Separator(props: SeparatorProps, ref: ForwardedRef<Element>) {
       {...separatorProps}
       style={style}
       className={className ?? 'react-aria-Separator'}
-      ref={ref} />
+      ref={ref}
+      slot={props.slot} />
   );
 }
 

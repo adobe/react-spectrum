@@ -1,6 +1,6 @@
 import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
-import {DOMProps, Provider, useContextProps} from './utils';
+import {ContextValue, DOMProps, Provider, SlotProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {ModalContext} from './Modal';
@@ -12,11 +12,11 @@ export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
-export interface DialogProps extends AriaDialogProps, DOMProps {
+export interface DialogProps extends AriaDialogProps, DOMProps, SlotProps {
   onClose?: () => void
 }
 
-export const DialogContext = createContext<DialogProps>(null);
+export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement>>(null);
 
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
@@ -57,6 +57,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       {...filterDOMProps(props)}
       {...dialogProps}
       ref={ref}
+      slot={props.slot}
       style={props.style}
       className={props.className ?? 'react-aria-Dialog'}>
       <Provider

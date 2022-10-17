@@ -1,9 +1,9 @@
 import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
-import {RenderProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps> {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
 
 export interface SwitchRenderProps {
   /**
@@ -43,7 +43,7 @@ export interface SwitchRenderProps {
   isReadOnly: boolean
 }
 
-export const SwitchContext = createContext<WithRef<AriaSwitchProps, HTMLInputElement>>(null);
+export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
 
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
@@ -92,6 +92,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label 
       {...mergeProps(pressProps, hoverProps, renderProps)}
+      slot={props.slot}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}

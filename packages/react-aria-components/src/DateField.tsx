@@ -1,25 +1,24 @@
 import {AriaDateFieldProps, AriaTimeFieldProps, useDateField, useDateSegment, useLocale, useTimeField} from 'react-aria';
+import {ContextValue, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {DateValue, TimeValue} from '@react-types/datepicker';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState> {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateFieldState>, SlotProps {}
 
-interface DateInputContextValue {
+interface DateInputContextValue extends SlotProps {
   state: DateFieldState,
-  fieldProps: HTMLAttributes<HTMLElement>,
-  ref: RefObject<HTMLDivElement>
+  fieldProps: HTMLAttributes<HTMLElement>
 }
 
-export const DateFieldContext = createContext<WithRef<DateFieldProps<any>, HTMLDivElement>>(null);
-export const TimeFieldContext = createContext<WithRef<TimeFieldProps<any>, HTMLDivElement>>(null);
-export const DateInputContext = createContext<DateInputContextValue>(null);
+export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
+export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
+export const DateInputContext = createContext<ContextValue<DateInputContextValue, HTMLDivElement>>(null);
 
 function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateFieldContext);
@@ -52,7 +51,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref}>
+      <div {...renderProps} ref={ref} slot={props.slot}>
         {props.children}
       </div>
     </Provider>
@@ -96,7 +95,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref}>
+      <div {...renderProps} ref={ref} slot={props.slot}>
         {props.children}
       </div>
     </Provider>

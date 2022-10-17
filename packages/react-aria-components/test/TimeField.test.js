@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateInput, DateSegment, Label, Text, TimeField} from '../';
+import {DateInput, DateSegment, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
@@ -67,5 +67,21 @@ describe('TimeField', () => {
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('class', 'segment placeholder');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <TimeFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TimeField slot="test">
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </TimeField>
+      </TimeFieldContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-TimeField')).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 });

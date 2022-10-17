@@ -1,13 +1,13 @@
 import {AriaRadioGroupProps, AriaRadioProps, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {Orientation, ValidationState} from '@react-types/shared';
-import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps> {}
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps>, SlotProps {}
 export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps> {}
 
 export interface RadioGroupRenderProps {
@@ -86,7 +86,7 @@ export interface RadioRenderProps {
    isRequired: boolean 
 }
 
-export const RadioGroupContext = createContext<WithRef<RadioGroupProps, HTMLDivElement>>(null);
+export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
 let InternalRadioContext = createContext<RadioGroupState>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -111,7 +111,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   return (
-    <div {...radioGroupProps} {...renderProps} ref={ref}>
+    <div {...radioGroupProps} {...renderProps} ref={ref} slot={props.slot}>
       <Provider
         values={[
           [InternalRadioContext, state],

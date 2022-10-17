@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateField, DateInput, DateSegment, Label, Text} from '../';
+import {DateField, DateFieldContext, DateInput, DateSegment, Label, Text} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
@@ -67,5 +67,21 @@ describe('DateField', () => {
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('class', 'segment placeholder');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <DateFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <DateField slot="test">
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </DateFieldContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateField')).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 });

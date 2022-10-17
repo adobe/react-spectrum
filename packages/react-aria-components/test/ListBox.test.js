@@ -11,17 +11,19 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Item, ListBox, Section, Text} from '../';
+import {Item, ListBox, ListBoxContext, Section, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderListbox = (listBoxProps, itemProps) => render(
-  <ListBox {...listBoxProps} aria-label="Test">
+let TestListBox = ({listBoxProps, itemProps}) => (
+  <ListBox aria-label="Test" {...listBoxProps}>
     <Item {...itemProps} id="cat">Cat</Item>
     <Item {...itemProps} id="dog">Dog</Item>
     <Item {...itemProps} id="kangaroo">Kangaroo</Item>
   </ListBox>
 );
+
+let renderListbox = (listBoxProps, itemProps) => render(<TestListBox {...{listBoxProps, itemProps}} />);
 
 describe('ListBox', () => {
   it('should render with default classes', () => {
@@ -52,6 +54,18 @@ describe('ListBox', () => {
     for (let option of getAllByRole('option')) {
       expect(option).toHaveAttribute('data-bar', 'foo');
     }
+  });
+
+  it('should support the slot prop', () => {
+    let {getByRole} = render(
+      <ListBoxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestListBox listBoxProps={{slot: 'test', 'aria-label': undefined}} />
+      </ListBoxContext.Provider>
+    );
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('slot', 'test');
+    expect(listbox).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support slots', () => {

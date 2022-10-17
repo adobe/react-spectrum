@@ -11,13 +11,13 @@
  */
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
-import {Button, CalendarCell, CalendarGrid, Heading, RangeCalendar} from 'react-aria-components';
+import {Button, CalendarCell, CalendarGrid, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
 import {getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderCalendar = (calendarProps, gridProps, cellProps) => render(
-  <RangeCalendar {...calendarProps} aria-label="Trip dates">
+let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
+  <RangeCalendar aria-label="Trip dates" {...calendarProps}>
     <header>
       <Button slot="previous">◀</Button>
       <Heading />
@@ -28,6 +28,8 @@ let renderCalendar = (calendarProps, gridProps, cellProps) => render(
     </CalendarGrid>
   </RangeCalendar>
 );
+
+let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
 
 describe('RangeCalendar', () => {
   it('should render with default classes', () => {
@@ -67,6 +69,18 @@ describe('RangeCalendar', () => {
     for (let cell of within(grid).getAllByRole('button')) {
       expect(cell).toHaveAttribute('data-baz', 'foo');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <RangeCalendarContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestCalendar calendarProps={{slot: 'test', 'aria-label': undefined}} />
+      </RangeCalendarContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', expect.stringContaining('test'));
   });
 
   it('should support multi-month calendars', () => {

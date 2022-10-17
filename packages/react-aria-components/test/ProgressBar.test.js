@@ -10,21 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, ProgressBar} from 'react-aria-components';
+import {Label, ProgressBar, ProgressBarContext} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
+let TestProgressBar = (props) => (
+  <ProgressBar value={25} data-foo="bar" {...props}>
+    {({percentage, valueText}) => (<>
+      <Label>Loading…</Label>
+      <span className="value">{valueText}</span>
+      <div className="bar" style={{width: percentage + '%'}} />
+    </>)}
+  </ProgressBar>
+);
+
 describe('ProgressBar', () => {
   it('renders', () => {
-    let {getByRole} = render(
-      <ProgressBar value={25} data-foo="bar">
-        {({percentage, valueText}) => (<>
-          <Label>Loading…</Label>
-          <span className="value">{valueText}</span>
-          <div className="bar" style={{width: percentage + '%'}} />
-        </>)}
-      </ProgressBar>
-    );
+    let {getByRole} = render(<TestProgressBar />);
 
     let progressbar = getByRole('progressbar');
     expect(progressbar).toHaveClass('react-aria-ProgressBar');
@@ -56,5 +58,17 @@ describe('ProgressBar', () => {
 
     let bar = progressbar.querySelector('.bar');
     expect(bar.style.width).toBe('');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <ProgressBarContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestProgressBar slot="test" />
+      </ProgressBarContext.Provider>
+    );
+
+    let progressbar = getByRole('progressbar');
+    expect(progressbar).toHaveAttribute('slot', 'test');
+    expect(progressbar).toHaveAttribute('aria-label', 'test');
   });
 });

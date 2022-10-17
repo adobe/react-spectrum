@@ -1,17 +1,17 @@
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {CollectionProps, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
-import {Provider, StyleProps, useContextProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean
 }
 
-export const BreadcrumbsContext = createContext<WithRef<BreadcrumbsProps<any>, HTMLElement>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLElement>>(null);
 
 function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
@@ -23,6 +23,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
       ref={ref}
       {...filterDOMProps(props)}
       {...navProps}
+      slot={props.slot}
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
       <ol>

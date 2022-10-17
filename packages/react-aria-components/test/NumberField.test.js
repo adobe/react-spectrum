@@ -10,24 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField, Text} from '../';
+import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
+let TestNumberField = (props) => (
+  <NumberField defaultValue={1024} minValue={0} data-foo="bar" {...props}>
+    <Label>Width</Label>
+    <Group>
+      <Button slot="decrement">-</Button>
+      <Input />
+      <Button slot="increment">+</Button>
+    </Group>
+    <Text slot="description">Description</Text>
+    <Text slot="errorMessage">Error</Text>
+  </NumberField>
+);
+
 describe('NumberField', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(
-      <NumberField defaultValue={1024} minValue={0} data-foo="bar">
-        <Label>Width</Label>
-        <Group>
-          <Button slot="decrement">-</Button>
-          <Input />
-          <Button slot="increment">+</Button>
-        </Group>
-        <Text slot="description">Description</Text>
-        <Text slot="errorMessage">Error</Text>
-      </NumberField>
-    );
+    let {getByRole, getAllByRole} = render(<TestNumberField />);
 
     let group = getByRole('group');
     expect(group).toBeInTheDocument();
@@ -48,5 +50,17 @@ describe('NumberField', () => {
     let buttons = getAllByRole('button');
     expect(buttons[0]).toHaveAttribute('aria-label', 'Decrease');
     expect(buttons[1]).toHaveAttribute('aria-label', 'Increase');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <NumberFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestNumberField slot="test" />
+      </NumberFieldContext.Provider>
+    );
+
+    let textbox = getByRole('textbox');
+    expect(textbox.closest('.react-aria-NumberField')).toHaveAttribute('slot', 'test');
+    expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 });

@@ -10,20 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Input, Label, Text, TextField} from '../';
+import {Input, Label, Text, TextField, TextFieldContext} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
+let TestTextField = (props) => (
+  <TextField defaultValue="test" data-foo="bar" {...props}>
+    <Label>Test</Label>
+    <Input />
+    <Text slot="description">Description</Text>
+    <Text slot="errorMessage">Error</Text>
+  </TextField>
+);
+
 describe('TextField', () => {
   it('provides slots', () => {
-    let {getByRole} = render(
-      <TextField defaultValue="test" data-foo="bar">
-        <Label>Test</Label>
-        <Input />
-        <Text slot="description">Description</Text>
-        <Text slot="errorMessage">Error</Text>
-      </TextField>
-    );
+    let {getByRole} = render(<TestTextField />);
 
     let input = getByRole('textbox');
     expect(input).toHaveValue('test');
@@ -37,5 +39,17 @@ describe('TextField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <TextFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestTextField slot="test" />
+      </TextFieldContext.Provider>
+    );
+
+    let textbox = getByRole('textbox');
+    expect(textbox.closest('.react-aria-TextField')).toHaveAttribute('slot', 'test');
+    expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 });

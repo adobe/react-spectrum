@@ -12,7 +12,7 @@
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {ToggleButton} from '../';
+import {ToggleButton, ToggleButtonContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('ToggleButton', () => {
@@ -32,6 +32,18 @@ describe('ToggleButton', () => {
     let {getByRole} =  render(<ToggleButton data-foo="bar">Test</ToggleButton>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <ToggleButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <ToggleButton slot="test">Test</ToggleButton>
+      </ToggleButtonContext.Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('slot', 'test');
+    expect(button).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

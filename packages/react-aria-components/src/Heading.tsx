@@ -1,11 +1,11 @@
+import {ContextValue, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
-import {useContextProps, WithRef} from './utils';
 
 export interface HeadingProps extends HTMLAttributes<HTMLElement> {
   level?: number
 }
 
-export const HeadingContext = createContext<WithRef<HeadingProps, HTMLHeadingElement>>({});
+export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
 
 function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   [props, ref] = useContextProps(props, ref, HeadingContext);

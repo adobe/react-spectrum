@@ -1,16 +1,16 @@
+import {CalendarProps as BaseCalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
+import {RangeCalendarProps as BaseRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
-import {CalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
+import {ContextValue, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
-import {DateValue, RangeCalendarProps} from '@react-types/calendar';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
-import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React from 'react';
 import {TextContext} from './Text';
 
-export interface CalendarComponentProps<T extends DateValue> extends Omit<CalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState> {
+export interface CalendarProps<T extends DateValue> extends Omit<BaseCalendarProps<T>, 'errorMessage'>, RenderProps<CalendarState>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -18,7 +18,7 @@ export interface CalendarComponentProps<T extends DateValue> extends Omit<Calend
   visibleDuration?: DateDuration
 }
 
-export interface RangeCalendarComponentProps<T extends DateValue> extends Omit<RangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState> {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeCalendarProps<T>, 'errorMessage'>, RenderProps<RangeCalendarState>, SlotProps {
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -26,12 +26,12 @@ export interface RangeCalendarComponentProps<T extends DateValue> extends Omit<R
   visibleDuration?: DateDuration
 }
 
-export const CalendarContext = createContext<WithRef<CalendarProps<any>, HTMLDivElement>>({});
-export const RangeCalendarContext = createContext<WithRef<RangeCalendarProps<any>, HTMLDivElement>>({});
+export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>({});
+export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
 const InternalCalendarContext = createContext<CalendarState | RangeCalendarState>(null);
 const InternalCalendarGridContext = createContext<CalendarDate>(null);
 
-function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -49,7 +49,7 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref}>
+    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
       <Provider
         values={[
           [ButtonContext, {
@@ -84,7 +84,7 @@ function Calendar<T extends DateValue>(props: CalendarComponentProps<T>, ref: Fo
 const _Calendar = forwardRef(Calendar);
 export {_Calendar as Calendar};
 
-function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RangeCalendarContext);
   let {locale} = useLocale();
   let state = useRangeCalendarState({
@@ -106,7 +106,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarComponentProps<T
   });
 
   return (
-    <div {...renderProps} {...calendarProps} ref={ref}>
+    <div {...renderProps} {...calendarProps} ref={ref} slot={props.slot}>
       <Provider
         values={[
           [ButtonContext, {

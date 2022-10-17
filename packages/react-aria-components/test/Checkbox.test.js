@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from '../';
+import {Checkbox, CheckboxContext} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -30,8 +30,20 @@ describe('Checkbox', () => {
 
   it('should support DOM props', () => {
     let {getByRole} =  render(<Checkbox data-foo="bar">Test</Checkbox>);
-    let checkbox = getByRole('checkbox');
+    let checkbox = getByRole('checkbox').closest('label');
     expect(checkbox).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <CheckboxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <Checkbox slot="test">Test</Checkbox>
+      </CheckboxContext.Provider>
+    );
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox.closest('label')).toHaveAttribute('slot', 'test');
+    expect(checkbox).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

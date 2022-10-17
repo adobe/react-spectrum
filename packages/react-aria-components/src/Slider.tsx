@@ -1,13 +1,13 @@
 import {AriaSliderProps, mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {AriaSliderThumbProps} from '@react-types/slider';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
-import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-export interface SliderProps extends AriaSliderProps, RenderProps<SliderState> {
+export interface SliderProps extends AriaSliderProps, RenderProps<SliderState>, SlotProps {
   /**
    * The display format of the value label.
    */
@@ -21,7 +21,7 @@ interface SliderContextValue {
   trackRef: RefObject<HTMLDivElement>
 }
 
-export const SliderContext = createContext<WithRef<SliderProps, HTMLDivElement>>(null);
+export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
 const InternalSliderContext = createContext<SliderContextValue>(null);
 
 export interface SliderRenderProps {
@@ -66,6 +66,7 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
         {...groupProps}
         {...renderProps}
         ref={ref}
+        slot={props.slot}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined} />
     </Provider>

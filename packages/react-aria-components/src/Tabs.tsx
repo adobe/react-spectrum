@@ -1,12 +1,12 @@
 import {AriaLabelingProps, Node, Orientation} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
+import {ContextValue, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
-import {RenderProps, StyleRenderProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {useObjectRef} from '@react-aria/utils';
 import {useTabListState} from 'react-stately';
 
-export interface TabsProps extends RenderProps<TabsRenderProps> {
+export interface TabsProps extends RenderProps<TabsRenderProps>, SlotProps {
   /**
    * The orientation of the tabs.
    * @default 'horizontal'
@@ -83,7 +83,7 @@ export interface TabPanelRenderProps {
   isFocusVisible: boolean
 }
 
-export const TabsContext = createContext<WithRef<TabsProps, HTMLDivElement>>(null);
+export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
 const InternalTabsContext = createContext(null);
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -103,6 +103,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
     <div 
       {...renderProps}
       ref={ref}
+      slot={props.slot}
       data-orientation={orientation}>
       <InternalTabsContext.Provider value={{state, setState, orientation}}>
         {props.children}

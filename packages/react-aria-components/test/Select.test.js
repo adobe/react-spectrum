@@ -10,30 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Label, ListBox, Popover, Select, SelectValue, Text} from '../';
+import {Button, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
+let TestSelect = (props) => (
+  <Select data-foo="bar" {...props}>
+    <Label>Favorite Animal</Label>
+    <Button>
+      <SelectValue />
+    </Button>
+    <Text slot="description">Description</Text>
+    <Text slot="errorMessage">Error</Text>
+    <Popover>
+      <ListBox>
+        <Item>Cat</Item>
+        <Item>Dog</Item>
+        <Item>Kangaroo</Item>
+      </ListBox>
+    </Popover>
+  </Select>
+);
+
 describe('Select', () => {
   it('provides slots', () => {
-    let {getByRole} = render(
-      <Select data-foo="bar">
-        <Label>Favorite Animal</Label>
-        <Button>
-          <SelectValue />
-        </Button>
-        <Text slot="description">Description</Text>
-        <Text slot="errorMessage">Error</Text>
-        <Popover>
-          <ListBox>
-            <Item>Cat</Item>
-            <Item>Dog</Item>
-            <Item>Kangaroo</Item>
-          </ListBox>
-        </Popover>
-      </Select>
-    );
+    let {getByRole} = render(<TestSelect />);
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Select an item');
@@ -60,5 +62,17 @@ describe('Select', () => {
 
     userEvent.click(options[1]);
     expect(button).toHaveTextContent('Dog');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <SelectContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestSelect slot="test" />
+      </SelectContext.Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
+    expect(button).toHaveAttribute('aria-label', 'test');
   });
 });

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs, Item, Link} from 'react-aria-components';
+import {Breadcrumbs, BreadcrumbsContext, Item, Link} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
@@ -56,5 +56,19 @@ describe('Breadcrumbs', () => {
     for (let item of getAllByRole('listitem')) {
       expect(item).toHaveAttribute('data-bar', 'foo');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <BreadcrumbsContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <Breadcrumbs slot="test">
+          <Item><Link>Test</Link></Item>
+        </Breadcrumbs>
+      </BreadcrumbsContext.Provider>
+    );
+
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('slot', 'test');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'test');
   });
 });

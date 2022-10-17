@@ -10,21 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Meter} from 'react-aria-components';
+import {Label, Meter, MeterContext} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 
+let TestMeter = (props) => (
+  <Meter value={25} data-foo="bar" {...props}>
+    {({percentage, valueText}) => (<>
+      <Label>Storage space</Label>
+      <span className="value">{valueText}</span>
+      <div className="bar" style={{width: percentage + '%'}} />
+    </>)}
+  </Meter>
+);
+
 describe('Meter', () => {
   it('renders', () => {
-    let {getByRole} = render(
-      <Meter value={25} data-foo="bar">
-        {({percentage, valueText}) => (<>
-          <Label>Storage space</Label>
-          <span className="value">{valueText}</span>
-          <div className="bar" style={{width: percentage + '%'}} />
-        </>)}
-      </Meter>
-    );
+    let {getByRole} = render(<TestMeter />);
 
     let meter = getByRole('meter');
     expect(meter).toHaveClass('react-aria-Meter');
@@ -38,5 +40,17 @@ describe('Meter', () => {
 
     let bar = meter.querySelector('.bar');
     expect(bar).toHaveStyle('width: 25%');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <MeterContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestMeter slot="test" />
+      </MeterContext.Provider>
+    );
+
+    let meter = getByRole('meter');
+    expect(meter).toHaveAttribute('slot', 'test');
+    expect(meter).toHaveAttribute('aria-label', 'test');
   });
 });

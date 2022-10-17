@@ -2,19 +2,19 @@
 import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
 import {CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
-import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
-export const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
+export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
@@ -42,7 +42,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
@@ -76,6 +76,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
         {...filterDOMProps(props)}
         {...menuProps}
         ref={ref}
+        slot={props.slot}
         style={props.style}
         className={props.className ?? 'react-aria-Menu'}>
         <Provider

@@ -1,7 +1,7 @@
+import {ContextValue, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
-import {useContextProps, WithRef} from './utils';
 
-export const KeyboardContext = createContext<WithRef<HTMLAttributes<HTMLElement>, HTMLElement>>({});
+export const KeyboardContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
 function Keyboard(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, KeyboardContext);

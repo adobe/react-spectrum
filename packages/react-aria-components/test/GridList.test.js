@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, GridList, Item} from '../';
+import {Checkbox, GridList, GridListContext, Item} from '../';
 import {fireEvent, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderGridList = (listBoxProps, itemProps) => render(
-  <GridList {...listBoxProps} aria-label="Test">
+let TestGridList = ({listBoxProps, itemProps}) => (
+  <GridList aria-label="Test" {...listBoxProps}>
     <Item {...itemProps} id="cat"><Checkbox /> Cat</Item>
     <Item {...itemProps} id="dog"><Checkbox /> Dog</Item>
     <Item {...itemProps} id="kangaroo"><Checkbox /> Kangaroo</Item>
   </GridList>
 );
+
+let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{listBoxProps, itemProps}} />);
 
 describe('GridList', () => {
   it('should render with default classes', () => {
@@ -52,6 +54,18 @@ describe('GridList', () => {
     for (let row of getAllByRole('row')) {
       expect(row).toHaveAttribute('data-bar', 'foo');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <GridListContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestGridList listBoxProps={{slot: 'test', 'aria-label': undefined}} />
+      </GridListContext.Provider>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('slot', 'test');
+    expect(grid).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

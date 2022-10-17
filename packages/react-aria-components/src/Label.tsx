@@ -1,11 +1,11 @@
+import {ContextValue, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, LabelHTMLAttributes} from 'react';
-import {useContextProps, WithRef} from './utils';
 
 export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   elementType?: string
 }
 
-export const LabelContext = createContext<WithRef<LabelProps, HTMLLabelElement>>({});
+export const LabelContext = createContext<ContextValue<LabelProps, HTMLLabelElement>>({});
 
 function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, LabelContext);

@@ -1,21 +1,21 @@
 import {AriaListBoxOptions, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {AriaListBoxProps} from '@react-types/listbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
-import {Provider, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior
 }
 
-interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLDivElement> {
+interface ListBoxContextValue<T> extends ListBoxProps<T> {
   state?: ListState<T> & OverlayTriggerState
 }
 
@@ -24,12 +24,12 @@ interface InternalListBoxContextValue {
   shouldFocusOnHover: boolean
 }
 
-export const ListBoxContext = createContext<ListBoxContextValue<any>>(null);
+export const ListBoxContext = createContext<ContextValue<ListBoxContextValue<any>, HTMLDivElement>>(null);
 const InternalListBoxContext = createContext<InternalListBoxContextValue>(null);
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let {state} = useContext(ListBoxContext) || {};
   [props, ref] = useContextProps(props, ref, ListBoxContext);
+  let state = (props as ListBoxContextValue<T>).state;
 
   if (state) {
     return state.isOpen ? <ListBoxInner state={state} props={props} listBoxRef={ref} /> : null;
@@ -86,6 +86,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       {...filterDOMProps(props)}
       {...listBoxProps}
       ref={listBoxRef}
+      slot={props.slot}
       style={props.style}
       className={props.className ?? 'react-aria-ListBox'}>
       <Provider

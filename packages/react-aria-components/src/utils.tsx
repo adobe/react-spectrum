@@ -8,7 +8,9 @@ interface SlottedValue<T> {
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-type ProviderValue<T> = [React.Context<T>, SlottedValue<T> | T];
+export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E>;
+
+type ProviderValue<T> = [React.Context<T>, T];
 type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
@@ -85,7 +87,7 @@ export interface SlotProps {
   slot?: string
 }
 
-export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<WithRef<SlottedValue<U> | U, E>>): [T, React.RefObject<E>] {
+export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
   if ('slots' in ctx) {
     if (!props.slot) {

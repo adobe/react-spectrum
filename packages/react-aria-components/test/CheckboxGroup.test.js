@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxGroup, Label, Text} from '../';
+import {Checkbox, CheckboxGroup, CheckboxGroupContext, Label, Text} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let renderGroup = (groupProps, checkboxProps) => render(
+let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
   <CheckboxGroup {...groupProps}>
     <Label>Test</Label>
     <Checkbox {...checkboxProps} value="a">A</Checkbox>
@@ -23,6 +23,8 @@ let renderGroup = (groupProps, checkboxProps) => render(
     <Checkbox {...checkboxProps} value="c">C</Checkbox>
   </CheckboxGroup>
 );
+
+let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
 describe('CheckboxGroup', () => {
   it('should render a checkbox group with default classes', () => {
@@ -54,6 +56,18 @@ describe('CheckboxGroup', () => {
     let {getByRole} = renderGroup({'data-foo': 'bar'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <CheckboxGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestCheckboxGroup groupProps={{slot: 'test'}} />
+      </CheckboxGroupContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support disabled state on checkbox', () => {

@@ -1,9 +1,9 @@
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
-import {RenderProps, useContextProps, useRenderProps} from './utils';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps> {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps>, SlotProps {}
 
 export interface LinkRenderProps {
   /**
@@ -38,7 +38,7 @@ export interface LinkRenderProps {
   isDisabled: boolean
 }
 
-export const LinkContext = createContext(null);
+export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
 
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
@@ -68,6 +68,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
 
   return React.cloneElement(element, {
     ref: useMemo(() => element.ref ? mergeRefs(element.ref, ref) : ref, [element.ref, ref]),
+    slot: props.slot,
     ...mergeProps(renderProps, linkProps, hoverProps, focusProps, {
       children: element.props.children,
       'data-hovered': isHovered || undefined,

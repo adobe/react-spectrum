@@ -11,7 +11,7 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Link} from '../';
+import {Link, LinkContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -33,6 +33,18 @@ describe('Link', () => {
     let {getByRole} =  render(<Link data-foo="bar">Test</Link>);
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <LinkContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <Link slot="test">Test</Link>
+      </LinkContext.Provider>
+    );
+
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('slot', 'test');
+    expect(link).toHaveAttribute('aria-label', 'test');
   });
 
   it('should render a link with <a> element', () => {

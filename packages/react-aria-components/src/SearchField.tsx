@@ -1,13 +1,13 @@
 import {AriaTextFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState> {}
+export interface SearchFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
 
 export interface SearchFieldRenderProps {
   /**
@@ -17,7 +17,7 @@ export interface SearchFieldRenderProps {
   isEmpty: boolean
 }
 
-export const SearchFieldContext = createContext<WithRef<SearchFieldProps, HTMLDivElement>>(null);
+export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
@@ -39,6 +39,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     <div 
       {...renderProps}
       ref={ref}
+      slot={props.slot}
       data-empty={state.value === '' || undefined}>
       <Provider
         values={[

@@ -1,13 +1,13 @@
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
 import {TextContext} from './Text';
 import {ValidationState} from '@react-types/shared';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps> {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps> {}
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps>, SlotProps {}
 
 export interface CheckboxGroupRenderProps {
   /**
@@ -85,7 +85,7 @@ export interface CheckboxRenderProps {
   isRequired: boolean
 }
 
-export const CheckboxGroupContext = createContext<WithRef<CheckboxGroupProps, HTMLDivElement>>(null);
+export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
 const InternalCheckboxGroupContext = createContext<CheckboxGroupState>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -113,6 +113,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       {...groupProps}
       {...renderProps}
       ref={ref}
+      slot={props.slot}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
       data-validation-state={state.validationState || undefined}>
@@ -133,7 +134,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   );
 }
 
-export const CheckboxContext = createContext<WithRef<CheckboxProps, HTMLInputElement>>(null);
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInputElement>>(null);
 
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
@@ -176,6 +177,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   let pressed = isInteractionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
+    // TODO: should data attrs go on the label or on the <input>? useCheckbox passes them to the input...
     ...props,
     defaultClassName: 'react-aria-Checkbox',
     values: {
@@ -195,6 +197,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label 
       {...mergeProps(pressProps, hoverProps, renderProps)}
+      slot={props.slot}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
       data-pressed={pressed || undefined}

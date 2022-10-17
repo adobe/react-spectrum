@@ -11,11 +11,11 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Label, Radio, RadioGroup, Text} from '../';
+import {Label, Radio, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderGroup = (groupProps, radioProps) => render(
+let TestRadioGroup = ({groupProps, radioProps}) => (
   <RadioGroup {...groupProps}>
     <Label>Test</Label>
     <Radio {...radioProps} value="a">A</Radio>
@@ -23,6 +23,8 @@ let renderGroup = (groupProps, radioProps) => render(
     <Radio {...radioProps} value="c">C</Radio>
   </RadioGroup>
 );
+
+let renderGroup = (groupProps, radioProps) => render(<TestRadioGroup {...{groupProps, radioProps}} />);
 
 describe('RadioGroup', () => {
   it('should render a radio group with default classes', () => {
@@ -57,6 +59,18 @@ describe('RadioGroup', () => {
     for (let radio of getAllByRole('radio')) {
       expect(radio.closest('label')).toHaveAttribute('data-test', 'test');
     }
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestRadioGroup groupProps={{slot: 'test'}} />
+      </RadioGroupContext.Provider>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

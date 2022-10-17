@@ -1,7 +1,7 @@
 import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
 import {ButtonRenderProps} from './Button';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {RenderProps, SlotProps, useContextProps, useRenderProps, WithRef} from './utils';
 import {useToggleState} from 'react-stately';
 
 export interface ToggleButtonRenderProps extends ButtonRenderProps {
@@ -13,9 +13,8 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
 }
 
 export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
-interface ToggleButtonContextValue extends WithRef<AriaToggleButtonProps, HTMLButtonElement> {}
 
-export const ToggleButtonContext = createContext<ToggleButtonContextValue>({});
+export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 
 function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonContext);

@@ -10,40 +10,42 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
+let TestDatePicker = (props) => (
+  <DatePicker data-foo="bar" {...props}>
+    <Label>Birth date</Label>
+    <Group>
+      <DateInput>
+        {(segment) => <DateSegment segment={segment} />}
+      </DateInput>
+      <Button>▼</Button>
+    </Group>
+    <Text slot="description">Description</Text>
+    <Text slot="errorMessage">Error</Text>
+    <Popover>
+      <Dialog>
+        <Calendar>
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            {(date) => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </Calendar>
+      </Dialog>
+    </Popover>
+  </DatePicker>
+);
+
 describe('DatePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(
-      <DatePicker data-foo="bar">
-        <Label>Birth date</Label>
-        <Group>
-          <DateInput>
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
-          <Button>▼</Button>
-        </Group>
-        <Text slot="description">Description</Text>
-        <Text slot="errorMessage">Error</Text>
-        <Popover>
-          <Dialog>
-            <Calendar>
-              <header>
-                <Button slot="previous">◀</Button>
-                <Heading />
-                <Button slot="next">▶</Button>
-              </header>
-              <CalendarGrid>
-                {(date) => <CalendarCell date={date} />}
-              </CalendarGrid>
-            </Calendar>
-          </Dialog>
-        </Popover>
-      </DatePicker>
-    );
+    let {getByRole, getAllByRole} = render(<TestDatePicker />);
 
     let group = getByRole('group');
     let input = group.querySelector('.react-aria-DateInput');
@@ -76,5 +78,17 @@ describe('DatePicker', () => {
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
+  });
+
+  it('should support the slot prop', () => {
+    let {getByRole} = render(
+      <DatePickerContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestDatePicker slot="test" />
+      </DatePickerContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DatePicker')).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 });

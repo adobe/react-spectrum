@@ -1,6 +1,6 @@
 import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {RenderProps, SlotProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -31,15 +31,15 @@ export interface ButtonRenderProps {
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
-interface ButtonContextValue extends WithRef<AriaButtonProps, HTMLButtonElement> {
+interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean
 }
 
-export const ButtonContext = createContext<ButtonContextValue>({});
+export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  let {isPressed: isPressedContext} = useContext(ButtonContext) || {};
+  let isPressedContext = (props as ButtonContextValue).isPressed;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);

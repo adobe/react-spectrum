@@ -1,25 +1,25 @@
 import {AriaSelectProps} from '@react-types/select';
 import {ButtonContext} from './Button';
+import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, slotCallbackSymbol, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useResizeObserver} from '@react-aria/utils';
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>> {}
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
 
 interface SelectValueContext {
   state: SelectState<unknown>,
   valueProps: HTMLAttributes<HTMLElement>
 }
 
-export const SelectContext = createContext<WithRef<SelectProps<any>, HTMLDivElement>>(null);
+export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 const InternalSelectContext = createContext<SelectValueContext>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -88,7 +88,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref}>
+      <div {...renderProps} ref={ref} slot={props.slot}>
         {props.children}
       </div>
       {portal}

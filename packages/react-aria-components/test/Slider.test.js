@@ -11,12 +11,12 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Label, Slider, SliderOutput, SliderThumb, SliderTrack} from '../';
+import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderSlider = (props, thumbProps, trackProps) => render(
-  <Slider {...props}>
+let TestSlider = ({sliderProps, thumbProps, trackProps}) => (
+  <Slider {...sliderProps}>
     <Label>Opacity</Label>
     <SliderOutput />
     <SliderTrack {...trackProps}>
@@ -24,6 +24,8 @@ let renderSlider = (props, thumbProps, trackProps) => render(
     </SliderTrack>
   </Slider>
 );
+
+let renderSlider = (sliderProps, thumbProps, trackProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps}} />);
 
 describe('Slider', () => {
   it('should render a button with default class', () => {
@@ -49,6 +51,18 @@ describe('Slider', () => {
     expect(group).toHaveAttribute('data-foo', 'bar');
     expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <SliderContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestSlider sliderProps={{slot: 'test'}} />
+      </SliderContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support focus ring', () => {

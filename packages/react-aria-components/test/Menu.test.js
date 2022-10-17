@@ -10,18 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Keyboard, Menu, MenuTrigger, Popover, Section, Separator, Text} from '../';
+import {Button, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let renderMenu = (menuProps, itemProps) => render(
-  <Menu {...menuProps} aria-label="Test">
+let TestMenu = ({menuProps, itemProps}) => (
+  <Menu aria-label="Test" {...menuProps}>
     <Item {...itemProps} id="cat">Cat</Item>
     <Item {...itemProps} id="dog">Dog</Item>
     <Item {...itemProps} id="kangaroo">Kangaroo</Item>
   </Menu>
 );
+
+let renderMenu = (menuProps, itemProps) => render(<TestMenu {...{menuProps, itemProps}} />);
 
 describe('Menu', () => {
   it('should render with default classes', () => {
@@ -52,6 +54,18 @@ describe('Menu', () => {
     for (let menuitem of getAllByRole('menuitem')) {
       expect(menuitem).toHaveAttribute('data-bar', 'foo');
     }
+  });
+
+  it('should support the slot prop', () => {
+    let {getByRole} = render(
+      <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestMenu menuProps={{slot: 'test', 'aria-label': undefined}} />
+      </MenuContext.Provider>
+    );
+
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('slot', 'test');
+    expect(menu).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support slots', () => {

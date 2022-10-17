@@ -1,9 +1,9 @@
 import {AriaMeterProps, useMeter} from 'react-aria';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {RenderProps, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 
-export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps> {}
+export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps>, SlotProps {}
 
 export interface MeterRenderProps {
   /**
@@ -17,7 +17,7 @@ export interface MeterRenderProps {
   valueText: string
 }
 
-export const MeterContext = createContext<WithRef<MeterProps, HTMLDivElement>>(null);
+export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
 
 function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MeterContext);
@@ -46,7 +46,7 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   return (
-    <div {...meterProps} {...renderProps} ref={ref}>
+    <div {...meterProps} {...renderProps} ref={ref} slot={props.slot}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

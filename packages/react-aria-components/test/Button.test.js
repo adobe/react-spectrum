@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from '../';
+import {Button, ButtonContext} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -29,9 +29,21 @@ describe('Button', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} =  render(<Button data-foo="bar">Test</Button>);
+    let {getByRole} = render(<Button data-foo="bar">Test</Button>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <ButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <Button slot="test">Test</Button>
+      </ButtonContext.Provider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('slot', 'test');
+    expect(button).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

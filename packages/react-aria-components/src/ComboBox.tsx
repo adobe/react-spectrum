@@ -1,23 +1,23 @@
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState} from 'react-stately';
+import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, slotCallbackSymbol, useContextProps, useRenderProps, useSlot, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
 import {useComboBox, useFilter} from 'react-aria';
 import {useResizeObserver} from '@react-aria/utils';
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>> {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean
 }
 
-export const ComboBoxContext = createContext<WithRef<ComboBoxProps<any>, HTMLDivElement>>(null);
+export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
 
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
@@ -104,7 +104,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           }
         }]
       ]}>
-      <div {...renderProps} ref={ref}>
+      <div {...renderProps} ref={ref} slot={props.slot}>
         {props.children}
       </div>
       {portal}

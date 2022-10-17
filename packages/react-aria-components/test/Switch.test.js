@@ -12,7 +12,7 @@
 
 import {fireEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {Switch} from '../';
+import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('Switch', () => {
@@ -32,6 +32,18 @@ describe('Switch', () => {
     let {getByRole} =  render(<Switch data-foo="bar">Test</Switch>);
     let s = getByRole('switch');
     expect(s).toHaveAttribute('data-foo', 'bar');
+  });
+
+  it('should support slot', () => {
+    let {getByRole} = render(
+      <SwitchContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <Switch slot="test">Test</Switch>
+      </SwitchContext.Provider>
+    );
+
+    let s = getByRole('switch');
+    expect(s.closest('label')).toHaveAttribute('slot', 'test');
+    expect(s).toHaveAttribute('aria-label', 'test');
   });
 
   it('should support hover', () => {

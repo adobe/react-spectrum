@@ -10,43 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';import React from 'react';
+import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
+let TestDateRangePicker = (props) => (
+  <DateRangePicker data-foo="bar" {...props}>
+    <Label>Trip dates</Label>
+    <Group>
+      <DateInput slot="start">
+        {(segment) => <DateSegment segment={segment} />}
+      </DateInput>
+      <span aria-hidden="true">–</span>
+      <DateInput slot="end">
+        {(segment) => <DateSegment segment={segment} />}
+      </DateInput>
+      <Button>▼</Button>
+    </Group>
+    <Text slot="description">Description</Text>
+    <Text slot="errorMessage">Error</Text>
+    <Popover>
+      <Dialog>
+        <RangeCalendar>
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            {(date) => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </RangeCalendar>
+      </Dialog>
+    </Popover>
+  </DateRangePicker>
+);
+
 describe('DateRangePicker', () => {
   it('provides slots', () => {
-    let {getByRole, getAllByRole} = render(
-      <DateRangePicker data-foo="bar">
-        <Label>Trip dates</Label>
-        <Group>
-          <DateInput slot="start">
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
-          <span aria-hidden="true">–</span>
-          <DateInput slot="end">
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
-          <Button>▼</Button>
-        </Group>
-        <Text slot="description">Description</Text>
-        <Text slot="errorMessage">Error</Text>
-        <Popover>
-          <Dialog>
-            <RangeCalendar>
-              <header>
-                <Button slot="previous">◀</Button>
-                <Heading />
-                <Button slot="next">▶</Button>
-              </header>
-              <CalendarGrid>
-                {(date) => <CalendarCell date={date} />}
-              </CalendarGrid>
-            </RangeCalendar>
-          </Dialog>
-        </Popover>
-      </DateRangePicker>
-    );
+    let {getByRole, getAllByRole} = render(<TestDateRangePicker />);
 
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
@@ -80,5 +82,17 @@ describe('DateRangePicker', () => {
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
+  });
+
+  it('should support the slot prop', () => {
+    let {getByRole} = render(
+      <DateRangePickerContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <TestDateRangePicker slot="test" />
+      </DateRangePickerContext.Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
   });
 });
