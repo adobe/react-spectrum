@@ -4434,7 +4434,7 @@ describe('ComboBox', function () {
         expect(ref.current.UNSAFE_getDOMNode()).toBe(getByText('Test').parentElement);
       });
 
-      it('attaches a ref to the button if no label', function () {
+      it('attaches a ref to the wrapper if no label', function () {
         let ref = React.createRef();
         let {getByRole} = renderComboBox({ref, label: null, 'aria-label': 'test'});
 

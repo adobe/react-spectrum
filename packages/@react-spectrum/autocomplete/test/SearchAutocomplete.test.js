@@ -2135,7 +2135,7 @@ describe('SearchAutocomplete', function () {
         expect(ref.current.UNSAFE_getDOMNode()).toBe(getByText('Test').parentElement);
       });
 
-      it('attaches a ref to the button if no label', function () {
+      it('attaches a ref to wrapper if no label', function () {
         let ref = React.createRef();
         let {getByRole} = renderSearchAutocomplete({ref, label: null, 'aria-label': 'test'});
 
