@@ -62,8 +62,6 @@ for (let key in themes) {
   };
 }
 
-console.log(expressThemes)
-
 // Based on https://adobe.sharepoint.com/sites/global/SitePages/Languages%20Supported.aspx
 export let locales = [
   {label: 'Auto', value: ''},
