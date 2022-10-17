@@ -28,6 +28,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup {
+  @inherit: %spectrum-FocusRing;
+
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -35,30 +37,6 @@ governing permissions and limitations under the License.
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
   background: var(--spectrum-textfield-background-color);
-
-  /* :after is used for the focus halo (express) */
-  &:after {
-    border-radius: calc(calc(var(--spectrum-textfield-border-radius) / 2) + var(--spectrum-alias-input-focusring-gap) * 2);
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    margin: 0;
-    transform: translateX(0); /* Forces FF to render on the pixel grid */
-    pointer-events: none;
-
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1);
-    }
-  }
 
   .spectrum-FieldButton {
     padding: var(--spectrum-combobox-fieldbutton-inset);
@@ -124,19 +102,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup--quiet {
+  @inherit: %spectrum-FocusRing--quiet;
+
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));
   background: transparent;
-
-  &:after {
-    border-radius: 0;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: 0 0 calc(var(--spectrum-alias-input-focusring-gap) * -1) 0;
-    }
-  }
 
   .spectrum-FieldButton {
     inline-size: auto;

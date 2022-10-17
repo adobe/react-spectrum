@@ -22,6 +22,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
+  @inherit: %spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
+  --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
+
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-areas: "icon content action";
@@ -53,31 +57,6 @@ governing permissions and limitations under the License.
     grid-area: action;
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
     width: var(--spectrum-global-dimension-size-300);
-  }
-
-  /* :after is used for the focus halo (express) */
-  &:after {
-    border-radius: calc(var(--spectrum-tag-border-radius) + var(--spectrum-alias-input-focusring-gap) * 2);
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    margin: calc(-1 * var(--spectrum-tag-border-size));
-    transform: translateX(0); /* Forces FF to render on the pixel grid */
-    z-index: -1;
-    pointer-events: none;
-
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1 - var(--spectrum-tag-border-size));
-    }
   }
 }
 

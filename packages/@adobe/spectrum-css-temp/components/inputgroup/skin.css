@@ -69,12 +69,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-
-  &:focus-ring {
-    &:after {
-      box-shadow: 0 0 0 var(--spectrum-alias-input-focusring-size) var(--spectrum-alias-focus-ring-color);
-    }
-  }
 }
 
 .spectrum-InputGroup.is-focused {
@@ -109,12 +103,6 @@ governing permissions and limitations under the License.
       &:disabled:hover:before {
         border-color: var(--spectrum-textfield-quiet-border-color);
       }
-    }
-  }
-
-  &:focus-ring {
-    &:after {
-       box-shadow: 0 var(--spectrum-alias-input-focusring-size) 0 var(--spectrum-alias-focus-ring-color);
     }
   }
 

@@ -59,12 +59,6 @@ governing permissions and limitations under the License.
   }
 
   &:not(.spectrum-Stepper--isQuiet) {
-    &:focus-ring {
-      &:after {
-        box-shadow: 0 0 0 var(--spectrum-alias-input-focusring-size) var(--spectrum-alias-focus-ring-color);
-      }
-    }
-
     .spectrum-Stepper-input {
       border-color: var(--spectrum-textfield-border-color);
     }
@@ -140,11 +134,6 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-Stepper--isQuiet {
-    &:focus-ring {
-      &:after {
-        box-shadow: 0 var(--spectrum-alias-input-focusring-size) 0 var(--spectrum-alias-focus-ring-color);
-      }
-    }
     .spectrum-Stepper-input {
       border-color: var(--spectrum-textfield-quiet-border-color);
     }

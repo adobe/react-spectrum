@@ -27,37 +27,14 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper {
+  @inherit: %spectrum-FocusRing;
+
   display: inline-grid;
   position: relative;
 
   inline-size: var(--spectrum-stepper-default-width-desktop);
   line-height: 0;
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
-
-  /* :after is used for the focus halo (express) */
-  &:after {
-    border-radius: calc(calc(var(--spectrum-textfield-border-radius) / 2) + var(--spectrum-alias-input-focusring-gap) * 2);
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    margin: 0;
-    transform: translateX(0); /* Forces FF to render on the pixel grid */
-    z-index: -1;
-    pointer-events: none;
-
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1);
-    }
-  }
 
   /**
    * There are only two layouts, so we don't need to repeat them down below.
@@ -180,16 +157,10 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isQuiet {
+    @inherit: %spectrum-FocusRing--quiet;
+
     .spectrum-Stepper-icon {
       inset-inline-end: 0px;
-    }
-    &:after {
-      border-radius: 0;
-    }
-    &:focus-ring {
-      &:after {
-        margin: 0 0 calc(var(--spectrum-alias-input-focusring-gap) * -1) 0;
-      }
     }
 
     &:not(.spectrum-Stepper--showStepper) {

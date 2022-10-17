@@ -49,20 +49,6 @@ governing permissions and limitations under the License.
   --spectrum-logicbutton-or-border-color-hover: var(--spectrum-logicbutton-or-background-color-hover);
 }
 
-.spectrum-LogicButton,
-.spectrum-Button,
-.spectrum-ActionButton,
-.spectrum-FieldButton {
-  --spectrum-button-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, var(--spectrum-button-primary-focus-ring-color-key-focus));
-
-  &:focus-ring,
-  &.is-focused {
-    &:after {
-      box-shadow: 0 0 0 var(--spectrum-button-primary-focus-ring-size-key-focus) var(--spectrum-button-focus-ring-color);
-    }
-  }
-}
-
 .spectrum-ClearButton {
   background-color: var(--spectrum-clearbutton-medium-background-color);
 
@@ -193,7 +179,7 @@ governing permissions and limitations under the License.
   }
 
   &[data-static-color=white] {
-    --spectrum-button-primary-focus-ring-color-key-focus: white;
+    --spectrum-focus-ring-color: white;
 
     &[data-variant=accent],
     &[data-variant=negative],
@@ -239,7 +225,7 @@ governing permissions and limitations under the License.
   }
 
   &[data-static-color=black] {
-    --spectrum-button-primary-focus-ring-color-key-focus: black;
+    --spectrum-focus-ring-color: black;
 
     &[data-variant=accent],
     &[data-variant=negative],
@@ -661,6 +647,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-actionbutton-static-background-color);
   border-color: var(--spectrum-actionbutton-static-border-color);
   color: var(--spectrum-actionbutton-static-color);
+  --spectrum-focus-ring-color: var(--spectrum-actionbutton-static-color);
 
   .spectrum-Icon {
     fill: var(--spectrum-actionbutton-static-color);
@@ -700,10 +687,6 @@ governing permissions and limitations under the License.
 
     .spectrum-ActionButton-hold {
       fill: var(--spectrum-actionbutton-static-color);
-    }
-
-    &:after {
-      box-shadow: 0 0 0 var(--spectrum-button-primary-focus-ring-size-key-focus) var(--spectrum-actionbutton-static-color);
     }
   }
 
@@ -921,10 +904,6 @@ governing permissions and limitations under the License.
 
     &.is-placeholder {
       color: var(--spectrum-fieldbutton-quiet-placeholder-text-color-key-focus);
-    }
-
-    &:after {
-      box-shadow: 0 var(--spectrum-alias-focus-ring-size) 0 var(--spectrum-alias-focus-ring-color);
     }
   }
 

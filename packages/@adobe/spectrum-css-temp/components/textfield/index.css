@@ -33,6 +33,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield {
+  @inherit: %spectrum-FocusRing;
+
   display: inline-flex;
   position: relative;
   min-width: var(--spectrum-textfield-min-width);
@@ -43,42 +45,10 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
     overflow-x: hidden;
   }
-
-  /* :after is used for the focus halo (express) */
-  &:after {
-    border-radius: calc(calc(var(--spectrum-textfield-border-radius) / 2) + var(--spectrum-alias-input-focusring-gap) * 2);
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-    margin: 0;
-    transform: translateX(0); /* Forces FF to render on the pixel grid */
-    pointer-events: none;
-
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1);
-    }
-  }
 }
 
 .spectrum-Textfield--quiet {
-  &:after {
-    border-radius: 0;
-  }
-
-  &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-alias-input-focusring-gap) * -1) 0;
-    }
-  }
+  @inherit: %spectrum-FocusRing--quiet;
 }
 
 .spectrum-Textfield-input {

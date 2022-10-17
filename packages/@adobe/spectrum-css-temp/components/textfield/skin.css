@@ -10,22 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Textfield {
-  &:focus-ring {
-    &:after {
-      box-shadow: 0 0 0 var(--spectrum-alias-input-focusring-size) var(--spectrum-alias-focus-ring-color);
-    }
-  }
-}
-
-.spectrum-Textfield--quiet {
-  &:focus-ring {
-    &:after {
-      box-shadow: 0 var(--spectrum-alias-input-focusring-size) 0 var(--spectrum-alias-focus-ring-color);
-    }
-  }
-}
-
 .spectrum-Textfield-input {
   background-color: var(--spectrum-textfield-background-color);
   border-color: var(--spectrum-textfield-border-color);
