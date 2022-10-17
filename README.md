@@ -4,7 +4,7 @@ A collection of libraries and tools that help you build adaptive, accessible, an
 
 ### React Spectrum
 
-A React implementation of Spectrum, Adobe’s design system. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.
+A React implementation of Adobe’s design system: Spectrum. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.
 
 [Explore React Spectrum](https://react-spectrum.adobe.com/react-spectrum/index.html)
 
