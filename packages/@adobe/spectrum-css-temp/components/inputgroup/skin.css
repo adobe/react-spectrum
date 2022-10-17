@@ -142,7 +142,7 @@ governing permissions and limitations under the License.
 
   &.spectrum-InputGroup {
     &.spectrum-InputGroup--invalid {
-      .spectrum-FieldButton:before ,
+      .spectrum-FieldButton:before,
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-error);
       }
@@ -168,7 +168,7 @@ governing permissions and limitations under the License.
       }
 
       &.spectrum-InputGroup--invalid {
-        .spectrum-FieldButton:before ,
+        .spectrum-FieldButton:before,
         .spectrum-InputGroup-input {
           border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
         }

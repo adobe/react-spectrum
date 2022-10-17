@@ -312,12 +312,8 @@ a.spectrum-ActionButton {
   cursor: default;
   outline: none;
 
-  &:after,
-  &:focus-ring:after {
-    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
-    border-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-input-focusring-gap));
-    margin: calc(calc(var(--spectrum-alias-input-focusring-gap) * -1) - var(--spectrum-dropdown-border-size));
-  }
+  --spectrum-alias-focus-ring-gap: var(--spectrum-alias-input-focusring-gap);
+  --spectrum-button-primary-focus-ring-size-key-focus: var(--spectrum-alias-input-focusring-size);
 }
 
 .spectrum-FieldButton {
@@ -325,9 +321,9 @@ a.spectrum-ActionButton {
   padding-block: 0;
   padding-inline: var(--spectrum-dropdown-padding-x);
 
-  border-width: var(--spectrum-dropdown-border-size);
+  --spectrum-button-border-width: var(--spectrum-dropdown-border-size);
+  --spectrum-button-border-radius: var(--spectrum-border-radius);
   border-style: solid;
-  border-radius: var(--spectrum-border-radius);
 
   transition: background-color var(--spectrum-global-animation-duration-100),
     box-shadow var(--spectrum-global-animation-duration-100),

@@ -648,5 +648,7 @@
 
   --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
 
+  --spectrum-slider-track-color: var(--spectrum-global-color-gray-400);
+
   --spectrum-datepicker-segment-background-color-focus: var(--spectrum-global-color-static-blue-600);
 }
