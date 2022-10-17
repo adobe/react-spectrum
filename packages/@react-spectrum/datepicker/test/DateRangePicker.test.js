@@ -365,16 +365,26 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(dialog, {key: 'Escape'});
-      fireEvent.keyUp(dialog, {key: 'Escape'});
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
       act(() => jest.runAllTimers());
 
+      await waitFor(() => {
+        expect(dialog).not.toBeInTheDocument();
+      }); // wait for animation
+
+      // now that it's been unmounted, run the raf callback
+      act(() => {
+        jest.runAllTimers();
+      });
+
       expect(dialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
+      expect(button).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      act(() => button.focus());
       userEvent.tab();
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
@@ -391,12 +401,11 @@ describe('DateRangePicker', function () {
 
       userEvent.tab();
       expect(segments[0]).toHaveFocus();
-      // mock tab via userEvent calls up, but not down
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(segments[0], {key: 'ArrowRight'});
-      fireEvent.keyUp(segments[0], {key: 'ArrowRight'});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);

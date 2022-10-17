@@ -290,12 +290,11 @@ describe('DateField', function () {
 
       userEvent.tab();
       expect(segments[0]).toHaveFocus();
-      // mock tab via userEvent calls up, but not down
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(segments[0], {key: 'ArrowRight'});
-      fireEvent.keyUp(segments[0], {key: 'ArrowRight'});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);

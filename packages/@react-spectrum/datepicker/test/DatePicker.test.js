@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -270,7 +270,7 @@ describe('DatePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should open and close popover and only call blur when focus leaves picker', function () {
+    it('should open and close popover and only call blur when focus leaves picker', async function () {
       let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let button = getByRole('button');
 
@@ -287,16 +287,26 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(dialog, {key: 'Escape'});
-      fireEvent.keyUp(dialog, {key: 'Escape'});
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
       act(() => jest.runAllTimers());
 
+      await waitFor(() => {
+        expect(dialog).not.toBeInTheDocument();
+      }); // wait for animation
+
+      // now that it's been unmounted, run the raf callback
+      act(() => {
+        jest.runAllTimers();
+      });
+
       expect(dialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
+      expect(button).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      act(() => button.focus());
       userEvent.tab();
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
@@ -313,12 +323,11 @@ describe('DatePicker', function () {
 
       userEvent.tab();
       expect(segments[0]).toHaveFocus();
-      // mock tab via userEvent calls up, but not down
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(segments[0], {key: 'ArrowRight'});
-      fireEvent.keyUp(segments[0], {key: 'ArrowRight'});
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
