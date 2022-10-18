@@ -308,8 +308,43 @@
   --spectrum-neutral-background-color-down: var(--spectrum-gray-200);
   --spectrum-neutral-background-color-key-focus: var(--spectrum-gray-300);
 
+  --spectrum-neutral-subdued-background-color-default: var(--spectrum-gray-400);
+  --spectrum-neutral-subdued-background-color-hover: var(--spectrum-gray-300);
+  --spectrum-neutral-subdued-background-color-down: var(--spectrum-gray-200);
+  --spectrum-neutral-subdued-background-color-key-focus: var(--spectrum-gray-300);
+
   --spectrum-negative-background-color-default: var(--spectrum-red-500);
   --spectrum-negative-background-color-hover: var(--spectrum-red-400);
   --spectrum-negative-background-color-down: var(--spectrum-red-300);
   --spectrum-negative-background-color-key-focus: var(--spectrum-red-400);
+
+  --spectrum-positive-background-color-default: var(--spectrum-green-500);
+  --spectrum-positive-background-color-hover: var(--spectrum-green-400);
+  --spectrum-positive-background-color-down: var(--spectrum-green-300);
+  --spectrum-positive-background-color-key-focus: var(--spectrum-green-400);
+
+  --spectrum-informative-background-color-default: var(--spectrum-blue-500);
+  --spectrum-informative-background-color-hover: var(--spectrum-blue-400);
+  --spectrum-informative-background-color-down: var(--spectrum-blue-300);
+  --spectrum-informative-background-color-key-focus: var(--spectrum-blue-400);
+
+  --spectrum-negative-visual-color: var(--spectrum-red-700);
+  --spectrum-positive-visual-color: var(--spectrum-green-800);
+  --spectrum-notice-visual-color: var(--spectrum-orange-900);
+  --spectrum-informative-visual-color: var(--spectrum-blue-900);
+
+  --spectrum-gray-visual-color: var(--spectrum-gray-600);
+  --spectrum-red-visual-color: var(--spectrum-red-700);
+  --spectrum-orange-visual-color: var(--spectrum-orange-900);
+  --spectrum-yellow-visual-color: var(--spectrum-yellow-1100);
+  --spectrum-chartreuse-visual-color: var(--spectrum-chartreuse-900);
+  --spectrum-celery-visual-color: var(--spectrum-celery-800);
+  --spectrum-green-visual-color: var(--spectrum-green-800);
+  --spectrum-seafoam-visual-color: var(--spectrum-seafoam-800);
+  --spectrum-cyan-visual-color: var(--spectrum-cyan-900);
+  --spectrum-blue-visual-color: var(--spectrum-blue-900);
+  --spectrum-indigo-visual-color: var(--spectrum-indigo-900);
+  --spectrum-purple-visual-color: var(--spectrum-purple-900);
+  --spectrum-fuchsia-visual-color: var(--spectrum-fuchsia-900);
+  --spectrum-magenta-visual-color: var(--spectrum-magenta-900);
 }
