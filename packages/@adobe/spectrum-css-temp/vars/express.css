@@ -22,11 +22,15 @@
   --spectrum-alias-border-radius-large: var(--spectrum-global-dimension-size-150);
 
   --spectrum-button-primary-border-radius:  var(--spectrum-global-dimension-size-200);
-  --spectrum-semantic-neutral-color-background: var(--spectrum-global-color-static-gray-800);
   --spectrum-alias-input-border-size: var(--spectrum-global-dimension-static-size-25);
   --spectrum-alias-input-focusring-gap: var(--spectrum-global-dimension-static-size-25);
   --spectrum-alias-input-border-color-key-focus: var(--spectrum-global-color-gray-900);
   --spectrum-alias-input-focusring-size: var(--spectrum-global-dimension-static-size-25);
+
+  --spectrum-alias-border-color: var(--spectrum-gray-400);
+  --spectrum-alias-border-color-hover: var(--spectrum-gray-500);
+  --spectrum-alias-border-color-down: var(--spectrum-gray-900);
+  --spectrum-alias-border-color-focus: var(--spectrum-gray-900);
 
   --spectrum-textfield-border-color-key-focus: var(--spectrum-alias-input-border-color-key-focus);
   --spectrum-textfield-border-color-down: var(--spectrum-global-color-gray-900);
@@ -40,6 +44,9 @@
   --spectrum-alias-toggle-color-default: var(--spectrum-global-color-gray-800);
   --spectrum-alias-toggle-color-hover: var(--spectrum-global-color-gray-900);
   --spectrum-alias-toggle-color-key-focus: var(--spectrum-global-color-gray-900);
+  --spectrum-alias-toggle-color-selected: var(--spectrum-gray-800);
+  --spectrum-alias-toggle-color-selected-hover: var(--spectrum-gray-900);
+  --spectrum-alias-toggle-color-selected-key-focus: var(--spectrum-gray-900);
 
   --spectrum-actionbutton-icon-color: var(--spectrum-global-color-gray-800);
   --spectrum-actionbutton-background-color: var(--spectrum-global-color-gray-200);
@@ -144,6 +151,8 @@
   --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
   --spectrum-datepicker-segment-background-color-focus: var(--spectrum-global-color-static-indigo-600);
+
+  --spectrum-tooltip-background-color: var(--spectrum-neutral-background-color-default);
 }
 
 .medium {
