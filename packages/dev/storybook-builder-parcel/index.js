@@ -4,6 +4,8 @@ const {createProxyMiddleware} = require('http-proxy-middleware');
 const {normalizeStories, loadPreviewOrConfigFile} = require('@storybook/core-common');
 const fs = require('fs');
 
+let proxyPort = 3000;
+
 exports.start = async function ({options, router}) {
   let parcel = await createParcel(options, true);
 
@@ -13,7 +15,7 @@ exports.start = async function ({options, router}) {
     }
 
     let proxy = createProxyMiddleware({
-      target: 'http://localhost:3000/',
+      target: `http://localhost:${proxyPort}/`,
       selfHandleResponse: true,
       logLevel: 'warn',
       onProxyRes(proxyRes, req, res) {
@@ -66,15 +68,17 @@ async function createParcel(options, isDev = false) {
   await generateHTML(options);
   await generateJS(options);
 
+  proxyPort = options.port === 9004 ? 3010 : 3000;
+
   return new Parcel({
     entries: path.join(__dirname, 'iframe.html'),
     config: path.resolve(__dirname, '..', '..', '..', '.parcelrc-storybook'),
     mode: isDev ? 'development' : 'production',
     serveOptions: isDev ? {
-      port: 3000
+      port: proxyPort
     } : null,
     hmrOptions: isDev ? {
-      port: 3001
+      port: proxyPort + 1
     } : null,
     additionalReporters: [
       {
