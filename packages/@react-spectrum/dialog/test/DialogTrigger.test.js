@@ -137,16 +137,12 @@ describe('DialogTrigger', function () {
   });
 
   describe('popover arrows', function () {
-    const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
-    const originalOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
-
     beforeAll(() => {
-      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {configurable: true, value: 500});
-      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {configurable: true, value: 500});
+      jest.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => ({configurable: true, value: 500}));
+      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => ({configurable: true, value: 500}));
     });
     afterAll(() => {
-      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', originalOffsetHeight);
-      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', originalOffsetWidth);
+      jest.clearAllMocks();
     });
 
     it('should trigger a popover with an arrow', function () {

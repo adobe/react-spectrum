@@ -144,7 +144,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         setIsHideArrow(propsHideArrow);
       }
     }
-  }, [arrowProps]);
+  }, [arrowProps, hideArrow, isHideArrow, ref]);
 
 
   return (
