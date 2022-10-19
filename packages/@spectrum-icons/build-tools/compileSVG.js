@@ -42,7 +42,7 @@ export function compileSVG(file, componentName = 'IconComponent') {
               overrides: {
                 removeViewBox: false,
                 inlineStyles: {
-                  onlyMatchedOnce: false,
+                  onlyMatchedOnce: false
                 }
               }
             }
