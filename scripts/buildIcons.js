@@ -23,7 +23,8 @@ const PACKAGES = {
   color: path.dirname(
     require.resolve('@adobe/react-spectrum-workflow-color/dist/')
   ),
-  illustrations: path.join(getIconPackageFolder('illustrations'), 'src')
+  illustrations: path.join(getIconPackageFolder('illustrations'), 'src'),
+  express: path.join(path.dirname(require.resolve('@adobe/spectrum-css-ccx-workflow-icons')), '18')
 };
 
 (async function () {
