@@ -44,8 +44,8 @@ ${jsx}
 ExpressIcon.displayName = IconComponent.displayName;
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren) {
-  let {theme} = useProvider();
-  return <UIIcon {...props}>{theme.global.express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
+  let provider = useProvider();
+  return <UIIcon {...props}>{provider && provider.theme.global.express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
 }
 `
   );
