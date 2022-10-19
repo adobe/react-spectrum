@@ -146,7 +146,7 @@ export {_DialogTrigger as DialogTrigger};
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboardDismissDisabled, ...props}) {
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let isCloserPadding = false;
+  let isMoveCloserToContainerBoundary = false;
 
   // For popover triggers close to the edge, decrease the container padding allowing popovers to
   // move closer to their trigger.
@@ -157,27 +157,26 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
     // 'bottom' is the default when no value is provided
     let [axisPlacement] = props.placement?.split(' ') || ['bottom']; // Flip and RTL don't matter
 
-    // The following is the math that gets the desired beavhior in both scales, but isn't as logical
-    // as desired. For example, would love to not multiple the default padding by 2.
+    // The following math, while not straightforward, identifies button proximity for both scales.
     if (axisPlacement === 'start' || axisPlacement === 'end' || axisPlacement === 'right' || axisPlacement === 'left') {
-      // top edge start/end math
+      // Trigger at top edge with start/end/right/left arrow.
       if ((DEFAULT_MODAL_PADDING * 2) - (triggerRect.height / 2) > triggerRect.top) {
-        isCloserPadding = true;
+        isMoveCloserToContainerBoundary = true;
       }
-      // bottom edge start/end math
-      // The documentRect doesn't work for this which is why we're using the window.innerHright.
+      // Trigger at bottom edge with start/end/right/left arrow.
+      // Determining the buttons location relative to the bottom edge via window.innderHeight.
       if (triggerRect.top + (DEFAULT_MODAL_PADDING * 2) + (triggerRect.height / 2) > window.innerHeight) {
-        isCloserPadding = true;
+        isMoveCloserToContainerBoundary = true;
       }
     }
     if (axisPlacement === 'top' || axisPlacement === 'bottom') {
-      // right edge top/bottom math
+      // Trigger at right edge with top/bottom arrow.
       if ((DEFAULT_MODAL_PADDING * 2) - (triggerRect.width / 2) > triggerRect.left) {
-        isCloserPadding = true;
+        isMoveCloserToContainerBoundary = true;
       }
-      // left edge top/bottom math
+      // Trigger at left edge with top/bottom arrow.
       if (triggerRect.right - (triggerRect.width / 2) + (DEFAULT_MODAL_PADDING * 2) > documentRect.right) {
-        isCloserPadding = true;
+        isMoveCloserToContainerBoundary = true;
       }
     }
   }
@@ -186,7 +185,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
     targetRef: targetRef || triggerRef,
     overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
-    containerPadding: isCloserPadding && (props.containerPadding === undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
+    containerPadding: isMoveCloserToContainerBoundary && (props.containerPadding === undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
     offset: props.offset,
     crossOffset: props.crossOffset,
     shouldFlip: props.shouldFlip,

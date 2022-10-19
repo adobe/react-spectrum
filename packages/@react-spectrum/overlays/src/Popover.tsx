@@ -105,40 +105,41 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let [isHideArrow, setIsHideArrow] = useState(hideArrow);
 
   useLayoutEffect(() => {
-    // check position of arrow and popover proximety to boundry edge
+    // Check arrow and popover proximity to the boundary edge.
     if (ref.current && arrowProps) {
       let propsHideArrow = hideArrow;
 
-      // figure out the location of the offset and which popover dimension to use
+      // The axis of the arrow and the popovers cross axis dimension.
+      // Both are used for calculating their proximities to the edges.
       let offset = arrowProps.style.left ? 'left' : 'top';
       let overlayCrossSize = offset === 'left' ? ref.current.offsetWidth : ref.current.offsetHeight;
 
-      // for the start and top, no change is made to arrowPosition not caught in a condiational below
+      // Left and top conditional, keep the arrow pointing at the button and within the popover.
       if (DEFAULT_MODAL_PADDING > arrowProps.style[offset] && arrowProps.style[offset] > 0) {
-        // using the default padding for proper arrow placement
+        // Using the default padding for proper arrow placement.
         let arrowStyle = {...arrowProps.style};
         arrowStyle[offset] = DEFAULT_MODAL_PADDING;
         arrowProps.style = arrowStyle;
-        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden
+        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden.
         if (ref.current.style.margin === '0px') {
           ref.current.style.removeProperty('margin');
         }
       } else if (arrowProps.style[offset] > overlayCrossSize - DEFAULT_MODAL_PADDING && arrowProps.style[offset] + 2 <= overlayCrossSize) {
-        // for the end and bottom, keep the arrow pointing at the button and within the popover
+        // For the right and bottom, keep the arrow pointing at the button and within the popover.
         let arrowStyle = {...arrowProps.style};
         arrowStyle[offset] = overlayCrossSize - DEFAULT_MODAL_PADDING;
         arrowProps.style = arrowStyle;
-        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden
+        // isOpen can cause us to hide the arrow when we really want it to show, this reverts the margin removal when the arrow was hidden.
         if (ref.current.style.margin === '0px') {
           ref.current.style.removeProperty('margin');
         }
       } else if (arrowProps.style[offset] <= 0 || arrowProps.style[offset] + 2 > overlayCrossSize) {
-        // trigger is too far off the page, hiding the arrow per Spectrum
+        // Trigger is too far off the page, hiding the arrow per Spectrum.
         propsHideArrow = true;
         ref.current.style.margin = '0';
       }
 
-      // if we are already hiding the arrow no reason change it.
+      // If we are already hiding the arrow no reason change it.
       if (propsHideArrow !== isHideArrow) {
         setIsHideArrow(propsHideArrow);
       }
