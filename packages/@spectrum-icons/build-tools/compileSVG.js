@@ -12,12 +12,13 @@
 import fs from 'fs';
 import {transform} from '@svgr/core';
 
-export function compileSVG(file) {
+export function compileSVG(file, componentName = 'IconComponent') {
   let code = fs.readFileSync(file, 'utf8');
   return transform.sync(
     code,
     {
       plugins: [
+        '@svgr/plugin-svgo',
         '@svgr/plugin-jsx'
       ],
       jsx: {
@@ -27,11 +28,29 @@ export function compileSVG(file) {
               '@svgr/babel-plugin-remove-jsx-attribute',
               {
                 elements: ['svg', 'path', 'circle', 'rect', 'ellipse'],
-                attributes: ['width', 'height', 'fill']
+                attributes: ['width', 'height', 'fill', 'data-name', 'id', 'style']
               }
             ]
           ]
         }
+      },
+      svgoConfig: {
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                removeViewBox: false,
+                inlineStyles: {
+                  onlyMatchedOnce: false,
+                }
+              }
+            }
+          },
+          {
+            name: 'removeXMLNS'
+          }
+        ]
       },
       template: (variables, {tpl}) => tpl`
 ${variables.interfaces};
@@ -41,7 +60,7 @@ const ${variables.componentName} = (${variables.props}) => (
 );`
     },
     {
-      componentName: 'IconComponent'
+      componentName
     }
   );
 }
