@@ -33,7 +33,7 @@ const PACKAGES = {
   for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
     let distFolder = getIconPackageFolder(pkg);
     for (let srcFile of await glob([
-      path.join(srcFolder, '*.{js,tsx}').replace(/\\/g, '/')
+      path.join(srcFolder, '*.{js,tsx,svg}').replace(/\\/g, '/')
     ])) {
       let filename = path.basename(srcFile);
       if (filename === 'index.js' || filename === 'util.js') {
