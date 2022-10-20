@@ -25,6 +25,10 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
+
+  .spectrum-SearchWithin-picker { 
+    width: auto;
+  }
 }
 
 .spectrum-SearchWithin-picker {
