@@ -233,5 +233,6 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
     return () => {
       changeHandlers.delete(handler);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

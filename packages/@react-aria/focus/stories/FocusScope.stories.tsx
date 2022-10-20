@@ -61,6 +61,7 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
     <MaybePortal isPortaled={isPortaled}>
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input />
@@ -76,6 +77,7 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
           </div>
         )}
         {showNew && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <div role="dialog" onKeyDown={onKeyDown}>
             <input />
             <input autoFocus />
