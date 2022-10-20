@@ -77,13 +77,13 @@ function Input(props, ref) {
   // parent element.
   useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
   let textfieldClass = classNames(
     textfieldStyles,
     'spectrum-Textfield',
     {
       'spectrum-Textfield--invalid': isInvalid,
-      'spectrum-Textfield--valid': validationState === 'valid',
+      'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
       'spectrum-Textfield--quiet': isQuiet
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
@@ -107,9 +107,9 @@ function Input(props, ref) {
   );
 
   let validationIcon = null;
-  if (validationState === 'invalid') {
+  if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
-  } else if (validationState === 'valid') {
+  } else if (validationState === 'valid' && !isDisabled) {
     validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 

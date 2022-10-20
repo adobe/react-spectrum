@@ -297,7 +297,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'spectrum-InputGroup--invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
             className
@@ -314,8 +314,8 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
               {
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,
-                'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid'
+                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               }
             )
           }
