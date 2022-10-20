@@ -58,13 +58,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     display: showResizer ? undefined : 'none',
     touchAction: 'none'
   };
-  if (columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key)) {
-    style.cursor = direction === 'rtl' ? 'w-resize' : 'e-resize';
-  } else if (columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key)) {
-    style.cursor = direction === 'rtl' ? 'e-resize' : 'w-resize';
-  } else {
-    style.cursor = 'col-resize';
-  }
+  let isEResizable = columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key);
+  let isWResizable = columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key);
 
   return (
     <>
@@ -72,7 +67,15 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         <div
           role="presentation"
           style={style}
-          className={classNames(styles, 'spectrum-Table-columnResizer')}
+          className={classNames(
+            styles,
+            'spectrum-Table-columnResizer',
+            {
+              'spectrum-Table-columnResizer--ewresize': !(isEResizable && isWResizable),
+              'spectrum-Table-columnResizer--eresize': direction === 'rtl' ? isWResizable : isEResizable,
+              'spectrum-Table-columnResizer--wresize': direction === 'rtl' ? isEResizable : isWResizable
+            }
+          )}
           {...resizerProps}>
           <VisuallyHidden>
             <input

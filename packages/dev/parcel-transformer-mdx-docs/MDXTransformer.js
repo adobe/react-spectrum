@@ -48,6 +48,8 @@ module.exports = new Transformer({
             return [];
           }
 
+          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
+
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
@@ -87,7 +89,7 @@ module.exports = new Transformer({
 
             if (options.includes('render=false')) {
               node.meta = null;
-              return transformExample(node, preRelease);
+              return transformExample(node, preRelease, keepIndividualImports);
             }
 
             if (meta === 'snippet') {
@@ -110,7 +112,7 @@ module.exports = new Transformer({
             node.meta = 'example';
 
             return [
-              ...transformExample(node, preRelease),
+              ...transformExample(node, preRelease, keepIndividualImports),
               {
                 type: 'mdxJsxFlowElement',
                 name: 'div',
@@ -169,7 +171,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return transformExample(node, preRelease);
+          return transformExample(node, preRelease, keepIndividualImports);
         }
 
         return [node];
@@ -325,7 +327,7 @@ module.exports = new Transformer({
                 highlightParent = parent;
                 highlightedNodes = [];
                 return [];
-              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children[0].value)) {
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
                 highlightParent = null;
                 let res = [{
                   type: 'element',
@@ -339,28 +341,28 @@ module.exports = new Transformer({
                 }
 
                 // Remove extra newline after starting comment, but keep indentation.
-                if (highlightedNodes[0].type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
                   let node = highlightedNodes[0];
                   node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
                 }
 
                 // Remove opening brace from JSX-style ending comments.
                 let last = highlightedNodes[highlightedNodes.length - 1];
-                if (last.children?.[0]?.value === '{') {
+                if (last?.children?.[0]?.value === '{') {
                   highlightedNodes.pop();
                 }
 
                 // Remove extra newline before ending comment.
                 last = highlightedNodes[highlightedNodes.length - 1];
-                if (last.type === 'text' && /^\s+$/.test(last.value)) {
+                if (last?.type === 'text' && /^\s+$/.test(last?.value)) {
                   highlightedNodes.pop();
                 }
 
                 // Remove closing brace from JSX-style ending comments.
-                let next = parent.children[index + 1];
+                let next = parent.children?.[index + 1];
                 if (next?.children?.[0]?.value === '}') {
                   parent.children[index + 1] = {type: 'text', value: ''};
-                  next = parent.children[index + 2];
+                  next = parent.children?.[index + 2];
                 }
 
                 // Remove extra newline after ending comment.
@@ -497,7 +499,7 @@ export default {};
   }
 });
 
-function transformExample(node, preRelease) {
+function transformExample(node, preRelease, keepIndividualImports) {
   if (node.lang !== 'tsx') {
     return responsiveCode(node);
   }
@@ -530,7 +532,7 @@ function transformExample(node, preRelease) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
           if (!specifiers[lib]) {
             specifiers[lib] = [];

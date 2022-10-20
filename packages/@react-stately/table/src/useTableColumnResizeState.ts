@@ -193,6 +193,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
   }
 
   // This function is regenerated whenever columnWidthsRef.current changes in order to get the new correct ref value.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let getColumnWidth = useCallback((key: Key): number => columnWidthsRef.current.get(key) ?? 0, [columnWidthsRef.current]);
 
   let getColumnMinWidth = useCallback((key: Key) => {
