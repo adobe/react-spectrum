@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,9 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-const {compileStrings} = require('@internationalized/string-compiler');
+import {testSSR} from '@react-spectrum/test-utils';
 
-module.exports = (code) => {
-  let json = JSON.parse(code);
-  return compileStrings(json);
-};
+describe('useDrag and useDrop SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {Draggable, Droppable} from './examples';
+      import React from 'react';
+
+      <>
+        <Draggable />
+        <Droppable />
+      </>
+    `);
+  });
+});

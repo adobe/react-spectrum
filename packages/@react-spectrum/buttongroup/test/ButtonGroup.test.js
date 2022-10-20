@@ -164,6 +164,7 @@ function ButtonGroupWithRefs(props) {
       button2: button2.current.UNSAFE_getDOMNode(),
       button3: button3.current.UNSAFE_getDOMNode()
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Provider theme={theme}>
