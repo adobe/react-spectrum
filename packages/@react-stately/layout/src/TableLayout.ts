@@ -50,16 +50,22 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   getColumnWidth(key: Key): number {
-    return this.columnWidths.get(key);
+    return this.columnWidths.get(key) ?? 0;
   }
 
   getColumnMinWidth(key: Key): number {
     let column = this.collection.columns.find(col => col.key === key);
+    if (!column) {
+      return 0;
+    }
     return getMinWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
   }
 
   getColumnMaxWidth(key: Key): number {
     let column = this.collection.columns.find(col => col.key === key);
+    if (!column) {
+      return 0;
+    }
     return getMaxWidth(column.props.maxWidth, this.virtualizer.visibleRect.width);
   }
 
