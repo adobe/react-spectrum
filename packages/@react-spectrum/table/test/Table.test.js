@@ -4240,14 +4240,11 @@ describe('TableView', function () {
 
     it('should allow the user to tab into the table body', function () {
       let tree = render(<EmptyStateTable />);
-      let table = tree.getByRole('grid');
       let toggleButton = tree.getAllByRole('button')[0];
       let link = tree.getByRole('link');
 
       userEvent.tab();
       expect(document.activeElement).toBe(toggleButton);
-      userEvent.tab();
-      expect(document.activeElement).toBe(table);
       userEvent.tab();
       expect(document.activeElement).toBe(link);
     });

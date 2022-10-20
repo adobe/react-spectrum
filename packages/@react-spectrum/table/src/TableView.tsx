@@ -479,49 +479,53 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     <TableVirtualizerContext.Provider value={{state}}>
       <FocusScope>
         <div
-          // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
-          {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
+          {...mergeProps(otherProps, virtualizerProps)}
           ref={domRef}>
           <div
-            role="presentation"
-            className={classNames(styles, 'spectrum-Table-headWrapper')}
-            style={{
-              width: visibleRect.width,
-              height: headerHeight,
-              overflow: 'hidden',
-              position: 'relative',
-              willChange: state.isScrolling ? 'scroll-position' : '',
-              transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
-            }}
-            ref={headerRef}>
-            {state.visibleViews[0]}
-          </div>
-          <ScrollView
-            role="presentation"
-            className={
-              classNames(
-                styles,
-                'spectrum-Table-body',
-                {
-                  'focus-ring': isFocusVisible,
-                  'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
-                }
-              )
-            }
-            tabIndex={-1}
-            style={{flex: 1}}
-            innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
-            ref={bodyRef}
-            contentSize={state.contentSize}
-            onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
-            onScrollStart={state.startScrolling}
-            onScrollEnd={state.endScrolling}
-            onScroll={onScroll}>
-            {state.visibleViews[1]}
+            // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
+            {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
+            ref={domRef}>
             <div
-              className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-              style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
-          </ScrollView>
+              role="presentation"
+              className={classNames(styles, 'spectrum-Table-headWrapper')}
+              style={{
+                width: visibleRect.width,
+                height: headerHeight,
+                overflow: 'hidden',
+                position: 'relative',
+                willChange: state.isScrolling ? 'scroll-position' : '',
+                transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+              }}
+              ref={headerRef}>
+              {state.visibleViews[0]}
+            </div>
+            <ScrollView
+              role="presentation"
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Table-body',
+                  {
+                    'focus-ring': isFocusVisible,
+                    'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
+                  }
+                )
+              }
+              tabIndex={-1}
+              style={{flex: 1}}
+              innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
+              ref={bodyRef}
+              contentSize={state.contentSize}
+              onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
+              onScrollStart={state.startScrolling}
+              onScrollEnd={state.endScrolling}
+              onScroll={onScroll}>
+              {state.visibleViews[1]}
+              <div
+                className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+                style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
+            </ScrollView>
+          </div>
         </div>
       </FocusScope>
     </TableVirtualizerContext.Provider>
