@@ -42,12 +42,12 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * Handler that is called when a user performs a column resize.
    * @private
    */
-  onColumnResize?: (affectedColumns: {key: Key, width: number}[]) => void,
+  onColumnResize?: (key: Key, width: number) => void,
   /**
    * Handler that is called when a column resize ends.
    * @private
    */
-  onColumnResizeEnd?: (affectedColumns: {key: Key, width: number}[]) => void
+  onColumnResizeEnd?: (key: Key) => void
 }
 
 export interface TableHeaderProps<T> {

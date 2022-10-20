@@ -10,30 +10,58 @@
  * governing permissions and limitations under the License.
  */
 
+import {calculateColumnSizes, getMaxWidth, getMinWidth} from './TableUtils';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 
+type TableLayoutOptions<T> = ListLayoutOptions<T> & {
+  getDefaultWidth: (props) => string | number,
+  getDefaultMinWidth: (props) => string | number
+}
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
+  resizingColumn: Key | null;
   lastCollection: TableCollection<T>;
-  getColumnWidth: (key: Key) => number;
+  columnWidths: Map<Key, number> = new Map();
+  changedColumns: Map<Key, number | null> = new Map();
   stickyColumnIndices: number[];
+  getDefaultWidth: (props) => string | number;
+  getDefaultMinWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
 
-  constructor(options: ListLayoutOptions<T>) {
+  constructor(options: TableLayoutOptions<T>) {
     super(options);
+    this.getDefaultWidth = options.getDefaultWidth;
+    this.getDefaultMinWidth = options.getDefaultMinWidth;
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
   }
 
+  setResizeColumnWidth(width): void {
+    this.changedColumns.set(this.resizingColumn, width);
+  }
+
+  getColumnWidth(key: Key): number {
+    return this.columnWidths.get(key);
+  }
+
+  getColumnMinWidth(key: Key): number {
+    let column = this.collection.columns.find(col => col.key === key);
+    return getMinWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
+  }
+
+  getColumnMaxWidth(key: Key): number {
+    let column = this.collection.columns.find(col => col.key === key);
+    return getMaxWidth(column.props.maxWidth, this.virtualizer.visibleRect.width);
+  }
 
   buildCollection(): LayoutNode[] {
     // If columns changed, clear layout cache.
@@ -51,9 +79,9 @@ export class TableLayout<T> extends ListLayout<T> {
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 
+    this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
-    this.stickyColumnIndices = this.collection.columns.filter(c => c.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(c.key)).map(c => c.index);
     this.lastPersistedKeys = null;
 
     body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
@@ -62,6 +90,65 @@ export class TableLayout<T> extends ListLayout<T> {
       header,
       body
     ];
+  }
+
+  buildColumnWidths() {
+    let prevColumnWidths = this.columnWidths;
+    this.columnWidths = new Map();
+    this.stickyColumnIndices = [];
+
+    for (let column of this.collection.columns) {
+      // The selection cell and any other sticky columns always need to be visible.
+      // In addition, row headers need to be in the DOM for accessibility labeling.
+      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+        this.stickyColumnIndices.push(column.index);
+      }
+    }
+    if (this.resizingColumn == null) {
+      // initial layout or table/window resizing
+      let columnWidths = calculateColumnSizes(
+        this.virtualizer.visibleRect.width,
+        this.collection.columns.map(col => ({...col.column.props, key: col.key})),
+        this.changedColumns,
+        (i) => this.getDefaultWidth(this.collection.columns[i].props),
+        (i) => this.getDefaultMinWidth(this.collection.columns[i].props)
+      );
+
+      // columns going in will be the same order as the columns coming out
+      columnWidths.forEach((width, index) => {
+        this.columnWidths.set(this.collection.columns[index].key, width);
+      });
+    } else {
+      // resizing a column
+      // TODO do we want to recalculate sizes of columns after the one we're resizing?
+      // I personally feel like that's weird because it changes once all columns become static or resized
+      let resizeIndex = Infinity;
+      let resizingChanged = new Map<Key, number>(this.changedColumns);
+      this.collection.columns.forEach((column, i) => {
+        if (resizeIndex < i) {
+          return;
+        }
+        if (column.key === this.resizingColumn) {
+          resizeIndex = i;
+        }
+        if (!resizingChanged.has(column.key)) {
+          resizingChanged.set(column.key, prevColumnWidths.get(column.key));
+        }
+      });
+
+      let columnWidths = calculateColumnSizes(
+        this.virtualizer.visibleRect.width,
+        this.collection.columns.map(col => ({...col.column.props, key: col.key})),
+        resizingChanged,
+        (i) => this.getDefaultWidth(this.collection.columns[i].props),
+        (i) => this.getDefaultMinWidth(this.collection.columns[i].props)
+      );
+
+      // columns going in will be the same order as the columns coming out
+      columnWidths.forEach((width, index) => {
+        this.columnWidths.set(this.collection.columns[index].key, width);
+      });
+    }
   }
 
   buildHeader(): LayoutNode {
@@ -131,13 +218,13 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   // used to get the column widths when rendering to the DOM
-  getColumnWidth_(node: GridNode<T>) {
+  getRenderedColumnWidth(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
     let colIndex = node.colIndex ?? node.index;
     let width = 0;
     for (let i = colIndex; i < colIndex + colspan; i++) {
       let column = this.collection.columns[i];
-      width += this.getColumnWidth(column.key);
+      width += this.columnWidths.get(column.key);
     }
 
     return width;
@@ -167,7 +254,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth_(node);
+    let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
@@ -268,7 +355,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth_(node);
+    let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);

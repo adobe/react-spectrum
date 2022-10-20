@@ -73,17 +73,26 @@ describe('TableViewSizing', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let rerender = (tree, children, scale = 'medium') => {
+    let newTree = tree.rerender(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    act(() => {jest.runAllTimers();});
+    return newTree;
+  };
 
   describe('layout', function () {
     describe('row heights', function () {
@@ -686,18 +695,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 595
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -711,18 +709,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('190px');
         }
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -782,18 +769,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('200px');
         }
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 595
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -807,18 +783,7 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[2].style.width).toBe('190px');
         }
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -908,18 +873,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
 
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -1004,18 +958,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
 
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -1122,18 +1065,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 600
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1214,18 +1146,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 600
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1276,7 +1197,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1326,7 +1247,7 @@ describe('TableViewSizing', function () {
 
         userEvent.tab();
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1376,7 +1297,7 @@ describe('TableViewSizing', function () {
 
         userEvent.tab({shift: true});
         expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 

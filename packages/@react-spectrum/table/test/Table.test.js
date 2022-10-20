@@ -144,18 +144,26 @@ describe('TableView', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-
+  let rerender = (tree, children, scale = 'medium') => {
+    let newTree = tree.rerender(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    act(() => {jest.runAllTimers();});
+    return newTree;
+  };
   // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
   let getCell = (tree, text) => {
     // Find by text, then go up to the element with the cell role.
@@ -786,42 +794,50 @@ describe('TableView', function () {
 
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
-    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderTable = (locale = 'en-US', props = {}) => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     // locale is being set here, since we can't nest them, use original render function
-    let renderNested = (locale = 'en-US') => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table">
-          <TableHeader columns={nestedColumns}>
-            {column =>
-              <Column childColumns={column.children}>{column.name}</Column>
-            }
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderNested = (locale = 'en-US') => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table">
+            <TableHeader columns={nestedColumns}>
+              {column =>
+                <Column childColumns={column.children}>{column.name}</Column>
+              }
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     let renderMany = () => render(
       <TableView aria-label="Table">
@@ -3891,10 +3907,8 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 3 by useLayoutEffect
-      // we can't get better results than that without mocking every single clientHeight/Width
-      // this is a good candidate for storybook interactions test
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(4);
+      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
     });
   });
 
