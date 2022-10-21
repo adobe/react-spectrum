@@ -88,8 +88,6 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
     }
   };
 
-  let onClose = () => state.commit();
-
   return (
     <>
       <Field
@@ -112,10 +110,10 @@ export const MobileSearchAutocomplete = React.forwardRef(function MobileSearchAu
           {state.inputValue || props.placeholder || ''}
         </SearchAutocompleteButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={onClose} isFixedHeight isNonModal {...overlayProps}>
+      <Tray state={state} isFixedHeight {...overlayProps}>
         <SearchAutocompleteTray
           {...props}
-          onClose={onClose}
+          onClose={state.close}
           overlayProps={overlayProps}
           state={state} />
       </Tray>

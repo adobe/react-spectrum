@@ -21,17 +21,14 @@ import {
   useSlotProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusScope} from '@react-aria/focus';
 import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -67,7 +64,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let domRef = useDOMRef(ref);
 
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
   let listboxRef = useRef();
@@ -82,52 +78,27 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
-  let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: unwrappedTriggerRef,
-    overlayRef: unwrappedPopoverRef,
-    scrollRef: listboxRef,
-    placement: `${direction} ${align}` as Placement,
-    shouldFlip: shouldFlip,
-    isOpen: state.isOpen && !isMobile,
-    onClose: state.close
-  });
-
   let {hoverProps, isHovered} = useHover({isDisabled});
-
-  // Update position once the ListBox has rendered. This ensures that
-  // it flips properly when it doesn't fit in the available space.
-  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
-  useLayoutEffect(() => {
-    if (state.isOpen) {
-      requestAnimationFrame(() => {
-        updatePosition();
-      });
-    }
-  }, [state.isOpen, updatePosition]);
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let listbox = (
-    <FocusScope restoreFocus contain={isMobile}>
-      <DismissButton onDismiss={() => state.close()} />
-      <ListBoxBase
-        {...menuProps}
-        ref={listboxRef}
-        disallowEmptySelection
-        autoFocus={state.focusStrategy || true}
-        shouldSelectOnPressUp
-        focusOnPointerEnter
-        layout={layout}
-        state={state}
-        width={isMobile ? '100%' : undefined}
-        // Set max height: inherit so Tray scrolling works
-        UNSAFE_style={{maxHeight: 'inherit'}}
-        isLoading={isLoadingMore}
-        onLoadMore={props.onLoadMore} />
-      <DismissButton onDismiss={() => state.close()} />
-    </FocusScope>
+    <ListBoxBase
+      {...menuProps}
+      ref={listboxRef}
+      disallowEmptySelection
+      autoFocus={state.focusStrategy || true}
+      shouldSelectOnPressUp
+      focusOnPointerEnter
+      layout={layout}
+      state={state}
+      width={isMobile ? '100%' : undefined}
+      // Set max height: inherit so Tray scrolling works
+      UNSAFE_style={{maxHeight: 'inherit'}}
+      isLoading={isLoadingMore}
+      onLoadMore={props.onLoadMore} />
   );
 
   // Measure the width of the button to inform the width of the menu (below).
@@ -151,7 +122,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close}>
+      <Tray state={state}>
         {listbox}
       </Tray>
     );
@@ -161,21 +132,21 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     // Not using style props for this because they don't support `calc`.
     let width = isQuiet ? null : buttonWidth;
     let style = {
-      ...overlayProps.style,
       width: menuWidth ? dimensionValue(menuWidth) : width,
       minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
     };
 
     overlay = (
       <Popover
-        isOpen={state.isOpen}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
         ref={popoverRef}
-        placement={placement}
+        placement={`${direction} ${align}`}
+        shouldFlip={shouldFlip}
         hideArrow
-        shouldCloseOnBlur
-        onClose={state.close}>
+        state={state}
+        triggerRef={unwrappedTriggerRef}
+        scrollRef={listboxRef}>
         {listbox}
       </Popover>
     );
