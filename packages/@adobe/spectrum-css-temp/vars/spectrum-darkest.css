@@ -258,6 +258,7 @@
   --spectrum-alias-highlight-active: rgba(239,239,239,0.15);
   --spectrum-alias-highlight-selected: rgba(64,150,243,0.2);
   --spectrum-alias-highlight-selected-hover: rgba(64,150,243,0.3);
+  --spectrum-alias-highlight-invalid: rgba(221, 33, 24, 0.15); /* matches red-600 */
   --spectrum-alias-text-highlight-color: rgba(64,150,243,0.3);
   --spectrum-alias-background-color-quickactions: rgba(29,29,29,0.9);
   --spectrum-alias-radial-reaction-color-default: rgba(235,235,235,0.6);
