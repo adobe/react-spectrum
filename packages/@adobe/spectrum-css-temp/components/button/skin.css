@@ -15,6 +15,16 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
   /* Interactions with overbackground button should match background. Not a DNA token, overridden in WHCM. */
   --spectrum-button-over-background-color: inherit;
+
+  /* TBD on new tokens. This passes contrast for now. */
+  --spectrum-logicbutton-and-background-color: var(--spectrum-global-color-static-blue-600);
+  --spectrum-logicbutton-and-background-color-hover: var(--spectrum-global-color-static-blue-700);
+  --spectrum-logicbutton-and-border-color: var(--spectrum-logicbutton-and-background-color);
+  --spectrum-logicbutton-and-border-color-hover: var(--spectrum-logicbutton-and-background-color-hover);
+  --spectrum-logicbutton-or-background-color: var(--spectrum-global-color-static-magenta-500);
+  --spectrum-logicbutton-or-background-color-hover: var(--spectrum-global-color-static-magenta-600);
+  --spectrum-logicbutton-or-border-color: var(--spectrum-logicbutton-or-background-color);
+  --spectrum-logicbutton-or-border-color-hover: var(--spectrum-logicbutton-or-background-color-hover);
 }
 
 .spectrum-LogicButton,
