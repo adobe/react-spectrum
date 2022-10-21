@@ -18,6 +18,7 @@ import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
 import React, {forwardRef, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
+import {Underlay} from './Underlay';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
@@ -71,47 +72,50 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   } = props;
   let {styleProps} = useStyleProps(props);
 
-  let {popoverProps, arrowProps, placement} = usePopover({
+  let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
     ...props,
     popoverRef: ref,
     maxHeight: null
   }, state);
 
   return (
-    <div
-      {...styleProps}
-      {...popoverProps}
-      style={{
-        ...styleProps.style,
-        ...popoverProps.style
-      }}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Popover',
-          `spectrum-Popover--${placement}`,
-          {
-            'spectrum-Popover--withTip': !hideArrow,
-            'is-open': isOpen
-          },
+    <>
+      {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
+      <div
+        {...styleProps}
+        {...popoverProps}
+        style={{
+          ...styleProps.style,
+          ...popoverProps.style
+        }}
+        ref={ref}
+        className={
           classNames(
-            overrideStyles,
+            styles,
             'spectrum-Popover',
-            'react-spectrum-Popover'
-          ),
-          styleProps.className
-        )
-      }
-      role="presentation"
-      data-testid="popover">
-      {!isNonModal && <DismissButton onDismiss={state.close} />}
-      {children}
-      {hideArrow ? null : (
-        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
-      )}
-      <DismissButton onDismiss={state.close} />
-    </div>
+            `spectrum-Popover--${placement}`,
+            {
+              'spectrum-Popover--withTip': !hideArrow,
+              'is-open': isOpen
+            },
+            classNames(
+              overrideStyles,
+              'spectrum-Popover',
+              'react-spectrum-Popover'
+            ),
+            styleProps.className
+          )
+        }
+        role="presentation"
+        data-testid="popover">
+        {!isNonModal && <DismissButton onDismiss={state.close} />}
+        {children}
+        {hideArrow ? null : (
+          <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
+        )}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </>
   );
 });
 

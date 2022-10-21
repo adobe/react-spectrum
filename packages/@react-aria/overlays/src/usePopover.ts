@@ -19,6 +19,7 @@ import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import {RefObject, useContext} from 'react';
 import {useOverlay} from './useOverlay';
+import {usePreventScroll} from './usePreventScroll';
 
 export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'onClose' | 'targetRef' | 'overlayRef'> {
   /**
@@ -50,6 +51,8 @@ export interface PopoverAria {
   popoverProps: DOMAttributes,
   /** Props for the popover tip arrow if any. */
   arrowProps: DOMAttributes,
+  /** Props to apply to the underlay element, if any. */
+  underlayProps: DOMAttributes,
   /** Placement of the popover with respect to the trigger. */
   placement: PlacementAxis
 }
@@ -68,7 +71,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   } = props;
 
   let ctx = useContext(OverlayContext);
-  let {overlayProps} = useOverlay(
+  let {overlayProps, underlayProps} = useOverlay(
     {
       isOpen: state.isOpen,
       onClose: state.close,
@@ -86,6 +89,11 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     overlayRef: popoverRef,
     isOpen: state.isOpen
   });
+  
+  usePreventScroll({
+    // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
+    isDisabled: isNonModal || !placement
+  });
 
   useLayoutEffect(() => {
     if (state.isOpen && !isNonModal && popoverRef.current) {
@@ -96,6 +104,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   return {
     popoverProps: mergeProps(overlayProps, positionProps),
     arrowProps,
+    underlayProps,
     placement
   };
 }
