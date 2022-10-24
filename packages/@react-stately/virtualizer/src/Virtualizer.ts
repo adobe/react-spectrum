@@ -826,7 +826,7 @@ export class Virtualizer<T extends object, V, W> {
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
-      if (view.layoutInfo?.parentKey && !viewsByParentKey.has(view.layoutInfo.parentKey)) {
+      if (view.layoutInfo?.parentKey !== undefined && !viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
 
