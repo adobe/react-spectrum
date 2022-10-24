@@ -877,7 +877,7 @@ export class Virtualizer<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
-        if (cur?.key) {
+        if (cur?.key !== undefined) {
           let layoutInfo = this.layout.getLayoutInfo(cur.key);
           if (this._applyLayoutInfo(view, layoutInfo)) {
             updated = true;
