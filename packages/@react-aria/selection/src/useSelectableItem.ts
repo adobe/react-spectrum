@@ -302,7 +302,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction ? pressProps : {},
+      allowsSelection || hasPrimaryAction ? pressProps : {
+        onMouseDown: pressProps.onMouseDown,
+        onTouchStart: pressProps.onTouchStart,
+        onPointerDown: pressProps.onPointerDown
+      },
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture}
     ),
