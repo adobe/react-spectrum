@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {act, render, triggerPress, typeText} from '@react-spectrum/test-utils';
-import Filter from '@spectrum-icons/workflow/Filter';
+import Filter from '@spectrum-icons/workflow/Filter.js';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

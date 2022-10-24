@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium.js';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';

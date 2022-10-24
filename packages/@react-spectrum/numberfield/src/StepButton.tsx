@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {AriaButtonProps} from '@react-types/button';
-import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
-import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
+import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall.js';
+import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall.js';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
-import Remove from '@spectrum-icons/workflow/Remove';
+import Remove from '@spectrum-icons/workflow/Remove.js';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';

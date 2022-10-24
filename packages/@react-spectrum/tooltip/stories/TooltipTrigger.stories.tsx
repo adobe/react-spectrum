@@ -13,12 +13,12 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import Delete from '@spectrum-icons/workflow/Delete';
-import Edit from '@spectrum-icons/workflow/Edit';
+import Delete from '@spectrum-icons/workflow/Delete.js';
+import Edit from '@spectrum-icons/workflow/Edit.js';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
-import SaveTo from '@spectrum-icons/workflow/SaveTo';
+import SaveTo from '@spectrum-icons/workflow/SaveTo.js';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {Tooltip, TooltipTrigger} from '../src';
 

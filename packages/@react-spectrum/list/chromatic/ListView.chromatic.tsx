@@ -12,16 +12,16 @@
 
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {Content, View} from '@react-spectrum/view';
-import Delete from '@spectrum-icons/workflow/Delete';
-import Folder from '@spectrum-icons/illustrations/Folder';
+import Delete from '@spectrum-icons/workflow/Delete.js';
+import Folder from '@spectrum-icons/illustrations/Folder.js';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
-import Info from '@spectrum-icons/workflow/Info';
+import Info from '@spectrum-icons/workflow/Info.js';
 import {Item, ListView} from '../';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';

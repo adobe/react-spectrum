@@ -15,7 +15,7 @@ import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import Folder from '@spectrum-icons/workflow/Folder';
+import Folder from '@spectrum-icons/workflow/Folder.js';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import {ListDropTargetDelegate} from '@react-aria/dnd';

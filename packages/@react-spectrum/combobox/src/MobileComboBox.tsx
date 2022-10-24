@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
 import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium.js';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium.js';
 import {classNames, unwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';

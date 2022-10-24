@@ -11,12 +11,12 @@
  */
 
 import {ActionButton} from '@react-spectrum/button/src';
-import Copy from '@spectrum-icons/workflow/Copy';
+import Copy from '@spectrum-icons/workflow/Copy.js';
 import {Divider} from '../';
-import Edit from '@spectrum-icons/workflow/Edit';
-import Properties from '@spectrum-icons/workflow/Properties';
+import Edit from '@spectrum-icons/workflow/Edit.js';
+import Properties from '@spectrum-icons/workflow/Properties.js';
 import React from 'react';
-import Select from '@spectrum-icons/workflow/Select';
+import Select from '@spectrum-icons/workflow/Select.js';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Divider', module)

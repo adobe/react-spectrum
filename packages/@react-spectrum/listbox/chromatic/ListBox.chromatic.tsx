@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import AlignRight from '@spectrum-icons/workflow/AlignRight';
-import Blower from '@spectrum-icons/workflow/Blower';
-import Book from '@spectrum-icons/workflow/Book';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Cut from '@spectrum-icons/workflow/Cut';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter.js';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft.js';
+import AlignRight from '@spectrum-icons/workflow/AlignRight.js';
+import Blower from '@spectrum-icons/workflow/Blower.js';
+import Book from '@spectrum-icons/workflow/Book.js';
+import Copy from '@spectrum-icons/workflow/Copy.js';
+import Cut from '@spectrum-icons/workflow/Cut.js';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import {Meta, Story} from '@storybook/react';
-import Paste from '@spectrum-icons/workflow/Paste';
+import Paste from '@spectrum-icons/workflow/Paste.js';
 import React from 'react';
 import {SpectrumListBoxProps} from '@react-types/listbox';
 import {Text} from '@react-spectrum/text';

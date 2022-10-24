@@ -12,12 +12,12 @@
 
 import {ActionBar, ActionBarContainer, Item} from '../';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Delete from '@spectrum-icons/workflow/Delete';
-import Duplicate from '@spectrum-icons/workflow/Duplicate';
-import Edit from '@spectrum-icons/workflow/Edit';
+import Copy from '@spectrum-icons/workflow/Copy.js';
+import Delete from '@spectrum-icons/workflow/Delete.js';
+import Duplicate from '@spectrum-icons/workflow/Duplicate.js';
+import Edit from '@spectrum-icons/workflow/Edit.js';
 import {mergeProps} from '@react-aria/utils';
-import Move from '@spectrum-icons/workflow/Move';
+import Move from '@spectrum-icons/workflow/Move.js';
 import React, {useRef, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import {Text} from '@react-spectrum/text';

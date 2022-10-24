@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium.js';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';

@@ -14,7 +14,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';

@@ -12,7 +12,7 @@
 
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import Magnifier from '@spectrum-icons/ui/Magnifier';
+import Magnifier from '@spectrum-icons/ui/Magnifier.js';
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';

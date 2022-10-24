@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '../';
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';

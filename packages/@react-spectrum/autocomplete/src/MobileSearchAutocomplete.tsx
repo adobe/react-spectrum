@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
 import {AriaButtonProps} from '@react-types/button';
-import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium.js';
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
@@ -24,7 +24,7 @@ import {FocusScope, useFocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import Magnifier from '@spectrum-icons/ui/Magnifier';
+import Magnifier from '@spectrum-icons/ui/Magnifier.js';
 import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';

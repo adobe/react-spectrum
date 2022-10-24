@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import Bell from '@spectrum-icons/workflow/Bell';
+import Bell from '@spectrum-icons/workflow/Bell.js';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import React, {useState} from 'react';

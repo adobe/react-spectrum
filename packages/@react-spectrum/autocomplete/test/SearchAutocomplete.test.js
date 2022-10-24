@@ -14,7 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, screen, triggerPress, typeText, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
-import Filter from '@spectrum-icons/workflow/Filter';
+import Filter from '@spectrum-icons/workflow/Filter.js';
 import {Item, SearchAutocomplete, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium.js';
 import {
   classNames,
   dimensionValue,

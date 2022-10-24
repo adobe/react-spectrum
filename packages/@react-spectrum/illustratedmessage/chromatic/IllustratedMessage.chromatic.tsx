@@ -11,17 +11,17 @@
  */
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
-import Error from '@spectrum-icons/illustrations/src/Error';
+import Error from '@spectrum-icons/illustrations/src/Error.js';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import {Link} from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
-import NotFound from '@spectrum-icons/illustrations/src/NotFound';
+import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults.js';
+import NotFound from '@spectrum-icons/illustrations/src/NotFound.js';
 import React from 'react';
-import Timeout from '@spectrum-icons/illustrations/Timeout';
-import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
-import Unavailable from '@spectrum-icons/illustrations/Unavailable';
-import Upload from '@spectrum-icons/illustrations/Upload';
+import Timeout from '@spectrum-icons/illustrations/Timeout.js';
+import Unauthorized from '@spectrum-icons/illustrations/Unauthorized.js';
+import Unavailable from '@spectrum-icons/illustrations/Unavailable.js';
+import Upload from '@spectrum-icons/illustrations/Upload.js';
 
 type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;
 

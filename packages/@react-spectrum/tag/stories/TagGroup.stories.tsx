@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import Audio from '@spectrum-icons/workflow/Audio';
+import Audio from '@spectrum-icons/workflow/Audio.js';
 import {Icon} from '@react-spectrum/icon';
 import {Item, TagGroup} from '../src';
 import React from 'react';

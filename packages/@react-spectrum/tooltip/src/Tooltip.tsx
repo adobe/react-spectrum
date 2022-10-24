@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertSmall from '@spectrum-icons/ui/AlertSmall';
+import AlertSmall from '@spectrum-icons/ui/AlertSmall.js';
 import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import InfoSmall from '@spectrum-icons/ui/InfoSmall';
+import InfoSmall from '@spectrum-icons/ui/InfoSmall.js';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useImperativeHandle, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
-import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
+import SuccessSmall from '@spectrum-icons/ui/SuccessSmall.js';
 import {TooltipContext} from './context';
 import {useTooltip} from '@react-aria/tooltip';
 

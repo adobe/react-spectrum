@@ -14,7 +14,7 @@ import {act, fireEvent, render, screen, triggerPress, within} from '@react-spect
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import Edit from '@spectrum-icons/workflow/Edit';
+import Edit from '@spectrum-icons/workflow/Edit.js';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

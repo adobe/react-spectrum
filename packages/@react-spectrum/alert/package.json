@@ -6,10 +6,10 @@
   "private": true,
   "main": "dist/Alert.js",
   "exports": {
-    "import": "./dist/Alert.module.js",
+    "import": "./dist/Alert.module.mjs",
     "require": "./dist/Alert.js"
   },
-  "module": "dist/Alert.module.js",
+  "module": "dist/Alert.module.mjs",
   "types": "dist/Alert.d.ts",
   "source": "src/index.ts",
   "files": [

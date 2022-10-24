@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, typeText, waitFor} from '@react-spectrum/test-utils';
-import Checkmark from '@spectrum-icons/workflow/Checkmark';
+import Checkmark from '@spectrum-icons/workflow/Checkmark.js';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';

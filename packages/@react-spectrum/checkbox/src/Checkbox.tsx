@@ -11,9 +11,9 @@
  */
 
 import {CheckboxGroupContext} from './context';
-import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
+import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall.js';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import DashSmall from '@spectrum-icons/ui/DashSmall';
+import DashSmall from '@spectrum-icons/ui/DashSmall.js';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useContext, useRef} from 'react';

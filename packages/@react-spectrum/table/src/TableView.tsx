@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall.js';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium.js';
 import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';

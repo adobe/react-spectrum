@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium.js';
 import {
   classNames,
   ClearSlots,
@@ -26,7 +26,7 @@ import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, u
 import {FocusScope} from '@react-aria/focus';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
-import More from '@spectrum-icons/workflow/More';
+import More from '@spectrum-icons/workflow/More.js';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';

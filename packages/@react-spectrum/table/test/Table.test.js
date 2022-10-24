@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, typeText, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';

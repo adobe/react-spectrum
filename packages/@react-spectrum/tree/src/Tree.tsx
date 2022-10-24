@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium.js';
 import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';

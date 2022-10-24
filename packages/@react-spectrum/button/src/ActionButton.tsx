@@ -11,7 +11,7 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
+import CornerTriangle from '@spectrum-icons/ui/CornerTriangle.js';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';

@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
-import Delete from '@spectrum-icons/workflow/Delete';
+import Delete from '@spectrum-icons/workflow/Delete.js';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';

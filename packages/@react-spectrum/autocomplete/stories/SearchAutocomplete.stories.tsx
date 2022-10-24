@@ -12,7 +12,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import Filter from '@spectrum-icons/workflow/Filter';
+import Filter from '@spectrum-icons/workflow/Filter.js';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';

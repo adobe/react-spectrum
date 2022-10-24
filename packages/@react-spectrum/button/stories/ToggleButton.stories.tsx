@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import Add from '@spectrum-icons/workflow/Add';
+import Add from '@spectrum-icons/workflow/Add.js';
 import {Flex, Text, View} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';

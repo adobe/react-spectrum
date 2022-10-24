@@ -11,13 +11,13 @@
  */
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
-import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import AlignRight from '@spectrum-icons/workflow/AlignRight';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Cut from '@spectrum-icons/workflow/Cut';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter.js';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft.js';
+import AlignRight from '@spectrum-icons/workflow/AlignRight.js';
+import Copy from '@spectrum-icons/workflow/Copy.js';
+import Cut from '@spectrum-icons/workflow/Cut.js';
 import {Item, Picker, Section} from '../src';
-import Paste from '@spectrum-icons/workflow/Paste';
+import Paste from '@spectrum-icons/workflow/Paste.js';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {states} from './data';

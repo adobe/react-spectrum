@@ -28,6 +28,7 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
+      'rulesdir/iconImportExtensions': [ERROR],
       'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,

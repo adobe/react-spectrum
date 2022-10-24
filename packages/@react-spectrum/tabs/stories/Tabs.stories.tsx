@@ -12,11 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup, Flex, Heading, Text} from '@adobe/react-spectrum';
-import Bookmark from '@spectrum-icons/workflow/Bookmark';
+import Bookmark from '@spectrum-icons/workflow/Bookmark.js';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import Calendar from '@spectrum-icons/workflow/Calendar';
-import Dashboard from '@spectrum-icons/workflow/Dashboard';
+import Calendar from '@spectrum-icons/workflow/Calendar.js';
+import Dashboard from '@spectrum-icons/workflow/Dashboard.js';
 import {Item, TabList, TabPanels, Tabs} from '..';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';

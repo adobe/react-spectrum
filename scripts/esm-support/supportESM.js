@@ -7,9 +7,9 @@ const yargs = require('yargs');
 let argv = yargs
   .option('dryRun', {type: 'boolean'})
   .argv;
+let packagesDir = path.join(__dirname, '..', '..', 'packages');
 
-function run() {
-  let packagesDir = path.join(__dirname, '..', 'packages');
+function fixPkgJsons() {
   let packages = fg.sync(`${packagesDir}/**/package.json`, {
     ignore: ['**/node_modules/**', '**/dev/**', '**/build-tools/**']
   });
@@ -20,6 +20,9 @@ function run() {
       delete json.exports;
     }
     let main = json.main;
+    if (json.module && json.module.endsWith('.js')) {
+      json.module = json.module.replace(/\.js$/, '.mjs');
+    }
     let module = json.module;
     let newPackageJSON = {};
     for (let [field, value] of Object.entries(json)) {
@@ -43,6 +46,10 @@ function run() {
       fs.writeFileSync(packageJSON, `${pkg}\n`);
     }
   }
+}
+
+function run() {
+  fixPkgJsons();
 }
 
 run();

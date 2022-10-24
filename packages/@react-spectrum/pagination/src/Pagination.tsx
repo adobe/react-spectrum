@@ -11,8 +11,8 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium.js';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium.js';
 import {classNames} from '@react-spectrum/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';

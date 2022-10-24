@@ -11,7 +11,7 @@
  */
 
 import {Badge} from '../';
-import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
+import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle.js';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
 import {Text} from '@react-spectrum/text';

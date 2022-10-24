@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
-import Bell from '@spectrum-icons/workflow/Bell';
+import Bell from '@spectrum-icons/workflow/Bell.js';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

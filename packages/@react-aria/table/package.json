@@ -5,10 +5,10 @@
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "exports": {
-    "import": "./dist/module.js",
+    "import": "./dist/module.mjs",
     "require": "./dist/main.js"
   },
-  "module": "dist/module.js",
+  "module": "dist/module.mjs",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
