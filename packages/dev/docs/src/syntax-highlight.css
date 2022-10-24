@@ -27,13 +27,14 @@
 }
 
 .spectrum.dark {
-  --hljs-literal-color: var(--spectrum-global-color-orange-400);
-  --hljs-function-color: var(--spectrum-global-color-blue-700);
-  --hljs-attribute-color: var(--spectrum-global-color-blue-700);
-  --hljs-title-color: var(--spectrum-global-color-blue-700);
-  --hljs-keyword-color: var(--spectrum-global-color-magenta-700);
-  --hljs-string-color: var(--spectrum-global-color-green-700);
-  --hljs-section-color: var(--spectrum-global-color-red-700);
+  --hljs-literal-color: var(--spectrum-orange-800);
+  --hljs-function-color: var(--spectrum-blue-1000);
+  --hljs-attribute-color: var(--spectrum-blue-1000);
+  --hljs-title-color: var(--spectrum-blue-1000);
+  --hljs-keyword-color: var(--spectrum-magenta-900);
+  --hljs-string-color: var(--spectrum-green-1000);
+  --hljs-section-color: var(--spectrum-red-900);
+  --hljs-variable-color: var(--spectrum-magenta-900);
   --mark-background: rgba(38,128,235,0.1);
 }
 
@@ -213,6 +214,6 @@
   margin: 0 calc(var(--code-padding) * -1);
   padding: 0 var(--code-padding) 0 calc(var(--code-padding) - 2px);
   color: inherit;
-  --hljs-comment-color: var(--spectrum-global-color-gray-800);
-  --hljs-string-color: var(--spectrum-global-color-green-700);
+  --hljs-comment-color: var(--spectrum-gray-800);
+  --hljs-string-color: var(--spectrum-green-1000);
 }
