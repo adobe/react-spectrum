@@ -76,6 +76,8 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 
 ```css
 .react-aria-DatePicker {
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+
   & [role=group] {
     display: flex;
     width: fit-content;
@@ -109,22 +111,31 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 
   & [slot=errorMessage] {
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
+    color: var(--text-color-invalid);
   }
 }
 
 .react-aria-DateInput {
+  --field-border: var(--spectrum-global-color-gray-400);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-placeholder: var(--spectrum-global-color-gray-700);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+
   display: flex;
   padding: 4px 2.5rem 4px 8px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--field-border);
   border-radius: 6px;
-  background: var(--spectrum-global-color-gray-50);
+  background: var(--field-background);
   width: fit-content;
   min-width: 150px;
   
   &:focus-within {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
   }
 }
 
@@ -132,30 +143,31 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   padding: 0 2px;
   font-variant-numeric: tabular-nums;
   text-align: end;
+  color: var(--text-color);
 
   &[data-type=literal] {
     padding: 0;
   }
 
   &[data-placeholder] {
-    color: var(--spectrum-global-color-gray-700);
+    color: var(--text-color-placeholder);
     font-style: italic;
   }
 
   &:focus {
-    color: white;
-    background: slateblue;
+    color: var(--highlight-foreground);
+    background: var(--highlight-background);
     outline: none;
     border-radius: 4px;
     caret-color: transparent;
   }
 
   &[aria-invalid] {
-    color: var(--spectrum-global-color-red-600);
+    color: var(--text-color-invalid);
 
     &:focus {
-      background: var(--spectrum-global-color-static-red-600);
-      color: white;
+      background: var(--highlight-background-invalid);
+      color: var(--highlight-foreground);
     }
   }
 }
@@ -170,6 +182,20 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 }
 
 .react-aria-Calendar {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --button-background: var(--spectrum-global-color-gray-50);
+  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-border: var(--spectrum-global-color-gray-400);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --pressed-color: var(--spectrum-global-color-gray-200);
+  --unavailable-color: var(--spectrum-global-color-red-600);
+  --invalid-color: var(--spectrum-global-color-static-red-600);
+
+  color: var(--text-color);
+
   & header {
     display: flex;
     align-items: center;
@@ -183,8 +209,8 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
 
     & button {
-      background: var(--spectrum-global-color-gray-50);
-      border: 1px solid var(--spectrum-global-color-gray-400);
+      background: var(--button-background);
+      border: 1px solid var(--button-border);
       box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
       border-radius: 4px;
       appearance: none;
@@ -197,12 +223,12 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       outline: none;
 
       &[data-focus-visible] {
-        border-color: slateblue;
-        box-shadow: 0 0 0 1px slateblue;
+        border-color: var(--highlight-background);
+        box-shadow: 0 0 0 1px var(--highlight-background);
       }
 
       &[data-pressed] {
-        background: var(--spectrum-global-color-gray-100);
+        background: var(--button-backgound-pressed);
       }
     }
   }
@@ -226,36 +252,86 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
 
     &[data-pressed] {
-      background: var(--spectrum-global-color-gray-200);
+      background: var(--pressed-color);
     }
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      box-shadow: 0 0 0 2px var(--highlight-background);
     }
 
     &[data-selected] {
-      background: slateblue;
-      color: white;
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
     }
 
     &[data-disabled] {
-      color: var(--spectrum-global-color-gray-600); 
+      color: var(--text-color-disabled); 
     }
 
     &[data-unavailable] {
       text-decoration: line-through;
-      color: var(--spectrum-global-color-red-600);
+      color: var(--unavailable-color);
     }
 
     &[aria-invalid] {
-      background: var(--spectrum-global-color-static-red-600);
-      color: white;
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
     }
   }
 
   & [slot=errorMessage] {
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
+    color: var(--text-color-invalid);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-DatePicker {
+    --text-color-invalid: LinkText;
+
+    & button {
+      forced-color-adjust: none;
+
+      --focus-ring-color: Highlight;
+      background: ButtonFace;
+      color: ButtonText;
+      border: 1px solid ButtonBorder;
+
+      &[data-focus-visible] {
+        border-color: Highlight;
+        box-shadow: 0 0 0 1px Highlight;
+      }
+    }
+  }
+
+  .react-aria-DateInput {
+    forced-color-adjust: none;
+
+    --field-border: ButtonBorder;
+    --field-background: Field;
+    --text-color: FieldText;
+    --text-color-placeholder: FieldText;
+    --text-color-invalid: LinkText;
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --highlight-background-invalid: LinkText;
+  }
+
+  .react-aria-Calendar {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --button-border: ButtonBorder;
+    --button-background: ButtonFace;
+    --button-backgound-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --text-color-invalid: LinkText;
+    --unavailable-color: GrayText;
+    --invalid-color: LinkText;
+    --pressed-color: Canvas;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```

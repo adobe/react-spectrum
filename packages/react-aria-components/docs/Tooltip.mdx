@@ -149,6 +149,19 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
     box-shadow: 0 0 0 1px slateblue;
   }
 }
+
+@media (forced-colors: active) {
+  .react-aria-Tooltip {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+
+    & .react-aria-OverlayArrow svg {
+      fill: ButtonFace;
+      stroke: ButtonBorder;
+    }
+  }
+}
 ```
 
 </details>

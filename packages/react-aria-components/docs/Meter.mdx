@@ -58,12 +58,16 @@ import {Meter, Label} from 'react-aria-components';
 
 ```css
 .react-aria-Meter {
+  --bar-color: var(--spectrum-global-color-gray-400);
+  --text-color: var(--spectrum-alias-text-color);
+
   display: grid;
   grid-template-areas: "label value"
                        "bar bar";
   grid-template-columns: 1fr auto;
   gap: 4px;
   width: 250px;
+  color: var(--text-color);
 
   & .value {
     grid-area: value;
@@ -71,7 +75,7 @@ import {Meter, Label} from 'react-aria-components';
 
   & .bar {
     grid-area: bar;
-    background: var(--spectrum-global-color-gray-400);
+    background: var(--bar-color);
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -80,6 +84,19 @@ import {Meter, Label} from 'react-aria-components';
   & .fill {
     background: orange;
     height: 100%;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Meter {
+    forced-color-adjust: none;
+    --bar-color: ButtonFace;
+    --text-color: ButtonText;
+
+    & .bar {
+      border: 1px solid ButtonBorder;
+      box-sizing: border-box;
+    }
   }
 }
 ```

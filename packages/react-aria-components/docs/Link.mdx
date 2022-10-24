@@ -55,7 +55,12 @@ import {Link} from 'react-aria-components';
 
 ```css
 .react-aria-Link {
-  color: var(--spectrum-global-color-blue-600);
+  --focus-ring-color: slateblue;
+  --text-color: var(--spectrum-global-color-blue-600);
+  --text-color-pressed: var(--spectrum-global-color-blue-700);
+  --text-color-disabled: gray;
+
+  color: var(--text-color);
   font-size: 18px;
   transition: all 200ms;
   text-decoration: underline;
@@ -68,20 +73,29 @@ import {Link} from 'react-aria-components';
   }
 
   &[data-pressed] {
-    color: var(--spectrum-global-color-blue-700);
+    color: var(--text-color-pressed);
   }
 
   &[aria-disabled] {
     cursor: default;
-    color: gray;
+    color: var(--text-color-disabled);
   }
 
   &[data-focus-visible]:after {
     content: '';
     position: absolute;
-    inset: -1px -4px;
-    border-radius: 4px;
-    box-shadow: 0 0 0 2px slateblue;
+    inset: -3px -6px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Link {
+    --focus-ring-color: Highlight;
+    --text-color: LinkText;
+    --text-color-pressed: LinkText;
+    --text-color-disabled: GrayText;
   }
 }
 ```

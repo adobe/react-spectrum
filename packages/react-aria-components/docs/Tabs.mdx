@@ -68,6 +68,12 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
 
 ```css
 .react-aria-Tabs {
+  --highlight-color: slateblue;
+  --text-color: var(--spectrum-global-color-gray-700);
+  --text-color-hover: var(--spectrum-global-color-gray-800);
+  --text-color-selected: var(--spectrum-global-color-gray-900);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
   display: flex;
 
   &[data-orientation=horizontal] {
@@ -105,21 +111,24 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
   cursor: default;
   outline: none;
   position: relative;
-  color: var(--spectrum-global-color-gray-700);
+  color: var(--text-color);
   transition: color 200ms;
 
   &[data-hovered],
   &:focus {
-    color: var(--spectrum-global-color-gray-800);
+    color: var(--text-color-hover);
   }
 
   &[aria-selected=true] {
-    --border-color: slateblue;
-    color: var(--spectrum-global-color-gray-900);
+    --border-color: var(--highlight-color);
+    color: var(--text-color-selected);
   }
 
   &[aria-disabled] {
-    opacity: 0.5;
+    color: var(--text-color-disabled);
+    &[aria-selected=true] {
+      --border-color: var(--text-color-disabled);
+    }
   }
 
   &[data-focus-visible]:after {
@@ -127,7 +136,7 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
     position: absolute;
     inset: 4px;
     border-radius: 4px;
-    box-shadow: 0 0 0 2px slateblue;
+    border: 2px solid var(--highlight-color);
   }
 }
 
@@ -138,7 +147,20 @@ import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'react-aria-components';
   outline: none;
 
   &[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px slateblue;
+    box-shadow: inset 0 0 0 2px var(--highlight-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Tabs {
+    forced-color-adjust: none;
+    color: CanvasText;
+
+    --highlight-color: Highlight;
+    --text-color: ButtonText;
+    --text-color-hover: ButtonText;
+    --text-color-selected: ButtonText;
+    --text-color-disabled: GrayText;
   }
 }
 ```

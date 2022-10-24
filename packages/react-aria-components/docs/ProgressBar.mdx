@@ -58,6 +58,10 @@ import {ProgressBar, Label} from 'react-aria-components';
 
 ```css
 .react-aria-ProgressBar {
+  --bar-color: var(--spectrum-global-color-gray-400);
+  --circle-color: var(--bar-color);
+  --fill-color: slateblue;
+  
   display: grid;
   grid-template-areas: "label value"
                        "bar bar";
@@ -71,7 +75,7 @@ import {ProgressBar, Label} from 'react-aria-components';
 
   & .bar {
     grid-area: bar;
-    background: var(--spectrum-global-color-gray-400);
+    background: var(--bar-color);
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -79,7 +83,7 @@ import {ProgressBar, Label} from 'react-aria-components';
   }
 
   & .fill {
-    background: slateblue;
+    background: var(--fill-color);
     height: 100%;
   }
 
@@ -100,6 +104,19 @@ import {ProgressBar, Label} from 'react-aria-components';
 
   to {
     transform: translateX(250px);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ProgressBar {
+    --bar-color: ButtonFace;
+    --circle-color: ButtonBorder;
+    --fill-color: Highlight;
+
+    & .bar {
+      border: 1px solid ButtonBorder;
+      box-sizing: border-box;
+    }
   }
 }
 ```
@@ -201,12 +218,12 @@ let c = 2 * r * Math.PI;
 <ProgressBar aria-label="Loading…" value={60}>
   {({percentage}) => <>
     <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r} stroke="var(--spectrum-global-color-gray-400)" />
+      <circle cx={center} cy={center} r={r} stroke="var(--circle-color)" />
       <circle
         cx={center}
         cy={center}
         r={r}
-        stroke="slateblue"
+        stroke="var(--fill-color)"
         strokeDasharray={`${c} ${c}`}
         strokeDashoffset={c - percentage / 100 * c}
         strokeLinecap="round"

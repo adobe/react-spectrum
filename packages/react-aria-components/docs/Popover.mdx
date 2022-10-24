@@ -158,6 +158,18 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
     box-shadow: 0 0 0 1px slateblue;
   }
 }
+
+@media (forced-colors: active) {
+  .react-aria-Popover {
+    border-color: ButtonBorder;
+    background: Canvas;
+
+    & .react-aria-OverlayArrow svg {
+      fill: Canvas;
+      stroke: ButtonBorder;
+    }
+  }
+}
 ```
 
 </details>

@@ -86,14 +86,22 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 }
 
 .react-aria-Menu {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --separator-color: var(--spectrum-global-color-gray-500);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
   max-height: inherit;
   overflow: auto;
   padding: 2px;
   margin: 0;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   min-width: 150px;
   box-sizing: border-box;
 
@@ -109,7 +117,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 
   & [role=separator] {
     height: 1px;
-    background: var(--spectrum-global-color-gray-500);
+    background: var(--separator-color);
     margin: 2px 4px;
   }
 
@@ -119,7 +127,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
     border-radius: 6px;
     outline: none;
     cursor: default;
-    color: var(--spectrum-global-color-gray-800);
+    color: var(--text-color);
     font-size: 1.072rem;
     position: relative;
     display: grid;
@@ -129,12 +137,12 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
     column-gap: 20px;
 
     &[data-focused] {
-      background: slateblue;
-      color: white;
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
     }
 
     &[aria-disabled] {
-      opacity: 0.4;
+      color: var(--text-color-disabled);
     }
 
     & [slot=label] {
@@ -171,6 +179,20 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
         transform: scale(0.7)
       }
     }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Menu {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+    --separator-color: ButtonBorder;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -428,13 +450,20 @@ function MyItem(props) {
   border-radius: 6px;
   outline: none;
   cursor: default;
-  color: var(--spectrum-global-color-gray-800);
+  color: var(--text-color);
   font-size: 1.072rem;
   position: relative;
 
   &.focused {
     background: #e70073;
     color: white;
+  }
+}
+
+@media (forced-colors: active) {
+  .my-item.focused {
+    background: Highlight;
+    color: HighlightText;
   }
 }
 ```

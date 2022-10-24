@@ -54,16 +54,26 @@ import {Switch} from 'react-aria-components';
 
 ```css
 .react-aria-Switch {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --track-color: var(--spectrum-alias-background-color-default);
+  --indicator-color: var(--selected-color);
+  --indicator-color-pressed: var(--selected-color-pressed);
+
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 16px;
+  color: var(--label-color);
 
   & .indicator {
     width: 28px;
     height: 16px;
-    border: 2px solid gray;
-    background: var(--spectrum-global-color-gray-50);
+    border: 2px solid var(--deselected-color);
+    background: var(--track-color);
     border-radius: 16px;
     transition: all 200ms;
 
@@ -73,45 +83,69 @@ import {Switch} from 'react-aria-components';
       margin: 2px;
       width: 12px;
       height: 12px;
-      background: slateblue;
+      background: var(--indicator-color);
       border-radius: 16px;
       transition: all 200ms;
     }
   }
 
   &[data-pressed] .indicator {
-    border-color: dimgray;
+    border-color: var(--deselected-color-pressed);
 
     &:before {
-      background: #4837b5;
+      background: var(--indicator-color-pressed);
     }
   }
 
   &[data-selected] {
     & .indicator {
-      border-color: slateblue;
-      background: slateblue;
+      border-color: var(--selected-color);
+      background: var(--selected-color);
 
       &:before {
-        background: var(--spectrum-alias-background-color-default);
+        background: var(--track-color);
         transform: translateX(100%);
       }
     }
 
     &[data-pressed] {
       & .indicator {
-        border-color: #4837b5;
-        background: #4837b5;
+        border-color: var(--selected-color-pressed);
+        background: var(--selected-color-pressed);
       }
     }
   }
 
   &[data-focus-visible] .indicator {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px slateblue;
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
   }
 
   &[data-disabled] {
     opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Switch {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --indicator-color: ButtonText;
+    --indicator-color-pressed: ButtonText;
+    --track-color: ButtonFace;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --spectrum-alias-background-color-default: Canvas;
+
+    &[data-disabled] {
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
+      --indicator-color: GrayText;
+    }
   }
 }
 ```

@@ -78,7 +78,12 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
 }
 
 .react-aria-Link {
-  color: var(--spectrum-global-color-gray-800);
+  --focus-ring-color: slateblue;
+  --text-color: var(--spectrum-global-color-gray-800);
+  --text-color-current: var(--spectrum-global-color-gray-900);
+  --text-color-disabled: gray;
+
+  color: var(--text-color);
   outline: none;
   position: relative;
   text-decoration: none;
@@ -89,24 +94,33 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
   }
 
   &[aria-current] {
-    color: var(--spectrum-global-color-gray-900);
+    color: var(--text-color-current);
     font-weight: bold;
   }
 
   &[data-focus-visible]:after {
     content: '';
     position: absolute;
-    inset: 0 -2px;
-    border-radius: 4px;
-    box-shadow: 0 0 0 2px slateblue;
+    inset: -2px -4px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
   }
 
   &[aria-disabled] {
     cursor: default;
 
     &:not([aria-current]) {
-      opacity: 0.5;
+      color: var(--text-color-disabled);
     }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Link {
+    --focus-ring-color: Highlight;
+    --text-color: LinkText;
+    --text-color-current: CanvasText;
+    --text-color-disabled: GrayText;
   }
 }
 ```

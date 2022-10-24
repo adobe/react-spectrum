@@ -58,6 +58,14 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
 ```css
 .react-aria-SearchField {
+  --field-border: var(--spectrum-alias-border-color);
+  --field-border-disabled: var(--spectrum-alias-border-color-disabled);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+  --invalid-color: var(--spectrum-global-color-red-600);
+
   display: grid;
   grid-template-areas: "label label"
                        "input button"
@@ -70,9 +78,9 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     grid-area: input;
     padding: 4px 24px 4px 4px;
     margin: 0;
-    border: 1px solid var(--spectrum-global-color-gray-400);
+    border: 1px solid var(--field-border);
     border-radius: 6px;
-    background: var(--spectrum-global-color-gray-50);
+    background: var(--field-background);
     font-size: 16px;
 
     &::-webkit-search-cancel-button,
@@ -82,12 +90,13 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
     &:focus {
       outline: none;
-      border-color: slateblue;
-      box-shadow: 0 0 0 1px slateblue;
+      border-color: var(--focus-ring-color);
+      box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
 
     &:disabled {
-      opacity: 0.4;
+      border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
     }
   }
 
@@ -99,7 +108,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
   & [slot=errorMessage] {
     grid-area: help;
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
+    color: var(--invalid-color);
   }
 
   & button {
@@ -124,6 +133,24 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
   &[data-empty] button {
     display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-SearchField {
+    --field-border: ButtonBorder;
+    --field-border-disabled: GrayText;
+    --field-background: Field;
+    --text-color: FieldText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+    --invalid-color: LinkText;
+
+    & button {
+      &:disabled {
+        opacity: 1;
+      }
+    }
   }
 }
 ```

@@ -57,12 +57,19 @@ import {ListBox, Item} from 'react-aria-components';
 
 ```css
 .react-aria-ListBox {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
   max-height: inherit;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   min-width: var(--button-width);
   max-width: 250px;
@@ -85,27 +92,27 @@ import {ListBox, Item} from 'react-aria-components';
     border-radius: 6px;
     outline: none;
     cursor: default;
-    color: var(--spectrum-global-color-gray-800);
+    color: var(--text-color);
     font-size: 1.072rem;
     position: relative;
     display: flex;
     flex-direction: column;
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px slateblue;
+      box-shadow: inset 0 0 0 2px var(--highlight-background);
     }
 
     &[aria-selected=true] {
-      background: slateblue;
-      color: white;
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px slateblue, inset 0 0 0 4px white;
+        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
       }
     }
 
     &[aria-disabled] {
-      opacity: 0.4;
+      color: var(--text-color-disabled);
     }
 
     & [slot=label] {
@@ -115,6 +122,20 @@ import {ListBox, Item} from 'react-aria-components';
     & [slot=description] {
       font-size: small;
     }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ListBox {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+    --separator-color: ButtonBorder;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -295,6 +316,8 @@ function MyItem(props) {
 }
 
 .my-item {
+  --highlight: #e70073;
+
   margin: 2px;
   padding: 4px 8px 4px 8px;
   border-radius: 6px;
@@ -304,12 +327,29 @@ function MyItem(props) {
   font-size: 1.072rem;
 
   &.selected {
-    background: #e70073;
+    background: var(--highlight);
     color: white;
   }
 
   &.focused {
-    box-shadow: 0 0 0 2px var(--page-background), 0 0 0 4px #e70073;
+    box-shadow: 0 0 0 2px var(--page-background), 0 0 0 4px var(--highlight);
+  }
+}
+
+@media (forced-colors: active) {
+  .my-listbox {
+    forced-color-adjust: none;
+    border-color: ButtonBorder;
+    background: Canvas;
+  }
+
+  .my-item {
+    color: ButtonText;
+    --highlight: Highlight;
+
+    &.selected {
+      color: HighlightText;
+    }
   }
 }
 ```

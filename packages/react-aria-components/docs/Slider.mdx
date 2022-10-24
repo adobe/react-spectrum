@@ -55,11 +55,18 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 
 ```css
 .react-aria-Slider {
+  --label-color: var(--spectrum-alias-text-color);
+  --track-color: gray;
+  --thumb-color: slateblue;
+  --thumb-color-dragging: lch(from slateblue calc(l - 10%) c h);
+  --focus-ring-color: slateblue;
+
   display: grid;
   grid-template-areas: "label output"
                        "track track";
   grid-template-columns: 1fr auto;
   max-width: 300px;
+  color: var(--label-color);
 
   & label {
     grid-area: label;
@@ -78,7 +85,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       content: '';
       display: block;
       position: absolute;
-      background: gray;
+      background: var(--track-color);
     }
   }
 
@@ -86,15 +93,15 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: slateblue;
+    background: var(--thumb-color);
     border: 2px solid var(--spectrum-alias-background-color-default);
 
     &[data-dragging] {
-      background: #4837b5;
+      background: var(--thumb-color-dragging);
     }
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      box-shadow: 0 0 0 2px var(--focus-ring-color);
     }
   }
 
@@ -148,6 +155,28 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
   &[data-disabled] {
     & .react-aria-SliderTrack {
       opacity: 0.4;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Slider {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --track-color: ButtonBorder;
+    --thumb-color: ButtonBorder;
+    --thumb-color-dragging: Highlight;
+    --focus-ring-color: Highlight;
+    --spectrum-alias-background-color-default: Canvas;
+
+    &[data-disabled] {
+      --track-color: GrayText;
+      --thumb-color: GrayText;
+      --label-color: GrayText;
+      & .react-aria-SliderTrack {
+        opacity: 1;
+      }
     }
   }
 }

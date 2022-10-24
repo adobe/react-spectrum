@@ -77,10 +77,20 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 }
 
 .react-aria-Radio {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --background-color: var(--spectrum-global-color-gray-50);
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --invalid-color: var(--spectrum-global-color-static-red-600);
+  --invalid-color-pressed: var(--spectrum-global-color-static-red-700);
+
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 16px;
+  color: var(--label-color);
 
   &:before {
     content: '';
@@ -88,37 +98,66 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     width: 18px;
     height: 18px;
     box-sizing: border-box;
-    border: 2px solid gray;
-    background: var(--spectrum-global-color-gray-50);
+    border: 2px solid var(--deselected-color);
+    background: var(--background-color);
     border-radius: 18px;
     transition: all 200ms;
   }
 
   &[data-pressed]:before {
-    border-color: dimgray;
+    border-color: var(--deselected-color-pressed);
   }
 
   &[data-selected] {
     &:before {
-      border-color: slateblue;
+      border-color: var(--selected-color);
       border-width: 6px;
     }
 
     &[data-pressed]:before {
-      border-color: #4837b5;
+      border-color: var(--selected-color-pressed);
     }
   }
 
-  &[data-validation-state=invalid]:before {
-    border-color: var(--spectrum-global-color-static-red-600);
+  &[data-validation-state=invalid] {
+    &:before {
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed]:before {
+      border-color: var(--invalid-color-pressed);
+    }
   }
 
   &[data-focus-visible]:before {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px slateblue;
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
   }
 
   &[data-disabled] {
     opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Radio {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --background-color: HighlightText;
+    --invalid-color: LinkText;
+    --invalid-color-pressed: LinkText;
+    --spectrum-alias-background-color-default: Canvas;
+
+    &[data-disabled] {
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
+    }
   }
 }
 ```

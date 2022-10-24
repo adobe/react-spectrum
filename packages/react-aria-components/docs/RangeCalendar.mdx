@@ -59,7 +59,20 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
 
 ```css
 .react-aria-RangeCalendar {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --button-background: var(--spectrum-global-color-gray-50);
+  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-border: var(--spectrum-global-color-gray-400);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --pressed-color: var(--spectrum-global-color-gray-200);
+  --unavailable-color: var(--spectrum-global-color-red-600);
+  --invalid-color: var(--spectrum-global-color-static-red-600);
+
   width: fit-content;
+  color: var(--text-color);
 
   & header {
     display: flex;
@@ -74,8 +87,8 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
     }
 
     & button {
-      background: var(--spectrum-global-color-gray-50);
-      border: 1px solid var(--spectrum-global-color-gray-400);
+      background: var(--button-background);
+      border: 1px solid var(--button-border);
       box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
       border-radius: 4px;
       appearance: none;
@@ -88,12 +101,12 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
       outline: none;
 
       &[data-focus-visible] {
-        border-color: slateblue;
-        box-shadow: 0 0 0 1px slateblue;
+        border-color: var(--highlight-background);
+        box-shadow: 0 0 0 1px var(--highlight-background);
       }
 
       &[data-pressed] {
-        background: var(--spectrum-global-color-gray-100);
+        background: var(--button-background-pressed);
       }
     }
   }
@@ -120,20 +133,20 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
     }
 
     &[data-pressed] {
-      background: var(--spectrum-global-color-gray-200);
+      background: var(--pressed-color);
     }
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px slateblue;
+      box-shadow: inset 0 0 0 2px var(--highlight-background);
     }
 
     &[data-selected] {
-      background: slateblue;
-      color: white;
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
       border-radius: 0;
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 1px slateblue, inset 0 0 0 3px white;
+        box-shadow: inset 0 0 0 1px var(--highlight-background), inset 0 0 0 3px var(--highlight-foreground);
       }
     }
 
@@ -148,23 +161,41 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
     }
 
     &[data-disabled] {
-      color: var(--spectrum-global-color-gray-600); 
+      color: var(--text-color-disabled); 
     }
 
     &[data-unavailable] {
       text-decoration: line-through;
-      color: var(--spectrum-global-color-red-600);
+      color: var(--unavailable-color);
     }
 
     &[aria-invalid] {
-      background: var(--spectrum-global-color-static-red-600);
-      color: white;
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
     }
   }
 
   & [slot=errorMessage] {
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
+    color: var(--text-color-invalid);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-RangeCalendar {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --button-border: ButtonBorder;
+    --button-background: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --text-color-invalid: LinkText;
+    --unavailable-color: GrayText;
+    --invalid-color: LinkText;
+    --pressed-color: Canvas;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
