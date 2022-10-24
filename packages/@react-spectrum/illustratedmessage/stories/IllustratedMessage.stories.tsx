@@ -13,7 +13,7 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
-import NotFound from '@spectrum-icons/illustrations/src/NotFound.js';
+import NotFound from '@spectrum-icons/illustrations/NotFound.js';
 import React from 'react';
 
 type IllustratedMessageStory = ComponentStoryObj<typeof IllustratedMessage>;

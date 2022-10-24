@@ -206,6 +206,20 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+
+  test-esm:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: |
+            make build
+            yarn lerna run prepublishOnly
+            node --loader ./scripts/esm-support/loader.mjs ./scripts/testESM.mjs
+
   lint:
     executor: rsp
     steps:
@@ -449,6 +463,9 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-esm:
+          requires:
+            - install
       - lint:
           requires:
             - install
@@ -504,6 +521,7 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
+            - test-esm
             - storybook
             - storybook-16
             - storybook-17

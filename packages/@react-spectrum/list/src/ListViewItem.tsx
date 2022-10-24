@@ -13,7 +13,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium.js';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium.js';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
-import CSSTransition from 'react-transition-group';
+import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
