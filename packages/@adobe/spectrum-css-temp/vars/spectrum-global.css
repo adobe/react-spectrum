@@ -635,14 +635,16 @@
   --spectrum-actionbutton-static-black-border-color-hover: rgba(0, 0, 0, 0.55);
   --spectrum-actionbutton-static-black-border-color-key-focus: rgba(0, 0, 0, 0.55);
   --spectrum-actionbutton-static-black-border-color-down: rgba(0, 0, 0, 0.7);
-  --spectrum-actionbutton-static-black-border-color-disabled: rgba(0, 0, 0, 0.1);
+  --spectrum-actionbutton-static-black-border-color-disabled: rgba(0, 0, 0, 0.25);
+  --spectrum-actionbutton-static-black-border-color-selected-disabled: rgba(0, 0, 0, 0.1);
   --spectrum-actionbutton-static-black-background-color: transparent;
 
   --spectrum-actionbutton-static-white-border-color: rgba(255, 255, 255, 0.4);
   --spectrum-actionbutton-static-white-border-color-hover: rgba(255, 255, 255, 0.55);
   --spectrum-actionbutton-static-white-border-color-key-focus: rgba(255, 255, 255, 0.55);
   --spectrum-actionbutton-static-white-border-color-down: rgba(255, 255, 255, 0.7);
-  --spectrum-actionbutton-static-white-border-color-disabled: rgba(255, 255, 255, 0.1);
+  --spectrum-actionbutton-static-white-border-color-disabled: rgba(255, 255, 255, 0.25);
+  --spectrum-actionbutton-static-white-border-color-selected-disabled: rgba(255, 255, 255, 0.1);
   --spectrum-actionbutton-static-white-background-color: transparent;
 
   --spectrum-combobox-fieldbutton-inset: 0;
@@ -650,8 +652,6 @@
   --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
 
   --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
-
-  --spectrum-datepicker-segment-background-color-focus: var(--spectrum-global-color-static-blue-600);
 
   --spectrum-tooltip-background-color: var(--spectrum-neutral-subdued-background-color-default);
 }

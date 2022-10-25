@@ -605,6 +605,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-border-color-active: var(--spectrum-actionbutton-static-white-border-color-down);
   --spectrum-actionbutton-static-border-color-focus: var(--spectrum-actionbutton-static-white-border-color-key-focus);
   --spectrum-actionbutton-static-border-disabled: var(--spectrum-actionbutton-static-white-border-color-disabled);
+  --spectrum-actionbutton-static-border-color-selected-disabled: var(--spectrum-actionbutton-static-white-border-color-selected-disabled);
   --spectrum-actionbutton-static-color: white;
   --spectrum-actionbutton-static-color-selected: black; /* becomes the background of the parent element due to mix-blend-mode */
   --spectrum-actionbutton-static-color-disabled: rgba(255, 255, 255, 0.55);
@@ -632,6 +633,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-border-color-active: var(--spectrum-actionbutton-static-black-border-color-down);
   --spectrum-actionbutton-static-border-color-focus: var(--spectrum-actionbutton-static-black-border-color-key-focus);
   --spectrum-actionbutton-static-border-disabled: var(--spectrum-actionbutton-static-black-border-color-disabled);
+  --spectrum-actionbutton-static-border-color-selected-disabled: var(--spectrum-actionbutton-static-black-border-color-selected-disabled);
   --spectrum-actionbutton-static-color: black;
   --spectrum-actionbutton-static-color-selected: white; /* becomes the background of the parent element due to mix-blend-mode */
   --spectrum-actionbutton-static-color-disabled: rgba(0, 0, 0, 0.55);
@@ -750,7 +752,7 @@ governing permissions and limitations under the License.
     &:disabled,
     &.is-disabled {
       background-color: var(--spectrum-actionbutton-static-background-color-selected-disabled);
-      border-color: var(--spectrum-actionbutton-static-background-color-selected-disabled);
+      border-color: var(--spectrum-actionbutton-static-border-color-selected-disabled);
       color: var(--spectrum-actionbutton-static-color-disabled);
 
       .spectrum-Icon {

@@ -56,10 +56,10 @@
   --spectrum-actionbutton-background-color-disabled: var(--spectrum-global-color-gray-200);
   --spectrum-actionbutton-border-color-disabled: var(--spectrum-global-color-gray-200);
 
-  --spectrum-actionbutton-background-color-selected: var(--spectrum-global-color-gray-800);
-  --spectrum-actionbutton-background-color-selected-hover: var(--spectrum-global-color-gray-900);
-  --spectrum-actionbutton-background-color-selected-key-focus: var(--spectrum-global-color-gray-900);
-  --spectrum-actionbutton-background-color-selected-down: var(--spectrum-global-color-gray-900);
+  --spectrum-actionbutton-background-color-selected: var(--spectrum-neutral-background-color-default);
+  --spectrum-actionbutton-background-color-selected-hover: var(--spectrum-neutral-background-color-hover);
+  --spectrum-actionbutton-background-color-selected-key-focus: var(--spectrum-neutral-background-color-key-focus);
+  --spectrum-actionbutton-background-color-selected-down: var(--spectrum-neutral-background-color-down);
 
   --spectrum-actionbutton-border-color: var(--spectrum-actionbutton-background-color);
   --spectrum-actionbutton-border-color-hover: var(--spectrum-actionbutton-background-color-hover);
@@ -78,6 +78,7 @@
   --spectrum-actionbutton-static-black-border-color-key-focus: transparent;
   --spectrum-actionbutton-static-black-border-color-down: transparent;
   --spectrum-actionbutton-static-black-border-color-disabled: transparent;
+  --spectrum-actionbutton-static-black-border-color-selected-disabled: transparent;
   --spectrum-actionbutton-static-black-background-color: rgba(0, 0, 0, 0.1);
 
   --spectrum-actionbutton-static-white-border-color: transparent;
@@ -85,6 +86,7 @@
   --spectrum-actionbutton-static-white-border-color-key-focus: transparent;
   --spectrum-actionbutton-static-white-border-color-down: transparent;
   --spectrum-actionbutton-static-white-border-color-disabled: transparent;
+  --spectrum-actionbutton-static-white-border-color-selected-disabled: transparent;
   --spectrum-actionbutton-static-white-background-color: rgba(255, 255, 255, 0.1);
 
   --spectrum-fieldbutton-background-color: var(--spectrum-actionbutton-background-color);
@@ -150,7 +152,6 @@
   --spectrum-popover-border-size: 0; /* TODO: is this for all popovers or just menu/picker/combobox? */
   --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
-  --spectrum-datepicker-segment-background-color-focus: var(--spectrum-global-color-static-indigo-600);
 
   --spectrum-tooltip-background-color: var(--spectrum-neutral-background-color-default);
 }
