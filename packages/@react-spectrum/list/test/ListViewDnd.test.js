@@ -228,6 +228,74 @@ describe('ListView', function () {
         });
       });
 
+      it('should allow drag and drop of a single row, selectionMode="none"', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView listViewProps={{selectionMode: 'none'}} />
+        );
+
+        let droppable = getByText('Drop here');
+        let row = getAllByRole('row')[0];
+        expect(row).toHaveAttribute('draggable', 'true');
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Adobe Photoshop')]);
+
+        act(() => jest.runAllTimers());
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set('a'),
+          x: 0,
+          y: 0
+        });
+
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragMove).toHaveBeenCalledTimes(1);
+        expect(onDragMove).toHaveBeenCalledWith({
+          type: 'dragmove',
+          keys: new Set('a'),
+          x: 1,
+          y: 1
+        });
+
+        fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+        fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+        act(() => jest.runAllTimers());
+        expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledWith({
+          type: 'drop',
+          x: 1,
+          y: 1,
+          dropOperation: 'move',
+          items: [
+            {
+              kind: 'text',
+              types: new Set(['text/plain']),
+              getText: expect.any(Function)
+            }
+          ]
+        });
+
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set('a'),
+          x: 1,
+          y: 1,
+          dropOperation: 'move',
+          isInternal: false
+        });
+      });
+
       it('should allow drag and drop of multiple rows', async function () {
         let {getAllByRole, getByText} = render(
           <DraggableListView />
@@ -1719,6 +1787,52 @@ describe('ListView', function () {
       it('should allow drag and drop of a single row', async function () {
         let {getAllByRole, getByText} = render(
           <DraggableListView />
+        );
+
+        let droppable = getByText('Drop here');
+        let row = getAllByRole('row')[0];
+        let cell = within(row).getByRole('gridcell');
+        expect(cell).toHaveTextContent('Adobe Photoshop');
+        expect(row).toHaveAttribute('draggable', 'true');
+
+        userEvent.tab();
+        let draghandle = within(cell).getAllByRole('button')[0];
+        expect(draghandle).toBeTruthy();
+        expect(draghandle).toHaveAttribute('draggable', 'true');
+
+        fireEvent.keyDown(draghandle, {key: 'Enter'});
+        fireEvent.keyUp(draghandle, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          keys: new Set('a'),
+          x: 50,
+          y: 25
+        });
+
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(droppable);
+        fireEvent.keyDown(droppable, {key: 'Enter'});
+        fireEvent.keyUp(droppable, {key: 'Enter'});
+
+        expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Adobe Photoshop');
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          keys: new Set('a'),
+          x: 50,
+          y: 25,
+          dropOperation: 'move',
+          isInternal: false
+        });
+      });
+
+      it('should allow drag and drop of a single row, selectionMode="none"', async function () {
+        let {getAllByRole, getByText} = render(
+          <DraggableListView listViewProps={{selectionMode: 'none'}} />
         );
 
         let droppable = getByText('Drop here');
