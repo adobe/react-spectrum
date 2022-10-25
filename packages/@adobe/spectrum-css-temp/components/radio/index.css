@@ -29,10 +29,10 @@ governing permissions and limitations under the License.
 
   --spectrum-radio-emphasized-circle-border-color: var(--spectrum-alias-toggle-color-default);
   --spectrum-radio-emphasized-circle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
-  --spectrum-radio-emphasized-circle-border-color-key-focus: var(--spectrum-alias-toggle-border-key-focus);
+  --spectrum-radio-emphasized-circle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
   --spectrum-radio-quiet-circle-border-color-selected: var(--spectrum-alias-toggle-color-selected);
   --spectrum-radio-quiet-circle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
-  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(--spectrum-alias-toggle-border-selected-key-focus);
+  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
 
   --spectrum-radio-emphasized-circle-border-color-selected: var(--spectrum-accent-color-900);
   --spectrum-radio-emphasized-circle-border-color-selected-hover: var(--spectrum-accent-color-1000);
