@@ -137,7 +137,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     for (let i = colIndex; i < colIndex + colspan; i++) {
       let column = this.collection.columns[i];
-      if (column?.key !== undefined) {
+      if (column?.key != null) {
         width += this.getColumnWidth(column.key);
       }
     }
