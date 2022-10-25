@@ -292,7 +292,11 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
                 'is-quiet': isQuiet,
                 'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
                 'spectrum-Search--valid': validationState === 'valid' && !isDisabled
-              }
+              },
+              classNames(
+                styles,
+                'spectrum-InputGroup-field'
+              )
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
@@ -302,7 +306,8 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
+          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton}
+          disableFocusRing />
       </div>
     </FocusRing>
   );
