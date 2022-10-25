@@ -452,6 +452,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-key-focus));
+    border-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-border-color-hover));
     color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-text-color-key-focus));
 
     .spectrum-Icon {
@@ -553,6 +554,7 @@ governing permissions and limitations under the License.
 
     &:focus-ring {
       background-color: xvar(--spectrum-high-contrast-highlight, var(--spectrum-actionbutton-emphasized-background-color-selected-key-focus));
+      border-color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-emphasized-border-color-selected-hover));
       color: xvar(--spectrum-high-contrast-highlight-text, var(--spectrum-actionbutton-emphasized-text-color-selected-key-focus));
 
       .spectrum-Icon {
