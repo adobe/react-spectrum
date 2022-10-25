@@ -27,7 +27,7 @@ function fixPkgJsons() {
     let newPackageJSON = {};
     for (let [field, value] of Object.entries(json)) {
       newPackageJSON[field] = value;
-      if (field === 'main' && module) {
+      if (field === 'module' && module) {
         newPackageJSON.exports = {};
         if (module) {
           newPackageJSON.exports.import = `./${module}`;

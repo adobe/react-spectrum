@@ -4,11 +4,11 @@
   "description": "Slider",
   "license": "Apache-2.0",
   "main": "dist/main.js",
+  "module": "dist/module.mjs",
   "exports": {
     "import": "./dist/module.mjs",
     "require": "./dist/main.js"
   },
-  "module": "dist/module.mjs",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
