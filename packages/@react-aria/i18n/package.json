@@ -50,7 +50,6 @@
     "@internationalized/message": "^3.0.9",
     "@internationalized/number": "^3.1.1",
     "@internationalized/string": "^3.0.0",
-    "@react-aria/i18n": "^3.6.1",
     "@react-aria/ssr": "^3.3.0",
     "@react-aria/utils": "^3.14.0",
     "@react-types/shared": "^3.15.0"
