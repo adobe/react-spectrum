@@ -49,7 +49,7 @@ module.exports = {
         return;
       }
 
-      if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName)) {
+      if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName) && pkgName !== pkg.name) {
         context.report({
           node,
           message: `Missing dependency on ${pkgName}.`,
