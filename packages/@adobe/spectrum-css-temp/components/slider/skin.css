@@ -18,7 +18,6 @@ governing permissions and limitations under the License.
   --spectrum-slider-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
     /* todo: remove when fixed */
   --spectrum-slider-handle-focus-ring-color-key-focus: var(--spectrum-alias-focus-color);
-  --spectrum-slider-track-color: var(--spectrum-global-color-gray-400);
 }
 
 .spectrum-Slider {
