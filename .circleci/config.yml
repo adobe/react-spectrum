@@ -218,7 +218,7 @@ jobs:
           command: |
             make build
             yarn lerna run prepublishOnly
-            node --loader ./scripts/esm-support/loader.mjs ./scripts/testESM.mjs
+            node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
     executor: rsp
