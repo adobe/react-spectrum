@@ -865,7 +865,7 @@ export class Virtualizer<T extends object, V, W> {
     // Apply layout infos to visible views
     for (let view of this._visibleViews.values()) {
       let cur = view.layoutInfo;
-      if (cur.key) {
+      if (cur.key != null) {
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
