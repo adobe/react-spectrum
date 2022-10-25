@@ -40,7 +40,10 @@ governing permissions and limitations under the License.
 
   .spectrum-FieldButton {
     padding: var(--spectrum-combobox-fieldbutton-inset);
-    border-radius: var(--spectrum-combobox-fieldbutton-border-radius);
+    border-start-start-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
+    border-end-start-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
+    border-start-end-radius: var(--spectrum-combobox-fieldbutton-end-border-radius);
+    border-end-end-radius: var(--spectrum-combobox-fieldbutton-end-border-radius);
     background-clip: content-box;
     inline-size: var(--spectrum-combobox-button-width);
     flex-shrink: 0;

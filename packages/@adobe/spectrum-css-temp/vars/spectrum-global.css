@@ -650,6 +650,8 @@
   --spectrum-combobox-fieldbutton-inset: 0;
   --spectrum-combobox-fieldbutton-border-left-width: var(--spectrum-alias-input-border-size);
   --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+  --spectrum-combobox-fieldbutton-start-border-radius: 0;
+  --spectrum-combobox-fieldbutton-end-border-radius: var(--spectrum-alias-border-radius-regular);
 
   --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
 

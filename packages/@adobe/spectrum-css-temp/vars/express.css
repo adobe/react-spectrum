@@ -102,7 +102,8 @@
   --spectrum-combobox-fieldbutton-inset: var(--spectrum-global-dimension-size-75);
   --spectrum-combobox-fieldbutton-border-left-width: 0;
   --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-alias-border-radius-regular);
-  --spectrum-combobox-fieldbutton-border-radius: calc(var(--spectrum-alias-border-radius-regular) + var(--spectrum-alias-input-border-size));
+  --spectrum-combobox-fieldbutton-start-border-radius: calc(var(--spectrum-alias-border-radius-regular) + var(--spectrum-alias-input-border-size));
+  --spectrum-combobox-fieldbutton-end-border-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
 
   --spectrum-search-border-radius: var(--spectrum-global-dimension-size-300);
   --spectrum-search-clear-button-padding: var(--spectrum-global-dimension-size-50);
