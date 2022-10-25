@@ -299,16 +299,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
-  let defaultPressProps = shouldSelectOnPressUp ? {
-    onMouseDown: pressProps.onMouseDown,
-    onTouchStart: pressProps.onTouchStart,
-    onPointerDown: pressProps.onPointerDown
-  } : {};
-
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction ? pressProps : defaultPressProps,
+      (allowsSelection || hasPrimaryAction || shouldSelectOnPressUp) && !isDisabled ? pressProps : {},
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture}
     ),
