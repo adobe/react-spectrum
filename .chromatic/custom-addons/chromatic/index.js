@@ -1,4 +1,4 @@
-import {locales, scales, themes} from '../../constants';
+import {expressThemes, locales, scales, themes} from '../../constants';
 import {makeDecorator} from '@storybook/addons';
 import {Provider, View} from '@adobe/react-spectrum';
 import React, {useEffect} from 'react';
@@ -15,6 +15,7 @@ export const withChromaticProvider = makeDecorator({
     } else {
       selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US', 'ar-AE'];
     }
+    let colorSchemes = options.express ? [] : (options.colorSchemes || Object.keys(themes));
     let height;
     let minHeight;
     if(isNaN(options.height)) {
@@ -27,7 +28,7 @@ export const withChromaticProvider = makeDecorator({
     return (
       <DisableAnimations disableAnimations={options.disableAnimations}>
         <div style={{display: 'flex', flexDirection: 'column', height, minHeight}}>
-            {(options.colorSchemes || Object.keys(themes)).map(colorScheme =>
+            {colorSchemes.map(colorScheme =>
               (options.scales || Object.keys(scales)).map(scale =>
                 (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>
                   <Provider key={`${colorScheme}_${scale}_${locale}`} theme={themes[colorScheme]} colorScheme={colorScheme.replace(/est$/, '')} scale={scale} locale={locale} typekitId="pbi5ojv">
@@ -39,6 +40,14 @@ export const withChromaticProvider = makeDecorator({
                 )
               )
             )}
+            {options.express !== false &&
+              <Provider key="express" theme={expressThemes.light} colorScheme="light" scale="medium" locale="en-US" typekitId="pbi5ojv">
+                <View margin="size-100">
+                  <h1 style={{margin: 0, padding: 0}}>express, light, medium, en-US</h1>
+                  {getStory(context)}
+                </View>
+              </Provider>
+            }
         </div>
       </DisableAnimations>
     )

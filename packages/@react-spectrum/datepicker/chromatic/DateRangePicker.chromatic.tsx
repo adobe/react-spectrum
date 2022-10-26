@@ -30,7 +30,8 @@ const focusParams = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
   }
 };
 
@@ -61,6 +62,13 @@ const zoned = {
 export const Placeholder = () => <DateRangePicker label="Date" placeholderValue={value.start} />;
 export const PlaceholderFocus = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusExpress = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+PlaceholderFocusExpress.parameters = {
+  chromaticProvider: {
+    express: true
+  }
+};
 
 export const PlaceholderTime = () => <DateRangePicker label="Date" placeholderValue={dateTime.start} />;
 export const PlaceholderZoned = () => <DateRangePicker label="Date" placeholderValue={zoned.start} />;

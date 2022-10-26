@@ -30,7 +30,8 @@ const focusParams = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
   }
 };
 
@@ -50,6 +51,13 @@ const zonedDateTime = parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Ang
 export const Placeholder = () => <DatePicker label="Date" placeholderValue={date} />;
 export const PlaceholderFocus = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusExpress = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
+PlaceholderFocusExpress.parameters = {
+  chromaticProvider: {
+    express: true
+  }
+};
 
 export const PlaceholderTime = () => <DatePicker label="Date" placeholderValue={dateTime} />;
 export const PlaceholderZoned = () => <DatePicker label="Date" placeholderValue={zonedDateTime} />;
