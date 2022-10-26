@@ -54,7 +54,8 @@
       }
     ],
     "transform-glob-import",
-    "babel-plugin-macros"
+    "babel-plugin-macros",
+    "add-module-exports"
   ],
   "sourceType": "unambiguous"
 }
