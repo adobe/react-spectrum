@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "type": "commonjs",
   "scripts": {
     "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx' && tsc --project ./tsconfig.types.json"
   },
