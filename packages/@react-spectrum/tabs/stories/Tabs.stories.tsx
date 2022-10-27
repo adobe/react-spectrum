@@ -251,6 +251,28 @@ storiesOf('Tabs', module)
     }
   )
   .add(
+    'Tab 1 controlled TabList item',
+    () => {
+      let [tab1Text, setTab1Text] = useState('Tab 1');
+
+      return (
+        <Flex minHeight={400} minWidth={400} direction="column">
+          <TextField label="Tab Title" value={tab1Text} onChange={setTab1Text} />
+          <Tabs maxWidth={500}>
+            <TabList>
+              <Item>{tab1Text}</Item>
+              <Item>Tab 2</Item>
+            </TabList>
+            <TabPanels>
+              <Item>Tab 1 Content</Item>
+              <Item>Tab 2 Content</Item>
+            </TabPanels>
+          </Tabs>
+        </Flex>
+      );
+    }
+  )
+  .add(
     'changing selection programatically',
     () => (
       <ControlledSelection />

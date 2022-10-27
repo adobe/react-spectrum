@@ -227,7 +227,7 @@ function TabLine(props: TabLineProps) {
       setStyle(styleObj);
     }
 
-  }, [direction, setStyle, selectedTab, orientation, scale, selectedKey]);
+  }, [direction, setStyle, selectedTab, selectedTab?.offsetWidth, selectedTab?.offsetLeft, orientation, scale, selectedKey]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
