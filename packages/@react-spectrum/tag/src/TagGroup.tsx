@@ -28,7 +28,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    isRemovable,
+    allowsRemoving,
     onRemove,
     ...otherProps
   } = props;
@@ -51,7 +51,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       };
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [listState.collection, isRemovable]);
+  }), [listState.collection, allowsRemoving]);
   let state = useGridState({
     ...props,
     collection: gridCollection,
@@ -91,7 +91,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           key={item.key}
           item={item}
           state={state}
-          isRemovable={isRemovable}
+          allowsRemoving={allowsRemoving}
           onRemove={onRemove}>
           {item.childNodes[0].rendered}
         </Tag>

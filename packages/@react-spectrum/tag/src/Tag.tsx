@@ -24,7 +24,7 @@ import {useTag} from '@react-aria/tag';
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
     children,
-    isRemovable,
+    allowsRemoving,
     item,
     state,
     onRemove,
@@ -40,7 +40,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
     isFocused,
-    isRemovable,
+    allowsRemoving,
     item,
     onRemove,
     tagRef,
@@ -59,7 +59,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           {
             'focus-ring': isFocusVisible,
             'is-focused': isFocused,
-            'not-removable': !isRemovable,
+            'not-removable': !allowsRemoving,
             'is-hovered': isHovered
           },
           styleProps.className
@@ -68,11 +68,11 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable}), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': allowsRemoving}), ...labelProps}
           }}>
 
           {typeof children === 'string' ? <Text>{children}</Text> : children}
-          {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+          {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
     </div>
