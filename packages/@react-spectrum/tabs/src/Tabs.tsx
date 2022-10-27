@@ -210,7 +210,12 @@ function TabLine(props: TabLineProps) {
     height: undefined
   });
 
-  useLayoutEffect(() => {
+  let selectedTabRef = useRef<HTMLElement>();
+  if (selectedTab) {
+    selectedTabRef.current = selectedTab;
+  }
+
+  let onResize = useCallback(() => {
     if (selectedTab) {
       let styleObj = {transform: undefined, width: undefined, height: undefined};
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
@@ -226,8 +231,13 @@ function TabLine(props: TabLineProps) {
       }
       setStyle(styleObj);
     }
+  }, [direction, setStyle, selectedTab, orientation]);
 
-  }, [direction, setStyle, selectedTab, selectedTab?.offsetWidth, selectedTab?.offsetLeft, orientation, scale, selectedKey]);
+  useLayoutEffect(() => {
+    onResize();
+  }, [onResize, direction, scale, selectedKey, orientation, selectedTab?.offsetLeft]);
+
+  useResizeObserver({ref: selectedTabRef, onResize: onResize});
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
