@@ -12,7 +12,6 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
@@ -21,7 +20,6 @@ import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
-import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
@@ -100,16 +98,6 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     state
   );
 
-  let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: inputRef,
-    overlayRef: unwrappedPopoverRef,
-    scrollRef: listBoxRef,
-    placement: `${direction} end` as Placement,
-    shouldFlip: shouldFlip,
-    isOpen: state.isOpen,
-    onClose: state.close
-  });
-
   // Measure the width of the inputfield to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
@@ -128,19 +116,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  // Update position once the ListBox has rendered. This ensures that
-  // it flips properly when it doesn't fit in the available space.
-  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
-  useLayoutEffect(() => {
-    if (state.isOpen) {
-      requestAnimationFrame(() => {
-        updatePosition();
-      });
-    }
-  }, [state.isOpen, updatePosition]);
-
   let style = {
-    ...overlayProps.style,
     width: isQuiet ? null : menuWidth,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
@@ -157,14 +133,15 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
           clearButtonProps={clearButtonProps} />
       </Field>
       <Popover
-        isOpen={state.isOpen}
+        state={state}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        placement={placement}
+        triggerRef={inputRef}
+        placement={`${direction} end`}
         hideArrow
         isNonModal
-        isDismissable={false}>
+        shouldFlip={shouldFlip}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
@@ -182,7 +159,6 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
               {stringFormatter.format('noResults')}
             </span>
           )} />
-        <DismissButton onDismiss={() => state.close()} />
       </Popover>
     </>
   );
