@@ -31,7 +31,6 @@ export interface TagAria {
 export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
   let {isFocused} = props;
   const {
-    isDisabled,
     isRemovable,
     onRemove,
     children,
@@ -72,19 +71,17 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     clearButtonProps: mergeProps(pressProps, {
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
-      id: buttonId,
-      isDisabled
+      id: buttonId
     }),
     labelProps: {
       id: labelId
     },
     tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
-      'aria-disabled': isDisabled,
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1
     })
   };
 }

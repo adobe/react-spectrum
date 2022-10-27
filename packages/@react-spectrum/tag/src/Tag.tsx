@@ -24,7 +24,6 @@ import {useTag} from '@react-aria/tag';
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
     children,
-    isDisabled,
     isRemovable,
     item,
     state,
@@ -34,13 +33,12 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let tagRef = useRef();
   let tagRowRef = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
-    isDisabled,
     isFocused,
     isRemovable,
     item,
@@ -59,7 +57,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           styles,
           'spectrum-Tags-item',
           {
-            'is-disabled': isDisabled,
             'focus-ring': isFocusVisible,
             'is-focused': isFocused,
             'not-removable': !isRemovable,

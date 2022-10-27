@@ -23,11 +23,6 @@ storiesOf('TagGroup', module)
     'default',
     () => render({})
   )
-  .add(
-    'disabledKeys',
-    () => render({
-      disabledKeys: ['1']
-    }))
   .add('icons', () => (
     <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
@@ -41,32 +36,7 @@ storiesOf('TagGroup', module)
     </TagGroup>
   ))
   .add(
-    'isDisabled',
-    () => render({
-      isDisabled: true
-    }))
-  .add(
     'onRemove',
-    () => render({
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
-  )
-  .add(
-    'onRemove + disabledKeys',
-    () => render({
-      disabledKeys: ['2'],
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
-  )
-  .add(
-    'onRemove + isDisabled',
-    () => render({
-      isDisabled: true,
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
   )
   .add('wrapping', () => (
     <div style={{width: '200px'}}>

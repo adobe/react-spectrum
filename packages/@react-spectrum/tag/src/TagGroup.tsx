@@ -28,7 +28,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    isDisabled,
     isRemovable,
     onRemove,
     ...otherProps
@@ -60,7 +59,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   });
   let keyboardDelegate = new TagKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: new Set(),
     ref: domRef,
     direction,
     focusMode: 'cell'
@@ -69,7 +68,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ...props,
     keyboardDelegate
   }, state, domRef);
-  const {tagGroupProps} = useTagGroup(props, listState);
+  const {tagGroupProps} = useTagGroup(props);
 
   // Don't want the grid to be focusable or accessible via keyboard
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,9 +80,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         classNames(
           styles,
           'spectrum-Tags',
-          {
-            'is-disabled': isDisabled
-          },
           styleProps.className
         )
       }
@@ -95,7 +91,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           key={item.key}
           item={item}
           state={state}
-          isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
           isRemovable={isRemovable}
           onRemove={onRemove}>
           {item.childNodes[0].rendered}
