@@ -17,39 +17,36 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {ToggleButton} from '../';
 
+const parameters = {
+  args: {
+    isQuiet: false,
+    isEmphasized: false,
+    isDisabled: false
+  }
+};
+
 storiesOf('Button/ToggleButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({providerSwitcher: {status: 'positive'}, ...parameters})
   .add(
     'default',
-    () => render()
-  ).add(
-    'emphasized',
-    () => render({isEmphasized: true})
-  ).add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  ).add(
-    'isQuiet & emphasized',
-    () => render({isEmphasized: true, isQuiet: true})
+    args => render(args)
   )
   .add(
     'staticColor: white',
-    () => (
+    args => (
       <View backgroundColor="static-seafoam-600" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'white'})}
-          {render({staticColor: 'white', isQuiet: true})}
+          {render({...args, staticColor: 'white'})}
         </Flex>
       </View>
     )
   )
   .add(
     'staticColor: black',
-    () => (
+    args => (
       <View backgroundColor="static-yellow-400" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'black'})}
-          {render({staticColor: 'black', isQuiet: true})}
+          {render({...args, staticColor: 'black'})}
         </Flex>
       </View>
     )
@@ -80,10 +77,6 @@ function render(props = {}) {
     <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
       <Add />
       <Text>Selected</Text>
-    </ToggleButton>
-    <ToggleButton defaultSelected isDisabled {...props}>
-      <Add />
-      <Text>Disabled + selected</Text>
     </ToggleButton>
   </Flex>);
 }

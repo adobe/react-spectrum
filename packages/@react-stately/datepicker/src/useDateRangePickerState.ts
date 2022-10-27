@@ -63,7 +63,11 @@ export interface DateRangePickerState extends OverlayTriggerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string}
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
+  /** Whether the date range picker is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the date range picker is focused. */
+  setFocused(isFocused: boolean): void
 }
 
 /**
@@ -75,6 +79,8 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
   let overlayState = useOverlayTriggerState(props);
   let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
   let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
+
+  let [isFocused, setFocused] = useState(false);
 
   // Reset the placeholder if the value prop is set to null.
   if (controlledValue == null && placeholderValue.start && placeholderValue.end) {
@@ -263,6 +269,8 @@ export function useDateRangePickerState(props: DateRangePickerStateOptions): Dat
         start: startFormatter.format(startDate),
         end: endFormatter.format(endDate)
       };
-    }
+    },
+    isFocused,
+    setFocused
   };
 }

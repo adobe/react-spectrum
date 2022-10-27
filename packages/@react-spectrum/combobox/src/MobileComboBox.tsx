@@ -182,7 +182,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'spectrum-InputGroup--invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
             classNames(
@@ -198,8 +198,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               textfieldStyles,
               'spectrum-Textfield',
               {
-                'spectrum-Textfield--invalid': validationState === 'invalid',
-                'spectrum-Textfield--valid': validationState === 'valid',
+                'spectrum-Textfield--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
                 'spectrum-Textfield--quiet': isQuiet
               },
               classNames(
@@ -240,7 +240,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
               {children}
             </span>
           </div>
-          {validationState ? validation : null}
+          {validationState && !isDisabled ? validation : null}
         </div>
         <div
           className={
@@ -251,7 +251,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
                 'spectrum-FieldButton--quiet': isQuiet,
                 'is-active': isPressed,
                 'is-disabled': isDisabled,
-                'spectrum-FieldButton--invalid': validationState === 'invalid',
+                'spectrum-FieldButton--invalid': validationState === 'invalid' && !isDisabled,
                 'is-hovered': isHovered
               },
               classNames(
@@ -455,8 +455,8 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
               'spectrum-Textfield',
               'spectrum-Search--loadable',
               {
-                'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid'
+                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               },
               classNames(
                 comboboxStyles,

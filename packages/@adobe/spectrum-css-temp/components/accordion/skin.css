@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-accordion-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+}
+
 .spectrum-Accordion-item {
   border-color: var(--spectrum-accordion-border-color);
 

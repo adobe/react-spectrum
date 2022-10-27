@@ -164,7 +164,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           styles,
           'spectrum-Dropdown',
           {
-            'is-invalid': validationState === 'invalid',
+            'is-invalid': validationState === 'invalid' && !isDisabled,
             'is-disabled': isDisabled,
             'spectrum-Dropdown--quiet': isQuiet
           }
@@ -210,7 +210,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
               aria-label={stringFormatter.format('loading')}
               UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
           }
-          {validationState === 'invalid' && !isLoadingInitial &&
+          {validationState === 'invalid' && !isLoadingInitial && !isDisabled &&
             <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
           }
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
