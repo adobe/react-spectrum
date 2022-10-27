@@ -7,7 +7,7 @@ rulesDirPlugin.RULES_DIR = './bin';
 module.exports = {
   plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-rsp-rules'],
   extends: ['eslint:recommended'],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       'legacyDecorators': true
@@ -149,7 +149,7 @@ module.exports = {
     'react/no-did-update-set-state': ERROR,
     'react/no-multi-comp': OFF,
     'react/no-set-state': OFF,
-    'react/no-unknown-property': ERROR,
+    'react/no-unknown-property': [ERROR, {ignore: ['prefix']}],
     'react/react-in-jsx-scope': ERROR,
     'react/require-extension': OFF,
     'react/jsx-equals-spacing': ERROR,

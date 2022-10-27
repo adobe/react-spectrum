@@ -216,6 +216,57 @@ jobs:
           name: lint
           command: yarn lint
 
+  ts-build-branch:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build branch apis
+          command: yarn build:api-branch
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'branch-api/'
+
+  ts-build-fork-point:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build fork-point apis
+          command: |
+            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'base-api/'
+
+  ts-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/dist
+
+      - run:
+          name: compare api
+          command: |
+            mkdir -p dist
+            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'ts-diff.txt'
+
   storybook:
     executor: rsp-large
     steps:
@@ -349,6 +400,9 @@ jobs:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
+      - attach_workspace:
+          at: /tmp/dist
+
       - run:
           name: comment on pr
           command: |
@@ -398,6 +452,25 @@ workflows:
       - lint:
           requires:
             - install
+      - ts-build-fork-point:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore: main
+      - ts-build-branch:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore: main
+      - ts-diff:
+          requires:
+            - ts-build-fork-point
+            - ts-build-branch
+          filters:
+            branches:
+              ignore: main
       - storybook:
           requires:
             - install
@@ -450,6 +523,7 @@ workflows:
             branches:
               ignore: main
           requires:
+            - ts-diff
             - deploy
       - comment:
           name: comment-verdaccio

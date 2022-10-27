@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, SlotProvider} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
@@ -52,11 +52,13 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
         isQuiet>
         {icon}
       </ActionButton>
-      <SlotProvider slots={slots}>
-        <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
-          {children}
-        </Dialog>
-      </SlotProvider>
+      <ClearSlots>
+        <SlotProvider slots={slots}>
+          <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
+            {children}
+          </Dialog>
+        </SlotProvider>
+      </ClearSlots>
     </DialogTrigger>
   );
 }
