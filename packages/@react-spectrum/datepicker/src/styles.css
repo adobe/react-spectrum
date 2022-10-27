@@ -135,7 +135,7 @@
 }
 
 .react-spectrum-DatePicker-cell:focus {
-  background-color: var(--spectrum-global-color-static-blue);
+  background-color: var(--spectrum-accent-background-color-default);
   color: white;
   caret-color: transparent;
   outline: none;

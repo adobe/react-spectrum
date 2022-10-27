@@ -228,7 +228,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
           {
             'spectrum-InputGroup--quiet': isQuiet,
             'is-disabled': isDisabled,
-            'spectrum-InputGroup--invalid': validationState === 'invalid',
+            'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
             'is-hovered': isHovered,
             'is-focused': isFocused,
             'focus-ring': isFocusVisible
@@ -246,8 +246,8 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
             textfieldStyles,
             'spectrum-Textfield',
             {
-              'spectrum-Textfield--invalid': validationState === 'invalid',
-              'spectrum-Textfield--valid': validationState === 'valid',
+              'spectrum-Textfield--invalid': validationState === 'invalid' && !isDisabled,
+              'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
               'spectrum-Textfield--quiet': isQuiet
             },
             classNames(
@@ -256,8 +256,8 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
               {
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,
-                'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid'
+                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               }
             )
           )
@@ -298,7 +298,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
             {children}
           </span>
         </div>
-        {validationState ? validation : null}
+        {validationState && !isDisabled ? validation : null}
         {(inputValue !== '' || validationState != null) && !isReadOnly && clearButton}
       </div>
     </div>
@@ -504,8 +504,8 @@ function SearchAutocompleteTray(props: SearchAutocompleteTrayProps) {
               'spectrum-Textfield',
               'spectrum-Search--loadable',
               {
-                'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid'
+                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               },
               classNames(
                 searchAutocompleteStyles,

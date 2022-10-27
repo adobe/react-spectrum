@@ -11,14 +11,16 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-tabs-emphasized-text-color: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-icon-color: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-global-color-blue-700);
-  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-global-color-blue-700);
-  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-vertical-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-global-color-blue-500);
 }
 
 .spectrum-Tabs {
@@ -218,7 +220,7 @@ governing permissions and limitations under the License.
         /* FieldButton Picker focus ring override */
         outline: none;
       }
-      
+
     }
   }
 }
