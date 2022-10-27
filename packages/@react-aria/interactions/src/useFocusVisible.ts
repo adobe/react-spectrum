@@ -22,7 +22,7 @@ export type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
-interface FocusVisibleProps {
+export interface FocusVisibleProps {
   /** Whether the element is a text input. */
   isTextInput?: boolean,
   /** Whether the element will be auto focused. */
