@@ -56,7 +56,7 @@ describe('TagGroup', function () {
 
   it('provides context for Tag component', function () {
     let {container} = render(
-      <TagGroup aria-label="tag group" isRemovable onRemove={onRemoveSpy}>
+      <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
         <Item aria-label="Tag 1">Tag 1</Item>
         <Item aria-label="Tag 2">Tag 2</Item>
         <Item aria-label="Tag 3">Tag 3</Item>
@@ -306,7 +306,7 @@ describe('TagGroup', function () {
   `('Remove tag $Name', function ({Name, props}) {
     let {getByText} = render(
       <Provider theme={theme}>
-        <TagGroup aria-label="tag group" isRemovable onRemove={onRemoveSpy}>
+        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
           <Item key="3" aria-label="Tag 3">Tag 3</Item>
@@ -316,7 +316,7 @@ describe('TagGroup', function () {
 
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: props.keyPress});
-    expect(onRemoveSpy).toHaveBeenCalledWith('Tag 1', expect.anything());
+    expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
 
