@@ -16,11 +16,11 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useMemo} from 'react';
+import {FocusEvent as ReactFocusEvent, RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
@@ -76,7 +76,63 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
-      'aria-describedby': ariaDescribedBy
+      'aria-describedby': ariaDescribedBy,
+      onKeyDown(e: KeyboardEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onKeyDown) {
+          props.onKeyDown(e);
+        }
+      },
+      onKeyUp(e: KeyboardEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onKeyUp) {
+          props.onKeyUp(e);
+        }
+      },
+      onFocus(e: ReactFocusEvent) {
+        if (state.isFocused) {
+          return;
+        }
+
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onFocus) {
+          props.onFocus(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(true);
+        }
+
+        state.setFocused(true);
+      },
+      onBlur(e: ReactFocusEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (e.currentTarget.contains(e.relatedTarget as Node)) {
+          return;
+        }
+
+        if (props.onBlur) {
+          props.onBlur(e);
+        }
+
+        if (props.onFocusChange) {
+          props.onFocusChange(false);
+        }
+
+        state.setFocused(false);
+      }
     }),
     labelProps: {
       ...labelProps,

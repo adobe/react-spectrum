@@ -52,7 +52,7 @@ export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, 
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStrings} from '@react-aria/i18n';
-export type {FocusProps, FocusResult, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
+export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
 export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-aria/label';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
