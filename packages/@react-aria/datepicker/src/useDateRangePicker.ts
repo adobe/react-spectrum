@@ -21,7 +21,7 @@ import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
-import {FocusEvent as ReactFocusEvent, RefObject, useMemo} from 'react';
+import {FocusEvent, RefObject, useMemo} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -108,7 +108,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let {focusWithinProps} = useFocusWithin({
     ...props,
-    onBlurWithin: (e: ReactFocusEvent) => {
+    onBlurWithin: (e: FocusEvent) => {
       if (state.isOpen) {
         return;
       }
@@ -117,7 +117,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
         props.onBlur(e);
       }
     },
-    onFocusWithin: (e: ReactFocusEvent) => {
+    onFocusWithin: (e: FocusEvent) => {
       if (state.isOpen) {
         return;
       }

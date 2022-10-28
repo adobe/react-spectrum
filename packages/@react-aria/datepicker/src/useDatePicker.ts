@@ -20,7 +20,7 @@ import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent as ReactFocusEvent, RefObject, useMemo} from 'react';
+import {FocusEvent, RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
@@ -74,7 +74,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
 
   let {focusWithinProps} = useFocusWithin({
     ...props,
-    onBlurWithin: (e: ReactFocusEvent) => {
+    onBlurWithin: (e: FocusEvent) => {
       if (state.isOpen) {
         return;
       }
@@ -83,7 +83,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
         props.onBlur(e);
       }
     },
-    onFocusWithin: (e: ReactFocusEvent) => {
+    onFocusWithin: (e: FocusEvent) => {
       if (state.isOpen) {
         return;
       }
