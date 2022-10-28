@@ -11,15 +11,17 @@
  */
 
 import {ariaHideOutside} from './ariaHideOutside';
+import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {OverlayContext} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {PositionProps} from '@react-types/overlays';
-import {RefObject, useEffect} from 'react';
+import {PlacementAxis} from '@react-types/overlays';
+import {RefObject, useContext} from 'react';
 import {useOverlay} from './useOverlay';
-import {useOverlayPosition} from './useOverlayPosition';
+import {usePreventScroll} from './usePreventScroll';
 
-export interface AriaPopoverProps extends Omit<PositionProps, 'isOpen'> {
+export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'onClose' | 'targetRef' | 'overlayRef'> {
   /**
    * The ref for the element which the popover positions itself with respect to.
    */
@@ -36,14 +38,23 @@ export interface AriaPopoverProps extends Omit<PositionProps, 'isOpen'> {
    * reader experience. Only use with components such as combobox, which are designed
    * to handle this situation carefully.
    */
-  isNonModal?: boolean
+  isNonModal?: boolean,
+  /**
+   * Whether pressing the escape key to close the popover should be disabled.
+   * @default false
+   */
+  isKeyboardDismissDisabled?: boolean
 }
 
 export interface PopoverAria {
   /** Props for the popover element. */
   popoverProps: DOMAttributes,
   /** Props for the popover tip arrow if any. */
-  arrowProps: DOMAttributes
+  arrowProps: DOMAttributes,
+  /** Props to apply to the underlay element, if any. */
+  underlayProps: DOMAttributes,
+  /** Placement of the popover with respect to the trigger. */
+  placement: PlacementAxis
 }
 
 /**
@@ -55,34 +66,45 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     triggerRef,
     popoverRef,
     isNonModal,
+    isKeyboardDismissDisabled,
     ...otherProps
   } = props;
 
-  let {overlayProps} = useOverlay(
+  let ctx = useContext(OverlayContext);
+  let {overlayProps, underlayProps} = useOverlay(
     {
       isOpen: state.isOpen,
       onClose: state.close,
-      shouldCloseOnBlur: true,
-      isDismissable: true
+      // Close on blur if the overlay's FocusScope does not contain focus.
+      shouldCloseOnBlur: ctx && !ctx.contain,
+      isDismissable: !isNonModal,
+      isKeyboardDismissDisabled
     },
     popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen
   });
+  
+  usePreventScroll({
+    // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
+    isDisabled: isNonModal || !placement
+  });
 
-  useEffect(() => {
-    if (state.isOpen && !isNonModal) {
+  useLayoutEffect(() => {
+    if (state.isOpen && !isNonModal && popoverRef.current) {
       return ariaHideOutside([popoverRef.current]);
     }
   }, [isNonModal, state.isOpen, popoverRef]);
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),
-    arrowProps
+    arrowProps,
+    underlayProps,
+    placement
   };
 }

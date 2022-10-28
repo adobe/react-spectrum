@@ -128,6 +128,10 @@ storiesOf('Date and Time/DateRangePicker', module)
   .add(
     'showFormatHelpText',
     () => render({showFormatHelpText: true})
+  )
+  .add(
+    'all the events',
+    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
   );
 
 storiesOf('Date and Time/DateRangePicker/styling', module)

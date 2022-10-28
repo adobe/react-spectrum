@@ -10,43 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaModalOverlayProps, DismissButton, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {mergeProps, useViewportSize} from '@react-aria/utils';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
+import {OverlayProps} from '@react-types/overlays';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
-import {TrayProps} from '@react-types/overlays';
+import React, {forwardRef, ReactNode, RefObject} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {useViewportSize} from '@react-aria/utils';
 
-interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
+interface TrayProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
   children: ReactNode,
-  isOpen?: boolean,
-  onClose?: () => void,
-  isFixedHeight?: boolean,
-  isNonModal?: boolean,
-  overlayProps: HTMLAttributes<HTMLElement>
+  state: OverlayTriggerState,
+  isFixedHeight?: boolean
+}
+
+interface TrayWrapperProps extends TrayProps {
+  isOpen?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, isFixedHeight, isNonModal, ...otherProps} = props;
+  let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
-
-  let {overlayProps, underlayProps} = useOverlay({...props, isDismissable: true}, domRef);
 
   return (
-    <Overlay {...otherProps}>
-      <Underlay {...underlayProps} />
-      <TrayWrapper
-        {...styleProps}
-        onClose={onClose}
-        ref={domRef}
-        overlayProps={overlayProps}
-        isFixedHeight={isFixedHeight}
-        isNonModal={isNonModal}>
+    <Overlay {...otherProps} isOpen={state.isOpen}>
+      <TrayWrapper {...props} ref={domRef}>
         {children}
       </TrayWrapper>
     </Overlay>
@@ -58,14 +50,14 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     children,
     isOpen,
     isFixedHeight,
-    isNonModal,
-    overlayProps,
-    ...otherProps
+    state
   } = props;
-  usePreventScroll();
-  let {modalProps} = useModal({
-    isDisabled: isNonModal
-  });
+  let {styleProps} = useStyleProps(props);
+
+  let {modalProps, underlayProps} = useModalOverlay({
+    ...props,
+    isDismissable: true
+  }, state, ref);
 
   // We need to measure the window's height in JS rather than using percentages in CSS
   // so that contents (e.g. menu) can inherit the max-height properly. Using percentages
@@ -96,22 +88,25 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
       'spectrum-Tray',
       'react-spectrum-Tray'
     ),
-    otherProps.className
+    styleProps.className
   );
 
-  let domProps = mergeProps(otherProps, overlayProps);
-
   return (
-    <div className={wrapperClassName} style={wrapperStyle}>
-      <div
-        {...domProps}
-        {...modalProps}
-        className={className}
-        ref={ref}
-        data-testid="tray">
-        {children}
+    <>
+      <Underlay {...underlayProps} isOpen={isOpen} />
+      <div className={wrapperClassName} style={wrapperStyle}>
+        <div
+          {...styleProps}
+          {...modalProps}
+          className={className}
+          ref={ref}
+          data-testid="tray">
+          <DismissButton onDismiss={state.close} />
+          {children}
+          <DismissButton onDismiss={state.close} />
+        </div>
       </div>
-    </div>
+    </>
   );
 });
 
