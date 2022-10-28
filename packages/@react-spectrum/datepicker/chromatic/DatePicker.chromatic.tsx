@@ -37,8 +37,10 @@ const focusParams = {
 
 const openParams = {
   chromaticProvider: {
-    colorSchemes: ['light', 'darkest'],
-    disableAnimations: true
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
   }
 };
 
@@ -135,6 +137,15 @@ OpenInvalidTime.decorators = openDecorators;
 export const OpenUnavailable = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} isDateUnavailable={date => date.day <= 10} />;
 OpenUnavailable.parameters = openParams;
 OpenUnavailable.decorators = openDecorators;
+
+export const OpenExpress = () => <DatePicker label="Date" value={dateTime} isOpen shouldFlip={false} />;
+OpenExpress.parameters = {
+  chromaticProvider: {
+    express: true,
+    disableAnimations: true
+  }
+};
+OpenExpress.decorators = openDecorators;
 
 export const MultipleMonths = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;
