@@ -76,7 +76,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'spectrum-InputGroup--invalid': state.validationState === 'invalid',
+      'spectrum-InputGroup--invalid': state.validationState === 'invalid' && !isDisabled,
       'is-disabled': isDisabled,
       'is-hovered': isHovered,
       'is-focused': isFocused,
@@ -89,7 +89,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     'spectrum-InputGroup-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': state.validationState === 'invalid'
+      'is-invalid': state.validationState === 'invalid' && !isDisabled
     }
   );
 

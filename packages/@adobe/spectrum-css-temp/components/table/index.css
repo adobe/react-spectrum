@@ -37,7 +37,8 @@ svg.spectrum-Table-sortedIcon {
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Table-menuChevron {

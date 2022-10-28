@@ -9,6 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {TreeProps, TreeState} from './useTreeState';
-export {useTreeState} from './useTreeState';
-export {TreeCollection} from './TreeCollection';
+import React from 'react';
+import {View} from '../';
+
+let meta = {
+  title: 'View',
+  component: View,
+  args: {
+    colorVersion: 5,
+    backgroundColor: 'blue-400'
+  }
+};
+
+export default meta;
+
+export const Default = args => (
+  <View
+    {...args}
+    width="single-line-width"
+    height="size-500"
+    elementType="span" />
+);
