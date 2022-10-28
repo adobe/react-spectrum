@@ -146,7 +146,22 @@ Tray.parameters = {
     colorSchemes: ['light'],
     locales: ['en-US'],
     scales: ['large'],
-    disableAnimations: true
+    disableAnimations: true,
+    express: false
+  },
+  chromatic: {
+    viewports: [380]
+  }
+};
+
+export const TrayExpress = () => <DatePicker label="Date" value={date} isOpen />;
+TrayExpress.parameters = {
+  chromaticProvider: {
+    colorSchemes: ['light'],
+    locales: ['en-US'],
+    scales: ['large'],
+    disableAnimations: true,
+    express: true
   },
   chromatic: {
     viewports: [380]

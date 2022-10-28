@@ -15,15 +15,12 @@ import {default as tooltipTriggerDefault} from './TooltipTrigger.chromatic';
 
 export default {
   ...tooltipTriggerDefault,
-  title: 'TooltipTriggerRTL',
+  title: 'TooltipTriggerExpress',
   component: TooltipTrigger,
   parameters: {
     chromaticProvider: {
-      colorSchemes: ['light'],
-      locales: ['ar-AE'],
-      scales: ['large'],
       disableAnimations: true,
-      express: false
+      express: true
     },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {
@@ -32,13 +29,4 @@ export default {
   }
 } as ComponentMeta<typeof TooltipTrigger>;
 
-export {
-  Default,
-  PlacementStart,
-  PlacementEnd,
-  Offset50,
-  CrossOffset50,
-  ContainerPadding50AtEdge,
-  ArrowPositioningAtEdge,
-  PlacementNoFlip
-} from './TooltipTrigger.chromatic';
+export * from './TooltipTrigger.chromatic';

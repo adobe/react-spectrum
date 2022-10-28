@@ -15,9 +15,9 @@ import React from 'react';
 
 // Open MenuTriggers behave funny if rendered off screen, especially with the offset stories
 const meta: Meta = {
-  title: 'MenuTriggerRTL',
+  title: 'MenuTriggerExpress',
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true, express: false},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true},
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {pauseAnimationAtEnd: true}
   },
@@ -26,19 +26,4 @@ const meta: Meta = {
 
 export default meta;
 
-export {
-  Default,
-  WithSections,
-  Complex,
-  AlignEnd,
-  DirectionTop,
-  DirectionBottom,
-  DirectionStart,
-  DirectionStartEnd,
-  DirectionEnd,
-  DirectionLeft,
-  DirectionLeftEnd,
-  DirectionRight,
-  DirectionRightEnd,
-  ArabicComplex
-} from './MenuTrigger.chromatic';
+export * from './MenuTrigger.chromatic';

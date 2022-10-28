@@ -11,24 +11,13 @@
  */
 
 import Add from '../Add';
-import Alert from '@spectrum-icons/workflow/Alert';
+import Alert from '@spectrum-icons/express/Alert';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Flex} from "@react-spectrum/layout";
-import * as AllIcons from '../src';
 
-let allIcons = Object.keys(AllIcons);
-let alphabet = [...Array(26)]
-  .map((val, i) => String.fromCharCode(i + 65));
-alphabet = ['_', ...alphabet];
-let alphabetizedIcons = alphabet
-  .reduce((acc, char) => {
-    acc[char] = allIcons.filter(iconName => iconName[0] === char).sort();
-    return acc;
-  }, {});
-
-storiesOf('Icons/Workflow', module)
-  .addParameters({chromaticProvider: { express: false}})
+storiesOf('Icons/Express', module)
+  .addParameters({chromaticProvider: {express: true}})
   .add(
     'icon: Add with sizes',
     () => renderIconSizes(Add, {'aria-label': 'Add'})
@@ -43,28 +32,6 @@ storiesOf('Icons/Workflow', module)
         <Alert color="notice" aria-label="notice alert" />
       </Flex>
     )
-  )
-  .add('All Workflow',
-    () => (
-      <Flex direction="column">
-        {
-          Object.keys(alphabetizedIcons).map(char => (
-            <div style={{height: "calc(12 * var(--spectrum-global-dimension-size-300))"}}>
-              <div>{char}</div>
-              <Flex direction="row" gap="size-50" wrap>
-                {
-                  alphabetizedIcons[char].map(iconName => {
-                    let Icon = AllIcons[iconName].default;
-                    return <Icon key={iconName} id={iconName} />;
-                  })
-                }
-              </Flex>
-            </div>
-          ))
-        }
-      </Flex>
-    ),
-  {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true}}
   );
 
 function renderIconSizes(Component, props) {
