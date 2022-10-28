@@ -595,6 +595,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-background-color-hover: rgba(255, 255, 255, 0.25);
   --spectrum-actionbutton-static-background-color-focus: rgba(255, 255, 255, 0.25);
   --spectrum-actionbutton-static-background-color-active: rgba(255, 255, 255, 0.4);
+  --spectrum-actionbutton-static-background-color-disabled: var(--spectrum-actionbutton-static-white-background-color-disabled);
   --spectrum-actionbutton-static-background-color-selected: rgba(255, 255, 255, 0.9);
   --spectrum-actionbutton-static-background-color-selected-hover: white;
   --spectrum-actionbutton-static-background-color-selected-focus: white;
@@ -624,6 +625,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-background-color-focus: rgba(0, 0, 0, 0.25);
   --spectrum-actionbutton-static-background-color-active: rgba(0, 0, 0, 0.4);
   --spectrum-actionbutton-static-background-color-selected: rgba(0, 0, 0, 0.9);
+  --spectrum-actionbutton-static-background-color-disabled: var(--spectrum-actionbutton-static-black-background-color-disabled);
   --spectrum-actionbutton-static-background-color-selected-hover: black;
   --spectrum-actionbutton-static-background-color-selected-focus: black;
   --spectrum-actionbutton-static-background-color-selected-active: black;
@@ -704,7 +706,7 @@ governing permissions and limitations under the License.
 
   &:disabled,
   &.is-disabled {
-    background-color: transparent;
+    background-color: var(--spectrum-actionbutton-static-background-color-disabled);
     border-color: var(--spectrum-actionbutton-static-border-disabled);
     color: var(--spectrum-actionbutton-static-color-disabled);
 
@@ -766,6 +768,10 @@ governing permissions and limitations under the License.
   }
 
   &.spectrum-ActionButton--quiet {
+    /* Quiet action buttons always have transparent backgrounds, in both Spectrum and Express */
+    --spectrum-actionbutton-static-background-color: transparent;
+    --spectrum-actionbutton-static-background-color-disabled: transparent;
+
     &,
     &:hover,
     &.is-active,

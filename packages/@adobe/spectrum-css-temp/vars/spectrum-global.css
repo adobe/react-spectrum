@@ -638,6 +638,7 @@
   --spectrum-actionbutton-static-black-border-color-disabled: rgba(0, 0, 0, 0.25);
   --spectrum-actionbutton-static-black-border-color-selected-disabled: rgba(0, 0, 0, 0.1);
   --spectrum-actionbutton-static-black-background-color: transparent;
+  --spectrum-actionbutton-static-black-background-color-disabled: transparent;
 
   --spectrum-actionbutton-static-white-border-color: rgba(255, 255, 255, 0.4);
   --spectrum-actionbutton-static-white-border-color-hover: rgba(255, 255, 255, 0.55);
@@ -646,6 +647,7 @@
   --spectrum-actionbutton-static-white-border-color-disabled: rgba(255, 255, 255, 0.25);
   --spectrum-actionbutton-static-white-border-color-selected-disabled: rgba(255, 255, 255, 0.1);
   --spectrum-actionbutton-static-white-background-color: transparent;
+  --spectrum-actionbutton-static-white-background-color-disabled: transparent;
 
   --spectrum-combobox-fieldbutton-inset: 0;
   --spectrum-combobox-fieldbutton-border-left-width: var(--spectrum-alias-input-border-size);
