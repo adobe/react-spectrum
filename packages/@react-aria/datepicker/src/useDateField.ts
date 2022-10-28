@@ -15,9 +15,9 @@ import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
+import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';

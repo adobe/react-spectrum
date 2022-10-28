@@ -17,11 +17,11 @@ import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {FocusEvent, RefObject, useMemo} from 'react';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
-import {FocusEvent, RefObject, useMemo} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
