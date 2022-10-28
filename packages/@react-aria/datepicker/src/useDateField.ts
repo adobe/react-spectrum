@@ -64,8 +64,23 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
   });
 
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    ...props,
+    onBlurWithin: (e: ReactFocusEvent) => {
       state.confirmPlaceholder();
+
+      if (props.onBlur) {
+        props.onBlur(e);
+      }
+    },
+    onFocusWithin: (e: ReactFocusEvent) => {
+      if (props.onFocus) {
+        props.onFocus(e);
+      }
+    },
+    onFocusWithinChange: (value: boolean) => {
+      if (props.onFocusChange) {
+        props.onFocusChange(value);
+      }
     }
   });
 
@@ -136,36 +151,6 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         if (props.onKeyUp) {
           props.onKeyUp(e);
         }
-      },
-      onFocus(e: ReactFocusEvent) {
-        if (state.isFocused) {
-          return;
-        }
-
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
-
-        state.setFocused(true);
-      },
-      onBlur(e: ReactFocusEvent) {
-        if (e.currentTarget.contains(e.relatedTarget as Node)) {
-          return;
-        }
-
-        if (props.onBlur) {
-          props.onBlur(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(false);
-        }
-
-        state.setFocused(false);
       }
     }),
     descriptionProps,
