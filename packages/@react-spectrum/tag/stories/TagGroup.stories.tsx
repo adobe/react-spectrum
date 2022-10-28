@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {Icon} from '@react-spectrum/icon';
 import {Item, TagGroup} from '../src';
@@ -38,16 +39,17 @@ storiesOf('TagGroup', module)
     'onRemove',
     () => {
       const [items, setItems] = useState([
-        {key: '1', label: 'Cool Tag 1'},
-        {key: '2', label: 'Another cool tag'},
-        {key: '3', label: 'This tag'},
-        {key: '4', label: 'What tag?'},
-        {key: '5', label: 'This tag is cool too'},
-        {key: '6', label: 'Shy tag'}
+        {key: 1, label: 'Cool Tag 1'},
+        {key: 2, label: 'Another cool tag'},
+        {key: 3, label: 'This tag'},
+        {key: 4, label: 'What tag?'},
+        {key: 5, label: 'This tag is cool too'},
+        {key: 6, label: 'Shy tag'}
       ]);
       const onRemove = (key) => {
-        const newItems = [...items].filter((item) => key !== item.key);
+        const newItems = [...items].filter((item) => key !== item.key.toString());
         setItems(newItems);
+        action('onRemove')(key);
       };
 
       return (<TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>

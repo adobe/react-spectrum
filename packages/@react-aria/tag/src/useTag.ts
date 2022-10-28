@@ -56,12 +56,12 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
 
   function onKeyDown(e: KeyboardEvent) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
-      onRemove(gridCellProps['data-key']);
+      onRemove(item.childNodes[0].key);
       e.preventDefault();
     }
   }
   const pressProps = {
-    onPress: () => onRemove?.(gridCellProps['data-key'])
+    onPress: () => onRemove?.(item.childNodes[0].key)
   };
 
   isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;

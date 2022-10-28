@@ -59,7 +59,6 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           {
             'focus-ring': isFocusVisible,
             'is-focused': isFocused,
-            'not-removable': !allowsRemoving,
             'is-hovered': isHovered
           },
           styleProps.className
