@@ -158,26 +158,6 @@ describe('TagGroup', function () {
     expect(tag).toHaveAttribute('aria-label', 'Tag 1');
   });
 
-  it('not disabled if keys are provided', function () {
-    let {getAllByRole, getByRole} = render(
-      <Provider theme={theme}>
-        <TagGroup aria-label="tag group" disabledKeys={['1', 'foo', 'bar']}>
-          <Item key="1" aria-label="Tag 1">Tag 1</Item>
-          <Item key="2" aria-label="Tag 2">Tag 2</Item>
-        </TagGroup>
-      </Provider>
-    );
-
-    let tagGroup = getByRole('grid');
-    expect(tagGroup).not.toHaveAttribute('aria-disabled', 'true');
-    let tags = getAllByRole('gridcell');
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(tags[0]);
-    pressArrowRight(tags[0]);
-    expect(document.activeElement).toBe(tags[1]);
-  });
-
   it('should remember last focused item', function () {
     let {getAllByRole, getByLabelText} = render(
       <Provider theme={theme} locale="de-DE">
