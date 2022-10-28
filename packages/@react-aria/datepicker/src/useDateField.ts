@@ -72,16 +72,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         props.onBlur(e);
       }
     },
-    onFocusWithin: (e: FocusEvent) => {
-      if (props.onFocus) {
-        props.onFocus(e);
-      }
-    },
-    onFocusWithinChange: (value: boolean) => {
-      if (props.onFocusChange) {
-        props.onFocusChange(value);
-      }
-    }
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);

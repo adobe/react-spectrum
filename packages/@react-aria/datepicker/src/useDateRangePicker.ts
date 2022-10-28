@@ -108,33 +108,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let {focusWithinProps} = useFocusWithin({
     ...props,
-    onBlurWithin: (e: FocusEvent) => {
-      if (state.isOpen) {
-        return;
-      }
-
-      if (props.onBlur) {
-        props.onBlur(e);
-      }
-    },
-    onFocusWithin: (e: FocusEvent) => {
-      if (state.isOpen) {
-        return;
-      }
-
-      if (props.onFocus) {
-        props.onFocus(e);
-      }
-    },
-    onFocusWithinChange: (value: boolean) => {
-      if (state.isOpen) {
-        return;
-      }
-
-      if (props.onFocusChange) {
-        props.onFocusChange(value);
-      }
-    }
+    isDisabled: state.isOpen,
+    onBlurWithin: props.onBlur,
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   return {
