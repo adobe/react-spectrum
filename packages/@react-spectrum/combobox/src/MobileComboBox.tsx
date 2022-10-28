@@ -86,8 +86,6 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
-  let onClose = () => state.commit();
-
   return (
     <>
       <Field
@@ -107,10 +105,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
-      <Tray isOpen={state.isOpen} onClose={onClose} isFixedHeight isNonModal {...overlayProps}>
+      <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
           {...props}
-          onClose={onClose}
+          onClose={state.close}
           overlayProps={overlayProps}
           state={state} />
       </Tray>
