@@ -30,7 +30,6 @@
   --spectrum-alias-border-color: var(--spectrum-gray-400);
   --spectrum-alias-border-color-hover: var(--spectrum-gray-500);
   --spectrum-alias-border-color-down: var(--spectrum-gray-900);
-  --spectrum-alias-border-color-focus: var(--spectrum-gray-900);
 
   --spectrum-textfield-border-color-key-focus: var(--spectrum-alias-input-border-color-key-focus);
   --spectrum-textfield-border-color-down: var(--spectrum-global-color-gray-900);
