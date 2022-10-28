@@ -14,9 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
-import {DismissButton} from '@react-aria/overlays';
 import {DOMRef} from '@react-types/shared';
-import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -74,45 +72,35 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [hasFooter, hasHeader, titleProps]);
 
-  // If rendered in a popover or tray there won't be a visible dismiss button,
-  // so we render a hidden one for screen readers.
-  let dismissButton: JSX.Element;
-  if (type === 'popover' || type === 'tray') {
-    dismissButton = <DismissButton onDismiss={onDismiss} />;
-  }
-
   return (
-    <FocusScope contain restoreFocus>
-      <section
-        {...styleProps}
-        {...dialogProps}
-        className={classNames(
-          styles,
-          'spectrum-Dialog',
-          {
-            [`spectrum-Dialog--${sizeVariant}`]: sizeVariant,
-            'spectrum-Dialog--dismissable': isDismissable
-          },
-          styleProps.className
-        )}
-        ref={domRef}>
-        <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Dialog-grid']}>
-          <SlotProvider slots={slots}>
-            {children}
-          </SlotProvider>
-          {isDismissable &&
-            <ActionButton
-              UNSAFE_className={styles['spectrum-Dialog-closeButton']}
-              isQuiet
-              aria-label={stringFormatter.format('dismiss')}
-              onPress={onDismiss}>
-              <CrossLarge />
-            </ActionButton>
-          }
-        </Grid>
-        {dismissButton}
-      </section>
-    </FocusScope>
+    <section
+      {...styleProps}
+      {...dialogProps}
+      className={classNames(
+        styles,
+        'spectrum-Dialog',
+        {
+          [`spectrum-Dialog--${sizeVariant}`]: sizeVariant,
+          'spectrum-Dialog--dismissable': isDismissable
+        },
+        styleProps.className
+      )}
+      ref={domRef}>
+      <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Dialog-grid']}>
+        <SlotProvider slots={slots}>
+          {children}
+        </SlotProvider>
+        {isDismissable &&
+          <ActionButton
+            UNSAFE_className={styles['spectrum-Dialog-closeButton']}
+            isQuiet
+            aria-label={stringFormatter.format('dismiss')}
+            onPress={onDismiss}>
+            <CrossLarge />
+          </ActionButton>
+        }
+      </Grid>
+    </section>
   );
 }
 

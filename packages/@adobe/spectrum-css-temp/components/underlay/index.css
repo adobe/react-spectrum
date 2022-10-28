@@ -37,6 +37,11 @@ governing permissions and limitations under the License.
   /* Exit animations */
   transition: opacity var(--spectrum-dialog-background-exit-animation-duration) var(--spectrum-dialog-background-exit-animation-ease) var(--spectrum-dialog-background-exit-animation-delay),
               visibility 0ms linear calc(var(--spectrum-dialog-background-exit-animation-delay) + var(--spectrum-dialog-background-exit-animation-duration));
+
+  &.spectrum-Underlay--transparent {
+    transition: none;
+    background: none;
+  }
 }
 
 .spectrum-Underlay.is-open {

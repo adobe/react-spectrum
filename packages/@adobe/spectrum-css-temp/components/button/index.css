@@ -41,6 +41,8 @@ governing permissions and limitations under the License.
   margin: 0;
 
   border-style: solid;
+  border-radius: var(--spectrum-button-border-radius);
+  border-width: var(--spectrum-button-border-width);
 
   /* Remove the inheritance of text transform on button in Edge, Firefox, and IE. */
   text-transform: none;
@@ -113,8 +115,8 @@ governing permissions and limitations under the License.
 }
 
 %spectrum-ButtonWithFocusRing {
-  &:after {
-    border-radius: calc(var(--spectrum-button-primary-border-radius) + var(--spectrum-alias-focus-ring-gap));
+&:after {
+  border-radius: calc(var(--spectrum-button-border-radius) + var(--spectrum-alias-focus-ring-gap));
     content: '';
     display: block;
     position: absolute;
@@ -131,7 +133,7 @@ governing permissions and limitations under the License.
 
   &:focus-ring {
     &:after {
-      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -1 - var(--spectrum-button-border-width));
     }
   }
 }
@@ -140,9 +142,9 @@ governing permissions and limitations under the License.
   @inherit: %spectrum-BaseButton;
   @inherit: %spectrum-ButtonWithFocusRing;
 
-  border-width: var(--spectrum-button-primary-border-size);
   border-style: solid;
-  border-radius: var(--spectrum-button-primary-border-radius);
+  --spectrum-button-border-radius: var(--spectrum-button-primary-border-radius);
+  --spectrum-button-border-width: var(--spectrum-button-primary-border-size);
 
   min-block-size: var(--spectrum-button-primary-height);
   block-size: 0%;
@@ -188,6 +190,7 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton {
   @inherit: %spectrum-BaseButton;
+  @inherit: %spectrum-ButtonWithFocusRing;
   position: relative;
 
   block-size: var(--spectrum-actionbutton-height);
@@ -196,8 +199,8 @@ a.spectrum-ActionButton {
   /* Use icon padding by default as it's smaller */
   padding: 0;
 
-  border-width: var(--spectrum-actionbutton-border-size);
-  border-radius: var(--spectrum-actionbutton-border-radius);
+  --spectrum-button-border-radius: var(--spectrum-actionbutton-border-radius);
+  --spectrum-button-border-width: var(--spectrum-actionbutton-border-size);
 
   font-size: var(--spectrum-actionbutton-text-size);
   font-weight: var(--spectrum-actionbutton-text-font-weight);
@@ -276,23 +279,6 @@ a.spectrum-ActionButton {
   font-weight: var(--spectrum-actionbutton-quiet-text-font-weight);
 }
 
-.spectrum-ActionButton--emphasized,
-.spectrum-ActionButton--staticColor {
-  @inherit: %spectrum-ButtonWithFocusRing;
-
-  &:after {
-    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
-    border-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
-  }
-
-  &:focus-ring {
-    &:after {
-      /* action buttons only have a 1px border, not 2px */
-      margin: calc(calc(var(--spectrum-alias-focus-ring-gap) * -1) - var(--spectrum-actionbutton-quiet-border-size));
-    }
-  }
-}
-
 .spectrum-LogicButton {
   @inherit: %spectrum-BaseButton;
   @inherit: %spectrum-ButtonWithFocusRing;
@@ -300,17 +286,12 @@ a.spectrum-ActionButton {
   block-size: var(--spectrum-logicbutton-and-height);
   padding: var(--spectrum-logicbutton-and-padding-x);
 
-  border-width: var(--spectrum-logicbutton-and-border-size);
-  border-radius: var(--spectrum-logicbutton-and-border-radius);
+  --spectrum-button-border-width: var(--spectrum-logicbutton-and-border-size);
+  --spectrum-button-border-radius: var(--spectrum-logicbutton-and-border-radius);
 
   font-size: var(--spectrum-logicbutton-and-text-size);
   font-weight: var(--spectrum-logicbutton-and-text-font-weight);
   line-height: 0;
-
-  &:after {
-    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
-    border-radius: calc(var(--spectrum-logicbutton-and-border-radius) + var(--spectrum-alias-focus-ring-gap));
-  }
 }
 
 .spectrum-FieldButton {
@@ -375,7 +356,8 @@ a.spectrum-ActionButton {
   inline-size: var(--spectrum-clearbutton-medium-width);
   block-size: var(--spectrum-clearbutton-medium-height);
 
-  border-radius: 100%;
+  --spectrum-button-border-radius: 100%;
+  --spectrum-button-border-width: 0px;
 
   padding: 0;
   margin: 0;
@@ -386,15 +368,6 @@ a.spectrum-ActionButton {
     /* @safari10 Workaround for https://bugs.webkit.org/show_bug.cgi?id=169700 */
     margin-block: 0;
     margin-inline: auto;
-  }
-}
-
-.spectrum-ClearButton--overBackground {
-  &:focus-ring {
-    &:after {
-      /* Adjust margin because ClearButton does not have a border */
-      margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
-    }
   }
 }
 

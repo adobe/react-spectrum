@@ -44,40 +44,40 @@ governing permissions and limitations under the License.
   color: var(--spectrum-statuslight-neutral-text-color);
 
   &::before {
-    background-color: var(--spectrum-statuslight-neutral-dot-color);
+    background-color: var(--spectrum-gray-visual-color);
   }
 }
 
 .spectrum-StatusLight--celery::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-celery);
+  background-color: var(--spectrum-celery-visual-color);
 }
 
 .spectrum-StatusLight--yellow::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-yellow);
+  background-color: var(--spectrum-yellow-visual-color);
 }
 
 .spectrum-StatusLight--fuchsia::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-fuchsia);
+  background-color: var(--spectrum-fuchsia-visual-color);
 }
 
 .spectrum-StatusLight--indigo::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-indigo);
+  background-color: var(--spectrum-indigo-visual-color);
 }
 
 .spectrum-StatusLight--seafoam::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-seafoam);
+  background-color: var(--spectrum-seafoam-visual-color);
 }
 
 .spectrum-StatusLight--chartreuse::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-chartreuse);
+  background-color: var(--spectrum-chartreuse-visual-color);
 }
 
 .spectrum-StatusLight--magenta::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-magenta);
+  background-color: var(--spectrum-magenta-visual-color);
 }
 
 .spectrum-StatusLight--purple::before {
-  background-color: var(--spectrum-statuslight-dot-color-label-purple);
+  background-color: var(--spectrum-purple-visual-color);
 }
 
 @media (forced-colors: active) {
@@ -85,7 +85,7 @@ governing permissions and limitations under the License.
     forced-color-adjust: none;
     --spectrum-statuslight-text-color-disabled: GrayText;
     --spectrum-statuslight-dot-color-disabled: GrayText;
-    &:before { 
+    &:before {
       border: 1px solid ButtonText;
     }
   }
