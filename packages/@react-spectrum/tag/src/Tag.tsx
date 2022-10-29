@@ -24,8 +24,7 @@ import {useTag} from '@react-aria/tag';
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
     children,
-    isDisabled,
-    isRemovable,
+    allowsRemoving,
     item,
     state,
     onRemove,
@@ -34,15 +33,14 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   // @ts-ignore
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let tagRef = useRef();
   let tagRowRef = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
-    isDisabled,
     isFocused,
-    isRemovable,
+    allowsRemoving,
     item,
     onRemove,
     tagRef,
@@ -59,10 +57,8 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
           styles,
           'spectrum-Tags-item',
           {
-            'is-disabled': isDisabled,
             'focus-ring': isFocusVisible,
             'is-focused': isFocused,
-            'not-removable': !isRemovable,
             'is-hovered': isHovered
           },
           styleProps.className
@@ -71,11 +67,11 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': isRemovable}), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': allowsRemoving}), ...labelProps}
           }}>
 
           {typeof children === 'string' ? <Text>{children}</Text> : children}
-          {isRemovable && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+          {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
         </SlotProvider>
       </div>
     </div>
