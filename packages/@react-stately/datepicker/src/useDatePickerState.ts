@@ -19,7 +19,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
+export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
@@ -68,7 +68,7 @@ export interface DatePickerState extends OverlayTriggerState {
  * Provides state management for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
+export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
