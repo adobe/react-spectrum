@@ -150,7 +150,7 @@ governing permissions and limitations under the License.
   }
 
   &:first-of-type::before {
-    border-start-start-radius: var(--spectrum-slider-track-border-radius);;
+    border-start-start-radius: var(--spectrum-slider-track-border-radius);
     border-end-start-radius: var(--spectrum-slider-track-border-radius);
   }
 
