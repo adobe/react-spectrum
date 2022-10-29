@@ -57,11 +57,7 @@ export interface DatePickerState extends OverlayTriggerState {
   /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
   validationState: ValidationState,
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string,
-  /** Whether the date picker is currently focused. */
-  readonly isFocused: boolean,
-  /** Sets whether the date picker is focused. */
-  setFocused(isFocused: boolean): void
+  formatValue(locale: string, fieldOptions: FieldOptions): string
 }
 
 /**
@@ -71,8 +67,6 @@ export interface DatePickerState extends OverlayTriggerState {
 export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
-
-  let [isFocused, setFocused] = useState(false);
 
   let v = (value || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
@@ -165,8 +159,6 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
 
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
-    },
-    isFocused,
-    setFocused
+    }
   };
 }
