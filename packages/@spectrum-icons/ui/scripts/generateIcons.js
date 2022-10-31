@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {generateIcons} from '@spectrum-icons/build-tools/generateIcons.js';
+import {generateIcons} from '@spectrum-icons/build-tools/generateIcons';
 import * as path from 'path';
 
 let displayNameRegex = /.*?\.displayName = '(?<name>.*?)';/;
