@@ -15,7 +15,7 @@ import {Button} from '@react-spectrum/button';
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import Info from '@spectrum-icons/workflow/Info.js';
+import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';

@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
-import Info from '@spectrum-icons/workflow/Info.js';
+import Info from '@spectrum-icons/workflow/Info';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '../';

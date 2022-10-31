@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
-import Bell from '@spectrum-icons/workflow/Bell.js';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';

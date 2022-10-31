@@ -11,7 +11,7 @@
  */
 
 import Add from '../Add';
-import Alert from '@spectrum-icons/workflow/Alert.js';
+import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Flex} from "@react-spectrum/layout";

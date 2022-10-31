@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
-import Refresh from '@spectrum-icons/workflow/Refresh.js';
+import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
 

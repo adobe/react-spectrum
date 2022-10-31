@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import _123 from '@spectrum-icons/workflow/123.js';
+import _123 from '@spectrum-icons/workflow/123';
 import {Alert} from '../';
 import CalendarCheckColor from '@spectrum-icons/color/CalendarCheckColor.js';
 import React from 'react';
