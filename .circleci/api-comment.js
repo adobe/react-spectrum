@@ -89,7 +89,7 @@ ${diffs}
 }
 
 async function findDifferComment(pr, page = 1) {
-  let comments;
+  let comments = null;
   try {
     comments = await octokit.issues.listComments({
       owner: 'adobe',
