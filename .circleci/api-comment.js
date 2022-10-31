@@ -53,9 +53,10 @@ async function run() {
 
   if (pr != null) {
     let commentId = findDifferComment(pr);
+    console.log(commentId);
     let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     if (diffs.length > 0) {
-      if (commentId) {
+      if (commentId != null) {
         // edit existing comment
         await octokit.issues.updateComment({
           owner: 'adobe',
@@ -81,7 +82,7 @@ ${diffs}
       await octokit.issues.deleteComment({
         owner: 'adobe',
         repo: 'react-spectrum',
-        issue_number: pr
+        comment_id: commentId
       });
     }
   }
