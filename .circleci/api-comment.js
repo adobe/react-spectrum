@@ -98,8 +98,10 @@ async function findDifferComment(pr, page = 1) {
       page
     });
   } catch (err) {
+    console.log(err);
     return null;
   }
+  console.log(comments);
   let commentId;
   for (let comment of comments.data) {
     if (comment.body.includes(commentKey)) {
