@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';

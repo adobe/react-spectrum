@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import Alert from '@spectrum-icons/ui/AlertMedium.js';
-import Checkmark from '@spectrum-icons/ui/CheckmarkMedium.js';
+import Alert from '@spectrum-icons/ui/AlertMedium';
+import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
 import {FocusRing} from '@react-aria/focus';

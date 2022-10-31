@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {announce} from '@react-aria/live-announcer';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import CrossLarge from '@spectrum-icons/ui/CrossLarge.js';
+import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusScope} from '@react-aria/focus';

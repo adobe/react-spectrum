@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
-import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';

@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium.js';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
   useFocusableRef,

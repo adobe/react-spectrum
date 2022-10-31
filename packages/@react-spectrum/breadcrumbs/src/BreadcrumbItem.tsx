@@ -11,7 +11,7 @@
  */
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
-import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall.js';
+import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';

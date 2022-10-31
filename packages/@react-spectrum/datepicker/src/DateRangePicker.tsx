@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import CalendarIcon from '@spectrum-icons/workflow/Calendar.js';
+import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';

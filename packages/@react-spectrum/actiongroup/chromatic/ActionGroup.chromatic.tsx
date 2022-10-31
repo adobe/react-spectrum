@@ -11,23 +11,23 @@
  */
 
 import {ActionGroup} from '../';
-import BookIcon from '@spectrum-icons/workflow/Book.js';
-import CopyIcon from '@spectrum-icons/workflow/Copy.js';
-import DeleteIcon from '@spectrum-icons/workflow/Delete.js';
-import DocumentIcon from '@spectrum-icons/workflow/Document.js';
-import DrawIcon from '@spectrum-icons/workflow/Draw.js';
+import BookIcon from '@spectrum-icons/workflow/Book';
+import CopyIcon from '@spectrum-icons/workflow/Copy';
+import DeleteIcon from '@spectrum-icons/workflow/Delete';
+import DocumentIcon from '@spectrum-icons/workflow/Document';
+import DrawIcon from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
-import InfoIcon from '@spectrum-icons/workflow/Info.js';
+import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
-import PropertiesIcon from '@spectrum-icons/workflow/Properties.js';
+import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
-import SettingsIcon from '@spectrum-icons/workflow/Settings.js';
+import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
-import ViewCardIcon from '@spectrum-icons/workflow/ViewCard.js';
-import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid.js';
-import ViewListIcon from '@spectrum-icons/workflow/ViewList.js';
+import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
+import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
+import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
 const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];

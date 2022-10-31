@@ -12,17 +12,17 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add.js';
-import Alert from '@spectrum-icons/workflow/Alert.js';
-import Bell from '@spectrum-icons/workflow/Bell.js';
+import Add from '@spectrum-icons/workflow/Add';
+import Alert from '@spectrum-icons/workflow/Alert';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import Copy from '@spectrum-icons/workflow/Copy.js';
+import Copy from '@spectrum-icons/workflow/Copy';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import Draw from '@spectrum-icons/workflow/Draw.js';
+import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';

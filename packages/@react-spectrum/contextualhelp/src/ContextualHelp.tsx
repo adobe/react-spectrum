@@ -14,9 +14,9 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FocusableRef} from '@react-types/shared';
-import HelpOutline from '@spectrum-icons/workflow/HelpOutline.js';
+import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from './contextualhelp.css';
-import InfoOutline from '@spectrum-icons/workflow/InfoOutline.js';
+import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useLabels} from '@react-aria/utils';

@@ -17,7 +17,7 @@ import {FocusableRef} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import {Menu} from './Menu';
 import {MenuTrigger} from './MenuTrigger';
-import More from '@spectrum-icons/workflow/More.js';
+import More from '@spectrum-icons/workflow/More';
 import React, {forwardRef, ReactElement} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';

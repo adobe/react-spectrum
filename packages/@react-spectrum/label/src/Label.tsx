@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import Asterisk from '@spectrum-icons/ui/Asterisk.js';
+import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';

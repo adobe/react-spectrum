@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import Bell from '@spectrum-icons/workflow/Bell.js';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';

@@ -12,13 +12,13 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add.js';
+import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
-import Delete from '@spectrum-icons/workflow/Delete.js';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
@@ -28,7 +28,7 @@ import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
-import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults.js';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';

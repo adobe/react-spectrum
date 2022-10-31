@@ -10,22 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-module.exports = {
-  meta: {
-    fixable: 'code'
-  },
-  create: function (context) {
-    return {
-      ImportDeclaration(node) {
-        const source = node.source.value;
-        if (source.startsWith('@spectrum-icons') && !source.endsWith('.js')) {
-          context.report({
-            node: node.source,
-            message: 'Icons must use cjs ".js" file extension in an import.',
-            fix: (fixer) => fixer.replaceText(node.source, `'${node.source.value}.js'`)
-          });
-        }
-      }
-    };
-  }
-};
+import {addPackageExports} from '@spectrum-icons/build-tools/generateIcons.js';
+import * as path from 'path';
+
+addPackageExports(path.join(__dirname, '..'));
+

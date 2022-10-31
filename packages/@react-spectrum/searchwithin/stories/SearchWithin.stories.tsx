@@ -11,7 +11,7 @@
  */
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import Filter from '@spectrum-icons/workflow/Filter.js';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import React, {useState} from 'react';

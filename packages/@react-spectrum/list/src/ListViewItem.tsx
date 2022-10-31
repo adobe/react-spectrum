@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 import {Checkbox} from '@react-spectrum/checkbox';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium.js';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium.js';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
 import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
@@ -19,7 +19,7 @@ import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/interactions';
-import ListGripper from '@spectrum-icons/ui/ListGripper.js';
+import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';

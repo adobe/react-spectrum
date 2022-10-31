@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import CrossMedium from '@spectrum-icons/ui/CrossMedium.js';
+import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
-import InfoMedium from '@spectrum-icons/ui/InfoMedium.js';
+import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
-import SuccessMedium from '@spectrum-icons/ui/SuccessMedium.js';
+import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
 import {ToastProps, ToastState} from '@react-types/toast';
 import {useToast} from '@react-aria/toast';

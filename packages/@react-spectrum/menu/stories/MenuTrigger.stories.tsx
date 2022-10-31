@@ -12,16 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import AlignCenter from '@spectrum-icons/workflow/AlignCenter.js';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft.js';
-import AlignRight from '@spectrum-icons/workflow/AlignRight.js';
-import Blower from '@spectrum-icons/workflow/Blower.js';
-import Book from '@spectrum-icons/workflow/Book.js';
-import Copy from '@spectrum-icons/workflow/Copy.js';
-import Cut from '@spectrum-icons/workflow/Cut.js';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import Blower from '@spectrum-icons/workflow/Blower';
+import Book from '@spectrum-icons/workflow/Book';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
-import Paste from '@spectrum-icons/workflow/Paste.js';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 

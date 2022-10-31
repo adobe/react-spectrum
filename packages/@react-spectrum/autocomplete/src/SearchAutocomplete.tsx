@@ -19,7 +19,7 @@ import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import Magnifier from '@spectrum-icons/ui/Magnifier.js';
+import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';

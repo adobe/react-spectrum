@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium.js';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium.js';
+import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
+import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';

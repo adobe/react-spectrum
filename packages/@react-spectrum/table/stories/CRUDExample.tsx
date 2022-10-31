@@ -12,18 +12,18 @@
 
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import Add from '@spectrum-icons/workflow/Add.js';
+import Add from '@spectrum-icons/workflow/Add';
 import {AlertDialog, Dialog, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
-import Delete from '@spectrum-icons/workflow/Delete.js';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import More from '@spectrum-icons/workflow/More.js';
+import More from '@spectrum-icons/workflow/More';
 import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';

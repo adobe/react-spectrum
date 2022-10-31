@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import Filter from '@spectrum-icons/workflow/Filter.js';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '../';

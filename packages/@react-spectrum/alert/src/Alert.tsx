@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertMedium from '@spectrum-icons/ui/AlertMedium.js';
+import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import HelpMedium from '@spectrum-icons/ui/HelpMedium.js';
-import InfoMedium from '@spectrum-icons/ui/InfoMedium.js';
+import HelpMedium from '@spectrum-icons/ui/HelpMedium';
+import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
 import React from 'react';
 import {SpectrumAlertProps} from '@react-types/alert';
 import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
-import SuccessMedium from '@spectrum-icons/ui/SuccessMedium.js';
+import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 let ICONS = {
