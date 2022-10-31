@@ -108,7 +108,7 @@ async function findDifferComment(pr, page = 1) {
     }
   }
   if (commentId == null) {
-    commentId = findDifferComment(pr, page++);
+    commentId = await findDifferComment(pr, page++);
   }
   return commentId;
 }
