@@ -71,7 +71,7 @@ export function addPackageExports(iconPackageDir) {
     pkgJson.exports = {};
     iconFiles.forEach(icon => {
       let iconFileName = path.basename(icon).substring(0, icon.length - 4);
-      pkgJson.exports[`${iconFileName}`] = {
+      pkgJson.exports[`./${iconFileName}`] = {
         'require': `./${iconFileName}.js`,
         'import': `./${iconFileName}.mjs`
       };
