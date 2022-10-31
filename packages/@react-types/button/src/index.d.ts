@@ -78,8 +78,7 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
    * Whether the button should be displayed with a quiet style.
    * @deprecated
    */
-  isQuiet?: boolean,
-  fire?: boolean
+  isQuiet?: boolean
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
