@@ -101,7 +101,7 @@ async function findDifferComment(pr, page = 1) {
     return null;
   }
   let commentId;
-  for (let comment of comments) {
+  for (let comment of comments.data) {
     if (comment.body.includes(commentKey)) {
       commentId = comment.id;
       break;
