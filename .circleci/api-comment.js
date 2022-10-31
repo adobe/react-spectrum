@@ -52,7 +52,7 @@ async function run() {
   }
 
   if (pr != null) {
-    let commentId = findDifferComment(pr);
+    let commentId = await findDifferComment(pr);
     console.log(commentId);
     let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     if (diffs.length > 0) {
