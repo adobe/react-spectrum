@@ -62,26 +62,20 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
  * @param iconDir Root icon directory.
  */
 export function addPackageExports(iconPackageDir) {
-  fs.readdir(iconPackageDir, (err, items) => {
+  fs.readdir(iconPackageDir, (items, err) => {
     let iconFiles = items.filter(item => !!item.endsWith('.mjs'));
 
     // add all exports fields to package.json
     let pkgJsonFilepath = path.join(iconPackageDir, 'package.json');
     let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilepath), 'utf-8');
     pkgJson.exports = {};
-    // iconFiles.forEach(icon => {
-    //   let iconFileName = path.basename(icon).substring(0, icon.length - 4);
-    //   pkgJson.exports[`${iconFileName}`] = {
-    //     'require': `./${iconFileName}.js`,
-    //     'import': `./${iconFileName}.mjs`
-    //   };
-    // });
-    pkgJson.exports = {
-      '*': {
-        'import': './*.mjs',
-        'require': './*.js'
-      }
-    }
+    iconFiles.forEach(icon => {
+      let iconFileName = path.basename(icon).substring(0, icon.length - 4);
+      pkgJson.exports[`${iconFileName}`] = {
+        'require': `./${iconFileName}.js`,
+        'import': `./${iconFileName}.mjs`
+      };
+    });
     let pkg = JSON.stringify(pkgJson, null, 2);
     fs.writeFileSync(pkgJsonFilepath, `${pkg}\n`);
   });
