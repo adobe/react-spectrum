@@ -32,155 +32,155 @@
     "access": "public"
   },
   "exports": {
-    "AlertMedium": {
+    "./AlertMedium": {
       "require": "./AlertMedium.js",
       "import": "./AlertMedium.mjs"
     },
-    "AlertSmall": {
+    "./AlertSmall": {
       "require": "./AlertSmall.js",
       "import": "./AlertSmall.mjs"
     },
-    "ArrowDownSmall": {
+    "./ArrowDownSmall": {
       "require": "./ArrowDownSmall.js",
       "import": "./ArrowDownSmall.mjs"
     },
-    "ArrowLeftMedium": {
+    "./ArrowLeftMedium": {
       "require": "./ArrowLeftMedium.js",
       "import": "./ArrowLeftMedium.mjs"
     },
-    "ArrowUpSmall": {
+    "./ArrowUpSmall": {
       "require": "./ArrowUpSmall.js",
       "import": "./ArrowUpSmall.mjs"
     },
-    "Asterisk": {
+    "./Asterisk": {
       "require": "./Asterisk.js",
       "import": "./Asterisk.mjs"
     },
-    "CheckmarkMedium": {
+    "./CheckmarkMedium": {
       "require": "./CheckmarkMedium.js",
       "import": "./CheckmarkMedium.mjs"
     },
-    "CheckmarkSmall": {
+    "./CheckmarkSmall": {
       "require": "./CheckmarkSmall.js",
       "import": "./CheckmarkSmall.mjs"
     },
-    "ChevronDownMedium": {
+    "./ChevronDownMedium": {
       "require": "./ChevronDownMedium.js",
       "import": "./ChevronDownMedium.mjs"
     },
-    "ChevronDownSmall": {
+    "./ChevronDownSmall": {
       "require": "./ChevronDownSmall.js",
       "import": "./ChevronDownSmall.mjs"
     },
-    "ChevronLeftLarge": {
+    "./ChevronLeftLarge": {
       "require": "./ChevronLeftLarge.js",
       "import": "./ChevronLeftLarge.mjs"
     },
-    "ChevronLeftMedium": {
+    "./ChevronLeftMedium": {
       "require": "./ChevronLeftMedium.js",
       "import": "./ChevronLeftMedium.mjs"
     },
-    "ChevronRightLarge": {
+    "./ChevronRightLarge": {
       "require": "./ChevronRightLarge.js",
       "import": "./ChevronRightLarge.mjs"
     },
-    "ChevronRightMedium": {
+    "./ChevronRightMedium": {
       "require": "./ChevronRightMedium.js",
       "import": "./ChevronRightMedium.mjs"
     },
-    "ChevronRightSmall": {
+    "./ChevronRightSmall": {
       "require": "./ChevronRightSmall.js",
       "import": "./ChevronRightSmall.mjs"
     },
-    "ChevronUpSmall": {
+    "./ChevronUpSmall": {
       "require": "./ChevronUpSmall.js",
       "import": "./ChevronUpSmall.mjs"
     },
-    "CornerTriangle": {
+    "./CornerTriangle": {
       "require": "./CornerTriangle.js",
       "import": "./CornerTriangle.mjs"
     },
-    "CrossLarge": {
+    "./CrossLarge": {
       "require": "./CrossLarge.js",
       "import": "./CrossLarge.mjs"
     },
-    "CrossMedium": {
+    "./CrossMedium": {
       "require": "./CrossMedium.js",
       "import": "./CrossMedium.mjs"
     },
-    "CrossSmall": {
+    "./CrossSmall": {
       "require": "./CrossSmall.js",
       "import": "./CrossSmall.mjs"
     },
-    "DashSmall": {
+    "./DashSmall": {
       "require": "./DashSmall.js",
       "import": "./DashSmall.mjs"
     },
-    "DoubleGripper": {
+    "./DoubleGripper": {
       "require": "./DoubleGripper.js",
       "import": "./DoubleGripper.mjs"
     },
-    "FolderBreadcrumb": {
+    "./FolderBreadcrumb": {
       "require": "./FolderBreadcrumb.js",
       "import": "./FolderBreadcrumb.mjs"
     },
-    "HelpMedium": {
+    "./HelpMedium": {
       "require": "./HelpMedium.js",
       "import": "./HelpMedium.mjs"
     },
-    "HelpSmall": {
+    "./HelpSmall": {
       "require": "./HelpSmall.js",
       "import": "./HelpSmall.mjs"
     },
-    "InfoMedium": {
+    "./InfoMedium": {
       "require": "./InfoMedium.js",
       "import": "./InfoMedium.mjs"
     },
-    "InfoSmall": {
+    "./InfoSmall": {
       "require": "./InfoSmall.js",
       "import": "./InfoSmall.mjs"
     },
-    "ListGripper": {
+    "./ListGripper": {
       "require": "./ListGripper.js",
       "import": "./ListGripper.mjs"
     },
-    "Magnifier": {
+    "./Magnifier": {
       "require": "./Magnifier.js",
       "import": "./Magnifier.mjs"
     },
-    "More": {
+    "./More": {
       "require": "./More.js",
       "import": "./More.mjs"
     },
-    "SkipLeft": {
+    "./SkipLeft": {
       "require": "./SkipLeft.js",
       "import": "./SkipLeft.mjs"
     },
-    "SkipRight": {
+    "./SkipRight": {
       "require": "./SkipRight.js",
       "import": "./SkipRight.mjs"
     },
-    "Star": {
+    "./Star": {
       "require": "./Star.js",
       "import": "./Star.mjs"
     },
-    "StarOutline": {
+    "./StarOutline": {
       "require": "./StarOutline.js",
       "import": "./StarOutline.mjs"
     },
-    "SuccessMedium": {
+    "./SuccessMedium": {
       "require": "./SuccessMedium.js",
       "import": "./SuccessMedium.mjs"
     },
-    "SuccessSmall": {
+    "./SuccessSmall": {
       "require": "./SuccessSmall.js",
       "import": "./SuccessSmall.mjs"
     },
-    "TripleGripper": {
+    "./TripleGripper": {
       "require": "./TripleGripper.js",
       "import": "./TripleGripper.mjs"
     },
-    "index": {
+    "./index": {
       "require": "./index.js",
       "import": "./index.mjs"
     }

@@ -30,39 +30,39 @@
     "access": "public"
   },
   "exports": {
-    "Error": {
+    "./Error": {
       "require": "./Error.js",
       "import": "./Error.mjs"
     },
-    "File": {
+    "./File": {
       "require": "./File.js",
       "import": "./File.mjs"
     },
-    "Folder": {
+    "./Folder": {
       "require": "./Folder.js",
       "import": "./Folder.mjs"
     },
-    "NoSearchResults": {
+    "./NoSearchResults": {
       "require": "./NoSearchResults.js",
       "import": "./NoSearchResults.mjs"
     },
-    "NotFound": {
+    "./NotFound": {
       "require": "./NotFound.js",
       "import": "./NotFound.mjs"
     },
-    "Timeout": {
+    "./Timeout": {
       "require": "./Timeout.js",
       "import": "./Timeout.mjs"
     },
-    "Unauthorized": {
+    "./Unauthorized": {
       "require": "./Unauthorized.js",
       "import": "./Unauthorized.mjs"
     },
-    "Unavailable": {
+    "./Unavailable": {
       "require": "./Unavailable.js",
       "import": "./Unavailable.mjs"
     },
-    "Upload": {
+    "./Upload": {
       "require": "./Upload.js",
       "import": "./Upload.mjs"
     }

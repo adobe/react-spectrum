@@ -32,75 +32,75 @@
     "access": "public"
   },
   "exports": {
-    "CalendarCheckColor": {
+    "./CalendarCheckColor": {
       "require": "./CalendarCheckColor.js",
       "import": "./CalendarCheckColor.mjs"
     },
-    "EmotionAdmirationColor": {
+    "./EmotionAdmirationColor": {
       "require": "./EmotionAdmirationColor.js",
       "import": "./EmotionAdmirationColor.mjs"
     },
-    "EmotionAngerColor": {
+    "./EmotionAngerColor": {
       "require": "./EmotionAngerColor.js",
       "import": "./EmotionAngerColor.mjs"
     },
-    "EmotionAnticipationColor": {
+    "./EmotionAnticipationColor": {
       "require": "./EmotionAnticipationColor.js",
       "import": "./EmotionAnticipationColor.mjs"
     },
-    "EmotionDisgustColor": {
+    "./EmotionDisgustColor": {
       "require": "./EmotionDisgustColor.js",
       "import": "./EmotionDisgustColor.mjs"
     },
-    "EmotionFearColor": {
+    "./EmotionFearColor": {
       "require": "./EmotionFearColor.js",
       "import": "./EmotionFearColor.mjs"
     },
-    "EmotionJoyColor": {
+    "./EmotionJoyColor": {
       "require": "./EmotionJoyColor.js",
       "import": "./EmotionJoyColor.mjs"
     },
-    "EmotionSadnessColor": {
+    "./EmotionSadnessColor": {
       "require": "./EmotionSadnessColor.js",
       "import": "./EmotionSadnessColor.mjs"
     },
-    "EmotionSurpriseColor": {
+    "./EmotionSurpriseColor": {
       "require": "./EmotionSurpriseColor.js",
       "import": "./EmotionSurpriseColor.mjs"
     },
-    "ImageCheckColor": {
+    "./ImageCheckColor": {
       "require": "./ImageCheckColor.js",
       "import": "./ImageCheckColor.mjs"
     },
-    "LinkCheckColor": {
+    "./LinkCheckColor": {
       "require": "./LinkCheckColor.js",
       "import": "./LinkCheckColor.mjs"
     },
-    "ProjectCameraColor": {
+    "./ProjectCameraColor": {
       "require": "./ProjectCameraColor.js",
       "import": "./ProjectCameraColor.mjs"
     },
-    "ProjectColor": {
+    "./ProjectColor": {
       "require": "./ProjectColor.js",
       "import": "./ProjectColor.mjs"
     },
-    "ProjectPlayColor": {
+    "./ProjectPlayColor": {
       "require": "./ProjectPlayColor.js",
       "import": "./ProjectPlayColor.mjs"
     },
-    "ProjectRefreshColor": {
+    "./ProjectRefreshColor": {
       "require": "./ProjectRefreshColor.js",
       "import": "./ProjectRefreshColor.mjs"
     },
-    "UserCircleColor": {
+    "./UserCircleColor": {
       "require": "./UserCircleColor.js",
       "import": "./UserCircleColor.mjs"
     },
-    "UserGroupCircleColor": {
+    "./UserGroupCircleColor": {
       "require": "./UserGroupCircleColor.js",
       "import": "./UserGroupCircleColor.mjs"
     },
-    "index": {
+    "./index": {
       "require": "./index.js",
       "import": "./index.mjs"
     }
