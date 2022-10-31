@@ -9,24 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { AlertDialogContext, DialogContext, DialogContextValue } from './context';
+import {AlertDialogContext, DialogContext, DialogContextValue} from './context';
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import { Button } from '@react-spectrum/button';
-import { ButtonGroup } from '@react-spectrum/buttongroup';
-import { chain } from '@react-aria/utils';
-import { classNames, useStyleProps } from '@react-spectrum/utils';
-import { Content } from '@react-spectrum/view';
-import { Dialog } from './Dialog';
-import { Divider } from '@react-spectrum/divider';
-import { DOMRef } from '@react-types/shared';
-import { Heading } from '@react-spectrum/text';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {chain} from '@react-aria/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
+import {Dialog} from './Dialog';
+import {Divider} from '@react-spectrum/divider';
+import {DOMRef} from '@react-types/shared';
+import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, { forwardRef, useContext } from 'react';
-import { SpectrumAlertDialogProps } from '@react-types/dialog';
-import { SpectrumButtonProps } from '@react-types/button';
+import React, {forwardRef, useContext} from 'react';
+import {SpectrumAlertDialogProps} from '@react-types/dialog';
+import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import { useLocalizedStringFormatter } from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
@@ -52,7 +52,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     onSecondaryAction = () => { },
     ...otherProps
   } = props;
-  let { styleProps } = useStyleProps(otherProps);
+  let {styleProps} = useStyleProps(otherProps);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
@@ -74,10 +74,10 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   };
 
   return (
-    <AlertDialogContext.Provider value={{ onKeyDown }}>
+    <AlertDialogContext.Provider value={{onKeyDown}}>
       <Dialog
         UNSAFE_style={styleProps.style}
-        UNSAFE_className={classNames(styles, { [`spectrum-Dialog--${variant}`]: variant }, styleProps.className)}
+        UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
         isHidden={styleProps.hidden}
         size="M"
         role="alertdialog"
@@ -125,4 +125,4 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
 let _AlertDialog = forwardRef(AlertDialog);
-export { _AlertDialog as AlertDialog };
+export {_AlertDialog as AlertDialog};
