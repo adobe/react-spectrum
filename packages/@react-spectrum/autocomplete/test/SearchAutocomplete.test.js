@@ -14,6 +14,7 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, render, screen, triggerPress, typeText, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Item, SearchAutocomplete, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -163,6 +164,18 @@ describe('SearchAutocomplete', function () {
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('should support custom icons', function () {
+    let {getByTestId} = renderSearchAutocomplete({icon: <Filter data-testid="filtericon" />});
+
+    expect(getByTestId('filtericon')).toBeTruthy();
+  });
+
+  it('should support no icons', function () {
+    let {queryByTestId} = renderSearchAutocomplete({icon: null});
+
+    expect(queryByTestId('searchicon')).toBeNull();
   });
 
   it('renders with placeholder text and shows warning', function () {
@@ -721,11 +734,9 @@ describe('SearchAutocomplete', function () {
       let {getByRole} = renderSearchAutocomplete({allowsCustomValue: true});
       let searchAutocomplete = getByRole('combobox');
       // Change input value to something matching a searchAutocomplete value
-      act(() => {
-        searchAutocomplete.focus();
-        fireEvent.change(searchAutocomplete, {target: {value: 'Two'}});
-        jest.runAllTimers();
-      });
+      act(() => searchAutocomplete.focus());
+      fireEvent.change(searchAutocomplete, {target: {value: 'Two'}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
@@ -735,11 +746,9 @@ describe('SearchAutocomplete', function () {
       expect(items[0].textContent).toBe('Two');
 
       // Change input text to something that doesn't match any searchAutocomplete items but still shows the menu
-      act(() => {
-        searchAutocomplete.focus();
-        fireEvent.change(searchAutocomplete, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => searchAutocomplete.focus());
+      fireEvent.change(searchAutocomplete, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       // check that no item is focused in the menu
       listbox = getByRole('listbox');
@@ -1386,10 +1395,8 @@ describe('SearchAutocomplete', function () {
 
       expect(queryByRole('progressbar')).toBeNull();
 
-      act(() => {
-        typeText(searchAutocomplete, 'o');
-        jest.runAllTimers();
-      });
+      typeText(searchAutocomplete, 'o');
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();

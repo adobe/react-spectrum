@@ -33,13 +33,11 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
-  isLoading?: boolean,
-  readOnlyText?: string
+  isLoading?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {
-    label,
     validationState,
     icon,
     isQuiet = false,
@@ -52,17 +50,16 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     descriptionProps,
     errorMessageProps,
-    inputRef,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
-    validationIconClassName,
-    readOnlyText
+    validationIconClassName
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
-  
+  let inputRef = userInputRef || defaultInputRef;
+
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -77,7 +74,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
 
   if (icon) {
     let UNSAFE_className = classNames(
@@ -109,7 +106,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           'spectrum-Textfield',
           {
             'spectrum-Textfield--invalid': isInvalid,
-            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
             'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
@@ -134,28 +131,21 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           } />
       </FocusRing>
       {icon}
-      {validationState && !isLoading ? validation : null}
+      {validationState && !isLoading && !isDisabled ? validation : null}
       {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>
   );
 
-  if (label) {
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
-    }));
-  }
-  
   return (
     <Field
       {...props}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      wrapperClassName={classNames(styles, 'spectrum-Textfield-wrapper')}
       showErrorIcon={false}
-      ref={domRef}
-      readOnlyText={readOnlyText}
-      inputProps={inputProps}>
+      ref={domRef}>
       {textField}
     </Field>
   );

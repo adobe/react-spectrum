@@ -19,21 +19,33 @@ import {HTMLAttributes, Key, RefObject} from 'react';
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
 import {useId} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
+  /** The drop target that the drop indicator represents. */
   target: DropTarget
 }
 
 export interface DropIndicatorAria {
-  dropIndicatorProps: HTMLAttributes<HTMLElement>
+  /** Props for the drop indicator element. */
+  dropIndicatorProps: HTMLAttributes<HTMLElement>,
+  /** Whether the drop indicator is currently the active drop target. */
+  isDropTarget: boolean,
+  /**
+   * Whether the drop indicator is hidden, both visually and from assistive technology.
+   * Use this to determine whether to omit the element from the DOM entirely.
+   */
+  isHidden: boolean
 }
 
+/**
+ * Handles drop interactions for a target within a droppable collection.
+ */
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
   let {target} = props;
   let {collection} = state;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
@@ -42,10 +54,10 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let label = '';
   let labelledBy: string;
   if (target.type === 'root') {
-    label = formatMessage('dropOnRoot');
+    label = stringFormatter.format('dropOnRoot');
     labelledBy = `${id} ${getDroppableCollectionId(state)}`;
   } else if (target.dropPosition === 'on') {
-    label = formatMessage('dropOnItem', {
+    label = stringFormatter.format('dropOnItem', {
       itemText: getText(target.key)
     });
   } else {
@@ -57,30 +69,37 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       : target.key;
 
     if (before && after) {
-      label = formatMessage('insertBetween', {
+      label = stringFormatter.format('insertBetween', {
         beforeItemText: getText(before),
         afterItemText: getText(after)
       });
     } else if (before) {
-      label = formatMessage('insertAfter', {
+      label = stringFormatter.format('insertAfter', {
         itemText: getText(before)
       });
     } else if (after) {
-      label = formatMessage('insertBefore', {
+      label = stringFormatter.format('insertBefore', {
         itemText: getText(after)
       });
     }
   }
 
+  let isDropTarget = state.isDropTarget(target);
+  let ariaHidden = !dragSession ? 'true' : dropProps['aria-hidden'];
   return {
     dropIndicatorProps: {
       ...dropProps,
       id,
-      'aria-roledescription': formatMessage('dropIndicator'),
+      'aria-roledescription': stringFormatter.format('dropIndicator'),
       'aria-label': label,
       'aria-labelledby': labelledBy,
-      'aria-hidden': !dragSession ? 'true' : dropProps['aria-hidden'],
+      'aria-hidden': ariaHidden,
       tabIndex: -1
-    }
+    },
+    isDropTarget,
+    // If aria-hidden, we are either not in a drag session or the drop target is invalid.
+    // In that case, there's no need to render anything at all unless we need to show the indicator visually.
+    // This can happen when dragging using the native DnD API as opposed to keyboard dragging.
+    isHidden: !isDropTarget && !!ariaHidden
   };
 }

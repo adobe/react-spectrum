@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useToggleState';
+export {useToggleState} from './useToggleState';
+
+export type {ToggleProps} from '@react-types/checkbox';
+export type {ToggleState} from './useToggleState';

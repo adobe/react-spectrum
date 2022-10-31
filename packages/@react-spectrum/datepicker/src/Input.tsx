@@ -37,29 +37,32 @@ function Input(props, ref) {
   // not cause a layout shift.
   let [reservePadding, setReservePadding] = useValueEffect(false);
   let onResize = useCallback(() => setReservePadding(function *(reservePadding) {
-    if (reservePadding) {
-      // Try to collapse padding if the content is clipped.
-      if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield false;
-
-        // If removing padding causes a layout shift, add it back.
-        if (inputRef.current.parentElement.offsetWidth !== width) {
-          yield true;
-        }
-      }
-    } else {
-      // Try to add padding if the content is not clipped.
-      if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
-        let width = inputRef.current.parentElement.offsetWidth;
-        yield true;
-
-        // If adding padding does not change the width (i.e. width is constrained), remove it again.
-        if (inputRef.current.parentElement.offsetWidth === width) {
+    if (inputRef.current) {
+      if (reservePadding) {
+        // Try to collapse padding if the content is clipped.
+        if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
           yield false;
+
+          // If removing padding causes a layout shift, add it back.
+          if (inputRef.current.parentElement.offsetWidth !== width) {
+            yield true;
+          }
+        }
+      } else {
+        // Try to add padding if the content is not clipped.
+        if (inputRef.current.offsetWidth >= inputRef.current.scrollWidth) {
+          let width = inputRef.current.parentElement.offsetWidth;
+          yield true;
+
+          // If adding padding does not change the width (i.e. width is constrained), remove it again.
+          if (inputRef.current.parentElement.offsetWidth === width) {
+            yield false;
+          }
         }
       }
     }
+
   }), [inputRef, setReservePadding]);
 
   useLayoutEffect(onResize, [onResize]);
@@ -74,13 +77,13 @@ function Input(props, ref) {
   // parent element.
   useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
   let textfieldClass = classNames(
     textfieldStyles,
     'spectrum-Textfield',
     {
       'spectrum-Textfield--invalid': isInvalid,
-      'spectrum-Textfield--valid': validationState === 'valid',
+      'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
       'spectrum-Textfield--quiet': isQuiet
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
@@ -104,9 +107,9 @@ function Input(props, ref) {
   );
 
   let validationIcon = null;
-  if (validationState === 'invalid') {
+  if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
-  } else if (validationState === 'valid') {
+  } else if (validationState === 'valid' && !isDisabled) {
     validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
   }
 

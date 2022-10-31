@@ -18,10 +18,14 @@ import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
-let FormContext = React.createContext<SpectrumLabelableProps>({});
+let FormContext = React.createContext<SpectrumLabelableProps>(null);
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   let ctx = useContext(FormContext);
-  return {...ctx, ...props};
+  if (ctx) {
+    return {...ctx, ...props};
+  }
+
+  return props;
 }
 
 const formPropNames = new Set([

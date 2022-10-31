@@ -232,7 +232,7 @@ html, body {
   justify-content: space-between;
 }
 
-.sideNavItem span {
+.sideNavItem > span {
   margin-left: 10px;
   cursor: pointer;
 }
@@ -436,7 +436,8 @@ footer li:last-child:after {
 
 .article pre {
   background: var(--spectrum-global-color-gray-75);
-  padding: 18px;
+  --code-padding: 18px;
+  padding: var(--code-padding);
   border-radius: 4px;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -747,12 +748,10 @@ h2.sectionHeader {
 
   .propTable td[data-column]:before {
     content: attr(data-column);
-    font-size: var(--spectrum-table-header-text-size);
+    font-size: var(--spectrum-global-dimension-font-size-100);
     font-weight: var(--spectrum-table-header-text-font-weight);
     min-height: var(--spectrum-table-header-min-height);
-    letter-spacing: var(--spectrum-table-header-text-letter-spacing);
-    color: var(--spectrum-table-header-text-color);
-    text-transform: uppercase;
+    color: var(--spectrum-alias-text-color);
     width: 80px;
     display: inline-block;
     vertical-align: middle;
@@ -859,7 +858,7 @@ h2.sectionHeader {
   }
 
   .article pre {
-    padding: 8px;
+    --code-padding: 8px;
   }
 
   @mixin small-propTable;
@@ -888,4 +887,30 @@ h2.sectionHeader {
 
 .popover {
   @mixin small-propTable;
+}
+
+.cardGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  justify-content: space-between;
+  justify-items: center;
+  gap: 16px;
+  margin-top: var(--spectrum-global-dimension-size-200);
+  margin-bottom: var(--spectrum-global-dimension-size-400);
+
+  a {
+    width: 100%;
+    margin: 0;
+  }
+
+  + h2.sectionHeader.docsHeader {
+    margin-top: var(--spectrum-global-dimension-size-800);
+  }
+}
+
+@media (min-width: 1440px) {
+  .cardGroup {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
 }

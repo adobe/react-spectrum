@@ -157,7 +157,7 @@ export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
   /**
    * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
    */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | string,
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {}),
 
   /**
    * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
@@ -173,5 +173,6 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
   id?: string | undefined,
   role?: AriaRole | undefined,
   tabIndex?: number | undefined,
-  style?: CSSProperties | undefined
+  style?: CSSProperties | undefined,
+  className?: string | undefined
 }

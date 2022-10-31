@@ -14,7 +14,12 @@ import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {Key, KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
-interface TypeSelectOptions {
+/**
+ * Controls how long to wait before clearing the typeahead buffer.
+ */
+const TYPEAHEAD_DEBOUNCE_WAIT_MS = 1000; // 1 second
+
+export interface AriaTypeSelectOptions {
   /**
    * A delegate that returns collection item keys with respect to visual layout.
    */
@@ -29,7 +34,7 @@ interface TypeSelectOptions {
   onTypeSelect?: (key: Key) => void
 }
 
-interface TypeSelectAria {
+export interface TypeSelectAria {
   /**
    * Props to be spread on the owner of the options.
    */
@@ -39,7 +44,7 @@ interface TypeSelectAria {
 /**
  * Handles typeahead interactions with collections.
  */
-export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
+export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef({
     search: '',
@@ -84,7 +89,7 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
     clearTimeout(state.timeout);
     state.timeout = setTimeout(() => {
       state.search = '';
-    }, 500);
+    }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
   };
 
   return {

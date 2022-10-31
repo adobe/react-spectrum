@@ -276,7 +276,7 @@
 
   .react-spectrum-ListViewItem-grid {
     display: grid;
-    grid-template-columns: auto auto auto auto 1fr auto auto;
+    grid-template-columns: auto auto auto 1fr auto auto auto;
     grid-template-rows: 1fr auto;
     grid-template-areas:
       "draghandle checkbox thumbnail content actions actionmenu chevron"
@@ -337,7 +337,7 @@
     align-items: center;
     justify-content: center;
 
-    > img, > svg {
+    > img {
       width: unset;
       height: 100%;
     }
@@ -399,11 +399,21 @@
     border-radius: var(--spectrum-alias-border-radius-regular);
     background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
 
+    &.react-spectrum-ListViewItem-dragPreview--compact {
+      padding-top: var(--spectrum-listview-item-compact-padding-y);
+      padding-bottom: var(--spectrum-listview-item-compact-padding-y);
+    }
+
+    &.react-spectrum-ListViewItem-dragPreview--spacious {
+      padding-top: var(--spectrum-listview-item-spacious-padding-y);
+      padding-bottom: var(--spectrum-listview-item-spacious-padding-y);
+    }
+
     .react-spectrum-ListViewItem-grid {
       grid-template-areas:
         "thumbnail content     . badge"
         "thumbnail description . badge";
-      grid-template-columns: auto auto auto 1fr;
+      grid-template-columns: auto auto 1fr auto;
     }
 
     .react-spectrum-ListViewItem-badge {
@@ -585,4 +595,11 @@
 .react-spectrum-ListViewItem-checkbox--exitActive {
   opacity: 0.01;
   max-width: 0px;
+}
+
+.react-spectrum-ListView {
+  &:focus-ring {
+    border-color: var(--spectrum-global-color-blue-500);
+    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+  }
 }

@@ -31,8 +31,11 @@ const DOC_LINKS = {
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
   CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
+  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
   'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
   'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
@@ -59,6 +62,10 @@ export function Type({type}) {
     case 'unknown':
     case 'never':
       return <Keyword {...type} />;
+    case 'this':
+      return <Keyword {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -85,6 +92,8 @@ export function Type({type}) {
       return <IntersectionType {...type} />;
     case 'application':
       return <TypeApplication {...type} />;
+    case 'typeOperator':
+      return <TypeOperator {...type} />;
     case 'function':
       return <FunctionType {...type} />;
     case 'parameter':
@@ -119,10 +128,22 @@ export function Type({type}) {
     }
     case 'conditional':
       return <ConditionalType {...type} />;
+    case 'indexedAccess':
+      return <IndexedAccess {...type} />;
+    case 'keyof':
+      return <Keyof {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function TypeOperator({operator, value}) {
+  return <span><span className="token hljs-literal">{operator}</span>{' '}<Type type={value} /></span>;
+}
+
+function IndexedAccess({objectType, indexType}) {
+  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
 function StringLiteral({value}) {
@@ -135,6 +156,14 @@ function NumberLiteral({value}) {
 
 function BooleanLiteral({value}) {
   return <span className="token hljs-literal">{'' + value}</span>;
+}
+
+function Symbol() {
+  return <span className="token hljs-literal">symbol</span>;
+}
+
+function Keyof({keyof}) {
+  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
 }
 
 function Keyword({type}) {
@@ -370,6 +399,10 @@ export function LinkType({id}) {
     return null;
   }
 
+  if (DOC_LINKS[value.name]) {
+    return <Identifier name={value.name} />;
+  }
+
   registered.set(id, {type: value, links});
 
   let used = getUsedLinks(value, links);
@@ -515,21 +548,6 @@ function ObjectType({properties, exact}) {
 
         let optional = property.optional;
         let value = property.value;
-
-        // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'method') {
-          return (
-            <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-function">{k}</span>
-              <span className="token punctuation">(</span>
-              <JoinList elements={value.parameters} joiner=", " />
-              <span className="token punctuation">)</span>
-              <span className="token punctuation">{': '}</span>
-              <Type type={value.return} />
-              {i < arr.length - 1 ? ',' : ''}
-            </div>
-          );
-        }
 
         let punc = optional ? '?: ' : ': ';
         return (

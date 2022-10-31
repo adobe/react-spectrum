@@ -34,6 +34,27 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+  &.spectrum-InputGroup--invalid {
+    .spectrum-FieldButton,
+    .spectrum-InputGroup-input {
+      border-color: var(--spectrum-textfield-border-color-error);
+    }
+
+    &:hover {
+      .spectrum-FieldButton,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-hover);
+      }
+    }
+
+    &:active {
+      .spectrum-FieldButton,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-down);
+      }
+    }
+  }
 }
 
 .spectrum-InputGroup.is-focused {
@@ -45,7 +66,7 @@ governing permissions and limitations under the License.
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
-      border-color: var(--spectrum-dropdown-border-color-error);
+      border-color: var(--spectrum-dropdown-border-color-key-focus);
     }
   }
 }
@@ -64,7 +85,7 @@ governing permissions and limitations under the License.
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton,
     .spectrum-InputGroup-input {
-      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
     }
   }
 }
@@ -111,6 +132,20 @@ governing permissions and limitations under the License.
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-error);
       }
+
+      &:hover {
+        .spectrum-FieldButton,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-hover);
+        }
+      }
+
+      &:active {
+        .spectrum-FieldButton,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-down);
+        }
+      }
     }
 
     &.is-focused {
@@ -119,8 +154,9 @@ governing permissions and limitations under the License.
       }
 
       &.spectrum-InputGroup--invalid {
-        .spectrum-FieldButton {
-          border-color: var(--spectrum-textfield-border-color-error);
+        .spectrum-FieldButton,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
         }
       }
     }
@@ -137,11 +173,11 @@ governing permissions and limitations under the License.
 
       &.spectrum-InputGroup--invalid {
         .spectrum-InputGroup-input {
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+          box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
         }
 
         .spectrum-FieldButton {
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+          box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
         }
       }
     }
@@ -166,32 +202,32 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
 
     &.spectrum-InputGroup--invalid {
-      box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+      box-shadow: 0 0 0 1px var(--spectrum-textfield-quiet-border-color-key-focus);
 
       .spectrum-FieldButton {
-        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
   }
 
   &.spectrum-InputGroup--invalid {
     .spectrum-InputGroup-input {
-      border-color: var(--spectrum-dropdown-border-color-error) !important;
+      border-color: var(--spectrum-dropdown-border-color-error);
     }
 
     /* Focus ring: When one of the inputs or the button has keyboard focus, render the focus ring border around the entire input group by styling an adjacent descendant element. */
     &:focus-ring {
       .spectrum-FieldButton {
-        border-color: var(--spectrum-dropdown-border-color-error);
-        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+        border-color: var(--spectrum-dropdown-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
       }
     }
     .spectrum-FieldButton {
       border-color: var(--spectrum-dropdown-border-color-error);
       &.spectrum-FieldButton--invalid {
         &:focus-ring {
-          border-color: var(--spectrum-dropdown-border-color-error);
-          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+          border-color: var(--spectrum-dropdown-border-color-key-focus);
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
       }
     }
@@ -203,15 +239,15 @@ governing permissions and limitations under the License.
       &.spectrum-InputGroup--invalid {
         .spectrum-FieldButton {
           box-shadow: none;
-          border-color: var(--spectrum-dropdown-border-color-error);
+          border-color: var(--spectrum-dropdown-border-color-key-focus);
           &.spectrum-FieldButton--invalid {
             &:focus-ring {
-              box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-error);
+              box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
             }
           }
         }
         &:focus-ring {
-          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-error);
+          box-shadow: 0 0 0 1px var(--spectrum-dropdown-border-color-key-focus);
         }
       }
     }
@@ -235,7 +271,7 @@ governing permissions and limitations under the License.
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
-    }  
+    }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
       border-color: GrayText;
@@ -290,7 +326,7 @@ governing permissions and limitations under the License.
       }
       &.spectrum-InputGroup--quiet {
         box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
-      }   
+      }
     }
   }
 }

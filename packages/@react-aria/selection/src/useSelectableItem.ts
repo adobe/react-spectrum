@@ -78,7 +78,7 @@ export interface SelectableItemStates {
   allowsSelection: boolean,
   /**
    * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
-   * and `disabledBehavior. It may also change depending on the current selection state
+   * and `disabledBehavior`. It may also change depending on the current selection state
    * of the list (e.g. when selection is primary). This can be used to enable or disable hover
    * styles or other visual indications of interactivity.
    */
@@ -144,6 +144,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
@@ -290,7 +291,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent native drag and drop on long press if we also select on long press.
   // Once the user is in selection mode, they can long press again to drag.
-  let onDragStart = e => {
+  // Use a capturing listener to ensure this runs before useDrag, regardless of
+  // the order the props get merged.
+  let onDragStartCapture = e => {
     if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
       e.preventDefault();
     }
@@ -301,7 +304,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStart}
+      {onDoubleClick, onDragStartCapture}
     ),
     isPressed,
     isSelected: manager.isSelected(key),

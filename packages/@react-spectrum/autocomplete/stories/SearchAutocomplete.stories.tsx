@@ -12,6 +12,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
@@ -183,3 +184,9 @@ customWidth6000.storyName = 'custom width: size-6000';
 
 export const customOnSubmit = (props) => <CustomOnSubmit {...props} />;
 customOnSubmit.storyName = 'custom onSubmit';
+
+export const iconFilter = (props) => <Default {...props} icon={<Filter />} />;
+iconFilter.storyName = 'icon: Filter';
+
+export const iconNull = (props) => <Default {...props} icon={null} />;
+iconNull.storyName = 'icon: null';
