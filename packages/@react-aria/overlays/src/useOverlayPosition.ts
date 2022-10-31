@@ -15,7 +15,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
@@ -138,6 +138,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   // Update position on window resize
   useResize(updatePosition);
+
+  // Update position when the overlay changes size (might need to flip).
+  useResizeObserver({
+    ref: overlayRef,
+    onResize: updatePosition
+  });
 
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.

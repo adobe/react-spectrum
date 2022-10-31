@@ -65,7 +65,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'spectrum-Stepper--isQuiet': isQuiet,
         'is-disabled': isDisabled,
         'spectrum-Stepper--readonly': isReadOnly,
-        'is-invalid': props.validationState === 'invalid',
+        'is-invalid': props.validationState === 'invalid' && !isDisabled,
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
         'is-hovered': isHovered,
@@ -123,6 +123,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     style,
     autoFocus,
     isQuiet,
+    isDisabled,
     hideStepper,
     validationState
   } = props;
@@ -162,7 +163,8 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           isQuiet={isQuiet}
           inputRef={inputRef}
           validationState={validationState}
-          inputProps={inputProps} />
+          inputProps={inputProps}
+          isDisabled={isDisabled} />
         {showStepper &&
         <>
           <StepButton direction="up" isQuiet={isQuiet} {...incrementProps} />
