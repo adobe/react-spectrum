@@ -69,13 +69,19 @@ export function addPackageExports(iconPackageDir) {
     let pkgJsonFilepath = path.join(iconPackageDir, 'package.json');
     let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilepath), 'utf-8');
     pkgJson.exports = {};
-    iconFiles.forEach(icon => {
-      let iconFileName = path.basename(icon).substring(0, icon.length - 4);
-      pkgJson.exports[`./${iconFileName}`] = {
-        'require': `./${iconFileName}.js`,
-        'import': `./${iconFileName}.mjs`
-      };
-    });
+    // iconFiles.forEach(icon => {
+    //   let iconFileName = path.basename(icon).substring(0, icon.length - 4);
+    //   pkgJson.exports[`${iconFileName}`] = {
+    //     'require': `./${iconFileName}.js`,
+    //     'import': `./${iconFileName}.mjs`
+    //   };
+    // });
+    pkgJson.exports = {
+      '*': {
+        'import': './*.mjs',
+        'require': './*.js'
+      }
+    }
     let pkg = JSON.stringify(pkgJson, null, 2);
     fs.writeFileSync(pkgJsonFilepath, `${pkg}\n`);
   });
