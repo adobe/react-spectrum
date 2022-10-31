@@ -79,7 +79,7 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
    * @deprecated
    */
   isQuiet?: boolean,
-  snow?: boolean
+  fire?: boolean
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
