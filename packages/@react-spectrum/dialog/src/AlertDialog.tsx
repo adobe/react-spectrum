@@ -18,11 +18,11 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef, useContext} from 'react';
+import React, {forwardRef, MutableRefObject, useContext, useRef} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
@@ -54,6 +54,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let dialogRef = useRef<DOMRefValue<HTMLDivElement>>(null);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -65,7 +66,8 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   }
 
   let onKeyDown = (e) => {
-    if (e.key === 'Enter' && allowsKeyboardConfirmation) {
+    let dialogNode: HTMLElement = dialogRef.current.UNSAFE_getDOMNode();
+    if (e.key === 'Enter' && allowsKeyboardConfirmation && dialogNode === e.target) {
       e.stopPropagation();
       e.preventDefault();
       onPrimaryAction();
@@ -81,7 +83,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         isHidden={styleProps.hidden}
         size="M"
         role="alertdialog"
-        ref={ref}>
+        ref={(elem) => (dialogRef as MutableRefObject<any>).current = elem}>
         <Heading>{title}</Heading>
         {(variant === 'error' || variant === 'warning') &&
           <AlertMedium

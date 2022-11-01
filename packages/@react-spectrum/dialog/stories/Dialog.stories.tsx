@@ -249,7 +249,62 @@ storiesOf('Dialog/Alert', module)
       onCancel: action('cancel'),
       allowsKeyboardConfirmation: true
     })
+  )
+  .add(
+    'alert with content actions',
+    () => renderWithContentButtons({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
+      onCancel: action('cancel'),
+      allowsKeyboardConfirmation: true
+    })
   );
+
+  function renderWithContentButtons(props) {
+    return (
+      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+        <DialogTrigger defaultOpen>
+          <ActionButton>Trigger</ActionButton>
+          <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel}>
+            <Counter />
+          </AlertDialog>
+        </DialogTrigger>
+      </div>
+    );
+  }
+
+  function Counter() {
+    const [count, setCount] = useState(0);
+  
+    const handleIncrement = () => {
+      setCount(prevCount => prevCount + 1);
+    };
+  
+    const handleDecrement = () => {
+      setCount(prevCount => prevCount - 1);
+    };
+
+    return (
+      <div>
+        <Flex gap={'size-300'} direction="column" alignItems="center">
+          <Flex>
+            <div>Count is {count}</div>
+          </Flex>
+          <Flex gap={'size-100'} direction="row">
+            <button onClick={handleDecrement}>-</button>
+            <button onClick={handleIncrement}>+</button>
+          </Flex>
+          <Flex>
+            <button onClick={() => setCount(0)}>Reset</button>
+          </Flex>
+        </Flex>
+      </div>
+    );
+  }
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (

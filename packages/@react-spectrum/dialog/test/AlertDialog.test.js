@@ -188,4 +188,24 @@ describe('AlertDialog', function () {
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     expect(onPrimaryAction).toHaveBeenCalledTimes(1);
   });
+
+  it('only when the keydown event actually happens on the Dialog itself will allowsKeyboardConfirmation work', function () {
+    let onPrimaryAction = jest.fn();
+    let onKeyDown = jest.fn();
+    let {getByText} = render(
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" allowsKeyboardConfirmation title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+          <button onKeyDown={onKeyDown}>native button</button>
+        </AlertDialog>
+      </Provider>
+    );
+
+    let button = getByText('native button');
+    button.focus();
+    expect(document.activeElement).toBe(button);
+
+    fireEvent.keyDown(button, {key: 'Enter'});
+    expect(onKeyDown).toHaveBeenCalledTimes(1);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(0);
+  });
 });
