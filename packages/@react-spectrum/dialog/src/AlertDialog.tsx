@@ -83,7 +83,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         isHidden={styleProps.hidden}
         size="M"
         role="alertdialog"
-        ref={(elem) => (dialogRef as MutableRefObject<any>).current = elem}>
+        ref={!ref? (elem) => (dialogRef as MutableRefObject<any>).current = elem : ref}>
         <Heading>{title}</Heading>
         {(variant === 'error' || variant === 'warning') &&
           <AlertMedium

@@ -11,7 +11,7 @@
  */
 
 import {AlertDialog} from '../';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -201,7 +201,9 @@ describe('AlertDialog', function () {
     );
 
     let button = getByText('native button');
-    button.focus();
+    act(() => {
+      button.focus();
+    });
     expect(document.activeElement).toBe(button);
 
     fireEvent.keyDown(button, {key: 'Enter'});
