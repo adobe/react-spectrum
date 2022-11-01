@@ -33,7 +33,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
  */
 function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   let {
-    onClose = () => { }
+    onClose = () => {}
   } = useContext(DialogContext) || {} as DialogContextValue;
 
   let {
@@ -47,9 +47,9 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     isPrimaryActionDisabled,
     isSecondaryActionDisabled,
     allowsKeyboardConfirmation,
-    onCancel = () => { },
-    onPrimaryAction = () => { },
-    onSecondaryAction = () => { },
+    onCancel = () => {},
+    onPrimaryAction = () => {},
+    onSecondaryAction = () => {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
