@@ -59,8 +59,8 @@ async function run() {
     let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     if (diffs.length > 0) {
       if (commentId != null) {
-        // edit existing comment
-        await octokit.issues.updateComment({
+        // delete existing comment
+        await octokit.issues.deleteComment({
           owner: 'adobe',
           repo: 'react-spectrum',
           comment_id: commentId,
@@ -68,17 +68,16 @@ async function run() {
 ${diffs}
 `
         })
-      } else {
-        // create new comment
-        await octokit.issues.createComment({
-          owner: 'adobe',
-          repo: 'react-spectrum',
-          issue_number: pr,
-          body: `${commentKey}## API Changes
+      }
+      // create new comment
+      await octokit.issues.createComment({
+        owner: 'adobe',
+        repo: 'react-spectrum',
+        issue_number: pr,
+        body: `${commentKey}## API Changes
 ${diffs}
 `
-        });
-      }
+      });
     } else if (commentId != null) {
       // delete existing comment, it no longer applies
       await octokit.issues.deleteComment({
