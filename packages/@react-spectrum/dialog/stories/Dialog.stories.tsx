@@ -264,7 +264,7 @@ storiesOf('Dialog/Alert', module)
     })
   );
 
-function renderWithContentButtons(props){
+function renderWithContentButtons(props) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
@@ -277,7 +277,7 @@ function renderWithContentButtons(props){
   );
 }
 
-function Counter(){
+function Counter() {
   const [count, setCount] = useState(0);
 
   const handleIncrement = () => {
