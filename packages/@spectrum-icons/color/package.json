@@ -31,9 +31,77 @@
     "access": "public"
   },
   "exports": {
-    "*": {
-      "import": "./*.mjs",
-      "require": "./*.js"
+    "./CalendarCheckColor": {
+      "require": "./CalendarCheckColor.js",
+      "import": "./CalendarCheckColor.mjs"
+    },
+    "./EmotionAdmirationColor": {
+      "require": "./EmotionAdmirationColor.js",
+      "import": "./EmotionAdmirationColor.mjs"
+    },
+    "./EmotionAngerColor": {
+      "require": "./EmotionAngerColor.js",
+      "import": "./EmotionAngerColor.mjs"
+    },
+    "./EmotionAnticipationColor": {
+      "require": "./EmotionAnticipationColor.js",
+      "import": "./EmotionAnticipationColor.mjs"
+    },
+    "./EmotionDisgustColor": {
+      "require": "./EmotionDisgustColor.js",
+      "import": "./EmotionDisgustColor.mjs"
+    },
+    "./EmotionFearColor": {
+      "require": "./EmotionFearColor.js",
+      "import": "./EmotionFearColor.mjs"
+    },
+    "./EmotionJoyColor": {
+      "require": "./EmotionJoyColor.js",
+      "import": "./EmotionJoyColor.mjs"
+    },
+    "./EmotionSadnessColor": {
+      "require": "./EmotionSadnessColor.js",
+      "import": "./EmotionSadnessColor.mjs"
+    },
+    "./EmotionSurpriseColor": {
+      "require": "./EmotionSurpriseColor.js",
+      "import": "./EmotionSurpriseColor.mjs"
+    },
+    "./ImageCheckColor": {
+      "require": "./ImageCheckColor.js",
+      "import": "./ImageCheckColor.mjs"
+    },
+    "./LinkCheckColor": {
+      "require": "./LinkCheckColor.js",
+      "import": "./LinkCheckColor.mjs"
+    },
+    "./ProjectCameraColor": {
+      "require": "./ProjectCameraColor.js",
+      "import": "./ProjectCameraColor.mjs"
+    },
+    "./ProjectColor": {
+      "require": "./ProjectColor.js",
+      "import": "./ProjectColor.mjs"
+    },
+    "./ProjectPlayColor": {
+      "require": "./ProjectPlayColor.js",
+      "import": "./ProjectPlayColor.mjs"
+    },
+    "./ProjectRefreshColor": {
+      "require": "./ProjectRefreshColor.js",
+      "import": "./ProjectRefreshColor.mjs"
+    },
+    "./UserCircleColor": {
+      "require": "./UserCircleColor.js",
+      "import": "./UserCircleColor.mjs"
+    },
+    "./UserGroupCircleColor": {
+      "require": "./UserGroupCircleColor.js",
+      "import": "./UserGroupCircleColor.mjs"
+    },
+    "./index": {
+      "require": "./index.js",
+      "import": "./index.mjs"
     }
   }
 }

@@ -29,9 +29,41 @@
     "access": "public"
   },
   "exports": {
-    "*": {
-      "import": "./*.mjs",
-      "require": "./*.js"
+    "./Error": {
+      "require": "./Error.js",
+      "import": "./Error.mjs"
+    },
+    "./File": {
+      "require": "./File.js",
+      "import": "./File.mjs"
+    },
+    "./Folder": {
+      "require": "./Folder.js",
+      "import": "./Folder.mjs"
+    },
+    "./NoSearchResults": {
+      "require": "./NoSearchResults.js",
+      "import": "./NoSearchResults.mjs"
+    },
+    "./NotFound": {
+      "require": "./NotFound.js",
+      "import": "./NotFound.mjs"
+    },
+    "./Timeout": {
+      "require": "./Timeout.js",
+      "import": "./Timeout.mjs"
+    },
+    "./Unauthorized": {
+      "require": "./Unauthorized.js",
+      "import": "./Unauthorized.mjs"
+    },
+    "./Unavailable": {
+      "require": "./Unavailable.js",
+      "import": "./Unavailable.mjs"
+    },
+    "./Upload": {
+      "require": "./Upload.js",
+      "import": "./Upload.mjs"
     }
   }
 }
