@@ -5,7 +5,6 @@ const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_TOKEN}`
 });
 
-let index = 0;
 run();
 
 let commentKey = '<!-- APIDifferComment -->';
@@ -21,7 +20,6 @@ async function run() {
         repo: 'react-spectrum',
         commit_sha: process.env.CIRCLE_SHA1
       });
-      console.log(commit)
 
       // Check if it is a merge commit from the github "Branch from fork action"
       if (commit && commit.data?.parents?.length === 2 && commit.data.message.indexOf('Merge') > -1) {
@@ -55,7 +53,6 @@ async function run() {
 
   if (pr != null) {
     let commentId = await findDifferComment(pr);
-    console.log(commentId);
     let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     if (diffs.length > 0) {
       if (commentId != null) {
@@ -90,10 +87,6 @@ ${diffs}
 }
 
 async function findDifferComment(pr, page = 1) {
-  index++;
-  if (index > 3) {
-    return null;
-  }
   let comments = null;
   try {
     comments = await octokit.issues.listComments({
@@ -106,7 +99,7 @@ async function findDifferComment(pr, page = 1) {
     console.log(err);
     return null;
   }
-  console.log(comments);
+
   let commentId;
   for (let comment of comments.data) {
     if (comment.body.includes(commentKey)) {
