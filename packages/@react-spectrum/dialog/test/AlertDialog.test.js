@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AlertDialog} from '../';
 import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {AlertDialog} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
