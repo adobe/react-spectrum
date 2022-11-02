@@ -13,8 +13,12 @@ module.exports = {
     './custom-addons/descriptions/register',
     './custom-addons/theme/register',
     './custom-addons/strictmode/register',
-    './custom-addons/scrolling/register'
+    './custom-addons/scrolling/register',
+    '@storybook/addon-interactions'
   ],
+  features: {
+    interactionsDebugger: true
+  },
   typescript: {
     check: false,
     reactDocgen: false
