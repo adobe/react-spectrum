@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Key, useCallback, useEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
