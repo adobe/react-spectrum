@@ -19,17 +19,13 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
 ```jsx import
-import {ActionButton} from '@react-spectrum/button';
-import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
-import {Link} from '@react-spectrum/link';
 ```
 
 ---
@@ -709,11 +705,7 @@ function ReorderableList() {
     acceptedDragTypes: ['custom-app-type-reorder'],
     /*- begin highlight -*/
     onReorder: async (e) => {
-      let {
-        keys,
-        target,
-        dropOperation
-      } = e;
+      let {keys, target} = e;
 
       if (target.dropPosition === 'before') {
         list.moveBefore(target.key, [...keys]);

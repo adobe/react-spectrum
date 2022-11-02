@@ -78,7 +78,7 @@ function Example() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
-  let [majorId, setMajorId] = React.useState();
+  let [majorId, setMajorId] = React.useState(null);
 
   return (
     <>
@@ -816,7 +816,7 @@ Both a description and an error message can be supplied to a ComboBox. The descr
 
 ```tsx example
 function Example() {
-    let [animalId, setAnimalId] = React.useState();
+    let [animalId, setAnimalId] = React.useState(null);
     let options = [
       {id: 1, name: 'Aardvark'},
       {id: 2, name: 'Cat'},

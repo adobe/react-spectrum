@@ -114,7 +114,7 @@ function ListBox(props) {
 function Option({ item, state, dropState }) {
   // Setup listbox option as normal. See useListBox docs for details.
   let ref = React.useRef();
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   ///- begin highlight -///
@@ -317,7 +317,7 @@ function ListBox(props) {
 function Option({ item, state, dropState }) {
   ///- begin collapse -///
   let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { optionProps } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
 
   let {dropProps, isDropTarget} = useDroppableItem({
@@ -475,7 +475,7 @@ function ListBox(props) {
 ///- begin collapse -///
 function Option({ item, state, dropState }) {
   let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { optionProps } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
 
   let {dropProps, isDropTarget} = useDroppableItem({
@@ -604,7 +604,7 @@ function ReorderableListBox(props) {
 function ReorderableOption({ item, state, dragState, dropState }) {
   ///- begin collapse -///
   let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let { optionProps } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
 
   let {dropProps, isDropTarget} = useDroppableItem({

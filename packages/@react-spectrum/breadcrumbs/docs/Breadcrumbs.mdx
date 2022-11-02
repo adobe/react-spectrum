@@ -66,7 +66,7 @@ function Example() {
     {id: 2, label: 'Trendy'},
     {id: 3, label: 'March 2020 Assets'}
   ];
-  let [folderId, setFolderId] = React.useState();
+  let [folderId, setFolderId] = React.useState(null);
   return (
     <div>
       <Breadcrumbs onAction={(a) => setFolderId(a)}>

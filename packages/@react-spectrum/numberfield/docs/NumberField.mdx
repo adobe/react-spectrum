@@ -236,7 +236,7 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState();
+  let [value, setValue] = React.useState(null);
 
   return (
     <Flex direction="column" gap="size-150">

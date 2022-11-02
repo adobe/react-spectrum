@@ -457,7 +457,7 @@ function ListBox(props) {
 ///- end collapse -///
 function Option({item, state}) {
   let ref = React.useRef();
-  let {optionProps, labelProps, descriptionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let {optionProps, labelProps, descriptionProps, isSelected} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   // Pull out the two expected children. We will clone them

@@ -106,7 +106,7 @@ initial color from a hexadecimal string so that `value`'s type remains consisten
 function Example() {
   let [value, setValue] = React.useState(parseColor('#e73623'));
   let isValid = React.useMemo(() => {
-    return value && value.red && value.red > value.green && value.red > value.blue;
+    return value && value.getChannelValue('red') > value.getChannelValue('green') && value.getChannelValue('red') > value.getChannelValue('blue');
   }, [value]);
 
   return (
@@ -167,7 +167,7 @@ Both a description and an error message can be supplied to a ColorField. The des
 function Example() {
   let [value, setValue] = React.useState(parseColor('#e73623'));
   let isValid = React.useMemo(() => {
-    return value && value.red && value.red > value.green && value.red > value.blue;
+    return value && value.getChannelValue('red') > value.getChannelValue('green') && value.getChannelValue('red') > value.getChannelValue('blue');
   }, [value]);
 
   return (

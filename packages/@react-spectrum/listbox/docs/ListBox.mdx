@@ -66,7 +66,7 @@ function Example() {
     {id: 8, name: 'Turtle'},
     {id: 9, name: 'Wombat'}
   ];
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(null);
 
   return (
     <>
@@ -102,7 +102,7 @@ function Example() {
   let [animal, setAnimal] = React.useState(['Bison']);
 
   return (
-    <Flex flexDirection="row" gap="size-350">
+    <Flex direction="row" gap="size-350">
       <ListBox
         selectionMode="multiple"
         aria-label="Pick an animal"
@@ -316,7 +316,6 @@ function AsyncLoadingExample() {
   isLoading
   aria-label="Choose frequency"
   selectionMode="single"
-  onSelectionChange={selected => setFrequency(selected)}
   width="size-1200">
 </ListBox>
 ```

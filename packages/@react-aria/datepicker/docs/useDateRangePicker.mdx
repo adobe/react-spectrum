@@ -314,7 +314,7 @@ The `RangeCalendar` component implements the month grid shown within the `DateRa
 ```tsx example export=true render=false
 import {useRangeCalendarState} from '@react-stately/calendar';
 import {useRangeCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
-import {createCalendar, startOfWeek, getWeeksInMonth} from '@internationalized/date';
+import {createCalendar, getWeeksInMonth} from '@internationalized/date';
 
 function RangeCalendar(props) {
   let {locale} = useLocale();
@@ -655,7 +655,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -665,7 +664,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
   let [value, setValue] = React.useState(null);
   let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);

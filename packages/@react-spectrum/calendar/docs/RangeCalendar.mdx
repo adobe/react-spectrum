@@ -159,7 +159,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@adobe/react-spectrum';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -169,7 +168,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
 
   return <RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
@@ -184,6 +182,7 @@ This example prevents selecting weekends, but allows selecting ranges that span 
 
 ```tsx example
 import {isWeekend} from '@internationalized/date';
+import {useLocale} from '@adobe/react-spectrum';
 
 function Example() {
   let {locale} = useLocale();

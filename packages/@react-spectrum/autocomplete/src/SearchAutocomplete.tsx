@@ -22,7 +22,7 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {forwardRef, InputHTMLAttributes, ReactElement, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -312,5 +312,5 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
 /**
  * A SearchAutocomplete is a searchfield that supports a dynamic list of suggestions.
  */
-let _SearchAutocomplete = forwardRef(SearchAutocomplete);
+let _SearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_SearchAutocomplete as SearchAutocomplete};

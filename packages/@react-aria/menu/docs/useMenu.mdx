@@ -384,7 +384,7 @@ semantics are correct.
 import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
 
-function MenuSection({section, state, onAction}) {
+function MenuSection({section, state}) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -428,8 +428,7 @@ function MenuSection({section, state, onAction}) {
           <MenuItem
             key={node.key}
             item={node}
-            state={state}
-            onAction={onAction} />
+            state={state} />
         )}
       </ul>
     </li>

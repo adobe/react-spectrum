@@ -408,7 +408,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -418,7 +417,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
 
   return <RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />

@@ -302,8 +302,7 @@ The `Calendar` component implements the month grid shown within the `DatePicker`
 ```tsx example export=true render=false
 import {useCalendarState} from '@react-stately/calendar';
 import {useCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {createCalendar, startOfWeek, getWeeksInMonth} from '@internationalized/date';
+import {createCalendar, getWeeksInMonth} from '@internationalized/date';
 
 function Calendar(props) {
   let {locale} = useLocale();
@@ -313,11 +312,10 @@ function Calendar(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
-  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state, ref);
+  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
 
   return (
-    <div {...calendarProps} ref={ref} className="calendar">
+    <div {...calendarProps} className="calendar">
       <div className="header">
         <h2>{title}</h2>
         <Button {...prevButtonProps}>&lt;</Button>

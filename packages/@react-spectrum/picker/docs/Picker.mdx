@@ -20,8 +20,6 @@ import {Picker, Item, Section} from '@react-spectrum/picker';
 import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
-import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import {Text} from '@react-spectrum/text';
 ```
 
@@ -71,7 +69,7 @@ function Example() {
     {id: 8, name: 'Turtle'},
     {id: 9, name: 'Wombat'}
   ];
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(null);
 
   return (
     <>
@@ -208,7 +206,7 @@ The following example uses an `onSelectionChange` handler to update the selectio
 
 ```tsx example
 function StaticExample() {
-  let [frequency, setFrequency] = React.useState();
+  let [frequency, setFrequency] = React.useState(null);
 
   return (
     <>
@@ -227,7 +225,7 @@ When using Picker with dynamic items, selection works much the same way using `k
 
 ```tsx example
 function DynamicExample() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(null);
   let options = [
     {id: 1, name: 'Aardvark'},
     {id: 2, name: 'Cat'},
@@ -354,7 +352,7 @@ Both a description and an error message can be supplied to a Picker. The descrip
 
 ```tsx example
 function Example() {
-    let [animalId, setAnimalId] = React.useState();
+    let [animalId, setAnimalId] = React.useState(null);
     let options = [
       {id: 1, name: 'Aardvark'},
       {id: 2, name: 'Cat'},

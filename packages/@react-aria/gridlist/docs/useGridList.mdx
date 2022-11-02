@@ -478,7 +478,7 @@ be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Ke
 This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: 24 }}>
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
   <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
   <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 </div>

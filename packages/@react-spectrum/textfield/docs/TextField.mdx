@@ -99,7 +99,7 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextField.
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <Flex direction="column" gap="size-150">
