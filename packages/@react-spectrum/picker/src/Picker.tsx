@@ -50,6 +50,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     direction = 'bottom',
     align = 'start',
     shouldFlip = true,
+    placeholder = stringFormatter.format('placeholder'),
     validationState,
     isQuiet,
     label,
@@ -151,7 +152,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     );
   }
 
-  let contents = state.selectedItem ? state.selectedItem.rendered : null;
+  let contents = state.selectedItem ? state.selectedItem.rendered : placeholder;
   if (typeof contents === 'string') {
     contents = <Text>{contents}</Text>;
   }

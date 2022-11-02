@@ -174,8 +174,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         }
 
         state.setFocused(false);
-      },
-      role: 'tabpanel'
+      }
     }),
     valueProps: {
       id: valueId
