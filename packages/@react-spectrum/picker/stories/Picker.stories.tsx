@@ -79,9 +79,14 @@ export default {
   component: Picker,
   excludeStories: [],
   args: {
+<<<<<<< HEAD
     'label': 'Test',
     onSelectionChange: action('onSelectionChange'),
     onOpenChange: action('onOpenChange')
+=======
+    // 'label': 'Test',
+    onSelectionChange: action('onSelectionChange')
+>>>>>>> 36fa68a5e (sample failures for test to catch)
   },
   argTypes: {
     layout: {
