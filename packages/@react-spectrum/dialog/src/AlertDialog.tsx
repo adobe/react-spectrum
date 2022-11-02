@@ -18,16 +18,16 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {forwardRef, MutableRefObject, useContext, useRef} from 'react';
+import React, {forwardRef, useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-
+import {useObjectRef} from '@react-aria/utils';
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
@@ -54,7 +54,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let dialogRef = useRef<DOMRefValue<HTMLDivElement>>(null);
+  let dialogRef = useObjectRef(ref);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -83,7 +83,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
         isHidden={styleProps.hidden}
         size="M"
         role="alertdialog"
-        ref={!ref ? (elem) => (dialogRef as MutableRefObject<any>).current = elem : ref}>
+        ref={dialogRef}>
         <Heading>{title}</Heading>
         {(variant === 'error' || variant === 'warning') &&
           <AlertMedium
