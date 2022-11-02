@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useState} from 'react';
+import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
@@ -80,22 +80,37 @@ export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerPro
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
+  let setVisibleRect = useCallback((rect) => {
+    virtualizer.visibleRect = rect;
+  }, [virtualizer]);
+  let startScrolling = useCallback(() => {
+    virtualizer.startScrolling();
+    setScrolling(true);
+  }, [virtualizer]);
+  let endScrolling = useCallback(() => {
+    virtualizer.endScrolling();
+    setScrolling(false);
+  }, [virtualizer]);
+
+  let state = useMemo(() => ({
     virtualizer,
     visibleViews,
-    setVisibleRect: useCallback((rect) => {
-      virtualizer.visibleRect = rect;
-    }, [virtualizer]),
+    setVisibleRect,
     contentSize,
     isAnimating,
     isScrolling,
-    startScrolling: useCallback(() => {
-      virtualizer.startScrolling();
-      setScrolling(true);
-    }, [virtualizer]),
-    endScrolling: useCallback(() => {
-      virtualizer.endScrolling();
-      setScrolling(false);
-    }, [virtualizer])
-  };
+    startScrolling,
+    endScrolling
+  }), [
+    virtualizer,
+    visibleViews,
+    setVisibleRect,
+    contentSize,
+    isAnimating,
+    isScrolling,
+    startScrolling,
+    endScrolling
+  ]);
+
+  return state;
 }
