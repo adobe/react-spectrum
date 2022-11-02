@@ -20,6 +20,7 @@ import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {expect} from '@storybook/jest';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section, SpectrumPickerProps} from '../';
@@ -27,9 +28,9 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
+import {userEvent, within} from '@storybook/testing-library';
 import {View} from '@react-spectrum/view';
 
-<<<<<<< HEAD
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
   {id: 2, name: 'Kangaroo'},
@@ -73,47 +74,14 @@ let withSection = [
 
 export type PickerStory = ComponentStoryObj<typeof Picker>;
 
-=======
-// let flatOptions = [
-//   {id: 1, name: 'Aardvark'},
-//   {id: 2, name: 'Kangaroo'},
-//   {id: 3, name: 'Snake'},
-//   {id: 4, name: 'Danni'},
-//   {id: 5, name: 'Devon'},
-//   {id: 6, name: 'Ross'},
-//   {id: 7, name: 'Puppy'},
-//   {id: 8, name: 'Doggo'},
-//   {id: 9, name: 'Floof'}
-// ];
-
-// let withSection = [
-//   {name: 'Animals', children: [
-//     {name: 'Aardvark'},
-//     {name: 'Kangaroo'},
-//     {name: 'Snake'}
-//   ]},
-//   {name: 'People', children: [
-//     {name: 'Danni'},
-//     {name: 'Devon'},
-//     {name: 'Ross'}
-//   ]}
-// ];
-
-export type PickerStory = ComponentStoryObj<typeof Picker>;
-
->>>>>>> 7b4ffea64 (quick convert to csf 3)
 export default {
   title: 'Picker',
   component: Picker,
   excludeStories: [],
   args: {
     'label': 'Test',
-<<<<<<< HEAD
     onSelectionChange: action('onSelectionChange'),
     onOpenChange: action('onOpenChange')
-=======
-    onSelectionChange: action('onSelectionChange')
->>>>>>> 7b4ffea64 (quick convert to csf 3)
   },
   argTypes: {
     layout: {
@@ -125,7 +93,6 @@ export default {
       table: {
         disable: true
       }
-<<<<<<< HEAD
     },
     onSelectionChange: {
       table: {
@@ -205,6 +172,14 @@ export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
 };
 
+Default.play = async ({canvasElement}) => {
+  let canvas = within(canvasElement);
+  let button = await canvas.findByRole('button');
+  await userEvent.click(button);
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('listbox');
+};
+
 export const Disabled: DefaultStory = {
   render: (args) => <DefaultPicker {...args} disabledKeys={['Short']} />,
   name: 'disabled keys'
@@ -220,6 +195,26 @@ export const Sections: PickerStory = {
       </Section>
     )
   }
+};
+
+Sections.play = async ({canvasElement}) => {
+  // TODO: figure out what exactly this is complaining about
+  // @ts-ignore
+  await Default.play({canvasElement});
+  let body = canvasElement.ownerDocument.body;
+  let listbox = await within(body).findByRole('listbox');
+
+  expect(await within(listbox).findByText('Animals')).toBeInTheDocument();
+
+  let groups = await within(listbox).findAllByRole('group');
+  expect(groups).toHaveLength(1);
+
+  let items = await within(listbox).findAllByRole('option');
+  expect(items.length).toBe(3);
+  expect(items[0]).toHaveTextContent('Aardvark');
+  expect(items[1]).toHaveTextContent('Kangaroo');
+  expect(items[2]).toHaveTextContent('Snake');
+  expect(document.activeElement).toBe(listbox);
 };
 
 export const Dynamic: PickerStory = {
@@ -339,6 +334,25 @@ export const Focus: FocusStory = {
   name: 'keyboard tab focus'
 };
 
+Focus.play = async ({canvasElement}) => {
+  // @ts-ignore
+  await Default.play({canvasElement});
+  let canvas = within(canvasElement);
+
+  let body = canvasElement.ownerDocument.body;
+  let listbox = await within(body).findByRole('listbox');
+  expect(document.activeElement).toBe(listbox);
+
+  await userEvent.tab();
+  let afterInput = await canvas.findByTestId('after');
+  expect(document.activeElement).toBe(afterInput);
+  expect(listbox).not.toBeInTheDocument();
+
+  await userEvent.tab({shift: true});
+  let button = await canvas.findByRole('button');
+  expect(document.activeElement).toBe(button);
+};
+
 export type ResizePickerStory = ComponentStoryObj<typeof ResizePicker>;
 export const Resize: ResizePickerStory = {
   render: (args) => <ResizePicker {...args} />,
@@ -423,44 +437,16 @@ function AsyncLoadingExample(props) {
         items: json.results,
         cursor: json.next
       };
-=======
->>>>>>> 7b4ffea64 (quick convert to csf 3)
     }
-  }
-} as ComponentMeta<typeof Picker>;
+  });
 
-export const Default = {
-  render: (args) => <DefaultPicker {...args} />
-};
-
-export const Sections = {
-  args: {
-    children: (
-      <Section title="Animals">
-        <Item key="Aardvark">Aardvark</Item>
-        <Item key="Kangaroo">Kangaroo</Item>
-        <Item key="Snake">Snake</Item>
-      </Section>
-    )
-  }
-};
-
-function DefaultPicker(props: SpectrumPickerProps<object>) {
   return (
-<<<<<<< HEAD
     <Picker {...props} label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
       {(item: any) => <Item key={item.name}>{item.name}</Item>}
-=======
-    <Picker {...props}>
-      <Item key="Short">Short</Item>
-      <Item key="Normal">Normal</Item>
-      <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
->>>>>>> 7b4ffea64 (quick convert to csf 3)
     </Picker>
   );
 }
 
-<<<<<<< HEAD
 function ResizePicker(props) {
   const [state, setState] = useState(true);
 
@@ -477,582 +463,3 @@ function ResizePicker(props) {
     </Flex>
   );
 }
-=======
-// storiesOf('Picker', module)
-//   .add(
-//     'default',
-//     () => (
-//       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-//         <Item key="Short">Short</Item>
-//         <Item key="Normal">Normal</Item>
-//         <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'sections',
-//     () => (
-//       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-//         <Section title="Animals">
-//           <Item key="Aardvark">Aardvark</Item>
-//           <Item key="Kangaroo">Kangaroo</Item>
-//           <Item key="Snake">Snake</Item>
-//         </Section>
-//         <Section title="People">
-//           <Item key="Danni">Danni</Item>
-//           <Item key="Devon">Devon</Item>
-//           <Item key="Ross">Ross</Item>
-//         </Section>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'dynamic',
-//     () => (
-//       <Picker label="Test" items={flatOptions} onSelectionChange={action('selectionChange')}>
-//         {item => <Item>{item.name}</Item>}
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'dynamic with sections',
-//     () => (
-//       <Picker label="Test" items={withSection} onSelectionChange={action('selectionChange')}>
-//         {item => (
-//           <Section key={item.name} items={item.children} title={item.name}>
-//             {item => <Item key={item.name}>{item.name}</Item>}
-//           </Section>
-//         )}
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isDisabled',
-//     () => (
-//       <Picker label="Test" isDisabled onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isDisabled, selectedKey',
-//     () => (
-//       <Picker label="Test" isDisabled selectedKey="One" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'labelAlign: end',
-//     () => (
-//       <Picker direction="top" label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'labelPosition: side',
-//     () => (
-//       <Picker label="Test" labelPosition="side" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isRequired',
-//     () => (
-//       <Picker label="Test" isRequired onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isRequired, necessityIndicator: label',
-//     () => (
-//       <Picker label="Test" isRequired necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'optional, necessityIndicator: label',
-//     () => (
-//       <Picker label="Test" necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'validationState: invalid',
-//     () => (
-//       <Picker label="Test" validationState="invalid" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet',
-//     () => (
-//       <Picker isQuiet label="Test" onSelectionChange={action('selectionChange')}>
-//         <Item key="100">One hundred</Item>
-//         <Item key="2012">Two thousand and twelve</Item>
-//         <Item key="3">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, isDisabled',
-//     () => (
-//       <Picker label="Test" isQuiet isDisabled onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two million">Two million</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, labelAlign: end',
-//     () => (
-//       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two dollary-doos">Two dollary-doos</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, labelPosition: side',
-//     () => (
-//       <Picker label="Test" isQuiet labelPosition="side" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, isRequired',
-//     () => (
-//       <Picker label="Test" isQuiet isRequired onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, isRequired, necessityIndicator: label',
-//     () => (
-//       <Picker label="Test" isQuiet isRequired necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, optional, necessityIndicator: label',
-//     () => (
-//       <Picker label="Test" isQuiet necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, validationState: invalid',
-//     () => (
-//       <Picker label="Test" isQuiet validationState="invalid" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'complex items',
-//     () => (
-//       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-//         <Section title="Section 1">
-//           <Item textValue="Copy">
-//             <Copy />
-//             <Text>Copy</Text>
-//           </Item>
-//           <Item textValue="Cut">
-//             <Cut />
-//             <Text>Cut</Text>
-//           </Item>
-//           <Item textValue="Paste">
-//             <Paste />
-//             <Text>Paste</Text>
-//           </Item>
-//         </Section>
-//         <Section title="Section 2">
-//           <Item textValue="Puppy">
-//             <AlignLeft />
-//             <Text>Puppy</Text>
-//             <Text slot="description">Puppy description super long as well geez</Text>
-//           </Item>
-//           <Item textValue="Doggo with really really really long long long text">
-//             <AlignCenter />
-//             <Text>Doggo with really really really long long long text</Text>
-//           </Item>
-//           <Item textValue="Floof">
-//             <AlignRight />
-//             <Text>Floof</Text>
-//           </Item>
-//         </Section>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'long item text',
-//     () => (
-//       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-//         <Item key="short">One</Item>
-//         <Item key="long">your text here long long long long</Item>
-//         <Item key="underscores">your_text_here_long_long_long_long</Item>
-//         <Item key="hyphens">your-text-here-long-long-long-long</Item>
-//         <Item key="singleWord">supercalifragilisticexpialidocious</Item>
-//         <Item key="always">This item is very long and word wraps poorly</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'falsy item key',
-//     () => (
-//       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-//         <Item key="">None</Item>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'no visible label',
-//     () => (
-//       <Picker aria-label="Test" onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'with description',
-//     () => (
-//       <Picker label="Test" description="Please select an item." onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'with error message',
-//     () => (
-//       <Picker label="Test" errorMessage="Please select a valid item." validationState="invalid" onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'contextual help',
-//     () => (
-//       <Picker
-//         label="Test"
-//         contextualHelp={(
-//           <ContextualHelp>
-//             <Heading>What is a segment?</Heading>
-//             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-//           </ContextualHelp>
-//         )}
-//         onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, no visible label',
-//     () => (
-//       <Picker aria-label="Test" isQuiet onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isQuiet, align: end',
-//     () => (
-//       <Picker aria-label="Test" isQuiet align="end" onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'custom widths',
-//     () => (
-//       <Flex direction="column">
-//         <Picker label="Test" width="size-1200" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//         <Picker label="Test" width="size-6000" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//       </Flex>
-//     )
-//   )
-//   .add(
-//     'custom widths, labelPosition: side',
-//     () => (
-//       <Flex direction="column">
-//         <Picker label="Test" width="size-1200" labelPosition="side" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//         <Picker label="Test" width="size-6000" labelPosition="side" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//       </Flex>
-//     )
-//   )
-//   .add(
-//     'custom menu widths',
-//     () => (
-//       <Flex direction="column">
-//         <Picker label="Test" menuWidth="size-1000" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//         <Picker label="Test" menuWidth="size-6000" onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//       </Flex>
-//     )
-//   )
-//   .add(
-//     'custom menu widths, isQuiet',
-//     () => (
-//       <Flex direction="column">
-//         <Picker label="Test" menuWidth="size-400" isQuiet onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//         <Picker label="Test" menuWidth="size-6000" isQuiet onSelectionChange={action('selectionChange')}>
-//           <Item>One</Item>
-//           <Item>Two</Item>
-//           <Item>Three</Item>
-//         </Picker>
-//       </Flex>
-//     )
-//   )
-//   .add(
-//     'custom menu width, align: end',
-//     () => (
-//       <Picker label="Test" menuWidth="size-6000" align="end" onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isOpen (controlled)',
-//     () => (
-//       <Picker label="Test" isOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'defaultOpen (uncontrolled)',
-//     () => (
-//       <Picker label="Test" defaultOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
-//         <Item>One</Item>
-//         <Item>Two</Item>
-//         <Item>Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'selectedKey (controlled)',
-//     () => (
-//       <Picker label="Test" selectedKey="One" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'defaultSelectedKey (uncontrolled)',
-//     () => (
-//       <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
-//         <Item key="One">One</Item>
-//         <Item key="Two">Two</Item>
-//         <Item key="Three">Three</Item>
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'picker closes on blur',
-//     () => (
-//       <>
-//         <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-//           <label htmlFor="focus-before">Focus before</label>
-//           <input id="focus-before" />
-//           <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
-//             <Item key="One">One</Item>
-//             <Item key="Two">Two</Item>
-//             <Item key="Three">Three</Item>
-//           </Picker>
-//           <label htmlFor="focus-after">Focus after</label>
-//           <input id="focus-after" />
-//         </div>
-//       </>
-//     )
-//   )
-//   .add(
-//     'isLoading',
-//     () => (
-//       <Picker label="Test" isLoading items={[]}>
-//         {item => <Item>{item.name}</Item>}
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isLoading, isQuiet',
-//     () => (
-//       <Picker label="Test" isLoading isQuiet items={[]}>
-//         {item => <Item>{item.name}</Item>}
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'isLoading more',
-//     () => (
-//       <Picker label="Test" isLoading items={flatOptions}>
-//         {item => <Item>{item.name}</Item>}
-//       </Picker>
-//     )
-//   )
-//   .add(
-//     'async loading',
-//     () => (
-//       <AsyncLoadingExample />
-//     )
-//   ).add(
-//     'focus',
-//     () => (
-//       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-//         <label htmlFor="focus-before">Focus before</label>
-//         <input id="focus-before" />
-//         <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
-//           {item => <Item>{item.name}</Item>}
-//         </Picker>
-//         <label htmlFor="focus-after">Focus after</label>
-//         <input id="focus-after" />
-//       </div>
-//     )
-//   )
-//   .add('resize', () => <ResizePicker />)
-//   .add('autofocus', () => (
-//     <Picker label="Test" autoFocus>
-//       <Item key="One">One</Item>
-//       <Item key="Two">Two</Item>
-//       <Item key="Three">Three</Item>
-//     </Picker>
-//   ))
-//   .add('scrolling container', () => (
-//     <View width="300px" height="size-500" overflow="auto">
-//       <View width="500px">
-//         <Picker label="Test" autoFocus>
-//           <Item key="One">One</Item>
-//           <Item key="Two">Two</Item>
-//           <Item key="Three">Three</Item>
-//         </Picker>
-//       </View>
-//     </View>
-//   ));
-
-// function AsyncLoadingExample() {
-//   interface Pokemon {
-//     name: string,
-//     url: string
-//   }
-
-//   let list = useAsyncList<Pokemon>({
-//     async load({signal, cursor}) {
-//       let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
-//       let json = await res.json();
-//       // The API is too fast sometimes, so make it take longer so we can see the spinner
-//       await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
-//       return {
-//         items: json.results,
-//         cursor: json.next
-//       };
-//     }
-//   });
-
-//   return (
-//     <Picker label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-//       {item => <Item key={item.name}>{item.name}</Item>}
-//     </Picker>
-//   );
-// }
-
-// function ResizePicker() {
-//   const [state, setState] = useState(true);
-
-//   return (
-//     <Flex direction="column" gap="size-200" alignItems="start">
-//       <div style={{width: state ? '200px' : '300px'}}>
-//         <Picker label="Choose A" width="100%">
-//           <Item key="A1">A1</Item>
-//           <Item key="A2">A2</Item>
-//           <Item key="A3">A3</Item>
-//         </Picker>
-//       </div>
-//       <ActionButton onPress={() => setState(!state)}>Toggle size</ActionButton>
-//     </Flex>
-//   );
-// }
->>>>>>> 7b4ffea64 (quick convert to csf 3)

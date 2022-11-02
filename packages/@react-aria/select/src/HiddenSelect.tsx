@@ -105,7 +105,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   // autofill will work. Otherwise, use an <input type="hidden">.
   if (state.collection.size <= 300) {
     return (
-      <div {...containerProps}>
+      <div {...containerProps} id="blah">
         <input {...inputProps} />
         <label>
           {label}
