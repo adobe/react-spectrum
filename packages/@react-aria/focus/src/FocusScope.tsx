@@ -788,11 +788,18 @@ class Tree {
       if (
         current !== node &&
         node.nodeToRestore &&
-        current.nodeToRestore &&
-        node.scopeRef.current &&
-        isElementInScope(current.nodeToRestore, node.scopeRef.current)
+        (
+          // current.nodeToRestore might be undefined when the current node has just been added.
+          !current.nodeToRestore ||
+          (
+            current.nodeToRestore &&
+            node.scopeRef.current &&
+            isElementInScope(current.nodeToRestore, node.scopeRef.current)
+          )
+        )
       ) {
-        current.nodeToRestore = node.nodeToRestore;
+        // Wait a frame before reassigning the nodeToRestore.
+        requestAnimationFrame(() => current.nodeToRestore = node.nodeToRestore);
       }
     }
     let children = node.children;
