@@ -55,9 +55,9 @@ export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nPro
 export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
 export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-aria/label';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
-export type {AriaListBoxOptions, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
+export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
 export type {AriaGridListOptions, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
-export type {AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria} from '@react-aria/menu';
+export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
 export type {AriaModalOptions, AriaOverlayProps, AriaPositionProps, DismissButtonProps, ModalAria, OverlayAria, OverlayContainerProps, OverlayTriggerAria, OverlayTriggerProps, PositionAria} from '@react-aria/overlays';

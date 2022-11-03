@@ -171,8 +171,10 @@ See the `react-stately` [Selection docs](../react-stately/selection.html#selecte
 The `selectedKeys` prop can be used to make the selected state controlled.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['list']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
 
   return (
     <>
@@ -190,7 +192,7 @@ function Example() {
 Set `selectionMode` prop to `multiple` to allow more than one selection.
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['list']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
 
   return (
     <>
@@ -212,7 +214,7 @@ The `key` prop from the selected item will be passed into the callback.
 To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
 ```tsx example
 function Example() {
-  let [actionKey, setActionKey] = React.useState('');
+  let [actionKey, setActionKey] = React.useState<React.Key>('');
   return (
     <>
       <ActionGroup onAction={setActionKey}>

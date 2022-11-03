@@ -69,8 +69,8 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
+              if (/function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/function (.*?)\s*\(/)[1];
                 code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
                 code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
@@ -441,7 +441,7 @@ export default {};
     let assets = [
       asset,
       {
-        type: 'jsx',
+        type: 'tsx',
         content: clientBundle,
         uniqueKey: 'client',
         isBundleSplittable: true,
@@ -500,7 +500,7 @@ export default {};
 });
 
 function transformExample(node, preRelease, keepIndividualImports) {
-  if (node.lang !== 'tsx') {
+  if (node.lang !== 'tsx' && node.lang !== 'jsx') {
     return responsiveCode(node);
   }
 
@@ -515,6 +515,7 @@ function transformExample(node, preRelease, keepIndividualImports) {
    */
   if (!preRelease && /@react-spectrum|@react-aria|@react-stately/.test(node.value)) {
     let specifiers = {};
+    let typeSpecifiers = {};
     const recast = require('recast');
     const traverse = require('@babel/traverse').default;
     const {parse} = require('@babel/parser');
@@ -534,8 +535,9 @@ function transformExample(node, preRelease, keepIndividualImports) {
       ImportDeclaration(path) {
         if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
-          if (!specifiers[lib]) {
-            specifiers[lib] = [];
+          let s = path.node.importKind === 'type' ? typeSpecifiers : specifiers;
+          if (!s[lib]) {
+            s[lib] = [];
           }
 
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
@@ -543,9 +545,9 @@ function transformExample(node, preRelease, keepIndividualImports) {
             let mapped = mapping && mapping[specifier.imported.name];
             if (mapped && specifier.local.name === specifier.imported.name) {
               path.scope.rename(specifier.local.name, mapped);
-              specifiers[lib].push(mapped);
+              s[lib].push(mapped);
             } else {
-              specifiers[lib].push(specifier.imported.name);
+              s[lib].push(specifier.imported.name);
             }
           }
 
@@ -557,20 +559,26 @@ function transformExample(node, preRelease, keepIndividualImports) {
       },
       Program: {
         exit(path) {
-          for (let lib in specifiers) {
-            let names = specifiers[lib];
-            if (names.length > 0) {
-              let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
-              let literal =  t.stringLiteral(monopackage);
+          let process = (specifiers, importKind) => {
+            for (let lib in specifiers) {
+              let names = specifiers[lib];
+              if (names.length > 0) {
+                let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
+                let literal =  t.stringLiteral(monopackage);
 
-              let decl = t.importDeclaration(
-                names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
-                literal
-              );
+                let decl = t.importDeclaration(
+                  names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+                  literal
+                );
 
-              path.unshiftContainer('body', [decl]);
+                decl.importKind = importKind;
+                path.unshiftContainer('body', [decl]);
+              }
             }
-          }
+          };
+
+          process(specifiers, 'value');
+          process(typeSpecifiers, 'type');
         }
       }
     });
@@ -621,7 +629,7 @@ function formatCode(node, code, printWidth = 80, force = false) {
     return node.value;
   }
 
-  let res = dprint.format('example.jsx', node.value, {
+  let res = dprint.format('example.tsx', node.value, {
     quoteStyle: 'preferSingle',
     'jsx.quoteStyle': 'preferDouble',
     trailingCommas: 'never',

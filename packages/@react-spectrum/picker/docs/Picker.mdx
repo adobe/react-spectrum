@@ -128,7 +128,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState("Bison");
+  let [animal, setAnimal] = React.useState<React.Key>("Bison");
 
   return (
     <Flex gap="size-150" wrap>
@@ -285,8 +285,12 @@ See the docs for more information.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Pokemon {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Pokemon>({
     async load({signal, cursor}) {
       // If no cursor is available, then we're loading the first page.
       // Otherwise, the cursor is the next URL to load, as returned from the previous page.
@@ -447,15 +451,12 @@ The open state of the menu can be controlled via the `defaultOpen` and `isOpen` 
 ```tsx example
 function Example() {
   let [open, setOpen] = React.useState(false);
-  let [frequency, setFrequency] = React.useState("always");
 
   return (
     <Picker
       label="Frequency"
       isOpen={open}
-      selectedKey={frequency}
-      onOpenChange={setOpen}
-      onSelectionChange={selected => setFrequency(selected)}>
+      onOpenChange={setOpen}>
       <Item key="rarely">Rarely</Item>
       <Item key="sometimes">Sometimes</Item>
       <Item key="always">Always</Item>

@@ -19,7 +19,14 @@ export type {DragPreviewProps} from './DragPreview';
 export type {DragOptions, DragResult} from './useDrag';
 export type {DropOptions, DropResult} from './useDrop';
 export type {ClipboardProps, ClipboardResult} from './useClipboard';
-export type {DropTargetDelegate} from '@react-types/shared';
+export type {
+  DropTargetDelegate,
+  DragItem,
+  DropItem,
+  TextItem,
+  FileItem,
+  DirectoryItem
+} from '@react-types/shared';
 
 export {DIRECTORY_DRAG_TYPE} from './utils';
 export {useDrag} from './useDrag';

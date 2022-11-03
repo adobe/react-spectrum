@@ -101,3 +101,4 @@ export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, T
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
+export type {Selection} from '@react-types/shared';

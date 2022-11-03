@@ -13,5 +13,6 @@
 /// <reference types="css-module-types" />
 
 export type {DragAndDropOptions, DragAndDropHooks} from './useDragAndDrop';
+export type {DropItem, TextItem, FileItem, DirectoryItem} from '@react-types/shared';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';

@@ -117,6 +117,7 @@ The `Popover` and `Button` components used in this example are independent, and 
 The code is available below, and documentation is available on the corresponding pages.
 
 ```tsx example export=true render=false
+import type {MenuTriggerProps} from '@react-stately/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useMenuTrigger} from '@react-aria/menu';
 import {Item} from '@react-stately/collections';
@@ -124,13 +125,17 @@ import {Item} from '@react-stately/collections';
 // Reuse the Popover, and Button from your component library. See below for details.
 import {Popover, Button} from 'your-component-library';
 
-function MenuButton(props) {
+interface MenuButtonProps<T> extends AriaMenuProps<T>, MenuTriggerProps {
+  label?: string
+}
+
+function MenuButton<T extends object>(props: MenuButtonProps<T>) {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 
   // Get props for the button and menu elements
   let ref = React.useRef();
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+  let {menuTriggerProps, menuProps} = useMenuTrigger<T>({}, state, ref);
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
@@ -160,10 +165,11 @@ It is built using the <TypeLink links={menuDocs.links} type={menuDocs.exports.us
 For each item in the collection in state, we render either a `MenuItem` or `MenuSection` (defined [below](#sections)) according to the item's `type` property.
 
 ```tsx example export=true render=false
+import type {AriaMenuProps} from '@react-aria/menu';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu(props) {
+function Menu<T extends object>(props: AriaMenuProps<T>) {
   // Create menu state based on the incoming props
   let state = useTreeState(props);
 
@@ -354,8 +360,10 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['sidebar', 'console']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['sidebar', 'console']));
 
   return (
     <>
@@ -462,8 +470,10 @@ The above example shows sections with static items. Sections can also be populat
 Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set([1,3]));
+  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
   let openWindows = [
     {
       name: 'Left Panel',

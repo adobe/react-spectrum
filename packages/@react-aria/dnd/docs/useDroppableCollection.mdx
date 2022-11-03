@@ -277,53 +277,8 @@ function DropIndicator(props) {
 
 Now that the `DropIndicator` component is implemented, we can render an instance between each item in the list. This uses the `before` drop position by default, except for after the last item in the list.
 
-```tsx example render=false
-///- begin collapse -///
-function ListBox(props) {
-  // See useListBox docs for more details.
-  let state = useListState(props);
-  let ref = React.useRef();
-  let { listBoxProps } = useListBox(props, state, ref);
-
-  let dropState = useDroppableCollectionState({
-    ...props,
-    collection: state.collection,
-    selectionManager: state.selectionManager
-  });
-
-  let {collectionProps} = useDroppableCollection({
-    ...props,
-    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
-  }, dropState, ref);
-
-  return (
-    <ul
-      {...mergeProps(listBoxProps, collectionProps)}
-      ref={ref}>
-      {[...state.collection].map((item) => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state}
-          dropState={dropState}
-        />
-      ))}
-    </ul>
-  );
-}
-///- end collapse -///
-
+```tsx
 function Option({ item, state, dropState }) {
-  ///- begin collapse -///
-  let ref = React.useRef();
-  let { optionProps } = useOption({key: item.key}, state, ref);
-  let { isFocusVisible, focusProps } = useFocusRing();
-
-  let {dropProps, isDropTarget} = useDroppableItem({
-    target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, ref);
-  ///- end collapse -///
   // ...
 
   return (

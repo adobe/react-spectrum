@@ -112,6 +112,7 @@ package to ensure that this content is hidden while modals are open as well. See
 [watchModals docs](../react-aria/watchModals.html) for more information.
 
 ```tsx example
+import type {AriaOverlayProps} from '@react-aria/overlays';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
@@ -129,6 +130,12 @@ import {mergeProps} from '@react-aria/utils';
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
 
+interface PopoverProps extends AriaOverlayProps {
+  title: string,
+  children: React.ReactNode,
+  style?: React.CSSProperties
+}
+
 const Popover = React.forwardRef(({
   title,
   children,
@@ -136,7 +143,7 @@ const Popover = React.forwardRef(({
   onClose,
   style,
   ...otherProps
-}, ref) => {
+}: PopoverProps, ref: React.RefObject<HTMLDivElement>) => {
   // Handle interacting outside the dialog and pressing
   // the Escape key to close the modal.
   let {overlayProps} = useOverlay({
