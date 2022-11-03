@@ -18,7 +18,7 @@ module.exports = {
     //     {
     //       id: 'aria-hidden-focus',
     //       // selector: '*:not(#blah)'
-    //       selector: 'span'
+    //       // selector: '.react-spectrum-story *:not(#blah)'
     //     }
     //   ]
     // })
