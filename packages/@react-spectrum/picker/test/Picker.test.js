@@ -14,6 +14,7 @@ import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {axe, toHaveNoViolations} from 'jest-axe';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Picker, Section} from '../src';
@@ -25,6 +26,9 @@ import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
+
+// TODO: do this at a top level (aka expect.extend in setupTests.js) or use jest-axe/extend-expect in jest setupFiles
+expect.extend(toHaveNoViolations);
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -46,6 +50,25 @@ describe('Picker', function () {
 
   afterEach(() => {
     act(() => jest.runAllTimers());
+  });
+
+  it('accessibility check', async function () {
+    let {container} = render(
+      <Provider theme={theme}>
+        <Picker label="Test" data-testid="test">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Provider>
+    );
+    // TODO: kinda messy but runAllTimers doesn't fix it https://github.com/dequelabs/axe-core/issues/3055, an alternative would be to have the accessibility tests in a separate file so that the fake timers don't
+    // get in the way. We could also perhaps override the axe call here like we do for RTL stuff in renderOverride so that
+    // it always does this realTimers -> fakeTimers stuff
+    jest.useRealTimers();
+    const results = await axe(container);
+    jest.useFakeTimers();
+    expect(results).toHaveNoViolations();
   });
 
   it('renders correctly', function () {

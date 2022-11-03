@@ -28,7 +28,7 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React,  {useState} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
-import {userEvent, waitForElementToBeRemoved, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/testing-library';
 import {View} from '@react-spectrum/view';
 
 let flatOptions = [
