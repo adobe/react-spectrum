@@ -2163,8 +2163,8 @@ describe('NumberField', function () {
       let {onChange} = props;
       let [value, setValue] = useState(10);
       return (
-        <Provider theme={theme} scale='medium' locale='en-US'>
-          <NumberField {...props} label='reset to blank using null' value={value} onChange={value => setValue(value)} />
+        <Provider theme={theme} scale="medium" locale="en-US">
+          <NumberField {...props} label="reset to blank using null" value={value} onChange={value => setValue(value)} />
           <Button
             variant={'primary'}
             onPress={() => chain(setValue(null), onChange())}>

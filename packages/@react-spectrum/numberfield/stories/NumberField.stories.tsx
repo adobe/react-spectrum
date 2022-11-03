@@ -321,9 +321,9 @@ function NumberFieldControlledStateReset() {
     <>
       <NumberField
         value={controlledValue}
-        onChange={(value) => setControlledValue(value)}/>
+        onChange={(value) => setControlledValue(value)} />
       <Button
-        variant={"primary"}
+        variant={'primary'}
         onPress={() => setControlledValue(null)}>
         Reset
       </Button>
