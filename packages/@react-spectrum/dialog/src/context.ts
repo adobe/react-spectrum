@@ -20,8 +20,8 @@ export interface DialogContextValue extends HTMLAttributes<HTMLElement> {
 
 export const DialogContext = React.createContext<DialogContextValue>(null);
 
-export interface AlertDialogContextValue extends HTMLAttributes<HTMLElement> {
-  onKeyDown: (e: any) => void
+export interface AlertDialogContextValue {
+  onKeyDown: (e: KeyboardEvent) => void
 }
 
 export const AlertDialogContext = React.createContext<AlertDialogContextValue>(null);

@@ -261,7 +261,8 @@ storiesOf('Dialog/Alert', module)
       onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       allowsKeyboardConfirmation: true
-    })
+    }),
+    {description: {data: 'Pressing enter when focused on the counter button should not keyboard confirm the dialog.'}}
   );
 
 function renderWithContentButtons(props) {

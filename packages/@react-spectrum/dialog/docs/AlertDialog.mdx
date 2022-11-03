@@ -240,22 +240,3 @@ Disables the secondary button.
   </AlertDialog>
 </DialogTrigger>
 ```
-
-### allowsKeyboardConfirmation enabled
-
-Pressing the `enter` key closes the AlertDialog as if primary action button was clicked, which would call `onPrimaryAction`.
-
-```tsx example
-<DialogTrigger>
-  <ActionButton>Upgrade</ActionButton>
-  <AlertDialog
-    allowsKeyboardConfirmation
-    variant="confirmation"
-    title="Upgrade subscription"
-    primaryActionLabel="Upgrade"
-    secondaryActionLabel="Apply Coupon"
-    cancelLabel="Cancel">
-    Upgrade subscription for an additional $14.99 a month? You can press Enter to confirm.
-  </AlertDialog>
-</DialogTrigger>
-```
