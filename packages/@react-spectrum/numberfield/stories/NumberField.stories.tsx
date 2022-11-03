@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
@@ -247,7 +248,29 @@ storiesOf('NumberField', module)
       onCopy: action('onCopy'), onCut: action('onCut'), onPaste: action('onPaste'), onCompositionStart: action('onCompositionStart'), onCompositionEnd: action('onCompositionEnd'),
       onCompositionUpdate: action('onCompositionUpdate'), onSelect: action('onSelect'), onBeforeInput: action('onBeforeInput'), onInput: action('onInput')
     })
+  )
+  .add(
+    'reset controlled state to blank with null',
+    () => renderControlledState()
   );
+
+function renderControlledState() {
+  const [controlledValue, setControlledValue] = useState(12);
+  return (
+    <>
+      <NumberField
+        value={controlledValue}
+        onChange={(value) => setControlledValue(value)}
+      />
+      <Button
+        variant={"primary"}
+        onPress={() => setControlledValue(null)}
+      >
+        Reset
+      </Button>
+    </>
+  );
+}
 
 function render(props: any = {}) {
   return (
