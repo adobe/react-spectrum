@@ -23,7 +23,7 @@ let distDir = 'dist/docs-examples';
 try {
   fs.rmSync(distDir, {recursive: true});
 } catch (err) {}
-fs.mkdirSync(distDir);
+fs.mkdirSync(distDir, {recursive: true});
 
 for (let file of glob.sync('packages/@react-{spectrum,aria,stately}/*/docs/*.mdx')) {
   console.log(`Extracting ${file}...`);
