@@ -251,26 +251,8 @@ storiesOf('NumberField', module)
   )
   .add(
     'reset controlled state to blank with null',
-    () => renderControlledState()
+    () => <NumberFieldControlledStateReset />
   );
-
-function renderControlledState() {
-  const [controlledValue, setControlledValue] = useState(12);
-  return (
-    <>
-      <NumberField
-        value={controlledValue}
-        onChange={(value) => setControlledValue(value)}
-      />
-      <Button
-        variant={"primary"}
-        onPress={() => setControlledValue(null)}
-      >
-        Reset
-      </Button>
-    </>
-  );
-}
 
 function render(props: any = {}) {
   return (
@@ -330,6 +312,22 @@ function NumberFieldWithCurrencySelect(props) {
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
     </Form>
+  );
+}
+
+function NumberFieldControlledStateReset() {
+  const [controlledValue, setControlledValue] = useState(12);
+  return (
+    <>
+      <NumberField
+        value={controlledValue}
+        onChange={(value) => setControlledValue(value)}/>
+      <Button
+        variant={"primary"}
+        onPress={() => setControlledValue(null)}>
+        Reset
+      </Button>
+    </>
   );
 }
 
