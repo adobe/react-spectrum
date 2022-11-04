@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {expect} from '@storybook/jest';
 import {Flex} from '@react-spectrum/layout';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
+import {userEvent, within} from '@storybook/testing-library';
 
 type HelpTextStory = ComponentStoryObj<typeof TextField>;
 
@@ -71,6 +73,27 @@ export let WithState: HelpTextStory = {
   render: (props) => <TextFieldWithValidationState {...props} />
 };
 
+// Storybook interaction panel works much better with a simple flow like this that doesn't require transitions
+WithState.play = async ({canvasElement}) => {
+  let canvas = within(canvasElement);
+  let textfield = await canvas.findByTestId('textfield');
+  let radios = await canvas.findAllByRole('radio');
+
+  await expect(await canvas.findByText("This input is only valid when it's empty.")).toBeTruthy();
+  await expect(canvas.queryByRole('img', {hidden: true})).toBeFalsy();
+
+  await userEvent.type(textfield, 'hi');
+  await expect(await canvas.findByText('Remove input.')).toBeTruthy();
+  await expect(await canvas.findByRole('img', {hidden: true})).toBeTruthy();
+
+  await userEvent.clear(textfield);
+  await expect(await canvas.findByText("This input is only valid when it's empty.")).toBeTruthy();
+  await expect(canvas.queryByRole('img', {hidden: true})).toBeFalsy();
+
+  await userEvent.click(radios[0]);
+  await expect(canvas.findByRole('img', {hidden: true})).toBeTruthy();
+};
+
 export let AriaLabel: HelpTextStory = {
   args: {
     label: null,
@@ -125,6 +148,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
       gap="size-200">
       <TextField
         {...props}
+        data-testid="textfield"
         value={value}
         onChange={setValue}
         validationState={value.length ? 'invalid' : valid} />
