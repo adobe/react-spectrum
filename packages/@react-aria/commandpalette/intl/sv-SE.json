@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Visa förslag",
+  "countAnnouncement": "{optionCount, plural, one {# alternativ} other {# alternativ}} tillgängliga.",
+  "focusAnnouncement": "{isGroupChange, select, true {Ingick i gruppen {groupTitle} med {groupCount, plural, one {# alternativ} other {# alternativ}}. } other {}}{optionText}{isSelected, select, true {, valda} other {}}",
+  "listboxLabel": "Förslag",
+  "selectedAnnouncement": "{optionText}, valda"
+}

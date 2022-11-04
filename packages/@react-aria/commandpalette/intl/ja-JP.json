@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "候補を表示",
+  "countAnnouncement": "{optionCount, plural, one {# 個のオプション} other {# 個のオプション}}を利用できます。",
+  "focusAnnouncement": "{isGroupChange, select, true {入力されたグループ {groupTitle}、{groupCount, plural, one {# 個のオプション} other {# 個のオプション}}を含む。} other {}}{optionText}{isSelected, select, true {、選択済み} other {}}",
+  "listboxLabel": "候補",
+  "selectedAnnouncement": "{optionText}、選択済み"
+}

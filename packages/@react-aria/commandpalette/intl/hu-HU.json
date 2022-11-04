@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Javaslatok megjelenítése",
+  "countAnnouncement": "{optionCount, plural, one {# lehetőség} other {# lehetőség}} áll rendelkezésre.",
+  "focusAnnouncement": "{isGroupChange, select, true {Belépett a(z) {groupTitle} csoportba, amely {groupCount, plural, one {# lehetőséget} other {# lehetőséget}} tartalmaz. } other {}}{optionText}{isSelected, select, true {, kijelölve} other {}}",
+  "listboxLabel": "Javaslatok",
+  "selectedAnnouncement": "{optionText}, kijelölve"
+}

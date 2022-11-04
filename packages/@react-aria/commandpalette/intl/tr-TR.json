@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Önerileri göster",
+  "countAnnouncement": "{optionCount, plural, one {# seçenek} other {# seçenekler}} kullanılabilir.",
+  "focusAnnouncement": "{isGroupChange, select, true {Girilen grup {groupTitle}, ile {groupCount, plural, one {# seçenek} other {# seçenekler}}. } other {}}{optionText}{isSelected, select, true {, seçildi} other {}}",
+  "listboxLabel": "Öneriler",
+  "selectedAnnouncement": "{optionText}, seçildi"
+}

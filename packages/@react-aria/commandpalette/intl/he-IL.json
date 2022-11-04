@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "הצג הצעות",
+  "countAnnouncement": "{optionCount, plural, one {אפשרות #} other {# אפשרויות}} במצב זמין.",
+  "focusAnnouncement": "{isGroupChange, select, true {נכנס לקבוצה {groupTitle}, עם {groupCount, plural, one {אפשרות #} other {# אפשרויות}}. } other {}}{optionText}{isSelected, select, true {, נבחר} other {}}",
+  "listboxLabel": "הצעות",
+  "selectedAnnouncement": "{optionText}, נבחר"
+}
