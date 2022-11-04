@@ -11,9 +11,9 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {ElementType, RefObject} from 'react';
+import {ElementType, HTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
+import {FocusableElement} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -26,21 +26,19 @@ export interface ButtonAria<T> {
   isPressed: boolean
 }
 
-type AriaButtonPropsElementType = 'button' | 'a' | 'div' | 'input' | 'span' | ElementType;
+export type AriaButtonPropsElementType = 'button' | 'a' | 'div' | 'input' | 'span' | ElementType;
 
-type HTMLAttributesElementType = HTMLButtonElement | HTMLAnchorElement | HTMLDivElement | HTMLInputElement | HTMLSpanElement;
+export type HTMLAttributesElementType = HTMLButtonElement | HTMLAnchorElement | HTMLDivElement | HTMLInputElement | HTMLSpanElement;
 
-type RefObjectElementType = HTMLAttributesElementType | Element;
+export type RefObjectElementType = HTMLAttributesElementType | Element;
 
-type ButtonAriaElementType<T = HTMLAttributesElementType> = T | DOMAttributes;
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - Props to be applied to the button.
  * @param ref - A ref to a DOM element for the button.
  */
-export function useButton<T extends AriaButtonPropsElementType = 'button', V extends RefObjectElementType = HTMLButtonElement, W extends HTMLAttributesElementType = HTMLButtonElement>(
-  props: AriaButtonProps<T>, ref: RefObject<V>): ButtonAria<ButtonAriaElementType<W>> {
+export function useButton<T extends AriaButtonPropsElementType = 'button', V extends RefObjectElementType = HTMLButtonElement>(props: AriaButtonProps<T>, ref: RefObject<V>): ButtonAria<HTMLAttributes<any>> {
   let {
     elementType = 'button',
     isDisabled,
