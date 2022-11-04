@@ -92,6 +92,16 @@ export default {
         disable: true
       }
     },
+    onSelectionChange: {
+      table: {
+        disable: true
+      }
+    },
+    onOpenChange: {
+      table: {
+        disable: true
+      }
+    },
     label: {
       control: 'text'
     },
@@ -99,8 +109,7 @@ export default {
       control: 'text'
     },
     errorMessage: {
-      control: 'text',
-      defaultValue: 'Create a password with at least 8 characters.'
+      control: 'text'
     },
     isDisabled: {
       control: 'boolean',
@@ -154,6 +163,12 @@ export default {
     autoFocus: {
       control: 'boolean',
       defaultValue: false
+    },
+    isOpen: {
+      control: 'boolean'
+    },
+    defaultOpen: {
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof Picker>;
@@ -243,24 +258,6 @@ export const ContextualHelpPicker: PickerStory = {
   name: 'contextual help'
 };
 
-export const ControlledOpen: PickerStory = {
-  args: {
-    children: (item: any) => <Item>{item.name}</Item>,
-    items: flatOptions,
-    isOpen: true
-  },
-  name: 'isOpen (controlled)'
-};
-
-export const DefaultOpen: PickerStory = {
-  args: {
-    children: (item: any) => <Item>{item.name}</Item>,
-    items: flatOptions,
-    defaultOpen: true
-  },
-  name: 'defaultOpen (uncontrolled)'
-};
-
 export const SelectedKey: PickerStory = {
   args: {
     children: (item: any) => <Item>{item.name}</Item>,
@@ -290,18 +287,18 @@ export const Loading: PickerStory = {
 
 export type AsyncLoadingStory = ComponentStoryObj<typeof AsyncLoadingExample>;
 export const AsyncLoading: AsyncLoadingStory = {
-  render: () => <AsyncLoadingExample />,
+  render: (args) => <AsyncLoadingExample {...args} />,
   name: 'async loading'
 };
 
 export type FocusStory = ComponentStoryObj<any>;
 export const Focus: FocusStory = {
-  render: () => (
+  render: (args) => (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <label htmlFor="focus-before">Focus before</label>
       <input id="focus-before" data-testid="before" />
-      <Picker label="Focus-Test" items={flatOptions} autoFocus onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
-        {item => <Item>{item.name}</Item>}
+      <Picker {...args} label="Focus-Test" items={flatOptions} onFocus={action('focus')} onBlur={action('blur')} onKeyDown={action('keydown')} onKeyUp={action('keyup')}>
+        {(item: any) => <Item>{item.name}</Item>}
       </Picker>
       <label htmlFor="focus-after">Focus after</label>
       <input id="focus-after" data-testid="after" />
@@ -312,16 +309,16 @@ export const Focus: FocusStory = {
 
 export type ResizePickerStory = ComponentStoryObj<typeof ResizePicker>;
 export const Resize: ResizePickerStory = {
-  render: () => <ResizePicker />,
+  render: (args) => <ResizePicker {...args} />,
   name: 'resize'
 };
 
 export type ScrollingStory = ComponentStoryObj<any>;
 export const Scrolling: ScrollingStory = {
-  render: () => (
+  render: (args) => (
     <View width="300px" height="size-500" overflow="auto">
       <View width="500px">
-        <Picker label="Test" autoFocus>
+        <Picker {...args} label="Test">
           <Item key="One">One</Item>
           <Item key="Two">Two</Item>
           <Item key="Three">Three</Item>
@@ -378,7 +375,7 @@ function ComplexItemsPicker(props: SpectrumPickerProps<object>) {
   );
 }
 
-function AsyncLoadingExample() {
+function AsyncLoadingExample(props) {
   interface Pokemon {
     name: string,
     url: string
@@ -398,19 +395,19 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <Picker label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      {item => <Item key={item.name}>{item.name}</Item>}
+    <Picker {...props} label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      {(item: any) => <Item key={item.name}>{item.name}</Item>}
     </Picker>
   );
 }
 
-function ResizePicker() {
+function ResizePicker(props) {
   const [state, setState] = useState(true);
 
   return (
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '200px' : '300px'}}>
-        <Picker label="Choose A" width="100%">
+        <Picker {...props} label="Choose A" width="100%">
           <Item key="A1">A1</Item>
           <Item key="A2">A2</Item>
           <Item key="A3">A3</Item>
