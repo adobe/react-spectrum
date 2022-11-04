@@ -63,12 +63,9 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
       props.onSelectionChange(key);
     }
 
-    // If key is the same, reset the inputValue and close the menu
-    // (scenario: user clicks on already selected option)
-    if (key === selectedKey) {
-      resetInputValue();
-      triggerState.close();
-    }
+    // Since selection occurred, reset input and close
+    resetInputValue();
+    triggerState.close();
   };
 
   let {collection, selectionManager, selectedKey, setSelectedKey, selectedItem, disabledKeys} = useSingleSelectListState({
@@ -112,17 +109,6 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
   };
 
   let toggle = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
-    let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
-    // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
-      return;
-    }
-
-    if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
-      // Show all items if menu is toggled open. Only care about this if items are undefined
-      setShowAllItems(true);
-    }
-
     // Only update the menuOpenTrigger if menu is currently closed
     if (!triggerState.isOpen) {
       menuOpenTrigger.current = trigger;
@@ -132,38 +118,10 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
   };
 
   let lastValue = useRef(inputValue);
-  let resetInputValue = () => {
-    let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-    lastValue.current = itemText;
-    setInputValue(itemText);
-  };
-
-  let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
-  // intentional omit dependency array, want this to happen on every render
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    // Open and close menu automatically when the input value changes if the input is focused,
-    // and there are items in the collection or allowEmptyCollection is true.
-    if (
-      isFocused &&
-      (filteredCollection.size > 0) &&
-      !triggerState.isOpen &&
-      inputValue !== lastValue.current &&
-      menuTrigger !== 'manual'
-    ) {
-      open(null, 'input');
-    }
-
-    // Close when an item is selected.
-    if (
-      selectedKey != null &&
-      selectedKey !== lastSelectedKey.current
-    ) {
-      triggerState.close();
-    }
-
   
-  });
+  let resetInputValue = () => {
+    setInputValue('');
+  };
 
   useEffect(() => {
     // Reset focused key when the menu closes

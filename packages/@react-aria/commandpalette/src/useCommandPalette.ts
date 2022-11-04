@@ -13,12 +13,11 @@
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaCommandPaletteProps} from '@react-types/commandpalette';
-import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {chain, isAppleDevice, mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {CommandPaletteState} from '@react-stately/commandpalette';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useLayoutEffect, useMemo, useRef} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -60,7 +59,6 @@ let hasSetupGlobalListener = false;
 export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state: CommandPaletteState<T>): CommandPaletteAria<T> {
   let {
     buttonRef,
-    popoverRef,
     inputRef,
     listBoxRef,
     keyboardDelegate,
@@ -135,24 +133,11 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
       state.close();
     } else if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
       state.close();
+    } else if (e.key === 'Enter') {
+      let focused = state.selectionManager.focusedKey;
+      state.setSelectedKey(focused);
+      state.close();
     }
-    // else if (e.key === 'Enter') {
-    //   let focused = state.selectionManager.focusedKey;
-    //   state.setSelectedKey(focused);
-    // }
-  };
-
-  let onBlur = (e: FocusEvent) => {
-    // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget)) {
-      return;
-    }
-
-    if (props.onBlur) {
-      props.onBlur(e);
-    }
-
-    state.setFocused(false);
   };
 
   let onFocus = (e: FocusEvent) => {
@@ -171,7 +156,6 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     ...props,
     onChange: state.setInputValue,
     onKeyDown: chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown),
-    onBlur,
     value: state.inputValue,
     onFocus,
     autoComplete: 'off'
