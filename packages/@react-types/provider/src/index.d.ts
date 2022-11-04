@@ -88,7 +88,9 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Do not use `base` property.
    * @default {S:380,M:768,L:1024}
    */
-  breakpoints?: Breakpoints
+  breakpoints?: Breakpoints,
+  /** Whether components are rendered using ReactDOM.createPortal. */
+  isPortal?: boolean
 }
 
 export interface ProviderContext extends ContextProps {
