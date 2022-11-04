@@ -87,11 +87,7 @@ export interface DateFieldState {
   /** Clears the value of the given segment, reverting it to the placeholder. */
   clearSegment(type: SegmentType): void,
   /** Formats the current date value using the given options. */
-  formatValue(fieldOptions: FieldOptions): string,
-  /** Whether the date field is currently focused. */
-  readonly isFocused: boolean,
-  /** Sets whether the date field is focused. */
-  setFocused(isFocused: boolean): void
+  formatValue(fieldOptions: FieldOptions): string
 }
 
 const EDITABLE_SEGMENTS = {
@@ -154,8 +150,6 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
-
-  let [isFocused, setFocused] = useState(false);
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && !(granularity in v)) {
@@ -379,9 +373,7 @@ export function useDateFieldState(props: DateFieldStateOptions): DateFieldState 
       let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
-    },
-    isFocused,
-    setFocused
+    }
   };
 }
 

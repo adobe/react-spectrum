@@ -20,10 +20,11 @@ import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent as ReactFocusEvent, RefObject, useMemo} from 'react';
+import {RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DatePickerAria {
@@ -71,8 +72,16 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let domProps = filterDOMProps(props);
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
+  let {focusWithinProps} = useFocusWithin({
+    ...props,
+    isDisabled: state.isOpen,
+    onBlurWithin: props.onBlur,
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
+  });
+
   return {
-    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
+    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
@@ -94,44 +103,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
         if (props.onKeyUp) {
           props.onKeyUp(e);
         }
-      },
-      onFocus(e: ReactFocusEvent) {
-        if (state.isFocused) {
-          return;
-        }
-
-        if (state.isOpen) {
-          return;
-        }
-
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
-
-        state.setFocused(true);
-      },
-      onBlur(e: ReactFocusEvent) {
-        if (state.isOpen) {
-          return;
-        }
-
-        if (e.currentTarget.contains(e.relatedTarget as Node)) {
-          return;
-        }
-
-        if (props.onBlur) {
-          props.onBlur(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(false);
-        }
-
-        state.setFocused(false);
       }
     }),
     labelProps: {
