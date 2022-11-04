@@ -94,9 +94,13 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
     state
   );
 
+  let modalRef = useRef(null);
+  let modalHeight = modalRef.current?.UNSAFE_getDOMNode()?.clientHeight || 0;
+  let inputHeight = inputRef.current?.parentElement.parentElement.clientHeight || 0;
+
   return (
     <>
-      <Modal state={state} UNSAFE_style={{padding: 10, maxHeight: '60vh', overflow: 'auto'}}>
+      <Modal ref={modalRef} state={state} UNSAFE_style={{maxHeight: '60%', overflow: 'auto'}}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
@@ -117,6 +121,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
           shouldUseVirtualFocus
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
+          UNSAFE_style={{height: modalHeight > inputHeight ? modalHeight - inputHeight : undefined}}
           renderEmptyState={() => isAsync && (
             <span className={classNames(commandpaletteStyles, 'no-results')}>
               {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
@@ -199,7 +204,7 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
   }, [inputRef]);
 
   return (
-    <View UNSAFE_style={{position: 'sticky', top: 0, zIndex: 1}}>
+    <View UNSAFE_style={{position: 'sticky', top: 0, zIndex: 1, padding: 10, background: 'var(--spectrum-alias-background-color-default)'}}>
       <FocusRing
         within
         isTextInput
