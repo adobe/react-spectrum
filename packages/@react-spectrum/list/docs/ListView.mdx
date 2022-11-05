@@ -694,7 +694,6 @@ function ReorderableList() {
     ]
   });
 
-  // Append a generated key to the item type so they can only be reordered within this list and not dragged elsewhere.
   let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
