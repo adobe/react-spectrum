@@ -67,16 +67,16 @@ export interface ColumnProps<T> {
   /** A list of child columns used when dynamically rendering nested child columns. */
   childColumns?: T[],
   /** The width of the column. */
-  width?: number | string,
+  width?: ColumnStaticWidth,
   /** The minimum width of the column. */
-  minWidth?: number | string,
+  minWidth?: ColumnStaticWidth,
   /** The maximum width of the column. */
-  maxWidth?: number | string,
+  maxWidth?: ColumnStaticWidth,
   /**
    * The default width of the column.
    * @private
    */
-  defaultWidth?: number | string,
+  defaultWidth?: ColumnWidth,
   /**
    * Whether the column allows resizing.
    * @private
@@ -151,3 +151,9 @@ export interface TableCollection<T> extends GridCollection<T> {
   /** The node that makes up the body of the table. */
   body: GridNode<T>
 }
+/** The width value from input property. */
+export type ColumnStaticWidth = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+/** The width value calculated dynamically according to the available space since there's no input property value. */
+export type ColumnDynamicWidth = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+/** The width value from input property or calculated dynamically. */
+export type ColumnWidth = ColumnStaticWidth | ColumnDynamicWidth;

@@ -1,3 +1,4 @@
+import {ColumnDynamicWidth, ColumnStaticWidth, ColumnWidth} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 
@@ -12,11 +13,11 @@ export function getContentWidth(widths: Map<Key, number>): number {
 }
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
-export function isStatic(width: number | string): boolean {
+export function isStatic(width: ColumnWidth): boolean {
   return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
 }
 
-function parseFractionalUnit(width: string): number {
+function parseFractionalUnit(width: ColumnDynamicWidth): number {
   if (!width) {
     return 1;
   }
@@ -30,7 +31,7 @@ function parseFractionalUnit(width: string): number {
   return parseInt(match[0], 10);
 }
 
-export function parseStaticWidth(width: number | string, tableWidth: number): number {
+export function parseStaticWidth(width: ColumnStaticWidth, tableWidth: number): number {
   if (typeof width === 'string') {
     let match = width.match(/^(\d+)(?=%$)/);
     if (!match) {
@@ -42,13 +43,13 @@ export function parseStaticWidth(width: number | string, tableWidth: number): nu
 }
 
 
-export function getMaxWidth(maxWidth: number | string, tableWidth: number): number {
+export function getMaxWidth(maxWidth: ColumnStaticWidth, tableWidth: number): number {
   return maxWidth != null
         ? parseStaticWidth(maxWidth, tableWidth)
         : Number.MAX_SAFE_INTEGER;
 }
 
-export function getMinWidth(minWidth: number | string, tableWidth: number): number {
+export function getMinWidth(minWidth: ColumnStaticWidth, tableWidth: number): number {
   return minWidth != null
       ? parseStaticWidth(minWidth, tableWidth)
       : 75;
