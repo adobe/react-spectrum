@@ -69,12 +69,15 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
     setColumnWidths(newWidths);
   }
   /*
-    returns the resolved column width in this order:
-    previously calculated width -> controlled width prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
+    returns the resolved column width in the following order:
+    previously calculated width -> controlled width or minWidth prop -> uncontrolled defaultWidth prop -> dev assigned width -> default dynamic width
   */
   let getResolvedColumnWidth = useCallback((column: GridNode<T>): ColumnWidth => {
-    let columnProps = column.props as ColumnProps<T>;
-    return resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : columnProps.width ?? columnProps.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
+    const columnProps = column.props as ColumnProps<T>;
+    const staticWidth: ColumnStaticWidth = resizedColumns?.has(column.key) ? columnWidthsRef.current.get(column.key) : columnProps.width;
+    const dynamicWidth: ColumnWidth = columnProps.defaultWidth ?? getDefaultWidth?.(column.props) ?? '1fr';
+    const finalWidth = (columnProps.minWidth && staticWidth) ? getMinWidth(columnProps.minWidth, staticWidth, tableWidth.current) : staticWidth ?? dynamicWidth;
+    return finalWidth;
   }, [getDefaultWidth, resizedColumns]);
 
   let getStaticAndDynamicColumns = useCallback((columns: GridNode<T>[]) : { staticColumns: GridNode<T>[], dynamicColumns: GridNode<T>[] } => columns.reduce((acc, column) => {
@@ -151,7 +154,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
 
   function resizeColumn(column: GridNode<T>, newWidth: number) : AffectedColumnWidths {
     let boundedWidth =  Math.max(
-      getMinWidth(column.props.minWidth, tableWidth.current),
+      getMinWidth(column.props.minWidth, column.props.width, tableWidth.current),
       Math.min(Math.floor(newWidth), getMaxWidth(column.props.maxWidth, tableWidth.current)));
 
     // copy the columnWidths map and set the new width for the column being resized
@@ -200,7 +203,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
     if (columnIndex === -1) {
       return;
     }
-    return getMinWidth(columns[columnIndex].props.minWidth, tableWidth.current);
+    return getMinWidth(columns[columnIndex].props.minWidth, columns[columnIndex].props.width, tableWidth.current);
   }, [columns]);
 
   let getColumnMaxWidth = useCallback((key: Key) => {
