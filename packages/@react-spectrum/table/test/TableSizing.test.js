@@ -507,11 +507,66 @@ describe('TableViewSizing', function () {
         }
       });
 
+      it('should support minWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column key="foo" minWidth={200} width={100}>Foo</Column>
+              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('38px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('262px');
+        }
+      });
+
       it('should support maxWidth', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
+              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('200px');
+          expect(row.childNodes[1].style.width).toBe('300px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+        }
+      });
+
+      it('should support maxWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column key="foo" maxWidth={500} width={200}>Foo</Column>
               <Column key="bar" maxWidth={300}>Bar</Column>
               <Column key="baz">Baz</Column>
             </TableHeader>
