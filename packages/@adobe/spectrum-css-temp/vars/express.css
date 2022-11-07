@@ -152,7 +152,7 @@
   /* These are missing from spectrum-css */
   --spectrum-alias-dropshadow-blur: var(--spectrum-global-dimension-size-200);
   --spectrum-alias-dropshadow-offset-y: var(--spectrum-global-dimension-size-50);
-  --spectrum-popover-border-size: 0; /* TODO: is this for all popovers or just menu/picker/combobox? */
+  --spectrum-popover-border-size: 0px; /* TODO: is this for all popovers or just menu/picker/combobox? */
   --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
 
