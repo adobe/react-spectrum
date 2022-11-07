@@ -15,7 +15,6 @@
     bottom: 0;
     top: 0;
     margin: calc(-1 * var(--spectrum-focus-ring-border-size));
-    transform: translateX(0); /* Forces FF to render on the pixel grid */
     pointer-events: none;
 
     transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
