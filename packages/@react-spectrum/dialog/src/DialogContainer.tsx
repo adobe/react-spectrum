@@ -14,6 +14,7 @@ import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
@@ -46,10 +47,18 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     isDismissable
   };
 
+  let state = useOverlayTriggerState({
+    isOpen: !!child,
+    onOpenChange: isOpen => {
+      if (!isOpen) {
+        onDismiss();
+      }
+    }
+  });
+
   return (
     <Modal
-      isOpen={!!child}
-      onClose={onDismiss}
+      state={state}
       type={type}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
