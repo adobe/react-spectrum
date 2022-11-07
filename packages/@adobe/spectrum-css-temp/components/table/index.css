@@ -106,7 +106,10 @@ svg.spectrum-Table-sortedIcon {
     }
     .spectrum-Table-headCellButton {
       box-sizing: border-box;
-      padding: var(--spectrum-table-header-padding-y) 0 var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+      padding-block-start: var(--spectrum-table-header-padding-y);
+      padding-inline-end: 0;
+      padding-block-end: var(--spectrum-table-header-padding-y);
+      padding-inline-start: var(--spectrum-table-header-padding-x);
 
       /* truncate text with ellipsis */
       overflow: hidden;
