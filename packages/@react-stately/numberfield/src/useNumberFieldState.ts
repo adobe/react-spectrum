@@ -94,7 +94,7 @@ export function useNumberFieldState(
   let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
   let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
-  let format = useCallback((value: number) => isNaN(value) ? '' : formatter.format(value), [formatter]);
+  let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
 
   let clampStep = !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && isNaN(step)) {
