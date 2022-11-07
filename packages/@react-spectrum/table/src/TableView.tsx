@@ -508,7 +508,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           {state.visibleViews[1]}
           {columnState.currentlyResizingColumn != null && <div
             className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} /> }
+            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} /> }
         </ScrollView>
       </div>
     </FocusScope>
