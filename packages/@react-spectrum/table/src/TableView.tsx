@@ -506,9 +506,9 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           onScrollEnd={state.endScrolling}
           onScroll={onScroll}>
           {state.visibleViews[1]}
-          <div
+          {columnState.currentlyResizingColumn != null && <div
             className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} />
+            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} /> }
         </ScrollView>
       </div>
     </FocusScope>
