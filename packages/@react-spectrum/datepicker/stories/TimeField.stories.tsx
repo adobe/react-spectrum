@@ -106,6 +106,10 @@ storiesOf('Date and Time/TimeField', module)
   .add(
     'minValue: 8 AM, maxValue: 8 PM',
     () => render({minValue: new Time(8), maxValue: new Time(20)})
+  )
+  .add(
+    'all the events',
+    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
   );
 
 storiesOf('Date and Time/TimeField/styling', module)

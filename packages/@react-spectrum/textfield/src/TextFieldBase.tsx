@@ -74,7 +74,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
 
   if (icon) {
     let UNSAFE_className = classNames(
@@ -106,7 +106,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           'spectrum-Textfield',
           {
             'spectrum-Textfield--invalid': isInvalid,
-            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
             'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
             'spectrum-Textfield--multiline': multiLine
@@ -131,7 +131,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           } />
       </FocusRing>
       {icon}
-      {validationState && !isLoading ? validation : null}
+      {validationState && !isLoading && !isDisabled ? validation : null}
       {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>

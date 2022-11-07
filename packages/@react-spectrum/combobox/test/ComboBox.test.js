@@ -884,11 +884,9 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
@@ -904,11 +902,9 @@ describe('ComboBox', function () {
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
 
-      act(() => {
-        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-        jest.runAllTimers();
-      });
+      fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+      act(() => jest.runAllTimers());
 
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
@@ -925,11 +921,9 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
@@ -938,10 +932,8 @@ describe('ComboBox', function () {
       let items = within(listbox).getAllByRole('option');
       expect(items.length).toBe(1);
 
-      act(() => {
-        triggerPress(items[0]);
-        jest.runAllTimers();
-      });
+      triggerPress(items[0]);
+      act(() => jest.runAllTimers());
 
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
@@ -1369,11 +1361,9 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox({allowsCustomValue: true});
       let combobox = getByRole('combobox');
       // Change input value to something matching a combobox value
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Two'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Two'}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
@@ -1383,11 +1373,9 @@ describe('ComboBox', function () {
       expect(items[0].textContent).toBe('Two');
 
       // Change input text to something that doesn't match any combobox items but still shows the menu
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       // check that no item is focused in the menu
       listbox = getByRole('listbox');
@@ -2875,10 +2863,8 @@ describe('ComboBox', function () {
 
       expect(combobox.value).toBe('Aardvark');
 
-      act(() => {
-        combobox.blur();
-        jest.runAllTimers();
-      });
+      act(() => combobox.blur());
+      act(() => jest.runAllTimers());
       expect(document.activeElement).not.toBe(combobox);
 
       let newItems = [
@@ -2890,11 +2876,9 @@ describe('ComboBox', function () {
       rerender(<ComboBoxWithMap listItems={newItems} />);
       expect(combobox.value).toBe('New Text');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: ''}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: ''}});
+      act(() => jest.runAllTimers());
 
       listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
@@ -3016,21 +3000,17 @@ describe('ComboBox', function () {
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('One');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: ''}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: ''}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       let items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(3);
 
-      act(() => {
-        triggerPress(items[2]);
-        jest.runAllTimers();
-      });
+      triggerPress(items[2]);
+      act(() => jest.runAllTimers());
 
       expect(combobox.value).toBe('Three');
     });
