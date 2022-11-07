@@ -99,17 +99,29 @@ governing permissions and limitations under the License.
 
     .spectrum-ActionGroup-item {
       position: relative;
-      border-radius: 0;
+      --spectrum-button-border-radius: 0px;
       z-index: 1;
 
       &:first-child {
         border-start-start-radius: var(--spectrum-actionbutton-border-radius);
         border-end-start-radius: var(--spectrum-actionbutton-border-radius);
+
+        /* focus ring */
+        &:after {
+          border-start-start-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+          border-end-start-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+        }
       }
 
       &:last-child {
         border-start-end-radius: var(--spectrum-actionbutton-border-radius);
         border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+
+        /* focus ring */
+        &:after {
+          border-start-end-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+          border-end-end-radius: calc(var(--spectrum-actionbutton-border-radius) + var(--spectrum-alias-focus-ring-gap));
+        }
       }
 
       &.spectrum-ActionGroup-item--isDisabled {

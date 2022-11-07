@@ -11,6 +11,10 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Tooltip {
+  --spectrum-tooltip-background-color: var(--spectrum-neutral-subdued-background-color-default);
+  --spectrum-tooltip-negative-background-color: var(--spectrum-negative-background-color-default);
+  --spectrum-tooltip-positive-background-color: var(--spectrum-positive-background-color-default);
+  --spectrum-tooltip-info-background-color: var(--spectrum-informative-background-color-default);
   background-color: var(--spectrum-tooltip-background-color);
 
   color: var(--spectrum-tooltip-text-color);
