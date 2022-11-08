@@ -14,6 +14,7 @@ import {FocusScope} from '../';
 import {Meta, Story} from '@storybook/react';
 import React, {ReactNode, useState} from 'react';
 import ReactDOM from 'react-dom';
+import RestoreFocusExample from './helpers/RestoreFocusExample';
 
 const dialogsRoot = 'dialogsRoot';
 
@@ -62,7 +63,7 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
       <FocusScope contain={contain} restoreFocus autoFocus>
         {!showNew && (
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          <div role="dialog" onKeyDown={onKeyDown}>
+          <div role="dialog" aria-label="a focus scope" onKeyDown={onKeyDown}>
             <input />
             <input />
             <input />
@@ -78,7 +79,7 @@ function NestedDialog({onClose, isPortaled, contain}: {onClose: VoidFunction, is
         )}
         {showNew && (
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          <div role="dialog" onKeyDown={onKeyDown}>
+          <div role="dialog" aria-label="a focus scope" onKeyDown={onKeyDown}>
             <input />
             <input autoFocus />
             <input />
@@ -162,5 +163,9 @@ export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
 KeyboardNavigationInsidePortalNoContain.args = {isPortaled: true, contain: false};
 
 const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
-
 export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});
+
+const RestoreFocusExampleTemplate = (): Story<StoryProps> => () => <RestoreFocusExample />;
+export const RestoreFocus = RestoreFocusExampleTemplate().bind({});
+
+
