@@ -127,10 +127,10 @@
       </g>
       <g transform="translate(1028 49)">
         <g opacity="0.01">
-          <rect width="35" height="35" fill="var(--anatomy-gray-50)" />
+          <rect width="35" height="35" fill="#fff" />
         </g>
-        <path d="M12,24.422V8.407L23.591,20.026H16.81l-.411.124Z" fill="var(--anatomy-gray-50)" fill-rule="evenodd" />
-        <path d="M21.084,25.1l-3.6,1.535L12.8,15.542l3.686-1.553Z" fill="var(--anatomy-gray-50)" fill-rule="evenodd" />
+        <path d="M12,24.422V8.407L23.591,20.026H16.81l-.411.124Z" fill="#fff" fill-rule="evenodd" />
+        <path d="M21.084,25.1l-3.6,1.535L12.8,15.542l3.686-1.553Z" fill="#fff" fill-rule="evenodd" />
         <path d="M19.751,24.416l-1.844.774-3.1-7.374,1.841-.775Z" fill-rule="evenodd" />
         <path d="M13,10.814V22l2.969-2.866L16.4,19h4.768Z" fill-rule="evenodd" />
       </g>
