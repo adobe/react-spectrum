@@ -508,7 +508,10 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       return;
     }
 
-    focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
+    // a different nodeToRestore may have been assigned due to re-parenting, don't overwrite it
+    if (!focusScopeTree.getTreeNode(scopeRef).nodeToRestore) {
+      focusScopeTree.getTreeNode(scopeRef).nodeToRestore = nodeToRestoreRef.current;
+    }
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
     // after the node that had focus when the scope mounted. This is important when
