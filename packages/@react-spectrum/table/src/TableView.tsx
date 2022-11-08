@@ -654,18 +654,6 @@ function ResizableTableColumnHeader(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
-  useEffect(() => {
-    if (columnState.currentlyResizingColumn === column.key) {
-      // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
-      // without the immediate timeout, Android Chrome doesn't move focus to the resizer
-      setTimeout(() => {
-        resizingRef.current.focus();
-        onFocusedResizer();
-      }, 0);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columnState.currentlyResizingColumn, column.key]);
-
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null);
 
   return (
@@ -697,7 +685,16 @@ function ResizableTableColumnHeader(props) {
             )
           )
         }>
-        <MenuTrigger>
+        <MenuTrigger onExited={() => {
+          if (columnState.currentlyResizingColumn === column.key) {
+            // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
+            // without the immediate timeout, Android Chrome doesn't move focus to the resizer
+            setTimeout(() => {
+              resizingRef.current.focus();
+              onFocusedResizer();
+            }, 0);
+          }
+        }}>
           <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />

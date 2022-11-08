@@ -73,7 +73,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state}>
+      <Tray state={state} onExited={props.onExited}>
         {menu}
       </Tray>
     );
