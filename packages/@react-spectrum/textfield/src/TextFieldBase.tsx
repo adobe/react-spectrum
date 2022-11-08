@@ -143,7 +143,15 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      wrapperClassName={classNames(styles, 'spectrum-Textfield-wrapper')}
+      wrapperClassName={
+        classNames(
+          styles,
+          'spectrum-Textfield-wrapper',
+          {
+            'spectrum-Textfield-wrapper--quiet': isQuiet
+          }
+        )
+      }
       showErrorIcon={false}
       ref={domRef}>
       {textField}

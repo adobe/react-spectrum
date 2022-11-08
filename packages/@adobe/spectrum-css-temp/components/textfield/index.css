@@ -188,6 +188,10 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Textfield-wrapper.spectrum-Textfield-wrapper--quiet{
+  grid-template-rows: auto;
+}
+
 .spectrum-Textfield-wrapper .spectrum-Textfield--multiline {
   /* when textarea is inside a label wrapper, make it flex to take up remaining height. */
   flex: 1 1 auto;
