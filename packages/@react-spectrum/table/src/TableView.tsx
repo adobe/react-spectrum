@@ -360,7 +360,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             classNames(
               stylesOverrides,
               'react-spectrum-Table'
-            )
+            ),
+            styleProps.className
           )
         }
         layout={layout}
