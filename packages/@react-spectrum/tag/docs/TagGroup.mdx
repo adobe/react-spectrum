@@ -106,8 +106,7 @@ function Example() {
   let [items, setItems] = React.useState(defaultItems);
 
   let removeItem = (key) => {
-    let updatedItems = items.filter((item) => key !== item.id);
-    setItems(updatedItems);
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
   };
 
   return (
