@@ -13,7 +13,15 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, useDOMRef, useFocusableRef, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import {
+  classNames,
+  useDOMRef,
+  useFocusableRef,
+  useIsMobileDevice,
+  useStyleProps,
+  useUnwrapDOMRef
+} from '@react-spectrum/utils';
 import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
@@ -352,7 +360,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             classNames(
               stylesOverrides,
               'react-spectrum-Table'
-            )
+            ),
+            styleProps.className
           )
         }
         layout={layout}
@@ -440,6 +449,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
         onLoadMore();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onLoadMore, isLoading, state.setVisibleRect, state.virtualizer]);
 
   useLayoutEffect(() => {
@@ -466,8 +476,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   return (
     <FocusScope>
       <div
-        // Override virtualizer provided tabindex if TableView is empty, so it is tabbable.
-        {...mergeProps(otherProps, virtualizerProps, collection.size === 0 && {tabIndex: 0})}
+        {...mergeProps(otherProps, virtualizerProps)}
         ref={domRef}>
         <div
           role="presentation"
@@ -505,9 +514,9 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           onScrollEnd={state.endScrolling}
           onScroll={onScroll}>
           {state.visibleViews[1]}
-          <div
+          {columnState.currentlyResizingColumn != null && <div
             className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} />
+            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: 'block'}} /> }
         </ScrollView>
       </div>
     </FocusScope>
@@ -568,12 +577,12 @@ function TableColumnHeader(props) {
             )
           )
         }>
+        {columnProps.allowsSorting &&
+          <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
+        }
         {columnProps.hideHeader ?
           <VisuallyHidden>{column.rendered}</VisuallyHidden> :
           <div className={classNames(styles, 'spectrum-Table-headCellContents')}>{column.rendered}</div>
-        }
-        {columnProps.allowsSorting &&
-          <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
       </div>
     </FocusRing>
@@ -585,8 +594,9 @@ let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
   let {buttonProps} = useButton({...otherProps, elementType: 'div', isDisabled: isEmpty}, domRef);
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: isEmpty});
   return (
-    <div className={classNames(styles, 'spectrum-Table-headCellContents')}>
+    <div className={classNames(styles, 'spectrum-Table-headCellContents', {'is-hovered': isHovered})} {...hoverProps}>
       <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...mergeProps(buttonProps, focusProps)} ref={domRef}>{props.children}</div>
     </div>
   );
@@ -606,9 +616,10 @@ function ResizableTableColumnHeader(props) {
     isVirtualized: true,
     hasMenu: true
   }, state, ref);
+
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
 
-  const allProps = [columnHeaderProps, hoverProps, pressProps];
+  const allProps = [columnHeaderProps, pressProps, hoverProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
@@ -648,18 +659,28 @@ function ResizableTableColumnHeader(props) {
       }
     ];
     return options;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
+  let isMobile = useIsMobileDevice();
 
   useEffect(() => {
     if (columnState.currentlyResizingColumn === column.key) {
       // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
       // without the immediate timeout, Android Chrome doesn't move focus to the resizer
+      if (isMobile) {
+        setTimeout(() => {
+          resizingRef.current.focus();
+          onFocusedResizer();
+        }, 400);
+        return;
+      }
       setTimeout(() => {
         resizingRef.current.focus();
         onFocusedResizer();
       }, 0);
     }
-  }, [columnState.currentlyResizingColumn, column.key]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnState.currentlyResizingColumn, column.key, isMobile]);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || columnState.currentlyResizingColumn != null);
 
@@ -694,12 +715,15 @@ function ResizableTableColumnHeader(props) {
         }>
         <MenuTrigger>
           <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
-            {columnProps.hideHeader ?
-              <VisuallyHidden>{column.rendered}</VisuallyHidden> :
-              column.rendered
-            }
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
+            }
+            {columnProps.hideHeader ?
+              <VisuallyHidden>{column.rendered}</VisuallyHidden> :
+              <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
+            }
+            {
+              columnProps.allowsResizing && columnState.currentlyResizingColumn === null && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
           <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>

@@ -20,12 +20,8 @@ export interface TagGroupProps<T> extends CollectionBase<T> {
 
   /** Whether the TagGroup is disabled. */
   isDisabled?: boolean,
-
-  /** Whether the tags in the TagGroup are removable. */
-  isRemovable?: boolean,
-
-  /** Handler called when a tag is removed. */
-  onRemove?: (items: any[]) => void
+  allowsRemoving?: boolean,
+  onRemove?: (key: Key) => void
 }
 
 export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps {}
@@ -33,9 +29,9 @@ export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, St
 export interface TagProps<T> extends ItemProps<any> {
   isDisabled?: boolean,
   isFocused: boolean,
-  isRemovable?: boolean,
+  allowsRemoving?: boolean,
   item: Node<T>,
-  onRemove?: (item, e) => void,
+  onRemove?: (key: Key) => void,
   tagRef: RefObject<HTMLElement>,
   tagRowRef: RefObject<HTMLElement>
 }

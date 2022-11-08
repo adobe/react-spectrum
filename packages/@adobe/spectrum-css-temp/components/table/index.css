@@ -32,12 +32,22 @@ governing permissions and limitations under the License.
 svg.spectrum-Table-sortedIcon {
   display: none;
   flex: 0 0 auto;
-  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
 }
 
 .spectrum-Table-headWrapper {
@@ -96,12 +106,21 @@ svg.spectrum-Table-sortedIcon {
     }
     .spectrum-Table-headCellButton {
       box-sizing: border-box;
-      padding: var(--spectrum-table-header-padding-y) 0 var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+      padding-block-start: var(--spectrum-table-header-padding-y);
+      padding-inline-end: 0;
+      padding-block-end: var(--spectrum-table-header-padding-y);
+      padding-inline-start: var(--spectrum-table-header-padding-x);
 
       /* truncate text with ellipsis */
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+    }
+  }
+  .is-hovered,
+  &.focus-ring {
+    .spectrum-Table-menuChevron {
+      display: inline-block;
     }
   }
 }
@@ -282,6 +301,18 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 }
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
+}
+
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .spectrum-Table-headCell,
 .spectrum-Table-headCellButton {
@@ -453,12 +484,15 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.resize-ew * {
-  cursor: col-resize !important;
+.resize-ew *,
+.spectrum-Table-columnResizer--ewresize {
+  cursor: ew-resize !important;
 }
-.resize-e * {
+.resize-e *,
+.spectrum-Table-columnResizer--eresize {
   cursor: e-resize !important;
 }
-.resize-w * {
+.resize-w *,
+.spectrum-Table-columnResizer--wresize {
   cursor: w-resize !important;
 }

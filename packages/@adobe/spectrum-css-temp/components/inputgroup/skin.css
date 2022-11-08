@@ -34,6 +34,27 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+  &.spectrum-InputGroup--invalid {
+    .spectrum-FieldButton,
+    .spectrum-InputGroup-input {
+      border-color: var(--spectrum-textfield-border-color-error);
+    }
+
+    &:hover {
+      .spectrum-FieldButton,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-hover);
+      }
+    }
+
+    &:active {
+      .spectrum-FieldButton,
+      .spectrum-InputGroup-input {
+        border-color: var(--spectrum-textfield-border-color-error-down);
+      }
+    }
+  }
 }
 
 .spectrum-InputGroup.is-focused {
@@ -110,6 +131,20 @@ governing permissions and limitations under the License.
       .spectrum-FieldButton,
       .spectrum-InputGroup-input {
         border-color: var(--spectrum-textfield-border-color-error);
+      }
+
+      &:hover {
+        .spectrum-FieldButton,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-hover);
+        }
+      }
+
+      &:active {
+        .spectrum-FieldButton,
+        .spectrum-InputGroup-input {
+          border-color: var(--spectrum-textfield-border-color-error-down);
+        }
       }
     }
 
@@ -236,7 +271,7 @@ governing permissions and limitations under the License.
     }
     .spectrum-FieldButton {
       forced-color-adjust: auto;
-    }  
+    }
 
     &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) .spectrum-FieldButton {
       border-color: GrayText;
@@ -291,7 +326,7 @@ governing permissions and limitations under the License.
       }
       &.spectrum-InputGroup--quiet {
         box-shadow: 0 2px 0 0 var(--spectrum-dropdown-border-color-key-focus);
-      }   
+      }
     }
   }
 }
