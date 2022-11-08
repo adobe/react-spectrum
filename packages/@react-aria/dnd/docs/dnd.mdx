@@ -12,7 +12,7 @@ import DropOperation from './DropOperation.svg';
 import BetweenDropPosition from './BetweenDropPosition.svg';
 import OnDropPosition from './OnDropPosition.svg';
 import RootDropPosition from './RootDropPosition.svg';
-import DragPreview from './DragPreview.svg';
+import Anatomy from './Anatomy.svg';
 import DragAffordance from './DragAffordance.svg';
 
 import {Layout} from '@react-spectrum/docs';
@@ -42,10 +42,7 @@ The drag source is responsible for providing one or more **drag items**, which s
 
 While dragging, a **drag preview** is displayed under the user's mouse or finger to indicate the items being dragged. By default, this is a copy of the dragged element, but it can be customized. For example, when multiple items are dragged, they could be shown as a stack, or with a badge indicating the count.
 
-<figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
-  <DragPreview role="img" aria-labelledby="drag-preview-caption" />
-  <figcaption id="drag-preview-caption" style={{fontStyle: 'italic'}}>A custom drag preview representing multiple drag items.</figcaption>
-</figure>
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
 There are several **drop operations** that can be performed as a result of a drag and drop interaction:
 
