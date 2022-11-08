@@ -14,6 +14,7 @@ import heroVideo from 'url:../assets/dnd.mp4';
 import BetweenDropPosition from '@react-aria/dnd/docs/BetweenDropPosition.svg';
 import OnDropPosition from '@react-aria/dnd/docs/OnDropPosition.svg';
 import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
+import Anatomy from '../assets/dnd-anatomy.svg';
 
 import {BlogPostLayout, Video, Track, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
@@ -58,7 +59,7 @@ After years of research, development, and extensive testing across many devices 
 
 Drag and drop starts with a drag source, implemented using the [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
 
-*~~ Image of dnd anatomy ~~*
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
 For mouse and touch screen users, React Aria uses the native [HTML drag and drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) under the hood. This means items can be dragged within the browser window, between browser windows, or even outside the browser into external native applications (e.g. email programs). External items such as files or directories from the user’s device may also be dragged in.
 
