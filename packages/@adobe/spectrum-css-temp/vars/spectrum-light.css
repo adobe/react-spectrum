@@ -248,7 +248,7 @@
   --spectrum-tabs-quiet-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
   --spectrum-tabs-quiet-vertical-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
   --spectrum-well-background-color: rgba(34,34,34,0.02);
-  --spectrum-well-border-color: rgba(44,44,44,0.05);
+  --spectrum-well-border-color: rgba(0,0,0,0.05);
   --spectrum-tray-background-color: var(--spectrum-global-color-gray-50);
   /* react spectrum additions */
   --react-spectrum-datepicker-placeholder-color: rgb(118, 118, 118); /* 4.54:1 contrast ratio */

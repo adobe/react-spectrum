@@ -64,6 +64,7 @@ governing permissions and limitations under the License.
 
   --spectrum-dialog-padding-x: var(--spectrum-dialog-padding);
   --spectrum-dialog-padding-y: var(--spectrum-dialog-padding);
+  --spectrum-dialog-border-radius: var(--spectrum-border-radius);
 }
 
 .spectrum-Dialog--small {
