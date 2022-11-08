@@ -86,32 +86,33 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 An `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
 ### Removing tags
-Adding the `isRemovable` prop will allow the tags to be removed from the group. The `onRemove` callback is then
+Adding the `allowsRemoving` prop will allow the tags to be removed from the group. The `onRemove` callback is then
 used to handle the remove logic.
 
 ```tsx example
-function AppList() {
-const defaultItems = [
-  {id: 1, name: 'Adobe Photoshop'},
-  {id: 2, name: 'Adobe XD'},
-  {id: 3, name: 'Adobe InDesign'},
-  {id: 4, name: 'Adobe AfterEffects'},
-  {id: 5, name: 'Adobe Illustrator'},
-  {id: 6, name: 'Adobe Lightroom'},
-  {id: 7, name: 'Adobe Premiere Pro'},
-  {id: 8, name: 'Adobe Fresco'},
-  {id: 9, name: 'Adobe Dreamweaver'}
-];
+function Example() {
+  let defaultItems = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
 
-  const [items, setItems] = React.useState(defaultItems);
-  const removeItem = (tag) => {
-    const updatedItems = items.filter(item => item.name !== tag);
+  let [items, setItems] = React.useState(defaultItems);
+
+  let removeItem = (key) => {
+    let updatedItems = items.filter((item) => key !== item.id);
     setItems(updatedItems);
-  }
+  };
 
   return (
     <Flex width={500}>
-      <TagGroup items={items} isRemovable onRemove={removeItem} aria-label="Removable TagGroup example">
+      <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
         {(item) => (
           <Item key={item.key}>
             {item.name}
@@ -121,7 +122,6 @@ const defaultItems = [
     </Flex>
   );
 }
-
 ```
 
 ## Props
