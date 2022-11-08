@@ -23,7 +23,9 @@ export interface OverlayProps {
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
-  children: ReactNode
+  children: ReactNode,
+  /** If the overlay is open. */
+  isOpen: boolean
 }
 
 export const OverlayContext = React.createContext(null);
@@ -44,7 +46,7 @@ export function Overlay(props: OverlayProps) {
 
   let contents = (
     <OverlayContext.Provider value={contextValue}>
-      <FocusScope restoreFocus contain={contain}>
+      <FocusScope restoreFocus contain={contain && props.isOpen}>
         {props.children}
       </FocusScope>
     </OverlayContext.Provider>

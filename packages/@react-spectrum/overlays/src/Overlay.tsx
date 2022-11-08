@@ -43,7 +43,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container}>
+    <ReactAriaOverlay portalContainer={container} isOpen={props.isOpen}>
       <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
         <OpenTransition
           in={isOpen}
