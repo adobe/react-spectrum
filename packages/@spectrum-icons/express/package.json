@@ -1,0 +1,31 @@
+{
+  "name": "@spectrum-icons/express",
+  "version": "4.0.3",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "scripts": {
+    "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && tsc --project ./tsconfig.types.json"
+  },
+  "dependencies": {
+    "@adobe/spectrum-css-ccx-workflow-icons": "1.0.2",
+    "@babel/runtime": "^7.6.2",
+    "@react-spectrum/icon": "^3.6.1",
+    "@spectrum-icons/build-tools": "3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@spectrum-icons/build-tools": "3.0.0-alpha.1",
+    "fs-extra": "^10.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
+    "@react-spectrum/provider": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -27,9 +27,14 @@ governing permissions and limitations under the License.
   --spectrum-textfield-multiline-padding-x: var(--spectrum-textfield-padding-x);
   --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
+
+  --spectrum-textfield-border-size: var(--spectrum-alias-input-border-size);
+  --spectrum-textfield-quiet-border-size: var(--spectrum-alias-input-border-size);
 }
 
 .spectrum-Textfield {
+  @inherit: %spectrum-FocusRing;
+
   display: inline-flex;
   position: relative;
   min-width: var(--spectrum-textfield-min-width);
@@ -40,6 +45,10 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
     overflow-x: hidden;
   }
+}
+
+.spectrum-Textfield--quiet {
+  @inherit: %spectrum-FocusRing--quiet;
 }
 
 .spectrum-Textfield-input {
