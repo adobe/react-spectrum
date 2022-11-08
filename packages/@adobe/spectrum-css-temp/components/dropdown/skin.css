@@ -14,11 +14,6 @@ governing permissions and limitations under the License.
   /* Override to gray-800 to meet WCAG */
   --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
 
-  .spectrum-Dropdown-trigger:hover {
-    .spectrum-Dropdown-chevron {
-      color: var(--spectrum-dropdown-icon-color-hover);
-    }
-  }
 
   .spectrum-Dropdown-trigger {
     &.is-selected {
@@ -30,24 +25,18 @@ governing permissions and limitations under the License.
 
   &.is-invalid {
     .spectrum-Dropdown-invalidIcon {
-      color: var(--spectrum-dropdown-validation-icon-color-error);
+      fill: var(--spectrum-dropdown-validation-icon-color-error);
     }
 
     &.is-disabled {
       .spectrum-Icon,
       .spectrum-Dropdown-invalidIcon {
-        color: var(--spectrum-dropdown-icon-color-disabled);
+        fill: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
   }
 
   &.is-disabled {
-    &,
-    .spectrum-Dropdown-trigger:hover {
-      .spectrum-Dropdown-chevron {
-        color: var(--spectrum-dropdown-icon-color-disabled);
-      }
-    }
     &:active .spectrum-Dropdown-label {
       color: var(--spectrum-dropdown-text-color-disabled);
     }
@@ -57,10 +46,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-}
-
-.spectrum-Dropdown-chevron {
-  color: var(--spectrum-dropdown-icon-color);
 }
 
 .spectrum-Dropdown-label {
@@ -82,9 +67,6 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown-trigger.focus-ring {
   .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
-  }
-  .spectrum-Dropdown-chevron {
-    color: var(--spectrum-dropdown-icon-color-key-focus)
   }
 }
 

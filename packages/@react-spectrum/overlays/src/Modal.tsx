@@ -10,41 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {mergeProps, useViewportSize} from '@react-aria/utils';
-import {ModalProps} from '@react-types/overlays';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
+import {OverlayProps} from '@react-types/overlays';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
+import React, {forwardRef, ReactNode, RefObject} from 'react';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {useViewportSize} from '@react-aria/utils';
 
-interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
+interface ModalProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
   children: ReactNode,
-  isOpen?: boolean,
-  onClose?: () => void,
-  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
-  overlayProps: HTMLAttributes<HTMLElement>
+  state: OverlayTriggerState,
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'
+}
+
+interface ModalWrapperProps extends ModalProps {
+  isOpen?: boolean
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, ...otherProps} = props;
+  let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
-
-  let {overlayProps, underlayProps} = useOverlay(props, domRef);
 
   return (
-    <Overlay {...otherProps}>
-      <Underlay {...underlayProps} />
-      <ModalWrapper
-        {...styleProps}
-        onClose={onClose}
-        type={type}
-        ref={domRef}
-        overlayProps={overlayProps}>
+    <Overlay {...otherProps} isOpen={state.isOpen}>
+      <ModalWrapper {...props} ref={domRef}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -57,12 +51,11 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, isOpen, type, overlayProps, ...otherProps} = props;
+  let {type, children, state, isOpen} = props;
   let typeVariant = typeMap[type];
+  let {styleProps} = useStyleProps(props);
 
-  usePreventScroll();
-  let {modalProps} = useModal();
+  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -86,7 +79,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
       'react-spectrum-Modal'
     ),
     {[`spectrum-Modal--${typeVariant}`]: typeVariant},
-    otherProps.className
+    styleProps.className
   );
 
   let viewport = useViewportSize();
@@ -95,15 +88,19 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   };
 
   return (
-    <div className={wrapperClassName} style={style}>
-      <div
-        {...mergeProps(otherProps, overlayProps, modalProps)}
-        ref={ref}
-        className={modalClassName}
-        data-testid="modal">
-        {children}
+    <>
+      <Underlay {...underlayProps} isOpen={isOpen} />
+      <div className={wrapperClassName} style={style}>
+        <div
+          {...styleProps}
+          {...modalProps}
+          ref={ref}
+          className={modalClassName}
+          data-testid="modal">
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 });
 

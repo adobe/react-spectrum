@@ -16,7 +16,7 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -24,6 +24,7 @@ import {RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DatePickerAria {
@@ -71,12 +72,38 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let domProps = filterDOMProps(props);
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
+  let {focusWithinProps} = useFocusWithin({
+    ...props,
+    isDisabled: state.isOpen,
+    onBlurWithin: props.onBlur,
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
+  });
+
   return {
-    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, {
+    groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
-      'aria-describedby': ariaDescribedBy
+      'aria-describedby': ariaDescribedBy,
+      onKeyDown(e: KeyboardEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onKeyDown) {
+          props.onKeyDown(e);
+        }
+      },
+      onKeyUp(e: KeyboardEvent) {
+        if (state.isOpen) {
+          return;
+        }
+
+        if (props.onKeyUp) {
+          props.onKeyUp(e);
+        }
+      }
     }),
     labelProps: {
       ...labelProps,
