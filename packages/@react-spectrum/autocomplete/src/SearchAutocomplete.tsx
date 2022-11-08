@@ -23,6 +23,7 @@ import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -276,6 +277,10 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
               'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
+            classNames(
+              searchAutocompleteStyles,
+              'searchautocomplete'
+            ),
             className
           )
         }>
