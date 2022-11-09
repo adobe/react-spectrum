@@ -18,6 +18,7 @@ import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
+import RestoreFocusExample from '../stories/helpers/RestoreFocusExample';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
@@ -476,7 +477,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="before" />
-            <button data-testid="trigger" />
+            <button data-testid="trigger">trigger</button>
             <input data-testid="after" />
             {show &&
               <FocusScope restoreFocus autoFocus>
@@ -511,7 +512,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="before" />
-            <button data-testid="trigger" />
+            <button data-testid="trigger">trigger</button>
             <input data-testid="after" />
             {show &&
               <FocusScope restoreFocus autoFocus>
@@ -543,7 +544,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="before" />
-            <button data-testid="trigger" />
+            <button data-testid="trigger">trigger</button>
             {show &&
               <FocusScope restoreFocus autoFocus>
                 <input data-testid="input1" />
@@ -578,7 +579,7 @@ describe('FocusScope', function () {
         return (
           <div>
             <input data-testid="before" />
-            <button data-testid="trigger" />
+            <button data-testid="trigger">trigger</button>
             <input data-testid="after-trigger" />
             {show &&
               <FocusScope autoFocus>
@@ -655,7 +656,7 @@ describe('FocusScope', function () {
         let {getByTestId} = render(
           <div>
             <FocusScope contain>
-              <div role="dialog" data-testid="focusable" tabIndex={-1}>
+              <div role="dialog" aria-label="Example" data-testid="focusable" tabIndex={-1}>
                 <Item data-testid="tabbable1" autoFocus tabIndex={null}>Remove me!</Item>
                 <Item data-testid="item1" tabIndex={0}>Remove me, too!</Item>
                 <Item data-testid="item2" tabIndex={-1}>Remove me, three!</Item>
@@ -1538,6 +1539,45 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).not.toBe(document.body);
       expect(document.activeElement.textContent).toBe('Open Menu');
+    });
+    it('tracks node to restore if the node to restore was removed in another part of the tree (without CSS Transition)', () => {
+      render(<RestoreFocusExample />);
+      expect(document.activeElement).toBe(document.body);
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      userEvent.tab();
+
+      expect(document.activeElement.textContent).toBe('Actions▼');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Edit…');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Cancel');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement.textContent).toBe('Actions▼');
     });
   });
 });
