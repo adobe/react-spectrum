@@ -2071,8 +2071,6 @@ describe('ComboBox', function () {
         </Provider>
       );
 
-      let start = +new Date();
-      let delta = () => console.log(+new Date() - start);
       let button = getByRole('button');
       let combobox = getByRole('combobox');
       expect(load).toHaveBeenCalledTimes(1);
