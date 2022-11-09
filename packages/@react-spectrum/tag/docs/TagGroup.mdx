@@ -17,6 +17,11 @@ import packageData from '@react-spectrum/tag/package.json';
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
 import {Item, TagGroup} from '@react-spectrum/tag';
+import News from '@spectrum-icons/workflow/News';
+import Airplane from '@spectrum-icons/workflow/Airplane';
+import Game from '@spectrum-icons/workflow/Game';
+import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -133,3 +138,28 @@ function Example() {
     properties: Object.fromEntries(Object.entries(docs.exports.TagGroup.props.properties))
   }
 }} links={docs.links} />
+
+## Visual options
+
+### With icons
+
+```tsx example
+<TagGroup aria-label="TagGroup with icons example">
+  <Item>
+    <News />
+    <Text>News</Text>
+  </Item>
+  <Item>
+    <Airplane />
+    <Text>Travel</Text>
+  </Item>
+  <Item>
+    <Game />
+    <Text>Gaming</Text>
+  </Item>
+  <Item>
+    <ShoppingCart />
+    <Text>Shopping</Text>
+  </Item>
+</TagGroup>
+```
