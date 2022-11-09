@@ -39,7 +39,7 @@
 
 /* specificity war with .spectrum-Field--positionSide etc. */
 .react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField.react-spectrum-DateField {
-  min-width: var(--spectrum-global-dimension-size-2000)
+  min-width: var(--spectrum-global-dimension-size-2000);
 }
 
 .react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField.react-spectrum-TimeField {
@@ -93,7 +93,7 @@
   border: none;
   background: none;
   padding: 0 2px;
-  border-radius: 2px;
+  border-radius: var(--spectrum-alias-border-radius-small);
   font-variant-numeric: tabular-nums;
   text-align: end;
   box-sizing: content-box;

@@ -245,6 +245,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
           },
           classNames(
             searchAutocompleteStyles,
+            'searchautocomplete',
             'mobile-searchautocomplete'
           ),
           className
@@ -283,8 +284,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
                 'is-placeholder': isPlaceholder,
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,
-                'is-focused': isFocused,
-                'focus-ring': isFocusVisible
+                'is-focused': isFocused
               },
               classNames(
                 searchStyles,

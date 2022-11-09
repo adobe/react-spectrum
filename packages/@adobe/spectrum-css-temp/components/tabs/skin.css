@@ -13,14 +13,14 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-tabs-rule-color: var(--spectrum-global-color-gray-300);
   --spectrum-tabs-vertical-rule-color: var(--spectrum-global-color-gray-300);
-  --spectrum-tabs-emphasized-text-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-emphasized-icon-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-global-color-blue-600);
-  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-global-color-blue-500);
-  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-global-color-blue-500);
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-blue-900);
 }
 
 .spectrum-Tabs {
