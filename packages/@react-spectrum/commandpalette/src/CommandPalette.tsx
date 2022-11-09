@@ -56,7 +56,7 @@ function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>,
   }
 }
 
-const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extends object>(props: SpectrumCommandPaletteProps<T>, ref: FocusableRef<HTMLElement>) {
+const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extends object>(props: SpectrumCommandPaletteProps<T>) {
   let {
     menuTrigger = 'input',
     loadingState,
@@ -142,7 +142,7 @@ interface CommandPaletteInputProps extends SpectrumCommandPaletteProps<unknown> 
   isOpen?: boolean
 }
 
-const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props: CommandPaletteInputProps, ref: RefObject<HTMLElement>) {
+const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props: CommandPaletteInputProps) {
   let {
     isDisabled,
     validationState,
@@ -227,5 +227,5 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
 /**
  * CommandPalettes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
  */
-const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T>) => ReactElement;
 export {_CommandPalette as CommandPalette};
