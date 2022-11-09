@@ -14,19 +14,15 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-popover-background-color);
   border-color: var(--spectrum-popover-border-color);
   /*
-    box-shadow offset/blur is hardcoded here as it cannot be adjusted when scale changes,
-    and we'd rather it be able to change when color stops change
-    use filter instead so it includes the triangle
-
     we can't use box-shadow anymore because it renders along the rectangle that encloses the triangle instead
     of along the triangle's diagonal borders.
     we may be able to use box-shadow for the popover + drop-shadow just for the tip, each direction would need it's own
     and it may still have the problem where the tip's shadow would cover the popover border just a little and make it look sloppy again
   */
-  filter: drop-shadow(0 1px 4px var(--spectrum-popover-shadow-color));
+  filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
   /* explicitly adding this webkit prefix may fix the bug where the drop-shadow remains dirty */
   /* https://stackoverflow.com/questions/56478925/safari-drop-shadow-filter-remains-visible-even-with-hidden-element */
-  -webkit-filter: drop-shadow(0 1px 4px var(--spectrum-popover-shadow-color));
+  -webkit-filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
   will-change: filter;
   /* this helps mark the "dirty" area, it shouldn't affect anything unless it's sticking out from the popover. (tooltips?)
      this is an assumption that may not be a good idea

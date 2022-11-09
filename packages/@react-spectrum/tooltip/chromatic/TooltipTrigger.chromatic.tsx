@@ -31,7 +31,8 @@ export default {
       colorSchemes: ['light'],
       locales: ['en-US'],
       scales: ['medium'],
-      disableAnimations: true
+      disableAnimations: true,
+      express: false
     },
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {
