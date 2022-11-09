@@ -10,6 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-link-text-color: var(--spectrum-accent-color-1000);
+  --spectrum-link-text-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-link-text-color-down: var(--spectrum-accent-color-1100);
+  --spectrum-link-text-color-key-focus: var(--spectrum-accent-color-1000);
+}
+
 .spectrum-Link {
   color: var(--spectrum-link-text-color);
 

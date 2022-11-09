@@ -15,7 +15,7 @@ import recursive from 'recursive-readdir';
 import rimraf from 'rimraf';
 import fs from 'fs-extra';
 
-let topPaths = ['ui', 'workflow', 'color', 'illustrations'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
+let topPaths = ['ui', 'workflow', 'color', 'express', 'illustrations'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
 topPaths.forEach((rootPath) => {
   recursive(rootPath, (err, files) => {
     let filteredFiles = files.filter(filePath => /\/src\//.test(filePath));

@@ -326,11 +326,7 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
 
 function move<T>(state: ListState<T>, indices: number[], toIndex: number): ListState<T> {
   // Shift the target down by the number of items being moved from before the target
-  for (let index of indices) {
-    if (index < toIndex) {
-      toIndex--;
-    }
-  }
+  toIndex -= indices.filter(index => index < toIndex).length;
 
   let moves = indices.map(from => ({
     from,

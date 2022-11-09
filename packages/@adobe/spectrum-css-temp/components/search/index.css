@@ -23,11 +23,18 @@ governing permissions and limitations under the License.
 .spectrum-Search {
   display: inline-block;
   position: relative;
+  --spectrum-textfield-border-radius: var(--spectrum-search-border-radius);
 
   .spectrum-ClearButton {
     position: absolute;
     inset-inline-end: 0;
     top: 0;
+    padding: var(--spectrum-search-clear-button-padding);
+    background-clip: content-box;
+
+    --spectrum-clearbutton-medium-background-color-hover: var(--spectrum-search-clear-button-background-color-hover);
+    --spectrum-clearbutton-medium-background-color-key-focus: var(--spectrum-search-clear-button-background-color-key-focus);
+    --spectrum-clearbutton-medium-background-color-down: var(--spectrum-search-clear-button-background-color-down);
   }
 
   &.is-quiet .spectrum-Search-input {
