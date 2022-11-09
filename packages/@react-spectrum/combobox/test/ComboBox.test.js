@@ -248,8 +248,7 @@ describe('ComboBox', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   beforeEach(() => {
@@ -2031,8 +2030,9 @@ describe('ComboBox', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       // open menu
+      triggerPress(button);
+      // use async act to resolve initial load
       await act(async () => {
-        triggerPress(button);
         // advance to open state from Transition
         jest.advanceTimersToNextTimer();
       });
@@ -2049,30 +2049,19 @@ describe('ComboBox', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       expect(load).toHaveBeenCalledTimes(1);
 
-      if (React.version.startsWith('17') || React.version.startsWith('16')) {
-        // close menu
-        act(() => {
-          combobox.blur();
-          // on exiting
-          jest.advanceTimersToNextTimer();
-          // raf from virtualizer relayout
-          jest.advanceTimersToNextTimer();
-          // advance to onExited
-          jest.advanceTimersToNextTimer();
-        });
-      } else {
-        // close menu
-        act(() => {
-          combobox.blur();
-          // raf from virtualizer relayout
-          jest.advanceTimersToNextTimer();
-        });
-        // previous act wraps up onExiting
-        act(() => {
-          // advance to onExited
-          jest.advanceTimersToNextTimer();
-        });
-      }
+      // close menu
+      act(() => {combobox.blur();});
+      // raf from virtualizer relayout
+      act(() => {jest.advanceTimersToNextTimer();});
+      // previous act wraps up onExiting
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // exited
+      act(() => {jest.advanceTimersToNextTimer();});
+
+      expect(listbox).not.toBeInTheDocument();
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
@@ -2082,6 +2071,8 @@ describe('ComboBox', function () {
         </Provider>
       );
 
+      let start = +new Date();
+      let delta = () => console.log(+new Date() - start);
       let button = getByRole('button');
       let combobox = getByRole('combobox');
       expect(load).toHaveBeenCalledTimes(1);
@@ -2093,8 +2084,9 @@ describe('ComboBox', function () {
       clientHeightSpy.mockRestore();
       clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // open menu
+      triggerPress(button);
+      // use async act to resolve initial load
       await act(async () => {
-        triggerPress(button);
         // advance to open state from Transition
         jest.advanceTimersToNextTimer();
       });
@@ -2110,30 +2102,17 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      if (React.version.startsWith('17') || React.version.startsWith('16')) {
-        // close menu
-        act(() => {
-          combobox.blur();
-          // on exiting
-          jest.advanceTimersToNextTimer();
-          // raf from virtualizer relayout
-          jest.advanceTimersToNextTimer();
-          // advance to onExited
-          jest.advanceTimersToNextTimer();
-        });
-      } else {
-        // close menu
-        act(() => {
-          combobox.blur();
-          // raf from virtualizer relayout
-          jest.advanceTimersToNextTimer();
-        });
-        // previous act wraps up onExiting
-        act(() => {
-          // advance to onExited
-          jest.advanceTimersToNextTimer();
-        });
-      }
+      // close menu
+      act(() => {combobox.blur();});
+      // raf from virtualizer relayout
+      act(() => {jest.advanceTimersToNextTimer();});
+      // previous act wraps up onExiting
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // exited
+      act(() => {jest.advanceTimersToNextTimer();});
 
       expect(listbox).not.toBeInTheDocument();
 
@@ -2144,8 +2123,8 @@ describe('ComboBox', function () {
       clientHeightSpy.mockRestore();
       clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // reopen menu
+      triggerPress(button);
       await act(async () => {
-        triggerPress(button);
         // advance to open state from Transition
         jest.advanceTimersToNextTimer();
       });
@@ -2165,6 +2144,9 @@ describe('ComboBox', function () {
       // while the test doesn't, causing virtualizer to try to load more
       expect(onLoadMore).toHaveBeenCalledTimes(2);
       expect(load).toHaveBeenCalledTimes(1);
+
+      // close menu
+      act(() => {combobox.blur();});
     });
   });
 
