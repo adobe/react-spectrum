@@ -14,12 +14,12 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
@@ -33,7 +33,8 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
-  isLoading?: boolean
+  isLoading?: boolean,
+  disableFocusRing?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -53,7 +54,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef: userInputRef,
     isLoading,
     loadingIndicator,
-    validationIconClassName
+    validationIconClassName,
+    disableFocusRing
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,11 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
+  let {focusProps, isFocusVisible} = useFocusRing({
+    isTextInput: true,
+    autoFocus
+  });
+
   let textField = (
     <div
       className={
@@ -109,27 +116,26 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
             'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
-            'spectrum-Textfield--multiline': multiLine
+            'spectrum-Textfield--multiline': multiLine,
+            'focus-ring': !disableFocusRing && isFocusVisible
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-        <ElementType
-          {...mergeProps(inputProps, hoverProps)}
-          ref={inputRef as any}
-          rows={multiLine ? 1 : undefined}
-          className={
-            classNames(
-              styles,
-              'spectrum-Textfield-input',
-              {
-                'spectrum-Textfield-inputIcon': icon,
-                'is-hovered': isHovered
-              },
-              inputClassName
-            )
-          } />
-      </FocusRing>
+      <ElementType
+        {...mergeProps(inputProps, hoverProps, focusProps)}
+        ref={inputRef as any}
+        rows={multiLine ? 1 : undefined}
+        className={
+          classNames(
+            styles,
+            'spectrum-Textfield-input',
+            {
+              'spectrum-Textfield-inputIcon': icon,
+              'is-hovered': isHovered
+            },
+            inputClassName
+          )
+        } />
       {icon}
       {validationState && !isLoading && !isDisabled ? validation : null}
       {isLoading && loadingIndicator}

@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 
   inline-size: auto;
   padding: var(--spectrum-tooltip-padding-top) var(--spectrum-tooltip-padding-x);
-  border-radius: var(--spectrum-tooltip-border-radius);
+  border-radius: var(--spectrum-border-radius);
   min-block-size: var(--spectrum-tooltip-min-height);
 
   font-size: var(--spectrum-tooltip-text-size);
