@@ -6,6 +6,7 @@
   "main": "dist/main.js",
   "module": "dist/module.mjs",
   "exports": {
+    "types": "./dist/types.d.ts",
     "import": "./dist/module.mjs",
     "require": "./dist/main.js"
   },

@@ -11,7 +11,7 @@ let packagesDir = path.join(__dirname, '..', '..', 'packages');
 
 function fixPkgJsons() {
   let packages = fg.sync(`${packagesDir}/**/package.json`, {
-    ignore: ['**/node_modules/**', '**/dev/**', '**/build-tools/**']
+    ignore: ['**/node_modules/**', '**/dev/**', '**/build-tools/**', '**/spectrum-icons/**']
   });
 
   for (let packageJSON of packages) {
@@ -28,7 +28,9 @@ function fixPkgJsons() {
     for (let [field, value] of Object.entries(json)) {
       newPackageJSON[field] = value;
       if (field === 'module' && module) {
-        newPackageJSON.exports = {};
+        newPackageJSON.exports = {
+          types: './dist/types.d.ts'
+        };
         if (module) {
           newPackageJSON.exports.import = `./${module}`;
         }
