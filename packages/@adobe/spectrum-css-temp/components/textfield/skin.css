@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
 
   &:focus,
   &.is-focused {
-    border-color: var(--spectrum-textfield-border-color-down);
+    border-color: var(--spectrum-textfield-border-color-key-focus);
   }
 
   &:focus-ring {
