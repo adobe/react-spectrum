@@ -23,13 +23,27 @@ import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 const parameters = {
   args: {
-    variant: 'cta'
+    variant: 'cta',
+    style: undefined,
+    staticColor: undefined
   },
   argTypes: {
     variant: {
       control: {
         type: 'radio',
-        options: ['cta', 'primary', 'secondary', 'negative', 'overBackground']
+        options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground']
+      }
+    },
+    style: {
+      control: {
+        type: 'radio',
+        options: [undefined, 'fill', 'outline']
+      }
+    },
+    staticColor: {
+      control: {
+        type: 'radio',
+        options: [undefined, 'white', 'black']
       }
     }
   }
@@ -72,10 +86,6 @@ storiesOf('Button', module)
     'user-select:none on press test',
     () => <Example />,
     {description: {data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'}}
-  )
-  .add(
-    'styles to check WHCM support',
-    () => renderStyles()
   );
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -89,17 +99,20 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
       <Button {...buttonProps} isDisabled>
         Disabled
       </Button>
-      {props.variant !== 'cta' && (
-        <Button {...buttonProps} isQuiet>
-          Quiet
-        </Button>
-      )}
     </Flex>
   );
 
-  if (props.variant === 'overBackground') {
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </div>
     );
@@ -121,18 +134,20 @@ function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonP
         <Bell />
         <Text>Disabled</Text>
       </Button>
-      {props.variant !== 'cta' && (
-        <Button {...buttonProps} isQuiet>
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      )}
     </Flex>
   );
 
-  if (props.variant === 'overBackground') {
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </div>
     );
@@ -158,20 +173,20 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
         </Button>
         <Tooltip>Notifications</Tooltip>
       </TooltipTrigger>
-      {props.variant !== 'cta' && (
-        <TooltipTrigger offset={2}>
-          <Button {...buttonProps} isQuiet aria-label="Notifications (quiet)">
-            <Bell />
-          </Button>
-          <Tooltip>Notifications</Tooltip>
-        </TooltipTrigger>
-      )}
     </Flex>
   );
 
-  if (props.variant === 'overBackground') {
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
       <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
       </div>
     );
@@ -198,148 +213,6 @@ function Example() {
         onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
         Press and hold (no overwrite)
       </Button>
-    </Flex>
-  );
-}
-
-function renderStyles<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
-  return (
-    <Flex direction="column" gap="size-200">
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          {...props}
-          variant="cta">
-          CTA
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          {...props}
-          variant="cta">
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          {...props}>
-          Primary
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          {...props}>
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          {...props}
-          variant="secondary">
-          Secondary
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          {...props}
-          variant="secondary">
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          {...props}
-          variant="negative">
-          Warning
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          {...props}
-          variant="negative">
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          {...props}>
-          Primary Quiet
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          isQuiet
-          {...props}>
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          {...props}
-          variant="secondary">
-          Secondary Quiet
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          isQuiet
-          {...props}
-          variant="secondary">
-          Disabled
-        </Button>
-      </Flex>
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          {...props}
-          variant="negative">
-          Warning Quiet
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          isQuiet
-          {...props}
-          variant="negative">
-          Disabled
-        </Button>
-      </Flex>
     </Flex>
   );
 }

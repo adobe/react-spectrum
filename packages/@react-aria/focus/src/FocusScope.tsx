@@ -470,7 +470,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
     scope = scope.parent;
   }
 
-  return true;
+  return scope?.scopeRef === scopeRef;
 }
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
