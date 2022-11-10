@@ -24,12 +24,14 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
+import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
 import {Link} from '@react-spectrum/link';
+import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar'
 ```
 
 ---
@@ -361,6 +363,95 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection ListView with row actions" width="size-2400" />
   <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
 </Flex>
+```
+
+### Action bar
+
+An [ActionBar](ActionBar.html) can be used when a user needs to perform actions on one or more items at the same time.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {key: 0, name: 'Adobe Photoshop'},
+      {key: 1, name: 'Adobe Illustrator'},
+      {key: 2, name: 'Adobe XD'}
+    ],
+    initialSelectedKeys: [0]
+  });
+  return (
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={list.items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        onAction={(key) => alert(`Action: ${key}`)}
+        onClearSelection={() => list.setSelectedKeys(new Set([]))}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+```
+
+Action bars also support an `isEmphasized` prop if you need to call attention to it.
+
+```tsx example
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {key: 0, name: 'Adobe Photoshop'},
+      {key: 1, name: 'Adobe Illustrator'},
+      {key: 2, name: 'Adobe XD'}
+    ],
+    initialSelectedKeys: [0]
+  });
+  return (
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={list.items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        isEmphasized
+        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        onAction={(key) => alert(`Action: ${key}`)}
+        onClearSelection={() => list.setSelectedKeys(new Set([]))}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
 ```
 
 ## Drag and drop <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
