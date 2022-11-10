@@ -34,10 +34,14 @@ export interface ListState<T> {
   selectionManager: SelectionManager
 }
 
-function getNextLogicalFocusKey<T extends object>(collection: ListCollection<T>, focusedKey: Key): Key {
-  let focusKey = collection.getKeyAfter(focusedKey);
-  focusKey = focusKey ? focusKey : collection.getKeyBefore(focusedKey);
-  return focusKey;
+function getNextLogicalFocusKeys<T extends object>(collection: ListCollection<T>, focusedKey: Key): Array<Key> {
+  const nextFocusKeys: Array<Key> = [];
+  let nextFocusKey = collection.getKeyAfter(focusedKey);
+  while (nextFocusKey) {
+    nextFocusKeys.push(nextFocusKey);
+    nextFocusKey = collection.getKeyAfter(nextFocusKey);
+  }
+  return nextFocusKeys;
 }
 
 /**
@@ -57,19 +61,19 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   let collection = useCollection(props, factory, context, [filter]);
 
-  let [nextFocusKey, setNextFocusKey] = useState(getNextLogicalFocusKey(collection, selectionState.focusedKey));
+  let [nextFocusKeys, setNextFocusKeys] = useState(getNextLogicalFocusKeys(collection, selectionState.focusedKey));
 
-  // Reset focused key if that item is deleted from the collection.
+  // Reset focused key if that item is deleted from the collection, or that item is disabled
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(nextFocusKey);
+    if (selectionState.focusedKey != null && (!collection.getItem(selectionState.focusedKey) || disabledKeys.has(selectionState.focusedKey))) {
+      let foundKey = nextFocusKeys.find(key => collection.getItem(key) && !disabledKeys.has(key));
+      selectionState.setFocusedKey(foundKey);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, selectionState.focusedKey]);
 
   useEffect(() => {
-    getNextLogicalFocusKey(collection, selectionState.focusedKey);
-    setNextFocusKey(collection.getKeyAfter(selectionState.focusedKey));
+    setNextFocusKeys(getNextLogicalFocusKeys(collection, selectionState.focusedKey));
   }, [collection, selectionState.focusedKey]);
 
   return {

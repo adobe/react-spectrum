@@ -2143,18 +2143,30 @@ function DragBetweenListsOverride(props) {
 }
 
 const FocusExample = () => {
+  const items = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+
   const list = useListData({
-    getKey: (item) => item.cheese,
-    initialItems: [{name: 'Aardvark', cheese: 1}, {name: 'Kangaroo', cheese: 2}, {name: 'Snake', cheese: 3}],
-    initialSelectedKeys: ['Kangaroo']
+    getKey: (item) => item.id,
+    initialItems: items,
+    initialSelectedKeys: []
   });
 
   return (
     <ListView width="250px" items={list.items}>
       {(item) => (
-        <Item key={item.name}>
+        <Item key={item.id}>
           <Text>{item.name}</Text>
-          <ActionButton isQuiet onPress={() => list.remove(item.cheese)}>
+          <ActionButton isQuiet onPress={() => list.remove(item.id)}>
             <RemoveCircle />
           </ActionButton>
         </Item>
