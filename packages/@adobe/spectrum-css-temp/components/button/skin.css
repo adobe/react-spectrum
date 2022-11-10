@@ -16,6 +16,10 @@ governing permissions and limitations under the License.
   /* Interactions with overbackground button should match background. Not a DNA token, overridden in WHCM. */
   --spectrum-button-over-background-color: inherit;
 
+  --spectrum-actionbutton-background-color-selected: var(--spectrum-alias-toggle-color-selected);
+  --spectrum-actionbutton-background-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
+  --spectrum-actionbutton-background-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+  --spectrum-actionbutton-background-color-selected-down: var(--spectrum-alias-toggle-color-selected-down);
   --spectrum-actionbutton-border-color-selected: var(--spectrum-actionbutton-background-color-selected);
   --spectrum-actionbutton-border-color-selected-hover: var(--spectrum-actionbutton-background-color-selected-hover);
   --spectrum-actionbutton-border-color-selected-key-focus: var(--spectrum-actionbutton-background-color-selected-key-focus);
