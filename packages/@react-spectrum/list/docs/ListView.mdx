@@ -389,49 +389,6 @@ function Example() {
         )}
       </ListView>
       <ActionBar
-        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
-        onAction={(key) => alert(`Action: ${key}`)}
-        onClearSelection={() => setSelectedKeys(new Set([]))}>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="copy">
-          <Copy />
-          <Text>Copy</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionBar>
-    </ActionBarContainer>
-  );
-}
-```
-
-Action bars also support an `isEmphasized` prop if you need to call attention to it.
-
-```tsx example
-function Example() {
-  let items = [
-    {key: 0, name: 'Adobe Photoshop'},
-    {key: 1, name: 'Adobe Illustrator'},
-    {key: 2, name: 'Adobe XD'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
-
-  return (
-    <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        {(item) => (
-          <Item>
-            {item.name}
-          </Item>
-        )}
-      </ListView>
-      <ActionBar
         isEmphasized
         selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
         onAction={(key) => alert(`Action: ${key}`)}

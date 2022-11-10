@@ -545,65 +545,6 @@ function Example() {
         </TableBody>
       </TableView>
       <ActionBar
-        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
-        onClearSelection={() => setSelectedKeys(new Set())}
-        onAction={(key) => alert(`Action: ${key}`)}>
-        <Item key="edit" textValue="Edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="copy" textValue="Copy">
-          <Copy />
-          <Text>Copy</Text>
-        </Item>
-        <Item key="delete" textValue="Delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionBar>
-    </ActionBarContainer>
-  );
-}
-```
-
-Action bars also support an `isEmphasized` prop if you need to call attention to it.
-
-```tsx example
-function Example() {
-  let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Level', uid: 'level'}
-  ];
-
-  let rows = [
-    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
-    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([1]));
-
-  return (
-    <ActionBarContainer>
-      <TableView
-        aria-label="TableView with emphasized ActionBar"
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}>
-        <TableHeader columns={columns}>
-          {column => <Column key={column.uid}>{column.name}</Column>}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item => (
-            <Row>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
-      </TableView>
-      <ActionBar
         isEmphasized
         selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
         onClearSelection={() => setSelectedKeys(new Set())}
