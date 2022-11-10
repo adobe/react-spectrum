@@ -371,17 +371,17 @@ An [ActionBar](ActionBar.html) can be used when a user needs to perform actions 
 
 ```tsx example
 function Example() {
-  let list = useListData({
-    initialItems: [
-      {key: 0, name: 'Adobe Photoshop'},
-      {key: 1, name: 'Adobe Illustrator'},
-      {key: 2, name: 'Adobe XD'}
-    ],
-    initialSelectedKeys: [0]
-  });
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={list.items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <ListView items={items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
         {(item) => (
           <Item>
             {item.name}
@@ -389,9 +389,9 @@ function Example() {
         )}
       </ListView>
       <ActionBar
-        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
         onAction={(key) => alert(`Action: ${key}`)}
-        onClearSelection={() => list.setSelectedKeys(new Set([]))}>
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
         <Item key="edit">
           <Edit />
           <Text>Edit</Text>
@@ -414,17 +414,17 @@ Action bars also support an `isEmphasized` prop if you need to call attention to
 
 ```tsx example
 function Example() {
-  let list = useListData({
-    initialItems: [
-      {key: 0, name: 'Adobe Photoshop'},
-      {key: 1, name: 'Adobe Illustrator'},
-      {key: 2, name: 'Adobe XD'}
-    ],
-    initialSelectedKeys: [0]
-  });
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={list.items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <ListView items={items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
         {(item) => (
           <Item>
             {item.name}
@@ -433,9 +433,9 @@ function Example() {
       </ListView>
       <ActionBar
         isEmphasized
-        selectedItemCount={list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size}
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
         onAction={(key) => alert(`Action: ${key}`)}
-        onClearSelection={() => list.setSelectedKeys(new Set([]))}>
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
         <Item key="edit">
           <Edit />
           <Text>Edit</Text>
