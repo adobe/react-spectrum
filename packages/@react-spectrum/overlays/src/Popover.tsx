@@ -12,15 +12,15 @@
 
 import {AriaPopoverProps, DismissButton, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DEFAULT_MODAL_PADDING, useModal, useOverlay} from '@react-aria/overlays';
+import {DEFAULT_MODAL_PADDING} from '@react-aria/overlays';
 import {DOMRef, StyleProps} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
 import React, {forwardRef, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
+import {useLayoutEffect} from '@react-aria/utils';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
@@ -80,7 +80,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   }, state);
   let [isHideArrow, setIsHideArrow] = useState(hideArrow);
 
-  (() => {
+  useLayoutEffect(() => {
     // Check arrow and popover proximity to the boundary edge.
     if (ref.current && arrowProps) {
       let propsHideArrow = hideArrow;
