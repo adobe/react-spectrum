@@ -17,6 +17,7 @@ export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/c
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
+export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress} from '@react-aria/interactions';
@@ -52,6 +53,7 @@ export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, 
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStrings} from '@react-aria/i18n';
+export type {DraggableCollectionOptions, DraggableItemProps, DraggableItemResult, DragPreviewProps, DragOptions, DragResult, DropOptions, DropResult, DroppableCollectionOptions, DroppableCollectionResult, DroppableItemOptions, DroppableItemResult, DropIndicatorProps, DropIndicatorAria, ClipboardProps, ClipboardResult, DropTargetDelegate} from '@react-aria/dnd';
 export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
 export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-aria/label';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';

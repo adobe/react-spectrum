@@ -62,7 +62,7 @@ export interface DropExitEvent extends DragDropEvent {
   type: 'dropexit'
 }
 
-export interface TextItem {
+export interface TextDropItem {
   /** The item kind. */
   kind: 'text',
   /**
@@ -74,7 +74,7 @@ export interface TextItem {
   getText(type: string): Promise<string>
 }
 
-export interface FileItem {
+export interface FileDropItem {
   /** The item kind. */
   kind: 'file',
   /** The file type (usually a mime type). */
@@ -87,16 +87,16 @@ export interface FileItem {
   getText(): Promise<string>
 }
 
-export interface DirectoryItem {
+export interface DirectoryDropItem {
   /** The item kind. */
   kind: 'directory',
   /** The directory name. */
   name: string,
   /** Returns the entries contained within the directory. */
-  getEntries(): AsyncIterable<FileItem | DirectoryItem>
+  getEntries(): AsyncIterable<FileDropItem | DirectoryDropItem>
 }
 
-export type DropItem = TextItem | FileItem | DirectoryItem;
+export type DropItem = TextDropItem | FileDropItem | DirectoryDropItem;
 
 export interface DropEvent extends DragDropEvent {
   /** The event type. */
