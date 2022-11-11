@@ -28,7 +28,7 @@ export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
 export {useMeter} from '@react-aria/meter';
 export {useNumberField} from '@react-aria/numberfield';
-export {DismissButton, ModalProvider, OverlayContainer, OverlayProvider, useModal, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePreventScroll} from '@react-aria/overlays';
+export {DismissButton, ModalProvider, Overlay, OverlayContainer, OverlayProvider, useModal, useModalOverlay, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePopover, usePreventScroll} from '@react-aria/overlays';
 export {useProgressBar} from '@react-aria/progress';
 export {useRadio, useRadioGroup} from '@react-aria/radio';
 export {useSearchField} from '@react-aria/searchfield';
@@ -62,7 +62,7 @@ export type {AriaGridListOptions, GridListAria, AriaGridListItemOptions, GridLis
 export type {AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
-export type {AriaModalOptions, AriaOverlayProps, AriaPositionProps, DismissButtonProps, ModalAria, OverlayAria, OverlayContainerProps, OverlayTriggerAria, OverlayTriggerProps, PositionAria} from '@react-aria/overlays';
+export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria} from '@react-aria/overlays';
 export type {AriaProgressBarProps, ProgressBarAria} from '@react-aria/progress';
 export type {AriaRadioGroupProps, AriaRadioProps, RadioAria, RadioGroupAria} from '@react-aria/radio';
 export type {AriaSearchFieldProps, SearchFieldAria} from '@react-aria/searchfield';
