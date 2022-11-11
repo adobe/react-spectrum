@@ -41,6 +41,10 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
   isNonModal?: boolean,
   /**
    * Whether pressing the escape key to close the popover should be disabled.
+   *
+   * Most popovers should not use this option. When set to true, an alternative
+   * way to close the popover with a keyboard must be provided.
+   *
    * @default false
    */
   isKeyboardDismissDisabled?: boolean

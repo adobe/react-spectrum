@@ -68,7 +68,7 @@ import {Heading, Text} from '@react-spectrum/text';
       </Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close}>Confirm</Button>
+        <Button variant="accent" onPress={close}>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -101,7 +101,7 @@ A typical Dialog with a title, contents, and action buttons can be created like 
       <Content>Confirm publish?</Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+        <Button variant="accent" onPress={close} autoFocus>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -159,7 +159,7 @@ for the user to fill out or adding confirmation checkboxes.
       </Footer>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close}>Register</Button>
+        <Button variant="accent" onPress={close}>Register</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -179,7 +179,7 @@ The example below illustrates how a Dialog with a hero image could be rendered v
       <Content>Are you sure you want to upload this file?</Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+        <Button variant="accent" onPress={close} autoFocus>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -227,7 +227,7 @@ function Example() {
           <Divider />
           <ButtonGroup>
             <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
-            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
+            <Button autoFocus variant="accent" onPress={() => alertSave(close)}>Save</Button>
           </ButtonGroup>
           <Content>
             <Form>
@@ -346,7 +346,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>
@@ -367,7 +367,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>
@@ -388,7 +388,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>
