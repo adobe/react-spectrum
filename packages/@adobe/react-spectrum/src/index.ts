@@ -72,7 +72,7 @@ export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogConta
 export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-spectrum/datepicker';
 export type {SpectrumDividerProps} from '@react-spectrum/divider';
 export type {SpectrumFormProps} from '@react-spectrum/form';
-export type {IconProps} from '@react-spectrum/icon';
+export type {IconProps, IllustrationProps} from '@react-spectrum/icon';
 export type {SpectrumIllustratedMessageProps} from '@react-spectrum/illustratedmessage';
 export type {SpectrumImageProps} from '@react-spectrum/image';
 export type {DimensionValue, FlexProps, GridProps} from '@react-spectrum/layout';
