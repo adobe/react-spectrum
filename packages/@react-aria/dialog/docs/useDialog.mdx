@@ -48,12 +48,9 @@ can be used to build dialogs. However, it is not yet widely supported across bro
 building fully accessible custom dialogs from scratch is very difficult and error prone.
 `useDialog` helps achieve accessible dialogs that can be styled as needed.
 
-* Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA
-* Handles labelling the dialog by its title element
-* Handles focusing the dialog on mount, unless a child element is already focused
-* Contains focus inside the dialog, preventing the user from tabbing outside
-* Restores focus to the triggering element on unmount
-* May be used within a [modal](useModalOverlay.html), [popover](usePopover.html), or other types of overlays
+* **Flexible** – Dialogs can be used within a [modal](useModalOverlay.html) or [popover](usePopover.html) to create many types of overlay elements.
+* **Accessible** – Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA. The dialog is labeled by its title element, and content outside the dialog is hidden from assistive technologies while it is open.
+* **Focus management** – Focus is moved into the dialog on mount, and restored to the trigger element on unmount. While open, focus is contained within the dialog, preventing the user from tabbing outside.
 
 ## Anatomy
 
