@@ -10,7 +10,8 @@
   "main": "generateIcons.js",
   "private": true,
   "dependencies": {
-    "fs-extra": "^8.0.1"
+    "fs-extra": "^8.0.1",
+    "@svgr/core": "^6.2.0"
   },
   "publishConfig": {
     "access": "public"
