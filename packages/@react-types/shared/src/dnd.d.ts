@@ -149,7 +149,7 @@ export interface DroppableCollectionDropEvent extends DropEvent {
   target: DropTarget
 }
 
-interface DroppableCollectionInsertDropEvent {
+export interface DroppableCollectionInsertDropEvent {
   /** The dropped items. */
   items: DropItem[],
   /** The drop operation that should occur. */
@@ -158,14 +158,14 @@ interface DroppableCollectionInsertDropEvent {
   target: ItemDropTarget
 }
 
-interface DroppableCollectionRootDropEvent {
+export interface DroppableCollectionRootDropEvent {
   /** The dropped items. */
   items: DropItem[],
   /** The drop operation that should occur. */
   dropOperation: DropOperation
 }
 
-interface DroppableCollectionOnItemDropEvent {
+export interface DroppableCollectionOnItemDropEvent {
   /** The dropped items. */
   items: DropItem[],
   /** The drop operation that should occur. */
@@ -176,7 +176,7 @@ interface DroppableCollectionOnItemDropEvent {
   target: ItemDropTarget
 }
 
-interface DroppableCollectionReorderEvent {
+export interface DroppableCollectionReorderEvent {
   /** The keys of the items that were reordered. */
   keys: Set<Key>,
   /** The drop operation that should occur. */
@@ -251,17 +251,17 @@ export interface DroppableCollectionBaseProps {
 
 export interface DroppableCollectionProps extends DroppableCollectionUtilityOptions, DroppableCollectionBaseProps {}
 
-interface DraggableCollectionStartEvent extends DragStartEvent {
+export interface DraggableCollectionStartEvent extends DragStartEvent {
   /** The keys of the items that were dragged. */
   keys: Set<Key>
 }
 
-interface DraggableCollectionMoveEvent extends DragMoveEvent {
+export interface DraggableCollectionMoveEvent extends DragMoveEvent {
   /** The keys of the items that were dragged. */
   keys: Set<Key>
 }
 
-interface DraggableCollectionEndEvent extends DragEndEvent {
+export interface DraggableCollectionEndEvent extends DragEndEvent {
   /** The keys of the items that were dragged. */
   keys: Set<Key>,
   /** Whether the drop ended within the same collection as it originated. */
