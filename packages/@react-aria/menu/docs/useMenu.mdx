@@ -250,13 +250,14 @@ import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 function Popover({children, state, ...props}) {
   let ref = React.useRef();
   let {popoverRef = ref} = props;
-  let {popoverProps} = usePopover({
+  let {popoverProps, underlayProps} = usePopover({
     ...props,
     popoverRef
   }, state);
 
   return (
     <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
       <div
         {...popoverProps}
         ref={popoverRef}
