@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DEFAULT_MODAL_PADDING, useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
+import {DEFAULT_MODAL_PADDING, useOverlayTrigger} from '@react-aria/overlays';
 import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
-import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useOverlayTrigger} from '@react-aria/overlays';
+import {useMediaQuery} from '@react-spectrum/utils';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
@@ -143,7 +142,6 @@ export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();
-  let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
   let isMoveCloserToContainerBoundary = false;
 
   // For popover triggers close to the edge, decrease the container padding allowing popovers to
@@ -179,17 +177,6 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
     }
   }
 
-  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
-    targetRef: targetRef || triggerRef,
-    overlayRef: unwrapDOMRef(overlayRef),
-    placement: props.placement,
-    containerPadding: isMoveCloserToContainerBoundary && (props.containerPadding === undefined || props.containerPadding > 6) ? 6 : props.containerPadding,
-    offset: props.offset,
-    crossOffset: props.crossOffset,
-    shouldFlip: props.shouldFlip,
-    isOpen: state.isOpen
-  });
-
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   let triggerPropsWithRef = {
@@ -200,6 +187,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
   let overlay = (
     <Popover
       {...props}
+      containerPadding={isMoveCloserToContainerBoundary && (props.containerPadding === undefined || props.containerPadding > 6) ? 6 : props.containerPadding}
       hideArrow={hideArrow}
       triggerRef={targetRef || triggerRef}
       state={state}>

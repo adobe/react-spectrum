@@ -71,14 +71,14 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isNonModal,
     state
   } = props;
-
   let {styleProps} = useStyleProps(props);
+  let [isHideArrow, setIsHideArrow] = useState(hideArrow);
+
   let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
     ...props,
     popoverRef: ref,
     maxHeight: null
   }, state);
-  let [isHideArrow, setIsHideArrow] = useState(hideArrow);
 
   useLayoutEffect(() => {
     // Check arrow and popover proximity to the boundary edge.
