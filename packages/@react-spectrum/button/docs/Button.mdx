@@ -40,7 +40,7 @@ category: Buttons
 ## Example
 
 ```tsx example
-<Button variant="cta">Save</Button>
+<Button variant="accent">Save</Button>
 ```
 
 ## Content
@@ -90,78 +90,71 @@ function Example() {
 
 ## Visual options
 
-### Call to action
-[View guidelines](https://spectrum.adobe.com/page/button/#Call-to-action-variant)
+### Accent
+[View guidelines](https://spectrum.adobe.com/page/button/#Accent-variant)
 
 ```tsx example
-<Button variant="cta">Save</Button>
+<Flex wrap gap="size-250">
+  <Button variant="accent" style="fill">Save</Button>
+  <Button variant="accent" style="outline">Save</Button>
+</Flex>
 ```
 
 ### Primary
 [View guidelines](https://spectrum.adobe.com/page/button/#Primary-variant)
 
 ```tsx example
-<Button variant="primary">Save</Button>
-```
-
-### Quiet primary
-[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
-
-```tsx example
-<Button variant="primary" isQuiet>Save</Button>
+<Flex wrap gap="size-250">
+  <Button variant="primary" style="fill">Save</Button>
+  <Button variant="primary" style="outline">Save</Button>
+</Flex>
 ```
 
 ### Secondary
 [View guidelines](https://spectrum.adobe.com/page/button/#Secondary-variant)
 
 ```tsx example
-<Button variant="secondary">Save</Button>
-```
-
-### Quiet secondary
-[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
-
-```tsx example
-<Button variant="secondary" isQuiet>Save</Button>
-```
-
-### Over background
-[View guidelines](https://spectrum.adobe.com/page/button/#Over-background-variant)
-
-```tsx example
-<View backgroundColor="positive" padding="size-300">
-  <Button variant="overBackground">Save</Button>
-</View>
-```
-
-### Quiet over background
-[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
-
-```tsx example
-<View backgroundColor="positive" padding="size-300">
-  <Button variant="overBackground" isQuiet>Save</Button>
-</View>
+<Flex wrap gap="size-250">
+  <Button variant="secondary" style="fill">Save</Button>
+  <Button variant="secondary" style="outline">Save</Button>
+</Flex>
 ```
 
 ### Negative
 [View guidelines](https://spectrum.adobe.com/page/button/#Negative-variant)
 
 ```tsx example
-<Button variant="negative">Save</Button>
+<Flex wrap gap="size-250">
+  <Button variant="negative" style="fill">Save</Button>
+  <Button variant="negative" style="outline">Save</Button>
+</Flex>
 ```
 
-### Quiet negative
-[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
+### Static color
+[View guidelines](https://spectrum.adobe.com/page/button/#Static-color)
 
 ```tsx example
-<Button variant="negative" isQuiet>Save</Button>
+<Flex wrap gap="size-250">
+  <View backgroundColor="static-seafoam-700" padding="size-500">
+    <Flex wrap gap="size-200">
+      <Button variant="primary" staticColor="white" style="fill">Save</Button>
+      <Button variant="primary" staticColor="white" style="outline">Save</Button>
+    </Flex>
+  </View>
+  <View backgroundColor="static-yellow-400" padding="size-500">
+    <Flex wrap gap="size-200">
+      <Button variant="primary" staticColor="black" style="fill">Save</Button>
+      <Button variant="primary" staticColor="black" style="outline">Save</Button>
+    </Flex>
+  </View>
+</Flex>
 ```
 
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/button/#Disabled)
 
 ```tsx example
-<Button variant="cta" isDisabled>Save</Button>
+<Button variant="accent" isDisabled>Save</Button>
 ```
 
 ### Icon only
@@ -169,7 +162,7 @@ function Example() {
 
 ```tsx example
 <Flex direction="row" gap={8}>
-  <Button variant="cta" aria-label="Ring for service"><Bell /></Button>
+  <Button variant="accent" aria-label="Ring for service"><Bell /></Button>
   <Button variant="primary" aria-label="Ring for service"><Bell /></Button>
   <Button variant="secondary" aria-label="Ring for service"><Bell /></Button>
 </Flex>

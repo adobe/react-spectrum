@@ -17,6 +17,7 @@ export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/c
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
+export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress} from '@react-aria/interactions';
@@ -27,7 +28,7 @@ export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
 export {useMeter} from '@react-aria/meter';
 export {useNumberField} from '@react-aria/numberfield';
-export {DismissButton, ModalProvider, OverlayContainer, OverlayProvider, useModal, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePreventScroll} from '@react-aria/overlays';
+export {DismissButton, ModalProvider, Overlay, OverlayContainer, OverlayProvider, useModal, useModalOverlay, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePopover, usePreventScroll} from '@react-aria/overlays';
 export {useProgressBar} from '@react-aria/progress';
 export {useRadio, useRadioGroup} from '@react-aria/radio';
 export {useSearchField} from '@react-aria/searchfield';
@@ -52,6 +53,7 @@ export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, 
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStrings} from '@react-aria/i18n';
+export type {ClipboardProps, ClipboardResult, DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionOptions, DraggableCollectionStartEvent, DraggableItemProps, DraggableItemResult, DragItem, DragMoveEvent, DragOptions, DragPreviewProps, DragPreviewRenderer, DragResult, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropIndicatorAria, DropIndicatorProps, DropItem, DropMoveEvent, DropOperation, DropOptions, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionOptions, DroppableCollectionReorderEvent, DroppableCollectionResult, DroppableCollectionRootDropEvent, DroppableItemOptions, DroppableItemResult, DropPosition, DropResult, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-aria/dnd';
 export type {FocusProps, FocusResult, FocusVisibleProps, FocusVisibleResult, FocusWithinProps, FocusWithinResult, HoverProps, HoverResult, InteractOutsideProps, KeyboardProps, KeyboardResult, LongPressProps, LongPressResult, MoveEvents, MoveResult, PressHookProps, PressProps, PressResult, ScrollWheelProps} from '@react-aria/interactions';
 export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-aria/label';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
@@ -60,7 +62,7 @@ export type {AriaGridListOptions, GridListAria, AriaGridListItemOptions, GridLis
 export type {AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
-export type {AriaModalOptions, AriaOverlayProps, AriaPositionProps, DismissButtonProps, ModalAria, OverlayAria, OverlayContainerProps, OverlayTriggerAria, OverlayTriggerProps, PositionAria} from '@react-aria/overlays';
+export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria} from '@react-aria/overlays';
 export type {AriaProgressBarProps, ProgressBarAria} from '@react-aria/progress';
 export type {AriaRadioGroupProps, AriaRadioProps, RadioAria, RadioGroupAria} from '@react-aria/radio';
 export type {AriaSearchFieldProps, SearchFieldAria} from '@react-aria/searchfield';
