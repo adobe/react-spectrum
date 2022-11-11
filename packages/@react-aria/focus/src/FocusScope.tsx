@@ -792,7 +792,6 @@ class Tree {
           // current.nodeToRestore might be undefined when the current node has just been added.
           !current.nodeToRestore ||
           (
-            current.nodeToRestore &&
             node.scopeRef.current &&
             isElementInScope(current.nodeToRestore, node.scopeRef.current)
           )
