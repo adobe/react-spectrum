@@ -19,12 +19,14 @@ import {isIPad, isMac, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
+  /** A ref for the droppable element. */
   ref: RefObject<HTMLElement>,
   /**
    * A function returning the drop operation to be performed when items matching the given types are dropped
    * on the drop target.
    */
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation,
+  /** A function that returns the drop operation for a specific point within the target. */
   getDropOperationForPoint?: (types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation,
   /** Handler that is called when a valid drag enters the drop target. */
   onDropEnter?: (e: DropEnterEvent) => void,
@@ -33,6 +35,7 @@ export interface DropOptions {
   /**
    * Handler that is called after a valid drag is held over the drop target for a period of time.
    * This typically opens the item so that the user can drop within it.
+   * @private
    */
   onDropActivate?: (e: DropActivateEvent) => void,
   /** Handler that is called when a valid drag exits the drop target. */
@@ -42,12 +45,18 @@ export interface DropOptions {
 }
 
 export interface DropResult {
+  /** Props for the droppable element. */
   dropProps: HTMLAttributes<HTMLElement>,
-  isDropTarget: boolean // (??) whether the element is currently an active drop target
+  /** Whether the drop target is currently focused or hovered. */
+  isDropTarget: boolean
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
 
+/**
+ * Handles drop interactions for an element, with support for traditional mouse and touch
+ * based drag and drop, in addition to full parity for keyboard and screen reader users.
+ */
 export function useDrop(options: DropOptions): DropResult {
   let [isDropTarget, setDropTarget] = useState(false);
   let state = useRef({
@@ -155,6 +164,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragEnter = (e: DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     state.dragOverElements.add(e.target as Element);
     if (state.dragOverElements.size > 1) {
@@ -191,6 +201,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragLeave = (e: DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
 
     // We would use e.relatedTarget to detect if the drag is still inside the drop target,

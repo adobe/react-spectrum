@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {ActionBar, ActionBarContainer} from '../../actionbar';
+import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
@@ -26,7 +26,7 @@ import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useDnDHooks} from '@react-spectrum/dnd';
+import {useDragAndDrop} from '@react-spectrum/dnd';
 
 const parameters = {
   args: {
@@ -379,6 +379,14 @@ storiesOf('ListView/Drag and Drop', module)
     )
   )
   .add(
+    'Drag within list scrolling (Reorder)',
+    args => (
+      <Flex direction="row" wrap alignItems="center" height={100}>
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      </Flex>
+    )
+  )
+  .add(
     'Drag into folder',
     args => (
       <Flex direction="row" wrap alignItems="center">
@@ -672,7 +680,7 @@ export function DragExample(props?) {
     };
   });
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems,
     getAllowedDropOperations() {
       getAllowedDropOperationsAction();
@@ -688,7 +696,7 @@ export function DragExample(props?) {
       selectionMode="multiple"
       items={items}
       disabledKeys={['f']}
-      dndHooks={dndHooks}
+      dragAndDropHooks={dragAndDropHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item key={item.key} textValue={item.name} hasChildItems={item.type === 'folder'}>
@@ -750,7 +758,7 @@ export function ReorderExample(props) {
     }
   };
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -802,9 +810,10 @@ export function ReorderExample(props) {
       aria-label="reorderable list view"
       selectionMode="multiple"
       width="300px"
+      height="100%"
       items={list.items}
       disabledKeys={disabledKeys}
-      dndHooks={dndHooks}
+      dragAndDropHooks={dragAndDropHooks}
       {...otherprops}>
       {(item: any) => (
         <Item>
@@ -851,7 +860,7 @@ export function DragIntoItemExample(props) {
     list.remove(...keys);
   };
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -906,7 +915,7 @@ export function DragIntoItemExample(props) {
       width="300px"
       items={list.items}
       disabledKeys={disabledKeys}
-      dndHooks={dndHooks}
+      dragAndDropHooks={dragAndDropHooks}
       {...listViewProps}>
       {(item: any) => (
         <Item textValue={item.textValue} hasChildItems={item.type === 'folder'}>
@@ -962,7 +971,7 @@ export function DragBetweenListsExample(props) {
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1018,7 +1027,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dndHooks={dndHooks}
+          dragAndDropHooks={dragAndDropHooks}
           {...props}>
           {(item: any) => (
             <Item>
@@ -1035,7 +1044,7 @@ export function DragBetweenListsExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dndHooks={dndHooks}
+          dragAndDropHooks={dragAndDropHooks}
           {...props}>
           {(item: any) => (
             <Item>
@@ -1074,7 +1083,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     destinationList.append(...items);
   };
 
-  let {dndHooks: dndHooksFirst} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksFirst} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1120,7 +1129,7 @@ export function DragBetweenListsRootOnlyExample(props) {
     }
   });
 
-  let {dndHooks: dndHooksSecond} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksSecond} = useDragAndDrop({
     getItems(keys) {
       return [...keys].map(key => {
         key = JSON.stringify(key);
@@ -1176,7 +1185,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list1.items}
           disabledKeys={['2']}
-          dndHooks={dndHooksFirst}
+          dragAndDropHooks={dragAndDropHooksFirst}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1193,7 +1202,7 @@ export function DragBetweenListsRootOnlyExample(props) {
           width="300px"
           items={list2.items}
           disabledKeys={['2']}
-          dndHooks={dndHooksSecond}
+          dragAndDropHooks={dragAndDropHooksSecond}
           {...listViewProps}>
           {(item: any) => (
             <Item>
@@ -1348,7 +1357,7 @@ function DragExampleUtilHandlers(props) {
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
@@ -1368,7 +1377,7 @@ function DragExampleUtilHandlers(props) {
       height="size-3600"
       items={list.items}
       {...listViewProps}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {(item: any) => (
         <Item textValue={item.name} key={item.identifier}>
           <Text>{item.name}</Text>
@@ -1392,7 +1401,7 @@ function ReorderExampleUtilHandlers(props) {
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
@@ -1443,7 +1452,7 @@ function ReorderExampleUtilHandlers(props) {
       height="size-3600"
       items={list.items}
       {...listViewProps}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {(item: any) => (
         <Item textValue={item.name} key={item.identifier}>
           <Text>{item.name}</Text>
@@ -1467,7 +1476,7 @@ function ItemDropExampleUtilHandlers(props) {
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  let {dndHooks} = useDnDHooks({
+  let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list.getItem(key);
       return {
@@ -1507,7 +1516,7 @@ function ItemDropExampleUtilHandlers(props) {
       height="size-3600"
       items={list.items}
       {...listViewProps}
-      dndHooks={dndHooks}>
+      dragAndDropHooks={dragAndDropHooks}>
       {(item: any) => (
         <Item textValue={item.name} key={item.identifier}>
           <Text>{item.name}</Text>
@@ -1535,7 +1544,7 @@ function RootDropExampleUtilHandlers(props) {
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  let {dndHooks: list1Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
@@ -1558,7 +1567,7 @@ function RootDropExampleUtilHandlers(props) {
     ...firstListDnDOptions
   });
 
-  let {dndHooks: list2Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
     onRootDrop: async (e) => {
       action('onRootDropList1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
@@ -1577,7 +1586,7 @@ function RootDropExampleUtilHandlers(props) {
         height="size-3600"
         items={list1.items}
         {...listViewProps}
-        dndHooks={list1Hooks}>
+        dragAndDropHooks={list1Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1597,7 +1606,7 @@ function RootDropExampleUtilHandlers(props) {
         height="size-3600"
         items={list2.items}
         {...listViewProps}
-        dndHooks={list2Hooks}>
+        dragAndDropHooks={list2Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1626,7 +1635,7 @@ function InsertExampleUtilHandlers(props) {
   });
 
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  let {dndHooks: list1Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
@@ -1649,7 +1658,7 @@ function InsertExampleUtilHandlers(props) {
     ...firstListDnDOptions
   });
 
-  let {dndHooks: list2Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
     onInsert: async (e) => {
       let {
         items,
@@ -1677,7 +1686,7 @@ function InsertExampleUtilHandlers(props) {
         height="size-3600"
         items={list1.items}
         {...listViewProps}
-        dndHooks={list1Hooks}>
+        dragAndDropHooks={list1Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1697,7 +1706,7 @@ function InsertExampleUtilHandlers(props) {
         height="size-3600"
         items={list2.items}
         {...listViewProps}
-        dndHooks={list2Hooks}>
+        dragAndDropHooks={list2Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1725,7 +1734,7 @@ function FinderDropUtilHandlers(props) {
     getKey: (item) => item.identifier
   });
 
-  let {dndHooks: list1Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     onInsert: async (e) => {
       action('onInsertList1')(e);
@@ -1736,7 +1745,7 @@ function FinderDropUtilHandlers(props) {
     ...firstListDnDOptions
   });
 
-  let {dndHooks: list2Hooks} = useDnDHooks({
+  let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
     onInsert: async (e) => {
       action('onInsertList2')(e);
     },
@@ -1756,7 +1765,7 @@ function FinderDropUtilHandlers(props) {
         height="size-3600"
         items={list1.items}
         {...listViewProps}
-        dndHooks={list1Hooks}>
+        dragAndDropHooks={list1Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1776,7 +1785,7 @@ function FinderDropUtilHandlers(props) {
         height="size-3600"
         items={list2.items}
         {...listViewProps}
-        dndHooks={list2Hooks}>
+        dragAndDropHooks={list2Hooks}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1807,7 +1816,7 @@ export function DragBetweenListsComplex(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
-  let {dndHooks: dndHooksList1} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
@@ -1872,7 +1881,7 @@ export function DragBetweenListsComplex(props) {
   });
 
   // List 2 should allow reordering, on folder drops, and on root drops
-  let {dndHooks: dndHooksList2} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
       let dragItem = {};
@@ -1979,7 +1988,7 @@ export function DragBetweenListsComplex(props) {
         height="size-3600"
         items={list1.items}
         {...listViewProps}
-        dndHooks={dndHooksList1}>
+        dragAndDropHooks={dragAndDropHooksList1}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
             <Text>{item.name}</Text>
@@ -1999,7 +2008,7 @@ export function DragBetweenListsComplex(props) {
         height="size-3600"
         items={list2.items}
         {...listViewProps}
-        dndHooks={dndHooksList2}
+        dragAndDropHooks={dragAndDropHooksList2}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
@@ -2040,7 +2049,7 @@ function DragBetweenListsOverride(props) {
     getKey: (item) => item.identifier
   });
 
-  let {dndHooks: dndHooksList1} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       let dragType = `list-1-adobe-${item.type}`;
@@ -2057,7 +2066,7 @@ function DragBetweenListsOverride(props) {
     }
   });
 
-  let {dndHooks: dndHooksList2} = useDnDHooks({
+  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
     getDropOperation: (target, types) => {
       if (target.type !== 'root' || !(types.has('list-1-adobe-file') || types.has('text/plain'))) {
         return 'cancel';
@@ -2105,7 +2114,7 @@ function DragBetweenListsOverride(props) {
         width="size-3600"
         height="size-3600"
         items={list1.items}
-        dndHooks={dndHooksList1}
+        dragAndDropHooks={dragAndDropHooksList1}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>
@@ -2120,7 +2129,7 @@ function DragBetweenListsOverride(props) {
         width="size-3600"
         height="size-3600"
         items={list2.items}
-        dndHooks={dndHooksList2}
+        dragAndDropHooks={dragAndDropHooksList2}
         {...props}>
         {(item: any) => (
           <Item textValue={item.name} key={item.identifier}>

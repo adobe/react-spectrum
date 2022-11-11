@@ -552,6 +552,13 @@ describe('ListView', function () {
     expect(progressbar).toBeTruthy();
   });
 
+  it('should allow you to tab to ListView body if loading (no tabbable children)', function () {
+    let {getByRole} = render(<ListView aria-label="List" loadingState="loading">{[]}</ListView>);
+    let grid = getByRole('grid');
+    userEvent.tab();
+    expect(document.activeElement).toBe(grid);
+  });
+
   it('should display loading affordance with proper height (isLoadingMore)', function () {
     let items = [
       {key: 'foo', label: 'Foo'},
@@ -575,12 +582,18 @@ describe('ListView', function () {
     expect(getByText('No results')).toBeTruthy();
   });
 
-  it('should allow you to tab into ListView body if empty', function () {
-    let {getByRole} = render(<ListView aria-label="List" renderEmptyState={renderEmptyState} />);
-    let grid = getByRole('grid');
+  it('should allow you to tab into ListView body if empty with link', function () {
+    let {getByRole} = render(
+      <>
+        <ActionButton>Toggle</ActionButton>
+        <ListView aria-label="List" renderEmptyState={renderEmptyState}>{[]}</ListView>
+      </>
+    );
+    let toggleButton = getByRole('button');
     let link = getByRole('link');
+
     userEvent.tab();
-    expect(document.activeElement).toBe(grid);
+    expect(document.activeElement).toBe(toggleButton);
     userEvent.tab();
     expect(document.activeElement).toBe(link);
   });

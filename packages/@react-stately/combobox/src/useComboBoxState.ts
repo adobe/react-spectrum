@@ -305,6 +305,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     ...triggerState,
     toggle,
     open,
+    close: commit,
     selectionManager,
     selectedKey,
     setSelectedKey,

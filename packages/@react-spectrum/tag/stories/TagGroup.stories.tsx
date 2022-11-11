@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {Icon} from '@react-spectrum/icon';
 import {Item, TagGroup} from '../src';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -23,11 +23,6 @@ storiesOf('TagGroup', module)
     'default',
     () => render({})
   )
-  .add(
-    'disabledKeys',
-    () => render({
-      disabledKeys: ['1']
-    }))
   .add('icons', () => (
     <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
       {item => (
@@ -41,32 +36,28 @@ storiesOf('TagGroup', module)
     </TagGroup>
   ))
   .add(
-    'isDisabled',
-    () => render({
-      isDisabled: true
-    }))
-  .add(
     'onRemove',
-    () => render({
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
-  )
-  .add(
-    'onRemove + disabledKeys',
-    () => render({
-      disabledKeys: ['2'],
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
-  )
-  .add(
-    'onRemove + isDisabled',
-    () => render({
-      isDisabled: true,
-      isRemovable: true,
-      onRemove: action('onRemove')
-    })
+    () => {
+      const [items, setItems] = useState([
+        {key: 1, label: 'Cool Tag 1'},
+        {key: 2, label: 'Another cool tag'},
+        {key: 3, label: 'This tag'},
+        {key: 4, label: 'What tag?'},
+        {key: 5, label: 'This tag is cool too'},
+        {key: 6, label: 'Shy tag'}
+      ]);
+      const onRemove = (key) => {
+        const newItems = [...items].filter((item) => key !== item.key.toString());
+        setItems(newItems);
+        action('onRemove')(key);
+      };
+
+      return (<TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>
+        {item => (
+          <Item key={item.key}>{item.label}</Item>
+        )}
+      </TagGroup>);
+    }
   )
   .add('wrapping', () => (
     <div style={{width: '200px'}}>
@@ -81,7 +72,7 @@ storiesOf('TagGroup', module)
     </div>
     )
   )
-  .add('truncation', () => (
+  .add('label truncation', () => (
     <div style={{width: '100px'}}>
       <TagGroup aria-label="tag group">
         <Item key="1">Cool Tag 1 with a really long label</Item>
@@ -100,12 +91,6 @@ storiesOf('TagGroup', module)
         }
       </TagGroup>
     )
-  )
-  .add(
-    'with announcing',
-    () => (
-      <WithAnnouncing />
-    )
   );
 
 function render(props: any = {}) {
@@ -118,14 +103,3 @@ function render(props: any = {}) {
   );
 }
 
-function WithAnnouncing() {
-  let tags = ['Testing tag', 'Other testing label'];
-
-  return (
-    <React.Fragment>
-      <TagGroup aria-label="tag group">
-        {tags.map((t, index) => <Item key={index}>{t}</Item>)}
-      </TagGroup>
-    </React.Fragment>
-  );
-}

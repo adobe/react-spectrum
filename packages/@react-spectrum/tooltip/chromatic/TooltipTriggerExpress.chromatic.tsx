@@ -9,10 +9,24 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {ComponentMeta} from '@storybook/react';
+import {TooltipTrigger} from '../';
+import {default as tooltipTriggerDefault} from './TooltipTrigger.chromatic';
 
-const {compileStrings} = require('@internationalized/string-compiler');
+export default {
+  ...tooltipTriggerDefault,
+  title: 'TooltipTriggerExpress',
+  component: TooltipTrigger,
+  parameters: {
+    chromaticProvider: {
+      disableAnimations: true,
+      express: true
+    },
+    // chromatic needs a bit more time than disableAnimations allows
+    chromatic: {
+      pauseAnimationAtEnd: true
+    }
+  }
+} as ComponentMeta<typeof TooltipTrigger>;
 
-module.exports = (code) => {
-  let json = JSON.parse(code);
-  return compileStrings(json);
-};
+export * from './TooltipTrigger.chromatic';

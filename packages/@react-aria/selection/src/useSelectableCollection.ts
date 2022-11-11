@@ -370,7 +370,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (e.currentTarget.contains(e.target)) {
+      if (scrollRef.current === e.target) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }

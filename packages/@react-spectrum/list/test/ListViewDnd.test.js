@@ -421,17 +421,17 @@ describe('ListView', function () {
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
-        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 150});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 150}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 150}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 150});
 
-        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 150}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
 
         act(() => jest.runAllTimers());

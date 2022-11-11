@@ -27,7 +27,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper {
+  @inherit: %spectrum-FocusRing;
+
   display: inline-grid;
+  position: relative;
 
   inline-size: var(--spectrum-stepper-default-width-desktop);
   line-height: 0;
@@ -49,7 +52,7 @@ governing permissions and limitations under the License.
       padding-block-end: calc(var(--spectrum-button-padding-y) - .5px);
     }
     .spectrum-Stepper-button--stepDown {
-      padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+      padding-block-end: calc(var(--spectrum-button-padding-y) + .5px);
       padding-block-start: calc(var(--spectrum-button-padding-y) - .5px);
     }
   }
@@ -119,12 +122,12 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button--stepDown {
           border-end-end-radius: var(--spectrum-border-radius);
           border-block-start-width: var(--spectrum-stepper-border-size-default);
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
-          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
+          border-inline-end-width: var(--spectrum-alias-input-border-size);
         }
         .spectrum-Stepper-button--stepUp {
-          border-block-start-width: var(--spectrum-stepper-border-size-default);
-          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-start-width: var(--spectrum-alias-input-border-size);
+          border-inline-end-width: var(--spectrum-alias-input-border-size);
           border-start-end-radius: var(--spectrum-border-radius);
         }
       }
@@ -137,16 +140,16 @@ governing permissions and limitations under the License.
           inline-size: var(--spectrum-actionbutton-min-width);
         }
         .spectrum-Stepper-button--stepDown {
-          border-block-start-width: var(--spectrum-stepper-border-size-default);
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
-          border-inline-start-width: var(--spectrum-stepper-border-size-default);
+          border-block-start-width: var(--spectrum-alias-input-border-size);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
+          border-inline-start-width: var(--spectrum-alias-input-border-size);
           border-start-start-radius: var(--spectrum-border-radius);
           border-end-start-radius: var(--spectrum-border-radius);
         }
         .spectrum-Stepper-button--stepUp {
-          border-block-start-width: var(--spectrum-stepper-border-size-default);
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
-          border-inline-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-start-width: var(--spectrum-alias-input-border-size);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
+          border-inline-end-width: var(--spectrum-alias-input-border-size);
           border-start-end-radius: var(--spectrum-border-radius);
           border-end-end-radius: var(--spectrum-border-radius);
         }
@@ -154,9 +157,12 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isQuiet {
+    @inherit: %spectrum-FocusRing--quiet;
+
     .spectrum-Stepper-icon {
       inset-inline-end: 0px;
     }
+
     &:not(.spectrum-Stepper--showStepper) {
       &:not(.spectrum-Stepper--isMobile) {
         .spectrum-Stepper-input {}
@@ -165,7 +171,7 @@ governing permissions and limitations under the License.
           inline-size: var(--spectrum-stepper-button-width);
         }
         .spectrum-Stepper-button--stepDown {
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
         }
         .spectrum-Stepper-button--stepUp {}
       }
@@ -174,7 +180,7 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
           inline-size: var(--spectrum-actionbutton-min-width);
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
         }
         .spectrum-Stepper-button--stepDown {}
         .spectrum-Stepper-button--stepUp {}
@@ -188,7 +194,7 @@ governing permissions and limitations under the License.
           inline-size: var(--spectrum-stepper-button-width);
         }
         .spectrum-Stepper-button--stepDown {
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
         }
         .spectrum-Stepper-button--stepUp {}
       }
@@ -197,7 +203,7 @@ governing permissions and limitations under the License.
         .spectrum-Stepper-button {
           block-size: var(--spectrum-textfield-height);
           inline-size: var(--spectrum-actionbutton-min-width);
-          border-block-end-width: var(--spectrum-stepper-border-size-default);
+          border-block-end-width: var(--spectrum-alias-input-border-size);
         }
         .spectrum-Stepper-button--stepDown {}
         .spectrum-Stepper-button--stepUp {}

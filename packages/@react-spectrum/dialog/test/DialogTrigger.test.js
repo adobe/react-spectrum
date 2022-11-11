@@ -230,6 +230,41 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
+  it.each(['modal', 'popover', 'tray'])('contains focus within the dialog when rendered as a %s', function (type) {
+    let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type={type}>
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    let input1 = getByTestId('input1');
+    let input2 = getByTestId('input2');
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input1);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+    expect(document.activeElement).toBe(input1);
+  });
+
   it('should restore focus to the trigger when the dialog is closed', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -277,7 +312,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should restore focus to the trigger when the dialog is closed from a hidden dismiss button', async function () {
-    let {getByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
@@ -301,7 +336,7 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(dialog);
 
-    let dismiss = within(dialog).getByRole('button');
+    let dismiss = getAllByRole('button')[0];
     triggerPress(dismiss);
 
     act(() => {
@@ -377,7 +412,7 @@ describe('DialogTrigger', function () {
       </Provider>
     );
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
 
     let button = getByRole('button');
     triggerPress(button);
@@ -390,7 +425,7 @@ describe('DialogTrigger', function () {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).toHaveAttribute('aria-hidden', 'true');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).toBeInTheDocument();
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -403,7 +438,7 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
+    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
   });
 
   it('can be controlled', async function () {
