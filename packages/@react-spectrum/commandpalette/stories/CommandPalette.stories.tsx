@@ -57,16 +57,6 @@ let withSection = [
   ]}
 ];
 
-let lotsOfSections: any[] = [];
-for (let i = 0; i < 50; i++) {
-  let children = [];
-  for (let j = 0; j < 50; j++) {
-    children.push({name: `Section ${i}, Item ${j}`});
-  }
-
-  lotsOfSections.push({name: 'Section ' + i, children});
-}
-
 let actions = {
   onOpenChange: action('onOpenChange'),
   onInputChange: action('onInputChange'),
@@ -127,21 +117,6 @@ storiesOf('CommandPalette', module)
     )
   )
   .add(
-    'with many sections',
-    () => (
-      <>
-        <div>Press <Keyboard>⌘K</Keyboard> to open Command Palette.</div>
-        <CommandPalette defaultItems={lotsOfSections} label="Command Palette" {...actions}>
-          {(item) => (
-            <Section key={item.name} items={item.children} title={item.name}>
-              {(item: any) => <Item key={item.name}>{item.name}</Item>}
-            </Section>
-          )}
-        </CommandPalette>
-      </>
-    )
-  )
-  .add(
     'complex items',
     () => (
       <>
@@ -179,10 +154,10 @@ storiesOf('CommandPalette', module)
     () => (
       <>
         <div>Press <Keyboard>⌘K</Keyboard> to open Command Palette.</div>
-        <CommandPalette defaultItems={withSection} label="Command Palette" disabledKeys={['Snake', 'Ross']} {...actions}>
+        <CommandPalette defaultItems={withSection} label="Command Palette" disabledKeys={['2', '6']} {...actions}>
           {(item) => (
-            <Section key={item.name} items={item.children} title={item.name}>
-              {(item) => <Item key={item.name}>{item.name}</Item>}
+            <Section key={item.id} items={item.children} title={item.name}>
+              {(item) => <Item key={item.id}>{item.name}</Item>}
             </Section>
           )}
         </CommandPalette>
@@ -190,20 +165,8 @@ storiesOf('CommandPalette', module)
     )
   )
   .add(
-    'inputValue (controlled)',
-    () => (
-      <ControlledValueCommandPalette inputValue="Snake" disabledKeys={['2', '6']} />
-    )
-  )
-  .add(
     'defaultInputValue (uncontrolled)',
-    () => render({defaultInputValue: 'Item Three', disabledKeys: ['two']})
-  )
-  .add(
-    'selectedKey (controlled)',
-    () => (
-      <ControlledKeyCommandPalette selectedKey="4" disabledKeys={['2', '6']} />
-    )
+    () => render({defaultInputValue: 'Resource', disabledKeys: ['two']})
   )
   .add(
     'defaultSelectedKey (uncontrolled)',
@@ -213,12 +176,6 @@ storiesOf('CommandPalette', module)
     'inputValue and selectedKey (controlled)',
     () => (
       <AllControlledCommandPalette selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
-    )
-  )
-  .add(
-    'inputValue and defaultSelectedKey (controlled by inputvalue)',
-    () => (
-      <ControlledValueCommandPalette inputValue="K" defaultSelectedKey="2" disabledKeys={['2', '6']} />
     )
   )
   .add(
@@ -271,7 +228,7 @@ function ListDataExample() {
   let [showAll, setShowAll] = useState(false);
 
   return (
-    <Flex gap="size-300" direction="column" >
+    <>
       Press <Keyboard>⌘K</Keyboard> to open Command Palette.
       <CommandPalette
         onOpenChange={(open, reason) => {
@@ -288,7 +245,7 @@ function ListDataExample() {
         }}>
         {item => <Item>{item.name}</Item>}
       </CommandPalette>
-    </Flex>
+    </>
   );
 }
 
@@ -583,38 +540,6 @@ let ControlledKeyCommandPalette = (props) => {
         </Button>
       </ButtonGroup>
       <CommandPalette {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Command Palette" onSelectionChange={onSelectionChange}>
-        {(item: any) => (
-          <Section items={item.children} title={item.name}>
-            {(item: any) => <Item>{item.name}</Item>}
-          </Section>
-        )}
-      </CommandPalette>
-    </div>
-  );
-};
-
-let ControlledValueCommandPalette = (props) => {
-  let [value, setValue] = React.useState(props.inputValue);
-
-  let onValueChange = (value) => {
-    setValue(value);
-  };
-
-  return (
-    <div>
-      <div>Press <Keyboard>⌘K</Keyboard> to open Command Palette.</div>
-      <ButtonGroup marginEnd="30px" UNSAFE_style={{verticalAlign: 'bottom'}}>
-        <Button variant="secondary" onPress={() => setValue('Blah')}>
-          <Text>Blah</Text>
-        </Button>
-        <Button variant="secondary" onPress={() => setValue('Kangaroo')}>
-          <Text>Kangaroo</Text>
-        </Button>
-        <Button variant="secondary" onPress={() => setValue('')}>
-          <Text>Clear field</Text>
-        </Button>
-      </ButtonGroup>
-      <CommandPalette {...mergeProps(props, actions)} inputValue={value} defaultItems={withSection} label="Command Palette" onInputChange={onValueChange}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
