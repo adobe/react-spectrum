@@ -61,9 +61,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     buttonRef,
     inputRef,
     listBoxRef,
-    keyboardDelegate,
-    shouldFocusWrap,
-    isDisabled
+    keyboardDelegate
   } = props;
 
   useLayoutEffect(() => {
@@ -74,7 +72,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
 
   function keyDownHandler(e) {
     if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -98,8 +96,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
-      type: 'listbox',
-      isDisabled
+      type: 'listbox'
     },
     state,
     buttonRef
@@ -121,7 +118,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     keyboardDelegate: delegate,
     disallowTypeAhead: true,
     disallowEmptySelection: true,
-    shouldFocusWrap,
+    shouldFocusWrap: true,
     ref: inputRef,
     // Prevent item scroll behavior from being applied here, should be handled in the user's Popover + ListBox component
     isVirtualized: true
@@ -192,10 +189,6 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
   // If a touch happens on direct center of CommandPalette input, might be virtual click from iPad so open CommandPalette menu
   let lastEventTime = useRef(0);
   let onTouchEnd = (e: TouchEvent) => {
-    if (isDisabled) {
-      return;
-    }
-
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
@@ -311,8 +304,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
       ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart,
-      isDisabled
+      onPressStart
     },
     inputProps: mergeProps(inputProps, {
       role: 'combobox',
