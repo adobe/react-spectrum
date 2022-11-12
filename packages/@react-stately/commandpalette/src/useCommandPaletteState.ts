@@ -23,14 +23,10 @@ export interface CommandPaletteState<T> extends SelectState<T> {
   inputValue: string,
   /** Sets the value of the combo box input. */
   setInputValue(value: string): void,
-  /** Selects the currently focused item and updates the input value. */
-  commit(): void,
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
-  /** Resets the input value to the previously selected item's text if any and closes the menu.  */
-  revert(): void
+  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
@@ -117,8 +113,6 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     triggerState.toggle(focusStrategy);
   };
 
-  let lastValue = useRef(inputValue);
-
   let resetInputValue = () => {
     setInputValue('');
   };
@@ -129,42 +123,6 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
       selectionManager.setFocusedKey(null);
     }
   }, [triggerState.isOpen, selectionManager]);
-
-  // Revert input value and close menu
-  let revert = () => {
-    commitSelection();
-  };
-
-  let commitSelection = () => {
-    // If multiple things are controlled, call onSelectionChange
-    if (props.selectedKey !== undefined && props.inputValue !== undefined) {
-      props.onSelectionChange(selectedKey);
-
-      // Stop menu from reopening from useEffect
-      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-      lastValue.current = itemText;
-      triggerState.close();
-    } else {
-      // If only a single aspect of commandpalette is controlled, reset input value and close menu for the user
-      resetInputValue();
-      triggerState.close();
-    }
-  };
-
-  let commit = () => {
-    if (triggerState.isOpen && selectionManager.focusedKey != null) {
-      // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
-      // fire onSelectionChange to allow the application to control the closing.
-      if (selectedKey === selectionManager.focusedKey) {
-        commitSelection();
-      } else {
-        setSelectedKey(selectionManager.focusedKey);
-      }
-    } else {
-      // Reset inputValue and close menu if no item is focused but user triggers a commit
-      commitSelection();
-    }
-  };
 
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
@@ -195,9 +153,7 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     selectedItem,
     collection: showAllItems ? originalCollection : filteredCollection,
     inputValue,
-    setInputValue,
-    commit,
-    revert
+    setInputValue
   };
 }
 
