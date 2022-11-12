@@ -95,12 +95,10 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
   );
 
   let modalRef = useRef(null);
-  let modalHeight = modalRef.current?.UNSAFE_getDOMNode()?.clientHeight || 0;
-  let inputHeight = inputRef.current?.parentElement.parentElement.clientHeight || 0;
 
   return (
     <>
-      <Modal ref={modalRef} state={state} UNSAFE_style={{maxHeight: '60%', overflow: 'auto'}}>
+      <Modal ref={modalRef} state={state}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
@@ -121,7 +119,6 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
           shouldUseVirtualFocus
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
-          UNSAFE_style={{height: modalHeight > inputHeight ? modalHeight - inputHeight : undefined}}
           renderEmptyState={() => isAsync && (
             <span className={classNames(commandpaletteStyles, 'no-results')}>
               {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
