@@ -118,7 +118,7 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
   };
 
   let lastValue = useRef(inputValue);
-  
+
   let resetInputValue = () => {
     setInputValue('');
   };
@@ -176,11 +176,16 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     setFocusedState(isFocused);
   };
 
+  let close = () => {
+    resetInputValue();
+    triggerState.close();
+  };
+
   return {
     ...triggerState,
     toggle,
     open,
-    close: commit,
+    close,
     selectionManager,
     selectedKey,
     setSelectedKey,
