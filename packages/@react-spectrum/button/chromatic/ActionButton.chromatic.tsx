@@ -74,7 +74,7 @@ storiesOf('Button/ActionButton', module)
   .add(
     'staticColor: white',
     () => (
-      <View backgroundColor="static-seafoam-600" padding="size-1000">
+      <View backgroundColor="static-blue-700" padding="size-1000">
         <Flex direction="column" rowGap="size-150">
           <ActionButton staticColor="white">
             <Add />
