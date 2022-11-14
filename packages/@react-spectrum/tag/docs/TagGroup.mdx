@@ -92,8 +92,7 @@ An `aria-label` must be provided to the TagGroup for accessibility. If the TagGr
 
 ## Events
 
-Adding the `allowsRemoving` prop will allow the tags to be removed from the group. The `onRemove` callback is then
-used to handle the remove logic.
+You can enable tag deletion by providing the `allowsRemoving` prop to the TagGroup. TagGroup will provide the key to be removed to the `onRemove` handler as shown below. 
 
 ```tsx example
 function Example() {
