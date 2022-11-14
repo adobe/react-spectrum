@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, Overlay, useModalOverlay} from '@react-aria/overlays';
+import {AriaModalOverlayProps, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
