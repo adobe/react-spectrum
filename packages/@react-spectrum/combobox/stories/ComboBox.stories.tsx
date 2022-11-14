@@ -211,6 +211,10 @@ storiesOf('ComboBox', module)
     () => render({isDisabled: true})
   )
   .add(
+    'isDisabled, isQuiet',
+    () => render({isDisabled: true, isQuiet: true})
+  )
+  .add(
     'isReadOnly',
     () => render({isReadOnly: true, defaultSelectedKey: 'two'})
   )

@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-table-header-sort-icon-color-hover: var(--spectrum-global-color-gray-700);
+}
+
 .spectrum-Table-headWrapper {
   border-left-color: transparent;
   border-right-color: transparent;
@@ -22,14 +26,14 @@ governing permissions and limitations under the License.
   &.is-sortable,
   &.is-resizable {
     .spectrum-Table-sortedIcon {
-      color: var(--spectrum-alias-text-color);
+      color: var(--spectrum-table-header-sort-icon-color);
     }
 
     &.is-hovered {
       color: var(--spectrum-alias-text-color-hover);
 
       .spectrum-Table-sortedIcon {
-        color: var(--spectrum-alias-text-color-hover);
+        color: var(--spectrum-table-header-sort-icon-color-hover);
       }
     }
 

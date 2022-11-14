@@ -28,26 +28,56 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup {
+  @inherit: %spectrum-FocusRing;
+
   position: relative;
   display: inline-flex;
   flex-direction: row;
   flex-wrap: nowrap;
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
+  background: var(--spectrum-textfield-background-color);
 
   .spectrum-FieldButton {
-    padding: 0;
+    padding: var(--spectrum-combobox-fieldbutton-inset);
+    border-start-start-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
+    border-end-start-radius: var(--spectrum-combobox-fieldbutton-start-border-radius);
+    border-start-end-radius: var(--spectrum-combobox-fieldbutton-end-border-radius);
+    border-end-end-radius: var(--spectrum-combobox-fieldbutton-end-border-radius);
+    background-clip: content-box;
     inline-size: var(--spectrum-combobox-button-width);
-    border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
-    border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
-    border-width: 1px;
     flex-shrink: 0;
+    position: relative;
+    border-width: 0;
+    --spectrum-alias-input-focusring-gap: calc(-1 * var(--spectrum-alias-input-border-size));
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
+      border: var(--spectrum-alias-input-border-size) solid;
+      border-inline-start-width: var(--spectrum-combobox-fieldbutton-border-left-width);
+      transition: inherit;
+      z-index: -1;
+    }
+
+    &:after {
+      border-radius: var(--spectrum-alias-border-radius-regular);
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-focus-ring-border-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-focus-ring-border-radius);
+    }
   }
 
   /* Quiet or invalid inputgroup field button should always have a border width. */
   &.is-disabled:not(.spectrum-InputGroup--invalid):not(.spectrum-InputGroup--quiet) {
     .spectrum-FieldButton {
       border-width: 0;
+      padding: 0;
+      border-start-start-radius: var(--spectrum-combobox-fieldbutton-border-top-left-radius);
+      border-end-start-radius: var(--spectrum-combobox-fieldbutton-border-bottom-left-radius);
     }
   }
 
@@ -75,8 +105,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup--quiet {
+  @inherit: %spectrum-FocusRing--quiet;
+
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));
+  background: transparent;
 
   .spectrum-FieldButton {
     inline-size: auto;
@@ -84,9 +117,13 @@ governing permissions and limitations under the License.
 
     padding-inline-start: var(--spectrum-combobox-quiet-fieldbutton-padding-left);
     padding-inline-end: var(--spectrum-combobox-quiet-fieldbutton-padding-right);
-    border-width: 0;
-    border-bottom: var(--spectrum-textfield-quiet-affixed-border-size) solid;
-    border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+
+    &:before {
+      border-width: 0;
+      border-inline-start-width: 0;
+      border-bottom: var(--spectrum-alias-input-border-size) solid;
+      border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
+    }
 
     /* More hitarea */
     &:after {
@@ -105,6 +142,7 @@ governing permissions and limitations under the License.
   &.is-disabled {
     .spectrum-FieldButton {
       border-bottom-width: 1px;
+      border-radius: 0;
     }
   }
 
