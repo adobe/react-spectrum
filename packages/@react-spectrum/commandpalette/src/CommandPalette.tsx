@@ -17,7 +17,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import commandpaletteStyles from './commandpalette.css';
-import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -55,7 +55,7 @@ function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>,
   }
 }
 
-const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extends object>(props: SpectrumCommandPaletteProps<T>) {
+const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extends object>(props: SpectrumCommandPaletteProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     loadingState,
     onLoadMore
@@ -91,14 +91,12 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
     state
   );
 
-  let modalRef = useRef(null);
-
   // Max height for the listbox
   let maxHeight = (window.innerHeight * .6) - inputRef.current?.parentElement?.parentElement?.clientHeight;
 
   return (
     <>
-      <Modal ref={modalRef} state={state} UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
+      <Modal ref={ref} state={state} UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
