@@ -173,6 +173,7 @@ governing permissions and limitations under the License.
 
     &:disabled,
     &.is-disabled {
+      background-color: transparent;
       border-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-button-color-disabled));
       color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-button-text-color-disabled));
     }
