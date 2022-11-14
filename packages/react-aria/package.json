@@ -26,6 +26,7 @@
     "@react-aria/combobox": "^3.4.2",
     "@react-aria/datepicker": "^3.1.2",
     "@react-aria/dialog": "^3.4.0",
+    "@react-aria/dnd": "3.0.0-rc.0",
     "@react-aria/focus": "^3.9.0",
     "@react-aria/gridlist": "^3.1.0",
     "@react-aria/i18n": "^3.6.1",
