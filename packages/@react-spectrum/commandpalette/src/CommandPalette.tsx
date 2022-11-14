@@ -93,9 +93,12 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
 
   let modalRef = useRef(null);
 
+  // Max height for the listbox
+  let maxHeight = (window.innerHeight * .6) - inputRef.current?.parentElement?.parentElement?.clientHeight;
+
   return (
     <>
-      <Modal ref={modalRef} state={state}>
+      <Modal ref={modalRef} state={state} UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
@@ -104,6 +107,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
           inputRef={inputRef} />
         <ListBoxBase
           {...listBoxProps}
+          maxHeight={maxHeight ? maxHeight : undefined}
           ref={listBoxRef}
           disallowEmptySelection
           autoFocus={state.focusStrategy}
