@@ -133,7 +133,7 @@ function MenuButton(props) {
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
+    <>
       <Button
         {...menuTriggerProps}
         buttonRef={ref}
@@ -142,13 +142,13 @@ function MenuButton(props) {
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
       </Button>
       {state.isOpen &&
-        <Popover isOpen={state.isOpen} onClose={state.close}>
+        <Popover state={state} triggerRef={ref} placement="bottom start">
           <Menu
             {...props}
             {...menuProps} />
         </Popover>
       }
-    </div>
+    </>
   );
 }
 ```
@@ -238,52 +238,39 @@ Now we can render a simple menu with actionable items:
 
 The `Popover` component is used to contain the menu.
 It can be shared between many other components, including [ComboBox](useComboBox.html),
-[Select](useSelect.html), [Dialog](useOverlayTrigger.html), and others.
-See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
+[Select](useSelect.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {DismissButton, useOverlay} from '@react-aria/overlays';
-import {FocusScope} from '@react-aria/focus';
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover(props) {
+function Popover({children, state, ...props}) {
   let ref = React.useRef();
-  let {
-    popoverRef = ref,
-    isOpen,
-    onClose,
-    children
-  } = props;
+  let {popoverRef = ref} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
 
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    isOpen,
-    onClose,
-    shouldCloseOnBlur: true,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add a hidden <DismissButton> component at the end of the popover
-  // to allow screen reader users to dismiss the popup easily.
   return (
-    <FocusScope restoreFocus>
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
       <div
-        {...overlayProps}
+        {...popoverProps}
         ref={popoverRef}
         style={{
-          position: "absolute",
-          minWidth: "100%",
-          border: "1px solid gray",
-          background: "lightgray",
-          marginTop: 4
+          ...popoverProps.style,
+          background: 'lightgray',
+          border: '1px solid gray'
         }}>
+        <DismissButton onDismiss={state.close} />
         {children}
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={state.close} />
       </div>
-    </FocusScope>
+    </Overlay>
   );
 }
 ```
