@@ -179,7 +179,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   useCloseOnScroll({
     triggerRef: targetRef,
     isOpen,
-    onClose: onClose ? close : undefined
+    onClose: onClose && close
   });
 
   return {
