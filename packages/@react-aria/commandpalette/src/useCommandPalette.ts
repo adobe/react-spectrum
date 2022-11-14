@@ -11,10 +11,9 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
 import {AriaCommandPaletteProps} from '@react-types/commandpalette';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {BaseEvent, KeyboardDelegate} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {CommandPaletteState} from '@react-stately/commandpalette';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -43,9 +42,7 @@ export interface CommandPaletteAria<T> {
   /** Props for the command palette input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
-  listBoxProps: AriaListBoxOptions<T>,
-  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
-  buttonProps: AriaButtonProps
+  listBoxProps: AriaListBoxOptions<T>
 }
 
 let hasSetupGlobalListener = false;
@@ -149,7 +146,7 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     state.setFocused(true);
   };
 
-  let {labelProps, inputProps} = useTextField({
+  let {inputProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
     onKeyDown: chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown),
@@ -158,32 +155,10 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     autoComplete: 'off'
   }, inputRef);
 
-  // Press handlers for the CommandPalette button
-  let onPress = (e: PressEvent) => {
-    if (e.pointerType === 'touch') {
-      // Focus the input field in case it isn't focused yet
-      inputRef.current.focus();
-      state.toggle(null, 'manual');
-    }
-  };
-
-  let onPressStart = (e: PressEvent) => {
-    if (e.pointerType !== 'touch') {
-      inputRef.current.focus();
-      state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
-    }
-  };
-
-  let triggerLabelProps = useLabels({
-    id: menuTriggerProps.id,
-    'aria-label': stringFormatter.format('buttonLabel'),
-    'aria-labelledby': props['aria-labelledby'] || labelProps.id
-  });
-
   let listBoxProps = useLabels({
     id: menuProps.id,
     'aria-label': stringFormatter.format('listboxLabel'),
-    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+    'aria-labelledby': props['aria-labelledby']
   });
 
   // If a touch happens on direct center of CommandPalette input, might be virtual click from iPad so open CommandPalette menu
@@ -299,13 +274,6 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
   }, [state.isOpen]);
 
   return {
-    buttonProps: {
-      ...menuTriggerProps,
-      ...triggerLabelProps,
-      excludeFromTabOrder: true,
-      onPress,
-      onPressStart
-    },
     inputProps: mergeProps(inputProps, {
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],

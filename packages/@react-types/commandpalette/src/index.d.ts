@@ -28,11 +28,6 @@ export interface CommandPaletteProps<T> extends CollectionBase<T>, Omit<SingleSe
   /** Handler that is called when the CommandPalette input value changes. */
   onInputChange?: (value: string) => void,
   /**
-   * The interaction required to display the CommandPalette menu.
-   * @default 'input'
-   */
-  menuTrigger?: MenuTriggerAction,
-  /**
    * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   name?: string
@@ -44,11 +39,6 @@ export interface AriaCommandPaletteProps<T> extends CommandPaletteProps<T>, DOMP
 }
 
 export interface SpectrumCommandPaletteProps<T> extends SpectrumTextInputBase, Omit<AriaCommandPaletteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
-  /**
-   * The interaction required to display the CommandPalette menu. Note that this prop has no effect on the mobile CommandPalette experience.
-   * @default 'input'
-   */
-  menuTrigger?: MenuTriggerAction,
   /** The current loading state of the CommandPalette. Determines whether or not the progress circle should be shown. */
   loadingState?: LoadingState
 }

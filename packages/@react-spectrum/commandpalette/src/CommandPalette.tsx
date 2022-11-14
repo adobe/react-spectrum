@@ -49,8 +49,7 @@ function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>,
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
-    // menuTrigger=focus/manual don't apply to mobile commandpalette
-    return <MobileCommandPalette {...props} menuTrigger="input" ref={ref} />;
+    return <MobileCommandPalette {...props} ref={ref} />;
   } else {
     return <CommandPaletteBase {...props} ref={ref} />;
   }
@@ -58,7 +57,6 @@ function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>,
 
 const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extends object>(props: SpectrumCommandPaletteProps<T>) {
   let {
-    menuTrigger = 'input',
     loadingState,
     onLoadMore
   } = props;
@@ -81,15 +79,14 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
   );
   let layout = useListBoxLayout(state);
 
-  let {buttonProps, inputProps, listBoxProps} = useCommandPalette(
+  let {inputProps, listBoxProps} = useCommandPalette(
     {
       ...props,
       keyboardDelegate: layout,
       buttonRef: unwrappedButtonRef,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
-      inputRef: inputRef,
-      menuTrigger
+      inputRef: inputRef
     },
     state
   );
@@ -104,9 +101,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
           isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
-          inputRef={inputRef}
-          triggerProps={buttonProps}
-          triggerRef={buttonRef} />
+          inputRef={inputRef} />
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
@@ -132,8 +127,6 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
 interface CommandPaletteInputProps extends SpectrumCommandPaletteProps<unknown> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
-  triggerProps: AriaButtonProps,
-  triggerRef: RefObject<FocusableRefValue<HTMLElement>>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean
@@ -146,8 +139,7 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
     inputProps,
     inputRef,
     loadingState,
-    isOpen,
-    menuTrigger
+    isOpen
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let timeout = useRef(null);
@@ -214,7 +206,7 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
           isDisabled={isDisabled}
           validationState={validationState}
           width="100%"
-          isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
+          isLoading={showLoading && (isOpen || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle} />
       </FocusRing>
     </View>
