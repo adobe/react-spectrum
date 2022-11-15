@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
 import {GridState} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
 
@@ -21,7 +21,7 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
   onRemove?: (key: Key) => void
 }
 
-export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps {}
+export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps, AriaLabelingProps {}
 
 export interface TagProps<T> extends ItemProps<any> {
   isFocused: boolean,

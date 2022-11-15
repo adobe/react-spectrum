@@ -73,11 +73,7 @@ const items = [
 
 <Flex width={500}>
   <TagGroup items={items} aria-label="Dynamic TagGroup items example">
-    {(item) => (
-      <Item key={item.key}>
-        {item.name}
-      </Item>
-    )}
+    {item => <Item>{item.name}</Item>}
   </TagGroup>
 </Flex>
 ```
@@ -92,7 +88,7 @@ An `aria-label` must be provided to the TagGroup for accessibility. If the TagGr
 
 ## Events
 
-You can enable tag deletion by providing the `allowsRemoving` prop to the TagGroup. TagGroup will provide the key to be removed to the `onRemove` handler as shown below.
+Removing tags can be enabled by providing the `allowsRemoving` prop to the TagGroup. TagGroup will pass the key of the removed item to the `onRemove` handler as shown below.
 
 ```tsx example
 function Example() {
@@ -117,11 +113,7 @@ function Example() {
   return (
     <Flex width={500}>
       <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
-        {(item) => (
-          <Item key={item.key}>
-            {item.name}
-          </Item>
-        )}
+        {item => <Item>{item.name}</Item>}
       </TagGroup>
     </Flex>
   );
