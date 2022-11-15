@@ -88,8 +88,8 @@ A `DateRangePicker` composes several other components to produce a composite ele
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useDateRangePicker} from '@react-aria/datepicker';
 
-// Reuse the DateField, Popover, RangeCalendar, and Button from your component library. See below for details.
-import {DateField, Popover, RangeCalendar, Button} from 'your-component-library';
+// Reuse the DateField, Popover, Dialog, RangeCalendar, and Button from your component library.
+import {DateField, Popover, Dialog, RangeCalendar, Button} from 'your-component-library';
 
 function DateRangePicker(props) {
   let state = useDateRangePickerState(props);
@@ -97,7 +97,7 @@ function DateRangePicker(props) {
   let {labelProps, groupProps, startFieldProps, endFieldProps, buttonProps, dialogProps, calendarProps} = useDateRangePicker(props, state, ref);
 
   return (
-    <div style={{position: 'relative'}}>
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
       <span {...labelProps}>{props.label}</span>
       <div {...groupProps} ref={ref} style={{display: 'flex'}}>
         <div className="field">
@@ -111,8 +111,10 @@ function DateRangePicker(props) {
         <Button {...buttonProps}>🗓</Button>
       </div>
       {state.isOpen &&
-        <Popover {...dialogProps} isOpen={state.isOpen} onClose={() => state.setOpen(false)}>
-          <RangeCalendar {...calendarProps} />
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <Dialog {...dialogProps}>
+            <RangeCalendar {...calendarProps} />
+          </Dialog>
         </Popover>
       }
     </div>
@@ -136,67 +138,6 @@ function Button(props) {
   let ref = React.useRef();
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
-}
-```
-
-</details>
-
-### Popover
-
-The `Popover` component is used to contain the popup calendar for the `DateRangePicker`.
-It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenu.html), [Dialog](useOverlayTrigger.html), and others.
-See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-import {FocusScope} from '@react-aria/focus';
-import {useDialog} from '@react-aria/dialog';
-import {useOverlay, useModal, DismissButton} from '@react-aria/overlays';
-import {mergeProps} from '@react-aria/utils';
-
-function Popover(props) {
-  let ref = React.useRef();
-  let { popoverRef = ref, isOpen, onClose, children, ...otherProps } = props;
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let { overlayProps } = useOverlay(
-    {
-      isOpen,
-      onClose,
-      shouldCloseOnBlur: true,
-      isDismissable: true
-    },
-    popoverRef
-  );
-
-  let { modalProps } = useModal();
-  let { dialogProps } = useDialog(otherProps, popoverRef);
-
-  // Add a hidden <DismissButton> component at the end of the popover
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <FocusScope contain restoreFocus>
-      <div
-        {...mergeProps(overlayProps, modalProps, dialogProps)}
-        ref={popoverRef}
-        style={{
-          position: "absolute",
-          background: "var(--page-background)",
-          border: "1px solid gray",
-          marginTop: 4,
-          padding: 20,
-          zIndex: 1
-        }}
-      >
-        {children}
-        <DismissButton onDismiss={onClose} />
-      </div>
-    </FocusScope>
-  );
 }
 ```
 
@@ -301,6 +242,78 @@ function DateSegment({segment, state}) {
 ```
 
 </details>
+
+</details>
+
+### Popover
+
+The `Popover` component is used to contain the popup calendar for the `DateRangePicker`.
+It can be shared between many other components, including [Select](useSelect.html),
+[Menu](useMenu.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+
+function Popover({children, state, ...props}) {
+  let ref = React.useRef();
+  let {popoverRef = ref} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'var(--page-background)',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+```
+
+</details>
+
+### Dialog
+
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDialog} from '@react-aria/dialog';
+
+function Dialog({title, children, ...props}) {
+  let ref = React.useRef();
+  let {dialogProps, titleProps} = useDialog(props, ref);
+
+  return (
+    <div {...dialogProps} ref={ref} style={{padding: 30}}>
+      {title &&
+        <h3 {...titleProps} style={{marginTop: 0}}>
+          {title}
+        </h3>
+      }
+      {children}
+    </div>
+  );
+}
+```
 
 </details>
 
