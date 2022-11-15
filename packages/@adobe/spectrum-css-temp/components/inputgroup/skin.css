@@ -95,6 +95,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup--quiet {
+  background: transparent;
   /*
     specifically for readonly inputgroups that aren't disabled since the button will have the disabled class
     but we don't want the border color to be the disabled quiet one
