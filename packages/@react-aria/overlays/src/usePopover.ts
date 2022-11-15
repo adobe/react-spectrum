@@ -88,7 +88,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
-    isOpen: state.isOpen
+    isOpen: state.isOpen,
+    onClose: null
   });
 
   // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
