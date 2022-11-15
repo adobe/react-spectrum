@@ -46,6 +46,7 @@
   --spectrum-alias-toggle-color-selected: var(--spectrum-gray-800);
   --spectrum-alias-toggle-color-selected-hover: var(--spectrum-gray-900);
   --spectrum-alias-toggle-color-selected-key-focus: var(--spectrum-gray-900);
+  --spectrum-alias-toggle-color-selected-down: var(--spectrum-gray-900);
 
   --spectrum-actionbutton-icon-color: var(--spectrum-global-color-gray-800);
   --spectrum-actionbutton-background-color: var(--spectrum-global-color-gray-200);
@@ -54,11 +55,6 @@
   --spectrum-actionbutton-background-color-down: var(--spectrum-global-color-gray-400);
   --spectrum-actionbutton-background-color-disabled: var(--spectrum-global-color-gray-200);
   --spectrum-actionbutton-border-color-disabled: var(--spectrum-global-color-gray-200);
-
-  --spectrum-actionbutton-background-color-selected: var(--spectrum-neutral-background-color-default);
-  --spectrum-actionbutton-background-color-selected-hover: var(--spectrum-neutral-background-color-hover);
-  --spectrum-actionbutton-background-color-selected-key-focus: var(--spectrum-neutral-background-color-key-focus);
-  --spectrum-actionbutton-background-color-selected-down: var(--spectrum-neutral-background-color-down);
 
   --spectrum-actionbutton-border-color: var(--spectrum-actionbutton-background-color);
   --spectrum-actionbutton-border-color-hover: var(--spectrum-actionbutton-background-color-hover);
@@ -78,8 +74,8 @@
   --spectrum-actionbutton-static-black-border-color-down: transparent;
   --spectrum-actionbutton-static-black-border-color-disabled: transparent;
   --spectrum-actionbutton-static-black-border-color-selected-disabled: transparent;
-  --spectrum-actionbutton-static-black-background-color: rgba(0, 0, 0, 0.1);
-  --spectrum-actionbutton-static-black-background-color-disabled: rgba(0, 0, 0, 0.1);
+  --spectrum-actionbutton-static-black-background-color: rgba(0, 0, 0, 0.07);
+  --spectrum-actionbutton-static-black-background-color-disabled: rgba(0, 0, 0, 0.07);
 
   --spectrum-actionbutton-static-white-border-color: transparent;
   --spectrum-actionbutton-static-white-border-color-hover: transparent;
@@ -87,8 +83,8 @@
   --spectrum-actionbutton-static-white-border-color-down: transparent;
   --spectrum-actionbutton-static-white-border-color-disabled: transparent;
   --spectrum-actionbutton-static-white-border-color-selected-disabled: transparent;
-  --spectrum-actionbutton-static-white-background-color: rgba(255, 255, 255, 0.1);
-  --spectrum-actionbutton-static-white-background-color-disabled: rgba(255, 255, 255, 0.1);
+  --spectrum-actionbutton-static-white-background-color: rgba(255, 255, 255, 0.07);
+  --spectrum-actionbutton-static-white-background-color-disabled: rgba(255, 255, 255, 0.07);
 
   --spectrum-fieldbutton-background-color: var(--spectrum-actionbutton-background-color);
   --spectrum-fieldbutton-background-color-hover: var(--spectrum-actionbutton-background-color-hover);

@@ -187,6 +187,7 @@ module.exports = new Transformer({
     let date = '';
     let author = '';
     let image = '';
+    let hidden = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -259,6 +260,7 @@ module.exports = new Transformer({
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          hidden = yamlData.hidden;
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -417,6 +419,7 @@ module.exports = new Transformer({
     asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.order = order;
+    asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
     asset.isBundleSplittable = false;
