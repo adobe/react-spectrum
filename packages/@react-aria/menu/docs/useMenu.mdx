@@ -525,7 +525,7 @@ function MenuButton(props) {
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
       </Button>
       {state.isOpen &&
-        <Popover isOpen={state.isOpen} onClose={state.close}>
+        <Popover state={state} triggerRef={ref} placement="bottom start">
           <Menu
             {...props}
             {...menuProps} />
