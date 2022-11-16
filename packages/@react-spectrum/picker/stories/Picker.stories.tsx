@@ -178,6 +178,11 @@ export const Default: DefaultStory = {
   render: (args) => <DefaultPicker {...args} />
 };
 
+export const Disabled: DefaultStory = {
+  render: (args) => <DefaultPicker {...args} disabledKeys={['Short']} />,
+  name: 'disabled keys'
+};
+
 export const Sections: PickerStory = {
   args: {
     children: (
