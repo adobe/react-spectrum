@@ -1,0 +1,156 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/tag';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/tag/package.json';
+
+```jsx import
+import {Flex} from '@react-spectrum/layout';
+import {Item, TagGroup} from '@react-spectrum/tag';
+import News from '@spectrum-icons/workflow/News';
+import Airplane from '@spectrum-icons/workflow/Airplane';
+import Game from '@spectrum-icons/workflow/Game';
+import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
+import {Text} from '@react-spectrum/text';
+```
+
+---
+category: Status
+keywords: [TagGroup, status]
+---
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Item', 'TagGroup']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tag/'}
+  ]} />
+
+## Example
+```tsx example
+<TagGroup aria-label="Static TagGroup items example">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</TagGroup>
+```
+
+## Content
+TagGroup is a component that allows users to categorize content. Basic usage of TagGroup, seen in the example above, shows the use of a static collection where the contents of the TagGroup are hard coded.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time.
+
+Each item has a unique key defined by the data. In the example below, the `key` of each row element is implicitly defined by the id property of the row object.
+See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+
+```tsx example
+const items = [
+  {id: 1, name: 'Adobe Photoshop'},
+  {id: 2, name: 'Adobe XD'},
+  {id: 3, name: 'Adobe InDesign'},
+  {id: 4, name: 'Adobe AfterEffects'},
+  {id: 5, name: 'Adobe Illustrator'},
+  {id: 6, name: 'Adobe Lightroom'},
+  {id: 7, name: 'Adobe Premiere Pro'},
+  {id: 8, name: 'Adobe Fresco'},
+  {id: 9, name: 'Adobe Dreamweaver'}
+];
+
+<Flex width={500}>
+  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
+    {item => <Item>{item.name}</Item>}
+  </TagGroup>
+</Flex>
+```
+
+### Internationalization
+To internationalize a TagGroup, all text content within the TagGroup should be localized. This includes the `aria-label` provided to the TagGroup if any.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of TagGroup is automatically flipped.
+
+## Labeling
+### Accessibility
+An `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+## Events
+
+Removing tags can be enabled by providing the `allowsRemoving` prop to the TagGroup. TagGroup will pass the key of the removed item to the `onRemove` handler as shown below.
+
+```tsx example
+function Example() {
+  let defaultItems = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+
+  let [items, setItems] = React.useState(defaultItems);
+
+  let removeItem = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+  };
+
+  return (
+    <Flex width={500}>
+      <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
+        {item => <Item>{item.name}</Item>}
+      </TagGroup>
+    </Flex>
+  );
+}
+```
+
+## Props
+
+<PropTable component={{
+  ...docs.exports.TagGroup,
+  props: {
+    ...docs.exports.TagGroup.props,
+    properties: Object.fromEntries(Object.entries(docs.exports.TagGroup.props.properties))
+  }
+}} links={docs.links} />
+
+## Visual options
+
+### With icons
+
+```tsx example
+<TagGroup aria-label="TagGroup with icons example">
+  <Item>
+    <News />
+    <Text>News</Text>
+  </Item>
+  <Item>
+    <Airplane />
+    <Text>Travel</Text>
+  </Item>
+  <Item>
+    <Game />
+    <Text>Gaming</Text>
+  </Item>
+  <Item>
+    <ShoppingCart />
+    <Text>Shopping</Text>
+  </Item>
+</TagGroup>
+```
