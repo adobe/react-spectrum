@@ -21,7 +21,7 @@ We are excited to announce the release of drag and drop support in [React Aria](
 
 This release also includes an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Buttons also have a refreshed design, with improved accessibility, and additional variants.
 
-Another new feature in React Aria includes a new API for overlays such as [popovers](https://react-spectrum.adobe.com/react-aria/usePopover.html) and [modals](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html). It is designed to make building these components much easier than before, including builtin focus management, accessibility, scroll locking, and positioning.
+React Aria also includes a new API for overlays such as [popovers](https://react-spectrum.adobe.com/react-aria/usePopover.html) and [modals](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html). It is designed to make building these components much easier than before, including builtin focus management, accessibility, scroll locking, and positioning.
 
 Finally, we have plenty of bug fixes and documentation updates. Thanks to all of our contributors who helped with this release 🤩
 
@@ -52,6 +52,20 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 - `Button` and `ActionButton` design updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3650)
 - Migrate React Spectrum to new overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3677)
 - Add `UNSAFE_className` prop to `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3722)
+### Spectrum color update
+Spectrum design has updated their [color system](https://spectrum.adobe.com/page/color-fundamentals/) with an expanded palette, improved contrast, and increased vibrance. This update applies across all React Spectrum components automatically. You can also use the new Spectrum colors in your custom components using the [View](https://react-spectrum.adobe.com/react-spectrum/View.html) component, which now has a `colorVersion` prop enabling you to opt-in. See the [styling documentation](https://react-spectrum.adobe.com/react-spectrum/styling.html#color-values) for more details, and to view the full color palette.
+
+### Design updates
+Spectrum has also updated the designs for Button, ActionButton, ActionGroup, and ToggleButton  with improved contrast and accessibility. Button includes new outline and fill options, as well as new static color options. ActionButton, ActionGroup, ToggleButton, Picker, TextField, and other field components now have darker borders and selected states for improved contrast.
+
+The Button API has been updated to add new options, and deprecate some old ones. Deprecated options will be automatically mapped to new variants.
+
+- Added `accent` variant, replacing `cta` which is now deprecated.
+- Added `style` prop, accepting `fill` or `outline` for all button variants.
+- Added `staticColor` prop, which replaces the deprecated `overBackground` variant.
+- Deprecated `isQuiet`.
+
+View the updates on our [Button docs](https://react-spectrum.adobe.com/react-spectrum/Button.html#visual-options) and [Spectrum Design docs](https://spectrum.corp.adobe.com/page/button/#Accent-variant).
 
 ## Fixes
 - Avoid widening "type" prop of `TextInputDOMProps` - [@jossmac](https://github.com/jossmac) - [PR](https://github.com/adobe/react-spectrum/pull/3623)
@@ -66,9 +80,11 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 - Add generic for `DatePickerStateOptions` - [@jason89521](https://github.com/jason89521) - [PR](https://github.com/adobe/react-spectrum/pull/3682)
 - Update date components to use `useFocusWithin` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3694)
 - Wait until after a layout effect to prevent scroll in popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3697)
+- Add preventDefault to onDragEnter and onDragLeave for iPad - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3723)
 - Fix types for labelProp (htmlFor) in `useTextField` - [@LosYear](https://github.com/LosYear) - [PR](https://github.com/adobe/react-spectrum/pull/3671)
 - Reset `NumberField` when value is `null` - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3709)
 - Fix `TextArea` not using full height when custom height provided - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3720)
+- Fix `useListData` so that reorder operations are correctly inserted at the correct index - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3724)
 
 ## Docs
 - Correction of a mistake in `useBreadCrumbs` - [@Zoe-CF](https://github.com/Zoe-CF) - [PR](https://github.com/adobe/react-spectrum/pull/3607)
@@ -81,31 +97,15 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 
 - Update `TagGroup` to use keys instead of value - [@tiffany-sy-lin](https://github.com/tiffany-sy-lin) - [PR](https://github.com/adobe/react-spectrum/pull/3692)
 - Fix `ColorWheel` layout in a `Form` - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3705)
-- Fix useListData so that reorder operations are correctly inserted at the correct index - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3724)
-- Add preventDefault to onDragEnter and onDragLeave for iPad - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3723)
 - Update `TagGroup` types - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3728)
 
-## TagGroup updates
+### TagGroup updates
 We have made improvements to the `TagGroup` component, and it is now entering beta. This includes a few breaking changes.
 
 - `isDisabled` and `disabledKeys` props have been removed.
 - `isRemovable` has been renamed to `allowsRemoving`.
 - `onRemove` now passes the removed key instead of its children and press event.
 
-## Spectrum color update
-Spectrum design has updated their [color system](https://spectrum.adobe.com/page/color-fundamentals/) with an expanded palette, improved contrast, and increased vibrance. This update applies across all React Spectrum components automatically. You can also use the new Spectrum colors in your custom components using the [View](https://react-spectrum.adobe.com/react-spectrum/View.html) component, which now has a `colorVersion` prop enabling you to opt-in. See the [styling documentation](https://react-spectrum.adobe.com/react-spectrum/styling.html#color-values) for more details, and to view the full color palette.
-
-## Design updates
-Spectrum has also updated the designs for Button, ActionButton, ActionGroup, and ToggleButton  with improved contrast and accessibility. Button includes new outline and fill options, as well as new static color options. ActionButton, ActionGroup, ToggleButton, Picker, TextField, and other field components now have darker borders and selected states for improved contrast.
-
-The Button API has been updated to add new options, and deprecate some old ones. Deprecated options will be automatically mapped to new variants.
-
-- Added `accent` variant, replacing `cta` which is now deprecated.
-- Added `style` prop, accepting `fill` or `outline` for all button variants.
-- Added `staticColor` prop, which replaces the deprecated `overBackground` variant.
-- Deprecated `isQuiet`.
-
-View the updates on our [Button docs](https://react-spectrum.adobe.com/react-spectrum/Button.html#visual-options) and [Spectrum Design docs](https://spectrum.corp.adobe.com/page/button/#Accent-variant).
 
 ## Released packages
 
