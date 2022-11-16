@@ -11,7 +11,7 @@ import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. React Aria includes a new API for overlays such as popovers and modals.
+description: We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals.
 date: 2022-11-15
 ---
 
@@ -46,35 +46,35 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 - [useModalOverlay](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html)
 
 ## Enhancements
-* Add SSR support for drag and drop - [@Dev-CasperTheGhost](https://github.com/Dev-CasperTheGhost) - [PR](https://github.com/adobe/react-spectrum/pull/3616)
-* Export `TableCollection` and `TreeCollection` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3690)
-* Update Spectrum colors to v6 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3604)
-* `Button` and `ActionButton` design updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3650)
-* Migrate React Spectrum to new overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3677)
-* Add `UNSAFE_className` prop to `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3722)
+- Add SSR support for drag and drop - [@Dev-CasperTheGhost](https://github.com/Dev-CasperTheGhost) - [PR](https://github.com/adobe/react-spectrum/pull/3616)
+- Export `TableCollection` and `TreeCollection` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3690)
+- Update Spectrum colors to v6 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3604)
+- `Button` and `ActionButton` design updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3650)
+- Migrate React Spectrum to new overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3677)
+- Add `UNSAFE_className` prop to `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3722)
 
 ## Fixes
-* Avoid widening "type" prop of TextInputDOMProps - [@jossmac](https://github.com/jossmac) - [PR](https://github.com/adobe/react-spectrum/pull/3623)
-* Expose `props` to `Section` collection item - [@luisadame](https://github.com/luisadame) - [PR](https://github.com/adobe/react-spectrum/pull/3634)
-* Clear slots for `ContextualHelp` slot provider for `Dialog` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3635)
-* Fix focus for empty view in `TableView` and `ListView` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3581)
-* Fix `TableView` crashing when adding/removing columns - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3656)
-* Fix `DatePicker` and `DateField` key/focus event props - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3605)
-* Export FocusVisibleProps - [@warsawgentleman](https://github.com/warsawgentleman) - [PR](https://github.com/adobe/react-spectrum/pull/3639)
-* Remove unneeded aria-checked from `useCheckbox` and `useSwitch` - [@tywayne](https://github.com/tywayne) - [PR](https://github.com/adobe/react-spectrum/pull/3687)
-* Fix dragging in `ListView` with selectionMode set to `none` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3696)
-* Add generic for `DatePickerStateOptions` - [@jason89521](https://github.com/jason89521) - [PR](https://github.com/adobe/react-spectrum/pull/3682)
-* Update date components to use `useFocusWithin` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3694)
-* Wait until after a layout effect to prevent scroll in popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3697)
-* Fix types for labelProp (htmlFor) in `useTextField` - [@LosYear](https://github.com/LosYear) - [PR](https://github.com/adobe/react-spectrum/pull/3671)
-* Reset `NumberField` when value is `null` - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3709)
-* Fix `TextArea` not using full height when custom height provided - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3720)
+- Avoid widening "type" prop of `TextInputDOMProps` - [@jossmac](https://github.com/jossmac) - [PR](https://github.com/adobe/react-spectrum/pull/3623)
+- Expose `props` to `Section` collection item - [@luisadame](https://github.com/luisadame) - [PR](https://github.com/adobe/react-spectrum/pull/3634)
+- Clear slots for `ContextualHelp` slot provider for `Dialog` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3635)
+- Fix focus for empty view in `TableView` and `ListView` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3581)
+- Fix `TableView` crashing when adding/removing columns - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3656)
+- Fix `DatePicker` and `DateField` key/focus event props - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3605)
+- Export `FocusVisibleProps` - [@warsawgentleman](https://github.com/warsawgentleman) - [PR](https://github.com/adobe/react-spectrum/pull/3639)
+- Remove unneeded aria-checked from `useCheckbox` and `useSwitch` - [@tywayne](https://github.com/tywayne) - [PR](https://github.com/adobe/react-spectrum/pull/3687)
+- Fix dragging in `ListView` with selectionMode set to `none` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3696)
+- Add generic for `DatePickerStateOptions` - [@jason89521](https://github.com/jason89521) - [PR](https://github.com/adobe/react-spectrum/pull/3682)
+- Update date components to use `useFocusWithin` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3694)
+- Wait until after a layout effect to prevent scroll in popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3697)
+- Fix types for labelProp (htmlFor) in `useTextField` - [@LosYear](https://github.com/LosYear) - [PR](https://github.com/adobe/react-spectrum/pull/3671)
+- Reset `NumberField` when value is `null` - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3709)
+- Fix `TextArea` not using full height when custom height provided - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3720)
 
 ## Docs
-* Correction of a mistake in useBreadCrumbs.ts - [@Zoe-CF](https://github.com/Zoe-CF) - [PR](https://github.com/adobe/react-spectrum/pull/3607)
-* Display monopackage "since" version for components in React Spectrum docs - [@dannify](https://github.com/dannify) - [PR](https://github.com/adobe/react-spectrum/pull/3609)
-* Add link to Spectrum styling page to docs - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/3596)
-* Update copy relating to theming - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3622)
+- Correction of a mistake in `useBreadCrumbs` - [@Zoe-CF](https://github.com/Zoe-CF) - [PR](https://github.com/adobe/react-spectrum/pull/3607)
+- Display monopackage "since" version for components in React Spectrum docs - [@dannify](https://github.com/dannify) - [PR](https://github.com/adobe/react-spectrum/pull/3609)
+- Add link to Spectrum styling page to docs - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/3596)
+- Update copy relating to theming - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3622)
 
 ## Under construction
 Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
