@@ -887,6 +887,22 @@ describe('TableView', function () {
     let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
     let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
+    describe('row focus', function () {
+      it('should allow the user to focus disabled rows', function () {
+        let tree = renderTable('en-US', {disabledKeys: ['Foo 1']});
+        let grid = tree.getByRole('grid');
+        let rowgroups = within(grid).getAllByRole('rowgroup');
+        let rows = within(rowgroups[1]).getAllByRole('row');
+
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(rows[1]);
+        moveFocus('ArrowUp');
+        expect(document.activeElement).toBe(rows[0]);
+      });
+    });
+
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
         let tree = renderTable();

@@ -616,6 +616,38 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(2);
     });
 
+    it('does not close if clicking on a section header', function () {
+      tree = render(
+        <Provider theme={theme}>
+          <input data-testid="before-input" />
+          <MenuTrigger onOpenChange={onOpenChange}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+          <input data-testid="after-input" />
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {jest.runAllTimers();});
+
+      let menu = tree.getByRole('menu');
+      // click on the section header which is in a presentational li as an aria-hidden element
+      triggerPress(within(menu).getAllByRole('presentation')[0].children[0]);
+      act(() => {jest.runAllTimers();});
+
+      expect(document.activeElement).toBe(menu);
+    });
+
     it('should have a hidden dismiss button for screen readers', function () {
       let {getByRole, getAllByLabelText} = render(
         <Provider theme={theme}>

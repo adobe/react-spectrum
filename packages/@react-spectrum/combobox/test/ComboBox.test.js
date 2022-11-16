@@ -689,6 +689,14 @@ describe('ComboBox', function () {
         expect(document.activeElement).toBe(combobox);
         expect(combobox).not.toHaveAttribute('aria-activedescendant');
         expect(onSelectionChange).not.toHaveBeenCalled();
+
+        triggerPress(items[0]);
+
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(listbox).toBeVisible();
+        expect(onSelectionChange).not.toHaveBeenCalled();
       });
 
       it('closes the menu if there are no matching items', function () {
@@ -3182,7 +3190,8 @@ describe('ComboBox', function () {
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section Two').id);
     });
 
-    it('sections are not valid selectable values', function () {
+    it.skip('sections are not valid selectable values', function () {
+      // depends on https://github.com/jsdom/jsdom/issues/3464
       let {getByRole} = renderSectionComboBox({selectedKey: 'section 1'});
 
       let combobox = getByRole('combobox');
@@ -3201,6 +3210,15 @@ describe('ComboBox', function () {
       expect(groups[0]).not.toHaveAttribute('aria-selected');
 
       expect(within(listbox).queryAllByRole('img')).toEqual([]);
+      expect(document.activeElement).toBe(combobox)
+
+      // trigger a press on the first section heading
+      triggerPress(within(listbox).getAllByRole('presentation')[1].children[0]);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(listbox).toBeVisible();
+      expect(document.activeElement).toBe(combobox)
     });
   });
 
