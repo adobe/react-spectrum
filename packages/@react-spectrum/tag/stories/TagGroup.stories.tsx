@@ -92,9 +92,9 @@ storiesOf('TagGroup', module)
       </TagGroup>
     )
   )
-  .add('defaultVisibleRows: 2', () => (
+  .add('maxRows: 2', () => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup aria-label="tag group" defaultVisibleRows={2}>
+      <TagGroup aria-label="tag group" maxRows={2}>
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>

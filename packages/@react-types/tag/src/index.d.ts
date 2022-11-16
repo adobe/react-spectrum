@@ -20,7 +20,7 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
   /** Called when the user removes a tag.  */
   onRemove?: (key: Key) => void,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
-  defaultVisibleRows?: number
+  maxRows?: number
 }
 
 export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps, AriaLabelingProps {}

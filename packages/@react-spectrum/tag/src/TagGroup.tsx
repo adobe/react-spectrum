@@ -30,7 +30,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let {
     allowsRemoving,
     onRemove,
-    defaultVisibleRows,
+    maxRows,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -72,10 +72,10 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   const {tagGroupProps} = useTagGroup(props);
 
   let [visibleTagCount, setVisibleTagCount] = useState(gridCollection.size);
-  let [isCollapsed, setIsCollapsed] = useState(defaultVisibleRows != null);
+  let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
 
   let checkVisibleTagCount = useCallback(() => {
-    if (defaultVisibleRows != null && isCollapsed) {
+    if (maxRows != null && isCollapsed) {
       let currY = -Infinity;
       let rowCount = 0;
       let index = 0;
@@ -88,14 +88,14 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           rowCount++;
         }
 
-        if (rowCount > defaultVisibleRows) {
+        if (rowCount > maxRows) {
           break;
         }
         index++;
       }
       setVisibleTagCount(index);
     }
-  }, [defaultVisibleRows, domRef, isCollapsed]);
+  }, [maxRows, domRef, isCollapsed]);
 
   useEffect(() => {
     checkVisibleTagCount();
@@ -104,7 +104,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   useResizeObserver({ref: domRef, onResize: checkVisibleTagCount});
 
   let visibleTags = [...gridCollection];
-  if (defaultVisibleRows != null && isCollapsed) {
+  if (maxRows != null && isCollapsed) {
     visibleTags = visibleTags.slice(0, visibleTagCount);
   }
 
@@ -134,7 +134,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           {item.childNodes[0].rendered}
         </Tag>
       ))}
-      {defaultVisibleRows != null && visibleTagCount < gridCollection.size &&
+      {maxRows != null && visibleTagCount < gridCollection.size &&
         <Button variant="secondary" onPress={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
         </Button>
