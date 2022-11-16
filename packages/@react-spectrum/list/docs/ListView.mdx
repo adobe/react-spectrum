@@ -363,7 +363,7 @@ This behavior is slightly different in the highlight selection style, where sing
 </Flex>
 ```
 
-## Drag and drop <VersionBadge version="rc" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Drag and drop
 
 To enable drag and drop in a ListView, you must provide the drag and drop hooks sourced from <TypeLink links={dndDocs.links} type={dndDocs.exports.useDragAndDrop} /> to the ListView's `dragAndDropHooks` prop.
 See the examples below for various common drag and drop use cases. For more information on `useDragAndDrop` and the various supported ways to perform a drag and drop interaction,
@@ -376,7 +376,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
-```tsx example keepIndividualImports export=true render=false
+```tsx example export=true render=false
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@adobe/react-spectrum';
 
