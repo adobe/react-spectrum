@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button} from '@react-spectrum/button';
+import {ActionButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
@@ -135,9 +135,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         </Tag>
       ))}
       {maxRows != null && visibleTagCount < gridCollection.size &&
-        <Button variant="secondary" onPress={() => setIsCollapsed(!isCollapsed)}>
+        <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
-        </Button>
+        </ActionButton>
       }
     </div>
   );
