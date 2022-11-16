@@ -483,12 +483,12 @@ workflows:
       - docs:
           requires:
             - install
-      # - docs-production:
-      #     filters:
-      #       branches:
-      #         only: main
-      #     requires:
-      #       - install
+      - docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
       - docs-verdaccio:
           filters:
             branches:
@@ -508,12 +508,12 @@ workflows:
             - storybook-16
             - storybook-17
             - docs
-      # - deploy-production:
-      #     filters:
-      #       branches:
-      #         only: main
-      #     requires:
-      #       - docs-production
+      - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - docs-production
       - deploy-verdaccio:
           requires:
             - docs-verdaccio
