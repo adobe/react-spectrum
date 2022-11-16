@@ -446,9 +446,11 @@ let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) =
   };
 
   let removeTab = () => {
-    let newTabs = [...tabs];
-    newTabs.pop();
-    setTabs(newTabs);
+    if (tabs.length > 1) {
+      let newTabs = [...tabs];
+      newTabs.pop();
+      setTabs(newTabs);
+    }
   };
 
   return (
