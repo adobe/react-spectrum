@@ -344,6 +344,33 @@ describe('TableView', function () {
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
   });
 
+  it('accepts a UNSAFE_className', function () {
+    let {getByRole} = render(
+      <TableView aria-label="Table" data-testid="test" selectionMode="multiple" UNSAFE_className="test-class">
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', expect.stringContaining('test-class'));
+  });
+
   it('renders a dynamic table', function () {
     let {getByRole} = render(
       <TableView aria-label="Table">
