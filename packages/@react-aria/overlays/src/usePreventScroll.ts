@@ -103,6 +103,11 @@ function preventScrollMobileSafari() {
   };
 
   let onTouchMove = (e: TouchEvent) => {
+    // If the user is scrolling while usePreventScroll is called, ensure we set scrollable with onTouchStart
+    if (!scrollable) {
+      onTouchStart(e);
+    }
+
     // Prevent scrolling the window.
     if (scrollable === document.documentElement || scrollable === document.body) {
       e.preventDefault();
