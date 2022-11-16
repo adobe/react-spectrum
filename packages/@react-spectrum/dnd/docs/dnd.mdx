@@ -20,6 +20,7 @@ import BetweenDropPosition from '../../../@react-aria/dnd/docs/BetweenDropPositi
 import OnDropPosition from '../../../@react-aria/dnd/docs/OnDropPosition.svg';
 import RootDropPosition from '../../../@react-aria/dnd/docs/RootDropPosition.svg';
 import DragAffordance from '../../../@react-aria/dnd/docs/DragAffordance.svg';
+import Anatomy from '../../../@react-aria/dnd/docs/Anatomy.svg';
 
 ---
 category: Concepts
@@ -42,6 +43,8 @@ In addition to the standard mouse and touch interactions, React Spectrum also im
 Before we dive into how to enable drag and drop in React Spectrum, let's touch briefly on the terminology and concepts of drag and drop. In a drag and drop operation, there is
 a **drag source** and a **drop target**. The drag source is the starting location of your dragged data and the drop target is its intended destination. The dragged data
 is made up of one or more **drag items**, each of which contains information specific to their original item within the drag source.
+
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
 A drag item contains several pieces of information: the **type** of the data, the item's **kind**, and the actual data itself. The type of a drag item can be one of the
 [common mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or a custom type specific to your application. Multiple types can be attached to a

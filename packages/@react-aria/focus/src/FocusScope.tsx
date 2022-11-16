@@ -376,6 +376,11 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   return false;
 }
 
+/** @private */
+export function isElementInChildOfActiveScope(element: Element) {
+  return isElementInChildScope(element, activeScope);
+}
+
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
   let parent = focusScopeTree.getTreeNode(scope)?.parent;
   while (parent) {
@@ -470,7 +475,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
     scope = scope.parent;
   }
 
-  return true;
+  return scope?.scopeRef === scopeRef;
 }
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
@@ -499,6 +504,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       document.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
@@ -578,6 +584,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         restoreFocus
         && nodeToRestore
         && (
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           isElementInScope(document.activeElement, scopeRef.current)
           || (document.activeElement === document.body && shouldRestoreFocus(scopeRef))
         )

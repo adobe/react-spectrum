@@ -211,6 +211,10 @@ storiesOf('ComboBox', module)
     () => render({isDisabled: true})
   )
   .add(
+    'isDisabled, isQuiet',
+    () => render({isDisabled: true, isQuiet: true})
+  )
+  .add(
     'isReadOnly',
     () => render({isReadOnly: true, defaultSelectedKey: 'two'})
   )
@@ -740,6 +744,7 @@ let customFilterItems = [
 let CustomFilterComboBox = (props) => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
 
   return (

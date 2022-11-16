@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
@@ -2155,5 +2156,33 @@ describe('NumberField', function () {
         expect(textField).toHaveAttribute('value', '123.456.789');
       });
     });
+  });
+
+  it('can be reset to blank using null', () => {
+    function NumberFieldControlled(props) {
+      let {onChange} = props;
+      let [value, setValue] = useState(10);
+      return (
+        <Provider theme={theme} scale="medium" locale="en-US">
+          <NumberField {...props} label="reset to blank using null" value={value} onChange={value => setValue(value)} />
+          <Button
+            variant={'primary'}
+            onPress={() => chain(setValue(null), onChange())}>
+            Reset
+          </Button>
+        </Provider>
+      );
+    }
+    let resetSpy = jest.fn();
+    let {container, getByText} = render(<NumberFieldControlled onChange={resetSpy} />);
+    container = within(container).queryByRole('group');
+    let textField = container.firstChild;
+    let resetButton = getByText('Reset');
+
+    textField = textField.firstChild;
+    expect(textField).toHaveAttribute('value', '10');
+    triggerPress(resetButton);
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '');
   });
 });

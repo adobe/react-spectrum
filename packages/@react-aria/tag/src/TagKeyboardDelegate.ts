@@ -18,23 +18,15 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
   getFirstKey() {
     let key = this.collection.getFirstKey();
     let item = this.collection.getItem(key);
-    let newKey = [...item.childNodes][0].key;
 
-    if (this.disabledKeys.has(newKey)) {
-      newKey = this.getKeyBelow(newKey);
-    }
-    return newKey;
+    return [...item.childNodes][0].key;
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
     let item = this.collection.getItem(key);
-    let newKey = [...item.childNodes][0].key;
 
-    if (this.disabledKeys.has(newKey)) {
-      newKey = this.getKeyAbove(newKey);
-    }
-    return newKey;
+    return [...item.childNodes][0].key;
   }
 
   getKeyRightOf(key: Key) {
@@ -62,13 +54,8 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        let newKey = [...item.childNodes][startItem.index].key;
 
-        // Ignore disabled tags
-        if (this.disabledKeys.has(newKey)) {
-          return this.getKeyBelow(newKey);
-        }
-        return newKey;
+        return [...item.childNodes][startItem.index].key;
       }
 
       // Otherwise, focus the next row
@@ -97,13 +84,7 @@ export class TagKeyboardDelegate<T> extends GridKeyboardDelegate<T, GridCollecti
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        let newKey = [...item.childNodes][startItem.index].key;
-
-        // ignore disabled tags
-        if (this.disabledKeys.has(newKey)) {
-          return this.getKeyAbove(newKey);
-        }
-        return newKey;
+        return [...item.childNodes][startItem.index].key;
       }
 
       // Otherwise, focus the previous row

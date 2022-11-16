@@ -11,7 +11,7 @@
  */
 
 import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
@@ -62,7 +62,7 @@ function mapModality(modality: string) {
     modality = 'virtual';
   }
 
-  if (modality === 'virtual' && 'ontouchstart' in window) {
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
 
@@ -216,6 +216,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
         // only implemented in Chrome.
         if (typeof item.webkitGetAsEntry === 'function') {
           let entry: FileSystemEntry = item.webkitGetAsEntry();
+          // eslint-disable-next-line max-depth
           if (!entry) {
             // For some reason, Firefox includes an item with type image/png when copy
             // and pasting any file or directory (no matter the type), but returns `null` for both
@@ -225,6 +226,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
             continue;
           }
 
+          // eslint-disable-next-line max-depth
           if (entry.isFile) {
             items.push(createFileItem(item.getAsFile()));
           } else if (entry.isDirectory) {
@@ -268,7 +270,7 @@ function blobToString(blob: Blob): Promise<string> {
   });
 }
 
-function createFileItem(file: File): FileItem {
+function createFileItem(file: File): FileDropItem {
   return {
     kind: 'file',
     type: file.type || GENERIC_TYPE,
@@ -278,7 +280,7 @@ function createFileItem(file: File): FileItem {
   };
 }
 
-function createDirectoryItem(entry: any): DirectoryItem {
+function createDirectoryItem(entry: any): DirectoryDropItem {
   return {
     kind: 'directory',
     name: entry.name,
@@ -286,7 +288,7 @@ function createDirectoryItem(entry: any): DirectoryItem {
   };
 }
 
-async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileItem | DirectoryItem> {
+async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileDropItem | DirectoryDropItem> {
   let reader = item.createReader();
 
   // We must call readEntries repeatedly because there may be a limit to the
