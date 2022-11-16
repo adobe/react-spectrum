@@ -14,6 +14,7 @@ export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalen
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, TimeFieldStateOptions} from '@react-stately/datepicker';
+export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
 export type {MenuTriggerProps, MenuTriggerState} from '@react-stately/menu';
@@ -35,6 +36,7 @@ export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
 export {useComboBoxState} from '@react-stately/combobox';
 export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeFieldState} from '@react-stately/datepicker';
+export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {useListState, useSingleSelectListState} from '@react-stately/list';
