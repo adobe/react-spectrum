@@ -60,7 +60,7 @@ storiesOf('TagGroup', module)
     }
   )
   .add('wrapping', () => (
-    <div style={{width: '200px'}}>
+    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
       <TagGroup aria-label="tag group">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
@@ -91,7 +91,19 @@ storiesOf('TagGroup', module)
         }
       </TagGroup>
     )
-  );
+  )
+  .add('defaultVisibleRows: 2', () => (
+    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <TagGroup aria-label="tag group" defaultVisibleRows={2}>
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Another cool tag</Item>
+        <Item key="3">This tag</Item>
+        <Item key="4">What tag?</Item>
+        <Item key="5">This tag is cool too</Item>
+        <Item key="6">Shy tag</Item>
+      </TagGroup>
+    </div>
+  ));
 
 function render(props: any = {}) {
   return (

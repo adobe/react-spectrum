@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, useMemo} from 'react';
+import {mergeProps, useResizeObserver} from '@react-aria/utils';
+import React, {ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
@@ -24,12 +25,12 @@ import {useListState} from '@react-stately/list';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     allowsRemoving,
     onRemove,
+    defaultVisibleRows,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -70,6 +71,43 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   }, state, domRef);
   const {tagGroupProps} = useTagGroup(props);
 
+  let [visibleTagCount, setVisibleTagCount] = useState(gridCollection.size);
+  let [isCollapsed, setIsCollapsed] = useState(defaultVisibleRows != null);
+
+  let checkVisibleTagCount = useCallback(() => {
+    if (defaultVisibleRows != null && isCollapsed) {
+      let currY = -Infinity;
+      let rowCount = 0;
+      let index = 0;
+      let items = [...domRef.current.children];
+      for (let item of items) {
+        let {y} = item.getBoundingClientRect();
+
+        if (y !== currY) {
+          currY = y;
+          rowCount++;
+        }
+
+        if (rowCount > defaultVisibleRows) {
+          break;
+        }
+        index++;
+      }
+      setVisibleTagCount(index);
+    }
+  }, [defaultVisibleRows, domRef, isCollapsed]);
+
+  useEffect(() => {
+    checkVisibleTagCount();
+  }, [props.children, checkVisibleTagCount]);
+
+  useResizeObserver({ref: domRef, onResize: checkVisibleTagCount});
+
+  let visibleTags = [...gridCollection];
+  if (defaultVisibleRows != null && isCollapsed) {
+    visibleTags = visibleTags.slice(0, visibleTagCount);
+  }
+
   // Don't want the grid to be focusable or accessible via keyboard
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {tabIndex, role, ...otherGridProps} = gridProps;
@@ -85,7 +123,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       }
       role={state.collection.size ? 'grid' : null}
       ref={domRef}>
-      {[...gridCollection].map(item => (
+      {visibleTags.map(item => (
         <Tag
           {...item.childNodes[0].props}
           key={item.key}
@@ -95,7 +133,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           onRemove={onRemove}>
           {item.childNodes[0].rendered}
         </Tag>
-        ))}
+      ))}
+      {defaultVisibleRows != null && visibleTagCount < gridCollection.size &&
+        <Button variant="secondary" onPress={() => setIsCollapsed(!isCollapsed)}>
+          {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
+        </Button>
+      }
     </div>
   );
 }
