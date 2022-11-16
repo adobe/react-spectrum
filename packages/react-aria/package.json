@@ -42,6 +42,7 @@
     "@react-aria/radio": "^3.4.1",
     "@react-aria/searchfield": "^3.4.3",
     "@react-aria/select": "^3.8.3",
+    "@react-aria/selection": "^3.12.0",
     "@react-aria/separator": "^3.2.5",
     "@react-aria/slider": "^3.2.3",
     "@react-aria/ssr": "^3.4.0",
