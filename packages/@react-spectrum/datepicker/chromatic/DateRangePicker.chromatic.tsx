@@ -30,14 +30,17 @@ const focusParams = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
   }
 };
 
 const openParams = {
   chromaticProvider: {
-    colorSchemes: ['light', 'darkest'],
-    disableAnimations: true
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
   }
 };
 
@@ -61,6 +64,13 @@ const zoned = {
 export const Placeholder = () => <DateRangePicker label="Date" placeholderValue={value.start} />;
 export const PlaceholderFocus = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusExpress = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+PlaceholderFocusExpress.parameters = {
+  chromaticProvider: {
+    express: true
+  }
+};
 
 export const PlaceholderTime = () => <DateRangePicker label="Date" placeholderValue={dateTime.start} />;
 export const PlaceholderZoned = () => <DateRangePicker label="Date" placeholderValue={zoned.start} />;
@@ -139,6 +149,15 @@ export const OpenUnavailable = () => <DateRangePicker label="Date" value={value}
 OpenUnavailable.parameters = openParams;
 OpenUnavailable.decorators = openDecorators;
 
+export const OpenExpress = () => <DateRangePicker label="Date" value={dateTime} isOpen />;
+OpenExpress.parameters = {
+  chromaticProvider: {
+    express: true,
+    disableAnimations: true
+  }
+};
+OpenExpress.decorators = openDecorators;
+
 export const MultipleMonths = () => <DateRangePicker label="Date" value={value} isOpen maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;
 MultipleMonths.decorators = [Story => <div style={{height: 550, width: 1000}}><Story /></div>];
@@ -149,7 +168,22 @@ Tray.parameters = {
     colorSchemes: ['light'],
     locales: ['en-US'],
     scales: ['large'],
-    disableAnimations: true
+    disableAnimations: true,
+    express: false
+  },
+  chromatic: {
+    viewports: [380]
+  }
+};
+
+export const TrayExpress = () => <DateRangePicker label="Date" value={value} isOpen />;
+TrayExpress.parameters = {
+  chromaticProvider: {
+    colorSchemes: ['light'],
+    locales: ['en-US'],
+    scales: ['large'],
+    disableAnimations: true,
+    express: true
   },
   chromatic: {
     viewports: [380]

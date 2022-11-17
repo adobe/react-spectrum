@@ -11,12 +11,12 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {ColorVersion, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactElement} from 'react';
 import {ViewProps} from '@react-types/view';
 
-function View(props: ViewProps, ref: DOMRef) {
+function View<C extends ColorVersion>(props: ViewProps<C>, ref: DOMRef) {
   props = useSlotProps(props);
   let {
     elementType: ElementType = 'div',
@@ -42,5 +42,5 @@ function View(props: ViewProps, ref: DOMRef) {
  * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
  * It supports Spectrum style props to ensure consistency with other Spectrum components.
  */
-const _View = forwardRef(View);
+const _View = forwardRef(View) as <C extends ColorVersion = 5>(props: ViewProps<C> & {ref?: DOMRef}) => ReactElement;
 export {_View as View};

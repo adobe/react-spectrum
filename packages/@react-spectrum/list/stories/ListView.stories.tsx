@@ -379,6 +379,14 @@ storiesOf('ListView/Drag and Drop', module)
     )
   )
   .add(
+    'Drag within list scrolling (Reorder)',
+    args => (
+      <Flex direction="row" wrap alignItems="center" height={100}>
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      </Flex>
+    )
+  )
+  .add(
     'Drag into folder',
     args => (
       <Flex direction="row" wrap alignItems="center">
@@ -802,6 +810,7 @@ export function ReorderExample(props) {
       aria-label="reorderable list view"
       selectionMode="multiple"
       width="300px"
+      height="100%"
       items={list.items}
       disabledKeys={disabledKeys}
       dragAndDropHooks={dragAndDropHooks}
