@@ -15,11 +15,12 @@ import React from 'react';
 import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
 interface UnderlayProps {
-  isOpen?: boolean
+  isOpen?: boolean,
+  isTransparent?: boolean
 }
 
-export function Underlay({isOpen}: UnderlayProps) {
+export function Underlay({isOpen, isTransparent}: UnderlayProps) {
   return (
-    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
+    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
   );
 }

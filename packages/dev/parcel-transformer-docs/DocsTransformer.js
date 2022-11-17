@@ -348,7 +348,18 @@ module.exports = new Transformer({
       }
 
       if (path.isTSPropertySignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let name;
+        if (t.isStringLiteral(path.node.key)) {
+          name = path.node.key.value;
+        } else if (t.isNumericLiteral(path.node.key)) {
+          name = String(path.node.key.value);
+        } else if (t.isIdentifier(path.node.key)) {
+          name = path.node.key.name;
+        } else {
+          console.log('Unknown key', path.node.key);
+          name = 'unknown';
+        }
+
         let docs = getJSDocs(path);
         let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
