@@ -248,7 +248,7 @@ with the rest of the UI, directing a user’s focus to elsewhere in a view.
 
 ```tsx example
 <ActionBarContainer>
-  <ActionBar>
+  <ActionBar selectedItemCount={1}>
     <Item key="edit">
       Edit
     </Item>
@@ -261,7 +261,7 @@ with the rest of the UI, directing a user’s focus to elsewhere in a view.
   </ActionBar>
 </ActionBarContainer>
 <ActionBarContainer>
-<ActionBar isEmphasized>
+<ActionBar isEmphasized selectedItemCount={1}>
     <Item key="edit">
       Edit
     </Item>
