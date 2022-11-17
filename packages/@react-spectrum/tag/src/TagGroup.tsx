@@ -93,9 +93,21 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
         index++;
       }
+
+      // Hide tags on last row until there is room for the collapse button.
+      let end = direction === 'ltr' ? 'right' : 'left';
+      let containerEnd = domRef.current.getBoundingClientRect()[end];
+      let collapseButtonWidth = items[items.length - 1].getBoundingClientRect().width;
+      let lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
+
+      while (containerEnd - lastTagEnd < collapseButtonWidth) {
+        lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
+        index--;
+      }
+
       setVisibleTagCount(index);
     }
-  }, [maxRows, domRef, isCollapsed]);
+  }, [maxRows, isCollapsed, domRef, direction]);
 
   useEffect(() => {
     checkVisibleTagCount();
