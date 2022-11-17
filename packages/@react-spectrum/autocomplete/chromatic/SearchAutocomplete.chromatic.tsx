@@ -129,6 +129,11 @@ PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
+PropCustomWidth.parameters = {
+  chromaticProvider: {
+    express: false
+  }
+};
 
 export const PropIconFilter = Template.bind({});
 PropIconFilter.storyName = 'icon: Filter';

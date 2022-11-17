@@ -71,6 +71,7 @@ governing permissions and limitations under the License.
                          "field field field"
                          "helpText helpText helpText";
     grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
     align-content: start;
     width: var(--spectrum-field-default-width);
 

@@ -47,6 +47,11 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.3.tgz#bb33e0d5789f60436992b7e90ac294284fbfb4e8"
   integrity sha512-idHEptv5d+puofqO3tiv+cbYR/QV7gUWKHMrHFuJS6zDwRyi3u8GR9BInRbEYp7ZvrLMW8XnNl6lXFSf8ubDQA==
 
+"@adobe/spectrum-css-ccx-workflow-icons@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@adobe/spectrum-css-ccx-workflow-icons/-/spectrum-css-ccx-workflow-icons-1.0.2.tgz#31a3a9f62d7411861dc7368cfa5fa8b42bacc608"
+  integrity sha512-/Q9l1/6x1oZpHsiTIc6pJ4UrbufyKyn/6lfSskMjPsQ6l/jOsSMPR6yIUdCvt5GF4zjeFXqQvv13e6ywoqoGYg==
+
 "@babel/cli@^7.12.10":
   version "7.12.10"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.12.10.tgz#67a1015b1cd505bde1696196febf910c4c339a48"

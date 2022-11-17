@@ -30,7 +30,7 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions) {
   let {triggerRef, isOpen, onClose} = opts;
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen || onClose === null) {
       return;
     }
 

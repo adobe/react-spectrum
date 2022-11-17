@@ -67,6 +67,16 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'disabled keys',
+    () => (
+      <Picker label="Test" onSelectionChange={action('selectionChange')} disabledKeys={['Short']}>
+        <Item key="Short">Short</Item>
+        <Item key="Normal">Normal</Item>
+        <Item key="This item is very long and word wraps poorly">This item is very long and word wraps poorly</Item>
+      </Picker>
+    )
+  )
+  .add(
     'sections',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
