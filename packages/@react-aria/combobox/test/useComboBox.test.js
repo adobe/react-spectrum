@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
@@ -39,19 +39,16 @@ describe('useComboBox', function () {
   let props = {
     label: 'test label',
     popoverRef: {
-      current: {}
+      current: document.createElement('div')
     },
     buttonRef: {
-      current: {}
+      current: document.createElement('button')
     },
     inputRef: {
-      current: {
-        contains: jest.fn(),
-        focus: jest.fn()
-      }
+      current: document.createElement('input')
     },
     listBoxRef: {
-      current: {}
+      current: document.createElement('div')
     },
     layout: mockLayout
   };

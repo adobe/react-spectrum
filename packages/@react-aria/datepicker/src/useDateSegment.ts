@@ -10,30 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerProps, DateValue} from '@react-types/datepicker';
-import {DOMProps} from '@react-types/shared';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId} from '@react-aria/utils';
-import {labelIds} from './useDateField';
+import {CalendarDate, toCalendar} from '@internationalized/date';
+import {DateFieldState, DateSegment} from '@react-stately/datepicker';
+import {DOMAttributes} from '@react-types/shared';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
-import React, {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
+import React, {RefObject, useMemo, useRef} from 'react';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
-import {useFocusManager} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-interface DateSegmentAria {
-  segmentProps: HTMLAttributes<HTMLDivElement>
+export interface DateSegmentAria {
+  /** Props for the segment element. */
+  segmentProps: DOMAttributes
 }
 
-export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & DOMProps, segment: DateSegment, state: DatePickerFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+/**
+ * Provides the behavior and accessibility implementation for a segment in a date field.
+ * A date segment displays an individual unit of a date and time, and allows users to edit
+ * the value by typing or using the arrow keys to increment and decrement.
+ */
+export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
   let enteredKeys = useRef('');
-  let {locale, direction} = useLocale();
+  let {locale} = useLocale();
   let displayNames = useDisplayNames();
-  let focusManager = useFocusManager();
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
 
-  let textValue = segment.text;
+  let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
   let monthDateFormatter = useDateFormatter({month: 'long', timeZone: options.timeZone});
   let hourDateFormatter = useDateFormatter({
@@ -42,21 +46,24 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     timeZone: options.timeZone
   });
 
-  if (segment.type === 'month') {
+  if (segment.type === 'month' && !segment.isPlaceholder) {
     let monthTextValue = monthDateFormatter.format(state.dateValue);
     textValue = monthTextValue !== textValue ? `${textValue} – ${monthTextValue}` : monthTextValue;
-  } else if (segment.type === 'hour' || segment.type === 'dayPeriod') {
+  } else if (segment.type === 'hour' && !segment.isPlaceholder) {
     textValue = hourDateFormatter.format(state.dateValue);
   }
 
   let {spinButtonProps} = useSpinButton({
+    // The ARIA spec says aria-valuenow is optional if there's no value, but aXe seems to require it.
+    // This doesn't seem to have any negative effects with real AT since we also use aria-valuetext.
+    // https://github.com/dequelabs/axe-core/issues/3505
     value: segment.value,
     textValue,
     minValue: segment.minValue,
     maxValue: segment.maxValue,
-    isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly || !segment.isEditable,
-    isRequired: props.isRequired,
+    isDisabled: state.isDisabled,
+    isReadOnly: state.isReadOnly || !segment.isEditable,
+    isRequired: state.isRequired,
     onIncrement: () => {
       enteredKeys.current = '';
       state.increment(segment.type);
@@ -86,7 +93,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let backspace = () => {
-    if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly && !segment.isPlaceholder) {
+    if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
       let newValue = segment.text.slice(0, -1);
       let parsed = parser.parse(newValue);
       if (newValue.length === 0 || parsed === 0) {
@@ -112,34 +119,6 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     }
 
     switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
-        if (direction === 'rtl') {
-          focusManager.focusNext();
-        } else {
-          focusManager.focusPrevious();
-        }
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
-        if (direction === 'rtl') {
-          focusManager.focusPrevious();
-        } else {
-          focusManager.focusNext();
-        }
-        break;
-      case 'Enter':
-        e.preventDefault();
-        e.stopPropagation();
-        if (segment.isPlaceholder && !props.isReadOnly) {
-          state.confirmPlaceholder(segment.type);
-        }
-        focusManager.focusNext();
-        break;
-      case 'Tab':
-        break;
       case 'Backspace':
       case 'Delete': {
         // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
@@ -166,8 +145,36 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
   }, [amPmFormatter]);
 
+  // Get a list of formatted era names so users can type the first character to choose one.
+  let eraFormatter = useDateFormatter({year: 'numeric', era: 'narrow', timeZone: 'UTC'});
+  let eras = useMemo(() => {
+    if (segment.type !== 'era') {
+      return [];
+    }
+
+    let date = toCalendar(new CalendarDate(1, 1, 1), state.calendar);
+    let eras = state.calendar.getEras().map(era => {
+      let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
+      let parts = eraFormatter.formatToParts(eraDate);
+      let formatted = parts.find(p => p.type === 'era').value;
+      return {era, formatted};
+    });
+
+    // Remove the common prefix from formatted values. This is so that in calendars with eras like
+    // ERA0 and ERA1 (e.g. Ethiopic), users can press "0" and "1" to select an era. In other cases,
+    // the first letter is used.
+    let prefixLength = commonPrefixLength(eras.map(era => era.formatted));
+    if (prefixLength) {
+      for (let era of eras) {
+        era.formatted = era.formatted.slice(prefixLength);
+      }
+    }
+
+    return eras;
+  }, [eraFormatter, state.calendar, segment.type]);
+
   let onInput = (key: string) => {
-    if (props.isDisabled || props.isReadOnly) {
+    if (state.isDisabled || state.isReadOnly) {
       return;
     }
 
@@ -184,6 +191,14 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
         }
         focusManager.focusNext();
         break;
+      case 'era': {
+        let matched = eras.find(e => startsWith(e.formatted, key));
+        if (matched) {
+          state.setSegment('era', matched.era);
+          focusManager.focusNext();
+        }
+        break;
+      }
       case 'day':
       case 'hour':
       case 'minute':
@@ -245,12 +260,9 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     enteredKeys.current = '';
     scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
-    // Safari requires that a selection is set or it won't fire input events.
-    // Since usePress disables text selection, this won't happen by default.
-    ref.current.style.webkitUserSelect = 'text';
+    // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
     selection.collapse(ref.current);
-    ref.current.style.webkitUserSelect = '';
   };
 
   let compositionRef = useRef('');
@@ -261,7 +273,7 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     switch (e.inputType) {
       case 'deleteContentBackward':
       case 'deleteContentForward':
-        if (parser.isValidPartialNumber(segment.text) && !props.isReadOnly) {
+        if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly) {
           backspace();
         }
         break;
@@ -298,26 +310,18 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     }
   });
 
-  // Focus on mouse down/touch up to match native textfield behavior.
-  // usePress handles canceling text selection.
-  let {pressProps} = usePress({
-    preventFocusOnPress: true,
-    onPressStart: (e) => {
-      if (e.pointerType === 'mouse') {
-        e.target.focus();
+  useLayoutEffect(() => {
+    let element = ref.current;
+    return () => {
+      // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
+      if (document.activeElement === element) {
+        let prev = focusManager.focusPrevious();
+        if (!prev) {
+          focusManager.focusNext();
+        }
       }
-    },
-    onPress(e) {
-      if (e.pointerType !== 'mouse') {
-        e.target.focus();
-      }
-    }
-  });
-
-  // For Android: prevent selection on long press.
-  useEvent(ref, 'selectstart', e => {
-    e.preventDefault();
-  });
+    };
+  }, [ref, focusManager]);
 
   // spinbuttons cannot be focused with VoiceOver on iOS.
   let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
@@ -328,8 +332,6 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     'aria-valuenow': null
   } : {};
 
-  let {ariaLabelledBy, ariaDescribedBy} = labelIds.get(state);
-
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
   let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
@@ -337,20 +339,35 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
     ariaDescribedBy = undefined;
   }
 
-  let id = useId(props.id);
-  let isEditable = !props.isDisabled && !props.isReadOnly && segment.isEditable;
+  let id = useId();
+  let isEditable = !state.isDisabled && !state.isReadOnly && segment.isEditable;
+
+  // Prepend the label passed from the field to each segment name.
+  // This is needed because VoiceOver on iOS does not announce groups.
+  let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
+  let labelProps = useLabels({
+    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-labelledby': ariaLabelledBy
+  });
+
+  // Literal segments should not be visible to screen readers. We don't really need any of the above,
+  // but the rules of hooks mean hooks cannot be conditional so we have to put this condition here.
+  if (segment.type === 'literal') {
+    return {
+      segmentProps: {
+        'aria-hidden': true
+      }
+    };
+  }
+
   return {
-    segmentProps: mergeProps(spinButtonProps, pressProps, {
+    segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
-      'aria-controls': props['aria-controls'],
-      // 'aria-haspopup': props['aria-haspopup'], // deprecated in ARIA 1.2
       'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
-      'aria-label': segment.type !== 'literal' ? displayNames.of(segment.type) : undefined,
-      'aria-labelledby': `${ariaLabelledBy} ${id}`,
       'aria-describedby': ariaDescribedBy,
-      'aria-placeholder': segment.isPlaceholder ? segment.text : undefined,
-      'aria-readonly': props.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
+      'data-placeholder': segment.isPlaceholder || undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
@@ -358,10 +375,33 @@ export function useDateSegment<T extends DateValue>(props: DatePickerProps<T> & 
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: props.isDisabled || segment.type === 'dayPeriod' || !isEditable ? undefined : 'numeric',
-      tabIndex: props.isDisabled ? undefined : 0,
+      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
+      tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
-      onFocus
+      onFocus,
+      style: {
+        caretColor: 'transparent'
+      },
+      // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
+      onPointerDown(e) {
+        e.stopPropagation();
+      },
+      onMouseDown(e) {
+        e.stopPropagation();
+      }
     })
   };
+}
+
+function commonPrefixLength(strings: string[]): number {
+  // Sort the strings, and compare the characters in the first and last to find the common prefix.
+  strings.sort();
+  let first = strings[0];
+  let last = strings[strings.length - 1];
+  for (let i = 0; i < first.length; i++) {
+    if (first[i] !== last[i]) {
+      return i;
+    }
+  }
+  return 0;
 }

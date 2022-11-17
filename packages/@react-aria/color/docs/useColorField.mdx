@@ -29,7 +29,7 @@ keywords: [color, input, color picker, aria]
   packageData={packageData}
   componentNames={['useColorField']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/'}
   ]} />
 
 ## API
@@ -46,16 +46,17 @@ color fields that can be styled as needed.
 * Support for parsing and formatting a hex color value
 * Validates keyboard entry as the user types so that only valid hex characters are accepted
 * Supports using the arrow keys to increment and decrement the value
-* Support for customizing the step value for incrementing and decrementing
 * Exposed to assistive technology as a `textbox` via ARIA
 * Visual and ARIA labeling support
-* Follows the [spinbutton](https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton) ARIA pattern
+* Follows the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) ARIA pattern
 * Works around bugs in VoiceOver with the spinbutton role
 * Uses an ARIA live region to ensure that value changes are announced
 
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Color field anatomy diagram: Shows a color field component with labels pointing to its parts, including the input, and label elements." />
 
 A color field consists of an input element and a label. `useColorField` automatically manages
 the relationship between the two elements using the `for` attribute on the `<label>` element
@@ -128,14 +129,6 @@ function Example() {
     </>
   );
 }
-```
-
-### Step
-
-The `step` prop can be used to make a `ColorField` snap its value to specific increments.
-
-```tsx example
-<ColorField defaultValue="#7f007f" step={16} />
 ```
 
 ### Disabled and read only

@@ -20,6 +20,7 @@ import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescr
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
 import Anatomy from './TableAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Collections
@@ -34,7 +35,7 @@ keywords: [table, aria, grid]
   packageData={packageData}
   componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#grid'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
   ]} />
 
 ## API
@@ -374,28 +375,25 @@ of the table to allow the user to select rows. This is done using the <TypeLink 
 hook. It is passed the `parentKey` of the cell, which refers to the row the cell is contained within. When the user
 checks or unchecks the checkbox, the row will be added or removed from the Table's selection.
 
-In this example, we pass the result of the `checkboxProps` into the <TypeLink links={checkboxDocs.links} type={checkboxDocs.exports.useCheckbox} />
-hook and render an `<input>` element directly, but it's likely you'll have a `Checkbox` component in your component library that uses these hooks already.
-See the [useCheckbox docs](useCheckbox.html) for more information.
+The `Checkbox` component used in this example is independent and can be used separately from `Table`. The code is
+available below. See [useCheckbox](useCheckbox.html) for documentation.
 
 ```tsx example export=true render=false
 import {useTableSelectionCheckbox} from '@react-aria/table';
-import {useToggleState} from '@react-stately/toggle';
-import {useCheckbox} from '@react-aria/checkbox';
+
+// Reuse the Checkbox from your component library. See below for details.
+import {Checkbox} from 'your-component-library';
 
 function TableCheckboxCell({cell, state}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
 
-  let inputRef = useRef(null);
-  let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
-
   return (
     <td
       {...gridCellProps}
       ref={ref}>
-      <input {...inputProps} />
+      <Checkbox {...checkboxProps} />
     </td>
   );
 }
@@ -418,10 +416,7 @@ function TableSelectAllCell({column, state}) {
   let ref = useRef();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
-
   let {checkboxProps} = useTableSelectAllCheckbox(state);
-  let inputRef = useRef(null);
-  let {inputProps} = useCheckbox(checkboxProps, useToggleState(checkboxProps), inputRef);
 
   return (
     <th
@@ -429,7 +424,7 @@ function TableSelectAllCell({column, state}) {
       ref={ref}>
       {state.selectionManager.selectionMode === 'single'
         ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
-        : <input {...inputProps} ref={inputRef} />
+        : <Checkbox {...checkboxProps} />
       }
     </th>
   );
@@ -440,6 +435,10 @@ The following example shows how to enable multiple selection support using the T
 It's as simple as setting the `selectionMode` prop to `"multiple"`. Because we set the `showSelectionCheckboxes`
 option of `useTableState` to true when multiple selection is enabled, an extra column for these checkboxes is
 automatically added for us.
+
+And that's it! We now have a fully interactive table component that can support keyboard navigation, single or multiple selection,
+as well as column sorting. In addition, it is fully accessible for screen readers and other assistive technology. See below for more
+examples of how to use the Table component that we've built.
 
 ```tsx example
 <Table aria-label="Table with selection" selectionMode="multiple">
@@ -473,9 +472,27 @@ automatically added for us.
 </Table>
 ```
 
-And that's it! We now have a fully interactive table component that can support keyboard navigation, single or multiple selection,
-as well as column sorting. In addition, it is fully accessible for screen readers and other assistive technology. See below for more
-examples of how to use the Table component that we've built.
+### Checkbox
+
+The `Checkbox` component used in the above example is used to implement row selection. It is built using the [useCheckbox](useCheckbox.html)
+hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useToggleState} from '@react-stately/toggle';
+import {useCheckbox} from '@react-aria/checkbox';
+
+function Checkbox(props) {
+  let ref = React.useRef();
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+}
+```
+
+</details>
 
 ## Usage
 
@@ -617,15 +634,19 @@ When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the
 <PokemonTable selectionMode="multiple" selectionBehavior="replace" />
 ```
 
-### Row and cell actions
+### Row actions
+`useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
+When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
 
-`useTable` may be used in use cases where users can perform actions on rows or cells, such as navigating into items to open them or get more details. In the default `"toggle"` selection behavior, it is recommended to use a link in the first column for navigation.
-
-In the `"replace"` selection behavior, the `onRowAction` and `onCellAction` prop can be used to enable row and cell actions, which differ depending on the interaction method. When provided to `useTableState`, double clicking with a mouse or pressing the <Keyboard>Enter</Keyboard> key triggers the action, while single click and the <Keyboard>Space</Keyboard> key are reserved for selection. On touch devices, the action becomes the primary tap interaction, and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Double clicking matches the behavior of desktop platforms like macOS and Windows, and a separate selection mode matches mobile platforms like iOS and Android.
-
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+</div>
 ```
 
 ### Sorting

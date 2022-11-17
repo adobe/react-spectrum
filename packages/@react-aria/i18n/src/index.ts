@@ -10,11 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="intl-types-extension" />
+export {I18nProvider, useLocale} from './context';
+export {useMessageFormatter} from './useMessageFormatter';
+export {useLocalizedStringFormatter} from './useLocalizedStringFormatter';
+export {useListFormatter} from './useListFormatter';
+export {useDateFormatter} from './useDateFormatter';
+export {useNumberFormatter} from './useNumberFormatter';
+export {useCollator} from './useCollator';
+export {useFilter} from './useFilter';
 
-export * from './context';
-export * from './useMessageFormatter';
-export * from './useDateFormatter';
-export * from './useNumberFormatter';
-export * from './useCollator';
-export * from './useFilter';
+export type {FormatMessage} from './useMessageFormatter';
+export type {I18nProviderProps} from './context';
+export type {Locale} from './useDefaultLocale';
+export type {LocalizedStrings} from '@internationalized/message';
+export type {DateFormatterOptions} from './useDateFormatter';
+export type {DateFormatter} from '@internationalized/date';
+export type {Filter} from './useFilter';

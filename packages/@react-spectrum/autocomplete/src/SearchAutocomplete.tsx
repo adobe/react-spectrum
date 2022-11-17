@@ -12,7 +12,6 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing} from '@react-aria/focus';
@@ -21,17 +20,17 @@ import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
-import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter, useMessageFormatter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -39,6 +38,10 @@ import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+
+  if (props.placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
+  }
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
@@ -62,7 +65,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     onSubmit = () => {}
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -83,7 +86,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     }
   );
   let layout = useListBoxLayout(state);
-  
+
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
     {
       ...props,
@@ -95,16 +98,6 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
     },
     state
   );
-
-  let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: inputRef,
-    overlayRef: unwrappedPopoverRef,
-    scrollRef: listBoxRef,
-    placement: `${direction} end` as Placement,
-    shouldFlip: shouldFlip,
-    isOpen: state.isOpen,
-    onClose: state.close
-  });
 
   // Measure the width of the inputfield to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
@@ -124,19 +117,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  // Update position once the ListBox has rendered. This ensures that
-  // it flips properly when it doesn't fit in the available space.
-  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
-  useLayoutEffect(() => {
-    if (state.isOpen) {
-      requestAnimationFrame(() => {
-        updatePosition();
-      });
-    }
-  }, [state.isOpen, updatePosition]);
-
   let style = {
-    ...overlayProps.style,
     width: isQuiet ? null : menuWidth,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
@@ -153,14 +134,15 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
           clearButtonProps={clearButtonProps} />
       </Field>
       <Popover
-        isOpen={state.isOpen}
+        state={state}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        placement={placement}
+        triggerRef={inputRef}
+        placement={`${direction} end`}
         hideArrow
         isNonModal
-        isDismissable={false}>
+        shouldFlip={shouldFlip}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
@@ -175,10 +157,9 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span>
-              {formatMessage('noResults')}
+              {stringFormatter.format('noResults')}
             </span>
           )} />
-        <DismissButton onDismiss={() => state.close()} />
       </Popover>
     </>
   );
@@ -194,7 +175,12 @@ interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<u
 }
 
 const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: SearchAutocompleteInputProps, ref: RefObject<HTMLElement>) {
+  let searchIcon = (
+    <Magnifier data-testid="searchicon" />
+  );
+
   let {
+    icon = searchIcon,
     isQuiet,
     isDisabled,
     isReadOnly,
@@ -210,13 +196,13 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
     clearButtonProps
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={formatMessage('loading')}
+      aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -227,10 +213,6 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           'spectrum-InputGroup-input-circleLoader'
         )
       )} />
-  );
-
-  let searchIcon = (
-    <Magnifier data-testid="searchicon" />
   );
 
   let clearButton = (
@@ -292,9 +274,13 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'spectrum-InputGroup--invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
+            classNames(
+              searchAutocompleteStyles,
+              'searchautocomplete'
+            ),
             className
           )
         }>
@@ -309,9 +295,13 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
               {
                 'is-disabled': isDisabled,
                 'is-quiet': isQuiet,
-                'spectrum-Search--invalid': validationState === 'invalid',
-                'spectrum-Search--valid': validationState === 'valid'
-              }
+                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
+              },
+              classNames(
+                styles,
+                'spectrum-InputGroup-field'
+              )
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
@@ -320,8 +310,9 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle}
-          icon={searchIcon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
+          icon={icon}
+          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton}
+          disableFocusRing />
       </div>
     </FocusRing>
   );

@@ -11,72 +11,95 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Audio from '@spectrum-icons/workflow/Audio';
+import {Icon} from '@react-spectrum/icon';
+import {Item, TagGroup} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Tag, TagGroup} from '../src';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('TagGroup', module)
   .add(
     'default',
     () => render({})
-  ).add(
+  )
+  .add('icons', () => (
+    <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+      {item => (
+        <Item key={item.key} textValue={item.label}>
+          <Icon>
+            <Audio />
+          </Icon>
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </TagGroup>
+  ))
+  .add(
     'onRemove',
-    () => renderWithRemovableTags({
-      onRemove: action('onRemove')
-    })
-  ).add(
-    'is Disabled',
-    () => render({
-      isDisabled: true
-    })
-  ).add(
-    'isReadOnly',
-    () => renderWithRemovableTags({
-      isReadOnly: true
-    })
-  ).add(
-    'with announcing',
+    () => {
+      const [items, setItems] = useState([
+        {key: 1, label: 'Cool Tag 1'},
+        {key: 2, label: 'Another cool tag'},
+        {key: 3, label: 'This tag'},
+        {key: 4, label: 'What tag?'},
+        {key: 5, label: 'This tag is cool too'},
+        {key: 6, label: 'Shy tag'}
+      ]);
+      const onRemove = (key) => {
+        const newItems = [...items].filter((item) => key !== item.key.toString());
+        setItems(newItems);
+        action('onRemove')(key);
+      };
+
+      return (<TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>
+        {item => (
+          <Item key={item.key}>{item.label}</Item>
+        )}
+      </TagGroup>);
+    }
+  )
+  .add('wrapping', () => (
+    <div style={{width: '200px'}}>
+      <TagGroup aria-label="tag group">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Another cool tag</Item>
+        <Item key="3">This tag</Item>
+        <Item key="4">What tag?</Item>
+        <Item key="5">This tag is cool too</Item>
+        <Item key="6">Shy tag</Item>
+      </TagGroup>
+    </div>
+    )
+  )
+  .add('label truncation', () => (
+    <div style={{width: '100px'}}>
+      <TagGroup aria-label="tag group">
+        <Item key="1">Cool Tag 1 with a really long label</Item>
+        <Item key="2">Another long cool tag label</Item>
+        <Item key="3">This tag</Item>
+      </TagGroup>
+    </div>
+    )
+  )
+  .add(
+    'using items prop',
     () => (
-      <WithAnnouncing />
+      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
+        {item =>
+          <Item key={item.key} textValue={item.label}><Text>{item.label}</Text></Item>
+        }
+      </TagGroup>
     )
   );
 
 function render(props: any = {}) {
   return (
-    <TagGroup {...props}>
-      <Tag>Cool Tag 1</Tag>
-      <Tag>Cool Tag 2</Tag>
-      <Tag>Cool Tag 3</Tag>
+    <TagGroup {...props} aria-label="tag group">
+      <Item key="1">Cool Tag 1</Item>
+      <Item key="2">Cool Tag 2</Item>
+      <Item key="3">Cool Tag 3</Item>
     </TagGroup>
   );
 }
 
-function renderWithRemovableTags(props: any = {}) {
-  return (
-    <TagGroup {...props}>
-      <Tag isRemovable>Cool Tag 1</Tag>
-      <Tag isRemovable>Cool Tag 2</Tag>
-      <Tag isRemovable>Cool Tag 3</Tag>
-    </TagGroup>
-  );
-}
-
-function WithAnnouncing() {
-  let [tags, setTags] = useState(['Tag']);
-
-  function handleKeyDown(e) {
-    if (e.ctrlKey && e.key === 'd') {
-      e.preventDefault();
-      setTags([...tags, 'New Tag']);
-    }
-  }
-  return (
-    <React.Fragment>
-      {/*
-        // @ts-ignore */}
-      <TagGroup onKeyDown={handleKeyDown}>
-        {tags.map((t, index) => <Tag key={index}>{t}</Tag>)}
-      </TagGroup>
-    </React.Fragment>
-  );
-}

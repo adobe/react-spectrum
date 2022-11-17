@@ -41,7 +41,8 @@ keywords: [modal, tray, popover]
   componentNames={['Dialog', 'DialogTrigger']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dialog/'}
-  ]} />
+  ]}
+  since="3.0.0" />
 
 ## Example
 
@@ -67,7 +68,7 @@ import {Heading, Text} from '@react-spectrum/text';
       </Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close}>Confirm</Button>
+        <Button variant="accent" onPress={close}>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -100,7 +101,7 @@ A typical Dialog with a title, contents, and action buttons can be created like 
       <Content>Confirm publish?</Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+        <Button variant="accent" onPress={close} autoFocus>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -145,10 +146,10 @@ for the user to fill out or adding confirmation checkboxes.
       <Divider />
       <Content>
         <Form>
-          <TextField label="First Name" placeholder="John" autoFocus />
-          <TextField label="Last Name" placeholder="Smith" />
-          <TextField label="Street Address" placeholder="123 Any Street" />
-          <TextField label="City" placeholder="San Francisco" />
+          <TextField label="First Name" autoFocus />
+          <TextField label="Last Name" />
+          <TextField label="Street Address" />
+          <TextField label="City" />
         </Form>
       </Content>
       <Footer>
@@ -158,7 +159,7 @@ for the user to fill out or adding confirmation checkboxes.
       </Footer>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close}>Register</Button>
+        <Button variant="accent" onPress={close}>Register</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -178,7 +179,7 @@ The example below illustrates how a Dialog with a hero image could be rendered v
       <Content>Are you sure you want to upload this file?</Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+        <Button variant="accent" onPress={close} autoFocus>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
@@ -197,8 +198,6 @@ You are also responsible for determining what component, if any, should be autom
 The title of a Dialog is typically provided via its heading. By default, the Dialog sets its
 `aria-labelledby` to match the heading `id`, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
-
-When a Dialog is open, then it should be the only thing that can be interacted with. If your application's `Provider` is at the root of the page, this is handled automatically. However, if your application has content outside the `Provider`, then you should use the `@react-aria/aria-modal-polyfill` package to hide this content from assistive technology while a modal is open. See the [watchModals docs](../react-aria/watchModals.html) for more details.
 
 ## Events
 
@@ -226,7 +225,7 @@ function Example() {
           <Divider />
           <ButtonGroup>
             <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
-            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
+            <Button autoFocus variant="accent" onPress={() => alertSave(close)}>Save</Button>
           </ButtonGroup>
           <Content>
             <Form>
@@ -345,7 +344,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>
@@ -366,7 +365,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>
@@ -387,7 +386,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Divider />
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button autoFocus variant="accent" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form>

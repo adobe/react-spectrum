@@ -16,9 +16,12 @@ governing permissions and limitations under the License.
   --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
   --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
   --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+  --spectrum-table-row-border-radius: calc(var(--spectrum-table-border-radius) - 1px);
+  --spectrum-table-row-sticky-focus-indicator-width: 3px;
 }
 
 .spectrum-Table {
+  position: relative;
   border-collapse: separate;
   border-spacing: 0;
   outline: none;
@@ -29,12 +32,22 @@ governing permissions and limitations under the License.
 svg.spectrum-Table-sortedIcon {
   display: none;
   flex: 0 0 auto;
-  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
 }
 
 .spectrum-Table-headWrapper {
@@ -42,6 +55,10 @@ svg.spectrum-Table-sortedIcon {
   border-left-style: solid;
   border-right-width: 1px;
   border-right-style: solid;
+  flex: 0 0 auto;
+  padding-bottom: 1px;
+  margin-bottom: -1px;
+  z-index: 1;
 }
 .spectrum-Table-headCellContents {
   display: inline-block;
@@ -54,15 +71,12 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-headCell {
   display: flex;
   box-sizing: border-box;
-  font-size: var(--spectrum-table-header-text-size);
+  font-size: var(--spectrum-global-dimension-font-size-100);
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
   min-height: var(--spectrum-table-header-min-height);
-  letter-spacing: var(--spectrum-table-header-text-letter-spacing);
-  text-transform: uppercase;
   padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-  cursor: default;
   outline: 0;
   border-radius: var(--spectrum-table-header-border-radius);
 
@@ -84,6 +98,69 @@ svg.spectrum-Table-sortedIcon {
       transform: rotateZ(180deg);
     }
   }
+  &.is-resizable {
+    padding: 0;
+    .spectrum-Table-headCellContents {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .spectrum-Table-headCellButton {
+      box-sizing: border-box;
+      padding-block-start: var(--spectrum-table-header-padding-y);
+      padding-inline-end: 0;
+      padding-block-end: var(--spectrum-table-header-padding-y);
+      padding-inline-start: var(--spectrum-table-header-padding-x);
+
+      /* truncate text with ellipsis */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .is-hovered,
+  &.focus-ring {
+    .spectrum-Table-menuChevron {
+      display: inline-block;
+    }
+  }
+}
+
+.spectrum-Table-columnResizer {
+  display: flex;
+  position: absolute;
+  inset-inline-end: -10px;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: 21px;
+  block-size: 100%;
+  user-select: none;
+
+  &::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    inline-size: 1px;
+    block-size: 100%;
+  }
+
+  &:active,
+  &.focus-ring {
+    outline: none;
+  }
+}
+.spectrum-Table-columnResizerPlaceholder {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  inline-size: 10px;
+  block-size: 100%;
+  user-select: none;
+}
+.spectrum-Table-bodyResizeIndicator {
+  display: none;
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  top: 0px;
 }
 
 .spectrum-Table-cell--alignCenter {
@@ -121,6 +198,9 @@ svg.spectrum-Table-sortedIcon {
   &.is-drop-target {
     @inherit: %drop-target;
   }
+  &.spectrum-Table-body--resizerAtTableEdge {
+    border-start-end-radius: 0;
+  }
 }
 
 /* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
@@ -156,6 +236,7 @@ svg.spectrum-Table-sortedIcon {
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
   padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
 }
+.spectrum-Table--regular {}
 
 .spectrum-Table--compact .spectrum-Table-cell {
   padding-top: var(--spectrum-table-cell-compact-padding-y);
@@ -192,7 +273,8 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-cell,
-.spectrum-Table-headCell {
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
   position: relative;
 
   &:focus {
@@ -219,8 +301,21 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 }
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
+}
 
-.spectrum-Table-headCell {
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
   &:focus-ring,
   &.is-focused {
     &::before {
@@ -245,21 +340,75 @@ svg.spectrum-Table-sortedIcon {
     outline: 0;
   }
 
-  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  /* The focus ring should be sticky so it is visible at all horizontal scroll positions. */
   &:focus-ring {
     &:before {
+      display: inline-block;
       content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: var(--spectrum-selectlist-border-size-key-focus);
-      z-index: 3;
+      position: sticky;
+      inset-inline-start: 0;
+      height: 100%;
+      width: var(--spectrum-table-row-sticky-focus-indicator-width);
+      z-index: 4;
+      margin-inline-end: calc(var(--spectrum-table-row-sticky-focus-indicator-width) * -1);
+    }
+
+    .spectrum-Table-cellWrapper:first-of-type {
+      display: inline-block;
+      vertical-align: top;
     }
   }
 
   &.is-drop-target {
     @inherit: %drop-target;
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--loadingMore):not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--lastRow.spectrum-Table-row--isFlushBottom.is-selected {
+      &:after {
+        border-end-start-radius: var(--spectrum-table-row-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--firstRow.is-selected {
+      &:after {
+        border-start-start-radius: var(--spectrum-table-row-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+  &.spectrum-Table--isVerticalScrollbarVisible {
+    .spectrum-Table-row {
+      &.spectrum-Table-row--firstRow.is-selected {
+        &:after {
+          border-start-end-radius: 0;
+        }
+      }
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-end-radius: 0;
+        }
+      }
+    }
+  }
+  &.spectrum-Table--isHorizontalScrollbarVisible {
+    .spectrum-Table-row {
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-start-radius: 0;
+          border-end-end-radius: 0;
+        }
+      }
+    }
   }
 }
 
@@ -307,4 +456,43 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-checkbox {
   vertical-align: super;
+}
+
+.spectrum-Table-colResizeIndicator {
+  display: none;
+  height: 100%;
+  width: 2px;
+  position: absolute;
+  top: 1px;
+  inset-inline-end: 0;
+  pointer-events: none;
+  &.spectrum-Table-colResizeIndicator--visible {
+    display: block;
+  }
+}
+.spectrum-Table-colResizeNubbin {
+  display: none;
+  position: absolute;
+  /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
+   down one pixel and the nubbin circle up one pixel to cover it completely */
+  top: -1px;
+  width: 16px;
+  height: 16px;
+  inset-inline-start: -7px;
+  &.spectrum-Table-colResizeNubbin--visible {
+    display: block;
+  }
+}
+
+.resize-ew *,
+.spectrum-Table-columnResizer--ewresize {
+  cursor: ew-resize !important;
+}
+.resize-e *,
+.spectrum-Table-columnResizer--eresize {
+  cursor: e-resize !important;
+}
+.resize-w *,
+.spectrum-Table-columnResizer--wresize {
+  cursor: w-resize !important;
 }

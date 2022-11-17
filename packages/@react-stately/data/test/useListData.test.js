@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useListData} from '../src/useListData';
 
@@ -597,6 +597,26 @@ describe('useListData', function () {
         many[2],
         many[0],
         many[4],
+        many[3],
+        many[5]
+      ]);
+    });
+
+    it('should move multiple items before another item to after that item', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Five', ['Two', 'Three', 'Four']);
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[4],
+        many[1],
+        many[2],
         many[3],
         many[5]
       ]);

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {generatePowerset} from '../../story-utils';
-import {Grid, repeat} from '../../layout';
+import {generatePowerset} from '@react-spectrum/story-utils';
+import {Grid, repeat} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
@@ -115,4 +115,3 @@ PropNoLabel.args = {...PropDefaults.args, label: undefined, 'aria-label': 'Aria 
 export const PropCustomWidth = Template.bind({});
 PropCustomWidth.storyName = 'custom width';
 PropCustomWidth.args = {...PropDefaults.args, width: 300};
-

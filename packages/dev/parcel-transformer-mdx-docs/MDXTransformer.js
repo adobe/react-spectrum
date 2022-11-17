@@ -48,6 +48,8 @@ module.exports = new Transformer({
             return [];
           }
 
+          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
+
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
@@ -67,8 +69,8 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
+              if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
                 code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
                 code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
@@ -81,9 +83,13 @@ module.exports = new Transformer({
 
             exampleCode.push(code);
 
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
+            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
+
             if (options.includes('render=false')) {
               node.meta = null;
-              return transformExample(node, preRelease);
+              return transformExample(node, preRelease, keepIndividualImports);
             }
 
             if (meta === 'snippet') {
@@ -103,13 +109,10 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
-            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
             node.meta = 'example';
 
             return [
-              ...transformExample(node, preRelease),
+              ...transformExample(node, preRelease, keepIndividualImports),
               {
                 type: 'mdxJsxFlowElement',
                 name: 'div',
@@ -130,17 +133,45 @@ module.exports = new Transformer({
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',
-                children: [
+                children: [],
+                attributes: [
                   {
-                    type: 'text',
-                    value: node.value
+                    type: 'mdxJsxAttribute',
+                    name: 'dangerouslySetInnerHTML',
+                    value: {
+                      type: 'mdxJsxAttributeValueExpression',
+                      value: JSON.stringify({__html: node.value}),
+                      data: {
+                        estree: {
+                          type: 'Program',
+                          body: [{
+                            type: 'ExpressionStatement',
+                            expression: {
+                              type: 'ObjectExpression',
+                              properties: [{
+                                type: 'Property',
+                                kind: 'init',
+                                key: {
+                                  type: 'Identifier',
+                                  name: '__html'
+                                },
+                                value: {
+                                  type: 'Literal',
+                                  value: node.value
+                                }
+                              }]
+                            }
+                          }]
+                        }
+                      }
+                    }
                   }
                 ]
               }
             ];
           }
 
-          return transformExample(node, preRelease);
+          return transformExample(node, preRelease, keepIndividualImports);
         }
 
         return [node];
@@ -149,12 +180,14 @@ module.exports = new Transformer({
 
     let toc = [];
     let title = '';
+    let navigationTitle;
     let category = '';
     let keywords = [];
     let description = '';
     let date = '';
     let author = '';
     let image = '';
+    let hidden = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -220,12 +253,14 @@ module.exports = new Transformer({
           let yamlData = yaml.safeLoad(metadata.value);
           // title defined in yaml data will override
           title = yamlData.title || title;
+          navigationTitle = yamlData.navigationTitle;
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          hidden = yamlData.hidden;
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -272,6 +307,81 @@ module.exports = new Transformer({
             node.data = {};
           }
           let highlighted = treeSitter.highlightHast(node.value, language);
+
+          // Add <mark> elements wrapping highlighted regions, marked by comments in the code.
+          if (node.value.includes('- begin highlight -')) {
+            let highlightParent = null;
+            let highlightedNodes = [];
+            flatMap(highlighted, (node, index, parent) => {
+              if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
+                // Handle JSX-style comments, e.g. {/* foo */}
+                let prev = parent.children[index - 1];
+                if (prev?.children?.[0]?.value === '{') {
+                  prev.children = [];
+                  prev = parent.children[index - 2];
+                }
+
+                // Remove extra newline before comment.
+                if (prev?.type === 'text') {
+                  prev.value = prev.value.replace(/\n( *)$/, '\n');
+                }
+
+                highlightParent = parent;
+                highlightedNodes = [];
+                return [];
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
+                highlightParent = null;
+                let res = [{
+                  type: 'element',
+                  tagName: 'mark',
+                  children: highlightedNodes
+                }];
+
+                // Remove closing brace from JSX-style starting comments, e.g. {/* foo */}
+                if (highlightedNodes[0]?.children?.[0]?.value === '}') {
+                  highlightedNodes.shift();
+                }
+
+                // Remove extra newline after starting comment, but keep indentation.
+                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                  let node = highlightedNodes[0];
+                  node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
+                }
+
+                // Remove opening brace from JSX-style ending comments.
+                let last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.children?.[0]?.value === '{') {
+                  highlightedNodes.pop();
+                }
+
+                // Remove extra newline before ending comment.
+                last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.type === 'text' && /^\s+$/.test(last?.value)) {
+                  highlightedNodes.pop();
+                }
+
+                // Remove closing brace from JSX-style ending comments.
+                let next = parent.children?.[index + 1];
+                if (next?.children?.[0]?.value === '}') {
+                  parent.children[index + 1] = {type: 'text', value: ''};
+                  next = parent.children?.[index + 2];
+                }
+
+                // Remove extra newline after ending comment.
+                if (next?.type === 'text') {
+                  next.value = next.value.replace(/^ *\n/, '');
+                }
+
+                return res;
+              } else if (highlightParent && parent === highlightParent) {
+                highlightedNodes.push(node);
+                return [];
+              }
+
+              return [node];
+            });
+          }
+
           node.data.hChildren = [highlighted];
         });
         return tree;
@@ -301,6 +411,7 @@ module.exports = new Transformer({
     asset.setCode(String(compiled));
     asset.meta.toc = toc;
     asset.meta.title = title;
+    asset.meta.navigationTitle = navigationTitle;
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
@@ -308,6 +419,7 @@ module.exports = new Transformer({
     asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.order = order;
+    asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
     asset.isBundleSplittable = false;
@@ -390,7 +502,7 @@ export default {};
   }
 });
 
-function transformExample(node, preRelease) {
+function transformExample(node, preRelease, keepIndividualImports) {
   if (node.lang !== 'tsx') {
     return responsiveCode(node);
   }
@@ -404,32 +516,42 @@ function transformExample(node, preRelease) {
   /* Replace individual package imports in the code
    * with monorepo imports if building for production and not a pre-release
    */
-  if (process.env.DOCS_ENV === 'production' && !preRelease && node.value.includes('@react-spectrum')) {
-    let specifiers = [];
-    let last;
+  if (!preRelease && /@react-spectrum|@react-aria|@react-stately/.test(node.value)) {
+    let specifiers = {};
+    const recast = require('recast');
     const traverse = require('@babel/traverse').default;
     const {parse} = require('@babel/parser');
-    const generate = require('@babel/generator').default;
-    let ast = parse(node.value, {
-      sourceType: 'module',
-      plugins: ['jsx', 'typescript']
+    let ast = recast.parse(node.value, {
+      parser: {
+        parse() {
+          return parse(node.value, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript'],
+            tokens: true
+          });
+        }
+      }
     });
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (path.node.source.value.startsWith('@react-spectrum') && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
+          let lib = path.node.source.value.split('/')[0];
+          if (!specifiers[lib]) {
+            specifiers[lib] = [];
+          }
+
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
           for (let specifier of path.node.specifiers) {
             let mapped = mapping && mapping[specifier.imported.name];
             if (mapped && specifier.local.name === specifier.imported.name) {
               path.scope.rename(specifier.local.name, mapped);
-              specifiers.push(mapped);
+              specifiers[lib].push(mapped);
             } else {
-              specifiers.push(specifier.imported.name);
+              specifiers[lib].push(specifier.imported.name);
             }
           }
 
-          last = path.node;
           path.remove();
         }
       },
@@ -438,26 +560,25 @@ function transformExample(node, preRelease) {
       },
       Program: {
         exit(path) {
-          if (specifiers.length > 0) {
-            let literal =  t.stringLiteral('@adobe/react-spectrum');
-            literal.raw = "'@adobe/react-spectrum'";
+          for (let lib in specifiers) {
+            let names = specifiers[lib];
+            if (names.length > 0) {
+              let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
+              let literal =  t.stringLiteral(monopackage);
 
-            let decl = t.importDeclaration(
-              specifiers.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
-              literal
-            );
+              let decl = t.importDeclaration(
+                names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+                literal
+              );
 
-            decl.loc = last.loc;
-            decl.start = last.start;
-            decl.end = last.end;
-
-            path.unshiftContainer('body', [decl]);
+              path.unshiftContainer('body', [decl]);
+            }
           }
         }
       }
     });
 
-    node.value = generate(ast).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    node.value = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
     force = true;
   }
 

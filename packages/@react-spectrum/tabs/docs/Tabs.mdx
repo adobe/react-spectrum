@@ -39,7 +39,8 @@ keywords: [tabs, collections]
   componentNames={['Item', 'TabList', 'TabPanels', 'Tabs']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tabs/'}
-  ]} />
+  ]}
+  since="3.11.0" />
 
 ## Example
 ```tsx example
@@ -174,7 +175,7 @@ function Example () {
             </Item>
           )}
         </TabList>
-        <div style={{display: 'flex', flex: '0 0 auto', borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+        <div style={{display: 'flex', flex: '0 0 auto', borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'}}>
           <ActionGroup disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
             <Item key="add">
               Add Tab
@@ -534,4 +535,34 @@ function Example() {
     </>
   );
 }
+```
+
+### Emphasized
+[View guidelines](https://spectrum.adobe.com/page/tabs/#Emphasis)
+
+```tsx example
+<Tabs aria-label="Chat log emphasized example" isEmphasized>
+  <TabList>
+    <Item key="item1">
+      John Doe
+    </Item>
+    <Item key="item2">
+      Jane Doe
+    </Item>
+    <Item key="item3">
+      Joe Bloggs
+    </Item>
+  </TabList>
+  <TabPanels>
+    <Item key="item1">
+      There is no prior chat history with John Doe.
+    </Item>
+    <Item key="item2">
+      There is no prior chat history with Jane Doe.
+    </Item>
+    <Item key="item3">
+      There is no prior chat history with Joe Bloggs.
+    </Item>
+  </TabPanels>
+</Tabs>
 ```

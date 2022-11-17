@@ -31,8 +31,11 @@ const DOC_LINKS = {
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
   CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
+  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
   'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
   'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
@@ -57,7 +60,12 @@ export function Type({type}) {
     case 'undefined':
     case 'void':
     case 'unknown':
+    case 'never':
       return <Keyword {...type} />;
+    case 'this':
+      return <Keyword {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -84,6 +92,8 @@ export function Type({type}) {
       return <IntersectionType {...type} />;
     case 'application':
       return <TypeApplication {...type} />;
+    case 'typeOperator':
+      return <TypeOperator {...type} />;
     case 'function':
       return <FunctionType {...type} />;
     case 'parameter':
@@ -116,10 +126,24 @@ export function Type({type}) {
       }
       return <Type type={{...props, description: type.description}} />;
     }
+    case 'conditional':
+      return <ConditionalType {...type} />;
+    case 'indexedAccess':
+      return <IndexedAccess {...type} />;
+    case 'keyof':
+      return <Keyof {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function TypeOperator({operator, value}) {
+  return <span><span className="token hljs-literal">{operator}</span>{' '}<Type type={value} /></span>;
+}
+
+function IndexedAccess({objectType, indexType}) {
+  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
 function StringLiteral({value}) {
@@ -132,6 +156,14 @@ function NumberLiteral({value}) {
 
 function BooleanLiteral({value}) {
   return <span className="token hljs-literal">{'' + value}</span>;
+}
+
+function Symbol() {
+  return <span className="token hljs-literal">symbol</span>;
+}
+
+function Keyof({keyof}) {
+  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
 }
 
 function Keyword({type}) {
@@ -276,10 +308,18 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType}) {
   return (
     <>
       <span className="token hljs-name">{name}</span>
+      {constraint &&
+        <>
+          {' '}
+          <span className="token hljs-keyword">extends</span>
+          {' '}
+          <Type type={constraint} />
+        </>
+      }
       {defaultType &&
         <>
           <span className="token punctuation">{' = '}</span>
@@ -304,11 +344,12 @@ function FunctionType({name, parameters, return: returnType, typeParameters, res
   );
 }
 
-function Parameter({name, value, default: defaultValue, rest}) {
+function Parameter({name, value, default: defaultValue, optional, rest}) {
   return (
     <>
       {rest && <span className="token punctuation">...</span>}
       <span className="token">{name}</span>
+      {optional && <span className="token punctuation">?</span>}
       {value &&
         <>
           <span className="token punctuation">: </span>
@@ -358,6 +399,10 @@ export function LinkType({id}) {
     return null;
   }
 
+  if (DOC_LINKS[value.name]) {
+    return <Identifier name={value.name} />;
+  }
+
   registered.set(id, {type: value, links});
 
   let used = getUsedLinks(value, links);
@@ -372,15 +417,15 @@ function SpectrumLink({href, children, title}) {
   return <a className={clsx(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
 }
 
-export function renderHTMLfromMarkdown(description) {
+export function renderHTMLfromMarkdown(description, opts) {
   if (description) {
-    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}};
+    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
   return '';
 }
 
-export function InterfaceType({description, properties: props, showRequired, showDefault, isComponent}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -445,7 +490,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     }
                   </td>
                 }
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>
@@ -476,7 +521,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <Type type={prop.value.return} />
                   </code>
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>
@@ -503,21 +548,6 @@ function ObjectType({properties, exact}) {
 
         let optional = property.optional;
         let value = property.value;
-
-        // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'method') {
-          return (
-            <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-function">{k}</span>
-              <span className="token punctuation">(</span>
-              <JoinList elements={value.parameters} joiner=", " />
-              <span className="token punctuation">)</span>
-              <span className="token punctuation">{': '}</span>
-              <Type type={value.return} />
-              {i < arr.length - 1 ? ',' : ''}
-            </div>
-          );
-        }
 
         let punc = optional ? '?: ' : ': ';
         return (
@@ -553,6 +583,22 @@ function TupleType({elements}) {
       <Indent params={elements} alwaysIndent open="[" close="]">
         <JoinList elements={elements} joiner=", " alwaysIndent />
       </Indent>
+    </>
+  );
+}
+
+function ConditionalType({checkType, extendsType, trueType, falseType}) {
+  return (
+    <>
+      <Type type={checkType} />
+      {' '}
+      <span className="token hljs-keyword">extends</span>
+      {' '}
+      <Type type={extendsType} />
+      <span className="token punctuation">{' ? '}</span>
+      <Type type={trueType} />
+      <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
+      <Type type={falseType} />
     </>
   );
 }

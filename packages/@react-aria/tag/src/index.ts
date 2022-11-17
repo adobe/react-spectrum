@@ -10,5 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTag';
-export * from './useTagGroup';
+export {TagKeyboardDelegate} from './TagKeyboardDelegate';
+export {useTag} from './useTag';
+export {useTagGroup} from './useTagGroup';
+
+export type {TagProps} from '@react-types/tag';
+export type {AriaTagGroupProps, TagGroupAria} from './useTagGroup';
+export type {TagAria} from './useTag';

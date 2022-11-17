@@ -12,9 +12,9 @@
 
 import {LocalizedStrings, MessageDictionary, MessageFormatter} from '@internationalized/message';
 import {useCallback, useMemo} from 'react';
-import {useLocale} from './context';
+import {useLocale} from '../';
 
-type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
+export type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
 
 const cache = new WeakMap();
 function getCachedDictionary(strings: LocalizedStrings) {
@@ -31,6 +31,7 @@ function getCachedDictionary(strings: LocalizedStrings) {
  * Handles formatting ICU Message strings to create localized strings for the current locale.
  * Automatically updates when the locale changes, and handles caching of messages for performance.
  * @param strings - A mapping of languages to strings by key.
+ * @deprecated - use useLocalizedStringFormatter instead.
  */
 export function useMessageFormatter(strings: LocalizedStrings): FormatMessage {
   let {locale} = useLocale();

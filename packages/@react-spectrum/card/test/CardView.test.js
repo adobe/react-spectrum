@@ -10,18 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import * as stories from '../stories/GridCardView.stories';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
 import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
+
+let {falsyItems} = stories;
+let {FalsyIds} = composeStories(stories);
 
 let theme = {
   light: themeLight,
@@ -206,6 +210,34 @@ describe('CardView', function () {
       expect(within(cell).getByText('Description')).toBeTruthy();
       expect(within(cell).getByText('PNG')).toBeTruthy();
       expect(within(cell).getByText('Title', {exact: false})).toBeTruthy();
+    }
+  });
+
+  it.each`
+    Name                  | layout
+    ${'Grid layout'}      | ${GridLayout}
+    ${'Gallery layout'}   | ${GalleryLayout}
+    ${'Waterfall layout'} | ${WaterfallLayout}
+  `('$Name CardView supports falsy ids', function ({layout}) {
+    let tree = render(
+      <Provider theme={theme} locale="en-US">
+        <FalsyIds items={falsyItems} aria-label="test falsy" layout={layout} />
+      </Provider>
+    );
+    act(() => {
+      jest.runAllTimers();
+    });
+    let grid = tree.getByRole('grid');
+    let rowgroups = within(grid).getAllByRole('row');
+    expect(rowgroups).toHaveLength(falsyItems.length);
+    for (let row of rowgroups) {
+      let cell = within(row).getByRole('gridcell');
+      expect(cell).toBeTruthy();
+
+      let image = within(cell).getByRole('img');
+      expect(image).toHaveAttribute('src');
+      expect(within(cell).getByText('long description', {exact: false})).toBeTruthy();
+      expect(within(cell).getByText('PNG')).toBeTruthy();
     }
   });
 
@@ -744,9 +776,8 @@ describe('CardView', function () {
     describe('keyboard nav', function () {
       it('should move focus via Arrow Down', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[0]);
@@ -757,9 +788,9 @@ describe('CardView', function () {
         let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
         let expectedLeft = cardStyles.left;
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
           jest.runAllTimers();
         });
 
@@ -771,9 +802,8 @@ describe('CardView', function () {
 
       it('should move focus via Arrow Up', function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
-        act(() => {
-          jest.runAllTimers();
-        });
+        act(() => jest.runAllTimers()); // relayout raf
+        act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
         triggerPress(cards[2]);
@@ -784,9 +814,9 @@ describe('CardView', function () {
         let expectedTop = cardStyles.top;
         let expectedLeft = cardStyles.left;
 
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
         act(() => {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
           jest.runAllTimers();
         });
 
@@ -1006,8 +1036,8 @@ describe('CardView', function () {
       let cards = tree.getAllByRole('gridcell');
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
       expect(cards[1].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
-      expect(within(cards[1]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
+      expect(within(cards[1]).getByRole('checkbox').checked).toBeTruthy();
     });
 
     it('CardView should support disabledKeys', function () {
@@ -1021,7 +1051,7 @@ describe('CardView', function () {
       expect(document.activeElement).not.toBe(cards[0]);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', 'true');
       expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
-      expect(within(cards[0]).getByRole('checkbox')).not.toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
@@ -1042,8 +1072,8 @@ describe('CardView', function () {
 
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[0]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Title 3']));
@@ -1051,8 +1081,8 @@ describe('CardView', function () {
 
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
     });
 
     it('CardView should support single selection', function () {
@@ -1066,23 +1096,23 @@ describe('CardView', function () {
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 3']));
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'false');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeFalsy();
     });
 
     it('CardView should support no selection', function () {
@@ -1156,9 +1186,9 @@ describe('CardView', function () {
       expect(cards).toBeTruthy();
       triggerPress(cards[1]);
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1185,9 +1215,9 @@ describe('CardView', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       triggerPress(cards[1]);
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1212,9 +1242,9 @@ describe('CardView', function () {
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
       expect(within(grid).getByText('Title 1')).toBeTruthy();
 
+      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
         jest.runAllTimers();
       });
 
@@ -1243,5 +1273,34 @@ describe('CardView', function () {
       expect(within(gridCell).getByText('empty')).toBeTruthy();
       expect(row.parentNode.style.height).toBe(`${mockHeight}px`);
     });
+  });
+
+  // TODO: not testing waterfall layout because of aforementioned issue with the heights for each card being set to 0 for that layout
+  it.each`
+    Name                  | layout
+    ${'Grid layout'}      | ${GridLayout}
+    ${'Gallery layout'}   | ${GalleryLayout}
+  `('$Name CardView should only scroll an item into view when in keyboard modality', function ({layout}) {
+    let tree = render(<DynamicCardView layout={layout} />);
+    act(() => {
+      jest.runAllTimers();
+    });
+    let cards = tree.getAllByRole('gridcell');
+    expect(cards).toBeTruthy();
+    let grid = tree.getByRole('grid');
+    let initialScrollTop = grid.scrollTop;
+    triggerPress(cards[cards.length - 1]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(grid.scrollTop).toBe(initialScrollTop);
+
+    act(() => {
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+      jest.runAllTimers();
+    });
+
+    expect(grid.scrollTop).toBeGreaterThan(initialScrollTop);
   });
 });

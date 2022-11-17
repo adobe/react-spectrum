@@ -12,10 +12,14 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, toZoned} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
+import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -109,6 +113,13 @@ storiesOf('Date and Time/DatePicker', module)
     () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
   )
   .add(
+    'isDateUnavailable',
+    () => render({isDateUnavailable: (date: DateValue) => {
+      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+    }})
+  )
+  .add(
     'placeholderValue: 1980/1/1',
     () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
   )
@@ -131,6 +142,10 @@ storiesOf('Date and Time/DatePicker', module)
   .add(
     'showFormatHelpText',
     () => render({showFormatHelpText: true})
+  )
+  .add(
+    'all the events',
+    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
   );
 
 storiesOf('Date and Time/DatePicker/styling', module)
@@ -190,6 +205,23 @@ storiesOf('Date and Time/DatePicker/styling', module)
   .add(
     'errorMessage',
     () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
+  )
+  .add(
+    'invalid with time',
+    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
+  )
+  .add(
+    'shouldFlip: false',
+    () => render({shouldFlip: false})
   );
 
 function render(props = {}) {

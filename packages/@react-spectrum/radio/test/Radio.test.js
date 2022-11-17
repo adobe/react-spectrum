@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -415,6 +415,26 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-disabled', 'true');
   });
 
+  it('should support help text description', function () {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', description: 'Help text'}, []);
+
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('aria-describedby');
+
+    let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    expect(description).toBe('Help text');
+  });
+
+  it('should support error message', function () {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', validationState: 'invalid'}, []);
+
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('aria-describedby');
+
+    let description = document.getElementById(group.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('Error message');
+  });
+
   describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
       radioBehavior.reset();
@@ -480,11 +500,14 @@ describe('Radios', function () {
     });
 
     it('RadioGroup roving tabIndex for autoFocus', async () => {
+      jest.useFakeTimers();
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
       let radios = getAllByRole('radio');
+      act(() => {jest.runAllTimers();});
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+      jest.useRealTimers();
     });
 
     it.each`

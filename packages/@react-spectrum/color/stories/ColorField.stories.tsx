@@ -11,9 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Color} from '@react-types/color';
+import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
@@ -67,28 +71,16 @@ storiesOf('ColorField', module)
     )
   )
   .add(
-    'with placeholder',
-    () => render({placeholder: 'Enter a hex color'})
-  )
-  .add(
-    'step = 16',
-    () => render({step: 16})
-  )
-  .add(
     'controlled value',
     () => (
       <ControlledColorField
-        value="#FF00AA"
+        value={parseColor('#FF00AA')}
         onChange={action('change')} />
     )
   )
   .add(
     'autofocus',
     () => render({autoFocus: true})
-  )
-  .add(
-    'placeholder',
-    () => render({placeholder: '#e73623'})
   )
   .add(
     'label side',
@@ -129,11 +121,20 @@ storiesOf('ColorField', module)
         </div>
       </Flex>
     )
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
 
-function ControlledColorField(props: any = {}) {
-  let [color, setColor] = useState(props.value || null);
-  let onChange = (color: Color) => {
+function ControlledColorField(props: SpectrumColorFieldProps) {
+  let [color, setColor] = useState<string | Color | null | undefined>(props.value);
+  let onChange = (color: Color | null) => {
     setColor(color);
     if (props.onChange) { props.onChange(color); }
   };

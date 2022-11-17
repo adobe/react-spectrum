@@ -10,25 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, ReactNode} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
-interface AriaListBoxSectionProps {
+export interface AriaListBoxSectionProps {
   /** The heading for the section. */
   heading?: ReactNode,
   /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string
 }
 
-interface ListBoxSectionAria {
+export interface ListBoxSectionAria {
   /** Props for the wrapper list item. */
-  itemProps: HTMLAttributes<HTMLElement>,
+  itemProps: DOMAttributes,
 
   /** Props for the heading element, if any. */
-  headingProps: HTMLAttributes<HTMLElement>,
+  headingProps: DOMAttributes,
 
   /** Props for the group element. */
-  groupProps: HTMLAttributes<HTMLElement>
+  groupProps: DOMAttributes
 }
 
 /**

@@ -33,8 +33,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
     icon = defaultIcon,
     isDisabled,
     UNSAFE_className,
+    placeholder,
     ...otherProps
   } = props;
+
+  if (placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
+  }
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement>();
@@ -68,8 +73,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'spectrum-Search--invalid': props.validationState === 'invalid',
-            'spectrum-Search--valid': props.validationState === 'valid'
+            'spectrum-Search--invalid': props.validationState === 'invalid' && !isDisabled,
+            'spectrum-Search--valid': props.validationState === 'valid' && !isDisabled
           },
           UNSAFE_className
         )

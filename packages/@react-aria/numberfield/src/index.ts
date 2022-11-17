@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-/// <reference types="intl-types-extension" />
-
-export * from './useNumberField';
+export {useNumberField} from './useNumberField';
+export type {AriaNumberFieldProps} from '@react-types/numberfield';
+export type {NumberFieldAria} from './useNumberField';

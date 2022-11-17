@@ -56,14 +56,14 @@ function Example() {
   return (
     <>
       <div>
+        <label htmlFor="first-string">First string</label>
         <input
-          aria-label="First string"
-          placeholder="First string"
+          id="first-string"
           value={first}
           onChange={e => setFirst(e.target.value)} />
+        <label htmlFor="second-string">Second string</label>
         <input
-          aria-label="Second string"
-          placeholder="Second string"
+          id="second-string"
           value={second}
           onChange={e => setSecond(e.target.value)} />
       </div>

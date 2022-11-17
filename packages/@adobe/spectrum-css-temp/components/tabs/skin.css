@@ -10,13 +10,28 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-tabs-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-vertical-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-blue-900);
+}
+
 .spectrum-Tabs {
   border-block-end-color: var(--spectrum-tabs-rule-color);
 
   &.spectrum-Tabs--isCollapsed {
     :focus-ring {
       /* FieldButton Picker focus ring override */
-      box-shadow: none;
+      &::after {
+        box-shadow: none;
+      }
 
       &::before {
         border-color: var(--spectrum-tabs-focus-ring-color);
@@ -27,6 +42,12 @@ governing permissions and limitations under the License.
 
 .spectrum-Tabs--vertical {
   border-inline-start-color: var(--spectrum-tabs-vertical-rule-color);
+}
+
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-selectionIndicator {
+    background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+  }
 }
 
 .spectrum-Tabs-selectionIndicator {
@@ -77,11 +98,49 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-item {
+    &.is-selected {
+      color: var(--spectrum-tabs-emphasized-text-color);
+
+      .spectrum-Icon {
+        fill: var(--spectrum-tabs-emphasized-icon-color);
+      }
+
+      &:focus-ring {
+        color: var(--spectrum-tabs-emphasized-text-color-key-focus);
+
+        &::before {
+          border-color: var(--spectrum-tabs-emphasized-focus-ring-color);
+        }
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-key-focus);
+        }
+      }
+
+      &:hover {
+        color: var(--spectrum-tabs-emphasized-text-color-hover);
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-hover);
+        }
+      }
+    }
+  }
+}
+
 .spectrum-Tabs--quiet {
   border-block-end-color: var(--spectrum-tabs-quiet-rule-color);
 
   .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+  }
+
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+    }
   }
 }
 
@@ -92,6 +151,12 @@ governing permissions and limitations under the License.
 
     .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+    }
+  }
+
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
     }
   }
 }
@@ -151,6 +216,13 @@ governing permissions and limitations under the License.
       .spectrum-Tabs-itemLabel {
         color: HighlightText;
       }
+    }
+    &.spectrum-Tabs--isCollapsed {
+      :focus-ring {
+        /* FieldButton Picker focus ring override */
+        outline: none;
+      }
+
     }
   }
 }

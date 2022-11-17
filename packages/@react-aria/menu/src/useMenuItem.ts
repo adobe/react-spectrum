@@ -10,33 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
-import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {Key, RefObject} from 'react';
+import {menuData} from './useMenu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface MenuItemAria {
+export interface MenuItemAria {
   /** Props for the menu item element. */
-  menuItemProps: HTMLAttributes<HTMLElement>,
+  menuItemProps: DOMAttributes,
 
   /** Props for the main text element inside the menu item. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
 
   /** Props for the description text element inside the menu item, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
 
   /** Props for the keyboard shortcut text element inside the item, if any. */
-  keyboardShortcutProps: HTMLAttributes<HTMLElement>
+  keyboardShortcutProps: DOMAttributes,
+
+  /** Whether the item is currently focused. */
+  isFocused: boolean,
+  /** Whether the item is currently selected. */
+  isSelected: boolean,
+  /** Whether the item is currently in a pressed state. */
+  isPressed: boolean,
+  /** Whether the item is disabled. */
+  isDisabled: boolean
 }
 
-interface AriaMenuItemProps {
-  /** Whether the menu item is disabled. */
+export interface AriaMenuItemProps {
+  /**
+   * Whether the menu item is disabled.
+   * @deprecated - pass disabledKeys to useTreeState instead.
+   */
   isDisabled?: boolean,
 
-  /** Whether the menu item is selected. */
+  /**
+   * Whether the menu item is selected.
+   * @deprecated - pass selectedKeys to useTreeState instead.
+   */
   isSelected?: boolean,
 
   /** A screen reader only label for the menu item. */
@@ -45,7 +61,10 @@ interface AriaMenuItemProps {
   /** The unique key for the menu item. */
   key?: Key,
 
-  /** Handler that is called when the menu should close after selecting an item. */
+  /**
+   * Handler that is called when the menu should close after selecting an item.
+   * @deprecated - pass to the menu instead.
+   */
   onClose?: () => void,
 
   /**
@@ -57,7 +76,10 @@ interface AriaMenuItemProps {
   /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
 
-  /** Handler that is called when the user activates the item. */
+  /**
+   * Handler that is called when the user activates the item.
+   * @deprecated - pass to the menu instead.
+   */
   onAction?: (key: Key) => void
 }
 
@@ -67,16 +89,20 @@ interface AriaMenuItemProps {
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
-export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<FocusableElement>): MenuItemAria {
   let {
-    isSelected,
-    isDisabled,
     key,
-    onClose,
     closeOnSelect,
-    isVirtualized,
-    onAction
+    isVirtualized
   } = props;
+
+  let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
+  let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
+  let isFocused = state.selectionManager.focusedKey === key;
+
+  let data = menuData.get(state);
+  let onClose = props.onClose || data.onClose;
+  let onAction = props.onAction || data.onAction;
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
@@ -152,10 +178,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     selectionManager: state.selectionManager,
     key,
     ref,
-    shouldSelectOnPressUp: true
+    shouldSelectOnPressUp: true,
+    allowsDifferentPressOrigin: true
   });
 
-  let {pressProps} = usePress({onPressStart, onPressUp, isDisabled});
+  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled});
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
@@ -179,6 +206,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     },
     keyboardShortcutProps: {
       id: keyboardId
-    }
+    },
+    isFocused,
+    isSelected,
+    isPressed,
+    isDisabled
   };
 }

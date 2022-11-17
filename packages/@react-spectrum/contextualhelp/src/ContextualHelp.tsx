@@ -11,25 +11,28 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import React from 'react';
-import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-function ContextualHelp(props: SpectrumContextualHelpProps) {
+function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     variant = 'help',
-    placement = 'bottom end',
+    placement = 'bottom start',
     children,
-    ...otherProps} = props;
+    ...otherProps
+  } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
 
@@ -38,20 +41,24 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
     footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
   };
 
+  let labelProps = useLabels(otherProps, stringFormatter.format(variant));
+
   return (
-    <DialogTrigger type="popover" placement={placement} hideArrow {...otherProps}>
+    <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
-        isQuiet
-        aria-label={formatMessage('open')}>
+        {...mergeProps(otherProps, labelProps, {isDisabled: false})}
+        ref={ref}
+        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', otherProps.UNSAFE_className)}
+        isQuiet>
         {icon}
       </ActionButton>
-      <SlotProvider slots={slots}>
-        <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
-          {children}
-        </Dialog>
-      </SlotProvider>
-
+      <ClearSlots>
+        <SlotProvider slots={slots}>
+          <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
+            {children}
+          </Dialog>
+        </SlotProvider>
+      </ClearSlots>
     </DialogTrigger>
   );
 }
@@ -59,4 +66,5 @@ function ContextualHelp(props: SpectrumContextualHelpProps) {
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export {ContextualHelp};
+let _ContextualHelp = React.forwardRef(ContextualHelp);
+export {_ContextualHelp as ContextualHelp};

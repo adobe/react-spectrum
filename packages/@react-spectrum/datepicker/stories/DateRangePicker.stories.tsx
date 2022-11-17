@@ -12,10 +12,14 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarDate, parseDate, toZoned} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
+import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@adobe/react-spectrum';
 import React from 'react';
@@ -87,6 +91,29 @@ storiesOf('Date and Time/DateRangePicker', module)
     () => render({minValue: new CalendarDate(2010, 1, 1), maxValue: new CalendarDate(2020, 1, 1)})
   )
   .add(
+    'isDateUnavailable',
+    () => {
+      const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+      let [value, setValue] = React.useState(null);
+      let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
+      let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+      return render({
+        value,
+        onChange: setValue,
+        validationState: isInvalid ? 'invalid' : null,
+        isDateUnavailable,
+        errorMessage: 'Selected ranges may not include unavailable dates.'
+      });
+    }
+  )
+  .add(
+    'isDateAvailable, allowsNonContiguousRanges',
+    () => {
+      let {locale} = useLocale();
+      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+    }
+  )
+  .add(
     'placeholderValue: 1980/1/1',
     () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
   )
@@ -101,6 +128,10 @@ storiesOf('Date and Time/DateRangePicker', module)
   .add(
     'showFormatHelpText',
     () => render({showFormatHelpText: true})
+  )
+  .add(
+    'all the events',
+    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
   );
 
 storiesOf('Date and Time/DateRangePicker/styling', module)
@@ -162,12 +193,29 @@ storiesOf('Date and Time/DateRangePicker/styling', module)
     () => render({errorMessage: 'Dates must be after today', validationState: 'invalid'})
   )
   .add(
+    'invalid with time',
+    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: {start: toZoned(parseDate('2020-02-03'), 'America/New_York'), end: toZoned(parseDate('2020-02-12'), 'America/Los_Angeles')}})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
+  )
+  .add(
     'in scrollable container',
     () => (
       <div style={{height: '200vh'}}>
         {render({granularity: 'second'})}
       </div>
     )
+  )
+  .add(
+    'shouldFlip: false',
+    () => render({shouldFlip: false})
   );
 
 function render(props = {}) {

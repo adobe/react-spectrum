@@ -32,9 +32,8 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-itemIndicator {
   display: block;
 
-  position: absolute;
-  inset-inline-start: var(--spectrum-accordion-icon-spacing);
-  inset-block-start: calc(var(--spectrum-accordion-item-height-actual) / 2 - var(--spectrum-accordion-icon-height) / 2);
+  padding-inline-start: var(--spectrum-accordion-icon-spacing);
+  padding-inline-end: var(--spectrum-accordion-icon-gap);
 
   transition: transform ease var(--spectrum-global-animation-duration-100);
 }
@@ -67,20 +66,18 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   /* left padding takes into account the icon's size as well as the focus state's left border */
   padding-block: var(--spectrum-accordion-item-title-padding-y);
-  padding-inline-start: calc(calc(var(--spectrum-accordion-item-padding) * 2) + 2px);
+  padding-inline-start: 2px;
   padding-inline-end: var(--spectrum-accordion-item-padding);
   margin: 0;
 
   min-height: var(--spectrum-accordion-item-height-actual);
 
-  font-size: var(--spectrum-accordion-item-title-text-size);
+  font-size: var(--spectrum-global-dimension-font-size-300);
   line-height: var(--spectrum-accordion-item-line-height);
-  text-transform: uppercase;
-  letter-spacing: var(--spectrum-accordion-item-title-tracking-actual);
 
   text-overflow: ellipsis;
   cursor: default;
-  font-weight: 500;
+  font-weight: var(--spectrum-global-font-weight-bold);
 
   /* reset styling if button element is used */
   -webkit-appearance: none;

@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactNode, useContext, useMemo, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+// We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
+// guarded by a check that it only runs on the client side.
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.
@@ -36,7 +38,7 @@ const defaultContext: SSRContextValue = {
 
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
 
-interface SSRProviderProps {
+export interface SSRProviderProps {
   /** Your application here. */
   children: ReactNode
 }
@@ -77,6 +79,7 @@ export function useSSRSafeId(defaultId?: string): string {
     console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => defaultId || `react-aria${ctx.prefix}-${++ctx.current}`, [defaultId]);
 }
 

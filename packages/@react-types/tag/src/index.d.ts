@@ -10,23 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelection, Removable, StyleProps} from '@react-types/shared';
-import {ReactChild, ReactElement, ReactNode} from 'react';
+import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
+import {GridState} from '@react-stately/grid';
+import {Key, RefObject} from 'react';
 
-export interface TagProps extends Removable<ReactChild, void> {
-  children?: ReactNode,
-  icon?: ReactElement,
-  isDisabled?: boolean,
-  validationState?: 'invalid' | 'valid'
+export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
+  /** Whether the TagGroup allows removal of tags. */
+  allowsRemoving?: boolean,
+  /** Called when the user removes a tag.  */
+  onRemove?: (key: Key) => void
 }
 
-export interface TagGroupProps extends MultipleSelection {
-  children: ReactElement<TagProps> | ReactElement<TagProps>[],
-  isDisabled?: boolean,
-  isReadOnly?: boolean,
-  onRemove?: (items: any[]) => void,
-  validationState?: 'invalid' | 'valid'
+export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps, AriaLabelingProps {}
+
+export interface TagProps<T> extends ItemProps<any> {
+  isFocused: boolean,
+  allowsRemoving?: boolean,
+  item: Node<T>,
+  onRemove?: (key: Key) => void,
+  tagRef: RefObject<HTMLElement>,
+  tagRowRef: RefObject<HTMLElement>
 }
 
-export interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
-export interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}
+interface SpectrumTagProps<T> extends TagProps<T> {
+  state: GridState<any, any>
+}

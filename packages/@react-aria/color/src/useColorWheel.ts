@@ -12,37 +12,35 @@
 
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
+import {DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-interface ColorWheelAriaProps extends AriaColorWheelProps {
+export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
   outerRadius: number,
   /** The inner radius of the color wheel. */
   innerRadius: number
 }
 
-interface ColorWheelAria {
+export interface ColorWheelAria {
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
+  trackProps: DOMAttributes,
   /** Props for the thumb element. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
-
-const PAGE_MIN_STEP_SIZE = 6;
 
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState, inputRef: RefObject<HTMLElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
   let {
     isDisabled,
-    step = 1,
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel
@@ -62,12 +60,38 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
   stateRef.current = state;
 
   let currentPosition = useRef<{x: number, y: number}>(null);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      // these are the cases that useMove doesn't handle
+      if (!/^(PageUp|PageDown)$/.test(e.key)) {
+        e.continuePropagation();
+        return;
+      }
+      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
+      e.preventDefault();
+      // remember to set this and unset it so that onChangeEnd is fired
+      stateRef.current.setDragging(true);
+      switch (e.key) {
+        case 'PageUp':
+          e.preventDefault();
+          state.increment(stateRef.current.pageStep);
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          state.decrement(stateRef.current.pageStep);
+          break;
+      }
+      stateRef.current.setDragging(false);
+    }
+  });
+
   let moveHandler = {
     onMoveStart() {
       currentPosition.current = null;
       state.setDragging(true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
         currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
       }
@@ -75,9 +99,9 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment();
+          state.increment(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement();
+          state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         }
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
@@ -183,21 +207,6 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     }
   };
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      switch (e.key) {
-        case 'PageUp':
-          e.preventDefault();
-          state.increment(PAGE_MIN_STEP_SIZE);
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          state.decrement(PAGE_MIN_STEP_SIZE);
-          break;
-      }
-    }
-  });
-
   let trackInteractions = isDisabled ? {} : mergeProps({
     ...(typeof PointerEvent !== 'undefined' ? {
       onPointerDown: (e: React.PointerEvent) => {
@@ -234,7 +243,7 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     onTouchStart: (e: React.TouchEvent) => {
       onThumbDown(e.changedTouches[0].identifier);
     }
-  }, movePropsThumb, keyboardProps);
+  }, keyboardProps, movePropsThumb);
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given
@@ -247,6 +256,12 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
     ...props,
     'aria-label': ariaLabel
   });
+
+  let {minValue, maxValue, step} = state.value.getChannelRange('hue');
+
+  let forcedColorAdjustNoneStyle = {
+    forcedColorAdjust: 'none'
+  };
 
   return {
     trackProps: {
@@ -274,7 +289,8 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
             hsl(360, 100%, 50%)
           )
         `,
-        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`
+        clipPath: `path(evenodd, "${circlePath(outerRadius, outerRadius, outerRadius)} ${circlePath(outerRadius, outerRadius, innerRadius)}")`,
+        ...forcedColorAdjustNoneStyle
       }
     },
     thumbProps: {
@@ -284,15 +300,16 @@ export function useColorWheel(props: ColorWheelAriaProps, state: ColorWheelState
         left: '50%',
         top: '50%',
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
-        touchAction: 'none'
+        touchAction: 'none',
+        ...forcedColorAdjustNoneStyle
       }
     },
     inputProps: mergeProps(
       inputLabellingProps,
       {
         type: 'range',
-        min: '0',
-        max: '360',
+        min: String(minValue),
+        max: String(maxValue),
         step: String(step),
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,

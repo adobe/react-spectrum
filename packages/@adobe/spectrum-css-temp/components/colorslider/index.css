@@ -109,3 +109,21 @@
 .spectrum-ColorSlider-slider {
   @extend %spectrum-ColorControl-hiddenField;
 }
+
+.spectrum-ColorSlider-labelContainer {
+  display: grid;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+}
+
+.spectrum-ColorSlider-contextualHelp {
+  grid-area: contextualHelp;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+  margin-top: var(--spectrum-global-dimension-size-25);
+}
+
+.spectrum-ColorSlider-valueLabel {
+  grid-area: value;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+}

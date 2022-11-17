@@ -1,34 +1,88 @@
-import {DatePickerFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {KeyboardEvent} from '@react-types/shared';
+import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
+import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
+import {FocusableElement, KeyboardEvent} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {RefObject, useMemo} from 'react';
+import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DatePickerFieldState, ref: RefObject<HTMLElement>) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element>, disableArrowNavigation?: boolean) {
+  let {direction} = useLocale();
+  let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.altKey && e.key === 'ArrowDown' && 'setOpen' in state) {
+    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
       e.preventDefault();
       e.stopPropagation();
       state.setOpen(true);
+    }
+
+    if (disableArrowNavigation) {
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        e.stopPropagation();
+        if (direction === 'rtl') {
+          focusManager.focusNext();
+        } else {
+          focusManager.focusPrevious();
+        }
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        e.stopPropagation();
+        if (direction === 'rtl') {
+          focusManager.focusPrevious();
+        } else {
+          focusManager.focusNext();
+        }
+        break;
     }
   };
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
-    let elements = ref.current.querySelectorAll('[tabindex="0"]');
-    let index = elements.length - 1;
-    while (index >= 0 && elements[index].getAttribute('aria-placeholder')) {
-      index--;
+    // Try to find the segment prior to the element that was clicked on.
+    let target = window.event?.target as FocusableElement;
+    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+    if (target) {
+      walker.currentNode = target;
+      target = walker.previousNode() as FocusableElement;
     }
-    index = Math.min(index + 1, elements.length - 1);
-    let element = elements[index] as HTMLElement;
-    if (element) {
-      element.focus();
+
+    // If no target found, find the last element from the end.
+    if (!target) {
+      let last: FocusableElement;
+      do {
+        last = walker.lastChild() as FocusableElement;
+        if (last) {
+          target = last;
+        }
+      } while (last);
+    }
+
+    // Now go backwards until we find an element that is not a placeholder.
+    while (target?.hasAttribute('data-placeholder')) {
+      let prev = walker.previousNode() as FocusableElement;
+      if (prev && prev.hasAttribute('data-placeholder')) {
+        target = prev;
+      } else {
+        break;
+      }
+    }
+
+    if (target) {
+      target.focus();
     }
   };
 
   let {pressProps} = usePress({
+    preventFocusOnPress: true,
+    allowTextSelectionOnPress: true,
     onPressStart(e) {
       if (e.pointerType === 'mouse') {
         focusLast();

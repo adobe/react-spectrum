@@ -39,7 +39,8 @@ keywords: [collections, dropdown]
  componentNames={['ComboBox', 'Item', 'Section']}
  sourceData={[
  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/combo-box/'}
- ]} />
+ ]}
+ since="3.12.0" />
 
 ## Example
 ```tsx example
@@ -140,35 +141,6 @@ function Example() {
         {item => <Item>{item.name}</Item>}
       </ComboBox>
     </Flex>
-  );
-}
-```
-
-Placeholder text that describes the expected value or formatting for the ComboBox can be provided using the `placeholder` prop.
-Placeholder text will only appear when the ComboBox is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-function Example() {
-  let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
-  ];
-
-  return (
-    <ComboBox
-      width="size-3000"
-      label="Pick an engineering major"
-      defaultItems={options}
-      placeholder="Search engineering majors">
-      {item => <Item>{item.name}</Item>}
-    </ComboBox>
   );
 }
 ```
@@ -657,7 +629,6 @@ function Example() {
       defaultItems={options}
       inputValue={value}
       onInputChange={setValue}
-      placeholder="Enter recipient email"
       allowsCustomValue>
       {item => <Item>{item.email}</Item>}
     </ComboBox>
@@ -710,7 +681,6 @@ function Example() {
         setShowAll(false);
         setFilterValue(value);
       }}
-      placeholder="Enter recipient email"
       allowsCustomValue>
       {item => <Item>{item.email}</Item>}
     </ComboBox>
@@ -873,6 +843,32 @@ function Example() {
     </ComboBox>
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a ComboBox.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<ComboBox
+  label="Engineering major"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Major changes</Heading>
+      <Content>Once you have changed your major, you cannot change it back.</Content>
+    </ContextualHelp>
+  }>
+  <Item>Aerospace</Item>
+  <Item>Mechanical</Item>
+  <Item>Civil</Item>
+  <Item>Nuclear</Item>
+  <Item>Industrial</Item>
+  <Item>Chemical</Item>
+  <Item>Agricultural</Item>
+  <Item>Electrical</Item>
+</ComboBox>
 ```
 
 ### Custom widths

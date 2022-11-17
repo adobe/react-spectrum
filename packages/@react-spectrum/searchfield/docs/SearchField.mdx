@@ -31,7 +31,8 @@ keywords: [search field, input]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['SearchField']} />
+  componentNames={['SearchField']}
+  since="3.0.0" />
 
 ## Example
 
@@ -43,7 +44,6 @@ function Example() {
     <>
       <SearchField
         label="Search"
-        placeholder="Enter text"
         onSubmit={setSubmittedText} />
       <p>Submitted text: {submittedText}</p>
     </>
@@ -72,13 +72,6 @@ function Example() {
     </Flex>
   );
 }
-```
-
-Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop.
-Placeholder text will only appear when the SearchField is empty, and should not be used as a substitute for labeling the component with a visible label.
-
-```tsx example
-<SearchField placeholder="e.g. Sally Jones" label="Search for user" />
 ```
 
 ## Labeling
@@ -122,7 +115,6 @@ function Example() {
   return (
     <div>
       <SearchField
-        placeholder="Enter some text"
         onClear={() => setCurrentText('')}
         onChange={setCurrentText}
         onSubmit={setSubmittedText}
@@ -145,13 +137,13 @@ function Example() {
 ### Quiet
 
 ```tsx example
-<SearchField label="Search" placeholder="Email Address" isQuiet />
+<SearchField label="Search" isQuiet />
 ```
 
 ### Disabled
 
 ```tsx example
-<SearchField label="Search" placeholder="Email Address" isDisabled />
+<SearchField label="Search" isDisabled />
 ```
 
 ### Read only
@@ -193,6 +185,23 @@ function Example() {
     />
   );
 }
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a SearchField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<SearchField
+  label="Search"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Search tips</Heading>
+      <Content>You can use modifiers like "date:" and "from:" to search by specific attributes.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width
