@@ -41,7 +41,7 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
   /**
    * Target for adding extra weight to elements during linear partitioning. Anything with an aspect ratio smaler than this value
    * will be targeted.
-   * @default 1
+   * @type {number}
    */
   threshold?: number
 }
@@ -71,7 +71,6 @@ const DEFAULT_OPTIONS = {
 export class GalleryLayout<T> extends BaseLayout<T> {
   protected idealRowHeight: number;
   protected itemSpacing: Size;
-  /** The vertical padding for an item. */
   itemPadding: number;
   protected minItemSize: Size;
   protected threshold: number;
@@ -87,15 +86,16 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
   }
 
-  /** Returns the layout name. */
-  get layoutType(): string {
+  get layoutType() {
     return 'gallery';
   }
 
-  // Takes a row of widths and if there are any widths smaller than the min-width, leech width starting from
-  // the widest in the row until it can't give anymore, then move to the second widest and so forth.
-  // Do this until all assets meet the min-width.
-  private _distributeWidths(widths) {
+  /**
+   * Takes a row of widths and if there are any widths smaller than the min-width, leech width starting from
+   * the widest in the row until it can't give anymore, then move to the second widest and so forth.
+   * Do this until all assets meet the min-width.
+   * */
+  _distributeWidths(widths) {
     // create a copy of the widths array and sort it largest to smallest
     let sortedWidths = widths.concat().sort((a, b) => a[1] > b[1] ? -1 : 1);
     for (let width of widths) {
@@ -132,7 +132,6 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     return true;
   }
 
-  /** Calculate the layout information for the entire gallery collection. */
   buildCollection() {
     let visibleWidth = this.virtualizer.visibleRect.width;
     let visibleHeight = this.virtualizer.visibleRect.height;

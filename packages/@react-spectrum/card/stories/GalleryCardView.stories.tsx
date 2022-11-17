@@ -31,6 +31,7 @@ import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {Story} from '@storybook/react';
+import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
 let itemsLowVariance = [
@@ -142,7 +143,8 @@ function CustomGalleryLayout(props: SpectrumCardViewProps<object> & LayoutOption
     layoutOptions,
     ...otherProps
   } = props;
-  let galleryLayout = useMemo(() => new GalleryLayout<object>({...layoutOptions}), [layoutOptions]);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let galleryLayout = useMemo(() => new GalleryLayout<object>({collator, ...layoutOptions}), [collator, layoutOptions]);
 
   return CustomLayout({...otherProps, layout: galleryLayout});
 }

@@ -19,6 +19,7 @@ import {Image} from '@react-spectrum/image';
 import {Meta, Story} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
+import {useCollator} from '@react-aria/i18n';
 
 const meta: Meta<SpectrumCardViewProps<object>> = {
   title: 'CardView'
@@ -52,7 +53,8 @@ let itemsLowVariance = [
 ];
 
 function DynamicCardView(props: SpectrumCardViewProps<object>) {
-  let gridLayout = useMemo(() => new GridLayout(), []);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout,
     items

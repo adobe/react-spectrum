@@ -43,7 +43,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({cardOrientation, scale}) : layout, [layout, cardOrientation, scale]);
+  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
   let formatMessage = useMessageFormatter(intlMessages);
@@ -80,7 +80,6 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   cardViewLayout.disabledKeys = state.disabledKeys;
   cardViewLayout.isLoading = isLoading;
   cardViewLayout.direction = direction;
-  cardViewLayout.collator = collator;
 
   let {gridProps} = useGrid({
     ...props,
@@ -225,7 +224,7 @@ function InternalCard(props) {
 }
 
 /**
- * CardViews display a collection of items in a variety of layouts, providing users with a visual representation of the collection's contents.
+ * TODO: Add description of component here.
  */
 const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_CardView as CardView};

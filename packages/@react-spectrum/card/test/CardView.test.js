@@ -20,6 +20,7 @@ import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {useCollator} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -63,7 +64,8 @@ let onSelectionChange = jest.fn();
 let getCardStyles = (card) => card.parentNode.parentNode.style;
 
 function StaticCardView(props) {
-  let gridLayout = useMemo(() => new GridLayout(), []);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -98,8 +100,9 @@ function StaticCardView(props) {
 }
 
 function DynamicCardView(props) {
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
-  let gridLayout = useMemo(() => new GridLayout({cardOrientation}), [cardOrientation]);
+  let gridLayout = useMemo(() => new GridLayout({collator, cardOrientation}), [collator, cardOrientation]);
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -1017,7 +1020,8 @@ describe('CardView', function () {
       triggerPress(cards[0]);
       expect(document.activeElement).not.toBe(cards[0]);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).queryByRole('checkbox')).toBeFalsy();
+      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
+      expect(within(cards[0]).getByRole('checkbox')).not.toHaveAttribute('aria-checked', 'true');
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 

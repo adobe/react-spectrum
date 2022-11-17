@@ -17,13 +17,11 @@ import {Key} from 'react';
 import {Scale} from '@react-types/provider';
 
 export interface BaseLayoutOptions {
-  /**
-   * The scale for the layout (e.g. M for desktop, L for mobile). Affects the default item padding of the card where applicable.
-   * @default M
-   */
+  collator?: Intl.Collator,
+  // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
   scale?: Scale,
   /**
-   * The margin around the CardView between the edges and the items.
+   * The margin around the grid view between the edges and the items.
    * @default 24
    */
   margin?: number
@@ -32,36 +30,24 @@ export interface BaseLayoutOptions {
 export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
+  protected collator: Intl.Collator;
   protected lastCollection: GridCollection<T>;
-  /** A collection of items in the CardView. */
   collection:  GridCollection<T>;
-  /** Whether data is currently being loaded. */
   isLoading: boolean;
-  /** The currently disabled keys in the collection. */
   disabledKeys: Set<Key> = new Set();
-  /** The writing direction for the current application locale. */
   direction: Direction;
-  /** The scale for the layout (e.g. M for desktop, L for mobile). Affects the default item padding of the card where applicable. */
   scale: Scale;
-  /** The margin around the grid view between the edges and the items. */
   margin: number;
-  /** The collator used for internationalized string matching. Required to enable type to select behavior in the CardView. */
-  collator: Intl.Collator;
 
   constructor(options: BaseLayoutOptions = {}) {
     super();
     this.layoutInfos = new Map();
+    this.collator = options.collator;
     this.lastCollection = null;
     this.scale = options.scale || 'medium';
     this.margin = options.margin || 24;
   }
 
-  /**
-   * This method allows the layout to perform any pre-computation
-   * it needs to in order to prepare LayoutInfos for retrieval.
-   * Called by the collection view before getVisibleLayoutInfos
-   * or getLayoutInfo are called.
-   */
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     this.collection = this.virtualizer.collection as GridCollection<T>;
     this.buildCollection(invalidationContext);
@@ -89,17 +75,14 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   buildCollection(invalidationContext?: InvalidationContext<Node<T>, unknown>) {}
 
-  /** Returns the size of the collection. */
   getContentSize() {
     return this.contentSize;
   }
 
-  /** Returns a LayoutInfo for the given key. */
   getLayoutInfo(key: Key) {
     return this.layoutInfos.get(key);
   }
 
-  /** Returns an array of LayoutInfo objects which are inside the given rectangle. */
   getVisibleLayoutInfos(rect) {
     let res: LayoutInfo[] = [];
 
@@ -112,33 +95,23 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return res;
   }
 
-  /** Returns whether a given LayoutInfo is contained within a rectangular area. */
   isVisible(layoutInfo: LayoutInfo, rect: Rect) {
     return layoutInfo.rect.intersects(rect);
   }
 
-  /**
-   * Returns the starting attributes for an animated insertion.
-   * The view is animated from this LayoutInfo to the one returned by getLayoutInfo.
-   */
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
     return layoutInfo;
   }
 
-  /**
-   * Returns the ending attributes for an animated removal.
-   * The view is animated from the LayoutInfo returned by getLayoutInfo
-   * to the one returned by this method.
-   */
   getFinalLayoutInfo(layoutInfo: LayoutInfo) {
     layoutInfo.opacity = 0;
     layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
     return layoutInfo;
   }
 
-  private _findClosestLayoutInfo(target: Rect, rect: Rect) {
+  _findClosestLayoutInfo(target: Rect, rect: Rect) {
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let best = null;
     let bestDistance = Infinity;
@@ -162,12 +135,11 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return best;
   }
 
-  protected _findClosest(target: Rect, rect: Rect) {
+  _findClosest(target: Rect, rect: Rect) {
     let best = this._findClosestLayoutInfo(target, rect);
     return best || null;
   }
 
-  /** Returns the key visually below the given one, or `null` for none. */
   getKeyBelow(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -177,7 +149,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return closestRow?.childNodes[0]?.key;
   }
 
-  /** Returns the key visually above the given one, or `null` for none. */
   getKeyAbove(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -187,7 +158,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return closestRow?.childNodes[0]?.key;
   }
 
-  /** Returns the key visually to the right of the given one, or `null` for none. */
   getKeyRightOf(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -203,7 +173,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
   }
 
-  /** Returns the key visually to the left of the given one, or `null` for none. */
   getKeyLeftOf(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -219,13 +188,11 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
   }
 
-  /** Returns the first key, or `null` for none. */
   getFirstKey() {
     let firstRow = this.collection.getItem(this.collection.getFirstKey());
     return firstRow.childNodes[0].key;
   }
 
-  /** Returns the last key, or `null` for none. */
   getLastKey() {
     let lastRow = this.collection.getItem(this.collection.getLastKey());
     return lastRow.childNodes[0].key;
@@ -233,7 +200,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key
   // Perhaps have layoutInfo store childKey as well so we don't need to do this? Or maybe make the layoutInfos be the cells instead of the rows?
-  /** Returns the key visually one page above the given one, or `null` for none. */
   getKeyPageAbove(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -265,7 +231,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key
   // Perhaps have layoutInfo store childKey as well so we don't need to do this?
-  /** Returns the key visually one page below the given one, or `null` for none. */
   getKeyPageBelow(key: Key) {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
@@ -293,7 +258,6 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return this.getLastKey();
   }
 
-  /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch(search: string, fromKey?: Key) {
     if (!this.collator) {
       return null;
