@@ -29,6 +29,7 @@ import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {Story} from '@storybook/react';
+import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
 import {WaterfallLayout} from '../';
 import {WaterfallLayoutOptions} from '../src/WaterfallLayout';
@@ -110,7 +111,7 @@ EmptyWithHeightWaterfall.storyName = EmptyWithHeightGrid.storyName;
 export const AsyncLoadingWaterfall = () => <AsyncLoading {...AsyncLoading.args} layout={WaterfallLayout} />;
 AsyncLoadingWaterfall.storyName = AsyncLoading.storyName;
 
-const CustomLayoutTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CustomWaterfallLayout {...args} />;
+const CustomLayoutTemplate = (): Story<SpectrumCardViewProps<object>> => (args) => <CustomGalleryLayout {...args} />;
 export const CustomLayoutOptions = CustomLayoutTemplate().bind({});
 CustomLayoutOptions.args = {
   'aria-label': 'Test CardView',
@@ -124,12 +125,13 @@ interface LayoutOptions {
   layoutOptions?: WaterfallLayoutOptions
 }
 
-function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
+function CustomGalleryLayout(props: SpectrumCardViewProps<object> & LayoutOptions) {
   let {
     layoutOptions,
     ...otherProps
   } = props;
-  let waterfallLayout = useMemo(() => new WaterfallLayout<object>({...layoutOptions}), [layoutOptions]);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let galleryLayout = useMemo(() => new WaterfallLayout<object>({collator, ...layoutOptions}), [collator, layoutOptions]);
 
-  return CustomLayout({...otherProps, layout: waterfallLayout});
+  return CustomLayout({...otherProps, layout: galleryLayout});
 }
