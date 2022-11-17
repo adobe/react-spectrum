@@ -113,14 +113,10 @@ This example uses an `<input>` element for the search field.
 A "contains" filter function is obtained from <TypeLink links={i18nDocs.links} type={i18nDocs.exports.useFilter} /> and is passed to <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useComboBoxState} /> so
 that the list box can be filtered based on the option text and the current input text.
 
-The list box popup should use the same `Popover` and `ListBox` components created with [useOverlay](useOverlay.html)
+The list box popup should use the same `Popover` and `ListBox` components created with [usePopover](usePopover.html)
 and [useListBox](useListBox.html) that you may already have in your component library or application. These can be shared with other
 components such as a `Select` created with [useSelect](useSelect.html) or a `Dialog` popover created with [useDialog](useDialog.html).
 The code for these components is also included below in the collapsed sections.
-
-This example does not do any advanced popover positioning or portaling to escape its visual container.
-See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
-using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
 options.
@@ -174,7 +170,7 @@ function SearchAutocomplete(props) {
             <button {...buttonProps}>❎</button>
           }
         {state.isOpen &&
-          <Popover popoverRef={popoverRef} isOpen={state.isOpen} onClose={state.close}>
+          <Popover state={state} triggerRef={inputRef} popoverRef={popoverRef} isNonModal placement="bottom start">
             <ListBox
               {...listBoxProps}
               listBoxRef={listBoxRef}
@@ -200,52 +196,37 @@ function SearchAutocomplete(props) {
 
 The `Popover` component is used to contain the popup listbox for the SearchAutocomplete.
 It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenu.html), [Dialog](useOverlayTrigger.html), and others.
-See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
+[Menu](useMenu.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useOverlay, DismissButton} from '@react-aria/overlays';
-import {FocusScope} from '@react-aria/focus';
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover(props) {
+function Popover({children, state, ...props}) {
   let ref = React.useRef();
-  let {
-    popoverRef = ref,
-    isOpen,
-    onClose,
-    children
-  } = props;
+  let {popoverRef = ref} = props;
+  let {popoverProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
 
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    isOpen,
-    onClose,
-    shouldCloseOnBlur: true,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add a hidden <DismissButton> component at the end of the popover
-  // to allow screen reader users to dismiss the popup easily.
   return (
-    <FocusScope restoreFocus>
+    <Overlay>
       <div
-        {...overlayProps}
+        {...popoverProps}
         ref={popoverRef}
         style={{
-          position: "absolute",
-          width: "100%",
-          border: "1px solid gray",
-          background: "lightgray",
-          marginTop: 4
+          ...popoverProps.style,
+          background: 'lightgray',
+          border: '1px solid gray'
         }}>
         {children}
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={state.close} />
       </div>
-    </FocusScope>
+    </Overlay>
   );
 }
 ```
@@ -277,8 +258,9 @@ function ListBox(props) {
         margin: 0,
         padding: 0,
         listStyle: "none",
-        maxHeight: "150px",
-        overflow: "auto"
+        maxHeight: 150,
+        overflow: "auto",
+        minWidth: 200
       }}>
       {[...state.collection].map(item => (
         <Option

@@ -14,10 +14,9 @@ import {ariaHideOutside} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {OverlayContext} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import {RefObject, useContext, useState} from 'react';
+import {RefObject, useState} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -41,6 +40,10 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
   isNonModal?: boolean,
   /**
    * Whether pressing the escape key to close the popover should be disabled.
+   *
+   * Most popovers should not use this option. When set to true, an alternative
+   * way to close the popover with a keyboard must be provided.
+   *
    * @default false
    */
   isKeyboardDismissDisabled?: boolean
@@ -70,13 +73,11 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps
   } = props;
 
-  let ctx = useContext(OverlayContext);
   let {overlayProps, underlayProps} = useOverlay(
     {
       isOpen: state.isOpen,
       onClose: state.close,
-      // Close on blur if the overlay's FocusScope does not contain focus.
-      shouldCloseOnBlur: ctx && !ctx.contain,
+      shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
       isKeyboardDismissDisabled
     },
@@ -87,7 +88,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
-    isOpen: state.isOpen
+    isOpen: state.isOpen,
+    onClose: null
   });
 
   // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
