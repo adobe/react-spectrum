@@ -26,31 +26,25 @@ const argTypes = {
     control: 'text'
   },
   errorMessage: {
-    control: 'text',
-    defaultValue: 'Create a password with at least 8 characters.'
+    control: 'text'
   },
   validationState: {
     control: 'radio',
-    defaultValue: 'valid',
-    options: ['invalid', 'valid', undefined]
+    options: ['invalid', 'valid']
   },
   isDisabled: {
-    control: 'boolean',
-    defaultValue: false
+    control: 'boolean'
   },
   labelAlign: {
     control: 'radio',
-    defaultValue: 'start',
     options: ['end', 'start']
   },
   labelPosition: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['side', 'top']
   },
   width: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['100px', '440px', 'var(--spectrum-global-dimension-top, var(--spectrum-alias-top))']
   }
 };
@@ -147,7 +141,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
 
 function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
-
+  
   return (
     <TextField
       {...props}
