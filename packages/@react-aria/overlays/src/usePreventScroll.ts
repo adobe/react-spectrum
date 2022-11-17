@@ -33,6 +33,8 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
+let isScrollPrevented = false;
+
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
@@ -47,11 +49,15 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
     }
 
     if (isIOS()) {
-      return preventScrollMobileSafari();
+      return chain(preventScrollMobileSafari(), setScrollPrevented());
     } else {
-      return preventScrollStandard();
+      return chain(preventScrollStandard(), setScrollPrevented());
     }
   }, [isDisabled]);
+}
+
+export function getScrollPrevented(): boolean {
+  return isScrollPrevented;
 }
 
 // For most browsers, all we need to do is set `overflow: hidden` on the root element, and
@@ -230,6 +236,13 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
   };
 }
 
+function setScrollPrevented() {
+  isScrollPrevented = true;
+  return () => {
+    isScrollPrevented = false;
+  };
+}
+
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
   while (target && target !== root) {
@@ -243,7 +256,7 @@ function scrollIntoView(target: Element) {
       }
     }
 
-    target = scrollable.parentElement;
+    target = scrollable;
   }
 }
 

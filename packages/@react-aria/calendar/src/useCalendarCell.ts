@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, runAfterTransition, scrollIntoViewFully, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -288,10 +288,12 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
-      // Only scroll the direct scroll parent, not the whole page, so
-      // we don't scroll to the bottom when opening date picker popover.
-      if (getInteractionModality() !== 'pointer') {
-        scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+      if (getInteractionModality() === 'keyboard') {
+        // Run after dialog transitions so we don't attempt to scroll to the bottom of the page
+        // where the overlay is positioned initially
+        runAfterTransition(() => {
+          scrollIntoViewFully(ref.current);
+        });
       }
     }
   }, [isFocused, ref]);

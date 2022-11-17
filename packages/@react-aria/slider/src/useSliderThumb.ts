@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, scrollIntoViewFully, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -121,7 +121,12 @@ export function useSliderThumb(
           setThumbValue(index, getThumbMaxValue(index));
           break;
       }
+
       setThumbDragging(index, false);
+      // Perform scroll after the thumb is fully positioned
+      requestAnimationFrame(() => {
+        scrollIntoViewFully(inputRef.current);
+      });
     }
   });
 
@@ -151,6 +156,7 @@ export function useSliderThumb(
         } else {
           incrementThumb(index, shiftKey ? pageSize : step);
         }
+        scrollIntoViewFully(inputRef.current);
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {

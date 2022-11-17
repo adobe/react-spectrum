@@ -258,6 +258,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let onFocus = () => {
     enteredKeys.current = '';
+    // TODO: replace with scrollIntoViewFully?
     scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
 
     // Collapse selection to start or Chrome won't fire input events.

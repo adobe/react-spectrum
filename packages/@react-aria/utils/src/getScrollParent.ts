@@ -11,6 +11,10 @@
  */
 
 export function getScrollParent(node: Element): Element {
+  if (isScrollable(node)) {
+    node = node.parentElement;
+  }
+
   while (node && !isScrollable(node)) {
     node = node.parentElement;
   }

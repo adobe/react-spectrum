@@ -12,11 +12,11 @@
 
 import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
+import {getInteractionModality, PressProps, useLongPress, usePress} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, runAfterTransition, scrollIntoViewFully} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
 export interface SelectableItemOptions {
   /**
@@ -142,6 +142,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focus();
       } else {
         focusSafely(ref.current);
+      }
+
+      // TODO: is this the appropriate place to put this? We need the focused DOM node
+      // Also keyboard modality != keyboard navigation. If the manager.focusedKey changes programatically and not
+      // in response to keypress but the last interaction modality was keyboard then we'd perform the scroll
+      if (getInteractionModality() === 'keyboard') {
+        scrollIntoViewFully(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
