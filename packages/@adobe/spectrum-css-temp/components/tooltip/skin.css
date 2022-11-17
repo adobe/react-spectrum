@@ -11,13 +11,18 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Tooltip {
-  --spectrum-tooltip-background-color: var(--spectrum-neutral-subdued-background-color-default);
   --spectrum-tooltip-negative-background-color: var(--spectrum-negative-background-color-default);
   --spectrum-tooltip-positive-background-color: var(--spectrum-positive-background-color-default);
   --spectrum-tooltip-info-background-color: var(--spectrum-informative-background-color-default);
   background-color: var(--spectrum-tooltip-background-color);
-
   color: var(--spectrum-tooltip-text-color);
+
+  /* use drop-shadow instead of box-shadow so it follows the arrow shape */
+  filter: var(--spectrum-tooltip-dropshadow);
+  /* explicitly adding this webkit prefix may fix the bug where the drop-shadow remains dirty */
+  /* https://stackoverflow.com/questions/56478925/safari-drop-shadow-filter-remains-visible-even-with-hidden-element */
+  -webkit-filter: var(--spectrum-tooltip-dropshadow);
+  will-change: filter;
 }
 
 .spectrum-Tooltip-tip {

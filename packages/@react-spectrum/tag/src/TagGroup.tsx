@@ -100,5 +100,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   );
 }
 
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
 const _TagGroup = React.forwardRef(TagGroup) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_TagGroup as TagGroup};

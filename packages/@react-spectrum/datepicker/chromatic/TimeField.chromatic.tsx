@@ -36,7 +36,15 @@ PlaceholderFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const PlaceholderFocusExpress = () => <TimeField label="Time" placeholderValue={time} autoFocus />;
+PlaceholderFocusExpress.parameters = {
+  chromaticProvider: {
+    express: true
   }
 };
 
@@ -47,7 +55,8 @@ ValueFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
   }
 };
 

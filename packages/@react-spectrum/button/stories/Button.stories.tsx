@@ -20,6 +20,7 @@ import {SpectrumButtonProps} from '@react-types/button';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {View} from '@react-spectrum/view';
 
 const parameters = {
   args: {
@@ -104,9 +105,9 @@ function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> 
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
-      </div>
+      </View>
     );
   }
 
@@ -139,9 +140,9 @@ function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
-      </div>
+      </View>
     );
   }
 
@@ -178,9 +179,9 @@ function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonP
 
   if (props.variant === 'overBackground' || props.staticColor === 'white') {
     return (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
         {buttons}
-      </div>
+      </View>
     );
   }
 
