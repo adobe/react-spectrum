@@ -264,7 +264,7 @@ A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by o
 
 An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
-<StateTable properties={docs.exports.ItemRenderProps.properties} />
+<StateTable properties={docs.exports.ItemRenderProps.properties} showOptional />
 
 Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
 
@@ -579,6 +579,111 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
   <Item id="ham">Ham</Item>
 </ListBox>
 ```
+
+### Drag and drop
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop, DropIndicator} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 'a', type: 'file', name: 'Adobe Photoshop'},
+      {id: 'b', type: 'file', name: 'Adobe XD'},
+      {id: 'c', type: 'file', name: 'Adobe Dreamweaver'},
+      {id: 'd', type: 'file', name: 'Adobe InDesign'},
+      {id: 'e', type: 'file', name: 'Adobe Connect'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+  });
+
+  return (
+    <ListBox aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+      {item => <Item>{item.name}</Item>}
+    </ListBox>
+  )
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-drop-target] {
+  box-shadow: 0 0 0 2px var(--highlight-background);
+}
+
+.react-aria-Item[data-dragging] {
+  opacity: 0.6;
+}
+
+.react-aria-Item[data-drop-target] {
+  box-shadow: inset 0 0 0 2px var(--highlight-background);
+}
+
+.react-aria-DropIndicator {
+  width: 100%;
+  margin-left: 0;
+  height: 2px;
+  margin-top: -2px;
+  margin-bottom: -2px;
+  outline: none;
+  background: transparent;
+  list-style: none;
+
+  &:first-child {
+    margin-top: 0;
+    margin-bottom: -2px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+    margin-top: -2px;
+  }
+
+  &[data-drop-target] {
+    background: var(--highlight-background);
+  }
+}
+
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  background: slateblue;
+  color: white;
+  border-radius: 4px;
+
+  & .badge {
+    background: white;
+    color: slateblue;
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
 
 ## Advanced customization
 

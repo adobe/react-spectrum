@@ -47,6 +47,7 @@ export {Text, TextContext} from './Text';
 export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {TooltipTrigger, Tooltip} from './Tooltip';
+export {useDragAndDrop, DropIndicator} from './useDragAndDrop';
 
 export type {BreadcrumbsProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';

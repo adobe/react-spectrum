@@ -673,7 +673,19 @@ export interface ItemRenderProps {
   /** The type of selection that is allowed in the collection. */
   selectionMode: SelectionMode,
   /** The selection behavior for the collection. */
-  selectionBehavior: SelectionBehavior
+  selectionBehavior: SelectionBehavior,
+  /**
+   * Whether the item is currently being dragged.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [data-dragging]
+   */
+  isDragging?: boolean,
+  /**
+   * Whether the item is currently an active drop target.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [data-drop-target]
+   */
+  isDropTarget?: boolean
 }
 
 export interface ItemProps<T> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {}
