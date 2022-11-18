@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Collection, CollectionBase, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from '@react-types/shared';
+import {CollectionBase, Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
@@ -21,9 +21,9 @@ class BaseNode<T> {
   previousSibling: ElementNode<T> | null;
   nextSibling: ElementNode<T> | null;
   parentNode: BaseNode<T> | null;
-  ownerDocument: Root<T>;
+  ownerDocument: BaseCollection<T>;
 
-  constructor(ownerDocument: Root<T>) {
+  constructor(ownerDocument: BaseCollection<T>) {
     this.ownerDocument = ownerDocument;
   }
 
@@ -58,18 +58,11 @@ class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.addNode(child);
-    this.ownerDocument.update();
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
-    }
-
-    let node = referenceNode;
-    while (node) {
-      node.index++;
-      node = node.nextSibling;
     }
 
     newNode.nextSibling = referenceNode;
@@ -85,8 +78,13 @@ class BaseNode<T> {
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
+    let node = referenceNode;
+    while (node) {
+      node.index++;
+      node = node.nextSibling;
+    }
+
     this.ownerDocument.addNode(newNode);
-    this.ownerDocument.update();
   }
 
   removeChild(child: ElementNode<T>) {
@@ -122,7 +120,6 @@ class BaseNode<T> {
     child.index = null;
 
     this.ownerDocument.removeNode(child);
-    this.ownerDocument.update();
   }
 
   addEventListener() {}
@@ -136,7 +133,7 @@ const TYPE_MAP = {
   option: 'item'
 };
 
-class ElementNode<T> extends BaseNode<T> implements Node<T> {
+export class ElementNode<T> extends BaseNode<T> implements Node<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   type: string;
   key: Key;
@@ -144,10 +141,9 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
   rendered: ReactNode;
   textValue: string;
   props: any;
-  level: number;
   index: number;
 
-  constructor(type, ownerDocument) {
+  constructor(type: string, ownerDocument: BaseCollection<T>) {
     super(ownerDocument);
     this.type = TYPE_MAP[type];
     this.key = ++id; // TODO
@@ -155,7 +151,6 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
     this.rendered = null;
     this.textValue = null;
     this.props = {};
-    // this.props = {id: ++id};
   }
 
   get childNodes(): Iterable<ElementNode<T>> {
@@ -184,6 +179,14 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
     return null;
   }
 
+  get level() {
+    if (this.parentNode instanceof ElementNode) {
+      return this.parentNode.level + (this.type === 'item' ? 1 : 0);
+    }
+
+    return 0;
+  }
+
   set multiple(value) {
     this.props = value;
     this.rendered = value.rendered;
@@ -195,7 +198,7 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
       }
       this.key = value.id;
     }
-    this.ownerDocument.update();
+    this.ownerDocument.queueUpdate(this);
   }
 
   get style() {
@@ -206,27 +209,28 @@ class ElementNode<T> extends BaseNode<T> implements Node<T> {
   }
 
   hasAttribute() {}
-  setAttribute() {}
+  setAttribute(key: string, value: string) {
+    if (key in this) {
+      this[key] = value;
+    }
+  }
+  
   setAttributeNS() {}
   removeAttribute() {}
 }
 
-class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
+export class BaseCollection<T> extends BaseNode<T> implements ICollection<Node<T>> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
   ownerDocument = this;
   keyMap: Map<Key, ElementNode<T>> = new Map();
-  update: () => void;
+  private update: () => void;
 
   constructor(update: () => void) {
     super(null);
     this.update = update;
   }
 
-  createElement(type) {
-    if (type !== 'option' && type !== 'optgroup' && type !== 'hr') {
-      throw new Error(`<${type}> is not allowed inside a ListBox. Please render an <Item> or <Section>.`);
-    }
-
+  createElement(type: string) {
     return new ElementNode(type, this);
   }
 
@@ -238,6 +242,8 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
         this.addNode(child);
       }
     }
+
+    this.queueUpdate(node);
   }
 
   removeNode(node: ElementNode<T>) {
@@ -246,6 +252,13 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
     }
 
     this.keyMap.delete(node.key);
+    this.queueUpdate(node);
+  }
+
+  // node is used in subclasses.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  queueUpdate(node: ElementNode<T>) {
+    this.update();
   }
 
   get size() {
@@ -265,7 +278,7 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
     if (node.previousSibling) {
       node = node.previousSibling;
 
-      while (node.lastChild) {
+      while (node.type !== 'item' && node.lastChild) {
         node = node.lastChild;
       }
 
@@ -283,7 +296,7 @@ class Root<T> extends BaseNode<T> implements Collection<Node<T>> {
       return null;
     }
 
-    if (node.firstChild) {
+    if (node.type !== 'item' && node.firstChild) {
       return node.firstChild.key;
     }
 
@@ -359,10 +372,14 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
 
 interface CollectionResult<T> {
   portal: ReactPortal,
-  collection: Collection<Node<T>>
+  collection: ICollection<Node<T>>
 }
 
-export function useCollection<T extends object>(props: CollectionProps<T>): CollectionResult<T> {
+interface CollectionConstructor<T> {
+  new(update: () => void): ICollection<Node<T>>
+}
+
+export function useCollection<T extends object>(props: CollectionProps<T>, Class: CollectionConstructor<T> = BaseCollection): CollectionResult<T> {
   let isMounted = useRef(false);
   let [, queueUpdate] = useReducer(c => c + 1, 0);
 
@@ -375,11 +392,11 @@ export function useCollection<T extends object>(props: CollectionProps<T>): Coll
   }, []);
 
   let children = useCachedChildren(props);
-  let collection = useMemo(() => new Root<T>(() => {
+  let collection = useMemo(() => new Class(() => {
     if (isMounted.current) {
       queueUpdate();
     }
-  }), []);
+  }), [Class]);  
   let portal = createPortal(children, collection as unknown as Element);
   return {portal, collection};
 }
@@ -424,21 +441,25 @@ export interface ItemRenderProps {
 
 export interface ItemProps<T> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {}
 
-export function Item<T extends object>(props: ItemProps<T>) {
+export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
   // than converting to a string and using setAttribute. This allows our custom fake DOM to receive
   // the props as an object. Once React supports custom elements, we can switch to that instead.
   // https://github.com/facebook/react/issues/11347
   // https://github.com/facebook/react/blob/82c64e1a49239158c0daa7f0d603d2ad2ee667a9/packages/react-dom/src/shared/DOMProperty.js#L386
   // @ts-ignore
-  return <option multiple={{...props, rendered: props.children}} />;
+  return useMemo(() => <node type="item" multiple={{...props, rendered: props.children}} />, [props]);
 }
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {}
 
-export function Section<T extends object>(props: SectionProps<T>) {
+export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
   let children = useCachedChildren(props);
 
   // @ts-ignore
-  return <optgroup multiple={{...props, rendered: props.title}}>{children}</optgroup>;
+  return useMemo(() => <node type="section" multiple={{...props, rendered: props.title}}>{children}</node>, [props, children]);
+}
+
+export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
+  return useCachedChildren(props);
 }

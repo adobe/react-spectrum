@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -474,6 +474,46 @@ export const TabsExample = () => (
   </Tabs>
 );
 
+export const TableExample = () => (
+  <Table
+    aria-label="Example static collection table"
+    style={{height: '210px', maxWidth: '400px'}}
+    selectionMode="multiple">
+    <TableHeader>
+      <Column><MyCheckbox /></Column>
+      <Column>Name</Column>
+      <Column>Type</Column>
+      <Column>Date Modified</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>log.txt</Cell>
+        <Cell>Text Document</Cell>
+        <Cell>1/18/2016</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 function MyItem(props) {
   return (
     <Item
@@ -511,5 +551,22 @@ function CustomTab(props) {
       style={({isSelected}) => ({
         borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
       })} />
+  );
+}
+
+function MyCheckbox(props) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate, isSelected}) => (<>
+        <div style={{border: '2px solid gray', width: 16, height: 16}}>
+          <svg viewBox="0 0 18 18" width={14} height={14} fill="none" stroke="white">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" strokeWidth={3} strokeDasharray={22} strokeDashoffset={isSelected ? 44 : 66} />
+            }
+          </svg>
+        </div>
+      </>)}
+    </Checkbox>
   );
 }

@@ -19,7 +19,11 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
+export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
+  if (columnNodes.length === 0) {
+    return [];
+  }
+
   let columns: GridNode<T>[][] = [];
   let seen = new Map();
   for (let column of columnNodes) {
@@ -28,6 +32,9 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
 
     while (parentKey) {
       let parent: GridNode<T> = keyMap.get(parentKey);
+      if (!parent) {
+        break;
+      }
 
       // If we've already seen this parent, than it is shared
       // with a previous column. If the current column is taller

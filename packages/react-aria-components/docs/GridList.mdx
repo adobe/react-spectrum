@@ -425,7 +425,7 @@ function MyItem({children, ...props}) {
 }
 
 function MyCheckbox() {
-  return <Checkbox><svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg></Checkbox>;
+  return <Checkbox slot="selection"><svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg></Checkbox>;
 }
 
 <MyGridList aria-label="Ice cream flavors" selectionMode="multiple">
