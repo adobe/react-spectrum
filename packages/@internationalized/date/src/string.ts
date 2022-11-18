@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyDateTime, Disambiguation} from './types';
+import {AnyDateTime, DateTimeDuration, Disambiguation} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toCalendarDateTime, toTimeZone} from './conversion';
 import {getLocalTimeZone} from './queries';
@@ -22,6 +22,8 @@ const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
 const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
+const DATE_TIME_DURATION_RE =
+    /^(?<negative>-)?P((?<years>-?\d*[.,]?\d+)Y)?((?<months>-?\d*[.,]?\d+)M)?((?<weeks>-?\d*[.,]?\d+)W)?((?<days>-?\d*[.,]?\d+)D)?(T((?<hours>-?\d*[.,]?\d+)H)?((?<minutes>-?\d*[.,]?\d+)M)?((?<seconds>-?\d*[.,]?\d+)S)?)?/;
 
 /** Parses an ISO 8601 time string. */
 export function parseTime(value: string): Time {
@@ -194,4 +196,42 @@ function offsetToString(offset: number) {
 
 export function zonedDateTimeToString(date: ZonedDateTime): string {
   return `${dateTimeToString(date)}${offsetToString(date.offset)}[${date.timeZone}]`;
+}
+
+/**
+ * Parses an ISO 8601 duration string (e.g. "P3Y6M6W4DT12H30M5S").
+ * @param value An ISO 8601 duration string.
+ * @returns A DateTimeDuration object.
+ */
+export function parseDuration(value: string): Required<DateTimeDuration> {
+  const match = value.match(DATE_TIME_DURATION_RE);
+
+  if (!match) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+  }
+
+  const parseDurationGroup = (
+    group: string | undefined,
+    isNegative: boolean
+  ): number => {
+    if (!group) {
+      return 0;
+    }
+    const sign = isNegative ? -1 : 1;
+    return sign * parseFloat(group.replace(',', '.'));
+  };
+
+  const isNegative = !!match.groups?.negative;
+
+  const duration: Mutable<DateTimeDuration> = {
+    years: parseDurationGroup(match.groups?.years, isNegative),
+    months: parseDurationGroup(match.groups?.months, isNegative),
+    weeks: parseDurationGroup(match.groups?.weeks, isNegative),
+    days: parseDurationGroup(match.groups?.days, isNegative),
+    hours: parseDurationGroup(match.groups?.hours, isNegative),
+    minutes: parseDurationGroup(match.groups?.minutes, isNegative),
+    seconds: parseDurationGroup(match.groups?.seconds, isNegative)
+  };
+
+  return duration as Required<DateTimeDuration>;
 }

@@ -74,6 +74,26 @@ time.add({seconds: 1}); // 09:45:01
 
 Adding or subtracting a duration that goes beyond the limits of a particular field will cause the time to be _balanced_. For example, adding one minute to `09:59` results in `10:00`.
 
+### Parsing durations
+
+Duration can often be expressed as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string (e.g. 'PT20H35M15S'). The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can parse [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration strings that are expressed with decimals (using commas or periods), in negative values, or with strings that only contain time values (hours, minutes, seconds).
+
+```tsx
+let durationString = 'PT20H35M15S'
+let duration = parseDuration(durationString)
+// => duration = {hours: 20, minutes: 35, seconds: 15}
+
+let durationString = '-PT20H35M15S'
+let duration = parseDuration(durationString)
+// => duration = {hours: -20, minutes: -35, seconds: -15}
+
+let durationString = 'PT20,5H35,5M15,75S'
+let duration = parseDuration(durationString)
+// => duration = {hours: 20.5, minutes: 35.5, seconds: 15.75}
+
+```
+
+
 ### Setting fields
 
 `Time` objects are immutable, which means their properties cannot be set directly. Instead, use the `set` method, and pass the fields to be modified. This will return a new `Time` with the updated values.
