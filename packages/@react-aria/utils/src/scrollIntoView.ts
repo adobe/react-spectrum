@@ -12,8 +12,30 @@
 
 import {getScrollParent} from './';
 
-let isScrollPrevented = false;
+const intersectionObserver = (() => {
+  const intersectionObserverOptions: IntersectionObserverInit = {
+    root: undefined,
+    rootMargin: '0px',
+    threshold: 1
+  };
 
+  const intersectionObserverCallback = (entries: Array<IntersectionObserverEntry>, observer: IntersectionObserver) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        scrollIntoViewHelper(entry.target);
+      }
+      observer.unobserve(entry.target);
+    });
+  };
+
+  try {
+    return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+  } catch (err) {
+    return undefined;
+  }
+})();
+
+let isScrollPrevented = false;
 export function setScrollPrevented(value: boolean) {
   isScrollPrevented = value;
 }
@@ -71,20 +93,27 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
   return sum;
 }
 
+
+export function scrollIntoViewFully(target) {
+  if (intersectionObserver != null) {
+    intersectionObserver.observe(target);
+  }
+}
+
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
+// Perhaps add a parameter to this func to customize the root so we can say how far up we want to actually adjust the scroll?
+// scrollIntoView is exported and available from aria/utils so is it a breaking change to replace it with this func?
 // TODO: test with zoom/pinch zoom
 // TODO: if we want to use an interserctionObserver, we can initialize it at the top of the file
-export function scrollIntoViewFully(target) {
-  // TODO: add visiblity check? At the moment it isn't necessasary since scrollIntoView({block: 'nearest'}) doesn't
-  // shift the scroll position if it is already in view, but if we want something like block: 'center' or something else so that
-  // sliders fully come into view instead then we'll want to only run this stuff when something isn't visible
+function scrollIntoViewHelper(target) {
   let root = document.scrollingElement || document.documentElement;
   let scrollParent = getScrollParent(target);
 
-  // if scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+  // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
     target?.scrollIntoView?.({block: 'nearest'});
   } else {
+    // If scrolling is prevented, we don't want to scroll the body since it will break the open overlay's positioning.
     while (target && scrollParent && target !== root && scrollParent !== root) {
       scrollIntoView(scrollParent as HTMLElement, target);
       target = scrollParent;
