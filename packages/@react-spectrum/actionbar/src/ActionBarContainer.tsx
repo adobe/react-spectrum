@@ -38,7 +38,8 @@ function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<
 }
 
 /**
- * TODO: Add description of component here.
+ * ActionBarContainer wraps around an ActionBar and a component that supports selection. It handles
+ * the ActionBar's position with respect to its linked component.
  */
 const _ActionBarContainer = React.forwardRef(ActionBarContainer);
 export {_ActionBarContainer as ActionBarContainer};
