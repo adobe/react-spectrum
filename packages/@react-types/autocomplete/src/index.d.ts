@@ -12,9 +12,8 @@
 
 import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {AsyncLoadable, CollectionBase, LoadingState, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import {Key} from 'react';
+import {Key, ReactElement} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
-import {ReactElement} from 'react';
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<AriaSearchFieldProps, 'onSubmit'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
@@ -34,9 +33,9 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Aria
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction,
-  onSubmit?: (value: string, key: Key | null) => void,
+  onSubmit?: (value: string | null, key: Key | null) => void,
   /** An icon to display at the start of the input. */
-  icon?: ReactElement
+  icon?: ReactElement | null
 }
 
 export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<SearchAutocompleteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {

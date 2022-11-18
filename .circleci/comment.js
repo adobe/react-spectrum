@@ -65,7 +65,6 @@ async function run() {
   }
 
   if (pr != null) {
-    let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
     await octokit.issues.createComment({
       owner: 'adobe',
       repo: 'react-spectrum',
@@ -77,14 +76,5 @@ async function run() {
   * [View the storybook-16](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-16/index.html)
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
     });
-    if (diffs.length > 0) {
-      await octokit.issues.createComment({
-        owner: 'adobe',
-        repo: 'react-spectrum',
-        issue_number: pr,
-        body: `## API Changes
-${diffs}
-`});
-    }
   }
 }
