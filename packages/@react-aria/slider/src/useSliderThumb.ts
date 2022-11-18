@@ -125,7 +125,8 @@ export function useSliderThumb(
       setThumbDragging(index, false);
       // Perform scroll after the thumb is fully positioned
       requestAnimationFrame(() => {
-        scrollIntoViewFully(inputRef.current);
+        // Use e.currentTarget since the input may be visually hidden
+        scrollIntoViewFully(e.currentTarget, {block: 'center', inline: 'center'});
       });
     }
   });
@@ -156,6 +157,8 @@ export function useSliderThumb(
         } else {
           incrementThumb(index, shiftKey ? pageSize : step);
         }
+        // TODO: inputRef.current is actually visuallyHidden which is means the intersectionObserver thinks
+        // it is always out of view and thus will keep scrolling the window
         scrollIntoViewFully(inputRef.current);
       } else {
         let delta = isVertical ? deltaY : deltaX;

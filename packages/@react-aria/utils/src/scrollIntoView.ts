@@ -12,30 +12,9 @@
 
 import {getScrollParent} from './';
 
-const intersectionObserver = (() => {
-  const intersectionObserverOptions: IntersectionObserverInit = {
-    root: undefined,
-    rootMargin: '0px',
-    threshold: 1
-  };
-
-  const intersectionObserverCallback = (entries: Array<IntersectionObserverEntry>, observer: IntersectionObserver) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        scrollIntoViewHelper(entry.target);
-      }
-      observer.unobserve(entry.target);
-    });
-  };
-
-  try {
-    return new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
-  } catch (err) {
-    return undefined;
-  }
-})();
-
+let observerMap = new Map<string, IntersectionObserver>();
 let isScrollPrevented = false;
+
 export function setScrollPrevented(value: boolean) {
   isScrollPrevented = value;
 }
@@ -94,28 +73,59 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
 }
 
 
-export function scrollIntoViewFully(target) {
-  if (intersectionObserver != null) {
-    intersectionObserver.observe(target);
+function optionsToString(options: ScrollIntoViewOptions) {
+  return Object.keys(options).sort().map(key => `${key}${options[key]}`).toString();
+}
+
+export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoViewOptions) {
+  const intersectionObserverOptions: IntersectionObserverInit = {
+    root: undefined,
+    rootMargin: '0px',
+    threshold: 1
+  };
+
+  if (scrollOptions == null) {
+    scrollOptions = {
+      block: 'nearest'
+    };
   }
+
+  let intersectionObserverCallback = (entries: Array<IntersectionObserverEntry>, observer: IntersectionObserver) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        scrollIntoViewHelper(entry.target, scrollOptions);
+      }
+      observer.unobserve(entry.target);
+    });
+  };
+
+  let observerMapKey = optionsToString(scrollOptions);
+  let observer = observerMap.get(observerMapKey);
+  if (!observer) {
+    observer = new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+    observerMap.set(observerMapKey, observer);
+  }
+
+  observer.observe(target);
 }
 
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
 // Perhaps add a parameter to this func to customize the root so we can say how far up we want to actually adjust the scroll?
 // scrollIntoView is exported and available from aria/utils so is it a breaking change to replace it with this func?
 // TODO: test with zoom/pinch zoom
-// TODO: if we want to use an interserctionObserver, we can initialize it at the top of the file
-function scrollIntoViewHelper(target) {
+function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
   let root = document.scrollingElement || document.documentElement;
   let scrollParent = getScrollParent(target);
 
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
-    target?.scrollIntoView?.({block: 'nearest'});
+    target?.scrollIntoView?.(scrollOptions);
   } else {
     // If scrolling is prevented, we don't want to scroll the body since it will break the open overlay's positioning.
     while (target && scrollParent && target !== root && scrollParent !== root) {
-      scrollIntoView(scrollParent as HTMLElement, target);
+      // TODO: adapt scrollIntoView so that it can work with the provided ScrollIntoViewOptions instead of mimicking scrollIntoView({block: 'nearest'}) only
+      // do this if we decide we actually want the scrollOption flexibility
+      scrollIntoView(scrollParent as HTMLElement, target as HTMLElement);
       target = scrollParent;
       scrollParent = getScrollParent(target);
     }

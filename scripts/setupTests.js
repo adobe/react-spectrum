@@ -12,6 +12,7 @@
 
 // setup file
 import '@testing-library/jest-dom';
+import {intersectionObserver} from '@shopify/jest-dom-mocks';
 
 // this prints a nice stack like this
 /**
@@ -91,3 +92,11 @@ expect.extend({
 
 failTestOnConsoleWarn();
 failTestOnConsoleError();
+
+beforeAll(() => {
+  intersectionObserver.mock();
+});
+
+afterAll(() => {
+  intersectionObserver.restore();
+});
