@@ -408,6 +408,7 @@ jobs:
           command: |
             if [ $GITHUB_TOKEN ]; then
               node .circleci/comment.js
+              node .circleci/api-comment.js
             fi
 
   publish-nightly:
