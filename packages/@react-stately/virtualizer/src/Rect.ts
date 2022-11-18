@@ -152,6 +152,29 @@ export class Rect {
         && this.height === size.height;
   }
 
+  union(other: Rect) {
+    let x = Math.min(this.x, other.x);
+    let y = Math.min(this.y, other.y);
+    let width = Math.max(this.maxX, other.maxX) - x;
+    let height = Math.max(this.maxY, other.maxY) - y;
+    return new Rect(x, y, width, height);
+  }
+
+  intersection(other: Rect): Rect {
+    if (!this.intersects(other)) {
+      return new Rect(0, 0, 0, 0);
+    }
+
+    let x = Math.max(this.x, other.x);
+    let y = Math.max(this.y, other.y);
+    return new Rect(
+      x,
+      y,
+      Math.min(this.maxX, other.maxX) - x,
+      Math.min(this.maxY, other.maxY) - y
+    );
+  }
+
   /**
    * Returns a copy of this rectangle.
    */
