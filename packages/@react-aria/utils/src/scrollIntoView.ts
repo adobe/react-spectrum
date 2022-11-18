@@ -99,14 +99,16 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
     });
   };
 
-  let observerMapKey = optionsToString(scrollOptions);
-  let observer = observerMap.get(observerMapKey);
-  if (!observer) {
-    observer = new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
-    observerMap.set(observerMapKey, observer);
-  }
+  if (target) {
+    let observerMapKey = optionsToString(scrollOptions);
+    let observer = observerMap.get(observerMapKey);
+    if (!observer) {
+      observer = new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
+      observerMap.set(observerMapKey, observer);
+    }
 
-  observer.observe(target);
+    observer.observe(target);
+  }
 }
 
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?

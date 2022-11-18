@@ -31,7 +31,9 @@ export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
   trackRef: RefObject<Element>,
   /** A ref to the thumb input element. */
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement>,
+  /** A ref to the thumb element. */
+  thumbRef: RefObject<Element>
 }
 
 /**
@@ -50,6 +52,7 @@ export function useSliderThumb(
     validationState,
     trackRef,
     inputRef,
+    thumbRef,
     orientation = state.orientation
   } = opts;
 
@@ -125,8 +128,7 @@ export function useSliderThumb(
       setThumbDragging(index, false);
       // Perform scroll after the thumb is fully positioned
       requestAnimationFrame(() => {
-        // Use e.currentTarget since the input may be visually hidden
-        scrollIntoViewFully(e.currentTarget, {block: 'center', inline: 'center'});
+        scrollIntoViewFully(thumbRef.current, {block: 'center', inline: 'center'});
       });
     }
   });
@@ -157,9 +159,8 @@ export function useSliderThumb(
         } else {
           incrementThumb(index, shiftKey ? pageSize : step);
         }
-        // TODO: inputRef.current is actually visuallyHidden which is means the intersectionObserver thinks
-        // it is always out of view and thus will keep scrolling the window
-        scrollIntoViewFully(inputRef.current);
+
+        scrollIntoViewFully(thumbRef.current);
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {

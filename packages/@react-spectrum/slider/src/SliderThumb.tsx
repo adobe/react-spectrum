@@ -24,6 +24,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface SliderThumbProps extends AriaSliderThumbProps {
   trackRef: RefObject<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement>,
+  thumbRef?: RefObject<HTMLElement>,
   state: SliderState
 }
 
@@ -32,12 +33,14 @@ export function SliderThumb(props: SliderThumbProps) {
     inputRef,
     state
   } = props;
+  let thumbRef = useRef<HTMLDivElement>();
   let backupRef = useRef<HTMLInputElement>();
   inputRef = inputRef || backupRef;
 
   let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({
     ...props,
-    inputRef
+    inputRef,
+    thumbRef
   }, state);
 
   let {hoverProps, isHovered} = useHover({});
@@ -57,7 +60,8 @@ export function SliderThumb(props: SliderThumbProps) {
           )
         }
         {...mergeProps(thumbProps, hoverProps)}
-        role="presentation">
+        role="presentation"
+        ref={thumbRef}>
         <VisuallyHidden>
           <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
         </VisuallyHidden>
