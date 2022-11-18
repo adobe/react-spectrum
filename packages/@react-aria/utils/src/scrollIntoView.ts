@@ -11,8 +11,12 @@
  */
 
 import {getScrollParent} from './';
-// TODO: is this import a problem (is it weird to be importing something from overlays into the utils)?
-import {getScrollPrevented} from '@react-aria/overlays';
+
+let isScrollPrevented = false;
+
+export function setScrollPrevented(value: boolean) {
+  isScrollPrevented = value;
+}
 
 /**
  * Scrolls `scrollView` so that `element` is visible.
@@ -74,13 +78,12 @@ export function scrollIntoViewFully(target) {
   // TODO: add visiblity check? At the moment it isn't necessasary since scrollIntoView({block: 'nearest'}) doesn't
   // shift the scroll position if it is already in view, but if we want something like block: 'center' or something else so that
   // sliders fully come into view instead then we'll want to only run this stuff when something isn't visible
-  let isPreventScroll = getScrollPrevented();
   let root = document.scrollingElement || document.documentElement;
   let scrollParent = getScrollParent(target);
 
-  // if preventScroll is false then we aren’t in a overlay nor is a overlay open, just use scrollIntoView to bring the element into view
-  if (!isPreventScroll) {
-    target.scrollIntoView({block: 'nearest'});
+  // if scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+  if (!isScrollPrevented) {
+    target?.scrollIntoView?.({block: 'nearest'});
   } else {
     while (target && scrollParent && target !== root && scrollParent !== root) {
       scrollIntoView(scrollParent as HTMLElement, target);

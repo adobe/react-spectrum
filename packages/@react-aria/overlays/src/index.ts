@@ -12,7 +12,7 @@
 export {useOverlayPosition} from './useOverlayPosition';
 export {useOverlay} from './useOverlay';
 export {useOverlayTrigger} from './useOverlayTrigger';
-export {getScrollPrevented, usePreventScroll} from './usePreventScroll';
+export {usePreventScroll} from './usePreventScroll';
 export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from './useModal';
 export {DismissButton} from './DismissButton';
 export {ariaHideOutside} from './ariaHideOutside';

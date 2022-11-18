@@ -15,7 +15,7 @@ import {focusSafely} from '@react-aria/focus';
 import {getInteractionModality, PressProps, useLongPress, usePress} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps, runAfterTransition, scrollIntoViewFully} from '@react-aria/utils';
+import {mergeProps, scrollIntoViewFully} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 export interface SelectableItemOptions {

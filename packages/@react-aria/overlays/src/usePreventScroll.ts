@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
+import {chain, getScrollParent, isIOS, setScrollPrevented, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -33,8 +33,6 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
-let isScrollPrevented = false;
-
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
@@ -49,15 +47,11 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
     }
 
     if (isIOS()) {
-      return chain(preventScrollMobileSafari(), setScrollPrevented());
+      return chain(preventScrollMobileSafari(), updateScrollPrevented());
     } else {
-      return chain(preventScrollStandard(), setScrollPrevented());
+      return chain(preventScrollStandard(), updateScrollPrevented());
     }
   }, [isDisabled]);
-}
-
-export function getScrollPrevented(): boolean {
-  return isScrollPrevented;
 }
 
 // For most browsers, all we need to do is set `overflow: hidden` on the root element, and
@@ -236,10 +230,10 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
   };
 }
 
-function setScrollPrevented() {
-  isScrollPrevented = true;
+function updateScrollPrevented() {
+  setScrollPrevented(true);
   return () => {
-    isScrollPrevented = false;
+    setScrollPrevented(false);
   };
 }
 
