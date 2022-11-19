@@ -15,7 +15,7 @@ import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps, scrollIntoViewFully, useSlotId} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -92,17 +92,22 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewFully(focusable);
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
-            focusSafely(ref.current);
+            if (document.activeElement !== ref.current) {
+              focusSafely(ref.current);
+              scrollIntoViewFully(ref.current);
+            }
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewFully(lastElement);
             }
           }
         }
@@ -117,16 +122,21 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewFully(focusable);
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
-            focusSafely(ref.current);
+            if (document.activeElement !== ref.current) {
+              focusSafely(ref.current);
+              scrollIntoViewFully(ref.current);
+            }
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewFully(lastElement);
             }
           }
         }

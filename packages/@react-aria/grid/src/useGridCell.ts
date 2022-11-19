@@ -16,7 +16,7 @@ import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, scrollIntoViewFully} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -121,6 +121,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewFully(focusable);
         } else {
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
@@ -135,7 +136,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'rtl') {
-            focusSafely(ref.current);
+            if (document.activeElement !== ref.current) {
+              focusSafely(ref.current);
+              scrollIntoViewFully(ref.current);
+            }
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -143,6 +147,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : last(walker);
             if (focusable) {
               focusSafely(focusable);
+              scrollIntoViewFully(focusable);
             }
           }
         }
@@ -161,6 +166,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewFully(focusable);
         } else {
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
@@ -170,7 +176,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'ltr') {
-            focusSafely(ref.current);
+            if (document.activeElement !== ref.current) {
+              focusSafely(ref.current);
+              scrollIntoViewFully(ref.current);
+            }
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -178,6 +187,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : walker.firstChild() as FocusableElement;
             if (focusable) {
               focusSafely(focusable);
+              scrollIntoViewFully(focusable);
             }
           }
         }
