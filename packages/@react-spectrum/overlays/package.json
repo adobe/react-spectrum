@@ -38,7 +38,7 @@
     "@react-stately/overlays": "^3.4.3",
     "@react-types/overlays": "^3.6.5",
     "@react-types/shared": "^3.16.0",
-    "react-transition-group": "^2.2.0"
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
