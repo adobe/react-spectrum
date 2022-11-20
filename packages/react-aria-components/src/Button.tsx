@@ -43,14 +43,15 @@ export interface ButtonRenderProps {
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
 interface ButtonContextValue extends ButtonProps {
-  isPressed?: boolean
+  isPressed?: boolean,
+  isDraggable?: boolean
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  let isPressedContext = (props as ButtonContextValue).isPressed;
+  let ctx = props as ButtonContextValue;
   let {buttonProps, isPressed} = useButton(props, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
@@ -66,9 +67,10 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       {...renderProps}
       ref={ref}
       slot={props.slot}
-      data-pressed={isPressedContext || isPressed || undefined}
+      data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}
+      draggable={ctx.isDraggable || undefined} />
   );
 }
 

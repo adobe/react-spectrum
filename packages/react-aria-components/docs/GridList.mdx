@@ -401,10 +401,10 @@ An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overri
 
 If you will use a GridList in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable.
+This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag affordance when the item is draggable (see [below](#drag-and-drop)).
 
 ```tsx example export=true
-import {Checkbox} from 'react-aria-components';
+import {Button, Checkbox} from 'react-aria-components';
 
 function MyGridList({children, ...props}) {
   return (
@@ -416,8 +416,9 @@ function MyGridList({children, ...props}) {
 
 function MyItem({children, ...props}) {
   return (
-    <Item {...props}>
-      {({selectionMode, selectionBehavior}) => <>
+    <Item textValue={children} {...props}>
+      {({selectionMode, selectionBehavior, isDraggable}) => <>
+        {isDraggable && <Button slot="drag" className="drag">≡</Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
         {children}
       </>}
@@ -562,7 +563,7 @@ be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Ke
 This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: 24 }}>
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
   <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
   <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 </div>
@@ -604,6 +605,126 @@ function AsyncList() {
   );
 }
 ```
+
+### Drag and drop
+
+```tsx example
+import {useListData} from 'react-stately';
+import {useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDragPreview(items) {
+      return (
+        <div className="drag-preview">
+          {items[0]['text/plain']}
+          <span className="badge">{items.length}</span>
+        </div>
+      );
+    }
+  });
+
+  return (
+    <MyGridList aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+      {item => <MyItem>{item.name}</MyItem>}
+    </MyGridList>
+  )
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox[data-drop-target] {
+  box-shadow: 0 0 0 2px var(--highlight-background);
+}
+
+.react-aria-Item[draggable] {
+  padding-left: 4px;
+}
+
+.react-aria-Item[data-dragging] {
+  opacity: 0.6;
+}
+
+.react-aria-Item[data-drop-target] {
+  box-shadow: inset 0 0 0 2px var(--highlight-background);
+}
+
+.react-aria-DropIndicator {
+  width: 100%;
+  margin-left: 0;
+  height: 2px;
+  margin-bottom: -2px;
+  outline: none;
+  background: transparent;
+  list-style: none;
+
+  &:last-child {
+    margin-bottom: 0;
+    margin-top: -2px;
+  }
+
+  &[data-drop-target] {
+    background: var(--highlight-background);
+  }
+}
+
+.drag {
+  all: unset;
+  width: 15px;
+  text-align: center;
+
+  &[data-focus-visible] {
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px var(--highlight-background);
+  }
+}
+
+.react-aria-Item[aria-selected=true] {
+  & .drag[data-focus-visible] {
+    box-shadow: 0 0 0 2px var(--highlight-foreground);
+  }
+}
+
+.drag-preview {
+  width: 150px;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  background: slateblue;
+  color: white;
+  border-radius: 4px;
+
+  & .badge {
+    background: white;
+    color: slateblue;
+    padding: 0 8px;
+    border-radius: 4px;
+  }
+}
+```
+
+</details>
 
 ## Advanced customization
 

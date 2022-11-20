@@ -584,16 +584,16 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 
 ```tsx example
 import {useListData} from 'react-stately';
-import {useDragAndDrop, DropIndicator} from 'react-aria-components';
+import {useDragAndDrop} from 'react-aria-components';
 
 function Example() {
   let list = useListData({
     initialItems: [
-      {id: 'a', type: 'file', name: 'Adobe Photoshop'},
-      {id: 'b', type: 'file', name: 'Adobe XD'},
-      {id: 'c', type: 'file', name: 'Adobe Dreamweaver'},
-      {id: 'd', type: 'file', name: 'Adobe InDesign'},
-      {id: 'e', type: 'file', name: 'Adobe Connect'}
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
     ]
   });
 

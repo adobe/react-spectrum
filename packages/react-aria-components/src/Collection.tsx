@@ -675,6 +675,12 @@ export interface ItemRenderProps {
   /** The selection behavior for the collection. */
   selectionBehavior: SelectionBehavior,
   /**
+   * Whether the item is draggable.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [draggable]
+   */
+  isDraggable?: boolean,
+  /**
    * Whether the item is currently being dragged.
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-dragging]
