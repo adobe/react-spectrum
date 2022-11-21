@@ -1,0 +1,43 @@
+%spectrum-FocusRing {
+  --spectrum-focus-ring-border-radius: var(--spectrum-textfield-border-radius);
+  --spectrum-focus-ring-gap: var(--spectrum-alias-input-focusring-gap);
+  --spectrum-focus-ring-size: var(--spectrum-alias-input-focusring-size);
+  --spectrum-focus-ring-border-size: 0px;
+  --spectrum-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
+
+  &:after {
+    border-radius: calc(calc(var(--spectrum-focus-ring-border-radius) / 2) + var(--spectrum-focus-ring-gap) * 2);
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: calc(-1 * var(--spectrum-focus-ring-border-size));
+    pointer-events: none;
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
+
+  &:focus-ring {
+    &:after {
+      margin: calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size));
+      box-shadow: 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
+    }
+  }
+}
+
+%spectrum-FocusRing--quiet {
+  &:after {
+    border-radius: 0;
+  }
+
+  &:focus-ring {
+    &:after {
+      margin: 0 0 calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size)) 0;
+      box-shadow: 0 var(--spectrum-focus-ring-size) 0 var(--spectrum-focus-ring-color);
+    }
+  }
+}
