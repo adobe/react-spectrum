@@ -17,10 +17,15 @@ import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, Fil
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
 import {DragBetweenListsComplex, DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListView.stories';
 import {Droppable} from '@react-aria/dnd/test/examples';
+import {Flex} from '@react-spectrum/layout';
 import {globalDndState} from '@react-aria/dnd/src/utils';
+import {Item, ListView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
+import {useDragAndDrop} from '@react-spectrum/dnd';
+import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 let isReact18 = parseInt(React.version, 10) >= 18;
@@ -915,6 +920,109 @@ describe('ListView', function () {
           });
           expect(items).toContainObject({
             identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
+        });
+
+        it('should call onRootDrop when dropping on a empty list', async function () {
+          function Example() {
+            let list1 = useListData({
+              initialItems: []
+            });
+
+            let list2 = useListData({
+              initialItems: [
+                {id: '7', type: 'folder', name: 'Pictures'},
+                {id: '8', type: 'file', name: 'Adobe Fresco'},
+                {id: '9', type: 'folder', name: 'Apps'},
+                {id: '10', type: 'file', name: 'Adobe Illustrator'},
+                {id: '11', type: 'file', name: 'Adobe Lightroom'},
+                {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
+              ]
+            });
+
+            let {dragAndDropHooks: list1Hooks} = useDragAndDrop({
+              ...mockUtilityOptions,
+              acceptedDragTypes: 'all'
+            });
+
+            let {dragAndDropHooks: list2Hooks} = useDragAndDrop({
+              getItems: (keys) => [...keys].map(key => {
+                let item = list2.getItem(key);
+                return {
+                  [`${item.type}`]: JSON.stringify(item),
+                  'text/plain': JSON.stringify(item)
+                };
+              })
+            });
+
+            return (
+              <Flex wrap gap="size-300">
+                <ListView
+                  aria-label="Droppable listview"
+                  width="size-3600"
+                  height="size-3600"
+                  items={list1.items}
+                  dragAndDropHooks={list1Hooks}>
+                  {(item) => (
+                    <Item textValue={item.name}>
+                      <Text>{item.name}</Text>
+                    </Item>
+                  )}
+                </ListView>
+                <ListView
+                  aria-label="Draggable ListView"
+                  selectionMode="multiple"
+                  width="size-3600"
+                  height="size-3600"
+                  items={list2.items}
+                  dragAndDropHooks={list2Hooks}>
+                  {(item) => (
+                    <Item textValue={item.name}>
+                      <Text>{item.name}</Text>
+                    </Item>
+                  )}
+                </ListView>
+              </Flex>
+            );
+          }
+
+          let {getAllByRole} = render(
+            <Example />
+          );
+          let grids = getAllByRole('grid');
+          expect(grids).toHaveLength(2);
+
+          let dropTarget = grids[0];
+          let list2Rows = within(grids[1]).getAllByRole('row');
+          dragBetweenLists(list2Rows, dropTarget);
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onRootDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            id: '7',
+            type: 'folder',
+            name: 'Pictures'
+          });
+          expect(items).toContainObject({
+            id: '8',
             type: 'file',
             name: 'Adobe Fresco'
           });
