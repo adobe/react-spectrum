@@ -10,27 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaPopoverProps, DismissButton, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import {PlacementAxis, PopoverProps} from '@react-types/overlays';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {Underlay} from './Underlay';
+import {useLayoutEffect} from '@react-aria/utils';
 
-interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
   children: ReactNode,
-  placement?: PlacementAxis,
-  arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
-  isOpen?: boolean,
-  onClose?: () => void,
-  shouldCloseOnBlur?: boolean,
-  isKeyboardDismissDisabled?: boolean,
-  isNonModal?: boolean,
-  isDismissable?: boolean
+  state: OverlayTriggerState
+}
+
+interface PopoverWrapperProps extends PopoverProps {
+  isOpen?: boolean
 }
 
 /**
@@ -50,32 +48,14 @@ let arrowPlacement = {
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    placement,
-    arrowProps,
-    onClose,
-    shouldCloseOnBlur,
-    hideArrow,
-    isKeyboardDismissDisabled,
-    isNonModal,
-    isDismissable = true,
+    state,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
 
   return (
-    <Overlay {...otherProps}>
-      <PopoverWrapper
-        {...styleProps}
-        ref={domRef}
-        placement={placement}
-        arrowProps={arrowProps}
-        onClose={onClose}
-        shouldCloseOnBlur={shouldCloseOnBlur}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        hideArrow={hideArrow}
-        isNonModal={isNonModal}
-        isDismissable={isDismissable}>
+    <Overlay {...otherProps} isOpen={state.isOpen}>
+      <PopoverWrapper ref={domRef} {...props}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -85,52 +65,57 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   let {
     children,
-    placement = 'bottom',
-    arrowProps,
     isOpen,
     hideArrow,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    shouldCloseOnBlur,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKeyboardDismissDisabled,
     isNonModal,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isDismissable,
-    ...otherProps
+    state
   } = props;
-  let {overlayProps} = useOverlay({...props, isDismissable: isDismissable && isOpen}, ref);
-  let {modalProps} = useModal({
-    isDisabled: isNonModal
-  });
+  let {styleProps} = useStyleProps(props);
+
+  let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
+    ...props,
+    popoverRef: ref,
+    maxHeight: null
+  }, state);
 
   return (
-    <div
-      {...mergeProps(otherProps, overlayProps, modalProps)}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Popover',
-          `spectrum-Popover--${placement}`,
-          {
-            'spectrum-Popover--withTip': !hideArrow,
-            'is-open': isOpen
-          },
+    <>
+      {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
+      <div
+        {...styleProps}
+        {...popoverProps}
+        style={{
+          ...styleProps.style,
+          ...popoverProps.style
+        }}
+        ref={ref}
+        className={
           classNames(
-            overrideStyles,
+            styles,
             'spectrum-Popover',
-            'react-spectrum-Popover'
-          ),
-          otherProps.className
-        )
-      }
-      role="presentation"
-      data-testid="popover">
-      {children}
-      {hideArrow ? null : (
-        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
-      )}
-    </div>
+            `spectrum-Popover--${placement}`,
+            {
+              'spectrum-Popover--withTip': !hideArrow,
+              'is-open': isOpen
+            },
+            classNames(
+              overrideStyles,
+              'spectrum-Popover',
+              'react-spectrum-Popover'
+            ),
+            styleProps.className
+          )
+        }
+        role="presentation"
+        data-testid="popover">
+        {!isNonModal && <DismissButton onDismiss={state.close} />}
+        {children}
+        {hideArrow ? null : (
+          <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
+        )}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </>
   );
 });
 

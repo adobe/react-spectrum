@@ -376,6 +376,11 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   return false;
 }
 
+/** @private */
+export function isElementInChildOfActiveScope(element: Element) {
+  return isElementInChildScope(element, activeScope);
+}
+
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
   let parent = focusScopeTree.getTreeNode(scope)?.parent;
   while (parent) {
@@ -470,7 +475,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
     scope = scope.parent;
   }
 
-  return true;
+  return scope?.scopeRef === scopeRef;
 }
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {

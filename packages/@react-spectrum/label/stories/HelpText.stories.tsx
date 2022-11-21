@@ -26,31 +26,25 @@ const argTypes = {
     control: 'text'
   },
   errorMessage: {
-    control: 'text',
-    defaultValue: 'Create a password with at least 8 characters.'
+    control: 'text'
   },
   validationState: {
     control: 'radio',
-    defaultValue: 'valid',
-    options: ['invalid', 'valid', undefined]
+    options: ['invalid', 'valid']
   },
   isDisabled: {
-    control: 'boolean',
-    defaultValue: false
+    control: 'boolean'
   },
   labelAlign: {
     control: 'radio',
-    defaultValue: 'start',
     options: ['end', 'start']
   },
   labelPosition: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['side', 'top']
   },
   width: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['100px', '440px', 'var(--spectrum-global-dimension-top, var(--spectrum-alias-top))']
   }
 };
@@ -111,6 +105,16 @@ export const DescriptionAndCustomDescription = {
   )]
 };
 
+export let AriaLabelWithDynamicHelpText: HelpTextStory = {
+  args: {
+    label: null,
+    'aria-label': 'Password',
+    description: undefined
+  },
+  render: (props) => <TextFieldWithAriaLabelAndDynamicHelpText {...props} />,
+  parameters: {description: {data: 'For the case when there is no label and help text is added or removed dynamically. Focus should remain in the text field as the user types and the help text gets added or removed.'}}
+};
+
 function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
   let [valid, setValid] = useState(undefined);
@@ -132,5 +136,18 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
         <Radio value="">undefined</Radio>
       </RadioGroup>
     </Flex>
+  );
+}
+
+function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps) {
+  let [value, setValue] = useState('');
+  
+  return (
+    <TextField
+      {...props}
+      value={value}
+      onChange={setValue}
+      validationState={value.length ? 'invalid' : undefined}
+      errorMessage="Invalid length." />
   );
 }

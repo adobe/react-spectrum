@@ -280,7 +280,7 @@ describe('SearchAutocomplete', function () {
       let ref = React.createRef();
       let {getByRole} = renderSearchAutocomplete({ref, label: null, 'aria-label': 'test'});
 
-      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement);
+      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement.parentElement.parentElement);
     });
 
     it('calling focus() on the ref focuses the input field', function () {
@@ -734,11 +734,9 @@ describe('SearchAutocomplete', function () {
       let {getByRole} = renderSearchAutocomplete({allowsCustomValue: true});
       let searchAutocomplete = getByRole('combobox');
       // Change input value to something matching a searchAutocomplete value
-      act(() => {
-        searchAutocomplete.focus();
-        fireEvent.change(searchAutocomplete, {target: {value: 'Two'}});
-        jest.runAllTimers();
-      });
+      act(() => searchAutocomplete.focus());
+      fireEvent.change(searchAutocomplete, {target: {value: 'Two'}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
@@ -748,11 +746,9 @@ describe('SearchAutocomplete', function () {
       expect(items[0].textContent).toBe('Two');
 
       // Change input text to something that doesn't match any searchAutocomplete items but still shows the menu
-      act(() => {
-        searchAutocomplete.focus();
-        fireEvent.change(searchAutocomplete, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => searchAutocomplete.focus());
+      fireEvent.change(searchAutocomplete, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       // check that no item is focused in the menu
       listbox = getByRole('listbox');
@@ -1399,10 +1395,8 @@ describe('SearchAutocomplete', function () {
 
       expect(queryByRole('progressbar')).toBeNull();
 
-      act(() => {
-        typeText(searchAutocomplete, 'o');
-        jest.runAllTimers();
-      });
+      typeText(searchAutocomplete, 'o');
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
@@ -2135,11 +2129,11 @@ describe('SearchAutocomplete', function () {
         expect(ref.current.UNSAFE_getDOMNode()).toBe(getByText('Test').parentElement);
       });
 
-      it('attaches a ref to the button if no label', function () {
+      it('attaches a ref to wrapper if no label', function () {
         let ref = React.createRef();
         let {getByRole} = renderSearchAutocomplete({ref, label: null, 'aria-label': 'test'});
 
-        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button').parentElement);
       });
 
       it('calling focus() on the ref focuses the button', function () {

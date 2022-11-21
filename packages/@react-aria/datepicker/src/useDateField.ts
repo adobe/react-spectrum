@@ -15,9 +15,9 @@ import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
+import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {FocusEvent as ReactFocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -64,9 +64,16 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
   });
 
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    ...props,
+    onBlurWithin: (e: FocusEvent) => {
       state.confirmPlaceholder();
-    }
+
+      if (props.onBlur) {
+        props.onBlur(e);
+      }
+    },
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -136,36 +143,6 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         if (props.onKeyUp) {
           props.onKeyUp(e);
         }
-      },
-      onFocus(e: ReactFocusEvent) {
-        if (state.isFocused) {
-          return;
-        }
-
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
-
-        state.setFocused(true);
-      },
-      onBlur(e: ReactFocusEvent) {
-        if (e.currentTarget.contains(e.relatedTarget as Node)) {
-          return;
-        }
-
-        if (props.onBlur) {
-          props.onBlur(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(false);
-        }
-
-        state.setFocused(false);
       }
     }),
     descriptionProps,
