@@ -99,7 +99,7 @@ describe('NumberField', function () {
     let ref = React.createRef();
     let {container, textField} = renderNumberField({ref});
 
-    expect(ref.current.UNSAFE_getDOMNode()).toBe(container);
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(container.parentElement);
     act(() => {
       ref.current.focus();
     });
@@ -1711,13 +1711,12 @@ describe('NumberField', function () {
         </Provider>
       );
     }
-    let {container} = render(<NumberFieldControlled onChange={onChangeSpy} />);
+    let {container, getByRole} = render(<NumberFieldControlled onChange={onChangeSpy} />);
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = getByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
@@ -2174,12 +2173,10 @@ describe('NumberField', function () {
       );
     }
     let resetSpy = jest.fn();
-    let {container, getByText} = render(<NumberFieldControlled onChange={resetSpy} />);
-    container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let {getByText, getByRole} = render(<NumberFieldControlled onChange={resetSpy} />);
+    let textField = getByRole('textbox');
     let resetButton = getByText('Reset');
 
-    textField = textField.firstChild;
     expect(textField).toHaveAttribute('value', '10');
     triggerPress(resetButton);
     expect(resetSpy).toHaveBeenCalledTimes(1);

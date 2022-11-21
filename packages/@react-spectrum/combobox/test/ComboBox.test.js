@@ -411,8 +411,7 @@ describe('ComboBox', function () {
     it('attaches a ref to the combobox wrapper if no label', function () {
       let ref = React.createRef();
       let {getByRole} = renderComboBox({ref, label: null, 'aria-label': 'test'});
-
-      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement);
+      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement.parentElement.parentElement);
     });
 
     it('calling focus() on the ref focuses the input field', function () {
@@ -4464,11 +4463,11 @@ describe('ComboBox', function () {
         expect(ref.current.UNSAFE_getDOMNode()).toBe(getByText('Test').parentElement);
       });
 
-      it('attaches a ref to the button if no label', function () {
+      it('attaches a ref to the wrapper if no label', function () {
         let ref = React.createRef();
         let {getByRole} = renderComboBox({ref, label: null, 'aria-label': 'test'});
 
-        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button').parentElement);
       });
 
       it('calling focus() on the ref focuses the button', function () {
