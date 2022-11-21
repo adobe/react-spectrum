@@ -165,7 +165,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
-            <span>
+            <span className={classNames(searchAutocompleteStyles, 'no-results')}>
               {stringFormatter.format('noResults')}
             </span>
           )} />
