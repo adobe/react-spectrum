@@ -28,6 +28,7 @@ interface StorySliderProps extends AriaSliderProps<number> {
 export function StorySlider(props: StorySliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const thumbRef = React.useRef<HTMLDivElement>(null);
   const origin = props.origin ?? props.minValue ?? 0;
 
   const multiProps: AriaSliderProps = {
@@ -50,7 +51,8 @@ export function StorySlider(props: StorySliderProps) {
     index: 0,
     isDisabled: props.isDisabled,
     trackRef,
-    inputRef
+    inputRef,
+    thumbRef
   }, state);
 
   const value = state.values[0];
@@ -81,7 +83,7 @@ export function StorySlider(props: StorySliderProps) {
               'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
-            <div {...thumbProps} className={styles.thumbHandle}>
+            <div {...thumbProps} className={styles.thumbHandle} ref={thumbRef}>
               <VisuallyHidden><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}

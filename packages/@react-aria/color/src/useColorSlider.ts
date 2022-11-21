@@ -22,7 +22,9 @@ export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
   trackRef: RefObject<Element>,
   /** A ref for the input element. */
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: RefObject<HTMLInputElement>,
+  /** A ref to the thumb element. */
+  thumbRef: RefObject<Element>
 }
 
 export interface ColorSliderAria {
@@ -43,7 +45,7 @@ export interface ColorSliderAria {
  * Color sliders allow users to adjust an individual channel of a color value.
  */
 export function useColorSlider(props: AriaColorSliderOptions, state: ColorSliderState): ColorSliderAria {
-  let {trackRef, inputRef, orientation, channel, 'aria-label': ariaLabel} = props;
+  let {trackRef, inputRef, thumbRef, orientation, channel, 'aria-label': ariaLabel} = props;
 
   let {locale, direction} = useLocale();
 
@@ -59,7 +61,8 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     orientation,
     isDisabled: props.isDisabled,
     trackRef,
-    inputRef
+    inputRef,
+    thumbRef
   }, state);
 
   let generateBackground = () => {

@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {DOMProps} from '@react-types/shared';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, Ref} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId} from '@react-aria/utils';
@@ -27,7 +27,7 @@ interface ColorThumbProps extends DOMProps {
   children?: ReactElement
 }
 
-function ColorThumb(props: ColorThumbProps) {
+function ColorThumb(props: ColorThumbProps, ref: Ref<HTMLDivElement>) {
   let {value, isDisabled, isDragging, isFocused, children, className = '', ...otherProps} = props;
 
   let patternId = useId();
@@ -35,7 +35,7 @@ function ColorThumb(props: ColorThumbProps) {
   let valueCSS = value.toString('css');
 
   return (
-    <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} {...otherProps}>
+    <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} ref={ref} {...otherProps}>
       <div className={classNames(stylesHandle, 'spectrum-ColorHandle-color')} style={{backgroundColor: valueCSS}} />
       <svg className={classNames(stylesLoupe, 'spectrum-ColorLoupe',  {'is-open': isDragging})} aria-hidden="true">
         <pattern id={patternId} x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -60,4 +60,5 @@ function ColorThumb(props: ColorThumbProps) {
   );
 }
 
-export {ColorThumb};
+const _ColorThumb = React.forwardRef(ColorThumb);
+export {_ColorThumb as ColorThumb};
