@@ -118,7 +118,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
       // Perform scroll after the thumb is fully positioned
       requestAnimationFrame(() => {
-        scrollIntoViewFully(thumbRef.current, {block: 'center', inline: 'center'});
+        scrollIntoViewFully(thumbRef.current);
       });
     }
   });
@@ -161,7 +161,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         valueChangedViaKeyboard.current = valueChanged;
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
-        scrollIntoViewFully(thumbRef.current, {block: 'center', inline: 'center'});
+        scrollIntoViewFully(thumbRef.current);
       } else {
         currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
         currentPosition.current.y += deltaY / height;
