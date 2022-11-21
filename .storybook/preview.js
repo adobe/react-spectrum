@@ -19,7 +19,7 @@ export const parameters = {
 
 export const decorators = [
   story => (
-    <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+    <VerticalCenter style={{alignItems: 'center', height: '300vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
       {story()}
     </VerticalCenter>
   ),

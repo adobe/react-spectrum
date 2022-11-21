@@ -44,7 +44,7 @@ function ProviderUpdater(props) {
 
   if (props.options.mainElement == null) {
     return (
-      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
+      <Provider height="300vh" width="300vw" theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
         <main>
           {storyReady && props.children}
         </main>
