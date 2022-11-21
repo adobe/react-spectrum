@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParent} from './';
+import {getScrollParent, isWebKit} from './';
 
 let observerMap = new Map<string, IntersectionObserver>();
 let isScrollPrevented = false;
@@ -81,7 +81,8 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
   const intersectionObserverOptions: IntersectionObserverInit = {
     root: undefined,
     rootMargin: '0px',
-    threshold: 1
+    // Safari doesn't work with theshold=1. Setting root to document.body or document.documentElement doesn't fix it either
+    threshold: isWebKit() ? .9 : 1
   };
 
   if (scrollOptions == null) {
