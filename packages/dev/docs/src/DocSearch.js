@@ -13,7 +13,8 @@ export default function DocSearch() {
   const searchOptions = {
     distinct: 1,
     highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
-    highlightPostTag: '</mark>'
+    highlightPostTag: '</mark>',
+    hitsPerPage: 20
   };
 
   const sectionTitles = {
@@ -103,19 +104,17 @@ export default function DocSearch() {
     }
   };
 
-
   const searchAutocompleteRef = useRef();
-  let logoFragment = document.createElement('div');
+  const logoFragment = document.createElement('div');
   logoFragment.className = docsStyle.docSearchFooter;
-  let logoRoot = ReactDOM.createRoot(logoFragment);
+  const logoRoot = ReactDOM.createRoot(logoFragment);
   logoRoot.render(AlgoliaSearchLogo);
 
   let onOpenChange = (isOpen) => {
     if (isOpen) {
       requestAnimationFrame(() => {
-        const listboxes = document.querySelectorAll('[role="listbox"]');
-        const listbox = listboxes[listboxes.length - 1];
-        if (logoFragment.parentElement !== listbox.parentElement) {
+        const listbox = document.querySelector('[role="listbox"]');
+        if (listbox.nextElementSibling.innerHTML !== logoFragment.innerHTML) {
           listbox.parentElement.insertBefore(logoFragment, listbox.nextElementSibling);
         }
       });
