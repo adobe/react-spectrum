@@ -116,10 +116,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       }
 
-      // Perform scroll after the thumb is fully positioned
-      requestAnimationFrame(() => {
-        scrollIntoViewFully(thumbRef.current);
-      });
+      scrollIntoViewFully(thumbRef.current);
     }
   });
 

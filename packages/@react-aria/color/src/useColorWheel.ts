@@ -13,7 +13,7 @@
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoViewFully, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -38,7 +38,7 @@ export interface ColorWheelAria {
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>): ColorWheelAria {
+export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement>, thumbRef: RefObject<Element>): ColorWheelAria {
   let {
     isDisabled,
     innerRadius,
@@ -83,6 +83,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
           break;
       }
       stateRef.current.setDragging(false);
+      scrollIntoViewFully(thumbRef.current);
     }
   });
 
@@ -103,6 +104,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         } else if (deltaX < 0 || deltaY > 0) {
           state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
         }
+        scrollIntoViewFully(thumbRef.current);
       } else {
         stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
       }

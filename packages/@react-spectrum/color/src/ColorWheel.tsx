@@ -32,6 +32,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
   let {styleProps} = useStyleProps(props);
 
   let inputRef = useRef(null);
+  let thumbRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);
 
   let [wheelRadius, setWheelRadius] = useState<number>(0);
@@ -66,7 +67,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
     ...props,
     innerRadius: wheelRadius - wheelThickness,
     outerRadius: wheelRadius
-  }, state, inputRef);
+  }, state, inputRef, thumbRef);
 
   let {focusProps, isFocusVisible} = useFocusRing();
 
@@ -97,6 +98,7 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
         isDisabled={isDisabled}
         isDragging={state.isDragging}
         className={classNames(styles, 'spectrum-ColorWheel-handle')}
+        ref={thumbRef}
         {...thumbProps}>
         <input {...focusProps} className={classNames(styles, 'spectrum-ColorWheel-slider')} {...inputProps} ref={inputRef} />
       </ColorThumb>

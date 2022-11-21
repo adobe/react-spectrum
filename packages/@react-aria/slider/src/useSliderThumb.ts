@@ -126,10 +126,7 @@ export function useSliderThumb(
       }
 
       setThumbDragging(index, false);
-      // Perform scroll after the thumb is fully positioned
-      requestAnimationFrame(() => {
-        scrollIntoViewFully(thumbRef.current, {block: 'center', inline: 'center'});
-      });
+      scrollIntoViewFully(thumbRef.current);
     }
   });
 
