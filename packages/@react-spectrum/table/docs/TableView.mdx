@@ -528,12 +528,13 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([1]));
 
   return (
-    <ActionBarContainer>
+    <ActionBarContainer height="size-5000">
       <TableView
         aria-label="TableView with ActionBar"
         selectedKeys={selectedKeys}
         selectionMode="multiple"
-        onSelectionChange={setSelectedKeys}>
+        onSelectionChange={setSelectedKeys}
+        height="size-3000">
         <TableHeader columns={columns}>
           {column => <Column key={column.uid}>{column.name}</Column>}
         </TableHeader>
