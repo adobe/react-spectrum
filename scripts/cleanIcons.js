@@ -13,8 +13,9 @@
 import path from 'path';
 import recursive from 'recursive-readdir';
 import rimraf from 'rimraf';
+import fs from 'fs-extra';
 
-let topPaths = ['ui', 'workflow', 'color', 'express'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
+let topPaths = ['ui', 'workflow', 'color', 'express', 'illustrations'].map(name => path.resolve(path.join(__dirname, '..', 'packages', '@spectrum-icons', name)));
 topPaths.forEach((rootPath) => {
   recursive(rootPath, (err, files) => {
     let filteredFiles = files.filter(filePath => /\/src\//.test(filePath));
@@ -24,10 +25,26 @@ topPaths.forEach((rootPath) => {
       }
       let toRemove = path.basename(filePath, '.tsx');
       rimraf(path.join(rootPath, `${toRemove}.js`), [], () => {});
+      rimraf(path.join(rootPath, `${toRemove}.js.map`), [], () => {});
+      rimraf(path.join(rootPath, `${toRemove}.mjs`), [], () => {});
+      rimraf(path.join(rootPath, `${toRemove}.mjs.map`), [], () => {});
       rimraf(path.join(rootPath, `${toRemove}.d.ts`), [], () => {});
       rimraf(path.join(rootPath, `${toRemove}.d.ts.map`), [], () => {});
-      rimraf(filePath, [], () => {});
+      if (!rootPath.endsWith('illustrations')) {
+        rimraf(filePath, [], () => {});
+      }
     });
-    rimraf(path.join(rootPath, 'src'), [], () => {});
+    if (!rootPath.endsWith('illustrations')) {
+      rimraf(path.join(rootPath, 'src'), [], () => {});
+    }
+    rimraf(path.join(rootPath, 'index.d.ts'), [], () => {});
+    rimraf(path.join(rootPath, 'index.d.ts.map'), [], () => {});
+
+    // restore package.json to pre-exports state
+    let pkgJsonFilepath = path.join(rootPath, 'package.json');
+    let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilepath), 'utf-8');
+    delete pkgJson.exports;
+    let pkg = JSON.stringify(pkgJson, null, 2);
+    fs.writeFileSync(pkgJsonFilepath, `${pkg}\n`);
   });
 });
