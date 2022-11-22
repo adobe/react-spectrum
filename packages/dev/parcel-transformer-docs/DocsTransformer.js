@@ -104,12 +104,17 @@ module.exports = new Transformer({
         return processExport(path.get('typeAnnotation'), node);
       }
       if (path.isTSAsExpression()) {
-        // not sure why I can't pass typeAnnotation instead
-        return processExport(path.get('expression'), node);
+        return processExport(path.get('type'), node);
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
           return;
+        }
+        if (!node.id) {
+          Object.assign(node, {
+            id: `${asset.filePath}:${path.node.id.name}`,
+            name: path.node.id.name ?? null
+          });
         }
 
         let docs = getJSDocs(path.parentPath);
@@ -202,8 +207,8 @@ module.exports = new Transformer({
           let docs = getJSDocs(path);
           return Object.assign(node, {
             type: 'component',
-            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
-            name: path.node.id ? path.node.id.name : null,
+            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` :  node.id ?? null,
+            name: path.node.id ? path.node.id.name : node.name ?? null,
             props: props && props.typeAnnotation
               ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
@@ -415,6 +420,12 @@ module.exports = new Transformer({
       if (path.isIdentifier()) {
         let binding = path.scope.getBinding(path.node.name);
         if (!binding) {
+          if (!path.node.name) {
+            return Object.assign(node, {
+              type: 'identifier',
+              name: path.node.escapedText
+            });
+          }
           return Object.assign(node, {
             type: 'identifier',
             name: path.node.name
@@ -457,7 +468,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSObjectKeyword()) {
-        return Object.assign(node, {type: 'object'}); // ???
+        return Object.assign(node, {type: 'object'});
       }
 
       if (path.isTSUnknownKeyword()) {
@@ -549,6 +560,10 @@ module.exports = new Transformer({
           objectType: processExport(path.get('objectType')),
           indexType: processExport(path.get('indexType'))
         });
+      }
+
+      if (path.isCallExpression()) {
+        return processExport(path.get('callee'), node);
       }
 
       console.log('UNKNOWN TYPE', path.node.type);

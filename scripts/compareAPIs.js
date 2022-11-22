@@ -97,9 +97,7 @@ async function compare() {
   for (let [, diffs] of Object.entries(allDiffs)) {
     for (let {result: diff, simplifiedName} of diffs) {
       if (diff.length > 0) {
-        if (allChanged.has(simplifiedName)) {
-          console.log(simplifiedName, 'already in set');
-        } else {
+        if (!allChanged.has(simplifiedName)) {
           allChanged.add(simplifiedName);
         }
       }
@@ -229,7 +227,18 @@ function getDiff(pair) {
   let branchApi = pair.branchApi === null ? {exports:{}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
+  let allExportNames = [...new Set([...Object.entries(publishedApi.exports).map(([name, item]) => {
+    if (!item.id) {
+      console.log(item, name);
+      console.log(publishedApi.exports)
+    }
+    return item.id.replace(/(.*\/)(packages\/.*)/, '$2')
+  }), ...Object.entries(branchApi.exports).map(([name, item]) => {
+    if (!item.id) {
+      console.log(item, name);
+    }
+    return item.id.replace(/(.*\/)(packages\/.*)/, '$2')
+  })])];
   let allInterfaces = [...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])];
   let formattedPublishedInterfaces = '';
   let formattedBranchInterfaces = '';
@@ -242,6 +251,10 @@ function getDiff(pair) {
       return;
     }
     let simplifiedName = allExportNames[index];
+    if (iname === 'SearchAutocomplete<T extends {}>') {
+      console.log('published', formattedPublishedInterfaces[index])
+      console.log('branch', formattedBranchInterfaces[index])
+    }
     let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
     if (argv.verbose) {
       console.log(util.inspect(codeDiff, {depth: null}));
@@ -427,6 +440,9 @@ function rebuildInterfaces(json) {
   if (!json.exports) {
     return exports;
   }
+  if (json.exports.SearchAutocomplete) {
+    console.log('found')
+  }
   Object.keys(json.exports).forEach((key) => {
     currentlyProcessing = key;
     if (key === 'links') {
@@ -522,6 +538,8 @@ function rebuildInterfaces(json) {
         let isType = true;
         exports[name] = {isType, optional, defaultVal, value};
       }
+    } else if (item.type === 'identifier') {
+      exports[key] = processType(item);
     } else {
       console.log('unknown top level export', item);
     }
