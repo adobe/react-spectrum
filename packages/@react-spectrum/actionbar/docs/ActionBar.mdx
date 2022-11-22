@@ -196,7 +196,7 @@ function ActionBarActions(props) {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
   ///- end collapse -///
   return (
-    <ActionBarContainer>
+    <ActionBarContainer height="size-5000">
       <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
         <TableHeader columns={columns}>
           {column => (
