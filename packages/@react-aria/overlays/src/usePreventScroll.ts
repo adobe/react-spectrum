@@ -33,6 +33,11 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
+// Map of the page's styles and scroll values, used to restore page scrollability and scroll position
+let originalValues = new Map<string, string | number>();
+// The number of active usePreventScroll calls. Used to determine whether to revert back to the original page style/scroll position
+let preventScrollCount = 0;
+
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
@@ -46,6 +51,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
       return;
     }
 
+    preventScrollCount++;
     if (isIOS()) {
       return preventScrollMobileSafari();
     } else {
@@ -59,7 +65,8 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
 function preventScrollStandard() {
   return chain(
     setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden')
+    setStyle(document.documentElement, 'overflow', 'hidden'),
+    () => preventScrollCount--
   );
 }
 
@@ -181,8 +188,12 @@ function preventScrollMobileSafari() {
   // Record the original scroll position so we can restore it.
   // Then apply a negative margin to the body to offset it by the scroll position. This will
   // enable us to scroll the window to the top, which is required for the rest of this to work.
-  let scrollX = window.pageXOffset;
-  let scrollY = window.pageYOffset;
+  // Only do this if we are preventing scroll from the page's default state.
+  if (preventScrollCount === 1) {
+    originalValues.set('pageXOffset', window.pageXOffset);
+    originalValues.set('pageYOffset', window.pageYOffset);
+  }
+
   let restoreStyles = chain(
     setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
     setStyle(document.documentElement, 'overflow', 'hidden'),
@@ -204,16 +215,25 @@ function preventScrollMobileSafari() {
     // Restore styles and scroll the page back to where it was.
     restoreStyles();
     removeEvents();
-    window.scrollTo(scrollX, scrollY);
+    if (preventScrollCount === 1) {
+      window.scrollTo(originalValues.get('pageXOffset') as number, originalValues.get('pageYOffset') as number);
+    }
+    preventScrollCount--;
   };
 }
 
 // Sets a CSS property on an element, and returns a function to revert it to the previous value.
+// Only do so if we are moving from the page's default state to the preventScroll state or vice versa.
 function setStyle(element: HTMLElement, style: string, value: string) {
-  let cur = element.style[style];
-  element.style[style] = value;
+  if (preventScrollCount === 1) {
+    originalValues.set(style, element.style[style]);
+    element.style[style] = value;
+  }
+
   return () => {
-    element.style[style] = cur;
+    if (preventScrollCount === 1 && originalValues.has(style)) {
+      element.style[style] = originalValues.get(style);
+    }
   };
 }
 
