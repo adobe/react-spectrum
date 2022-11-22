@@ -385,7 +385,7 @@ function Example() {
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={items} maxWidth="size-6000" aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
         {(item) => (
           <Item>
             {item.name}
