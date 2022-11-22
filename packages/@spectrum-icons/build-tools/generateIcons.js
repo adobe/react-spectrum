@@ -55,3 +55,29 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
     writeToFile(indexFilepath, indexFile);
   });
 }
+
+
+/**
+ * Takes an icon directory and add all the built files to the exports.
+ * @param iconDir Root icon directory.
+ */
+export function addPackageExports(iconPackageDir) {
+  fs.readdir(iconPackageDir, (err, items) => {
+    let iconFiles = items.filter(item => !!item.endsWith('.mjs'));
+
+    // add all exports fields to package.json
+    let pkgJsonFilepath = path.join(iconPackageDir, 'package.json');
+    let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilepath), 'utf-8');
+    pkgJson.exports = {};
+    iconFiles.forEach(icon => {
+      let iconFileName = path.basename(icon).substring(0, icon.length - 4);
+      pkgJson.exports[`./${iconFileName}`] = {
+        'types': `./${iconFileName}.d.ts`,
+        'require': `./${iconFileName}.js`,
+        'import': `./${iconFileName}.mjs`
+      };
+    });
+    let pkg = JSON.stringify(pkgJson, null, 2);
+    fs.writeFileSync(pkgJsonFilepath, `${pkg}\n`);
+  });
+}

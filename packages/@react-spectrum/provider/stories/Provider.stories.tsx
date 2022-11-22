@@ -14,6 +14,7 @@ import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
+import {theme as expressTheme} from '@react-spectrum/theme-express';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -91,6 +92,10 @@ storiesOf('Provider', module)
   .add(
     'custom theme',
     () => render({theme: THEME})
+  )
+  .add(
+    'express theme',
+    () => render({theme: expressTheme})
   )
   .add(
     'responsive styleProps',

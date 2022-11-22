@@ -230,7 +230,9 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     for (let i = colIndex; i < colIndex + colspan; i++) {
       let column = this.collection.columns[i];
-      width += this.columnWidths.get(column.key);
+      if (column?.key != null) {
+        width += this.columnWidths.get(column.key);
+      }
     }
 
     return width;

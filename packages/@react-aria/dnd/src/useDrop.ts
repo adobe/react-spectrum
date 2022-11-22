@@ -164,6 +164,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragEnter = (e: DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     state.dragOverElements.add(e.target as Element);
     if (state.dragOverElements.size > 1) {
@@ -200,6 +201,7 @@ export function useDrop(options: DropOptions): DropResult {
   };
 
   let onDragLeave = (e: DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
 
     // We would use e.relatedTarget to detect if the drag is still inside the drop target,

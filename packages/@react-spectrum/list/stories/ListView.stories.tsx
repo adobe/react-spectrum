@@ -22,7 +22,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
@@ -374,6 +374,14 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag within list (Reorder)',
     args => (
       <Flex direction="row" wrap alignItems="center">
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag within list scrolling (Reorder)',
+    args => (
+      <Flex direction="row" wrap alignItems="center" height={100}>
         <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
       </Flex>
     )
@@ -802,6 +810,7 @@ export function ReorderExample(props) {
       aria-label="reorderable list view"
       selectionMode="multiple"
       width="300px"
+      height="100%"
       items={list.items}
       disabledKeys={disabledKeys}
       dragAndDropHooks={dragAndDropHooks}

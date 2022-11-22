@@ -22,11 +22,16 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-item {
+  @inherit: %spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
+  --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
+
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
+  position: relative;
 
   margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
   padding-inline-start:calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
@@ -35,7 +40,7 @@ governing permissions and limitations under the License.
 
   border-width: var(--spectrum-tag-border-size);
   border-style: solid;
-  border-radius: var(--spectrum-border-radius);
+  border-radius: var(--spectrum-tag-border-radius);
   outline: none;
   user-select: none;
 

@@ -140,7 +140,7 @@ async function build() {
 
   // TEMP HACK: Patch textfield css to workaround parcel bug
   fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
-  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
+  let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.mjs');
   let tf = fs.readFileSync(tfpath, 'utf8');
   tf = 'import "./label.css";\n' + tf;
   fs.writeFileSync(tfpath, tf);

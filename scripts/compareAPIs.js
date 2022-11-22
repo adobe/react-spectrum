@@ -225,8 +225,8 @@ function getDiff(pair) {
   if (argv.verbose) {
     console.log(`diffing ${name}`);
   }
-  let publishedApi = pair.pubApi === null ? {} : getAPI(pair.pubApi);
-  let branchApi = pair.branchApi === null ? {} : getAPI(pair.branchApi);
+  let publishedApi = pair.pubApi === null ? {exports:{}} : getAPI(pair.pubApi);
+  let branchApi = pair.branchApi === null ? {exports:{}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
   let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
