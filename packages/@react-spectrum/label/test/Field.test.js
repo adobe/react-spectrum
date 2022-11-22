@@ -15,6 +15,7 @@ import {Field} from '../';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
 import {useField} from '@react-aria/label';
+import userEvent from '@testing-library/user-event';
 
 let defaultProps = {
   label: 'Field label'
@@ -160,6 +161,25 @@ describe('Field', function () {
 
         let input = getByRole('textbox');
         expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('does not lose focus when no visible label and validation state changes', function () {
+        let {getByRole, getByText, rerender} = renderField();
+
+        let input = getByRole('textbox');
+
+        userEvent.tab();
+        expect(document.activeElement).toBe(input);
+        userEvent.type(input, 'Test');
+        expect(document.activeElement).toBe(input);
+
+        rerender(<ExampleField validationState="invalid" errorMessage="Error message" />);
+
+        let errorMessage = getByText('Error message');
+        expect(errorMessage).toBeInTheDocument();
+
+        input = getByRole('textbox');
+        expect(document.activeElement).toBe(input);
       });
     });
   });
