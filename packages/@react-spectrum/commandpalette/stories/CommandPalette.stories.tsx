@@ -19,6 +19,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {CommandPalette, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Keyboard} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
@@ -28,6 +29,17 @@ import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {useListData, useTreeData} from '@react-stately/data';
+import User from '@spectrum-icons/workflow/User';
+import DataSettings from '@spectrum-icons/workflow/DataSettings';
+import Apps from '@spectrum-icons/workflow/Apps';
+import LockClosed from '@spectrum-icons/workflow/LockClosed';
+import EmailNotification from '@spectrum-icons/workflow/EmailNotification';
+import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
+import Globe from '@spectrum-icons/workflow/Globe';
+import ABC from '@spectrum-icons/workflow/ABC';
+import Data from '@spectrum-icons/workflow/Data';
+import Monitoring from '@spectrum-icons/workflow/Monitoring';
+import IdentityService from '@spectrum-icons/workflow/IdentityService';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -115,6 +127,80 @@ storiesOf('CommandPalette', module)
               {(item) => <Item key={item.name}>{item.name}</Item>}
             </Section>
           )}
+        </CommandPalette>
+      </>
+    )
+  )
+  .add(
+    'with sections, icons, and descriptions',
+    () => (
+      <>
+        <div>Press <Keyboard>⌘K</Keyboard> to open Command Palette.</div>
+        <CommandPalette defaultItems={withSection} label="Command Palette" {...actions}>
+          <Section key="Actions" title="Actions">
+            <Item textValue="Create resource">
+              <Add />
+              <Text>Create resource</Text>
+              <Text slot="description">Adds a new resource to the group.</Text>
+            </Item>
+            <Item textValue="Copy resource">
+              <Copy />
+              <Text>Copy resource</Text>
+              <Text slot="description">Duplicates the current resource within the group.</Text>
+            </Item> 
+            <Item textValue="Delete resource">
+              <Delete />
+              <Text>Delete resource</Text>
+              <Text slot="description">Deletes the current resource permanently.</Text>
+            </Item> 
+          </Section>
+          <Section key="Apps" title="Apps">
+            <Item textValue="Data Engine">
+              <Data />
+              <Text>Data Engine</Text>
+              <Text slot="description">Manage data pipelines.</Text>
+            </Item>
+            <Item textValue="Monitoring">
+              <Monitoring />
+              <Text>Monitoring</Text>
+              <Text slot="description">Monitoring and analytics application.</Text>
+            </Item> 
+            <Item textValue="Identity Center">
+              <IdentityService />
+              <Text>Identity Center</Text>
+              <Text slot="description">View and manage identities.</Text>
+            </Item> 
+          </Section>
+          <Section key="Settings" title="Settings">
+            <Item textValue="User Settings">
+              <User />
+              <Text>User Settings</Text>
+            </Item>
+            <Item textValue="Project Settings">
+              <DataSettings />
+              <Text>Project Settings</Text>
+            </Item> 
+            <Item textValue="Appearance">
+              <ColorPalette />
+              <Text>Appearance</Text>
+            </Item> 
+            <Item textValue="Security">
+              <LockClosed />
+              <Text>Security</Text>
+            </Item>
+            <Item textValue="Notifications">
+              <EmailNotification />
+              <Text>Notifications</Text>
+            </Item>
+            <Item textValue="Region">
+              <Globe />
+              <Text>Region</Text>
+            </Item>
+            <Item textValue="Language">
+              <ABC />
+              <Text>Language</Text>
+            </Item>
+          </Section>
         </CommandPalette>
       </>
     )
