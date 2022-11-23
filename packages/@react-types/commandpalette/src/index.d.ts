@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
-import { Key } from 'react';
+import {Key} from 'react';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 

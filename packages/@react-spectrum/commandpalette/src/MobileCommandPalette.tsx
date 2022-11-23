@@ -15,7 +15,7 @@ import {ClearButton} from '@react-spectrum/button';
 import {CommandPaletteState, useCommandPaletteState} from '@react-stately/commandpalette';
 import commandpaletteStyles from './commandpalette.css';
 import {DismissButton} from '@react-aria/overlays';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRefValue} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
@@ -34,12 +34,11 @@ import {useCommandPalette} from '@react-aria/commandpalette';
 import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';
 import {useFilter} from '@react-aria/i18n';
-import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileCommandPalette = React.forwardRef(function MobileCommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>, ref: FocusableRef<HTMLElement>) {
+export const MobileCommandPalette = React.forwardRef(function MobileCommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>) {
   props = useProviderProps(props);
 
   let {contains} = useFilter({sensitivity: 'base'});

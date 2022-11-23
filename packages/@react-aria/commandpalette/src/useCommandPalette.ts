@@ -16,7 +16,7 @@ import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, KeyboardDelegate} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {CommandPaletteState} from '@react-stately/commandpalette';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 import {getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

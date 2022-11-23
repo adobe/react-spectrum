@@ -43,7 +43,7 @@ export interface CommandPaletteStateOptions<T> extends CommandPaletteProps<T> {
  */
 export function useCommandPaletteState<T extends object>(props: CommandPaletteStateOptions<T>): CommandPaletteState<T> {
   let {
-    defaultFilter,
+    defaultFilter
   } = props;
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
@@ -104,7 +104,7 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
   useEffect(() => {
     // TODO: Clear selected key immediately
     selectionManager.clearSelection();
-    console.log('clear');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKey]);
 
   let setFocused = (isFocused: boolean) => {
