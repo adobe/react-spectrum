@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import ABC from '@spectrum-icons/workflow/ABC';
 import {action} from '@storybook/addon-actions';
 import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
@@ -17,12 +18,20 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
+import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
 import {CommandPalette, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
+import Data from '@spectrum-icons/workflow/Data';
+import DataSettings from '@spectrum-icons/workflow/DataSettings';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Draw from '@spectrum-icons/workflow/Draw';
+import EmailNotification from '@spectrum-icons/workflow/EmailNotification';
+import Globe from '@spectrum-icons/workflow/Globe';
+import IdentityService from '@spectrum-icons/workflow/IdentityService';
 import {Keyboard} from '@react-spectrum/text';
+import LockClosed from '@spectrum-icons/workflow/LockClosed';
 import {mergeProps} from '@react-aria/utils';
+import Monitoring from '@spectrum-icons/workflow/Monitoring';
 import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
@@ -30,16 +39,6 @@ import {useAsyncList} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {useListData, useTreeData} from '@react-stately/data';
 import User from '@spectrum-icons/workflow/User';
-import DataSettings from '@spectrum-icons/workflow/DataSettings';
-import Apps from '@spectrum-icons/workflow/Apps';
-import LockClosed from '@spectrum-icons/workflow/LockClosed';
-import EmailNotification from '@spectrum-icons/workflow/EmailNotification';
-import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
-import Globe from '@spectrum-icons/workflow/Globe';
-import ABC from '@spectrum-icons/workflow/ABC';
-import Data from '@spectrum-icons/workflow/Data';
-import Monitoring from '@spectrum-icons/workflow/Monitoring';
-import IdentityService from '@spectrum-icons/workflow/IdentityService';
 
 let items = [
   {name: 'Aardvark', id: '1'},
