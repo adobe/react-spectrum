@@ -636,7 +636,7 @@ h2.sectionHeader {
 
 .docSearchBox {
   margin-inline-start: auto;
-  width: var(--spectrum-global-dimension-size-3600);
+  width: var(--spectrum-global-dimension-size-3000) !important;
   > div {
     width: 100%;
   }
@@ -649,7 +649,7 @@ h2.sectionHeader {
 }
 
 .docSearchItemIndent {
-  margin-inline-start: var(--spectrum-global-dimension-size-300);
+  margin-inline-start: var(--spectrum-global-dimension-size-325);
 }
 
 .docSearchFooter {
