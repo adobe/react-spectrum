@@ -95,7 +95,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
 
   return (
     <>
-      <Modal ref={ref} state={state} UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
+      <Modal ref={ref} state={state} isDismissable isKeyboardDismissDisabled UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
