@@ -1,17 +1,42 @@
 import algoliasearch from 'algoliasearch/lite';
+import {createRoot} from 'react-dom/client';
 import docsStyle from './docs.css';
 import DOMPurify from 'dompurify';
 import {Item, SearchAutocomplete, Section} from '@react-spectrum/autocomplete';
+import Link from '@spectrum-icons/workflow/Link';
+import News from '@spectrum-icons/workflow/News';
 import React, {useRef, useState} from 'react';
-import * as ReactDOM from 'react-dom/client';
 import {Text, VisuallyHidden} from '@adobe/react-spectrum';
 import {ThemeProvider} from './ThemeSwitcher';
+import WebPage from '@spectrum-icons/workflow/WebPage';
 
 export default function DocSearch() {
   const client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
   const searchIndex = client.initIndex('react-spectrum');
   const searchOptions = {
     distinct: 1,
+    attributesToRetrieve: [
+      'hierarchy.lvl0',
+      'hierarchy.lvl1',
+      'hierarchy.lvl2',
+      'hierarchy.lvl3',
+      'hierarchy.lvl4',
+      'hierarchy.lvl5',
+      'hierarchy.lvl6',
+      'content',
+      'type',
+      'url'
+    ],
+    attributesToSnippet: [
+      'hierarchy.lvl1:10',
+      'hierarchy.lvl2:10',
+      'hierarchy.lvl3:10',
+      'hierarchy.lvl4:10',
+      'hierarchy.lvl5:10',
+      'hierarchy.lvl6:10',
+      'content:10'
+    ],
+    snippetEllipsisText: '…',
     highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
     highlightPostTag: '</mark>',
     hitsPerPage: 20
@@ -29,13 +54,125 @@ export default function DocSearch() {
     'support': 'Support'
   };
 
+  function sectionTitlePredicate(hit) {
+    let sectionTitle;
+    for (const [path, title] of Object.entries(sectionTitles)) {
+      let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
+      if (hit.url.match(regexp)) {
+        sectionTitle = title;
+        break;
+      }
+    }
+    if (!sectionTitle) {
+      sectionTitle = 'Documentation';
+    }
+    return sectionTitle;
+  }
+
   const [searchValue, setSearchValue] = useState('');
+  const [loadingState, setLoadingState] = useState(null);
   const [predictions, setPredictions] = useState(null);
   const [suggestions, setSuggestions] = useState(null);
 
   let updatePredictions = ({hits}) => {
     setPredictions(hits);
+
+    const groupedBySection = groupBy(hits, (hit) => sectionTitlePredicate(hit));
     let sections = [];
+    for (const [title, hits] of Object.entries(groupedBySection)) {
+      const items = Object.values(
+        groupBy(hits, (hit) => hit.hierarchy.lvl1)
+      )
+      .reverse()
+      .map(
+        groupedHits =>
+        groupedHits.map((hit) => {
+          const hierarchy = hit.hierarchy;
+          const objectID = hit.objectID;
+
+          return (
+            <Item key={objectID} textValue={hit.type === 'content' ? hit[hit.type] : hierarchy[hit.type]}>
+              {
+                hierarchy[hit.type] &&
+                hit.type === 'lvl1' && (
+                  <>
+                    {
+                      title === 'Blog' || title === 'Releases' ?
+                        <News aria-label="news" /> :
+                        <WebPage aria-label="web page" />
+                    }
+                    <Text>
+                      <Snippet
+                        className="DocSearch-Hit-title"
+                        hit={hit}
+                        attribute="hierarchy.lvl1" />
+                    </Text>
+                    {hit.content && (
+                      <Text slot="description">
+                        <Snippet
+                          className="DocSearch-Hit-path"
+                          hit={hit}
+                          attribute="content" />
+                      </Text>
+                    )}
+                  </>
+                )
+              }
+
+              {
+                hierarchy[hit.type] &&
+                (
+                  hit.type === 'lvl2' ||
+                  hit.type === 'lvl3' ||
+                  hit.type === 'lvl4' ||
+                  hit.type === 'lvl5' ||
+                  hit.type === 'lvl6'
+                ) && (
+                  <>
+                    <Link aria-label="in-page link" />
+                    <Text>
+                      <Snippet
+                        className="DocSearch-Hit-title"
+                        hit={hit}
+                        attribute={`hierarchy.${hit.type}`} />
+                    </Text>
+                    <Text slot="description">
+                      <Snippet
+                        className="DocSearch-Hit-path"
+                        hit={hit}
+                        attribute="hierarchy.lvl1" />
+                    </Text>
+                  </>
+                )
+              }
+
+              {
+                hit.type === 'content' && (
+                  <>
+                    <Link aria-label="in-page link" />
+                    <Text>
+                      <Snippet
+                        className="DocSearch-Hit-title"
+                        hit={hit}
+                        attribute="content" />
+                    </Text>
+                    <Text slot="description">
+                      <Snippet
+                        className="DocSearch-Hit-path"
+                        hit={hit}
+                        attribute="hierarchy.lvl1" />
+                    </Text>
+                  </>
+                )
+              }
+            </Item>
+          );
+        }
+      ));
+
+      sections.push({title, items});
+    }
+    /*
     hits.forEach(prediction => {
       let hierarchy = prediction.hierarchy;
       let objectID = prediction.objectID;
@@ -76,18 +213,23 @@ export default function DocSearch() {
         </Item>
       );
     });
+    */
     let titles = Object.values(sectionTitles);
     sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
     let suggestions = sections.map((section, index) => <Section key={`${index}-${section.title}`} title={section.title}>{section.items}</Section>);
     setSuggestions(suggestions);
+    setLoadingState(null);
   };
 
   let onInputChange = (query) => {
+    setSearchValue(query);
     if (!query && predictions) {
       setPredictions(null);
       setSuggestions(null);
+      setLoadingState(null);
+      return;
     }
-    setSearchValue(query);
+    setLoadingState('loading');
     searchIndex
       .search(
         query,
@@ -107,14 +249,16 @@ export default function DocSearch() {
   const searchAutocompleteRef = useRef();
   const logoFragment = document.createElement('div');
   logoFragment.className = docsStyle.docSearchFooter;
-  const logoRoot = ReactDOM.createRoot(logoFragment);
+  const logoRoot = createRoot(logoFragment);
   logoRoot.render(AlgoliaSearchLogo);
 
   let onOpenChange = (isOpen) => {
     if (isOpen) {
       requestAnimationFrame(() => {
         const listbox = document.querySelector('[role="listbox"]');
-        if (listbox.nextElementSibling.innerHTML !== logoFragment.innerHTML) {
+        if (listbox &&
+          listbox.nextElementSibling &&
+          listbox.nextElementSibling.innerHTML !== logoFragment.innerHTML) {
           listbox.parentElement.insertBefore(logoFragment, listbox.nextElementSibling);
         }
       });
@@ -131,6 +275,7 @@ export default function DocSearch() {
           aria-label="Search"
           UNSAFE_className={docsStyle.docSearchBox}
           id="algolia-doc-search"
+          loadingState={loadingState}
           value={searchValue}
           onInputChange={onInputChange}
           onSubmit={onSubmit}
@@ -153,3 +298,51 @@ const AlgoliaSearchLogo = (
     </a>
   </div>
 );
+
+function groupBy(values, predicate = (value) => value) {
+  return values.reduce((accumulator, item) => {
+    const key = predicate(item);
+
+    if (!Object.prototype.hasOwnProperty.call(accumulator, key)) {
+      accumulator[key] = [];
+    }
+
+    // We limit each section to show 20 hits maximum.
+    // This acts as a frontend alternative to `distinct`.
+    if (accumulator[key].length < 21) {
+      accumulator[key].push(item);
+    }
+
+    return accumulator;
+  }, {});
+}
+
+function getPropertyByPath(object, path) {
+  const parts = path.split('.');
+
+  return parts.reduce((prev, current) => {
+    if (prev?.[current]) {
+      return prev[current];
+    }
+    return null;
+  }, object);
+}
+
+function Snippet({
+  hit,
+  attribute,
+  tagName = 'span',
+  ...rest
+}) {
+  return React.createElement(tagName, {
+    ...rest,
+    dangerouslySetInnerHTML: {
+      __html:
+        DOMPurify.sanitize(
+          getPropertyByPath(hit, `_snippetResult.${attribute}.value`) ||
+          getPropertyByPath(hit, attribute)
+        )
+    }
+  });
+}
+
