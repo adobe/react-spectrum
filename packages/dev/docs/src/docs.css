@@ -648,6 +648,10 @@ h2.sectionHeader {
   color: var(--spectrum-global-color-blue-700);
 }
 
+.docSearchItemIndent {
+  margin-inline-start: var(--spectrum-global-dimension-size-300);
+}
+
 .docSearchFooter {
   align-items: center;
   display: flex;

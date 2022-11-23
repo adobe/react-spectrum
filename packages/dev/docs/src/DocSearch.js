@@ -1,14 +1,14 @@
 import algoliasearch from 'algoliasearch/lite';
 import {createRoot} from 'react-dom/client';
 import docsStyle from './docs.css';
+import DocumentOutline from '@spectrum-icons/workflow/DocumentOutline';
 import DOMPurify from 'dompurify';
+import {Icon} from '@react-spectrum/icon';
 import {Item, SearchAutocomplete, Section} from '@react-spectrum/autocomplete';
-import Link from '@spectrum-icons/workflow/Link';
 import News from '@spectrum-icons/workflow/News';
 import React, {useRef, useState} from 'react';
 import {Text, VisuallyHidden} from '@adobe/react-spectrum';
 import {ThemeProvider} from './ThemeSwitcher';
-import WebPage from '@spectrum-icons/workflow/WebPage';
 
 export default function DocSearch() {
   const client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
@@ -89,6 +89,13 @@ export default function DocSearch() {
         groupedHits.map((hit) => {
           const hierarchy = hit.hierarchy;
           const objectID = hit.objectID;
+          const docsearchParent = hit.type !== 'lvl1' &&
+            groupedHits.find(
+              (siblingItem) =>
+                siblingItem.type === 'lvl1' &&
+                siblingItem.hierarchy.lvl1 ===
+                  hit.hierarchy.lvl1
+            );
 
           return (
             <Item key={objectID} textValue={hit.type === 'content' ? hit[hit.type] : hierarchy[hit.type]}>
@@ -99,7 +106,7 @@ export default function DocSearch() {
                     {
                       title === 'Blog' || title === 'Releases' ?
                         <News aria-label="news" /> :
-                        <WebPage aria-label="web page" />
+                        <DocumentOutline aria-label="web page" />
                     }
                     <Text>
                       <Snippet
@@ -129,7 +136,9 @@ export default function DocSearch() {
                   hit.type === 'lvl6'
                 ) && (
                   <>
-                    <Link aria-label="in-page link" />
+                    <Hash
+                      UNSAFE_className={docsearchParent ? docsStyle.docSearchItemIndent : undefined}
+                      aria-label="in-page link" />
                     <Text>
                       <Snippet
                         className="DocSearch-Hit-title"
@@ -149,7 +158,9 @@ export default function DocSearch() {
               {
                 hit.type === 'content' && (
                   <>
-                    <Link aria-label="in-page link" />
+                    <Hash
+                      UNSAFE_className={docsearchParent ? docsStyle.docSearchItemIndent : undefined}
+                      aria-label="in-page link" />
                     <Text>
                       <Snippet
                         className="DocSearch-Hit-title"
@@ -172,48 +183,6 @@ export default function DocSearch() {
 
       sections.push({title, items});
     }
-    /*
-    hits.forEach(prediction => {
-      let hierarchy = prediction.hierarchy;
-      let objectID = prediction.objectID;
-      let url = prediction.url;
-      let sectionTitle;
-      for (const [path, title] of Object.entries(sectionTitles)) {
-        let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
-        if (url.match(regexp)) {
-          sectionTitle = title;
-          break;
-        }
-      }
-      if (!sectionTitle) {
-        sectionTitle = 'Documentation';
-      }
-      let section = sections.find(section => section.title === sectionTitle);
-      if (!section) {
-        section = {title: sectionTitle, items: []};
-        sections.push(section);
-      }
-      let text = [];
-      let textValue = [];
-      for (let i = 1; i < 6; i++) {
-        if (hierarchy[`lvl${i}`]) {
-          text.push(prediction._highlightResult.hierarchy[`lvl${i}`].value);
-          textValue.push(hierarchy[`lvl${i}`]);
-        }
-      }
-      section.items.push(
-        <Item key={objectID} textValue={textValue.join(' | ')}>
-          <Text><span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(text.join(' | '))}} /></Text>
-          {
-            prediction.content &&
-            <Text slot="description">
-              <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(prediction._snippetResult.content.value)}} />
-            </Text>
-          }
-        </Item>
-      );
-    });
-    */
     let titles = Object.values(sectionTitles);
     sections = sections.sort((a, b) => titles.indexOf(a.title) < titles.indexOf(b.title) ? -1 : 1);
     let suggestions = sections.map((section, index) => <Section key={`${index}-${section.title}`} title={section.title}>{section.items}</Section>);
@@ -287,6 +256,16 @@ export default function DocSearch() {
   );
 }
 
+function Hash(props) {
+  return (
+    <Icon {...props}>
+      <svg viewBox="0 0 20 20">
+        <path d="M13 13h4-4V8H7v5h6v4-4H7V8H3h4V3v5h6V3v5h4-4v5zm-6 0v4-4H3h4z" stroke="currentColor" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </Icon>
+  );
+}
+
 const AlgoliaSearchLogo = (
   <div className={docsStyle.docSearchLogo}>
     <a href="https://www.algolia.com/ref/docsearch/?utm_source=react-spectrum.adobe.com&amp;utm_medium=referral&amp;utm_content=powered_by&amp;utm_campaign=docsearch" target="_blank" rel="noopener noreferrer">
@@ -345,4 +324,5 @@ function Snippet({
     }
   });
 }
+
 
