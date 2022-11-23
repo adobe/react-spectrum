@@ -115,7 +115,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
           shouldUseVirtualFocus
           isLoading={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
-          renderEmptyState={() => isAsync && (
+          renderEmptyState={() => (
             <span className={classNames(commandpaletteStyles, 'no-results')}>
               {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
             </span>
