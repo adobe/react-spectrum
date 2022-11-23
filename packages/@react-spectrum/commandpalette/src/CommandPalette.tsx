@@ -61,7 +61,6 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
   let buttonRef = useRef<FocusableRefValue<HTMLElement>>();
@@ -135,8 +134,6 @@ interface CommandPaletteInputProps extends SpectrumCommandPaletteProps<unknown> 
 
 const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props: CommandPaletteInputProps) {
   let {
-    isDisabled,
-    validationState,
     inputProps,
     inputRef,
     loadingState,
@@ -204,8 +201,6 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
           autoFocus
           inputProps={inputProps}
           inputRef={inputRef}
-          isDisabled={isDisabled}
-          validationState={validationState}
           width="100%"
           isLoading={showLoading && (isOpen || loadingState === 'loading')}
           loadingIndicator={loadingState != null && loadingCircle} />
