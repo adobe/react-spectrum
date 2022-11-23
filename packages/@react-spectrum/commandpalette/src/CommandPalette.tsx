@@ -16,7 +16,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import commandpaletteStyles from './commandpalette.css';
-import {DOMRef, DOMRefValue, FocusableRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -94,7 +94,7 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
 
   return (
     <>
-      <Modal ref={ref} state={state} isDismissable isKeyboardDismissDisabled UNSAFE_style={{position: 'absolute', top: '20%', maxHeight: '60%'}}>
+      <Modal ref={ref} state={state} isDismissable isKeyboardDismissDisabled UNSAFE_className={classNames(commandpaletteStyles, 'modal')}>
         <CommandPaletteInput
           {...props}
           isOpen={state.isOpen}
@@ -191,7 +191,7 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
   }, [inputRef]);
 
   return (
-    <View UNSAFE_style={{position: 'sticky', top: 0, zIndex: 1, padding: 10, background: 'var(--spectrum-alias-background-color-default)'}}>
+    <View UNSAFE_className={classNames(commandpaletteStyles, 'textfield-container')}>
       <FocusRing
         within
         isTextInput
@@ -212,5 +212,5 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
 /**
  * CommandPalettes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
  */
-const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T>) => ReactElement;
+const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_CommandPalette as CommandPalette};
