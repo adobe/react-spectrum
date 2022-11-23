@@ -8,8 +8,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
-    "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
-    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && tsc --project ./tsconfig.types.json"
+    "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
+    "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
+    "add-exports": "babel-node --presets @babel/env ./scripts/addExports.js -i '[]'",
+    "generate-types": "tsc --project ./tsconfig.types.json",
+    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types && yarn add-exports",
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && yarn generate-types"
   },
   "dependencies": {
     "@adobe/react-spectrum-ui": "1.2.0",
@@ -25,5 +29,197 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    "./AlertMedium": {
+      "types": "./AlertMedium.d.ts",
+      "require": "./AlertMedium.js",
+      "import": "./AlertMedium.mjs"
+    },
+    "./AlertSmall": {
+      "types": "./AlertSmall.d.ts",
+      "require": "./AlertSmall.js",
+      "import": "./AlertSmall.mjs"
+    },
+    "./ArrowDownSmall": {
+      "types": "./ArrowDownSmall.d.ts",
+      "require": "./ArrowDownSmall.js",
+      "import": "./ArrowDownSmall.mjs"
+    },
+    "./ArrowLeftMedium": {
+      "types": "./ArrowLeftMedium.d.ts",
+      "require": "./ArrowLeftMedium.js",
+      "import": "./ArrowLeftMedium.mjs"
+    },
+    "./ArrowUpSmall": {
+      "types": "./ArrowUpSmall.d.ts",
+      "require": "./ArrowUpSmall.js",
+      "import": "./ArrowUpSmall.mjs"
+    },
+    "./Asterisk": {
+      "types": "./Asterisk.d.ts",
+      "require": "./Asterisk.js",
+      "import": "./Asterisk.mjs"
+    },
+    "./CheckmarkMedium": {
+      "types": "./CheckmarkMedium.d.ts",
+      "require": "./CheckmarkMedium.js",
+      "import": "./CheckmarkMedium.mjs"
+    },
+    "./CheckmarkSmall": {
+      "types": "./CheckmarkSmall.d.ts",
+      "require": "./CheckmarkSmall.js",
+      "import": "./CheckmarkSmall.mjs"
+    },
+    "./ChevronDownMedium": {
+      "types": "./ChevronDownMedium.d.ts",
+      "require": "./ChevronDownMedium.js",
+      "import": "./ChevronDownMedium.mjs"
+    },
+    "./ChevronDownSmall": {
+      "types": "./ChevronDownSmall.d.ts",
+      "require": "./ChevronDownSmall.js",
+      "import": "./ChevronDownSmall.mjs"
+    },
+    "./ChevronLeftLarge": {
+      "types": "./ChevronLeftLarge.d.ts",
+      "require": "./ChevronLeftLarge.js",
+      "import": "./ChevronLeftLarge.mjs"
+    },
+    "./ChevronLeftMedium": {
+      "types": "./ChevronLeftMedium.d.ts",
+      "require": "./ChevronLeftMedium.js",
+      "import": "./ChevronLeftMedium.mjs"
+    },
+    "./ChevronRightLarge": {
+      "types": "./ChevronRightLarge.d.ts",
+      "require": "./ChevronRightLarge.js",
+      "import": "./ChevronRightLarge.mjs"
+    },
+    "./ChevronRightMedium": {
+      "types": "./ChevronRightMedium.d.ts",
+      "require": "./ChevronRightMedium.js",
+      "import": "./ChevronRightMedium.mjs"
+    },
+    "./ChevronRightSmall": {
+      "types": "./ChevronRightSmall.d.ts",
+      "require": "./ChevronRightSmall.js",
+      "import": "./ChevronRightSmall.mjs"
+    },
+    "./ChevronUpSmall": {
+      "types": "./ChevronUpSmall.d.ts",
+      "require": "./ChevronUpSmall.js",
+      "import": "./ChevronUpSmall.mjs"
+    },
+    "./CornerTriangle": {
+      "types": "./CornerTriangle.d.ts",
+      "require": "./CornerTriangle.js",
+      "import": "./CornerTriangle.mjs"
+    },
+    "./CrossLarge": {
+      "types": "./CrossLarge.d.ts",
+      "require": "./CrossLarge.js",
+      "import": "./CrossLarge.mjs"
+    },
+    "./CrossMedium": {
+      "types": "./CrossMedium.d.ts",
+      "require": "./CrossMedium.js",
+      "import": "./CrossMedium.mjs"
+    },
+    "./CrossSmall": {
+      "types": "./CrossSmall.d.ts",
+      "require": "./CrossSmall.js",
+      "import": "./CrossSmall.mjs"
+    },
+    "./DashSmall": {
+      "types": "./DashSmall.d.ts",
+      "require": "./DashSmall.js",
+      "import": "./DashSmall.mjs"
+    },
+    "./DoubleGripper": {
+      "types": "./DoubleGripper.d.ts",
+      "require": "./DoubleGripper.js",
+      "import": "./DoubleGripper.mjs"
+    },
+    "./FolderBreadcrumb": {
+      "types": "./FolderBreadcrumb.d.ts",
+      "require": "./FolderBreadcrumb.js",
+      "import": "./FolderBreadcrumb.mjs"
+    },
+    "./HelpMedium": {
+      "types": "./HelpMedium.d.ts",
+      "require": "./HelpMedium.js",
+      "import": "./HelpMedium.mjs"
+    },
+    "./HelpSmall": {
+      "types": "./HelpSmall.d.ts",
+      "require": "./HelpSmall.js",
+      "import": "./HelpSmall.mjs"
+    },
+    "./InfoMedium": {
+      "types": "./InfoMedium.d.ts",
+      "require": "./InfoMedium.js",
+      "import": "./InfoMedium.mjs"
+    },
+    "./InfoSmall": {
+      "types": "./InfoSmall.d.ts",
+      "require": "./InfoSmall.js",
+      "import": "./InfoSmall.mjs"
+    },
+    "./ListGripper": {
+      "types": "./ListGripper.d.ts",
+      "require": "./ListGripper.js",
+      "import": "./ListGripper.mjs"
+    },
+    "./Magnifier": {
+      "types": "./Magnifier.d.ts",
+      "require": "./Magnifier.js",
+      "import": "./Magnifier.mjs"
+    },
+    "./More": {
+      "types": "./More.d.ts",
+      "require": "./More.js",
+      "import": "./More.mjs"
+    },
+    "./SkipLeft": {
+      "types": "./SkipLeft.d.ts",
+      "require": "./SkipLeft.js",
+      "import": "./SkipLeft.mjs"
+    },
+    "./SkipRight": {
+      "types": "./SkipRight.d.ts",
+      "require": "./SkipRight.js",
+      "import": "./SkipRight.mjs"
+    },
+    "./Star": {
+      "types": "./Star.d.ts",
+      "require": "./Star.js",
+      "import": "./Star.mjs"
+    },
+    "./StarOutline": {
+      "types": "./StarOutline.d.ts",
+      "require": "./StarOutline.js",
+      "import": "./StarOutline.mjs"
+    },
+    "./SuccessMedium": {
+      "types": "./SuccessMedium.d.ts",
+      "require": "./SuccessMedium.js",
+      "import": "./SuccessMedium.mjs"
+    },
+    "./SuccessSmall": {
+      "types": "./SuccessSmall.d.ts",
+      "require": "./SuccessSmall.js",
+      "import": "./SuccessSmall.mjs"
+    },
+    "./TripleGripper": {
+      "types": "./TripleGripper.d.ts",
+      "require": "./TripleGripper.js",
+      "import": "./TripleGripper.mjs"
+    },
+    "./index": {
+      "types": "./index.d.ts",
+      "require": "./index.js",
+      "import": "./index.mjs"
+    }
   }
 }
