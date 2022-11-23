@@ -20,7 +20,6 @@ import {chain} from '@react-aria/utils';
 import {CommandPalette, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Draw from '@spectrum-icons/workflow/Draw';
-import {Flex} from '@react-spectrum/layout';
 import {Keyboard} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
@@ -60,7 +59,7 @@ let withSection = [
 let actions = {
   onOpenChange: action('onOpenChange'),
   onInputChange: action('onInputChange'),
-  onSelectionChange: action('onSelectionChange'),
+  onAction: action('onAction'),
   onBlur: action('onBlur'),
   onFocus: action('onFocus')
 };
@@ -69,6 +68,10 @@ storiesOf('CommandPalette', module)
   .add(
     'static items',
     () => render({})
+  )
+  .add(
+    'controlled open',
+    () => render({isOpen: true})
   )
   .add(
     'dynamic items',
@@ -317,7 +320,7 @@ function AsyncLoadingExampleControlledKey() {
     getKey: (item) => item.name
   });
 
-  let onSelectionChange = (key) => {
+  let onAction = (key) => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
     list.setFilterText(itemText);
@@ -337,7 +340,7 @@ function AsyncLoadingExampleControlledKey() {
       <CommandPalette
         label="Star Wars Character Lookup"
         selectedKey={selectedKey}
-        onSelectionChange={onSelectionChange}
+        onAction={onAction}
         items={list.items}
         inputValue={list.filterText}
         onInputChange={onInputChange}
@@ -388,7 +391,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
     getKey: (item) => item.name
   });
 
-  let onSelectionChange = (key) => {
+  let onAction = (key) => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
     list.setFilterText(itemText);
@@ -409,7 +412,7 @@ function AsyncLoadingExampleControlledKeyWithReset() {
         onFocusChange={(focus) => isFocused.current = focus}
         label="Star Wars Character Lookup"
         selectedKey={selectedKey}
-        onSelectionChange={onSelectionChange}
+        onAction={onAction}
         items={list.items}
         inputValue={list.filterText}
         onInputChange={onInputChange}
@@ -459,7 +462,7 @@ function AllControlledCommandPalette(props) {
     initialItems: withSection
   });
 
-  let onSelectionChange = (key: React.Key) => {
+  let onAction = (key: React.Key) => {
     setFieldState(prevState => ({
       inputValue: list.getItem(key)?.value.name ?? prevState.inputValue,
       selectedKey: key
@@ -499,7 +502,7 @@ function AllControlledCommandPalette(props) {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <CommandPalette disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Command Palette" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      <CommandPalette disabledKeys={props.disabledKeys} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} defaultItems={list.items} label="Command Palette" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onAction={onAction} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {item => (
           <Section items={item.children} title={item.value.name}>
             {item => <Item>{item.value.name}</Item>}
@@ -513,7 +516,7 @@ function AllControlledCommandPalette(props) {
 let ControlledKeyCommandPalette = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
 
-  let onSelectionChange = (key) => {
+  let onAction = (key) => {
     setSelectedKey(key);
   };
 
@@ -539,7 +542,7 @@ let ControlledKeyCommandPalette = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <CommandPalette {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Command Palette" onSelectionChange={onSelectionChange}>
+      <CommandPalette {...mergeProps(props, actions)} selectedKey={selectedKey} defaultItems={withSection} label="Command Palette" onAction={onAction}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}

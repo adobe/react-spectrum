@@ -11,10 +11,11 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, LabelableProps, LoadingState, SingleSelection, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import { Key } from 'react';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface CommandPaletteProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
+export interface CommandPaletteProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'>, InputBase, TextInputBase, Validation, FocusableProps, LabelableProps, HelpTextProps {
   /** The list of CommandPalette items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of CommandPalette items (controlled). */
@@ -27,6 +28,8 @@ export interface CommandPaletteProps<T> extends CollectionBase<T>, Omit<SingleSe
   defaultInputValue?: string,
   /** Handler that is called when the CommandPalette input value changes. */
   onInputChange?: (value: string) => void,
+  /** Handler that is called when a selection is made. */
+  onAction?: (key: Key) => void,
   /**
    * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
@@ -40,5 +43,7 @@ export interface AriaCommandPaletteProps<T> extends CommandPaletteProps<T>, DOMP
 
 export interface SpectrumCommandPaletteProps<T> extends SpectrumTextInputBase, Omit<AriaCommandPaletteProps<T>, 'menuTrigger'>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /** The current loading state of the CommandPalette. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState,
+  /** For controlling modal open state. Useful for activating via button on mobile devices. */
+  isOpen?: boolean
 }

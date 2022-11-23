@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
 import {
   classNames,
   useIsMobileDevice,

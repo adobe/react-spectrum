@@ -11,42 +11,40 @@
  */
 
 import {Collection, FocusStrategy, Node} from '@react-types/shared';
-import {CommandPaletteProps, MenuTriggerAction} from '@react-types/commandpalette';
+import {CommandPaletteProps} from '@react-types/commandpalette';
+import {Key, useEffect, useMemo, useState} from 'react';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface CommandPaletteState<T> extends SelectState<T> {
-  /** The current value of the combo box input. */
+  /** The current value of the command palette input. */
   inputValue: string,
-  /** Sets the value of the combo box input. */
+  /** Sets the value of the command palette input. */
   setInputValue(value: string): void,
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
+  open(focusStrategy?: FocusStrategy | null): void,
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void
+  toggle(focusStrategy?: FocusStrategy | null): void
 }
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
 export interface CommandPaletteStateOptions<T> extends CommandPaletteProps<T> {
-  /** The filter function used to determine if a option should be included in the combo box list. */
+  /** The filter function used to determine if a option should be included in the command palette list. */
   defaultFilter?: FilterFn
 }
 
 /**
- * Provides state management for a combo box component. Handles building a collection
- * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
- * focus state, and other properties of the combo box.
+ * Provides state management for a command palette component. Handles building a collection
+ * of items from props and manages the option selection state of the command palette. In addition, it tracks the input value,
+ * focus state, and other properties of the command palette.
  */
 export function useCommandPaletteState<T extends object>(props: CommandPaletteStateOptions<T>): CommandPaletteState<T> {
   let {
     defaultFilter,
-    menuTrigger = 'input'
   } = props;
-  let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
   let [inputValue, setInputValue] = useControlledState(
     props.inputValue,
@@ -54,9 +52,9 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     props.onInputChange
   );
 
-  let onSelectionChange = (key) => {
-    if (props.onSelectionChange) {
-      props.onSelectionChange(key);
+  let onSelectionChange = (key: Key) => {
+    if (props.onAction) {
+      props.onAction(key);
     }
 
     // Since selection occurred, reset input and close
@@ -70,8 +68,6 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     items: props.items ?? props.defaultItems
   });
 
-  // Preserve original collection so we can show all items on demand
-  let originalCollection = collection;
   let filteredCollection = useMemo(() => (
     // No default filter if items are controlled.
     props.items != null || !defaultFilter
@@ -79,37 +75,18 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
       : filterCollection(collection, inputValue, defaultFilter)
   ), [collection, inputValue, defaultFilter, props.items]);
 
-  // Track what action is attempting to open the menu
-  let menuOpenTrigger = useRef('focus' as MenuTriggerAction);
   let onOpenChange = (open: boolean) => {
     if (props.onOpenChange) {
-      props.onOpenChange(open, open ? menuOpenTrigger.current : undefined);
+      props.onOpenChange(open);
     }
   };
 
-  let triggerState = useMenuTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
-  let open = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
-    let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
-    // Prevent open operations from triggering if there is nothing to display
-    // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
-    // This is to prevent commandpalettees with empty defaultItems from opening but allow controlled items commandpalettees to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onOpenChange returning `menuTrigger` manual)
-    if (filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) {
-      if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
-        // Show all items if menu is manually opened. Only care about this if items are undefined
-        setShowAllItems(true);
-      }
-
-      menuOpenTrigger.current = trigger;
-      triggerState.open(focusStrategy);
-    }
+  let triggerState = useMenuTriggerState({...props, onOpenChange, defaultOpen: undefined});
+  let open = (focusStrategy?: FocusStrategy) => {
+    triggerState.open(focusStrategy);
   };
 
-  let toggle = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
-    // Only update the menuOpenTrigger if menu is currently closed
-    if (!triggerState.isOpen) {
-      menuOpenTrigger.current = trigger;
-    }
-
+  let toggle = (focusStrategy?: FocusStrategy) => {
     triggerState.toggle(focusStrategy);
   };
 
@@ -124,13 +101,13 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     }
   }, [triggerState.isOpen, selectionManager]);
 
-  let setFocused = (isFocused: boolean) => {
-    if (isFocused) {
-      if (menuTrigger === 'focus') {
-        open(null, 'focus');
-      }
-    }
+  useEffect(() => {
+    // TODO: Clear selected key immediately
+    selectionManager.clearSelection();
+    console.log('clear');
+  }, [selectedKey]);
 
+  let setFocused = (isFocused: boolean) => {
     setFocusedState(isFocused);
   };
 
@@ -151,7 +128,7 @@ export function useCommandPaletteState<T extends object>(props: CommandPaletteSt
     isFocused,
     setFocused,
     selectedItem,
-    collection: showAllItems ? originalCollection : filteredCollection,
+    collection: filteredCollection,
     inputValue,
     setInputValue
   };

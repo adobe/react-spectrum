@@ -72,7 +72,8 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
 
 
   function keyDownHandler(e) {
-    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'k' && e.metaKey) {
+      e.preventDefault();
       state.toggle();
     }
   }
@@ -81,12 +82,12 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     if (hasSetupGlobalListener) {
       return;
     }
-    document.addEventListener('keydown', keyDownHandler, {capture: true});
+    document.addEventListener('keydown', keyDownHandler, true);
     hasSetupGlobalListener = true;
   }
 
   function teardown() {
-    document.removeEventListener('keydown', keyDownHandler, {capture: true});
+    document.removeEventListener('keydown', keyDownHandler, true);
     hasSetupGlobalListener = false;
   }
 
@@ -160,31 +161,6 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
     'aria-label': stringFormatter.format('listboxLabel'),
     'aria-labelledby': props['aria-labelledby']
   });
-
-  // If a touch happens on direct center of CommandPalette input, might be virtual click from iPad so open CommandPalette menu
-  let lastEventTime = useRef(0);
-  let onTouchEnd = (e: TouchEvent) => {
-    // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
-    if (e.timeStamp - lastEventTime.current < 500) {
-      e.preventDefault();
-      inputRef.current.focus();
-      return;
-    }
-
-    let rect = (e.target as Element).getBoundingClientRect();
-    let touch = e.changedTouches[0];
-
-    let centerX = Math.ceil(rect.left + .5 * rect.width);
-    let centerY = Math.ceil(rect.top + .5 * rect.height);
-
-    if (touch.clientX === centerX && touch.clientY === centerY) {
-      e.preventDefault();
-      inputRef.current.focus();
-      state.toggle(null, 'manual');
-
-      lastEventTime.current = e.timeStamp;
-    }
-  };
 
   // VoiceOver has issues with announcing aria-activedescendant properly on change
   // (especially on iOS). We use a live region announcer to announce focus changes
@@ -278,10 +254,8 @@ export function useCommandPalette<T>(props: AriaCommandPaletteOptions<T>, state:
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuProps.id : undefined,
-      // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': focusedItem ? getItemId(state, focusedItem.key) : undefined,
-      onTouchEnd,
       // This disable's iOS's autocorrect suggestions, since the command palette provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
