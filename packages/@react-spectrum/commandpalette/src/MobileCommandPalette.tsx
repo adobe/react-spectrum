@@ -21,7 +21,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';

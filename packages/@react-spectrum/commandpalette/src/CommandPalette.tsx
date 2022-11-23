@@ -16,7 +16,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import commandpaletteStyles from './commandpalette.css';
-import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
