@@ -103,7 +103,7 @@ function CommandPaletteTray(props: CommandPaletteTrayProps) {
   let layout = useListBoxLayout(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let {inputProps, listBoxProps, labelProps} = useCommandPalette(
+  let {inputProps, listBoxProps} = useCommandPalette(
     {
       ...props,
       // completionMode,
@@ -130,7 +130,7 @@ function CommandPaletteTray(props: CommandPaletteTrayProps) {
   }, []);
 
   let {dialogProps} = useDialog({
-    'aria-labelledby': useId(labelProps.id)
+    'aria-labelledby': 'id' // TODO: Fix
   }, popoverRef);
 
   // Override the role of the input to "searchbox" instead of "commandpalette".
@@ -245,7 +245,6 @@ function CommandPaletteTray(props: CommandPaletteTrayProps) {
         <DismissButton onDismiss={onClose} />
         <TextFieldBase
           label={label}
-          labelProps={labelProps}
           inputProps={{...inputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}

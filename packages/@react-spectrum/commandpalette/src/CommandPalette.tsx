@@ -43,7 +43,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {View} from '@adobe/react-spectrum';
 
-function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>, ref: FocusableRef<HTMLElement>) {
+function CommandPalette<T extends object>(props: SpectrumCommandPaletteProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let isMobile = useIsMobileDevice();

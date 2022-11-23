@@ -14,4 +14,4 @@
 
 export {CommandPalette} from './CommandPalette';
 export {Item, Section} from '@react-stately/collections';
-export type {SpectrumCommandPalette} from '@react-types/commandpalette';
+export type {SpectrumCommandPaletteProps} from '@react-types/commandpalette';
