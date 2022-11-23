@@ -53,9 +53,9 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
 
     preventScrollCount++;
     if (isIOS()) {
-      return preventScrollMobileSafari();
+      return chain(() => preventScrollCount--,  preventScrollMobileSafari());
     } else {
-      return preventScrollStandard();
+      return chain(() => preventScrollCount--,  preventScrollStandard());
     }
   }, [isDisabled]);
 }
@@ -65,8 +65,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
 function preventScrollStandard() {
   return chain(
     setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
-    () => preventScrollCount--
+    setStyle(document.documentElement, 'overflow', 'hidden')
   );
 }
 
@@ -215,10 +214,11 @@ function preventScrollMobileSafari() {
     // Restore styles and scroll the page back to where it was.
     restoreStyles();
     removeEvents();
-    if (preventScrollCount === 1) {
+    if (preventScrollCount <= 0) {
       window.scrollTo(originalValues.get('pageXOffset') as number, originalValues.get('pageYOffset') as number);
+      originalValues.delete('pageXOffset');
+      originalValues.delete('pageYOffset');
     }
-    preventScrollCount--;
   };
 }
 
@@ -231,8 +231,9 @@ function setStyle(element: HTMLElement, style: string, value: string) {
   }
 
   return () => {
-    if (preventScrollCount === 1 && originalValues.has(style)) {
+    if (preventScrollCount <= 0 && originalValues.has(style)) {
       element.style[style] = originalValues.get(style);
+      originalValues.delete(style);
     }
   };
 }
