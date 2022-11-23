@@ -16,8 +16,8 @@ import {HelpText} from './HelpText';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, mergeRefs, useId} from '@react-aria/utils';
-import React, {ForwardedRef, ReactElement, RefObject, useCallback} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
+import React, {RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
@@ -50,125 +50,108 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let mergedRefs = useMergeRefs((children as ReactElement & {ref: RefObject<HTMLElement>}).ref, ref);
   let contextualHelpId = useId();
 
-  if (label || hasHelpText) {
-    let labelWrapperClass = classNames(
+  let labelWrapperClass = classNames(
       labelStyles,
       'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side',
-        'spectrum-Field--alignEnd': labelAlign === 'end',
-        'spectrum-Field--hasContextualHelp': !!props.contextualHelp
-      },
+    {
+      'spectrum-Field--positionTop': labelPosition === 'top',
+      'spectrum-Field--positionSide': labelPosition === 'side',
+      'spectrum-Field--alignEnd': labelAlign === 'end',
+      'spectrum-Field--hasContextualHelp': !!props.contextualHelp
+    },
       styleProps.className,
       wrapperClassName
     );
 
-    children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(
+  children = React.cloneElement(children, mergeProps(children.props, {
+    className: classNames(
         labelStyles,
         'spectrum-Field-field'
       )
-    }));
+  }));
 
-    let renderHelpText = () => (
-      <HelpText
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        description={description}
-        errorMessage={errorMessage}
-        validationState={validationState}
-        isDisabled={isDisabled}
-        showErrorIcon={showErrorIcon}
-        gridArea="helpText" />
+  let renderHelpText = () => (
+    <HelpText
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      description={description}
+      errorMessage={errorMessage}
+      validationState={validationState}
+      isDisabled={isDisabled}
+      showErrorIcon={showErrorIcon}
+      gridArea="helpText" />
     );
 
-    let renderChildren = () => {
-      if (labelPosition === 'side') {
-        return (
-          <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-            {children}
-            {hasHelpText && renderHelpText()}
-          </Flex>
-        );
-      }
-
+  let renderChildren = () => {
+    if (labelPosition === 'side') {
       return (
-        <>
+        <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
           {children}
           {hasHelpText && renderHelpText()}
-        </>
-      );
-    };
-
-    let labelAndContextualHelp = (
-      <>
-        {label && (
-          <Label
-            {...labelProps}
-            labelPosition={labelPosition}
-            labelAlign={labelAlign}
-            isRequired={isRequired}
-            necessityIndicator={necessityIndicator}
-            includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
-            elementType={elementType}>
-            {label}
-          </Label>
-        )}
-        {label && contextualHelp &&
-          <SlotProvider
-            slots={{
-              actionButton: {
-                UNSAFE_className: classNames(labelStyles, 'spectrum-Field-contextualHelp'),
-                id: contextualHelpId,
-                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined
-              }
-            }}>
-            {contextualHelp}
-          </SlotProvider>
-        }
-      </>
-    );
-
-    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
-    // so that the table layout works inside forms.
-    if (isInForm && labelPosition === 'side' && label && contextualHelp) {
-      labelAndContextualHelp = (
-        <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
-          <div className={classNames(labelStyles, 'spectrum-Field-labelWrapper')}>
-            {labelAndContextualHelp}
-          </div>
-        </div>
+        </Flex>
       );
     }
 
     return (
-      <div
-        {...styleProps}
-        {...wrapperProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
-        {labelAndContextualHelp}
-        {renderChildren()}
+      <>
+        {children}
+        {hasHelpText && renderHelpText()}
+      </>
+    );
+  };
+
+  let labelAndContextualHelp = (
+    <>
+      {label && (
+        <Label
+          {...labelProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          isRequired={isRequired}
+          necessityIndicator={necessityIndicator}
+          includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+          elementType={elementType}>
+          {label}
+        </Label>
+      )}
+      {label && contextualHelp &&
+        <SlotProvider
+          slots={{
+            actionButton: {
+              UNSAFE_className: classNames(labelStyles, 'spectrum-Field-contextualHelp'),
+              id: contextualHelpId,
+              'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined
+            }
+          }}>
+          {contextualHelp}
+        </SlotProvider>
+      }
+    </>
+    );
+
+    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
+    // so that the table layout works inside forms.
+  if (isInForm && labelPosition === 'side' && label && contextualHelp) {
+    labelAndContextualHelp = (
+      <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
+        <div className={classNames(labelStyles, 'spectrum-Field-labelWrapper')}>
+          {labelAndContextualHelp}
+        </div>
       </div>
     );
   }
 
-  return React.cloneElement(children, mergeProps(children.props, {
-    ...styleProps,
-    ...wrapperProps,
-    ref: mergedRefs
-  }));
-}
-
-function useMergeRefs<T>(...refs: ForwardedRef<T>[]): (instance: (T | null)) => void {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useCallback(
-    mergeRefs(...refs) as (instance: (T | null)) => void,
-    [...refs]
+  return (
+    <div
+      {...styleProps}
+      {...wrapperProps}
+      ref={ref as RefObject<HTMLDivElement>}
+      className={labelWrapperClass}>
+      {labelAndContextualHelp}
+      {renderChildren()}
+    </div>
   );
 }
 
