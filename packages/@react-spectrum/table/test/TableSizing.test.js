@@ -374,9 +374,9 @@ describe('TableViewSizing', function () {
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320px');
+          expect(row.childNodes[1].style.width).toBe('321px');
           expect(row.childNodes[2].style.width).toBe('321px');
-          expect(row.childNodes[3].style.width).toBe('321px');
+          expect(row.childNodes[3].style.width).toBe('320px');
         }
       });
 
@@ -401,8 +401,8 @@ describe('TableViewSizing', function () {
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('48px');
           expect(row.childNodes[1].style.width).toBe('317px');
-          expect(row.childNodes[2].style.width).toBe('317px');
-          expect(row.childNodes[3].style.width).toBe('318px');
+          expect(row.childNodes[2].style.width).toBe('318px');
+          expect(row.childNodes[3].style.width).toBe('317px');
         }
       });
 
@@ -623,17 +623,17 @@ describe('TableViewSizing', function () {
         expect(rows[0].childNodes[1].style.width).toBe('770px');
 
         expect(rows[1].childNodes[0].style.width).toBe('230px');
-        expect(rows[1].childNodes[1].style.width).toBe('384px');
+        expect(rows[1].childNodes[1].style.width).toBe('385px');
         expect(rows[1].childNodes[2].style.width).toBe('193px');
-        expect(rows[1].childNodes[3].style.width).toBe('193px');
+        expect(rows[1].childNodes[3].style.width).toBe('192px');
 
         for (let row of rows.slice(2)) {
           expect(row.childNodes[0].style.width).toBe('38px');
           expect(row.childNodes[1].style.width).toBe('192px');
-          expect(row.childNodes[2].style.width).toBe('192px');
+          expect(row.childNodes[2].style.width).toBe('193px');
           expect(row.childNodes[3].style.width).toBe('192px');
           expect(row.childNodes[4].style.width).toBe('193px');
-          expect(row.childNodes[5].style.width).toBe('193px');
+          expect(row.childNodes[5].style.width).toBe('192px');
         }
       });
     });

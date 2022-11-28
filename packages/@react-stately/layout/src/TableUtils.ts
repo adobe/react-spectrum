@@ -5,18 +5,18 @@ export function isStatic(width: number | string): boolean {
   return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
 }
 
-function parseFractionalUnit(width: string): number {
+export function parseFractionalUnit(width: string): number {
   if (!width) {
     return 1;
   }
-  let match = width.match(/^(\d+)(?=fr$)/);
-  // if width is the incorrect format, just deafult it to a 1fr
+  let match = width.match(/^(.+)(?=fr$)/);
+  // if width is the incorrect format, just default it to a 1fr
   if (!match) {
     console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
       'defaulting to \'1fr\'');
     return 1;
   }
-  return parseInt(match[0], 10);
+  return parseFloat(match[0]);
 }
 
 export function parseStaticWidth(width: number | string, tableWidth: number): number {
@@ -25,7 +25,7 @@ export function parseStaticWidth(width: number | string, tableWidth: number): nu
     if (!match) {
       throw new Error('Only percentages or numbers are supported for static column widths');
     }
-    return tableWidth * (parseInt(match[0], 10) / 100);
+    return tableWidth * (parseFloat(match[0]) / 100);
   }
   return width;
 }
@@ -37,16 +37,17 @@ export function getMaxWidth(maxWidth: number | string, tableWidth: number): numb
     : Number.MAX_SAFE_INTEGER;
 }
 
-export function getMinWidth(minWidth: number | string, tableWidth: number, defaultMinWidth = 75): number {
+// cannot support FR units, we'd need to know everything else in the table to do that
+export function getMinWidth(minWidth: number | string, tableWidth: number): number {
   return minWidth != null
     ? parseStaticWidth(minWidth, tableWidth)
-    : defaultMinWidth;
+    : 0;
 }
 
 // tell us the delta between min width and target width vs max width and target width
 function mapDynamicColumns(dynamicColumns: IndexedColumn[], availableSpace: number, tableWidth: number): (IndexedColumn & {delta: number})[] {
   let fractions = dynamicColumns.reduce(
-    (sum, column) => column ? sum + parseFractionalUnit(column.column.defaultWidth as string) : sum,
+    (sum, column) => column ? sum + parseFractionalUnit((column.column.width || column.column.defaultWidth) as string) : sum,
     0
   );
 
@@ -55,7 +56,7 @@ function mapDynamicColumns(dynamicColumns: IndexedColumn[], availableSpace: numb
       return null;
     }
     const targetWidth =
-      (parseFractionalUnit(column.column.defaultWidth as string) * availableSpace) / fractions;
+      (parseFractionalUnit((column.column.width || column.column.defaultWidth) as string) * availableSpace) / fractions;
     const delta = Math.max(
       getMinWidth(column.column.minWidth, tableWidth) - targetWidth,
       targetWidth - getMaxWidth(column.column.maxWidth, tableWidth)
@@ -73,7 +74,7 @@ function mapDynamicColumns(dynamicColumns: IndexedColumn[], availableSpace: numb
 // mutates columns to set their width
 function findDynamicColumnWidths(dynamicColumns: IndexedColumn[], availableSpace: number, tableWidth: number): void {
   let fractions = dynamicColumns.reduce(
-    (sum, col) => col ? sum + parseFractionalUnit(col.column.defaultWidth as string) : sum,
+    (sum, col) => col ? sum + col.width : sum,
     0
   );
 
@@ -82,14 +83,14 @@ function findDynamicColumnWidths(dynamicColumns: IndexedColumn[], availableSpace
       return null;
     }
     const targetWidth =
-      (parseFractionalUnit(column.column.defaultWidth as string) * availableSpace) / fractions;
+      (column.width * availableSpace) / fractions;
     let width = Math.max(
       getMinWidth(column.column.minWidth, tableWidth),
-      Math.min(Math.floor(targetWidth), getMaxWidth(column.column.maxWidth, tableWidth))
+      Math.min(Math.round(targetWidth), getMaxWidth(column.column.maxWidth, tableWidth))
     );
-    column.width = width;
     availableSpace -= width;
-    fractions -= parseFractionalUnit(column.column.defaultWidth as string);
+    fractions -= column.width;
+    column.width = width;
   });
 }
 
@@ -131,18 +132,21 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
   let remainingSpace = availableWidth;
   let {staticColumns, dynamicColumns} = columns.reduce((acc, column, index) => {
     let width = changedColumns.get(column.key) != null ? changedColumns.get(column.key) : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr';
-    let defaultMinWidth = getDefaultMinWidth?.(index);
+    let minWidth = column.minWidth ?? getDefaultMinWidth?.(index);
+    column.minWidth = minWidth;
+
     if (isStatic(width)) {
       let w = parseStaticWidth(width, availableWidth);
       w = Math.max(
-        getMinWidth(column.minWidth, availableWidth, defaultMinWidth),
+        getMinWidth(column.minWidth, availableWidth),
         Math.min(Math.floor(w), getMaxWidth(column.maxWidth, availableWidth)));
       acc.staticColumns.push({index, column, width: w} as IndexedColumn);
       acc.dynamicColumns.push(null);
       remainingSpace -= w;
     } else {
+      let w = parseFractionalUnit(width);
       acc.staticColumns.push(null);
-      acc.dynamicColumns.push({index, column, width: null} as IndexedColumn);
+      acc.dynamicColumns.push({index, column, width: w} as IndexedColumn);
     }
     return acc;
   }, {staticColumns: [] as IndexedColumn[], dynamicColumns: [] as IndexedColumn[]});

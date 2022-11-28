@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculateColumnSizes, getMaxWidth, getMinWidth} from './TableUtils';
+import {
+  calculateColumnSizes,
+  getMaxWidth,
+  getMinWidth,
+  isStatic,
+  parseFractionalUnit,
+  parseStaticWidth
+} from './TableUtils';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
@@ -18,39 +25,177 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
+  columnLayout: TableColumnLayout<T>
+}
+
+interface TableColumnLayoutOptions {
   getDefaultWidth: (props) => string | number,
   getDefaultMinWidth: (props) => string | number
 }
 
-export class TableLayout<T> extends ListLayout<T> {
-  collection: TableCollection<T>;
+export class TableColumnLayout<T> {
   resizingColumn: Key | null;
-  lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number> = new Map();
-  changedColumns: Map<Key, number | null> = new Map();
-  stickyColumnIndices: number[];
   getDefaultWidth: (props) => string | number;
   getDefaultMinWidth: (props) => string | number;
+  columnWidths: Map<Key, number> = new Map();
+  changedColumns: Map<Key, number | null> = new Map();
+  uncontrolledColumnWidths: Map<Key, number> = new Map();
+
+  constructor(options: TableColumnLayoutOptions) {
+    this.getDefaultWidth = options.getDefaultWidth;
+    this.getDefaultMinWidth = options.getDefaultMinWidth;
+  }
+
+  // can probably delete this
+  setResizeColumnWidth(width: number): void {
+    this.changedColumns.set(this.resizingColumn, width);
+  }
+
+  // can probably delete this
+  setResizingColumn(key: Key | null): void {
+    this.resizingColumn = key;
+  }
+
+  getColumnWidth(key: Key): number {
+    return this.columnWidths.get(key) ?? 0;
+  }
+
+  getColumnMinWidth(minWidth: number | string, tableWidth: number): number {
+    return getMinWidth(minWidth, tableWidth);
+  }
+
+  getColumnMaxWidth(maxWidth: number | string, tableWidth: number): number {
+    return getMaxWidth(maxWidth, tableWidth);
+  }
+
+  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths, uncontrolledWidths, col = null, width) {
+    let prevColumnWidths = this.columnWidths;
+    // resizing a column
+    let resizeIndex = Infinity;
+    let resizingChanged = new Map<Key, number>(Array.from(controlledWidths).concat(Array.from(uncontrolledWidths)));
+    let frKeys = new Map();
+    let percentKeys = new Map();
+    let frKeysToTheRight = new Map();
+    let minWidths = new Map();
+    // freeze columns to the left to their previous pixel value
+    // at the same time count how many total FR's are in play and which of those FRs are
+    // to the right or left of the resizing column
+    collection.columns.forEach((column, i) => {
+      let frKey;
+      minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i].props));
+      if (col !== column.key && !column.column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
+        // uncontrolled don't have props.width for us, so instead get from our state
+        frKey = column.key;
+        frKeys.set(column.key, parseFractionalUnit(uncontrolledWidths.get(column.key)));
+      } else if (col !== column.key && !isStatic(column.column.props.width) && !uncontrolledWidths.get(column.key)) {
+        // controlledWidths will be the same in the collection
+        frKey = column.key;
+        frKeys.set(column.key, parseFractionalUnit(column.column.props.width));
+      } else if (col !== column.key && column.column.props.width?.endsWith?.('%')) {
+        percentKeys.set(column.key, column.column.props.width);
+      }
+      // don't freeze columns to the right of the resizing one
+      if (resizeIndex < i) {
+        if (frKey) {
+          frKeysToTheRight.set(frKey, frKeys.get(frKey));
+        }
+        return;
+      }
+      // we already know the new size of the resizing column
+      if (column.key === col) {
+        resizeIndex = i;
+        return;
+      }
+      // freeze column to previous value
+      resizingChanged.set(column.key, prevColumnWidths.get(column.key));
+    });
+    resizingChanged.set(col, Math.floor(width));
+
+    // predict pixels sizes for all columns based on resize
+    let columnWidths = calculateColumnSizes(
+      tableWidth,
+      collection.columns.map(col => ({...col.column.props, key: col.key})),
+      resizingChanged,
+      (i) => this.getDefaultWidth(collection.columns[i].props),
+      (i) => this.getDefaultMinWidth(collection.columns[i].props)
+    );
+
+    // set all new column widths for onResize event
+    // columns going in will be the same order as the columns coming out
+    let newWidths = new Map<Key, number | string>();
+    // set all column widths based on calculateColumnSize
+    columnWidths.forEach((width, index) => {
+      let key = collection.columns[index].key;
+      newWidths.set(key, width);
+    });
+
+    // add FR's back as they were to columns to the right
+    Array.from(frKeys).forEach(([key]) => {
+      if (frKeysToTheRight.has(key)) {
+        newWidths.set(key, `${frKeysToTheRight.get(key)}fr`);
+      }
+    });
+
+    // put back in percents
+    Array.from(percentKeys).forEach(([key, width]) => {
+      // resizing locks a column to a px width
+      if (key === col) {
+        return;
+      }
+      newWidths.set(key, width);
+    });
+    return newWidths;
+  }
+
+  buildColumnWidths(tableWidth: number, collection: TableCollection<T>, controlledWidths) {
+    this.columnWidths = new Map();
+
+   // initial layout or table/window resizing
+    let columnWidths = calculateColumnSizes(
+      tableWidth,
+      collection.columns.map(col => ({...col.column.props, key: col.key})),
+      controlledWidths,
+      (i) => this.getDefaultWidth(collection.columns[i].props),
+      (i) => this.getDefaultMinWidth(collection.columns[i].props)
+    );
+
+    // columns going in will be the same order as the columns coming out
+    columnWidths.forEach((width, index) => {
+      this.columnWidths.set(collection.columns[index].key, width);
+    });
+    return this.columnWidths;
+  }
+}
+
+export class TableLayout<T> extends ListLayout<T> {
+  collection: TableCollection<T>;
+  lastCollection: TableCollection<T>;
+  columnWidths: Map<Key, number> = new Map();
+  stickyColumnIndices: number[];
   wasLoading = false;
   isLoading = false;
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
+  columnLayout: TableColumnLayout<T>;
+  controlledWidths: Map<Key, GridNode<T>>;
+  uncontrolledWidths: Map<Key, GridNode<T>>;
+  widths: Map<Key, number | string>;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
-    this.getDefaultWidth = options.getDefaultWidth;
-    this.getDefaultMinWidth = options.getDefaultMinWidth;
+    this.collection = options.initialCollection;
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
-  }
-
-  setResizeColumnWidth(width): void {
-    this.changedColumns.set(this.resizingColumn, width);
+    this.columnLayout = options.columnLayout;
+    this.getSplitColumns();
+    this.widths = new Map(Array.from(this.uncontrolledWidths).map(([key, col]) =>
+      [key, col.props.defaultWidth ?? this.columnLayout.getDefaultWidth?.(col.props)]
+    ));
   }
 
   getColumnWidth(key: Key): number {
-    return this.columnWidths.get(key) ?? 0;
+    return this.columnLayout.getColumnWidth(key) ?? 0;
   }
 
   getColumnMinWidth(key: Key): number {
@@ -58,7 +203,7 @@ export class TableLayout<T> extends ListLayout<T> {
     if (!column) {
       return 0;
     }
-    return getMinWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
+    return this.columnLayout.getColumnMinWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
   }
 
   getColumnMaxWidth(key: Key): number {
@@ -66,15 +211,73 @@ export class TableLayout<T> extends ListLayout<T> {
     if (!column) {
       return 0;
     }
-    return getMaxWidth(column.props.maxWidth, this.virtualizer.visibleRect.width);
+    return this.columnLayout.getColumnMaxWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
+  }
+
+  // outside, where this is called, should call props.onColumnResizeStart...
+  onColumnResizeStart(column: GridNode<T>): void {
+    this.columnLayout.setResizingColumn(column.key);
+  }
+
+  // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
+  onColumnResize(column: GridNode<T>, width: number): Map<Key, number | string> {
+    let newControlled = new Map(Array.from(this.controlledWidths).map(([key, entry]) => [key, entry.props.width]));
+    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.widths, column.key, width);
+
+    if (!column.props.width) {
+      let map = new Map(Array.from(this.uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
+      map.set(column.key, width);
+      this.widths = map;
+    }
+    // relayoutNow still uses setState, should happen at the same time the parent
+    // component's state is processed as a result of props.onColumnResize
+    this.virtualizer.relayoutNow({sizeChanged: true});
+    return newSizes;
+  }
+
+  onColumnResizeEnd(column: GridNode<T>): void {
+    this.columnLayout.setResizingColumn(null);
+  }
+
+  getSplitColumns() {
+    let [controlledWidths, uncontrolledWidths] = this.collection.columns.reduce((acc, col) => {
+      if (col.props.width !== undefined) {
+        acc[0].set(col.key, col);
+      } else {
+        acc[1].set(col.key, col);
+      }
+      return acc;
+    }, [new Map(), new Map()]);
+    this.controlledWidths = controlledWidths;
+    this.uncontrolledWidths = uncontrolledWidths;
+  }
+
+  recombineColumns() {
+    return new Map(this.collection.columns.map(col => {
+      if (this.uncontrolledWidths.has(col.key)) {
+        return [col.key, this.widths.get(col.key)];
+      } else {
+        return [col.key, this.controlledWidths.get(col.key).props.width];
+      }
+    }));
   }
 
   buildCollection(): LayoutNode[] {
+    this.getSplitColumns();
+    let cWidths = this.recombineColumns();
+    // I think this runs every render cycle?
+    // Which would mean that we'd be behind by one render since invalidate
+    // will take a render to resolve.
     // If columns changed, clear layout cache.
     if (
       !this.lastCollection ||
       this.collection.columns.length !== this.lastCollection.columns.length ||
-      this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
+      this.collection.columns.some((c, i) =>
+        c.key !== this.lastCollection.columns[i].key ||
+        c.props.width !== this.lastCollection.columns[i].props.width ||
+        c.props.minWidth !== this.lastCollection.columns[i].props.minWidth ||
+        c.props.maxWidth !== this.lastCollection.columns[i].props.maxWidth
+      )
     ) {
       // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
       this.invalidateEverything = true;
@@ -84,8 +287,16 @@ export class TableLayout<T> extends ListLayout<T> {
     let loadingState = this.collection.body.props.loadingState;
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+    this.stickyColumnIndices = [];
 
-    this.buildColumnWidths();
+    for (let column of this.collection.columns) {
+      // The selection cell and any other sticky columns always need to be visible.
+      // In addition, row headers need to be in the DOM for accessibility labeling.
+      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+        this.stickyColumnIndices.push(column.index);
+      }
+    }
+    this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, cWidths);
     let header = this.buildHeader();
     let body = this.buildBody(0);
     this.lastPersistedKeys = null;
@@ -96,65 +307,6 @@ export class TableLayout<T> extends ListLayout<T> {
       header,
       body
     ];
-  }
-
-  buildColumnWidths() {
-    let prevColumnWidths = this.columnWidths;
-    this.columnWidths = new Map();
-    this.stickyColumnIndices = [];
-
-    for (let column of this.collection.columns) {
-      // The selection cell and any other sticky columns always need to be visible.
-      // In addition, row headers need to be in the DOM for accessibility labeling.
-      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
-        this.stickyColumnIndices.push(column.index);
-      }
-    }
-    if (this.resizingColumn == null) {
-      // initial layout or table/window resizing
-      let columnWidths = calculateColumnSizes(
-        this.virtualizer.visibleRect.width,
-        this.collection.columns.map(col => ({...col.column.props, key: col.key})),
-        this.changedColumns,
-        (i) => this.getDefaultWidth(this.collection.columns[i].props),
-        (i) => this.getDefaultMinWidth(this.collection.columns[i].props)
-      );
-
-      // columns going in will be the same order as the columns coming out
-      columnWidths.forEach((width, index) => {
-        this.columnWidths.set(this.collection.columns[index].key, width);
-      });
-    } else {
-      // resizing a column
-      // TODO do we want to recalculate sizes of columns after the one we're resizing?
-      // I personally feel like that's weird because it changes once all columns become static or resized
-      let resizeIndex = Infinity;
-      let resizingChanged = new Map<Key, number>(this.changedColumns);
-      this.collection.columns.forEach((column, i) => {
-        if (resizeIndex < i) {
-          return;
-        }
-        if (column.key === this.resizingColumn) {
-          resizeIndex = i;
-        }
-        if (!resizingChanged.has(column.key)) {
-          resizingChanged.set(column.key, prevColumnWidths.get(column.key));
-        }
-      });
-
-      let columnWidths = calculateColumnSizes(
-        this.virtualizer.visibleRect.width,
-        this.collection.columns.map(col => ({...col.column.props, key: col.key})),
-        resizingChanged,
-        (i) => this.getDefaultWidth(this.collection.columns[i].props),
-        (i) => this.getDefaultMinWidth(this.collection.columns[i].props)
-      );
-
-      // columns going in will be the same order as the columns coming out
-      columnWidths.forEach((width, index) => {
-        this.columnWidths.set(this.collection.columns[index].key, width);
-      });
-    }
   }
 
   buildHeader(): LayoutNode {
