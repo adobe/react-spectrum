@@ -188,6 +188,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let layoutInfo = new LayoutInfo('rowgroup', 'body', rect);
 
     let startY = y;
+    let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
     for (let node of this.collection.body.childNodes) {
@@ -196,6 +197,7 @@ export class TableLayout<T> extends ListLayout<T> {
       // Skip rows before the valid rectangle.
       if (y + rowHeight < this.validRect.y) {
         y += rowHeight;
+        skipped++;
         continue;
       }
 
@@ -207,7 +209,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
       if (y > this.validRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += (this.collection.size - children.length) * rowHeight;
+        y += (this.collection.size - (skipped + children.length)) * rowHeight;
         break;
       }
     }
@@ -314,7 +316,7 @@ export class TableLayout<T> extends ListLayout<T> {
   getVisibleLayoutInfos(rect: Rect) {
     // If layout hasn't yet been done for the requested rect, union the
     // new rect with the existing valid rect, and recompute.
-    if (!this.validRect.containsRect(rect)) {
+    if (!this.validRect.containsRect(rect) && this.lastCollection) {
       this.lastValidRect = this.validRect;
       this.validRect = this.validRect.union(rect);
       this.rootNodes = this.buildCollection();
@@ -357,8 +359,10 @@ export class TableLayout<T> extends ListLayout<T> {
           persistedRowIndices[persistIndex] < firstVisibleRow
         ) {
           let idx = persistedRowIndices[persistIndex];
-          res.push(node.children[idx].layoutInfo);
-          this.addVisibleLayoutInfos(res, node.children[idx], rect);
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
+          }
           persistIndex++;
         }
 
@@ -375,7 +379,9 @@ export class TableLayout<T> extends ListLayout<T> {
         // Add persisted rows after the visible rows.
         while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
           let idx = persistedRowIndices[persistIndex++];
-          res.push(node.children[idx].layoutInfo);
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
         }
         break;
       }
@@ -389,7 +395,9 @@ export class TableLayout<T> extends ListLayout<T> {
         let persistedCellIndices = this.persistedIndices.get(node.layoutInfo.key) || this.stickyColumnIndices;
         while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
           let idx = persistedCellIndices[stickyIndex];
-          res.push(node.children[idx].layoutInfo);
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
           stickyIndex++;
         }
 
@@ -405,7 +413,9 @@ export class TableLayout<T> extends ListLayout<T> {
         // Add any remaining sticky cells after the visible cells.
         while (stickyIndex < persistedCellIndices.length) {
           let idx = persistedCellIndices[stickyIndex++];
-          res.push(node.children[idx].layoutInfo);
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
         }
         break;
       }

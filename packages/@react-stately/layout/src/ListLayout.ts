@@ -106,7 +106,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     // If the layout info wasn't found, it might be outside the bounds of the area that we've
     // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
     // Compute the full layout and try again.
-    if (!res && this.validRect.area < this.contentSize.area) {
+    if (!res && this.validRect.area < this.contentSize.area && this.lastCollection) {
       this.lastValidRect = this.validRect;
       this.validRect = new Rect(0, 0, Infinity, Infinity);
       this.rootNodes = this.buildCollection();
@@ -118,7 +118,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   }
 
   getVisibleLayoutInfos(rect: Rect) {
-    if (!this.validRect.containsRect(rect)) {
+    // If layout hasn't yet been done for the requested rect, union the
+    // new rect with the existing valid rect, and recompute.
+    if (!this.validRect.containsRect(rect) && this.lastCollection) {
       this.lastValidRect = this.validRect;
       this.validRect = this.validRect.union(rect);
       this.rootNodes = this.buildCollection();
@@ -160,7 +162,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     this.rootNodes = this.buildCollection();
 
     // Remove deleted layout nodes
-    if (this.lastCollection && invalidationContext.contentChanged) {
+    if (this.lastCollection && this.collection !== this.lastCollection) {
       for (let key of this.lastCollection.getKeys()) {
         if (!this.collection.getItem(key)) {
           let layoutNode = this.layoutNodes.get(key);
@@ -180,14 +182,24 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
   buildCollection(): LayoutNode[] {
     let y = this.padding;
+    let skipped = 0;
     let nodes = [];
     for (let node of this.collection) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+
+      // Skip rows before the valid rectangle.
+      if (node.type === 'item' && y + rowHeight < this.validRect.y) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
 
-      if (y > this.validRect.maxY && node.type !== 'section') {
-        y += (this.collection.size - nodes.length) * (this.rowHeight ?? this.estimatedRowHeight);
+      if (node.type === 'item' && y > this.validRect.maxY) {
+        y += (this.collection.size - (nodes.length + skipped)) * rowHeight;
         break;
       }
     }
@@ -285,14 +297,25 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
+    let skipped = 0;
     let children = [];
     for (let child of node.childNodes) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+
+      // Skip rows before the valid rectangle.
+      if (y + rowHeight < this.validRect.y) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
       let layoutNode = this.buildChild(child, x, y);
       y = layoutNode.layoutInfo.rect.maxY;
       children.push(layoutNode);
 
       if (y > this.validRect.maxY) {
-        y += ([...node.childNodes].length - children.length) * (this.rowHeight ?? this.estimatedRowHeight);
+        // Estimate the remaining height for rows that we don't need to layout right now.
+        y += ([...node.childNodes].length - (children.length + skipped)) * rowHeight;
         break;
       }
     }
@@ -319,10 +342,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
       if (previousLayoutNode) {
-        let curNode = this.collection.getItem(node.key);
-        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
         rectHeight = previousLayoutNode.layoutInfo.rect.height;
-        isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutNode.layoutInfo.estimatedSize;
+        isEstimated = width !== this.lastWidth || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
         rectHeight = this.estimatedRowHeight;
         isEstimated = true;
