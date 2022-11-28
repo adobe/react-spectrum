@@ -296,6 +296,7 @@ export class TableLayout<T> extends ListLayout<T> {
         this.stickyColumnIndices.push(column.index);
       }
     }
+
     this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, cWidths);
     let header = this.buildHeader();
     let body = this.buildBody(0);

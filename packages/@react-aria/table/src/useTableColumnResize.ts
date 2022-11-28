@@ -147,8 +147,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
-      if (e.pointerType === 'virtual' && layoutState.resizingColumn != null) {
-        layoutState.resizingColumn = item.key;
+      if (e.pointerType === 'virtual' && layoutState.columnLayout.resizingColumn != null) {
         stateRef.current.onColumnResizeEnd(item);
         focusSafely(triggerRef.current);
         return;
@@ -183,7 +182,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           state.setKeyboardNavigationDisabled(true);
         },
         onBlur: () => {
-          layoutState.resizingColumn = null;
           stateRef.current.onColumnResizeEnd(item);
           props.onResizeEnd?.(item.key);
           state.setKeyboardNavigationDisabled(false);

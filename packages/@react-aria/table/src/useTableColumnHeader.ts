@@ -64,6 +64,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
+  // try to just delete this, but figure out why it causes an extra focus target
   if (props.hasMenu) {
     pressProps = {};
   }

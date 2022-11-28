@@ -1660,7 +1660,7 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should remaind on the item,
+        // When scrolling the focused item out of view, focus should remain on the item,
         // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
         body.scrollLeft = 1000;

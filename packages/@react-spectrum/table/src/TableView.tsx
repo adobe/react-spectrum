@@ -133,6 +133,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     } else if (isSelectionCell) {
       return SELECTION_CELL_DEFAULT_WIDTH[scale];
     }
+    return 75;
   }, [scale]);
 
   let [isInResizeMode, setIsInResizeMode] = useState(false);
@@ -523,7 +524,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           {state.visibleViews[1]}
           <div
             className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{left: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.columnLayout.resizingColumn ? 'block' : 'none'}} />
+            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.columnLayout.resizingColumn ? 'block' : 'none'}} />
         </ScrollView>
       </div>
     </FocusScope>
@@ -620,7 +621,8 @@ function ResizableTableColumnHeader(props) {
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    isVirtualized: true
+    isVirtualized: true,
+    hasMenu: true
   }, state, ref);
 
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
