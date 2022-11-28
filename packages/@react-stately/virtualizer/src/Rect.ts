@@ -152,6 +152,9 @@ export class Rect {
         && this.height === size.height;
   }
 
+  /**
+   * Returns the union of this Rect and another.
+   */
   union(other: Rect) {
     let x = Math.min(this.x, other.x);
     let y = Math.min(this.y, other.y);
@@ -160,6 +163,10 @@ export class Rect {
     return new Rect(x, y, width, height);
   }
 
+  /**
+   * Returns the intersection of this Rect with another.
+   * If the rectangles do not intersect, an all zero Rect is returned.
+   */
   intersection(other: Rect): Rect {
     if (!this.intersects(other)) {
       return new Rect(0, 0, 0, 0);
