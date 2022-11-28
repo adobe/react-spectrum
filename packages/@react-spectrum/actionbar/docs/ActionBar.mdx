@@ -146,7 +146,8 @@ function ActionBarTable(props) {
       <ActionBar
         items={barItems}
         isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}>
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
         {item => (
           <Item key={item.key}>
             {item.label}
