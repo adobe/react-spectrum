@@ -43,13 +43,14 @@ export function useTagGroupState<T extends object, C extends GridCollection<T>>(
     focusMode: 'cell'
   });
 
-  let keyToRestoreOnDelete = useRef(null);
+  let keyToRestoreOnRemove = useRef(null);
 
   useEffect(() => {
+    // If the focused key is removed, restore focus to the tag before, or tag after if no tag before.
     if (!listState.collection.getItem(state.selectionManager.focusedKey)) {
-      state.selectionManager.setFocusedKey(keyToRestoreOnDelete.current);
+      state.selectionManager.setFocusedKey(keyToRestoreOnRemove.current);
     }
-    keyToRestoreOnDelete.current = listState.collection.getKeyBefore(state.selectionManager.focusedKey) || listState.collection.getKeyAfter(state.selectionManager.focusedKey);
+    keyToRestoreOnRemove.current = listState.collection.getKeyBefore(state.selectionManager.focusedKey) || listState.collection.getKeyAfter(state.selectionManager.focusedKey);
   }, [listState.collection, state.collection, state.selectionManager]);
 
   return state;
