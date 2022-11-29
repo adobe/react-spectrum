@@ -30,7 +30,7 @@ export interface TagGroupAria {
   tagGroupProps: DOMAttributes
 }
 
-export function useTagGroup<T, C extends GridCollection<T>>(props: AriaTagGroupProps, state: TagGroupState<T, C>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupProps, state: TagGroupState<T, any>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = new TagKeyboardDelegate({
     collection: state.collection,

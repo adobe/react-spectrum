@@ -15,13 +15,12 @@ import {TagGroupProps} from '@react-types/tag';
 import {useEffect, useMemo, useRef} from 'react';
 import {useListState} from 'react-stately';
 
-export interface TagGroupState<T, C extends GridCollection<T>> extends GridState<T, C> {
-}
+export interface TagGroupState<T, C extends GridCollection<T>> extends GridState<T, C> {}
 
 /**
  * Provides state management for a TagGroup component.
  */
-export function useTagGroupState<T extends object, C extends GridCollection<T>>(props: TagGroupProps<T>): GridState<T, C> {
+export function useTagGroupState<T extends object, C extends GridCollection<T>>(props: TagGroupProps<T>): TagGroupState<T, C> {
   let listState = useListState(props);
 
   let gridCollection = useMemo(() => new GridCollection({
@@ -53,5 +52,5 @@ export function useTagGroupState<T extends object, C extends GridCollection<T>>(
     keyToRestoreOnRemove.current = listState.collection.getKeyBefore(state.selectionManager.focusedKey) || listState.collection.getKeyAfter(state.selectionManager.focusedKey);
   }, [listState.collection, state.collection, state.selectionManager]);
 
-  return state;
+  return state as TagGroupState<T, C>;
 }
