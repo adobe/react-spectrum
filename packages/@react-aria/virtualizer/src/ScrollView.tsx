@@ -138,7 +138,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         h = Math.min(h, contentSize.height);
       }
     }
-
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;

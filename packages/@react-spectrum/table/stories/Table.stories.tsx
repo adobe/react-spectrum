@@ -38,6 +38,7 @@ import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
+import {ControllingResize} from './ControllingResize';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -1368,7 +1369,40 @@ storiesOf('TableView', module)
       </div>
     ),
     {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
+  )
+  .add(
+    'allowsResizing, controlled, no widths',
+    () => (
+      <ControllingResize width={900} />
+    )
+  )
+  .add(
+    'allowsResizing, controlled, some widths',
+    () => (
+      <ControllingResize width={900} columns={columnsSomeFR} />
+    )
+  )
+  .add(
+    'allowsResizing, controlled, all widths',
+    () => (
+      <ControllingResize width={900} columns={columnsFR} />
+    )
   );
+
+
+let columnsFR = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsSomeFR = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
 
 function AsyncLoadingExample(props) {
   const {isResizable} = props;

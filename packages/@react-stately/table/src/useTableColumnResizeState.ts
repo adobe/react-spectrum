@@ -52,7 +52,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
       }
       return acc;
     }, [new Map(), new Map()])
-  , [state.collection.columns]);
+  , [state.collection.columns]); // is this a safe thing to memo on? what if a single column changes?
 
   // uncontrolled column widths
   let [widths, setWidths] = useState<Map<Key, number | string>>(() => new Map(
@@ -79,11 +79,10 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps,
     let newControlled = new Map(Array.from(controlledWidths).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, widths, column.key, width);
 
-    if (!column.props.width) {
-      let map = new Map(Array.from(uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
-      map.set(column.key, width);
-      setWidths(map);
-    }
+    let map = new Map(Array.from(uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
+    map.set(column.key, width);
+    setWidths(map);
+
     return newSizes;
   }, [controlledWidths, uncontrolledWidths, props.onColumnResize, setWidths, tableWidth, columnLayout, state.collection, widths]);
 

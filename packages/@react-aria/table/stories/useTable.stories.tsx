@@ -211,7 +211,7 @@ function ControlledTableResizing(props: {columns: Array<{name: string, uid: stri
 let columnsFR: ColumnData[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
   {name: 'Type', uid: 'type', width: '1fr'},
-  {name: 'Level', uid: 'level', width: '4fr'}
+  {name: 'Level', uid: 'level', width: '5fr'}
 ];
 
 export const TableWithResizingFRsControlled = {
@@ -224,7 +224,7 @@ let columnsSomeFR: ColumnData[] = [
   {name: 'Type', uid: 'type', width: '1fr'},
   {name: 'Height', uid: 'height'},
   {name: 'Weight', uid: 'weight'},
-  {name: 'Level', uid: 'level', width: '4fr'}
+  {name: 'Level', uid: 'level', width: '5fr'}
 ];
 
 export const TableWithSomeResizingFRsControlled = {

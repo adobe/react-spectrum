@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
@@ -19,10 +18,12 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {Key} from 'react';
 import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+import {ControllingResize} from '../stories/ControllingResize';
+import {resizingTests} from '@react-aria/table/test/ariaTableResizing.test';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -55,6 +56,26 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
+let render = (children, scale = 'medium') => {
+  let tree = renderComponent(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+  // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+  act(() => {jest.runAllTimers();});
+  return tree;
+};
+
+let rerender = (tree, children, scale = 'medium') => {
+  let newTree = tree.rerender(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+  act(() => {jest.runAllTimers();});
+  return newTree;
+};
 describe('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
 
@@ -72,27 +93,6 @@ describe('TableViewSizing', function () {
   afterEach(() => {
     act(() => {jest.runAllTimers();});
   });
-
-  let render = (children, scale = 'medium') => {
-    let tree = renderComponent(
-      <Provider theme={theme} scale={scale}>
-        {children}
-      </Provider>
-    );
-    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
-    act(() => {jest.runAllTimers();});
-    return tree;
-  };
-
-  let rerender = (tree, children, scale = 'medium') => {
-    let newTree = tree.rerender(
-      <Provider theme={theme} scale={scale}>
-        {children}
-      </Provider>
-    );
-    act(() => {jest.runAllTimers();});
-    return newTree;
-  };
 
   describe('layout', function () {
     describe('row heights', function () {
@@ -572,7 +572,7 @@ describe('TableViewSizing', function () {
         });
       });
 
-      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
+      describe("multiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
         it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
           let tree = render(
             <TableView aria-label="Table">
@@ -1536,6 +1536,48 @@ describe('TableViewSizing', function () {
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
     });
-
   });
 });
+
+
+function getColumnWidths(tree) {
+  let rows = tree.getAllByRole('row');
+  return Array.from(rows[0].childNodes).map((cell) => Number(cell.style.width.replace('px', '')));
+}
+
+// I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
+function getColumn(tree, name) {
+  // Find by text, then go up to the element with the cell role.
+  let el = tree.getByText(name);
+  while (el && !/columnheader/.test(el.getAttribute('role'))) {
+    el = el.parentElement;
+  }
+
+  return el;
+}
+
+function resizeCol(tree, col, delta) {
+  let column = getColumn(tree, col);
+
+  // trigger pointer modality
+  fireEvent.pointerMove(tree.container);
+
+  fireEvent.pointerEnter(column);
+  let resizer = within(column).getByRole('slider');
+  fireEvent.pointerEnter(resizer);
+
+  // actual locations do not matter, the delta matters between events for the calculation of useMove
+  fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
+  fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
+  fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+  act(() => {jest.runAllTimers();});
+}
+
+
+function resizeTable(clientWidth, newValue) {
+  clientWidth.mockImplementation(() => newValue);
+  fireEvent(window, new Event('resize'));
+  act(() => {jest.runAllTimers()});
+}
+
+resizingTests(render, rerender, ControllingResize, ControllingResize, resizeCol, resizeTable);

@@ -403,6 +403,14 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
+  let transitionDuration = 220;
+  if (isLoading) {
+    transitionDuration = 160;
+  }
+  if (layout.columnLayout.resizingColumn != null) {
+    // while resizing, prop changes should not cause animations
+    transitionDuration = 0;
+  }
   let state = useVirtualizerState({
     layout,
     collection,
@@ -412,7 +420,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    transitionDuration: isLoading ? 160 : 220
+    transitionDuration
   });
 
   let {virtualizerProps} = useVirtualizer({
@@ -631,9 +639,6 @@ function ResizableTableColumnHeader(props) {
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
 
-  if (columnProps.width && columnProps.allowsResizing) {
-    throw new Error('Controlled state is not yet supported with column resizing. Please use defaultWidth for uncontrolled column resizing or remove the allowsResizing prop.');
-  }
   let {isFocusVisible, focusProps} = useFocusRing();
 
   const onMenuSelect = (key) => {

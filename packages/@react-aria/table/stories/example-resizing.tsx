@@ -43,8 +43,8 @@ export function Table(props) {
   });
 
   let [tableWidth, setTableWidth] = useState(0);
-  let getDefaultWidth = useCallback(() => 150, []);
-  let getDefaultMinWidth = useCallback(() => 50, []);
+  let getDefaultWidth = useCallback(() => undefined, []);
+  let getDefaultMinWidth = useCallback(() => 75, []);
   let layoutState = useTableColumnResizeState({
     getDefaultWidth,
     getDefaultMinWidth,

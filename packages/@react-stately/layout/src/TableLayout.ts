@@ -181,6 +181,7 @@ export class TableLayout<T> extends ListLayout<T> {
   controlledWidths: Map<Key, GridNode<T>>;
   uncontrolledWidths: Map<Key, GridNode<T>>;
   widths: Map<Key, number | string>;
+  lastVirtualizerWidth: number;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -189,6 +190,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.disableSticky = this.checkChrome105();
     this.columnLayout = options.columnLayout;
     this.getSplitColumns();
+    this.lastVirtualizerWidth = 0;
     this.widths = new Map(Array.from(this.uncontrolledWidths).map(([key, col]) =>
       [key, col.props.defaultWidth ?? this.columnLayout.getDefaultWidth?.(col.props)]
     ));
@@ -224,11 +226,9 @@ export class TableLayout<T> extends ListLayout<T> {
     let newControlled = new Map(Array.from(this.controlledWidths).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.widths, column.key, width);
 
-    if (!column.props.width) {
-      let map = new Map(Array.from(this.uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
-      map.set(column.key, width);
-      this.widths = map;
-    }
+    let map = new Map(Array.from(this.uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
+    map.set(column.key, width);
+    this.widths = map;
     // relayoutNow still uses setState, should happen at the same time the parent
     // component's state is processed as a result of props.onColumnResize
     this.virtualizer.relayoutNow({sizeChanged: true});
@@ -277,11 +277,13 @@ export class TableLayout<T> extends ListLayout<T> {
         c.props.width !== this.lastCollection.columns[i].props.width ||
         c.props.minWidth !== this.lastCollection.columns[i].props.minWidth ||
         c.props.maxWidth !== this.lastCollection.columns[i].props.maxWidth
-      )
+      ) ||
+      this.virtualizer.visibleRect.width !== this.lastVirtualizerWidth
     ) {
       // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
       this.invalidateEverything = true;
     }
+    this.lastVirtualizerWidth = this.virtualizer.visibleRect.width;
 
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
     let loadingState = this.collection.body.props.loadingState;
@@ -298,6 +300,7 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, cWidths);
+
     let header = this.buildHeader();
     let body = this.buildBody(0);
     this.lastPersistedKeys = null;
