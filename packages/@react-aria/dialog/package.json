@@ -25,13 +25,13 @@
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.10.0",
     "@react-aria/overlays": "^3.12.0",
     "@react-aria/utils": "^3.14.1",
     "@react-stately/overlays": "^3.4.3",
     "@react-types/dialog": "^3.4.5",
-    "@react-types/shared": "^3.16.0"
+    "@react-types/shared": "^3.16.0",
+    "@swc/helpers": "^0.4.14"
   },
   "publishConfig": {
     "access": "public"

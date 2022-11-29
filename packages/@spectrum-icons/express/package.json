@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@adobe/spectrum-css-ccx-workflow-icons": "1.0.2",
-    "@babel/runtime": "^7.6.2",
-    "@react-spectrum/icon": "^3.6.2"
+    "@react-spectrum/icon": "^3.6.2",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "3.0.0-alpha.1",
