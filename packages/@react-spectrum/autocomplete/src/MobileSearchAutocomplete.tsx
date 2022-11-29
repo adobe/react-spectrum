@@ -227,7 +227,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
 
   return (
     <div
-      {...mergeProps(hoverProps, focusProps, buttonProps)}
+      {...mergeProps(buttonProps, focusProps, hoverProps)}
       aria-haspopup="dialog"
       ref={ref}
       style={{...style, outline: 'none'}}
