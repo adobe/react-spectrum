@@ -94,7 +94,8 @@ function CustomOnSubmit(props) {
     if (value) {
       setSearchTerm(value);
     } else if (key) {
-      setSearchTerm(options.find(o => o.id === key).name);
+      let term = options.find(o => o.id === key)?.name;
+      setSearchTerm(term ? term : '');
     }
   };
 

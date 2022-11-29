@@ -226,7 +226,7 @@ function Pasteable() {
 
 ### Text
 
-A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
 
 The example below works with the above `Copyable` example using a custom app-specific data format to transfer rich data. If no such data is available, it falls back to pasting plain text data.
 
@@ -311,7 +311,7 @@ function Pasteable() {
 
 ### Files
 
-A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
 
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
@@ -337,9 +337,9 @@ function Pasteable() {
 
 ### Directories
 
-A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
 
-The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryItem.id]} />, and you can access the contents of each file as discussed above.
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
 
 This example renders the file names within a dropped directory in a grid.
 

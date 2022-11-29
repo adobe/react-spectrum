@@ -22,7 +22,7 @@ import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
