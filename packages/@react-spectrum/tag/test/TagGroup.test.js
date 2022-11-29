@@ -12,13 +12,13 @@
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
+import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TagGroup} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-import {chain} from '@react-aria/utils';
 
 function pressKeyOnButton(key) {
   return (button) => {
