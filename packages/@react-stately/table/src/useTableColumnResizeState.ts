@@ -1,8 +1,26 @@
 
+import {ColumnSize} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
 import {TableColumnLayout} from '@react-stately/layout/src/TableLayout';
 
+export interface TableColumnResizeStateProps<T> {
+  /**
+   * Current width of the table or table viewport that the columns
+   * should be calculated against.
+   **/
+  tableWidth: number,
+  /** A function that is called to find the default width for a given column. */
+  getDefaultWidth: (node: GridNode<T>) => ColumnSize,
+  /** A function that is called to find the default minWidth for a given column. */
+  getDefaultMinWidth: (node: GridNode<T>) => ColumnSize,
+  /** Callback that is invoked during the entirety of the resize event. */
+  onColumnResize?: (widths: Map<Key, ColumnSize>) => void,
+  /** Callback that is invoked when the resize event is started. */
+  onColumnResizeStart?: (key: Key) => void,
+  /** Callback that is invoked when the resize event is ended. */
+  onColumnResizeEnd?: (key: Key) => void
+}
 export interface TableColumnResizeState<T> {
   /** Trigger a resize and recalculation. */
   onColumnResize: (column: GridNode<T>, width: number) => void,
@@ -10,25 +28,18 @@ export interface TableColumnResizeState<T> {
   onColumnResizeStart: (column: GridNode<T>) => void,
   /** Callback for when onColumnResize has ended. */
   onColumnResizeEnd: (column: GridNode<T>) => void,
+  /** Gets the current width for the specified column. */
   getColumnWidth: (key: Key) => number,
+  /** Gets the current minWidth for the specified column. */
   getColumnMinWidth: (key: Key) => number,
+  /** Gets the current maxWidth for the specified column. */
   getColumnMaxWidth: (key: Key) => number,
+  /** Currently calculated widths for all columns. */
   widths: Map<Key, number>
 }
 
-export interface TableColumnResizeStateProps {
-  tableWidth: number,
-  getDefaultWidth,
-  getDefaultMinWidth,
-  /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (widths: Map<Key, number | string>) => void,
-  /** Callback that is invoked when the resize event is started. */
-  onColumnResizeStart?: (key: Key) => void,
-  /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (key: Key) => void
-}
 
-export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps, state): TableColumnResizeState<T> {
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state): TableColumnResizeState<T> {
   let {
     getDefaultWidth,
     getDefaultMinWidth

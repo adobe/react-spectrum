@@ -645,9 +645,9 @@ describe('TableViewSizing', function () {
 
       it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -694,8 +694,8 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -708,8 +708,8 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -719,9 +719,9 @@ describe('TableViewSizing', function () {
       });
 
       it('dragging the resizer works - mobile', () => {
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -768,8 +768,8 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('200px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
@@ -782,8 +782,8 @@ describe('TableViewSizing', function () {
           expect(row.childNodes[1].style.width).toBe('190px');
           expect(row.childNodes[2].style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -799,9 +799,9 @@ describe('TableViewSizing', function () {
       it('dragging the resizer works - desktop', () => {
         setInteractionModality('pointer');
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -872,17 +872,17 @@ describe('TableViewSizing', function () {
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
         setInteractionModality('pointer');
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -957,8 +957,8 @@ describe('TableViewSizing', function () {
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -967,9 +967,9 @@ describe('TableViewSizing', function () {
     describe('keyboard', () => {
       it('arrow keys the resizer works - desktop', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1064,17 +1064,17 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('arrow keys the resizer works - mobile', async () => {
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1145,8 +1145,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1154,9 +1154,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via Enter', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1196,8 +1196,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1205,9 +1205,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1246,8 +1246,8 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab();
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1255,9 +1255,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via shift Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1296,8 +1296,8 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab({shift: true});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith('foo');
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith('foo');
 
         expect(document.activeElement).toBe(resizableHeader);
 

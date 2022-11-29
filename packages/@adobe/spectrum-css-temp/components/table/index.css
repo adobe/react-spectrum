@@ -51,10 +51,10 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-headWrapper {
-  border-left-width: 1px;
-  border-left-style: solid;
-  border-right-width: 1px;
-  border-right-style: solid;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
   flex: 0 0 auto;
   padding-bottom: 1px;
   margin-bottom: -1px;

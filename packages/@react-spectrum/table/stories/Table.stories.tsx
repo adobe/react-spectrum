@@ -1306,7 +1306,7 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, onColumnResize action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResize={action('onResize')}>
         <TableHeader>
           <Column allowsResizing defaultWidth="1fr">File Name</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>

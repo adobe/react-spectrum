@@ -15,8 +15,7 @@ import {
   getMaxWidth,
   getMinWidth,
   isStatic,
-  parseFractionalUnit,
-  parseStaticWidth
+  parseFractionalUnit
 } from './TableUtils';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
@@ -38,8 +37,8 @@ export class TableColumnLayout<T> {
   getDefaultWidth: (props) => string | number;
   getDefaultMinWidth: (props) => string | number;
   columnWidths: Map<Key, number> = new Map();
+  resizerPositions: Map<Key, number> = new Map();
   changedColumns: Map<Key, number | null> = new Map();
-  uncontrolledColumnWidths: Map<Key, number> = new Map();
 
   constructor(options: TableColumnLayoutOptions) {
     this.getDefaultWidth = options.getDefaultWidth;
@@ -56,23 +55,31 @@ export class TableColumnLayout<T> {
     this.resizingColumn = key;
   }
 
+  getResizerPosition(): number {
+    return this.resizerPositions.get(this.resizingColumn);
+  }
+
   getColumnWidth(key: Key): number {
     return this.columnWidths.get(key) ?? 0;
   }
 
+  // TODO: need to send a grid node in so we can use getDefaultMinWidth
   getColumnMinWidth(minWidth: number | string, tableWidth: number): number {
-    return getMinWidth(minWidth, tableWidth);
+    return getMinWidth(minWidth ?? this.getDefaultMinWidth({}), tableWidth);
   }
 
   getColumnMaxWidth(maxWidth: number | string, tableWidth: number): number {
     return getMaxWidth(maxWidth, tableWidth);
   }
 
-  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths, uncontrolledWidths, col = null, width) {
+  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, number | string>, uncontrolledWidths: Map<Key, number | string>, col = null, width: number) {
     let prevColumnWidths = this.columnWidths;
     // resizing a column
     let resizeIndex = Infinity;
-    let resizingChanged = new Map<Key, number>(Array.from(controlledWidths).concat(Array.from(uncontrolledWidths)));
+    let controlledArray = Array.from(controlledWidths);
+    let uncontrolledArray = Array.from(uncontrolledWidths);
+    let combinedArray = controlledArray.concat(uncontrolledArray);
+    let resizingChanged = new Map<Key, number | string>(combinedArray);
     let frKeys = new Map();
     let percentKeys = new Map();
     let frKeysToTheRight = new Map();
@@ -86,7 +93,7 @@ export class TableColumnLayout<T> {
       if (col !== column.key && !column.column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
         // uncontrolled don't have props.width for us, so instead get from our state
         frKey = column.key;
-        frKeys.set(column.key, parseFractionalUnit(uncontrolledWidths.get(column.key)));
+        frKeys.set(column.key, parseFractionalUnit(uncontrolledWidths.get(column.key) as string));
       } else if (col !== column.key && !isStatic(column.column.props.width) && !uncontrolledWidths.get(column.key)) {
         // controlledWidths will be the same in the collection
         frKey = column.key;
@@ -149,6 +156,7 @@ export class TableColumnLayout<T> {
 
   buildColumnWidths(tableWidth: number, collection: TableCollection<T>, controlledWidths) {
     this.columnWidths = new Map();
+    this.resizerPositions = new Map();
 
    // initial layout or table/window resizing
     let columnWidths = calculateColumnSizes(
@@ -160,8 +168,12 @@ export class TableColumnLayout<T> {
     );
 
     // columns going in will be the same order as the columns coming out
+    let resizerPosition = 0;
     columnWidths.forEach((width, index) => {
-      this.columnWidths.set(collection.columns[index].key, width);
+      let key = collection.columns[index].key;
+      this.columnWidths.set(key, width);
+      resizerPosition += width;
+      this.resizerPositions.set(key, resizerPosition);
     });
     return this.columnWidths;
   }
@@ -235,6 +247,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return newSizes;
   }
 
+  // TODO: need to trigger a state update to turn off the resize blue bar
   onColumnResizeEnd(column: GridNode<T>): void {
     this.columnLayout.setResizingColumn(null);
   }

@@ -14,6 +14,7 @@ import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingS
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
+export type ColumnSize = number | `${number}fr` | `${number}%`;
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
@@ -40,14 +41,13 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   onAction?: (key: Key) => void,
   /**
    * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
    * @private
    */
-  onColumnResize?: (widths: Map<Key, number | string>) => void,
-  /**
-   * Handler that is called when a column resize ends.
-   * @private
-   */
-  onColumnResizeEnd?: (key: Key) => void
+  onResize?: (widths: Map<Key, number | string>) => void,
+  onResizeStart?: (key: Key) => void,
+  onResizeEnd?: (key: Key) => void
 }
 
 export interface TableHeaderProps<T> {
@@ -67,7 +67,7 @@ export interface ColumnProps<T> {
   /** A list of child columns used when dynamically rendering nested child columns. */
   childColumns?: T[],
   /** The width of the column. */
-  width?: number | string,
+  width?: ColumnSize,
   /** The minimum width of the column. */
   minWidth?: number | string,
   /** The maximum width of the column. */

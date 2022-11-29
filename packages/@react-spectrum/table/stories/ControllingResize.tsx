@@ -65,7 +65,7 @@ export function ControllingResize(props) {
         }}>Restore Cols</Button>
       <div>Current saved column state: {'{'}{Array.from(savedCols).map(([key, entry]) => `${key} => ${entry}`).join(',')}{'}'}</div>
       <div key={renderKey}>
-        <TableView aria-label="Table with resizable columns" onColumnResize={setWidths} {...otherProps}>
+        <TableView aria-label="Table with resizable columns" onResize={setWidths} {...otherProps}>
           <TableHeader columns={cols}>
             {column => <Column {...column} key={column.uid} width={widths.get(column.uid)} allowsResizing>{column.name}</Column>}
           </TableHeader>

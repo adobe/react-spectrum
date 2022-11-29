@@ -57,6 +57,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   stateRef.current = layoutState;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
+  let min = Math.floor(stateRef.current.getColumnMinWidth(item.key));
+  let max = Math.floor(stateRef.current.getColumnMaxWidth(item.key));
+  if (max === Infinity) {
+    max = Number.MAX_SAFE_INTEGER;
+  }
+  let value = Math.floor(stateRef.current.getColumnWidth(item.key));
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
@@ -105,12 +111,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
     }
   });
-  let min = Math.floor(stateRef.current.getColumnMinWidth(item.key));
-  let max = Math.floor(stateRef.current.getColumnMaxWidth(item.key));
-  if (max === Infinity) {
-    max = Number.MAX_SAFE_INTEGER;
-  }
-  let value = Math.floor(stateRef.current.getColumnWidth(item.key));
 
   let ariaProps = {
     'aria-label': props.label,
