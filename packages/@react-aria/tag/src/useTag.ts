@@ -45,9 +45,9 @@ export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: G
   let {rowProps} = useGridRow({
     node: item
   }, state, tagRowRef);
+
   // Don't want the row to be focusable or accessible via keyboard
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, ...otherRowProps} = rowProps;
+  delete rowProps.tabIndex;
 
   let {gridCellProps} = useGridCell({
     node: [...item.childNodes][0],
@@ -75,7 +75,7 @@ export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: G
     labelProps: {
       id: labelId
     },
-    tagRowProps: otherRowProps,
+    tagRowProps: rowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
