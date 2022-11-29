@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {Item, TagGroup} from '../src';
 import React, {useState} from 'react';
