@@ -36,7 +36,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps, state: TagGroupState<T,
     disabledKeys: new Set(),
     ref,
     direction,
-    focusMode: 'cell'
+    focusMode: 'row'
   });
   let {gridProps} = useGrid({
     ...props,
