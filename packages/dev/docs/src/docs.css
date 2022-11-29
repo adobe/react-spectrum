@@ -632,13 +632,13 @@ h2.sectionHeader {
 
 .docSearchBoxThemeProvider {
   height: var(--spectrum-global-dimension-size-400);
-}
 
-.docSearchBox {
-  margin-inline-start: auto;
-  width: var(--spectrum-global-dimension-size-3000) !important;
-  > div {
-    width: 100%;
+  .docSearchBox {
+    margin-inline-start: auto;
+    width: var(--spectrum-global-dimension-size-3000);
+    > div {
+      width: 100%;
+    }
   }
 }
 
@@ -802,9 +802,11 @@ h2.sectionHeader {
   }
 }
 
-@media (max-width: 569px) {
-  .docSearchBox {
-    width: var(--spectrum-global-dimension-size-2400);
+@media (max-width: 375px) {
+  .docSearchBoxThemeProvider {
+    .docSearchBox {
+      width: var(--spectrum-global-dimension-size-2400);
+    }
   }
 }
 
