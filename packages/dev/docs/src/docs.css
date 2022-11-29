@@ -635,8 +635,21 @@ h2.sectionHeader {
 
   .docSearchBox {
     margin-inline-start: auto;
-    width: var(--spectrum-global-dimension-size-3000);
-    > div {
+    max-width: var(--spectrum-global-dimension-size-3000);
+    width: calc(
+      100vw
+      - 2 * var(--spectrum-actionbutton-min-width, var(--spectrum-global-dimension-size-400))
+      - 4 * var(--spectrum-alias-border-size-thin)
+      - 4 * var(--spectrum-global-dimension-size-100)
+    );
+    min-width: calc(
+      var(--spectrum-global-dimension-size-225)
+      + 2 * var(--spectrum-global-dimension-size-150)
+      + 2 * var(--spectrum-alias-border-size-thin)
+    );
+    > div,
+    > div > div,
+    > div > div, div {
       width: 100%;
     }
   }
@@ -805,8 +818,16 @@ h2.sectionHeader {
 @media (max-width: 375px) {
   .docSearchBoxThemeProvider {
     .docSearchBox {
-      width: var(--spectrum-global-dimension-size-2400);
+      max-width: unset;
+      > div,
+      > div > div,
+      > div > div > div {
+        min-width: unset;
+        padding-left: unset;
+        padding-right: unset;
+      }
     }
+
   }
 }
 
