@@ -22,7 +22,7 @@ import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 
-export function Tag<T extends GridCollection<T>>(props: SpectrumTagProps<T, T>) {
+export function Tag<T extends GridCollection<T>>(props: SpectrumTagProps<T>) {
   const {
     children,
     allowsRemoving,
