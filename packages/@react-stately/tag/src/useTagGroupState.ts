@@ -39,7 +39,7 @@ export function useTagGroupState<T extends object>(props: TagGroupProps<T>): Tag
   let state = useGridState({
     ...props,
     collection: gridCollection,
-    focusMode: 'cell'
+    focusMode: 'row'
   });
 
   let keyToRestoreOnRemove = useRef(null);
