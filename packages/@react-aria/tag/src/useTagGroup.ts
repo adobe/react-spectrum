@@ -12,8 +12,13 @@
 
 import {DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {ReactNode, useState} from 'react';
+import {GridCollection} from '@react-types/grid';
+import {ReactNode, RefObject, useState} from 'react';
+import {TagGroupState} from '@react-stately/tag';
+import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
+import {useGrid} from '@react-aria/grid';
+import {useLocale} from '@react-aria/i18n';
 
 export interface AriaTagGroupProps extends DOMProps {
   children: ReactNode,
@@ -25,14 +30,31 @@ export interface TagGroupAria {
   tagGroupProps: DOMAttributes
 }
 
-export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
+export function useTagGroup<T, C extends GridCollection<T>>(props: AriaTagGroupProps, state: TagGroupState<T, C>, ref: RefObject<HTMLElement>): TagGroupAria {
+  let {direction} = useLocale();
+  let keyboardDelegate = new TagKeyboardDelegate({
+    collection: state.collection,
+    disabledKeys: new Set(),
+    ref,
+    direction,
+    focusMode: 'cell'
+  });
+  let {gridProps} = useGrid({
+    ...props,
+    keyboardDelegate
+  }, state, ref);
+
+  // Don't want the grid to be focusable or accessible via keyboard
+  delete gridProps.role;
+  delete gridProps.tabIndex;
+
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
   let domProps = filterDOMProps(props);
   return {
-    tagGroupProps: mergeProps(domProps, {
+    tagGroupProps: mergeProps(gridProps, domProps, {
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
