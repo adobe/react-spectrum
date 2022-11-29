@@ -12,7 +12,6 @@
 
 import {DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {GridCollection} from '@react-types/grid';
 import {ReactNode, RefObject, useState} from 'react';
 import {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
