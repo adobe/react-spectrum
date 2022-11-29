@@ -18,6 +18,7 @@ import React from 'react';
 import {TagGroup} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+import {chain} from '@react-aria/utils';
 
 function pressKeyOnButton(key) {
   return (button) => {
@@ -299,41 +300,49 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
+  it.each`
+    Name                         | props
+    ${'on `Delete` keypress'}    | ${{keyPress: 'Delete'}}
+    ${'on `Backspace` keypress'} | ${{keyPress: 'Backspace'}}
+    ${'on `space` keypress'}     | ${{keyPress: ' '}}
+  `('Can move focus after removing tag $Name', function ({Name, props}) {
 
-  // Commented out until spectrum can provide use case for these scenarios
-  // it.each`
-  //  Name           | Component     | TagComponent | props
-  //  ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
-  // `('$Name is read only', ({Component, TagComponent, props}) => {
-  //   let {getByText} = render(
-  //     <Component
-  //       {...props}
-  //       aria-label="tag group">
-  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-  //     </Component>
-  //   );
-  //   let tag = getByText('Tag 1');
-  //   fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
-  //   expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
-  // });
-  //
-  // it.each`
-  //  Name          | Component         | TagComponent     | props
-  //  ${'Tag'}      | ${TagGroup}       | ${Item}          | ${{validationState: 'invalid'}}
-  // `('$Name can be invalid', function ({Component, TagComponent, props}) {
-  //   let {getByRole, debug} = render(
-  //     <Component
-  //       {...props}
-  //       aria-label="tag group">
-  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-  //     </Component>
-  //   );
-  //
-  //   debug();
-  //
-  //   let tag = getByRole('row');
-  //   expect(tag).toHaveAttribute('aria-invalid', 'true');
-  // });
+    function TagGroupWithDelete(props) {
+      let [items, setItems] = React.useState([
+        {id: 1, label: 'Cool Tag 1'},
+        {id: 2, label: 'Another cool tag'},
+        {id: 3, label: 'This tag'},
+        {id: 4, label: 'What tag?'},
+        {id: 5, label: 'This tag is cool too'},
+        {id: 6, label: 'Shy tag'}
+      ]);
+
+      let removeItem = (key) => {
+        setItems(prevItems => prevItems.filter((item) => key !== item.id));
+      };
+    
+      return (
+        <Provider theme={theme}>
+          <TagGroup items={items} aria-label="tag group" allowsRemoving onRemove={chain(removeItem, onRemoveSpy)} {...props}>
+            {item => <Item>{item.label}</Item>}
+          </TagGroup>
+        </Provider>
+      );
+    }
+      
+    let {getAllByRole} = render(
+      <TagGroupWithDelete {...props} />
+    );
+
+    let tags = getAllByRole('gridcell');
+    userEvent.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
+    expect(onRemoveSpy).toHaveBeenCalledWith(1);
+    tags = getAllByRole('gridcell');
+    expect(document.activeElement).toBe(tags[0]);
+    pressArrowRight(tags[0]);
+    expect(document.activeElement).toBe(tags[1]);
+  });
 });
-
-// need to add test for focus after onremove
