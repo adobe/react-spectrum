@@ -72,7 +72,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   const {moveProps} = useMove({
     onMoveStart() {
       columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
-      stateRef.current.onColumnResizeStart(item);
+      stateRef.current.onColumnResizeStart(item.key);
       props.onResizeStart?.(item.key);
     },
     onMove(e) {

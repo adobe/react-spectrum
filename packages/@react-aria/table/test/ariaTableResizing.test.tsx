@@ -67,7 +67,7 @@ function resizeCol(tree, col, delta) {
 function resizeTable(clientWidth, newValue) {
   clientWidth.mockImplementation(() => newValue);
   fireEvent(window, new Event('resize'));
-  act(() => {jest.runAllTimers()});
+  act(() => {jest.runAllTimers();});
 }
 
 export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol, resizeTable) => {
@@ -226,6 +226,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
           expect(getColumnWidths(tree)).toStrictEqual(expected);
           expect(onResize).toHaveBeenCalledTimes(1);
           expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, expectedOnResize));
+          let resizers = tree.getAllByRole('slider');
+          resizers.forEach(resizer => {
+            expect(resizer).toHaveAttribute('min', `${75}`);
+            expect(resizer).toHaveAttribute('max', `${Number.MAX_SAFE_INTEGER}`);
+          });
         });
 
       it('cannot resize to be less than a minWidth, from start to end', function () {
@@ -259,6 +264,11 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         expect(getColumnWidths(tree)).toStrictEqual([100, 100, 100, 100, 100]);
         expect(onResize).toHaveBeenCalledTimes(5);
         expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, [100, 100, 100, 100, 100]));
+        let resizers = tree.getAllByRole('slider');
+        resizers.forEach(resizer => {
+          expect(resizer).toHaveAttribute('min', `${100}`);
+          expect(resizer).toHaveAttribute('max', `${Number.MAX_SAFE_INTEGER}`);
+        });
       });
 
       it('cannot resize to be less than a minWidth, from end to start', function () {
@@ -303,6 +313,12 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         expect(getColumnWidths(tree)).toStrictEqual([150, 150, 200, 200, 200]);
         resizeCol(tree, 'Level', 400);
         expect(getColumnWidths(tree)).toStrictEqual([150, 150, 200, 200, 500]);
+        let resizers = tree.getAllByRole('slider');
+        let expectedMaxWidths = [150, 150, 200, 200, 500];
+        resizers.forEach((resizer, i) => {
+          expect(resizer).toHaveAttribute('min', `${75}`);
+          expect(resizer).toHaveAttribute('max', `${expectedMaxWidths[i]}`);
+        });
       });
 
       it('cannot resize to be more than a maxWidth, from end to start', function () {
@@ -336,7 +352,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
           {name: 'Level', uid: 'level', width: '4fr'}
         ];
 
-        let tree = render(<ControlledTable columns={columns} />)
+        let tree = render(<ControlledTable columns={columns} />);
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
         resizeCol(tree, 'Name', -50);
         expect(getColumnWidths(tree)).toStrictEqual([75, 118, 118, 118, 471]);

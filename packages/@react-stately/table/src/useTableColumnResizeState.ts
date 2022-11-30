@@ -109,14 +109,12 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   // done
   let getColumnMinWidth = useCallback((key: Key) => {
-    let columnMinWidth = state.collection.columns.find(col => col.key === key).props.minWidth;
-    return columnLayout.getColumnMinWidth(columnMinWidth, tableWidth);
+    return columnLayout.getColumnMinWidth(key);
   }, [columnLayout, state.collection, tableWidth]);
 
   // done
   let getColumnMaxWidth = useCallback((key: Key) => {
-    let columnMaxWidth = state.collection.columns.find(col => col.key === key).props.maxWidth;
-    return columnLayout.getColumnMaxWidth(columnMaxWidth, tableWidth);
+    return columnLayout.getColumnMaxWidth(key);
   }, [columnLayout, state.collection, tableWidth]);
 
   let setResizingColumn = useCallback((key: Key) => {

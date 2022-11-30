@@ -37,6 +37,8 @@ export class TableColumnLayout<T> {
   getDefaultWidth: (props) => string | number;
   getDefaultMinWidth: (props) => string | number;
   columnWidths: Map<Key, number> = new Map();
+  columnMinWidths: Map<Key, number> = new Map();
+  columnMaxWidths: Map<Key, number> = new Map();
   resizerPositions: Map<Key, number> = new Map();
 
   constructor(options: TableColumnLayoutOptions) {
@@ -56,13 +58,12 @@ export class TableColumnLayout<T> {
     return this.columnWidths.get(key) ?? 0;
   }
 
-  // TODO: need to send a grid node in so we can use getDefaultMinWidth
-  getColumnMinWidth(minWidth: number | string, tableWidth: number): number {
-    return getMinWidth(minWidth ?? this.getDefaultMinWidth({}), tableWidth);
+  getColumnMinWidth(key: Key): number {
+    return this.columnMinWidths.get(key);
   }
 
-  getColumnMaxWidth(maxWidth: number | string, tableWidth: number): number {
-    return getMaxWidth(maxWidth, tableWidth);
+  getColumnMaxWidth(key: Key): number {
+    return this.columnMaxWidths.get(key);
   }
 
   resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, number | string>, uncontrolledWidths: Map<Key, number | string>, col = null, width: number) {
@@ -149,6 +150,8 @@ export class TableColumnLayout<T> {
 
   buildColumnWidths(tableWidth: number, collection: TableCollection<T>, controlledWidths) {
     this.columnWidths = new Map();
+    this.columnMinWidths = new Map();
+    this.columnMaxWidths = new Map();
     this.resizerPositions = new Map();
 
    // initial layout or table/window resizing
@@ -164,7 +167,10 @@ export class TableColumnLayout<T> {
     let resizerPosition = 0;
     columnWidths.forEach((width, index) => {
       let key = collection.columns[index].key;
+      let column = collection.columns[index];
       this.columnWidths.set(key, width);
+      this.columnMinWidths.set(key, getMinWidth(column.column.props.minWidth ?? this.getDefaultMinWidth(column.props), tableWidth));
+      this.columnMaxWidths.set(key, getMaxWidth(column.column.props.maxWidth, tableWidth));
       resizerPosition += width;
       this.resizerPositions.set(key, resizerPosition);
     });
@@ -210,7 +216,7 @@ export class TableLayout<T> extends ListLayout<T> {
     if (!column) {
       return 0;
     }
-    return this.columnLayout.getColumnMinWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
+    return this.columnLayout.getColumnMinWidth(key);
   }
 
   getColumnMaxWidth(key: Key): number {
@@ -218,7 +224,7 @@ export class TableLayout<T> extends ListLayout<T> {
     if (!column) {
       return 0;
     }
-    return this.columnLayout.getColumnMaxWidth(column.props.minWidth, this.virtualizer.visibleRect.width);
+    return this.columnLayout.getColumnMaxWidth(key);
   }
 
   // outside, where this is called, should call props.onColumnResizeStart...
