@@ -647,11 +647,6 @@ h2.sectionHeader {
       + 2 * var(--spectrum-global-dimension-size-150)
       + 2 * var(--spectrum-alias-border-size-thin)
     );
-    > div,
-    > div > div,
-    > div > div, div {
-      width: 100%;
-    }
   }
 }
 
@@ -820,14 +815,16 @@ h2.sectionHeader {
     .docSearchBox {
       max-width: unset;
       > div,
-      > div > div,
-      > div > div > div {
-        min-width: unset;
-        padding-left: unset;
-        padding-right: unset;
+      > div > div {
+        min-width: calc(
+          var(--spectrum-global-dimension-size-150)
+          + var(--spectrum-global-dimension-size-225)
+          + var(--spectrum-global-dimension-size-65)
+          + var(--spectrum-global-dimension-size-350)
+        );
+        width: 100%;
       }
     }
-
   }
 }
 
