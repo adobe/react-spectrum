@@ -65,6 +65,12 @@ governing permissions and limitations under the License.
 .spectrum-Field {
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
 
+  .spectrum-Field-contextualHelp {
+    grid-area: contextualHelp;
+    margin-inline-start: var(--spectrum-global-dimension-size-50);
+    margin-top: var(--spectrum-global-dimension-size-25);
+  }
+
   &:where(.spectrum-Field--positionTop) {
     display: inline-grid;
     grid-template-areas: "label contextualHelp ."
@@ -131,12 +137,6 @@ governing permissions and limitations under the License.
     .spectrum-FieldLabel {
       padding-inline-end: 0;
     }
-  }
-
-  .spectrum-Field-contextualHelp {
-    grid-area: contextualHelp;
-    margin-inline-start: var(--spectrum-global-dimension-size-50);
-    margin-top: var(--spectrum-global-dimension-size-25);
   }
 }
 
