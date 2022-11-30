@@ -10,11 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useLayoutEffect, useState} from 'react';
-import {useCheckbox} from '@react-aria/checkbox';
-import {FocusRing, useFocusRing} from '@react-aria/focus';
-import {useRef} from 'react';
+import ariaStyles from './resizing.css';
 import {
   AriaTableColumnResizeProps,
   useTable,
@@ -27,12 +23,16 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
+import {classNames} from '@react-spectrum/utils';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import React, {useCallback, useState} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import {useCheckbox} from '@react-aria/checkbox';
+import {useRef} from 'react';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {classNames} from '@react-spectrum/utils';
-import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import ariaStyles from './resizing.css';
 
 export function Table(props) {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');

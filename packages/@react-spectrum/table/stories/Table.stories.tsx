@@ -17,6 +17,7 @@ import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
+import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -38,7 +39,6 @@ import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
-import {ControllingResize} from './ControllingResize';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -1332,7 +1332,7 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, onColumnResizeEnd action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeEnd={action('onResizeEnd')}>
         <TableHeader>
           <Column allowsResizing defaultWidth="1fr">File name for reference</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>
@@ -1390,13 +1390,13 @@ storiesOf('TableView', module)
   );
 
 
-let columnsFR = [
+let columnsFR: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
   {name: 'Type', uid: 'type', width: '1fr'},
   {name: 'Level', uid: 'level', width: '4fr'}
 ];
 
-let columnsSomeFR = [
+let columnsSomeFR: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
   {name: 'Type', uid: 'type', width: '1fr'},
   {name: 'Height', uid: 'height'},

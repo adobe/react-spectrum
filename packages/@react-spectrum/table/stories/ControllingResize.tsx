@@ -10,14 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {Checkbox} from '@react-spectrum/checkbox';
-import {Flex} from '@react-spectrum/layout';
-import {Form} from '@react-spectrum/form';
-import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Button} from '@react-spectrum/button';
+import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {ColumnSize} from '@react-types/table';
+import React, {Key, useCallback, useMemo, useState} from 'react';
 
-let defaultColumns = [
+export interface PokemonColumn {
+  name: string,
+  uid: string,
+  width?: ColumnSize
+}
+export interface PokemonData {
+  id: number,
+  name: string,
+  type: string,
+  level: string,
+  weight: string,
+  height: string
+}
+let defaultColumns: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
   {name: 'Type', uid: 'type', width: '1fr'},
   {name: 'Height', uid: 'height'},
@@ -25,7 +36,7 @@ let defaultColumns = [
   {name: 'Level', uid: 'level', width: '5fr'}
 ];
 
-let defaultRows = [
+let defaultRows: PokemonData[] = [
   {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67', weight: '200lbs', height: '5\'7"'},
   {id: 2, name: 'Blastoise', type: 'Water', level: '56', weight: '188lbs', height: '5\'3"'},
   {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83', weight: '220lbs', height: '6\'7"'},
@@ -40,18 +51,19 @@ let defaultRows = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
 ];
 
-export function ControllingResize(props) {
+export function ControllingResize(props: {columns?: PokemonColumn[], rows?: PokemonData[], onResize?: (sizes: Map<Key, ColumnSize>) => void, [name: string]: any}) {
   let {columns = defaultColumns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, number | string>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
 
-  let setWidths = useCallback((vals: Map<Key, number | string>) => {
+  let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
     let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
     let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
     _setWidths(newVals);
     onResize?.(vals);
-  }, [columns]);
+  }, [onResize, columns, _setWidths]);
   let [savedCols, setSavedCols] = useState(widths);
   let [renderKey, setRenderKey] = useState(() => Math.random());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);
 
   return (

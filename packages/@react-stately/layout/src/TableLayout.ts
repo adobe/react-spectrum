@@ -17,14 +17,15 @@ import {
   isStatic,
   parseFractionalUnit
 } from './TableUtils';
+import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
-import {TableCollection} from '@react-types/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  columnLayout: TableColumnLayout<T>
+  columnLayout: TableColumnLayout<T>,
+  initialCollection: TableCollection<T>
 }
 
 interface TableColumnLayoutOptions {
@@ -66,14 +67,14 @@ export class TableColumnLayout<T> {
     return this.columnMaxWidths.get(key);
   }
 
-  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, number | string>, uncontrolledWidths: Map<Key, number | string>, col = null, width: number) {
+  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, ColumnSize>, uncontrolledWidths: Map<Key, ColumnSize>, col = null, width: number): Map<Key, ColumnSize> {
     let prevColumnWidths = this.columnWidths;
     // resizing a column
     let resizeIndex = Infinity;
     let controlledArray = Array.from(controlledWidths);
     let uncontrolledArray = Array.from(uncontrolledWidths);
     let combinedArray = controlledArray.concat(uncontrolledArray);
-    let resizingChanged = new Map<Key, number | string>(combinedArray);
+    let resizingChanged = new Map<Key, ColumnSize>(combinedArray);
     let frKeys = new Map();
     let percentKeys = new Map();
     let frKeysToTheRight = new Map();
@@ -123,7 +124,7 @@ export class TableColumnLayout<T> {
 
     // set all new column widths for onResize event
     // columns going in will be the same order as the columns coming out
-    let newWidths = new Map<Key, number | string>();
+    let newWidths = new Map<Key, ColumnSize>();
     // set all column widths based on calculateColumnSize
     columnWidths.forEach((width, index) => {
       let key = collection.columns[index].key;
@@ -191,7 +192,7 @@ export class TableLayout<T> extends ListLayout<T> {
   columnLayout: TableColumnLayout<T>;
   controlledWidths: Map<Key, GridNode<T>>;
   uncontrolledWidths: Map<Key, GridNode<T>>;
-  widths: Map<Key, number | string>;
+  widths: Map<Key, ColumnSize>;
   lastVirtualizerWidth: number;
 
   constructor(options: TableLayoutOptions<T>) {
@@ -205,6 +206,10 @@ export class TableLayout<T> extends ListLayout<T> {
     this.widths = new Map(Array.from(this.uncontrolledWidths).map(([key, col]) =>
       [key, col.props.defaultWidth ?? this.columnLayout.getDefaultWidth?.(col.props)]
     ));
+  }
+
+  get resizingColumn(): Key {
+    return this.columnLayout.resizingColumn;
   }
 
   getColumnWidth(key: Key): number {
@@ -228,17 +233,17 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   // outside, where this is called, should call props.onColumnResizeStart...
-  onColumnResizeStart(column: GridNode<T>): void {
-    this.columnLayout.setResizingColumn(column.key);
+  onColumnResizeStart(key: Key): void {
+    this.columnLayout.setResizingColumn(key);
   }
 
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
-  onColumnResize(column: GridNode<T>, width: number): Map<Key, number | string> {
+  onColumnResize(key: Key, width: number): Map<Key, ColumnSize> {
     let newControlled = new Map(Array.from(this.controlledWidths).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.widths, column.key, width);
+    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.widths, key, width);
 
     let map = new Map(Array.from(this.uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
-    map.set(column.key, width);
+    map.set(key, width);
     this.widths = map;
     // relayoutNow still uses setState, should happen at the same time the parent
     // component's state is processed as a result of props.onColumnResize
@@ -246,7 +251,8 @@ export class TableLayout<T> extends ListLayout<T> {
     return newSizes;
   }
 
-  onColumnResizeEnd(column: GridNode<T>): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onColumnResizeEnd(key: Key): void {
     this.columnLayout.setResizingColumn(null);
   }
 

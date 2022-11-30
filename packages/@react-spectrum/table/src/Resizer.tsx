@@ -13,13 +13,13 @@ import {useTableContext} from './TableView';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ResizerProps<T> {
-  layout: TableLayoutState<T>,
+  layout: TableLayoutState,
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onResizeStart: () => void,
+  onResizeStart: (key: Key) => void,
   onResize: (widths: Map<Key, number | string>) => void,
-  onResizeEnd: () => void,
+  onResizeEnd: (key: Key) => void,
   onMoveResizer: (e: MoveMoveEvent) => void
 }
 
@@ -28,10 +28,10 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {state, isEmpty} = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
-  const stateRef = useRef<TableLayoutState<T>>(null);
+  const stateRef = useRef<TableLayoutState>(null);
   stateRef.current = layout;
 
-  let {inputProps, resizerProps} = useTableColumnResize<T>({
+  let {inputProps, resizerProps} = useTableColumnResize<unknown>({
     ...props,
     label: stringFormatter.format('columnResizer'),
     isDisabled: isEmpty,

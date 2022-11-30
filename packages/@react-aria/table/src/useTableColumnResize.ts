@@ -11,6 +11,7 @@
  */
 
 import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
+import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, MoveEndEvent, MoveMoveEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
@@ -39,20 +40,19 @@ export interface AriaTableColumnResizeProps<T> {
   onResizeEnd: (key: Key) => void
 }
 
-export interface TableLayoutState<T> {
+export interface TableLayoutState {
   getColumnWidth: (key: Key) => number,
   getColumnMinWidth: (key: Key) => number,
   getColumnMaxWidth: (key: Key) => number,
-  setResizingColumn: (key: Key | null) => void,
   resizingColumn: Key,
   onColumnResizeStart: (key: Key) => void,
-  onColumnResize: (column: GridNode<T>, width: number) => void,
+  onColumnResize: (column: Key, width: number) => Map<Key, ColumnSize>,
   onColumnResizeEnd: (key: Key) => void
 }
 
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, layoutState: TableLayoutState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, layoutState: TableLayoutState, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled} = props;
-  const stateRef = useRef<TableLayoutState<T>>(null);
+  const stateRef = useRef<TableLayoutState>(null);
   stateRef.current = layoutState;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
@@ -89,8 +89,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       // if moving up/down only, no need to resize
       if (deltaX !== 0) {
         columnResizeWidthRef.current += deltaX;
-        let sizes = stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
-        props.onMove?.(e, columnResizeWidthRef.current);
+        let sizes = stateRef.current.onColumnResize(item.key, columnResizeWidthRef.current);
+        props.onMove?.(e);
         props.onResize?.(sizes);
       }
     },
@@ -99,7 +99,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       columnResizeWidthRef.current = 0;
       props.onMoveEnd?.(e);
       if (pointerType === 'mouse') {
-        stateRef.current.onColumnResizeEnd(item);
+        stateRef.current.onColumnResizeEnd(item.key);
         props.onResizeEnd?.(item.key);
       }
     }
@@ -136,7 +136,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     } else {
       nextValue = currentWidth - 10;
     }
-    stateRef.current.onColumnResize(item, nextValue);
+    stateRef.current.onColumnResize(item.key, nextValue);
     props.onMove({pointerType: 'virtual'} as MoveMoveEvent);
     props.onMoveEnd({pointerType: 'virtual'} as MoveEndEvent);
   };
@@ -146,8 +146,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
-      if (e.pointerType === 'virtual' && layoutState.columnLayout.resizingColumn != null) {
-        stateRef.current.onColumnResizeEnd(item);
+      if (e.pointerType === 'virtual' && layoutState.resizingColumn != null) {
+        stateRef.current.onColumnResizeEnd(item.key);
         focusSafely(triggerRef.current);
         return;
       }
@@ -176,12 +176,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         onFocus: () => {
           // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
           // call instead during focus and blur
-          stateRef.current.onColumnResizeStart(item);
+          stateRef.current.onColumnResizeStart(item.key);
           props.onResizeStart?.(item.key);
           state.setKeyboardNavigationDisabled(true);
         },
         onBlur: () => {
-          stateRef.current.onColumnResizeEnd(item);
+          stateRef.current.onColumnResizeEnd(item.key);
           props.onResizeEnd?.(item.key);
           state.setKeyboardNavigationDisabled(false);
         },

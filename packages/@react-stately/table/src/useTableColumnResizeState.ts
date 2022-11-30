@@ -1,3 +1,14 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 import {ColumnSize} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
@@ -21,13 +32,13 @@ export interface TableColumnResizeStateProps<T> {
   /** Callback that is invoked when the resize event is ended. */
   onColumnResizeEnd?: (key: Key) => void
 }
-export interface TableColumnResizeState<T> {
+export interface TableColumnResizeState {
   /** Trigger a resize and recalculation. */
-  onColumnResize: (column: GridNode<T>, width: number) => void,
+  onColumnResize: (key: Key, width: number) => void,
   /** Callback for when onColumnResize has started. */
-  onColumnResizeStart: (column: GridNode<T>) => void,
+  onColumnResizeStart: (key: Key) => void,
   /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: (column: GridNode<T>) => void,
+  onColumnResizeEnd: (key: Key) => void,
   /** Gets the current width for the specified column. */
   getColumnWidth: (key: Key) => number,
   /** Gets the current minWidth for the specified column. */
@@ -39,10 +50,12 @@ export interface TableColumnResizeState<T> {
 }
 
 
-export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state): TableColumnResizeState<T> {
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state): TableColumnResizeState {
   let {
     getDefaultWidth,
-    getDefaultMinWidth
+    getDefaultMinWidth,
+    onColumnResizeStart: propsOnColumnResizeStart,
+    onColumnResizeEnd: propsOnColumnResizeEnd
   } = props;
 
   let columnLayout = useMemo(
@@ -66,7 +79,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   , [state.collection.columns]); // is this a safe thing to memo on? what if a single column changes?
 
   // uncontrolled column widths
-  let [widths, setWidths] = useState<Map<Key, number | string>>(() => new Map(
+  let [widths, setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(
     Array.from(uncontrolledWidths).map(([key, col]) =>
       [key, col.props.defaultWidth ?? getDefaultWidth?.(col.props)]
     ))
@@ -78,76 +91,66 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     } else {
       return [col.key, controlledWidths.get(col.key).props.width];
     }
-  })), [state.collection.columns, uncontrolledWidths, controlledWidths]);
+  })), [state.collection.columns, uncontrolledWidths, controlledWidths, widths]);
 
+  let onColumnResizeStart = useCallback((key: Key) => {
+    columnLayout.setResizingColumn(key);
+    propsOnColumnResizeStart?.(key);
+  }, [columnLayout, propsOnColumnResizeStart]);
 
-  let onColumnResizeStart = useCallback((column: GridNode<T>) => {
-    columnLayout.setResizingColumn(column.key);
-    props.onColumnResizeStart && props.onColumnResizeStart(column.key);
-  }, [columnLayout, props.onColumnResizeStart]);
-
-  let onColumnResize = useCallback((column: GridNode<T>, width: number): Map<Key, number | string> => {
+  // TODO: move props.on* all into this file and layout, or move them all out to the aria handler..., stately would be preferable
+  let onColumnResize = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledWidths).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, widths, column.key, width);
+    let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, widths, key, width);
 
     let map = new Map(Array.from(uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
-    map.set(column.key, width);
+    map.set(key, width);
     setWidths(map);
 
     return newSizes;
-  }, [controlledWidths, uncontrolledWidths, props.onColumnResize, setWidths, tableWidth, columnLayout, state.collection, widths]);
+  }, [controlledWidths, uncontrolledWidths, setWidths, tableWidth, columnLayout, state.collection, widths]);
 
-  let onColumnResizeEnd = useCallback((column: GridNode<T>) => {
+  let onColumnResizeEnd = useCallback((key: Key) => {
     columnLayout.setResizingColumn(null);
-    props.onColumnResizeEnd && props.onColumnResizeEnd(column.key);
-  }, [columnLayout, props.onColumnResizeEnd]);
+    propsOnColumnResizeEnd?.(key);
+  }, [columnLayout, propsOnColumnResizeEnd]);
 
   // done
-  let getColumnWidth = useCallback((key: Key) => {
-    return columnLayout.getColumnWidth(key);
-  }, [columnLayout]);
+  let getColumnWidth = useCallback((key: Key) =>
+    columnLayout.getColumnWidth(key)
+  , [columnLayout]);
 
   // done
-  let getColumnMinWidth = useCallback((key: Key) => {
-    return columnLayout.getColumnMinWidth(key);
-  }, [columnLayout, state.collection, tableWidth]);
+  let getColumnMinWidth = useCallback((key: Key) =>
+    columnLayout.getColumnMinWidth(key)
+  , [columnLayout]);
 
   // done
-  let getColumnMaxWidth = useCallback((key: Key) => {
-    return columnLayout.getColumnMaxWidth(key);
-  }, [columnLayout, state.collection, tableWidth]);
-
-  let setResizingColumn = useCallback((key: Key) => {
-    columnLayout.setResizingColumn(key);
-  }, [columnLayout]);
-
-  let setResizeColumnWidth = useCallback((width) => {
-    columnLayout.setResizeColumnWidth(width);
-  }, [columnLayout]);
+  let getColumnMaxWidth = useCallback((key: Key) =>
+    columnLayout.getColumnMaxWidth(key)
+  , [columnLayout]);
 
   let columnWidths = useMemo(() =>
       columnLayout.buildColumnWidths(tableWidth, state.collection, cWidths)
-  , [tableWidth, state.collection, cWidths]);
+  , [tableWidth, state.collection, cWidths, columnLayout]);
 
   return useMemo(() => ({
+    resizingColumn: columnLayout.resizingColumn,
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
     getColumnWidth,
     getColumnMinWidth,
     getColumnMaxWidth,
-    setResizingColumn,
-    setResizeColumnWidth,
     widths: columnWidths
   }), [
+    columnLayout.resizingColumn,
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
     getColumnWidth,
     getColumnMinWidth,
     getColumnMaxWidth,
-    setResizingColumn,
-    setResizeColumnWidth,
     columnWidths
   ]);
 }

@@ -13,10 +13,10 @@
 import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
+import {ColumnSize, SpectrumTableProps} from '@react-types/table';
 import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
-import {SpectrumTableProps} from '@react-types/table';
 import {Table} from './example';
 
 const meta: Meta<SpectrumTableProps<any>> = {
@@ -132,8 +132,8 @@ export const TableWithResizingNoProps = {
 interface ColumnData {
   name: string,
   uid: string,
-  defaultWidth?: number | string,
-  width?: number | string
+  defaultWidth?: ColumnSize,
+  width?: ColumnSize
 }
 let columnsDefaultFR: ColumnData[] = [
   {name: 'Name', uid: 'name', defaultWidth: '1fr'},
@@ -163,18 +163,19 @@ export const TableWithResizingFRs = {
   )
 };
 
-function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width: string}>, rows, onResize}) {
+function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width: ColumnSize}>, rows, onResize}) {
   let {columns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, number | string>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
 
-  let setWidths = useCallback((vals: Map<Key, number | string>) => {
+  let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
     let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
     let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
     _setWidths(newVals);
     onResize?.(vals);
-  }, [columns]);
+  }, [columns, onResize]);
   let [savedCols, setSavedCols] = useState(widths);
   let [renderKey, setRenderKey] = useState(Math.random());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);
 
   return (
