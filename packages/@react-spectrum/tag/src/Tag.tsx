@@ -12,7 +12,6 @@
 
 import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {GridCollection} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
@@ -22,7 +21,7 @@ import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 
-export function Tag<T extends GridCollection<T>>(props: SpectrumTagProps<T>) {
+export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
     children,
     allowsRemoving,

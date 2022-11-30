@@ -10,26 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps} from '@react-types/shared';
+import {AriaTagGroupProps} from '@react-types/tag';
+import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {ReactNode, RefObject, useState} from 'react';
+import {RefObject, useState} from 'react';
 import {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
-export interface AriaTagGroupProps extends DOMProps {
-  children: ReactNode,
-  isReadOnly?: boolean, // removes close button
-  validationState?: 'valid' | 'invalid'
-}
-
 export interface TagGroupAria {
   tagGroupProps: DOMAttributes
 }
 
-export function useTagGroup<T>(props: AriaTagGroupProps, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = new TagKeyboardDelegate(state.collection, direction);
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);

@@ -29,7 +29,7 @@ export interface TagAria {
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
-export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
+export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
   let {
     isFocused,
     allowsRemoving,

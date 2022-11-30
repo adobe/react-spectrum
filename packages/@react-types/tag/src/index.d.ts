@@ -11,9 +11,8 @@
  */
 
 import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
-import {GridCollection} from '@react-types/grid';
-import {GridState} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
+import {ListState} from 'react-stately';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
@@ -34,6 +33,6 @@ export interface TagProps<T> extends ItemProps<any> {
   tagRowRef: RefObject<HTMLElement>
 }
 
-interface SpectrumTagProps<T extends GridCollection<T>> extends TagProps<T> {
-  state: GridState<T, T>
+interface SpectrumTagProps<T> extends TagProps<T> {
+  state: ListState<T>
 }
