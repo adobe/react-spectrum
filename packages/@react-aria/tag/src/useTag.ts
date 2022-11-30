@@ -13,7 +13,6 @@
 import {ButtonHTMLAttributes, KeyboardEvent} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {GridCollection} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {TagGroupState} from '@react-stately/tag';
