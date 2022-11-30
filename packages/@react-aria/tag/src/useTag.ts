@@ -13,9 +13,10 @@
 import {ButtonHTMLAttributes, KeyboardEvent} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {GridCollection, GridState} from '@react-stately/grid';
+import {GridCollection} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {useGridCell, useGridRow} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -28,7 +29,7 @@ export interface TagAria {
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
-export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: GridState<T, T>): TagAria {
+export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
   let {
     isFocused,
     allowsRemoving,
