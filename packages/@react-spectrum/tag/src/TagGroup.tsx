@@ -46,13 +46,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ref={domRef}>
       {[...state.collection].map(item => (
         <Tag
-          {...item.childNodes[0].props}
+          {...item.props}
           key={item.key}
           item={item}
           state={state}
           allowsRemoving={allowsRemoving}
           onRemove={onRemove}>
-          {item.childNodes[0].rendered}
+          {item.rendered}
         </Tag>
       ))}
     </div>

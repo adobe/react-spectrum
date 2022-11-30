@@ -16,7 +16,7 @@ import {ReactNode, RefObject, useState} from 'react';
 import {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useGrid} from '@react-aria/grid';
+import {useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaTagGroupProps extends DOMProps {
@@ -31,17 +31,8 @@ export interface TagGroupAria {
 
 export function useTagGroup<T>(props: AriaTagGroupProps, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let keyboardDelegate = new TagKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: new Set(),
-    ref,
-    direction,
-    focusMode: 'row'
-  });
-  let {gridProps} = useGrid({
-    ...props,
-    keyboardDelegate
-  }, state, ref);
+  let keyboardDelegate = new TagKeyboardDelegate(state.collection, direction);
+  let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
   delete gridProps.role;

@@ -18,7 +18,7 @@ import {GridCollection} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
-import {useGridCell, useGridRow} from '@react-aria/grid';
+import {useGridListItem} from '@react-aria/gridlist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -35,7 +35,6 @@ export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: T
     allowsRemoving,
     onRemove,
     item,
-    tagRef,
     tagRowRef
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -43,29 +42,25 @@ export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: T
   let labelId = useId();
   let buttonId = useId();
 
-  let {rowProps} = useGridRow({
+  let {rowProps, gridCellProps} = useGridListItem({
     node: item
   }, state, tagRowRef);
 
-  // Don't want the row to be focusable or accessible via keyboard
-  delete rowProps.tabIndex;
+  // We want TagKeyboardDelegate to handle keyboard events instead.
+  delete rowProps.onKeyDownCapture;
 
-  let {gridCellProps} = useGridCell({
-    node: [...item.childNodes][0],
-    focusMode: 'cell'
-  }, state, tagRef);
 
   function onKeyDown(e: KeyboardEvent) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
-      onRemove(item.childNodes[0].key);
+      onRemove(item.key);
       e.preventDefault();
     }
   }
   let pressProps = {
-    onPress: () => onRemove?.(item.childNodes[0].key)
+    onPress: () => onRemove?.(item.key)
   };
 
-  isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;
+  isFocused = isFocused || state.selectionManager.focusedKey === item.key;
   let domProps = filterDOMProps(props);
   return {
     clearButtonProps: mergeProps(pressProps, {
@@ -76,12 +71,14 @@ export function useTag<T extends GridCollection<T>>(props: TagProps<T>, state: T
     labelProps: {
       id: labelId
     },
-    tagRowProps: rowProps,
+    tagRowProps: {
+      ...rowProps,
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
+      onKeyDown: allowsRemoving ? onKeyDown : null
+    },
     tagProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
-      'aria-label': props['aria-label'],
-      onKeyDown: allowsRemoving ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1
+      'aria-label': props['aria-label']
     })
   };
 }

@@ -31,12 +31,9 @@ export interface TagProps<T> extends ItemProps<any> {
   allowsRemoving?: boolean,
   item: Node<T>,
   onRemove?: (key: Key) => void,
-  tagRef: RefObject<HTMLElement>,
   tagRowRef: RefObject<HTMLElement>
 }
 
 interface SpectrumTagProps<T extends GridCollection<T>> extends TagProps<T> {
   state: GridState<T, T>
 }
-
-export interface ITagGroupCollection<T> extends GridCollection<T>{}

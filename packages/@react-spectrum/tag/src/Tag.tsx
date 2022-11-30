@@ -36,7 +36,6 @@ export function Tag<T extends GridCollection<T>>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let tagRef = useRef();
   let tagRowRef = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
@@ -44,27 +43,25 @@ export function Tag<T extends GridCollection<T>>(props: SpectrumTagProps<T>) {
     allowsRemoving,
     item,
     onRemove,
-    tagRef,
     tagRowRef
   }, state);
 
   return (
     <div
-      {...tagRowProps}
-      ref={tagRowRef}>
-      <div
-        {...mergeProps(tagProps, hoverProps, focusProps)}
-        className={classNames(
+      {...mergeProps(tagRowProps, hoverProps, focusProps)}
+      className={classNames(
           styles,
           'spectrum-Tags-item',
-          {
-            'focus-ring': isFocusVisible,
-            'is-focused': isFocused,
-            'is-hovered': isHovered
-          },
+        {
+          'focus-ring': isFocusVisible,
+          'is-focused': isFocused,
+          'is-hovered': isHovered
+        },
           styleProps.className
         )}
-        ref={tagRef}>
+      ref={tagRowRef}>
+      <div
+        {...tagProps}>
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
