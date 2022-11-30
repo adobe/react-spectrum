@@ -354,9 +354,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       lastResizeInteractionModality.current = undefined;
     }
   };
-  let onResizeEnd = useCallback((val) => {
+  let onResizeEnd = useCallback((key) => {
     setIsInResizeMode(false);
-    props.onResizeEnd?.(val);
+    props.onResizeEnd?.(key);
   }, [props.onResizeEnd, setIsInResizeMode]);
 
   return (
@@ -478,78 +478,60 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
-  let resizerPosition = layout.columnLayout.getResizerPosition() - state.virtualizer.visibleRect.x - 1;
-  if (isQuiet) {
-    resizerPosition = resizerPosition - 1;
-  }
+  let resizerPosition = layout.columnLayout.getResizerPosition() - 2;
+
+  let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
+  // this should be fine, every movement of the resizer causes a rerender
+  // scrolling can cause it to lag for a moment, but it's always updated
+  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
+  let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   // TODO: can I introduce this wrapper? style and classname would be applied below
   return (
     <FocusScope>
       <div
-        style={{isolation: 'isolate', position: 'relative'}}
+        {...mergeProps(otherProps, virtualizerProps)}
         ref={domRef}>
         <div
-          {...mergeProps(otherProps, virtualizerProps)}>
-          <div
-            role="presentation"
-            className={classNames(styles, 'spectrum-Table-headWrapper')}
-            style={{
-              width: visibleRect.width,
-              height: headerHeight,
-              overflow: 'hidden',
-              position: 'relative',
-              willChange: state.isScrolling ? 'scroll-position' : '',
-              transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
-            }}
-            ref={headerRef}>
-            {state.visibleViews[0]}
-          </div>
-          <ScrollView
-            role="presentation"
-            className={
-              classNames(
-                styles,
-                'spectrum-Table-body',
-                {
-                  'focus-ring': isFocusVisible
-                }
-              )
-            }
-            tabIndex={-1}
-            style={{flex: 1}}
-            innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
-            ref={bodyRef}
-            contentSize={state.contentSize}
-            onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
-            onScrollStart={state.startScrolling}
-            onScrollEnd={state.endScrolling}
-            onScroll={onScroll}>
-            {state.visibleViews[1]}
-          </ScrollView>
-        </div>
-        <div
-          className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+          role="presentation"
+          className={classNames(styles, 'spectrum-Table-headWrapper')}
           style={{
-            [direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`,
-            top: '0px',
-            height: `${state.virtualizer.visibleRect.height + headerHeight}px`,
-            display: layout.columnLayout.resizingColumn ? 'block' : 'none',
-            visibility: resizerPosition > state.virtualizer.visibleRect.width ? 'hidden' : undefined,
-            isolation: 'isolate',
-            pointerEvents: 'none'
-          }}>
-          <div
-            className={classNames(
-              styles,
-              'spectrum-Table-colResizeNubbin',
-              {
-                'spectrum-Table-colResizeNubbin--visible': isInResizeMode
-              }
-            )}>
-            <Nubbin />
-          </div>
+            width: visibleRect.width,
+            height: headerHeight,
+            overflow: 'hidden',
+            position: 'relative',
+            willChange: state.isScrolling ? 'scroll-position' : '',
+            transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+          }}
+          ref={headerRef}>
+          {state.visibleViews[0]}
         </div>
+        <ScrollView
+          role="presentation"
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-body',
+              {
+                'focus-ring': isFocusVisible,
+                'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
+              }
+            )
+          }
+          tabIndex={-1}
+          style={{flex: 1}}
+          innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
+          ref={bodyRef}
+          contentSize={state.contentSize}
+          onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
+          onScrollStart={state.startScrolling}
+          onScrollEnd={state.endScrolling}
+          onScroll={onScroll}>
+          {state.visibleViews[1]}
+          <div
+            className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.columnLayout.resizingColumn ? 'block' : 'none'}} />
+        </ScrollView>
       </div>
     </FocusScope>
   );
@@ -574,8 +556,7 @@ function TableColumnHeader(props) {
 
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    isVirtualized: true,
-    focusMode: columnProps.allowsSorting ? 'child' : 'cell'
+    isVirtualized: true
   }, state, ref);
 
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
@@ -651,14 +632,15 @@ function ResizableTableColumnHeader(props) {
     setIsInResizeMode,
     isEmpty,
     onFocusedResizer,
-    onMoveResizer
+    onMoveResizer,
+    isInResizeMode
   } = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     isVirtualized: true,
-    focusMode: 'child'
+    hasMenu: true
   }, state, ref);
 
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
@@ -792,9 +774,20 @@ function ResizableTableColumnHeader(props) {
             styles,
             'spectrum-Table-colResizeIndicator',
             {
-              'spectrum-Table-colResizeIndicator--visible': resizingColumn != null
+              'spectrum-Table-colResizeIndicator--visible': resizingColumn != null,
+              'spectrum-Table-colResizeIndicator--resizing': resizingColumn === column.key
             }
           )}>
+          <div
+            className={classNames(
+              styles,
+              'spectrum-Table-colResizeNubbin',
+              {
+                'spectrum-Table-colResizeNubbin--visible': isInResizeMode && resizingColumn === column.key
+              }
+            )}>
+            <Nubbin />
+          </div>
         </div>
       </div>
     </FocusRing>
@@ -807,8 +800,7 @@ function TableSelectAllCell({column}) {
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    isVirtualized: true,
-    focusMode: 'child'
+    isVirtualized: true
   }, state, ref);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);

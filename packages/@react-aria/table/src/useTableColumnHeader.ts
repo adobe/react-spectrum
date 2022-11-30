@@ -23,13 +23,13 @@ import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-export interface AriaTableColumnHeaderProps {
+export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  node: GridNode<unknown>,
+  node: GridNode<T>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
   isVirtualized?: boolean,
   /** Where focus should go when it arrives at a cell. This can be used to send focus to a Menu Trigger. */
-  focusMode?: 'child' | 'cell'
+  hasMenu?: boolean
 }
 
 export interface TableColumnHeaderAria {
@@ -43,11 +43,11 @@ export interface TableColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell(props, state, ref);
+  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || props.hasMenu || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
@@ -58,6 +58,11 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
     },
     ref
   });
+
+  // try to just delete this, but figure out why it causes an extra focus target
+  if (props.hasMenu) {
+    pressProps = {};
+  }
 
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);

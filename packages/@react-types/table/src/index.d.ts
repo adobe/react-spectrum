@@ -69,18 +69,12 @@ export interface ColumnProps<T> {
   /** The width of the column. */
   width?: ColumnSize,
   /** The minimum width of the column. */
-  minWidth?: number | string,
+  minWidth?: ColumnSize,
   /** The maximum width of the column. */
-  maxWidth?: number | string,
-  /**
-   * The default width of the column.
-   * @private
-   */
-  defaultWidth?: number | string,
-  /**
-   * Whether the column allows resizing.
-   * @private
-   */
+  maxWidth?: ColumnSize,
+  /** The default width of the column. */
+  defaultWidth?: ColumnSize,
+  /** Whether the column allows resizing. */
   allowsResizing?: boolean,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,

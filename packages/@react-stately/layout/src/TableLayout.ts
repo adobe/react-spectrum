@@ -38,19 +38,12 @@ export class TableColumnLayout<T> {
   getDefaultMinWidth: (props) => string | number;
   columnWidths: Map<Key, number> = new Map();
   resizerPositions: Map<Key, number> = new Map();
-  changedColumns: Map<Key, number | null> = new Map();
 
   constructor(options: TableColumnLayoutOptions) {
     this.getDefaultWidth = options.getDefaultWidth;
     this.getDefaultMinWidth = options.getDefaultMinWidth;
   }
 
-  // can probably delete this
-  setResizeColumnWidth(width: number): void {
-    this.changedColumns.set(this.resizingColumn, width);
-  }
-
-  // can probably delete this
   setResizingColumn(key: Key | null): void {
     this.resizingColumn = key;
   }
@@ -247,7 +240,6 @@ export class TableLayout<T> extends ListLayout<T> {
     return newSizes;
   }
 
-  // TODO: need to trigger a state update to turn off the resize blue bar
   onColumnResizeEnd(column: GridNode<T>): void {
     this.columnLayout.setResizingColumn(null);
   }
