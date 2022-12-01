@@ -126,7 +126,10 @@ function ActionBarTable(props) {
 
   let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
   return (
-    <ActionBarContainer height="size-5000">
+    <ActionBarContainer
+      /*- begin highlight -*/
+      height="size-5000"
+      /*- end highlight -*/>
       <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
         <TableHeader columns={columns}>
           {column => (
@@ -143,7 +146,6 @@ function ActionBarTable(props) {
           )}
         </TableBody>
       </TableView>
-      {/*- begin highlight -*/}
       <ActionBar
         items={barItems}
         isEmphasized
@@ -155,7 +157,6 @@ function ActionBarTable(props) {
           </Item>
         )}
       </ActionBar>
-      {/*- end highlight -*/}
     </ActionBarContainer>
   );
 }
@@ -216,22 +217,22 @@ function ActionBarActions(props) {
           )}
         </TableBody>
       </TableView>
-      {/*- begin highlight -*/}
       <ActionBar
         items={barItems}
         isEmphasized
         selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        /*- begin highlight -*/
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}>
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        /*- end highlight -*/>
         {item => (
           <Item key={item.key}>
             {item.label}
           </Item>
         )}
       </ActionBar>
-      {/*- end highlight -*/}
     </ActionBarContainer>
   );
 }
