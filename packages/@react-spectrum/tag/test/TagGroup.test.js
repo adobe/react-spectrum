@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -296,6 +296,26 @@ describe('TagGroup', function () {
 
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('should remove tag when remove button is clicked', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup aria-label="tag group" allowsRemoving onRemove={onRemoveSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tags = getAllByRole('row');
+    fireEvent.click(tags[0]);
+    expect(onRemoveSpy).not.toHaveBeenCalled();
+
+    let removeButton = within(tags[0]).getByRole('button');
+    fireEvent.click(removeButton);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
