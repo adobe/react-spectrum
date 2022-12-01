@@ -29,18 +29,18 @@ export interface TagAria {
 }
 
 export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
-  let {
-    isFocused,
+  let {isFocused} = props;
+  const {
     allowsRemoving,
     onRemove,
     item,
     tagRef,
     tagRowRef
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let removeString = stringFormatter.format('remove');
-  let labelId = useId();
-  let buttonId = useId();
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const removeString = stringFormatter.format('remove');
+  const labelId = useId();
+  const buttonId = useId();
 
   let {rowProps} = useGridRow({
     node: item
@@ -60,7 +60,7 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
       e.preventDefault();
     }
   }
-  let pressProps = {
+  const pressProps = {
     onPress: () => onRemove?.(item.childNodes[0].key)
   };
 
