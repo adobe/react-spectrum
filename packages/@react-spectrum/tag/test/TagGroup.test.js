@@ -296,6 +296,7 @@ describe('TagGroup', function () {
 
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: props.keyPress});
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
@@ -316,6 +317,7 @@ describe('TagGroup', function () {
 
     let removeButton = within(tags[0]).getByRole('button');
     fireEvent.click(removeButton);
+    expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
