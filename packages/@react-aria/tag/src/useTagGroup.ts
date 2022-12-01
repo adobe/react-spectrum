@@ -24,6 +24,13 @@ export interface TagGroupAria {
   tagGroupProps: DOMAttributes
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a tag group component.
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
+ * @param props - Props to be applied to the tag group.
+ * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param ref - A ref to a DOM element for the tag group.
+ */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = new TagKeyboardDelegate(state.collection, direction);

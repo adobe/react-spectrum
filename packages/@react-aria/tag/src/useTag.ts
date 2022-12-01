@@ -28,6 +28,11 @@ export interface TagAria {
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a tag component.
+ * @param props - Props to be applied to the tag.
+ * @param state - State for the tag group, as returned by `useTagGroupState`.
+ */
 export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
   let {
     isFocused,
@@ -45,9 +50,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
     node: item
   }, state, tagRowRef);
 
-  // We want TagKeyboardDelegate to handle keyboard events instead.
+  // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
-
 
   function onKeyDown(e: KeyboardEvent) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {

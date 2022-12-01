@@ -25,7 +25,7 @@ export function useTagGroupState<T extends object>(props: TagGroupProps<T>): Tag
   let keyToRestoreOnRemove = useRef(null);
 
   useEffect(() => {
-    // If the focused key is removed, restore focus to the tag before, or tag after if no tag before.
+    // If the focused key is removed, restore focus to the tag after, or tag before if no tag after.
     if (!state.collection.getItem(state.selectionManager.focusedKey)) {
       state.selectionManager.setFocusedKey(keyToRestoreOnRemove.current);
     }
