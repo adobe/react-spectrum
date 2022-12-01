@@ -3210,7 +3210,7 @@ describe('ComboBox', function () {
       expect(groups[0]).not.toHaveAttribute('aria-selected');
 
       expect(within(listbox).queryAllByRole('img')).toEqual([]);
-      expect(document.activeElement).toBe(combobox)
+      expect(document.activeElement).toBe(combobox);
 
       // trigger a press on the first section heading
       triggerPress(within(listbox).getAllByRole('presentation')[1].children[0]);
@@ -3218,7 +3218,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
       expect(listbox).toBeVisible();
-      expect(document.activeElement).toBe(combobox)
+      expect(document.activeElement).toBe(combobox);
     });
   });
 
