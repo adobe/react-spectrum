@@ -62,8 +62,7 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
  * @param iconDir Root icon directory.
  */
 export function addPackageExports(iconPackageDir) {
-  fs.readdir(iconPackageDir, (err, items) => {
-    let iconFiles = items.filter(item => !!item.endsWith('.mjs'));
+  fs.readdir(iconPackageDir, () => {
 
     // add all exports fields to package.json
     let pkgJsonFilepath = path.join(iconPackageDir, 'package.json');
