@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, KeyboardEvent} from 'react';
+import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {KeyboardEvent} from 'react';
 import {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
@@ -25,7 +26,7 @@ export interface TagAria {
   labelProps: DOMAttributes,
   tagProps: DOMAttributes,
   tagRowProps: DOMAttributes,
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+  clearButtonProps: AriaButtonProps
 }
 
 /**
@@ -53,24 +54,22 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
 
-  function onKeyDown(e: KeyboardEvent) {
+  let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
       onRemove(item.key);
       e.preventDefault();
     }
-  }
-  let pressProps = {
-    onPress: () => onRemove?.(item.key)
   };
 
   isFocused = isFocused || state.selectionManager.focusedKey === item.key;
   let domProps = filterDOMProps(props);
   return {
-    clearButtonProps: mergeProps(pressProps, {
+    clearButtonProps: {
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
-      id: buttonId
-    }),
+      id: buttonId,
+      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null
+    },
     labelProps: {
       id: labelId
     },
