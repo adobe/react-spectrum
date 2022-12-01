@@ -68,15 +68,13 @@ export function addPackageExports(iconPackageDir) {
     // add all exports fields to package.json
     let pkgJsonFilepath = path.join(iconPackageDir, 'package.json');
     let pkgJson = JSON.parse(fs.readFileSync(pkgJsonFilepath), 'utf-8');
-    pkgJson.exports = {};
-    iconFiles.forEach(icon => {
-      let iconFileName = path.basename(icon).substring(0, icon.length - 4);
-      pkgJson.exports[`./${iconFileName}`] = {
-        'types': `./${iconFileName}.d.ts`,
-        'require': `./${iconFileName}.js`,
-        'import': `./${iconFileName}.mjs`
-      };
-    });
+    pkgJson.exports = {
+      './*': {
+        types: './*.d.ts',
+        import: './*.mjs',
+        require: './*.js'
+      }
+    };
     let pkg = JSON.stringify(pkgJson, null, 2);
     fs.writeFileSync(pkgJsonFilepath, `${pkg}\n`);
   });
