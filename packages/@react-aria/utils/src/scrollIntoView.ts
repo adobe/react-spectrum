@@ -84,7 +84,7 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
   }
 }
 
-// Determines if a target element is out of view and thus should be scrolled into view if possible.
+// Determines if a target element is partially/fully out of view and thus should be scrolled into view if possible.
 // Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
 function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   let root = document.scrollingElement || document.documentElement;
@@ -100,10 +100,10 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   if (scrollParent === root) {
     let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
     let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-    return (targetBottom < 0 || targetTop > viewportHeight || targetLeft > viewportWidth || targetRight < 0);
+    return (targetTop < 0 || targetBottom > viewportHeight || targetRight > viewportWidth || targetLeft < 0);
   }
 
-  return targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
+  return targetTop < scrollParentTop || targetBottom > scrollParentBottom || targetRight > scrollParentRight || targetLeft < scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
 }
 
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
