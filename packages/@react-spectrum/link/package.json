@@ -36,13 +36,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.10.0",
     "@react-aria/interactions": "^3.13.0",
     "@react-aria/link": "^3.3.5",
     "@react-aria/utils": "^3.14.1",
     "@react-spectrum/utils": "^3.8.0",
-    "@react-types/link": "^3.3.5"
+    "@react-types/link": "^3.3.5",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
