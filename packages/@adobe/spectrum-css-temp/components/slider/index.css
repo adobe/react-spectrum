@@ -378,7 +378,7 @@ governing permissions and limitations under the License.
   grid-area: value;
 }
 
-.spectrum-Slider-contextualHelp {
+.spectrum-Slider-contextualHelp.spectrum-Slider-contextualHelp {
   grid-area: contextualHelp;
   margin-inline-start: var(--spectrum-global-dimension-size-50);
   margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
