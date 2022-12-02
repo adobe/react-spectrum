@@ -37,7 +37,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/pagination": "3.0.0-alpha.1",
     "@react-spectrum/button": "^3.1.0",
@@ -46,7 +45,8 @@
     "@react-stately/pagination": "3.0.0-alpha.1",
     "@react-types/pagination": "3.0.0-alpha.1",
     "@react-types/shared": "^3.1.0",
-    "@spectrum-icons/ui": "^3.1.0"
+    "@spectrum-icons/ui": "^3.1.0",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

@@ -24,10 +24,10 @@
   },
   "dependencies": {
     {{#if (includes scopes "@react-types")}}
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.4.14",
     "@react-types/{{packageName}}": "3.0.0-alpha.1"
     {{else}}
-    "@babel/runtime": "^7.6.2"
+    "@swc/helpers": "^0.4.14",
     {{/if}}
   },
   "peerDependencies": {

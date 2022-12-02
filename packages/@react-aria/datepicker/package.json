@@ -22,7 +22,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@internationalized/date": "^3.0.1",
     "@internationalized/number": "^3.1.1",
     "@internationalized/string": "^3.0.0",
@@ -37,7 +36,8 @@
     "@react-types/calendar": "^3.0.4",
     "@react-types/datepicker": "^3.1.3",
     "@react-types/dialog": "^3.4.5",
-    "@react-types/shared": "^3.16.0"
+    "@react-types/shared": "^3.16.0",
+    "@swc/helpers": "^0.4.14"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
