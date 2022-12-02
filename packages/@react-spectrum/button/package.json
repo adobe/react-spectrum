@@ -36,7 +36,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/button": "^3.6.3",
     "@react-aria/focus": "^3.10.0",
     "@react-aria/interactions": "^3.13.0",
@@ -46,7 +45,8 @@
     "@react-stately/toggle": "^3.4.3",
     "@react-types/button": "^3.7.0",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.0"
+    "@spectrum-icons/ui": "^3.4.0",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

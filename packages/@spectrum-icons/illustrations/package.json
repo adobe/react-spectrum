@@ -15,9 +15,9 @@
     "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types && yarn add-exports"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@react-aria/utils": "^3.14.1",
     "@react-spectrum/icon": "^3.6.2",
-    "@react-aria/utils": "^3.14.1"
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "3.0.0-alpha.1"
