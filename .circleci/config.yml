@@ -518,7 +518,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: esm-smaller-icon-packagejson
           requires:
             - install
       - deploy:
