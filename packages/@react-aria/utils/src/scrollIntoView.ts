@@ -92,6 +92,9 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
     return false;
   }
 
+  // Note: there are cases where the target can be out of view but doesn't have a scrollable parent that would accurately determine
+  // if it is out of view (e.g. table resizer is absolutely positioned and can be moved out of view but the scrollable element that would bring it
+  // into view is the table's body rather than the column headers).
   let scrollParent = getScrollParent(target);
   let targetToCompare = originalTarget || target;
   let {bottom: targetBottom, top: targetTop, left: targetLeft, right: targetRight} = targetToCompare.getBoundingClientRect();
@@ -100,10 +103,10 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   if (scrollParent === root) {
     let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
     let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-    return (targetTop < 0 || targetBottom > viewportHeight || targetRight > viewportWidth || targetLeft < 0);
+    return (targetBottom < 0 || targetTop > viewportHeight || targetLeft > viewportWidth || targetRight < 0);
   }
 
-  return targetTop < scrollParentTop || targetBottom > scrollParentBottom || targetRight > scrollParentRight || targetLeft < scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
+  return targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
 }
 
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
