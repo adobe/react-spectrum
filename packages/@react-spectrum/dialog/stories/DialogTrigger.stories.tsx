@@ -28,7 +28,26 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
+.addParameters({
+  providerSwitcher: {status: 'notice'},
+  args: {
+    crossOffset: 50,
+    placement: 'top'
+  },
+  argTypes: {
+    crossOffset: {
+      control: {
+        type: 'number',
+        defaultValue: 50
+      }
+    },
+    placement: {
+      type: 'select',
+      defaultValue: 'top',
+      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
+    }
+  }
+})
   .add(
     'default',
     () => render({})
@@ -362,6 +381,9 @@ storiesOf('DialogTrigger', module)
   .add(
     'adjustable dialog',
     () => <AdjustableDialog />
+  ).add(
+    'crossoffset controls',
+    (args) => renderPopover({type: 'popover', ...args})
   );
 
 function render({width = 'auto', ...props}) {
