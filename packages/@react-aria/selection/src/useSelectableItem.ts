@@ -144,11 +144,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
 
-      // TODO: is this the appropriate place to put this? We need the focused DOM node
-      // Also keyboard modality != keyboard navigation. If the manager.focusedKey changes programatically and not
-      // in response to keypress but the last interaction modality was keyboard then we'd perform the scroll
+      // TODO: perhaps move this into the keydown handler of useSelectableCollection so that we guarentee scrolling
+      // only happens on keyboard interaction. Do this when making followup PR to have useKeyboard handle scrolling
       if (getInteractionModality() === 'keyboard') {
-        scrollIntoViewFully(ref.current);
+        // Wait for virtualizer to scroll the item into view so we don't double scroll. Also fixes the jank behavior w/ non-virtualized lists
+        // and scrollOption block: center where the whole page scrolls to move the newly focused item to the center of the page.
+        requestAnimationFrame(() => {
+          scrollIntoViewFully(ref.current);
+        });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

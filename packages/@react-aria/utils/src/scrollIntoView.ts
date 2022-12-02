@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParent, isWebKit} from './';
+import {getScrollParent} from './';
 
-let observerMap = new Map<string, IntersectionObserver>();
 let isScrollPrevented = false;
 
 export function setScrollPrevented(value: boolean) {
@@ -73,43 +72,38 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
 }
 
 
-function optionsToString(options: ScrollIntoViewOptions) {
-  return Object.keys(options).sort().map(key => `${key}${options[key]}`).toString();
-}
-
 export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoViewOptions) {
-  const intersectionObserverOptions: IntersectionObserverInit = {
-    root: undefined,
-    rootMargin: '0px',
-    // Safari doesn't work with theshold=1. Setting root to document.body or document.documentElement doesn't fix it either
-    threshold: isWebKit() ? .9 : 1
-  };
-
   if (scrollOptions == null) {
     scrollOptions = {
       block: 'nearest'
     };
   }
 
-  let intersectionObserverCallback = (entries: Array<IntersectionObserverEntry>, observer: IntersectionObserver) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        scrollIntoViewHelper(entry.target, scrollOptions);
-      }
-      observer.unobserve(entry.target);
-    });
-  };
-
-  if (target) {
-    let observerMapKey = optionsToString(scrollOptions);
-    let observer = observerMap.get(observerMapKey);
-    if (!observer) {
-      observer = new IntersectionObserver(intersectionObserverCallback, intersectionObserverOptions);
-      observerMap.set(observerMapKey, observer);
-    }
-
-    observer.observe(target);
+  if (shouldScrollIntoView(target)) {
+    scrollIntoViewHelper(target, scrollOptions);
   }
+}
+
+// Determines if a target element is out of view and thus should be scrolled into view if possible.
+// Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
+function shouldScrollIntoView(target: Element, originalTarget?: Element) {
+  let root = document.scrollingElement || document.documentElement;
+  if (target === root) {
+    return false;
+  }
+
+  let scrollParent = getScrollParent(target);
+  let targetToCompare = originalTarget || target;
+  let {bottom: targetBottom, top: targetTop, left: targetLeft, right: targetRight} = targetToCompare.getBoundingClientRect();
+  let {bottom: scrollParentBottom, top: scrollParentTop, left: scrollParentLeft, right: scrollParentRight} = scrollParent.getBoundingClientRect();
+
+  if (scrollParent === root) {
+    let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+    let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+    return (targetBottom < 0 || targetTop > viewportHeight || targetLeft > viewportWidth || targetRight < 0);
+  }
+
+  return targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
 }
 
 // TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
@@ -117,14 +111,13 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
 // scrollIntoView is exported and available from aria/utils so is it a breaking change to replace it with this func?
 // TODO: test with zoom/pinch zoom
 function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
-  let root = document.scrollingElement || document.documentElement;
-  let scrollParent = getScrollParent(target);
-
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
     target?.scrollIntoView?.(scrollOptions);
   } else {
-    // If scrolling is prevented, we don't want to scroll the body since it will break the open overlay's positioning.
+    let root = document.scrollingElement || document.documentElement;
+    let scrollParent = getScrollParent(target);
+    // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
     while (target && scrollParent && target !== root && scrollParent !== root) {
       // TODO: adapt scrollIntoView so that it can work with the provided ScrollIntoViewOptions instead of mimicking scrollIntoView({block: 'nearest'}) only
       // do this if we decide we actually want the scrollOption flexibility

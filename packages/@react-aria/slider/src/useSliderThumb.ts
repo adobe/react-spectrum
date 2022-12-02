@@ -1,7 +1,7 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, scrollIntoViewFully, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {getSliderThumbId, sliderIds} from './utils';
+import {getSliderThumbId,  sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
@@ -126,7 +126,10 @@ export function useSliderThumb(
       }
 
       setThumbDragging(index, false);
-      scrollIntoViewFully(thumbRef.current);
+      // Wait for thumb to shift position so that we scroll the page to the right place
+      requestAnimationFrame(() => {
+        scrollIntoViewFully(thumbRef.current);
+      });
     }
   });
 
