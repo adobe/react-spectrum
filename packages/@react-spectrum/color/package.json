@@ -4,7 +4,12 @@
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.js",
+  "module": "dist/module.mjs",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/module.mjs",
+    "require": "./dist/main.js"
+  },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
@@ -31,7 +36,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/color": "3.0.0-beta.17",
     "@react-aria/focus": "^3.10.0",
     "@react-aria/i18n": "^3.6.2",
@@ -48,7 +52,8 @@
     "@react-types/color": "3.0.0-beta.14",
     "@react-types/shared": "^3.16.0",
     "@react-types/slider": "^3.3.1",
-    "@react-types/textfield": "^3.6.1"
+    "@react-types/textfield": "^3.6.1",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
