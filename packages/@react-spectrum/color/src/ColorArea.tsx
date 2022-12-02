@@ -31,7 +31,6 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
 
   let inputXRef = useRef(null);
   let inputYRef = useRef(null);
-  let thumbRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputXRef);
 
   let state = useColorAreaState(props);
@@ -42,7 +41,7 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
     xInputProps,
     yInputProps,
     thumbProps
-  } = useColorArea({...props, inputXRef, inputYRef, containerRef, thumbRef}, state);
+  } = useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
@@ -73,7 +72,6 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
         isDisabled={isDisabled}
         isDragging={state.isDragging}
         className={classNames(styles, 'spectrum-ColorArea-handle')}
-        ref={thumbRef}
         {...thumbProps}>
         <div role="presentation">
           <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(xInputProps, focusProps)} ref={inputXRef} />

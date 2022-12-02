@@ -41,7 +41,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
 
   let inputRef = useRef(null);
   let trackRef = useRef(null);
-  let thumbRef = useRef(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let state = useColorSliderState({...props, locale});
@@ -70,8 +69,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
     label,
     'aria-label': ariaLabel,
     trackRef,
-    inputRef,
-    thumbRef
+    inputRef
   }, state);
 
   let {isFocusVisible} = useFocusVisible();
@@ -129,7 +127,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           isDisabled={isDisabled}
           isDragging={state.isThumbDragging(0)}
           className={classNames(styles, 'spectrum-ColorSlider-handle')}
-          ref={thumbRef}
           {...thumbProps}>
           <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
         </ColorThumb>

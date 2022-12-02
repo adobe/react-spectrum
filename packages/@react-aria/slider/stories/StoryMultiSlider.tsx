@@ -92,21 +92,18 @@ export function StoryThumb(props: StoryThumbProps) {
   const context = (props as any).__context as SliderStateContext;
   const {index, state, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const thumbRef = React.useRef<HTMLDivElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
     index,
     ...props,
     isDisabled: sliderProps.isDisabled || props.isDisabled,
     trackRef: context.trackRef,
-    inputRef,
-    thumbRef
+    inputRef
   }, state);
 
   return (
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
       <div
         {...thumbProps}
-        ref={thumbRef}
         className={classNames(styles, 'thumb', 'thumbHandle', {thumbDisabled: isDisabled})}
         style={{
           'left': `${state.getThumbPercent(index) * 100}%`

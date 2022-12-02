@@ -289,11 +289,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
       if (getInteractionModality() === 'keyboard') {
-        // Run after dialog transitions so we don't attempt to scroll to the bottom of the page
-        // where the overlay is positioned initially
-        runAfterTransition(() => {
-          scrollIntoViewFully(ref.current);
-        });
+        scrollIntoViewFully(ref.current);
       }
     }
   }, [isFocused, ref]);

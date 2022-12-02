@@ -33,14 +33,13 @@ const getBoundingClientRect = () => ({
 function ColorWheel(props: ColorWheelProps) {
   let state = useColorWheelState(props);
   let inputRef = useRef(null);
-  let thumbRef = useRef(null);
   let containerRef = useRef(null);
 
   let {inputProps, trackProps, thumbProps} = useColorWheel({
     ...props,
     innerRadius: THUMB_RADIUS - 3,
     outerRadius: THUMB_RADIUS + 3
-  }, state, inputRef, thumbRef);
+  }, state, inputRef);
 
   return (<div data-testid="container" {...trackProps} ref={containerRef}>
     <div data-testid="thumb" {...thumbProps}>

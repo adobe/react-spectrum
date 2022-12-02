@@ -13,7 +13,7 @@
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, scrollIntoViewFully, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
@@ -41,9 +41,7 @@ export interface AriaColorAreaOptions extends AriaColorAreaProps {
   /** A ref to the input that represents the y axis of the color area. */
   inputYRef: RefObject<HTMLInputElement>,
   /** A ref to the color area containing element. */
-  containerRef: RefObject<Element>,
-  /** A ref to the thumb element. */
-  thumbRef: RefObject<Element>
+  containerRef: RefObject<Element>
 }
 
 /**
@@ -56,7 +54,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     inputXRef,
     inputYRef,
     containerRef,
-    thumbRef,
     'aria-label': ariaLabel
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -115,8 +112,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       if (focusedInputRef.current) {
         focusInput(focusedInputRef.current ? focusedInputRef : inputXRef);
       }
-
-      scrollIntoViewFully(thumbRef.current);
     }
   });
 
@@ -158,7 +153,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         valueChangedViaKeyboard.current = valueChanged;
         // set the focused input based on which axis has the greater delta
         focusedInputRef.current = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? inputYRef.current : inputXRef.current;
-        scrollIntoViewFully(thumbRef.current);
       } else {
         currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
         currentPosition.current.y += deltaY / height;

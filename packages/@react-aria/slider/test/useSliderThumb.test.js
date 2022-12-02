@@ -11,7 +11,6 @@ describe('useSliderThumb', () => {
       let result = renderHook(() => {
         let trackRef = React.createRef(null);
         let inputRef = React.createRef(null);
-        let thumbRef = React.createRef(null);
         let sliderProps = {
           label: 'slider',
           defaultValue: [50],
@@ -24,8 +23,7 @@ describe('useSliderThumb', () => {
         let props = useSliderThumb({
           index: 0,
           trackRef,
-          inputRef,
-          thumbRef
+          inputRef
         }, state);
         return {props, labelProps, groupProps};
       }).result;
@@ -38,7 +36,6 @@ describe('useSliderThumb', () => {
       let result = renderHook(() => {
         let trackRef = React.createRef(null);
         let inputRef = React.createRef(null);
-        let thumbRef = React.createRef(null);
         let sliderProps = {
           'aria-label': 'slider',
           defaultValue: [50],
@@ -52,8 +49,7 @@ describe('useSliderThumb', () => {
           index: 0,
           label: 'thumb',
           trackRef,
-          inputRef,
-          thumbRef
+          inputRef
         }, state);
         return {props, labelProps, groupProps};
       }).result;
@@ -66,7 +62,6 @@ describe('useSliderThumb', () => {
       let result = renderHook(() => {
         let trackRef = React.createRef(null);
         let inputRef = React.createRef(null);
-        let thumbRef = React.createRef(null);
         let sliderProps = {
           'aria-label': 'slider',
           defaultValue: [50, 70],
@@ -80,15 +75,13 @@ describe('useSliderThumb', () => {
           index: 0,
           'aria-label': 'thumb0',
           trackRef,
-          inputRef,
-          thumbRef
+          inputRef
         }, state);
         let props1 = useSliderThumb({
           index: 1,
           'aria-label': 'thumb1',
           trackRef,
-          inputRef,
-          thumbRef
+          inputRef
         }, state);
         return {props0, props1, labelProps, groupProps};
       }).result;
@@ -118,8 +111,6 @@ describe('useSliderThumb', () => {
       let trackRef = useRef(null);
       let input0Ref = useRef(null);
       let input1Ref = useRef(null);
-      let thumb0Ref = React.createRef(null);
-      let thumb1Ref = React.createRef(null);
       let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
@@ -128,16 +119,14 @@ describe('useSliderThumb', () => {
         'aria-label': 'Min',
         index: 0,
         trackRef,
-        inputRef: input0Ref,
-        thumbRef: thumb0Ref
+        inputRef: input0Ref
       }, state);
       let {inputProps: input1Props, thumbProps: thumb1Props} = useSliderThumb({
         ...commonThumbProps,
         'aria-label': 'Max',
         index: 1,
         trackRef,
-        inputRef: input1Ref,
-        thumbRef: thumb1Ref
+        inputRef: input1Ref
       }, state);
       return (
         <div>
@@ -282,7 +271,6 @@ describe('useSliderThumb', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let inputRef = useRef(null);
-      let thumbRef = React.createRef(null);
       let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
@@ -291,8 +279,7 @@ describe('useSliderThumb', () => {
         'aria-label': 'Min',
         index: 0,
         trackRef,
-        inputRef: inputRef,
-        thumbRef
+        inputRef: inputRef
       }, state);
       return (
         <div data-testid="track" ref={trackRef} {...trackProps}>

@@ -84,7 +84,7 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
   }
 }
 
-// Determines if a target element is partially/fully out of view and thus should be scrolled into view if possible.
+// Determines if a target element is fully out of view and thus should be scrolled into view if possible.
 // Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
 function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   let root = document.scrollingElement || document.documentElement;
@@ -116,7 +116,6 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
 function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
-    scrollOptions = {block: 'center', inline: 'center'};
     target?.scrollIntoView?.(scrollOptions);
   } else {
     let root = document.scrollingElement || document.documentElement;

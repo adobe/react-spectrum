@@ -1,5 +1,5 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, scrollIntoViewFully, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -31,9 +31,7 @@ export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
   trackRef: RefObject<Element>,
   /** A ref to the thumb input element. */
-  inputRef: RefObject<HTMLInputElement>,
-  /** A ref to the thumb element. */
-  thumbRef: RefObject<Element>
+  inputRef: RefObject<HTMLInputElement>
 }
 
 /**
@@ -52,7 +50,6 @@ export function useSliderThumb(
     validationState,
     trackRef,
     inputRef,
-    thumbRef,
     orientation = state.orientation
   } = opts;
 
@@ -124,12 +121,7 @@ export function useSliderThumb(
           setThumbValue(index, getThumbMaxValue(index));
           break;
       }
-
       setThumbDragging(index, false);
-      // Wait for thumb to shift position so that we scroll the page to the right place
-      requestAnimationFrame(() => {
-        scrollIntoViewFully(thumbRef.current);
-      });
     }
   });
 
@@ -159,8 +151,6 @@ export function useSliderThumb(
         } else {
           incrementThumb(index, shiftKey ? pageSize : step);
         }
-
-        scrollIntoViewFully(thumbRef.current);
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {

@@ -17,8 +17,6 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
-  const minThumbRef = React.useRef<HTMLInputElement>(null);
-  const maxThumbRef = React.useRef<HTMLInputElement>(null);
   const formatter = useNumberFormatter(props.formatOptions);
   const state = useSliderState({...props, numberFormatter: formatter});
 
@@ -35,8 +33,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
     'aria-label': 'Minimum',
     isDisabled: props.isDisabled,
     trackRef,
-    inputRef: minInputRef,
-    thumbRef: minThumbRef
+    inputRef: minInputRef
   }, state);
 
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
@@ -44,8 +41,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
     'aria-label': 'Maximum',
     isDisabled: props.isDisabled,
     trackRef,
-    inputRef: maxInputRef,
-    thumbRef: maxThumbRef
+    inputRef: maxInputRef
   }, state);
 
   return (
@@ -81,7 +77,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
             {
               // We put thumbProps on thumbHandle, so that you cannot drag by the tip
             }
-            <div {...minThumbProps} className={styles.thumbHandle} ref={minThumbRef}>
+            <div {...minThumbProps} className={styles.thumbHandle}>
               <VisuallyHidden><input className={styles.input} ref={minInputRef} {...minInputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
@@ -98,7 +94,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
               // For fun, we put the thumbProps on the thumb container instead of just the handle.
               // This means you can drag the max thumb by the tip.
             }
-            <div className={styles.thumbHandle} ref={maxThumbRef}>
+            <div className={styles.thumbHandle}>
               <VisuallyHidden><input className={styles.input} ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(1)} (can drag by tip)</div>}
