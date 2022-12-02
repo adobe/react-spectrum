@@ -71,7 +71,6 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
   return sum;
 }
 
-
 export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoViewOptions) {
   if (scrollOptions == null) {
     scrollOptions = {
@@ -109,10 +108,6 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   return targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
 }
 
-// TODO: rename? combine with scrollintoview above? Replace scrollIntoView above (would need to add param for scrollRef so that we could have old behavior)?
-// Perhaps add a parameter to this func to customize the root so we can say how far up we want to actually adjust the scroll?
-// scrollIntoView is exported and available from aria/utils so is it a breaking change to replace it with this func?
-// TODO: test with zoom/pinch zoom
 function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
@@ -122,8 +117,6 @@ function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOpti
     let scrollParent = getScrollParent(target);
     // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
     while (target && scrollParent && target !== root && scrollParent !== root) {
-      // TODO: adapt scrollIntoView so that it can work with the provided ScrollIntoViewOptions instead of mimicking scrollIntoView({block: 'nearest'}) only
-      // do this if we decide we actually want the scrollOption flexibility
       scrollIntoView(scrollParent as HTMLElement, target as HTMLElement);
       target = scrollParent;
       scrollParent = getScrollParent(target);
