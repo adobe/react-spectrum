@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
@@ -54,21 +54,24 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         {
           'focus-ring': isFocusVisible,
           'is-focused': isFocused,
-          'is-hovered': isHovered
+          'is-hovered': isHovered,
+          'is-removable': allowsRemoving
         },
           styleProps.className
         )}
       ref={tagRowRef}>
       <div
+        className={classNames(styles, 'spectrum-Tag-cell')}
         {...tagProps}>
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': allowsRemoving}), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps}
           }}>
-
           {typeof children === 'string' ? <Text>{children}</Text> : children}
-          {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+          <ClearSlots>
+            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+          </ClearSlots>
         </SlotProvider>
       </div>
     </div>
