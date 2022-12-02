@@ -113,6 +113,7 @@ function shouldScrollIntoView(target: Element, originalTarget?: Element) {
 function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
+    scrollOptions = {block: 'center', inline: 'center'};
     target?.scrollIntoView?.(scrollOptions);
   } else {
     let root = document.scrollingElement || document.documentElement;
