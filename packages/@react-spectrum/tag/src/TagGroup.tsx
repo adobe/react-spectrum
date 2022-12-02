@@ -14,8 +14,8 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {mergeProps, useResizeObserver} from '@react-aria/utils';
-import React, {ReactElement, useCallback, useEffect, useMemo, useState} from 'react';
+import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import React, {ReactElement, useCallback, useMemo, useState} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
@@ -74,14 +74,15 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let [visibleTagCount, setVisibleTagCount] = useState(gridCollection.size);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
 
+  // If maxRows is provided, update the number of tags to show based on the height.
   let checkVisibleTagCount = useCallback(() => {
     if (maxRows != null && isCollapsed) {
       let currY = -Infinity;
       let rowCount = 0;
       let index = 0;
-      let items = [...domRef.current.children];
-      for (let item of items) {
-        let {y} = item.getBoundingClientRect();
+      let currentVisibleTags = [...domRef.current.children].filter(el => el.tagName !== 'BUTTON');
+      for (let tag of currentVisibleTags) {
+        let {y} = tag.getBoundingClientRect();
 
         if (y !== currY) {
           currY = y;
@@ -97,19 +98,19 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       // Hide tags on last row until there is room for the collapse button.
       let end = direction === 'ltr' ? 'right' : 'left';
       let containerEnd = domRef.current.getBoundingClientRect()[end];
-      let collapseButtonWidth = items[items.length - 1].getBoundingClientRect().width;
-      let lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
+      let collapseButtonWidth = domRef.current.querySelector('button')?.getBoundingClientRect().width;
+      let lastTagEnd = currentVisibleTags[index - 1]?.getBoundingClientRect()[end];
 
       while (containerEnd - lastTagEnd < collapseButtonWidth) {
-        lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
         index--;
+        lastTagEnd = currentVisibleTags[index - 1]?.getBoundingClientRect()[end];
       }
 
       setVisibleTagCount(index);
     }
   }, [maxRows, isCollapsed, domRef, direction]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     checkVisibleTagCount();
   }, [props.children, checkVisibleTagCount]);
 
