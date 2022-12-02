@@ -10,9 +10,8 @@
   "scripts": {
     "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
-    "add-exports": "babel-node --presets @babel/env ./scripts/addExports.js -i '[]'",
     "generate-types": "tsc --project ./tsconfig.types.json",
-    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types && yarn add-exports"
+    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
