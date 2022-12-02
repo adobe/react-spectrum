@@ -11,58 +11,94 @@
  */
 
 import React, {ReactElement, ReactNode, useContext} from 'react';
-import {ToastContainer} from './';
-import {ToastOptions} from '@react-types/toast';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useToastState} from '@react-stately/toast';
+import {SpectrumToastValue, Toast} from './Toast';
+import {ToastContainer} from './ToastContainer';
+import {ToastOptions, useToastState} from '@react-stately/toast';
 
-interface ToastContextProps {
-  positive?: (content: ReactNode, options: ToastOptions) => void,
-  negative?: (content: ReactNode, options: ToastOptions) => void,
-  neutral?: (content: ReactNode, options: ToastOptions) => void,
-  info?: (content: ReactNode, options: ToastOptions) => void
+export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
+  actionLabel?: ReactNode,
+  onAction?: () => void,
+  shouldCloseOnAction?: boolean
 }
 
-interface ToastProviderProps {
+export interface ToastProviderContext {
+  positive(content: ReactNode, options?: SpectrumToastOptions): void,
+  negative(content: ReactNode, options?: SpectrumToastOptions): void,
+  neutral(content: ReactNode, options?: SpectrumToastOptions): void,
+  info(content: ReactNode, options?: SpectrumToastOptions): void
+}
+
+export interface ToastProviderProps {
   children: ReactNode
 }
 
-export const ToastContext = React.createContext<ToastContextProps | null>(null);
+const ToastContext = React.createContext<ToastProviderContext | null>(null);
 
-export function useToastProvider() {
+export function useToastProvider(): ToastProviderContext {
   return useContext(ToastContext);
 }
 
-let keyCounter = 0;
-function generateKey(pre = 'toast') {
-  return `${pre}_${keyCounter++}`;
-}
-
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, onRemove, toasts} = useToastState();
-  let {
-    children
-  } = useProviderProps(props);
+  let state = useToastState<SpectrumToastValue>({
+    hasExitAnimation: true
+  });
+
+  let add = (children: ReactNode, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) => {
+    let value = {
+      children,
+      variant,
+      actionLabel: options.actionLabel,
+      onAction: options.onAction,
+      shouldCloseOnAction: options.shouldCloseOnAction
+    };
+
+    // https://spectrum.adobe.com/page/toast/#Auto-dismissible
+    let timeout = options.timeout ? Math.max(options.timeout, 5000) : null;
+    state.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
+  };
 
   let contextValue = {
-    neutral: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, toastKey: generateKey()});
+    neutral: (children: ReactNode, options: SpectrumToastOptions = {}) => {
+      add(children, 'neutral', options);
     },
-    positive: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, toastKey: generateKey(), variant: 'positive'});
+    positive: (children: ReactNode, options: SpectrumToastOptions = {}) => {
+      add(children, 'positive', options);
     },
-    negative: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, toastKey: generateKey(), variant: 'negative'});
+    negative: (children: ReactNode, options: SpectrumToastOptions = {}) => {
+      add(children, 'negative', options);
     },
-    info: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, toastKey: generateKey(), variant: 'info'});
+    info: (children: ReactNode, options: SpectrumToastOptions = {}) => {
+      add(children, 'info', options);
     }
   };
 
   return (
     <ToastContext.Provider value={contextValue}>
-      <ToastContainer toasts={toasts} onRemove={onRemove} />
-      {children}
+      <ToastContainer state={state}>
+        {state.toasts.map((toast) => (
+          <Toast
+            key={toast.key}
+            toast={toast}
+            state={state} />
+        ))}
+      </ToastContainer>
+      {props.children}
     </ToastContext.Provider>
   );
+}
+
+// https://spectrum.adobe.com/page/toast/#Priority-queue
+const VARIANT_PRIORITY = {
+  negative: 10,
+  positive: 3,
+  info: 2,
+  neutral: 1
+};
+
+function getPriority(variant: SpectrumToastValue['variant'], options: SpectrumToastOptions) {
+  let priority = VARIANT_PRIORITY[variant] || 1;
+  if (options.onAction) {
+    priority += 4;
+  }
+  return priority;
 }

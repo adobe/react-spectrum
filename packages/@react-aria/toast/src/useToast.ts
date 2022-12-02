@@ -10,85 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, filterDOMProps, mergeProps} from '@react-aria/utils';
-import {DOMAttributes, DOMProps} from '@react-types/shared';
-import {ImgHTMLAttributes} from 'react';
+import {AriaButtonProps} from '@react-types/button';
+import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps} from '@react-aria/interactions';
-import {ToastProps, ToastState} from '@react-types/toast';
-import {useFocus, useHover} from '@react-aria/interactions';
+import {QueuedToast, ToastState} from '@react-stately/toast';
+import {useEffect} from 'react';
+import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-interface ToastAriaProps extends ToastProps {}
-
-interface ToastAria {
-  toastProps: DOMAttributes,
-  iconProps: ImgHTMLAttributes<HTMLElement>,
-  actionButtonProps: PressProps,
-  closeButtonProps: DOMProps & PressProps
+export interface AriaToastProps<T> extends AriaLabelingProps {
+  toast: QueuedToast<T>
 }
 
-export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
+export interface ToastAria {
+  toastProps: DOMAttributes,
+  titleProps: DOMAttributes,
+  descriptionProps: DOMAttributes,
+  closeButtonProps: AriaButtonProps
+}
+
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>): ToastAria {
   let {
-    toastKey,
-    onAction,
-    onClose,
-    shouldCloseOnAction,
+    key,
     timer,
-    variant
-  } = props;
-  let {
-    onRemove
-  } = state;
+    timeout
+  } = props.toast;
+
+  useEffect(() => {
+    if (!timer) {
+      return;
+    }
+
+    timer.reset(timeout);
+    return () => {
+      timer.pause();
+    };
+  }, [timer, timeout]);
+
+  let titleId = useId();
+  let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let domProps = filterDOMProps(props);
-
-  const handleAction = (...args) => {
-    if (onAction) {
-      onAction(...args);
-    }
-
-    if (shouldCloseOnAction) {
-      onClose && onClose(...args);
-      onRemove && onRemove(toastKey);
-    }
-  };
-
-  let iconProps = variant ? {'aria-label': stringFormatter.format(variant)} : {};
-
-  let pauseTimer = () => {
-    timer && timer.pause();
-  };
-
-  let resumeTimer = () => {
-    timer && timer.resume();
-  };
-
-  let {hoverProps} = useHover({
-    onHoverStart: pauseTimer,
-    onHoverEnd: resumeTimer
-  });
-
-  let {focusProps} = useFocus({
-    onFocus: pauseTimer,
-    onBlur: resumeTimer
-  });
 
   return {
-    toastProps: mergeProps(domProps, {
-      ...hoverProps,
-      role: 'alert'
-    }),
-    iconProps,
-    actionButtonProps: {
-      ...focusProps,
-      onPress: handleAction
+    toastProps: {
+      role: 'alert',
+      'aria-label': props['aria-label'],
+      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-describedby': props['aria-descibedby'] || descriptionId,
+      'aria-details': props['aria-details']
+    },
+    titleProps: {
+      id: titleId
+    },
+    descriptionProps: {
+      id: descriptionId
     },
     closeButtonProps: {
       'aria-label': stringFormatter.format('close'),
-      ...focusProps,
-      onPress: chain(onClose, () => onRemove(toastKey))
+      onPress: () => state.close(key)
     }
   };
 }

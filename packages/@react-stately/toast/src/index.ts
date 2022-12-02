@@ -10,4 +10,5 @@
  * governing permissions and limitations under the License.
  */
 export {useToastState} from './useToastState';
-export {Timer} from './timer';
+
+export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from './useToastState';

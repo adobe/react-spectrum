@@ -11,42 +11,39 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import React, {ReactElement} from 'react';
-import {Toast} from './';
+import React, {ReactElement, ReactNode, useRef} from 'react';
 import toastContainerStyles from './toastContainer.css';
-import {ToastState} from '@react-types/toast';
-// import {useProvider} from '@react-spectrum/provider';
+import {ToastState} from '@react-stately/toast';
+import {useProvider} from '@react-spectrum/provider';
+import {useToastRegion} from '@react-aria/toast';
 
-export function ToastContainer(props: ToastState): ReactElement {
+interface ToastContainerProps {
+  children: ReactNode,
+  state: ToastState<unknown>
+}
+
+export function ToastContainer(props: ToastContainerProps): ReactElement {
   let {
-    onRemove,
-    toasts
+    children,
+    state
   } = props;
-  // let providerProps = useProvider();
-  let toastPlacement = 'bottom'; /* providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' '); */
-  let containerPosition = toastPlacement && toastPlacement[0];
-  let containerPlacement = toastPlacement && toastPlacement[1];
+  let provider = useProvider();
+  let containerPlacement = provider.scale === 'large' ? 'center' : 'right';
 
-  let renderToasts = () => toasts.map((toast) =>
-    (<Toast
-      {...toast.props}
-      key={toast.props.toastKey}
-      onRemove={onRemove}
-      timer={toast.timer}>
-      {toast.content}
-    </Toast>)
-  );
-
+  let ref = useRef();
+  let {regionProps} = useToastRegion({}, state, ref);
 
   return (
     <div
+      {...regionProps}
+      ref={ref}
+      data-position="bottom"
+      data-placement={containerPlacement}
       className={classNames(
         toastContainerStyles,
-        'react-spectrum-ToastContainer',
-        containerPosition && `react-spectrum-ToastContainer--${containerPosition}`,
-        containerPlacement && `react-spectrum-ToastContainer--${containerPlacement}`
+        'react-spectrum-ToastContainer'
       )}>
-      {renderToasts()}
+      {children}
     </div>
   );
 }

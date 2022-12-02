@@ -15,16 +15,32 @@ import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
+import {FocusScope} from '@react-aria/focus';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
-import React from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {QueuedToast, ToastState} from '@react-stately/toast';
+import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
-import {ToastProps, ToastState} from '@react-types/toast';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useToast} from '@react-aria/toast';
 
-interface SpectrumToastProps extends ToastProps, ToastState {}
+export interface SpectrumToastValue {
+  children: ReactNode,
+  variant: 'positive' | 'negative' | 'info' | 'neutral',
+  actionLabel?: ReactNode,
+  onAction?: () => void,
+  shouldCloseOnAction?: boolean
+}
 
+export interface SpectrumToastProps {
+  toast: QueuedToast<SpectrumToastValue>,
+  state: ToastState<SpectrumToastValue>
+}
+
+// TODO: express should use filled icons...
 export const ICONS = {
   info: InfoMedium,
   negative: AlertMedium,
@@ -33,57 +49,91 @@ export const ICONS = {
 
 function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
-    actionLabel,
-    children,
-    onRemove,
-    variant,
+    toast: {
+      key,
+      animation,
+      content: {
+        children,
+        variant,
+        actionLabel,
+        onAction,
+        shouldCloseOnAction
+      }
+    },
+    state,
     ...otherProps
   } = props;
   let {
-    actionButtonProps,
     closeButtonProps,
-    iconProps,
+    titleProps,
     toastProps
-  } = useToast({...otherProps, variant}, {onRemove});
+  } = useToast(props, state);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
+
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let iconLabel = variant && variant !== 'neutral' ? stringFormatter.format(variant) : null;
   let Icon = ICONS[variant];
 
+  const handleAction = () => {
+    if (onAction) {
+      onAction();
+    }
+
+    if (shouldCloseOnAction) {
+      state.close(key);
+    }
+  };
+
   return (
-    <div
-      {...styleProps}
-      {...toastProps}
-      ref={domRef}
-      className={classNames(styles,
-        'spectrum-Toast',
-        {['spectrum-Toast--' + variant]: variant},
-        styleProps.className,
-        classNames(
-          toastContainerStyles,
-          'spectrum-Toast'
-        )
-      )}>
-      {Icon &&
-        <Icon
-          {...iconProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
-      }
-      <div className={classNames(styles, 'spectrum-Toast-body')}>
-        <div className={classNames(styles, 'spectrum-Toast-content')}>{children}</div>
-        {actionLabel &&
-          <Button
-            {...actionButtonProps}
-            UNSAFE_className={classNames(styles, 'spectrum-Button')}
-            isQuiet
-            variant="overBackground">{actionLabel}</Button>
+    <FocusScope restoreFocus>
+      <div
+        {...styleProps}
+        {...toastProps}
+        ref={domRef}
+        className={classNames(styles,
+          'spectrum-Toast',
+          {['spectrum-Toast--' + variant]: variant},
+          styleProps.className,
+          classNames(
+            toastContainerStyles,
+            'spectrum-Toast'
+          )
+        )}
+        style={{
+          ...styleProps.style,
+          zIndex: props.toast.priority
+        }}
+        data-animation={animation}
+        onAnimationEnd={e => {
+          if (e.animationName === toastContainerStyles['fade-out']) {
+            state.remove(key);
+          }
+        }}>
+        {Icon &&
+          <Icon
+            aria-label={iconLabel}
+            UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
         }
+        <div className={classNames(styles, 'spectrum-Toast-body')}>
+          <div className={classNames(styles, 'spectrum-Toast-content')} {...titleProps}>{children}</div>
+          {actionLabel &&
+            <Button
+              onPress={handleAction}
+              UNSAFE_className={classNames(styles, 'spectrum-Button')}
+              variant="secondary"
+              staticColor="white">
+              {actionLabel}
+            </Button>
+          }
+        </div>
+        <div className={classNames(styles, 'spectrum-Toast-buttons')}>
+          <ClearButton {...closeButtonProps} variant="overBackground">
+            <CrossMedium />
+          </ClearButton>
+        </div>
       </div>
-      <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...closeButtonProps} variant="overBackground">
-          <CrossMedium />
-        </ClearButton>
-      </div>
-    </div>
+    </FocusScope>
   );
 }
 
