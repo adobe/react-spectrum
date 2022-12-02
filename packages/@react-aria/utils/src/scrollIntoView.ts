@@ -88,7 +88,7 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
 // Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
 function shouldScrollIntoView(target: Element, originalTarget?: Element) {
   let root = document.scrollingElement || document.documentElement;
-  if (target === root) {
+  if (target === root || target == null) {
     return false;
   }
 
