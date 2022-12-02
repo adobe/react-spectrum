@@ -24,11 +24,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.6.2",
     "@react-aria/ssr": "^3.4.0",
     "@react-aria/utils": "^3.14.1",
     "@react-types/shared": "^3.16.0",
+    "@swc/helpers": "^0.4.14",
     "clsx": "^1.1.1"
   },
   "peerDependencies": {

@@ -18,10 +18,10 @@ export const parameters = {
 };
 
 export const decorators = [
-  story => (
+  Story => (
     <div style={{overflow: 'auto', height: '100vh', width: '100vw'}}>
       <VerticalCenter style={{alignItems: 'center', height: '300vh', width: '300vw', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
-        {story()}
+        <Story />
       </VerticalCenter>
     </div>
   ),

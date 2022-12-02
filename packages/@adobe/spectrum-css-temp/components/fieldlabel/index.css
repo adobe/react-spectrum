@@ -65,7 +65,13 @@ governing permissions and limitations under the License.
 .spectrum-Field {
   --spectrum-field-default-width: var(--spectrum-component-single-line-width);
 
-  &.spectrum-Field--positionTop {
+  .spectrum-Field-contextualHelp {
+    grid-area: contextualHelp;
+    margin-inline-start: var(--spectrum-global-dimension-size-50);
+    margin-top: var(--spectrum-global-dimension-size-25);
+  }
+
+  &:where(.spectrum-Field--positionTop) {
     display: inline-grid;
     grid-template-areas: "label contextualHelp ."
                          "field field field"
@@ -92,7 +98,7 @@ governing permissions and limitations under the License.
 
   /* The side label variant of Field is inline, and fills as much space as needed
    * by default. If an explicit width is set, then the field flexes to fill available space. */
-  &.spectrum-Field--positionSide {
+  &:where(.spectrum-Field--positionSide) {
     display: inline-flex;
     align-items: flex-start;
 
@@ -132,12 +138,6 @@ governing permissions and limitations under the License.
       padding-inline-end: 0;
     }
   }
-
-  .spectrum-Field-contextualHelp {
-    grid-area: contextualHelp;
-    margin-inline-start: var(--spectrum-global-dimension-size-50);
-    margin-top: var(--spectrum-global-dimension-size-25);
-  }
 }
 
 /* topdoc
@@ -147,7 +147,7 @@ governing permissions and limitations under the License.
 .spectrum-Form {
   /* With labelPosition=side, we override field layout to use a CSS table
    * so that all the labels and fields line up automatically. */
-  &.spectrum-Form--positionSide {
+  &:where(.spectrum-Form--positionSide) {
     display: table;
     border-collapse: separate;
     border-spacing: var(--spectrum-tableform-border-spacing);
@@ -195,7 +195,7 @@ governing permissions and limitations under the License.
   }
 
   /* With labelPosition=top, we use a normal flex stack */
-  &.spectrum-Form--positionTop {
+  &:where(.spectrum-Form--positionTop) {
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -215,7 +215,7 @@ governing permissions and limitations under the License.
 
   &.spectrum-Field--positionSide {
     align-items: first baseline;
-    
+
     .spectrum-Field-contextualHelp {
       position: relative;
       top: var(--spectrum-global-dimension-size-40);
