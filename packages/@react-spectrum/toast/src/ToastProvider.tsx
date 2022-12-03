@@ -62,11 +62,14 @@ function ToastProviderInner(props: ToastProviderProps) {
       shouldCloseOnAction: options.shouldCloseOnAction
     };
 
-    // https://spectrum.adobe.com/page/toast/#Auto-dismissible
-    let timeout = options.timeout ? Math.max(options.timeout, 5000) : null;
+    // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
+    // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
+    // It is debatable whether non-actionable toasts would also fail.
+    let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
     state.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
   };
 
+  // TODO: return a function to allow programmatically closing the toast?
   let contextValue = {
     neutral: (children: ReactNode, options: SpectrumToastOptions = {}) => {
       add(children, 'neutral', options);
@@ -98,6 +101,7 @@ function ToastProviderInner(props: ToastProviderProps) {
 }
 
 // https://spectrum.adobe.com/page/toast/#Priority-queue
+// TODO: if a lower priority toast comes in, no way to know until you dismiss the higher priority one.
 const VARIANT_PRIORITY = {
   negative: 10,
   positive: 3,

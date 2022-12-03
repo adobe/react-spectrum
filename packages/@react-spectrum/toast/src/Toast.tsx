@@ -85,6 +85,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     }
   };
 
+  // TODO: if this isn't the last toast, move to the next one when closing instead?
   return (
     <FocusScope restoreFocus>
       <div
