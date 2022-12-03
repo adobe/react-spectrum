@@ -39,6 +39,16 @@ export function useToastProvider(): ToastProviderContext {
 }
 
 export function ToastProvider(props: ToastProviderProps): ReactElement {
+  // If there's already a ToastProvider above us in the React tree, don't render another one.
+  let ctx = useToastProvider();
+  if (ctx) {
+    return <>{props.children}</>;
+  }
+
+  return <ToastProviderInner {...props} />;
+}
+
+function ToastProviderInner(props: ToastProviderProps) {
   let state = useToastState<SpectrumToastValue>({
     hasExitAnimation: true
   });
