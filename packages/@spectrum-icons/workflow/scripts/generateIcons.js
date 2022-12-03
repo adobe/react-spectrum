@@ -22,7 +22,7 @@ function template(iconName) {
     iconRename = '_' + importName;
   }
   return (
-`import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow/dist/${importName}';
+`import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow/dist/${importName}.js';
 import {Icon, IconPropsWithoutChildren} from '@react-spectrum/icon';
 import React from 'react';
 

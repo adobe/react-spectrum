@@ -26,7 +26,7 @@ function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
   const {
     alt = '',
     isDisabled,
-    size,
+    size = DEFAULT_SIZE,
     src,
     ...otherProps
   } = useProviderProps(props);

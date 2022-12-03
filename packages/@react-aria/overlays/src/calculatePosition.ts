@@ -11,6 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
+import {clamp} from '@react-aria/utils';
 
 interface Position {
   top?: number,
@@ -202,13 +203,16 @@ function computePosition(
   // add the crossOffset from props
   position[crossAxis] += crossOffset;
 
-  // this is button center position - the overlay size + half of the button to align bottom of overlay with button center
-  let minViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2) - overlaySize[crossSize];
-  // this is button position of center, aligns top of overlay with button center
-  let maxViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2);
+  // button bottom touching overlay bottom
+  let bottomsTouchPosition = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossSize];
+  // button top touching overlay top
+  let topsTouchPosition = childOffset[crossAxis];
 
-  // clamp it into the range of the min/max positions
-  position[crossAxis] = Math.min(Math.max(minViablePosition, position[crossAxis]), maxViablePosition);
+  // we can't assume which one is bigger because button could be bigger than overlay and vice versa
+  const minPosition = Math.min(bottomsTouchPosition, topsTouchPosition);
+  const maxPosition = Math.max(bottomsTouchPosition, topsTouchPosition);
+
+  position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {

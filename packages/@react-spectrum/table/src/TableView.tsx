@@ -425,7 +425,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
 
   useEffect(() => {
     if (lastResizeInteractionModality.current === 'keyboard' && headerRef.current.contains(document.activeElement)) {
-      document.activeElement?.scrollIntoView?.(false);
+      document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
   }, [state.contentSize, headerRef, bodyRef, lastResizeInteractionModality]);
