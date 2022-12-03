@@ -11,10 +11,11 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, ReactNode, useRef} from 'react';
+import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
-import {useProvider} from '@react-spectrum/provider';
 import {useToastRegion} from '@react-aria/toast';
 
 interface ToastContainerProps {
@@ -33,17 +34,21 @@ export function ToastContainer(props: ToastContainerProps): ReactElement {
   let ref = useRef();
   let {regionProps} = useToastRegion({}, state, ref);
 
-  return (
-    <div
-      {...regionProps}
-      ref={ref}
-      data-position="bottom"
-      data-placement={containerPlacement}
-      className={classNames(
-        toastContainerStyles,
-        'react-spectrum-ToastContainer'
-      )}>
-      {children}
-    </div>
+  let contents = (
+    <Provider UNSAFE_style={{background: 'transparent'}}>
+      <div
+        {...regionProps}
+        ref={ref}
+        data-position="bottom"
+        data-placement={containerPlacement}
+        className={classNames(
+          toastContainerStyles,
+          'react-spectrum-ToastContainer'
+        )}>
+        {children}
+      </div>
+    </Provider>
   );
+
+  return ReactDOM.createPortal(contents, document.body);
 }

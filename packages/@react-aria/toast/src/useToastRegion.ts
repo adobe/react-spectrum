@@ -33,7 +33,13 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     regionProps: {
       ...landmarkProps,
       ...hoverProps,
-      ...focusWithinProps
+      ...focusWithinProps,
+      // Mark the toast region as a "top layer", so that it:
+      //   - is not aria-hidden when opening an overlay
+      //   - allows focus even outside a containing focus scope
+      //   - doesn’t dismiss overlays when clicking on it, even though it is outside
+      // @ts-ignore
+      'data-react-aria-top-layer': true
     }
   };
 }

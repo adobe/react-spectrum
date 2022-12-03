@@ -13,6 +13,9 @@
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Content} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import {SpectrumToastOptions} from '../src/ToastProvider';
 import {storiesOf} from '@storybook/react';
@@ -42,6 +45,41 @@ storiesOf('Toast', module)
   .add(
     'With action',
     args => <ToastProvider><RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} /></ToastProvider>
+  )
+  .add(
+    'With dialog',
+    args => (
+      <ToastProvider>
+        <DialogTrigger isDismissable>
+          <Button variant="accent">Open dialog</Button>
+          <Dialog>
+            <Heading>Toasty</Heading>
+            <Content>
+              <RenderProvider {...args} />
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </ToastProvider>
+    )
+  )
+  .add(
+    'nested ToastProvider',
+    args => (
+      <ToastProvider>
+        <div>
+          <div>
+            <h2>Outer</h2>
+            <RenderProvider {...args} />
+          </div>
+          <ToastProvider>
+            <div>
+              <h2>Inner</h2>
+              <RenderProvider {...args} />
+            </div>
+          </ToastProvider>
+        </div>
+      </ToastProvider>
+    )
   );
 
 function RenderProvider(options: SpectrumToastOptions) {
