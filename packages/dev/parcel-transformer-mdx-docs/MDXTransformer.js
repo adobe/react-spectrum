@@ -316,7 +316,7 @@ module.exports = new Transformer({
               if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
                 // Handle JSX-style comments, e.g. {/* foo */}
                 let prev = parent.children[index - 1];
-                if (prev?.children?.[0]?.value === '{') {
+                if (prev?.children?.[0]?.value === '{' && !node.children[0].value.startsWith('///')) {
                   prev.children = [];
                   prev = parent.children[index - 2];
                 }
