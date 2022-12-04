@@ -10,9 +10,8 @@
   "scripts": {
     "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
-    "add-exports": "babel-node --presets @babel/env ./scripts/addExports.js -i '[]'",
     "generate-types": "tsc --project ./tsconfig.types.json",
-    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types && yarn add-exports",
+    "build-icons": "yarn build-cjs && yarn build-esm",
     "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && yarn generate-types"
   },
   "dependencies": {
@@ -31,95 +30,10 @@
     "access": "public"
   },
   "exports": {
-    "./CalendarCheckColor": {
-      "types": "./CalendarCheckColor.d.ts",
-      "require": "./CalendarCheckColor.js",
-      "import": "./CalendarCheckColor.mjs"
-    },
-    "./EmotionAdmirationColor": {
-      "types": "./EmotionAdmirationColor.d.ts",
-      "require": "./EmotionAdmirationColor.js",
-      "import": "./EmotionAdmirationColor.mjs"
-    },
-    "./EmotionAngerColor": {
-      "types": "./EmotionAngerColor.d.ts",
-      "require": "./EmotionAngerColor.js",
-      "import": "./EmotionAngerColor.mjs"
-    },
-    "./EmotionAnticipationColor": {
-      "types": "./EmotionAnticipationColor.d.ts",
-      "require": "./EmotionAnticipationColor.js",
-      "import": "./EmotionAnticipationColor.mjs"
-    },
-    "./EmotionDisgustColor": {
-      "types": "./EmotionDisgustColor.d.ts",
-      "require": "./EmotionDisgustColor.js",
-      "import": "./EmotionDisgustColor.mjs"
-    },
-    "./EmotionFearColor": {
-      "types": "./EmotionFearColor.d.ts",
-      "require": "./EmotionFearColor.js",
-      "import": "./EmotionFearColor.mjs"
-    },
-    "./EmotionJoyColor": {
-      "types": "./EmotionJoyColor.d.ts",
-      "require": "./EmotionJoyColor.js",
-      "import": "./EmotionJoyColor.mjs"
-    },
-    "./EmotionSadnessColor": {
-      "types": "./EmotionSadnessColor.d.ts",
-      "require": "./EmotionSadnessColor.js",
-      "import": "./EmotionSadnessColor.mjs"
-    },
-    "./EmotionSurpriseColor": {
-      "types": "./EmotionSurpriseColor.d.ts",
-      "require": "./EmotionSurpriseColor.js",
-      "import": "./EmotionSurpriseColor.mjs"
-    },
-    "./ImageCheckColor": {
-      "types": "./ImageCheckColor.d.ts",
-      "require": "./ImageCheckColor.js",
-      "import": "./ImageCheckColor.mjs"
-    },
-    "./LinkCheckColor": {
-      "types": "./LinkCheckColor.d.ts",
-      "require": "./LinkCheckColor.js",
-      "import": "./LinkCheckColor.mjs"
-    },
-    "./ProjectCameraColor": {
-      "types": "./ProjectCameraColor.d.ts",
-      "require": "./ProjectCameraColor.js",
-      "import": "./ProjectCameraColor.mjs"
-    },
-    "./ProjectColor": {
-      "types": "./ProjectColor.d.ts",
-      "require": "./ProjectColor.js",
-      "import": "./ProjectColor.mjs"
-    },
-    "./ProjectPlayColor": {
-      "types": "./ProjectPlayColor.d.ts",
-      "require": "./ProjectPlayColor.js",
-      "import": "./ProjectPlayColor.mjs"
-    },
-    "./ProjectRefreshColor": {
-      "types": "./ProjectRefreshColor.d.ts",
-      "require": "./ProjectRefreshColor.js",
-      "import": "./ProjectRefreshColor.mjs"
-    },
-    "./UserCircleColor": {
-      "types": "./UserCircleColor.d.ts",
-      "require": "./UserCircleColor.js",
-      "import": "./UserCircleColor.mjs"
-    },
-    "./UserGroupCircleColor": {
-      "types": "./UserGroupCircleColor.d.ts",
-      "require": "./UserGroupCircleColor.js",
-      "import": "./UserGroupCircleColor.mjs"
-    },
-    "./index": {
-      "types": "./index.d.ts",
-      "require": "./index.js",
-      "import": "./index.mjs"
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./*.mjs",
+      "require": "./*.js"
     }
   }
 }
