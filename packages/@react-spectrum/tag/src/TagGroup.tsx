@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import React, {ReactElement, useCallback, useMemo, useState} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
@@ -31,6 +31,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     allowsRemoving,
     onRemove,
     maxRows,
+    children,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -71,18 +72,32 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   }, state, domRef);
   const {tagGroupProps} = useTagGroup(props);
 
-  let [visibleTagCount, setVisibleTagCount] = useState(gridCollection.size);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
 
-  // If maxRows is provided, update the number of tags to show based on the height.
-  let checkVisibleTagCount = useCallback(() => {
-    if (maxRows != null && isCollapsed) {
+  // Not using React.Children.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+  let [visibleTagCount, setVisibleTagCount] = useValueEffect(childArray.length);
+
+  let updateVisibleTagCount = useCallback(() => {
+    let computeVisibleTagCount = () => {
+      // Refs can be null at runtime.
+      let currDomRef: HTMLDivElement | null = domRef.current;
+      if (!currDomRef) {
+        return;
+      }
+
+      let items = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON') as HTMLDivElement[];
       let currY = -Infinity;
       let rowCount = 0;
       let index = 0;
-      let currentVisibleTags = [...domRef.current.children].filter(el => el.tagName !== 'BUTTON');
-      for (let tag of currentVisibleTags) {
-        let {y} = tag.getBoundingClientRect();
+      // Count rows and show tags until we hit the maxRows.
+      for (let item of items) {
+        let {y} = item.getBoundingClientRect();
 
         if (y !== currY) {
           currY = y;
@@ -96,25 +111,36 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       }
 
       // Hide tags on last row until there is room for the collapse button.
-      let end = direction === 'ltr' ? 'right' : 'left';
-      let containerEnd = domRef.current.getBoundingClientRect()[end];
-      let collapseButtonWidth = domRef.current.querySelector('button')?.getBoundingClientRect().width;
-      let lastTagEnd = currentVisibleTags[index - 1]?.getBoundingClientRect()[end];
+      // let end = direction === 'ltr' ? 'right' : 'left';
+      // let containerEnd = currDomRef.getBoundingClientRect()[end];
+      // let collapseButtonWidth = [...currDomRef.children].find(el => el.tagName !== 'BUTTON').getBoundingClientRect().width;
+      // let lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
+      // let lastTagY = items[index - 1]?.getBoundingClientRect().y;
+      // let lastRowY = lastTagY;
 
-      while (containerEnd - lastTagEnd < collapseButtonWidth) {
-        index--;
-        lastTagEnd = currentVisibleTags[index - 1]?.getBoundingClientRect()[end];
-      }
+      // while (containerEnd - lastTagEnd < collapseButtonWidth && lastTagY === lastRowY) {
+      //   index--;
+      //   lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
+      //   lastTagY = items[index - 1]?.getBoundingClientRect().y;
+      // }
 
-      setVisibleTagCount(index);
-    }
-  }, [maxRows, isCollapsed, domRef, direction]);
+      return index;
+    };
 
-  useLayoutEffect(() => {
-    checkVisibleTagCount();
-  }, [props.children, checkVisibleTagCount]);
+    setVisibleTagCount(function *() {
+      // Update to show all items.
+      yield childArray.length;
 
-  useResizeObserver({ref: domRef, onResize: checkVisibleTagCount});
+      // Measure, and update to show the items until maxRows is reached.
+      let newVisibleTagCount = computeVisibleTagCount();
+      yield newVisibleTagCount;
+    });
+  }, [childArray.length, domRef, maxRows, setVisibleTagCount]);
+
+  useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(updateVisibleTagCount, [children]);
 
   let visibleTags = [...gridCollection];
   if (maxRows != null && isCollapsed) {
