@@ -47,7 +47,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || props.hasMenu || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
+  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
@@ -58,11 +58,6 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
     },
     ref
   });
-
-  // try to just delete this, but figure out why it causes an extra focus target
-  if (props.hasMenu) {
-    pressProps = {};
-  }
 
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
