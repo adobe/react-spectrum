@@ -260,22 +260,43 @@ describe('TagGroup', function () {
         <TagGroup aria-label="tag group">
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+          <Item key="4" aria-label="Tag 4">Tag 4</Item>
         </TagGroup>
       </Provider>
     );
 
     let tags = getAllByRole('row');
-    expect(tags.length).toBe(2);
+    expect(tags.length).toBe(4);
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
     expect(tags[1]).toHaveAttribute('tabIndex', '0');
+    expect(tags[2]).toHaveAttribute('tabIndex', '0');
+    expect(tags[3]).toHaveAttribute('tabIndex', '0');
 
-    act(() => tags[0].focus());
+    userEvent.tab();
     expect(tags[0]).toHaveAttribute('tabIndex', '0');
     expect(tags[1]).toHaveAttribute('tabIndex', '-1');
+    expect(tags[2]).toHaveAttribute('tabIndex', '-1');
+    expect(tags[3]).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(tags[0]);
 
-    pressArrowRight(tags[0]);
-    expect(tags[0]).toHaveAttribute('tabIndex', '-1');
-    expect(tags[1]).toHaveAttribute('tabIndex', '0');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    expect(document.activeElement).toBe(tags[1]);
+    
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+    expect(document.activeElement).toBe(tags[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'End'});
+    expect(document.activeElement).toBe(tags[3]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'Home'});
+    expect(document.activeElement).toBe(tags[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
+    expect(document.activeElement).toBe(tags[1]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
+    expect(document.activeElement).toBe(tags[0]);
   });
 
   it.each`
