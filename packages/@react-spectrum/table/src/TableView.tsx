@@ -98,7 +98,9 @@ interface TableContextValue<T> {
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (key: Key) => void,
   onMoveResizer: (e: MoveMoveEvent) => void,
-  isQuiet: boolean
+  isQuiet: boolean,
+  headerMenuOpen: boolean,
+  setHeaderMenuOpen: (val: boolean) => void
 }
 
 const TableContext = React.createContext<TableContextValue<unknown>>(null);
@@ -191,6 +193,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     layout,
     onRowAction: onAction
   }, state, domRef);
+  let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
   // This overrides collection view's renderWrapper to support DOM hierarchy.
@@ -369,7 +372,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   return (
-    <TableContext.Provider value={{state, layout, isQuiet, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer}}>
+    <TableContext.Provider value={{state, layout, isQuiet, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -643,7 +646,9 @@ function ResizableTableColumnHeader(props) {
     isEmpty,
     onFocusedResizer,
     onMoveResizer,
-    isInResizeMode
+    isInResizeMode,
+    headerMenuOpen,
+    setHeaderMenuOpen
   } = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
@@ -653,7 +658,7 @@ function ResizableTableColumnHeader(props) {
     hasMenu: true
   }, state, ref);
 
-  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty});
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty || headerMenuOpen});
 
   const allProps = [columnHeaderProps, pressProps, hoverProps];
 
@@ -750,7 +755,7 @@ function ResizableTableColumnHeader(props) {
             )
           )
         }>
-        <MenuTrigger>
+        <MenuTrigger onOpenChange={setHeaderMenuOpen}>
           <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
@@ -933,10 +938,10 @@ function TableRow({item, children, hasActions, ...otherProps}) {
 }
 
 function TableHeaderRow({item, children, style, ...props}) {
-  let {state} = useTableContext();
+  let {state, headerMenuOpen} = useTableContext();
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
-  let {hoverProps} = useHover(props);
+  let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
 
   return (
     <div {...mergeProps(rowProps, hoverProps)} ref={ref} style={style}>
