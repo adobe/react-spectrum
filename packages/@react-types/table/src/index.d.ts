@@ -14,7 +14,13 @@ import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingS
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
-export type ColumnSize = number | `${number}fr` | `${number}%`;
+/** Widths that result in a constant pixel value for the same Table width. */
+export type ColumnStaticWidth = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+/** Widths that change size in relation to the remaining space and in ratio to other dynamic columns. */
+export type ColumnDynamicWidth = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+/** All possible sizes a column can be assigned. */
+export type ColumnSize = ColumnStaticWidth | ColumnDynamicWidth;
+
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
