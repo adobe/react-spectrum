@@ -113,7 +113,7 @@ export const TableWithResizingNoProps = {
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
         {column => (
-          <Column key={column.uid}>
+          <Column key={column.uid} allowsResizing>
             {column.name}
           </Column>
         )}
