@@ -14,11 +14,11 @@ import {ColumnSize} from '@react-types/table';
 import {
   getInitialUncontrolledWidths,
   recombineColumns,
-  splitColumnsIntoControlledAndUncontrolled
-} from '@react-stately/layout/src/TableLayout';
+  splitColumnsIntoControlledAndUncontrolled,
+  TableColumnLayout
+} from '@react-stately/layout';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
-import {TableColumnLayout} from '@react-stately/layout';
 
 export interface TableColumnResizeStateProps<T> {
   /**
