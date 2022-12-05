@@ -15,11 +15,11 @@ import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
-export type ColumnStaticWidth = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
 /** Widths that change size in relation to the remaining space and in ratio to other dynamic columns. */
-export type ColumnDynamicWidth = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
 /** All possible sizes a column can be assigned. */
-export type ColumnSize = ColumnStaticWidth | ColumnDynamicWidth;
+export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
@@ -77,9 +77,9 @@ export interface ColumnProps<T> {
   /** The width of the column. */
   width?: ColumnSize,
   /** The minimum width of the column. */
-  minWidth?: ColumnSize,
+  minWidth?: ColumnStaticSize,
   /** The maximum width of the column. */
-  maxWidth?: ColumnSize,
+  maxWidth?: ColumnStaticSize,
   /** The default width of the column. */
   defaultWidth?: ColumnSize,
   /** Whether the column allows resizing. */
