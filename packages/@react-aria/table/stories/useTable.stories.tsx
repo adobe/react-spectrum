@@ -217,7 +217,13 @@ let columnsFR: ColumnData[] = [
 
 export const TableWithResizingFRsControlled = {
   args: {columns: columnsFR},
-  render: (args) => <ControlledTableResizing {...args} />
+  render: (args) => <ControlledTableResizing {...args} />,
+  parameters: {description: {data: `
+  You can use the buttons to save and restore the column widths. When restoring,
+  you will see a quick flash because the entire table is re-rendered. This
+  mimics what would happen if an app reloaded the whole page and restored a saved
+  column width state.
+  `}}
 };
 
 let columnsSomeFR: ColumnData[] = [
@@ -230,5 +236,11 @@ let columnsSomeFR: ColumnData[] = [
 
 export const TableWithSomeResizingFRsControlled = {
   args: {columns: columnsSomeFR},
-  render: (args) => <ControlledTableResizing {...args} />
+  render: (args) => <ControlledTableResizing {...args} />,
+  parameters: {description: {data: `
+  You can use the buttons to save and restore the column widths. When restoring,
+  you will see a quick flash because the entire table is re-rendered. This
+  mimics what would happen if an app reloaded the whole page and restored a saved
+  column width state.
+  `}}
 };
