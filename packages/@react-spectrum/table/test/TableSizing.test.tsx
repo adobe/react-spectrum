@@ -519,6 +519,34 @@ describe('TableViewSizing', function () {
         }
       });
 
+      it('should support minWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column key="foo" minWidth={200} width={100}>Foo</Column>
+              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('262px');
+        }
+      });
+
       it('should support maxWidth', function () {
         let tree = render(
           <TableView aria-label="Table">
