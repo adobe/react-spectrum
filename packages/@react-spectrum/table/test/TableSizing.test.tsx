@@ -574,6 +574,33 @@ describe('TableViewSizing', function () {
         }
       });
 
+      it('should support maxWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column key="foo" maxWidth={500} width={200}>Foo</Column>
+              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('300px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
+        }
+      });
+
       describe('bounded constraint on columns where dynamic columns exist before the bounded columns', () => {
         it('should fulfill the constraints of the static columns and give remaining width to previously defined dynamic columns', () => {
           let tree = render(
