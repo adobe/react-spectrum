@@ -79,14 +79,11 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 }
 
 function TagRemoveButton(props) {
-  props = useSlotProps(props, 'tagRemoveButton');
   let {styleProps} = useStyleProps(props);
-  let clearBtnRef = useRef();
 
   return (
     <span
-      {...styleProps}
-      ref={clearBtnRef}>
+      {...styleProps}>
       <ClearButton
         preventFocus
         {...props} />
