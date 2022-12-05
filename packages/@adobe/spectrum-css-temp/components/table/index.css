@@ -41,7 +41,7 @@ svg.spectrum-Table-sortedIcon {
               color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Table-menuChevron {
+.spectrum-Table-menuChevron.spectrum-Table-menuChevron {
   display: none;
   flex: 0 0 auto;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
