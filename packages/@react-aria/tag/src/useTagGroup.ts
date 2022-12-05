@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps} from '@react-types/tag';
+import {AriaTagGroupProps, TagGroupState} from '@react-types/tag';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject, useState} from 'react';
-import {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';

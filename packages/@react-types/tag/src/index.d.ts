@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
 import {Key, RefObject} from 'react';
-import {ListState} from 'react-stately';
+import {ListState} from '@react-types/list';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
@@ -33,6 +33,8 @@ export interface TagProps<T> extends ItemProps<any> {
   tagRowRef: RefObject<HTMLElement>
 }
 
+export interface TagGroupState<T>  extends ListState<T>{}
+
 interface SpectrumTagProps<T> extends TagProps<T> {
-  state: ListState<T>
+  state: TagGroupState<T>
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';

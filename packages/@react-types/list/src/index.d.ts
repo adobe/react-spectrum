@@ -11,4 +11,5 @@
  */
 
 export type {AriaGridListProps, GridListProps} from '@react-aria/gridlist';
+export type {ListState} from '@react-stately/list';
 export type {SpectrumListViewProps} from '@react-spectrum/list';

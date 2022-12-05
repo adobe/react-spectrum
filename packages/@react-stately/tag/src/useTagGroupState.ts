@@ -10,11 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListState, useListState} from '@react-stately/list';
-import {TagGroupProps} from '@react-types/tag';
+import {TagGroupProps, TagGroupState} from '@react-types/tag';
 import {useEffect, useRef} from 'react';
-
-export interface TagGroupState<T>  extends ListState<T>{}
+import {useListState} from '@react-stately/list';
 
 /**
  * Provides state management for a TagGroup component.
