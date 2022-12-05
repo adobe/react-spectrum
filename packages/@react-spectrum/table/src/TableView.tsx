@@ -410,7 +410,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   if (isLoading) {
     transitionDuration = 160;
   }
-  if (layout.columnLayout.resizingColumn != null) {
+  if (layout.resizingColumn != null) {
     // while resizing, prop changes should not cause animations
     transitionDuration = 0;
   }
@@ -479,7 +479,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, [state.contentSize, state.virtualizer, state.isAnimating, onLoadMore, isLoading]);
 
-  let resizerPosition = layout.columnLayout.getResizerPosition() - 2;
+  let resizerPosition = layout.getResizerPosition() - 2;
 
   let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
@@ -531,7 +531,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
           {state.visibleViews[1]}
           <div
             className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.columnLayout.resizingColumn ? 'block' : 'none'}} />
+            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
         </ScrollView>
       </div>
     </FocusScope>

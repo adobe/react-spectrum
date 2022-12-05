@@ -212,6 +212,10 @@ export class TableLayout<T> extends ListLayout<T> {
     return this.columnLayout.resizingColumn;
   }
 
+  getResizerPosition(): Key {
+    return this.columnLayout.getResizerPosition();
+  }
+
   getColumnWidth(key: Key): number {
     return this.columnLayout.getColumnWidth(key) ?? 0;
   }

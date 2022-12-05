@@ -85,7 +85,7 @@ export function Table(props) {
             {[...headerRow.childNodes].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} widths={widths} />
-                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layoutState={layoutState} onResize={props.onResize} />
+                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layoutState={layoutState} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
             )}
           </TableHeaderRow>
         ))}
@@ -125,12 +125,13 @@ export function TableHeaderRow({item, state, children, className}) {
     </tr>
   );
 }
-function Resizer({column, state, layoutState, onResize}) {
+function Resizer({column, state, layoutState, onResize, onResizeEnd}) {
   let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
-    onResize: onResize
+    onResize,
+    onResizeEnd
   } as AriaTableColumnResizeProps<any>, state, layoutState, ref);
 
   return (
@@ -161,7 +162,7 @@ function Resizer({column, state, layoutState, onResize}) {
     </>
   );
 }
-export function TableColumnHeader({column, state, widths, layoutState, onResize}) {
+export function TableColumnHeader({column, state, widths, layoutState, onResize, onResizeEnd}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -195,7 +196,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResize}
         </div>
         {
           column.props.allowsResizing &&
-          <Resizer column={column} state={state} layoutState={layoutState} onResize={onResize} />
+          <Resizer column={column} state={state} layoutState={layoutState} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
