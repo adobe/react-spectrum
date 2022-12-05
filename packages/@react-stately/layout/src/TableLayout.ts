@@ -220,8 +220,8 @@ export class TableLayout<T> extends ListLayout<T> {
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
   columnLayout: TableColumnLayout<T>;
-  controlledColumns: Map<Key, GridNode<T>>;
-  uncontrolledColumns: Map<Key, GridNode<T>>;
+  controlledColumns: Map<Key, GridNode<unknown>>;
+  uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
   lastVirtualizerWidth: number;
 
