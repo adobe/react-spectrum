@@ -39,7 +39,6 @@ import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
-import {parameters} from '../../../../.storybook/preview';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -1376,7 +1375,7 @@ storiesOf('TableView', module)
     () => (
       <ControllingResize width={900} />
     ),
-    {description: {data: `
+  {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved
@@ -1388,7 +1387,7 @@ storiesOf('TableView', module)
     () => (
       <ControllingResize width={900} columns={columnsSomeFR} />
     ),
-    {description: {data: `
+  {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved
@@ -1400,7 +1399,7 @@ storiesOf('TableView', module)
     () => (
       <ControllingResize width={900} columns={columnsFR} />
     ),
-    {description: {data: `
+  {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved

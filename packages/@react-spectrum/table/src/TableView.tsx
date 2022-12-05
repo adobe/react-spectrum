@@ -135,6 +135,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, [scale]);
 
   let [isInResizeMode, setIsInResizeMode] = useState(false);
+  // entering resizing/exiting resizing doesn't trigger a render
+  // with table layout, so we need to track it here
+  let [, setIsResizing] = useState(false);
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
@@ -356,13 +359,17 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       lastResizeInteractionModality.current = undefined;
     }
   };
-  let onResizeEnd = useCallback((key) => {
+  let onResizeStart = useCallback(() => {
+    setIsResizing(true);
+  }, [setIsResizing]);
+  let onResizeEnd = useCallback((widths) => {
     setIsInResizeMode(false);
-    propsOnResizeEnd?.(key);
-  }, [propsOnResizeEnd, setIsInResizeMode]);
+    setIsResizing(false);
+    propsOnResizeEnd?.(widths);
+  }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   return (
-    <TableContext.Provider value={{state, layout, isQuiet, onResizeStart: props.onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer}}>
+    <TableContext.Provider value={{state, layout, isQuiet, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -687,8 +694,12 @@ function ResizableTableColumnHeader(props) {
   }, [allowsSorting]);
   let isMobile = useIsMobileDevice();
 
+  let resizingColumn = layout.resizingColumn;
+  let prevResizingColumn = useRef(null);
   useEffect(() => {
-    if (layout.resizingColumn === column.key) {
+    if (prevResizingColumn.current !== resizingColumn &&
+      resizingColumn != null &&
+      resizingColumn === column.key) {
       // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
       // without the immediate timeout, Android Chrome doesn't move focus to the resizer
       if (isMobile) {
@@ -703,10 +714,9 @@ function ResizableTableColumnHeader(props) {
         onFocusedResizer();
       }, 0);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layout.resizingColumn, column.key]);
+    prevResizingColumn.current = resizingColumn;
+  }, [resizingColumn, column.key, isMobile, onFocusedResizer, resizingRef, prevResizingColumn]);
 
-  let resizingColumn = layout.resizingColumn;
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
 
   return (

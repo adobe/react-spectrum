@@ -43,11 +43,13 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * Handler that is called when a user performs a column resize.
    * Can be used with the width property on columns to put the column widths into
    * a controlled state.
-   * @private
    */
   onResize?: (widths: Map<Key, number | string>) => void,
-  onResizeStart?: (key: Key) => void,
-  onResizeEnd?: (key: Key) => void
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
 export interface TableHeaderProps<T> {
