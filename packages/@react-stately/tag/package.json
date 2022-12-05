@@ -23,11 +23,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/grid": "^3.4.1",
     "@react-stately/list": "^3.6.0",
-    "@react-stately/utils": "^3.0.0",
-    "@react-types/tag": "3.0.0-beta.0",
-    "react-stately": "^3.19.0"
+    "@react-types/tag": "3.0.0-beta.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
