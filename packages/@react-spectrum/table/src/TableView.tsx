@@ -108,6 +108,11 @@ export function useTableContext() {
   return useContext(TableContext);
 }
 
+const VirtualizerContext = React.createContext(null);
+export function useVirtualizerContext() {
+  return useContext(VirtualizerContext);
+}
+
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {isQuiet, onAction, onResizeEnd: propsOnResizeEnd} = props;
@@ -500,53 +505,62 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
+  // minimize re-render caused on Resizers by memoing this
+  let resizingColumnWidth = layout.getColumnWidth(layout.resizingColumn);
+  let resizingColumn = useMemo(() => ({
+    width: resizingColumnWidth,
+    key: layout.resizingColumn
+  }), [resizingColumnWidth, layout.resizingColumn]);
+
   return (
-    <FocusScope>
-      <div
-        {...mergeProps(otherProps, virtualizerProps)}
-        ref={domRef}>
+    <VirtualizerContext.Provider value={resizingColumn}>
+      <FocusScope>
         <div
-          role="presentation"
-          className={classNames(styles, 'spectrum-Table-headWrapper')}
-          style={{
-            width: visibleRect.width,
-            height: headerHeight,
-            overflow: 'hidden',
-            position: 'relative',
-            willChange: state.isScrolling ? 'scroll-position' : '',
-            transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
-          }}
-          ref={headerRef}>
-          {state.visibleViews[0]}
-        </div>
-        <ScrollView
-          role="presentation"
-          className={
-            classNames(
-              styles,
-              'spectrum-Table-body',
-              {
-                'focus-ring': isFocusVisible,
-                'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
-              }
-            )
-          }
-          tabIndex={-1}
-          style={{flex: 1}}
-          innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
-          ref={bodyRef}
-          contentSize={state.contentSize}
-          onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
-          onScrollStart={state.startScrolling}
-          onScrollEnd={state.endScrolling}
-          onScroll={onScroll}>
-          {state.visibleViews[1]}
+          {...mergeProps(otherProps, virtualizerProps)}
+          ref={domRef}>
           <div
-            className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-            style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
-        </ScrollView>
-      </div>
-    </FocusScope>
+            role="presentation"
+            className={classNames(styles, 'spectrum-Table-headWrapper')}
+            style={{
+              width: visibleRect.width,
+              height: headerHeight,
+              overflow: 'hidden',
+              position: 'relative',
+              willChange: state.isScrolling ? 'scroll-position' : '',
+              transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+            }}
+            ref={headerRef}>
+            {state.visibleViews[0]}
+          </div>
+          <ScrollView
+            role="presentation"
+            className={
+              classNames(
+                styles,
+                'spectrum-Table-body',
+                {
+                  'focus-ring': isFocusVisible,
+                  'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
+                }
+              )
+            }
+            tabIndex={-1}
+            style={{flex: 1}}
+            innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
+            ref={bodyRef}
+            contentSize={state.contentSize}
+            onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
+            onScrollStart={state.startScrolling}
+            onScrollEnd={state.endScrolling}
+            onScroll={onScroll}>
+            {state.visibleViews[1]}
+            <div
+              className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+              style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
+          </ScrollView>
+        </div>
+      </FocusScope>
+    </VirtualizerContext.Provider>
   );
 }
 
@@ -703,26 +717,34 @@ function ResizableTableColumnHeader(props) {
 
   let resizingColumn = layout.resizingColumn;
   let prevResizingColumn = useRef(null);
+  let timeout = useRef(null);
   useEffect(() => {
     if (prevResizingColumn.current !== resizingColumn &&
       resizingColumn != null &&
       resizingColumn === column.key) {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
       // focusSafely won't actually focus because the focus moves from the menuitem to the body during the after transition wait
       // without the immediate timeout, Android Chrome doesn't move focus to the resizer
-      if (isMobile) {
-        setTimeout(() => {
-          resizingRef.current.focus();
-          onFocusedResizer();
-        }, 400);
-        return;
-      }
-      setTimeout(() => {
+      let focusResizer = () => {
         resizingRef.current.focus();
         onFocusedResizer();
-      }, 0);
+        timeout.current = null;
+      };
+      if (isMobile) {
+        timeout.current = setTimeout(focusResizer, 400);
+        return;
+      }
+      timeout.current = setTimeout(focusResizer, 0);
     }
     prevResizingColumn.current = resizingColumn;
-  }, [resizingColumn, column.key, isMobile, onFocusedResizer, resizingRef, prevResizingColumn]);
+  }, [resizingColumn, column.key, isMobile, onFocusedResizer, resizingRef, prevResizingColumn, timeout]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
 

@@ -195,7 +195,8 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
           expect(onResize).toHaveBeenCalledTimes(1);
           expect(onResize).toHaveBeenCalledWith(mapFromWidths(columnNames, expectedOnResize));
           let resizers = tree.getAllByRole('slider');
-          resizers.forEach(resizer => {
+          resizers.forEach((resizer, index) => {
+            expect(resizer).toHaveAttribute('value', `${expected[index]}`)
             expect(resizer).toHaveAttribute('min', `${75}`);
             expect(resizer).toHaveAttribute('max', `${Number.MAX_SAFE_INTEGER}`);
           });

@@ -746,7 +746,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -760,7 +760,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -820,7 +820,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -834,7 +834,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -907,7 +907,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -920,6 +920,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -993,6 +994,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -1005,6 +1007,7 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -1077,7 +1080,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -1090,6 +1093,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
 
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -1101,7 +1105,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -1113,7 +1117,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
@@ -1182,7 +1186,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
@@ -1194,7 +1198,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
-
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
