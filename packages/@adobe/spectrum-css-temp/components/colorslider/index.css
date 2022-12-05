@@ -117,7 +117,7 @@
   justify-items: start;
 }
 
-.spectrum-ColorSlider-contextualHelp {
+.spectrum-ColorSlider-contextualHelp.spectrum-ColorSlider-contextualHelp {
   grid-area: contextualHelp;
   margin-inline-start: var(--spectrum-global-dimension-size-50);
   margin-top: var(--spectrum-global-dimension-size-25);

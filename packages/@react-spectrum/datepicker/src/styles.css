@@ -51,7 +51,7 @@
   min-width: var(--spectrum-global-dimension-size-1250);
 }
 
-.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
+.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input.react-spectrum-Datepicker-input {
   /* always reserve space for the validation icon */
   padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
   cursor: text;
