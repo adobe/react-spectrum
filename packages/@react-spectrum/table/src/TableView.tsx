@@ -451,6 +451,9 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
     }
   }, state, domRef);
 
+  // this effect runs whenever the contentSize changes, it doesn't matter what the content size is
+  // only that it changes in a resize, and when that happens, we want to sync the body to the
+  // header scroll position
   useEffect(() => {
     if (lastResizeInteractionModality.current === 'keyboard' && headerRef.current.contains(document.activeElement)) {
       document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
@@ -494,7 +497,6 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
-  // TODO: can I introduce this wrapper? style and classname would be applied below
   return (
     <FocusScope>
       <div

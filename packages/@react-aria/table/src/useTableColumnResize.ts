@@ -29,24 +29,46 @@ export interface TableColumnResizeAria {
 }
 
 export interface AriaTableColumnResizeProps<T> {
+  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   column: GridNode<T>,
+  /** Aria label for the hidden input. Gets read when resizing. */
   label: string,
-  triggerRef: RefObject<HTMLDivElement>,
+  /**
+   * Ref to the trigger if resizing was started from a column header menu. If it's provided,
+   * focus will be returned there when resizing is done.
+   * */
+  triggerRef?: RefObject<HTMLDivElement>,
+  /** If resizing is disabled. */
   isDisabled?: boolean,
-  onMove: (e: MoveMoveEvent) => void,
-  onMoveEnd: (e: MoveEndEvent) => void,
+  /** If the resizer was moved. Different from onResize because it is always called. */
+  onMove?: (e: MoveMoveEvent) => void,
+  /**
+   * If the resizer was moved. Different from onResizeEnd because it is always called.
+   * It also carries the interaction details in the object.
+   * */
+  onMoveEnd?: (e: MoveEndEvent) => void,
+  /** Called when resizing starts. */
   onResizeStart: (key: Key) => void,
+  /** Called for every resize event that results in new column sizes. */
   onResize: (widths: Map<Key, number | string>) => void,
+  /** Called when resizing ends. */
   onResizeEnd: (key: Key) => void
 }
 
 export interface TableLayoutState {
+  /** Get the current width of the specified column. */
   getColumnWidth: (key: Key) => number,
+  /** Get the current min width of the specified column. */
   getColumnMinWidth: (key: Key) => number,
+  /** Get the current max width of the specified column. */
   getColumnMaxWidth: (key: Key) => number,
+  /** Get the currently resizing column. */
   resizingColumn: Key,
+  /** Called to update the state that resizing has started. */
   onColumnResizeStart: (key: Key) => void,
+  /** Called to update the state that a resize event has occurred. */
   onColumnResize: (column: Key, width: number) => Map<Key, ColumnSize>,
+  /** Called to update the state that resizing has ended. */
   onColumnResizeEnd: (key: Key) => void
 }
 
@@ -62,7 +84,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+      if (triggerRef?.current && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab')) {
         e.preventDefault();
         // switch focus back to the column header on anything that ends edit mode
         focusSafely(triggerRef.current);
@@ -168,9 +190,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
-      if (e.pointerType === 'virtual' && layoutState.resizingColumn != null) {
+      if (e.pointerType === 'virtual' && stateRef.current.resizingColumn != null) {
         endResize(item);
-        focusSafely(triggerRef.current);
+        if (triggerRef?.current) {
+          focusSafely(triggerRef.current);
+        }
         return;
       }
       focusInput();

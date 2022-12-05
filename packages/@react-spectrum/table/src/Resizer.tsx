@@ -61,8 +61,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     display: showResizer ? undefined : 'none',
     touchAction: 'none'
   };
-  let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
-  let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
+  let isEResizable = stateRef.current.getColumnMinWidth(column.key) >= stateRef.current.getColumnWidth(column.key);
+  let isWResizable = stateRef.current.getColumnMaxWidth(column.key) <= stateRef.current.getColumnWidth(column.key);
 
   return (
     <>

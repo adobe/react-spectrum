@@ -11,6 +11,11 @@
  */
 
 import {ColumnSize} from '@react-types/table';
+import {
+  getInitialUncontrolledWidths,
+  recombineColumns,
+  splitColumnsIntoControlledAndUncontrolled
+} from '@react-stately/layout/src/TableLayout';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
 import {TableColumnLayout} from '@react-stately/layout';
@@ -67,31 +72,18 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   );
 
   let tableWidth = props.tableWidth ?? 0;
-  let [controlledWidths, uncontrolledWidths]: [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] = useMemo(() =>
-    state.collection.columns.reduce((acc, col) => {
-      if (col.props.width !== undefined) {
-        acc[0].set(col.key, col);
-      } else {
-        acc[1].set(col.key, col);
-      }
-      return acc;
-    }, [new Map(), new Map()])
-  , [state.collection.columns]); // is this a safe thing to memo on? what if a single column changes?
+  let [controlledColumns, uncontrolledColumns]: [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] = useMemo(() =>
+    splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
+  , [state.collection.columns]);
 
   // uncontrolled column widths
-  let [widths, setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(
-    Array.from(uncontrolledWidths).map(([key, col]) =>
-      [key, col.props.defaultWidth ?? getDefaultWidth?.(col.props)]
-    ))
+  let [uncontrolledWidths, setUncontrolledWidths] = useState<Map<Key, ColumnSize>>(() =>
+    getInitialUncontrolledWidths(uncontrolledColumns, columnLayout)
   );
   // combine columns back into one map that maintains same order as the columns
-  let cWidths = useMemo(() => new Map(state.collection.columns.map(col => {
-    if (uncontrolledWidths.has(col.key)) {
-      return [col.key, widths.get(col.key)];
-    } else {
-      return [col.key, controlledWidths.get(col.key).props.width];
-    }
-  })), [state.collection.columns, uncontrolledWidths, controlledWidths, widths]);
+  let cWidths = useMemo(() =>
+    recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
+  , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns]);
 
   let onColumnResizeStart = useCallback((key: Key) => {
     columnLayout.setResizingColumn(key);
@@ -100,15 +92,15 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   // TODO: move props.on* all into this file and layout, or move them all out to the aria handler..., stately would be preferable
   let onColumnResize = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
-    let newControlled = new Map(Array.from(controlledWidths).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, widths, key, width);
+    let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
+    let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, uncontrolledWidths, key, width);
 
-    let map = new Map(Array.from(uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
+    let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
     map.set(key, width);
-    setWidths(map);
+    setUncontrolledWidths(map);
 
     return newSizes;
-  }, [controlledWidths, uncontrolledWidths, setWidths, tableWidth, columnLayout, state.collection, widths]);
+  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
 
   let onColumnResizeEnd = useCallback((key: Key) => {
     columnLayout.setResizingColumn(null);

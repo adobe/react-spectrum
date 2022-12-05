@@ -46,7 +46,7 @@ export interface TableColumnHeaderAria {
 export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
-  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
+  // if there are no focusable children, the column header will focus the cell
   let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';

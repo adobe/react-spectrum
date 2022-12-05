@@ -33,6 +33,36 @@ interface TableColumnLayoutOptions {
   getDefaultMinWidth: (props) => string | number
 }
 
+/** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
+export function splitColumnsIntoControlledAndUncontrolled(columns): [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] {
+  return columns.reduce((acc, col) => {
+    if (col.props.width !== undefined) {
+      acc[0].set(col.key, col);
+    } else {
+      acc[1].set(col.key, col);
+    }
+    return acc;
+  }, [new Map(), new Map()]);
+}
+
+/** Takes uncontrolled and controlled widths and joins them into a single Map. */
+export function recombineColumns(columns, uncontrolledWidths, uncontrolledColumns, controlledColumns): Map<Key, ColumnSize> {
+  return new Map(columns.map(col => {
+    if (uncontrolledColumns.has(col.key)) {
+      return [col.key, uncontrolledWidths.get(col.key)];
+    } else {
+      return [col.key, controlledColumns.get(col.key).props.width];
+    }
+  }));
+}
+
+/** Used to make an initial Map of the uncontrolled widths based on default widths. */
+export function getInitialUncontrolledWidths(uncontrolledColumns, columnLayout): Map<Key, ColumnSize> {
+  return new Map(Array.from(uncontrolledColumns).map(([key, col]) =>
+    [key, col.props.defaultWidth ?? columnLayout.getDefaultWidth?.(col.props)]
+  ));
+}
+
 export class TableColumnLayout<T> {
   resizingColumn: Key | null;
   getDefaultWidth: (props) => string | number;
@@ -190,9 +220,9 @@ export class TableLayout<T> extends ListLayout<T> {
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
   columnLayout: TableColumnLayout<T>;
-  controlledWidths: Map<Key, GridNode<T>>;
-  uncontrolledWidths: Map<Key, GridNode<T>>;
-  widths: Map<Key, ColumnSize>;
+  controlledColumns: Map<Key, GridNode<T>>;
+  uncontrolledColumns: Map<Key, GridNode<T>>;
+  uncontrolledWidths: Map<Key, ColumnSize>;
   lastVirtualizerWidth: number;
 
   constructor(options: TableLayoutOptions<T>) {
@@ -201,11 +231,11 @@ export class TableLayout<T> extends ListLayout<T> {
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
     this.columnLayout = options.columnLayout;
-    this.getSplitColumns();
+    let [controlledColumns, uncontrolledColumns] = splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    this.controlledColumns = controlledColumns;
+    this.uncontrolledColumns = uncontrolledColumns;
     this.lastVirtualizerWidth = 0;
-    this.widths = new Map(Array.from(this.uncontrolledWidths).map(([key, col]) =>
-      [key, col.props.defaultWidth ?? this.columnLayout.getDefaultWidth?.(col.props)]
-    ));
+    this.uncontrolledWidths = getInitialUncontrolledWidths(uncontrolledColumns, this.columnLayout);
   }
 
   get resizingColumn(): Key {
@@ -243,51 +273,29 @@ export class TableLayout<T> extends ListLayout<T> {
 
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
   onColumnResize(key: Key, width: number): Map<Key, ColumnSize> {
-    let newControlled = new Map(Array.from(this.controlledWidths).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.widths, key, width);
+    let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
+    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
 
-    let map = new Map(Array.from(this.uncontrolledWidths).map(([key]) => [key, newSizes.get(key)]));
+    let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
     map.set(key, width);
-    this.widths = map;
+    this.uncontrolledWidths = map;
     // relayoutNow still uses setState, should happen at the same time the parent
     // component's state is processed as a result of props.onColumnResize
     this.virtualizer.relayoutNow({sizeChanged: true});
     return newSizes;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onColumnResizeEnd(key: Key): void {
+  onColumnResizeEnd(): void {
     this.columnLayout.setResizingColumn(null);
   }
 
-  getSplitColumns() {
-    let [controlledWidths, uncontrolledWidths] = this.collection.columns.reduce((acc, col) => {
-      if (col.props.width !== undefined) {
-        acc[0].set(col.key, col);
-      } else {
-        acc[1].set(col.key, col);
-      }
-      return acc;
-    }, [new Map(), new Map()]);
-    this.controlledWidths = controlledWidths;
-    this.uncontrolledWidths = uncontrolledWidths;
-  }
-
-  recombineColumns() {
-    return new Map(this.collection.columns.map(col => {
-      if (this.uncontrolledWidths.has(col.key)) {
-        return [col.key, this.widths.get(col.key)];
-      } else {
-        return [col.key, this.controlledWidths.get(col.key).props.width];
-      }
-    }));
-  }
-
   buildCollection(): LayoutNode[] {
-    this.getSplitColumns();
-    let cWidths = this.recombineColumns();
-    // I think this runs every render cycle?
-    // Which would mean that we'd be behind by one render since invalidate
+    let [controlledColumns, uncontrolledColumns] = splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    this.controlledColumns = controlledColumns;
+    this.uncontrolledColumns = uncontrolledColumns;
+    let cWidths = recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
+
+    // We will be behind by one render for column prop changes since invalidate
     // will take a render to resolve.
     // If columns changed, clear layout cache.
     if (
