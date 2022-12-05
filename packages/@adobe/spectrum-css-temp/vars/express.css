@@ -1,4 +1,4 @@
-.express {
+.express.express {
   --spectrum-accent-color-100: var(--spectrum-indigo-100);
   --spectrum-accent-color-200: var(--spectrum-indigo-200);
   --spectrum-accent-color-300: var(--spectrum-indigo-300);
@@ -155,10 +155,10 @@
   --spectrum-tooltip-background-color: var(--spectrum-neutral-background-color-default);
 }
 
-.medium {
+.express.medium {
   --spectrum-switch-track-width: 28px;
 }
 
-.large {
+.express.large {
   --spectrum-switch-track-width: 36px;
 }
