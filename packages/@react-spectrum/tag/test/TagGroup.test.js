@@ -299,6 +299,85 @@ describe('TagGroup', function () {
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
 
+  it('maxRows should limit the number of tags shown', function () {
+    let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      return {
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 50
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 100,
+        width: 100,
+        height: 50
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 100,
+        width: 100,
+        height: 50
+      };
+    }).mockImplementation(function () {
+      return {
+        left: 0,
+        top: 0,
+        x: 0,
+        y: 200,
+        width: 100,
+        height: 50
+      };
+    });
+    let {getAllByRole, getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup maxRows={2} aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+          <Item key="4" aria-label="Tag 4">Tag 4</Item>
+          <Item key="5" aria-label="Tag 5">Tag 5</Item>
+          <Item key="6" aria-label="Tag 6">Tag 6</Item>
+          <Item key="7" aria-label="Tag 7">Tag 7</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(4);
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Show all (7)');
+
+    userEvent.click(button);
+    tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(7);
+    expect(button).toHaveTextContent('Show less');
+
+    userEvent.click(button);
+    tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(4);
+    expect(button).toHaveTextContent('Show all (7)');
+    
+    offsetWidth.mockReset();
+  });
 
   // Commented out until spectrum can provide use case for these scenarios
   // it.each`
