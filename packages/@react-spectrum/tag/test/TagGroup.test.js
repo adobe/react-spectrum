@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -23,6 +23,7 @@ import userEvent from '@testing-library/user-event';
 function pressKeyOnButton(key) {
   return (button) => {
     fireEvent.keyDown(button, {key});
+    fireEvent.keyUp(button, {key});
   };
 }
 
@@ -68,6 +69,7 @@ describe('TagGroup', function () {
     expect(tags.length).toBe(3);
 
     fireEvent.keyDown(tags[1], {key: 'Delete'});
+    fireEvent.keyUp(tags[1], {key: 'Delete'});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -281,21 +283,27 @@ describe('TagGroup', function () {
     expect(document.activeElement).toBe(tags[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tags[1]);
     
     fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tags[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'End'});
+    fireEvent.keyUp(document.activeElement, {key: 'End'});
     expect(document.activeElement).toBe(tags[3]);
 
     fireEvent.keyDown(document.activeElement, {key: 'Home'});
+    fireEvent.keyUp(document.activeElement, {key: 'Home'});
     expect(document.activeElement).toBe(tags[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'PageDown'});
+    fireEvent.keyUp(document.activeElement, {key: 'PageDown'});
     expect(document.activeElement).toBe(tags[1]);
 
     fireEvent.keyDown(document.activeElement, {key: 'PageUp'});
+    fireEvent.keyUp(document.activeElement, {key: 'PageUp'});
     expect(document.activeElement).toBe(tags[0]);
   });
 
@@ -317,6 +325,7 @@ describe('TagGroup', function () {
 
     let tag = getByText('Tag 1');
     fireEvent.keyDown(tag, {key: props.keyPress});
+    fireEvent.keyUp(tag, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
@@ -333,11 +342,11 @@ describe('TagGroup', function () {
     );
 
     let tags = getAllByRole('row');
-    fireEvent.click(tags[0]);
+    triggerPress(tags[0]);
     expect(onRemoveSpy).not.toHaveBeenCalled();
 
     let removeButton = within(tags[0]).getByRole('button');
-    fireEvent.click(removeButton);
+    triggerPress(removeButton);
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith('1');
   });
@@ -380,6 +389,7 @@ describe('TagGroup', function () {
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
     fireEvent.keyDown(document.activeElement, {key: props.keyPress});
+    fireEvent.keyUp(document.activeElement, {key: props.keyPress});
     expect(onRemoveSpy).toHaveBeenCalledTimes(1);
     expect(onRemoveSpy).toHaveBeenCalledWith(1);
     tags = getAllByRole('row');
