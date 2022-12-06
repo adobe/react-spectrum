@@ -227,18 +227,16 @@ function getDiff(pair) {
   let branchApi = pair.branchApi === null ? {exports:{}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  let allExportNames = [...new Set([...Object.entries(publishedApi.exports).map(([name, item]) => {
-    if (!item.id) {
-      console.log(item, name);
-      console.log(publishedApi.exports)
-    }
-    return item.id.replace(/(.*\/)(packages\/.*)/, '$2')
-  }), ...Object.entries(branchApi.exports).map(([name, item]) => {
-    if (!item.id) {
-      console.log(item, name);
-    }
-    return item.id.replace(/(.*\/)(packages\/.*)/, '$2')
-  })])];
+  let allExportNames = [...new Set([
+    // eslint-disable-next-line arrow-body-style
+    ...Object.entries(publishedApi.exports).map(([name, item]) => {
+      return item.id.replace(/(.*\/)(packages\/.*)/, '$2');
+    }),
+    // eslint-disable-next-line arrow-body-style
+    ...Object.entries(branchApi.exports).map(([name, item]) => {
+      return item.id.replace(/(.*\/)(packages\/.*)/, '$2');
+    })
+  ])];
   let allInterfaces = [...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])];
   let formattedPublishedInterfaces = '';
   let formattedBranchInterfaces = '';
@@ -251,10 +249,6 @@ function getDiff(pair) {
       return;
     }
     let simplifiedName = allExportNames[index];
-    if (iname === 'SearchAutocomplete<T extends {}>') {
-      console.log('published', formattedPublishedInterfaces[index])
-      console.log('branch', formattedBranchInterfaces[index])
-    }
     let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
     if (argv.verbose) {
       console.log(util.inspect(codeDiff, {depth: null}));
@@ -439,9 +433,6 @@ function rebuildInterfaces(json) {
   let exports = {};
   if (!json.exports) {
     return exports;
-  }
-  if (json.exports.SearchAutocomplete) {
-    console.log('found')
   }
   Object.keys(json.exports).forEach((key) => {
     currentlyProcessing = key;
