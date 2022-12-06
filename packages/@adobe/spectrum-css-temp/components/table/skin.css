@@ -303,11 +303,42 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table-colResizeIndicator {
+  --spectrum-table-col-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
   &.spectrum-Table-colResizeIndicator--resizing {
-    background-color: var(--spectrum-global-color-blue-600);
+    background-color: var(--spectrum-table-col-resize-indicator-background-color);
   }
 }
-.spectrum-Table-colResizeNubbin {}
+.spectrum-Table-colResizeNubbin {
+  --spectrum-table-col-resize-nubbin-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
+  svg {
+    > g {
+      fill: var(--spectrum-table-col-resize-nubbin-background-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-background-color);
+    }
+    > path {
+      fill: var(--spectrum-table-col-resize-nubbin-icon-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-icon-color);
+    }
+  }
+}
 .spectrum-Table-bodyResizeIndicator {
-  background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-body-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
+  background-color: var(--spectrum-table-body-resize-indicator-background-color);
+}
+
+@media (forced-colors: active) {
+  .spectrum-Table-columnResizer {
+    --spectrum-table-divider-border-color: CanvasText;
+  }
+  .spectrum-Table-colResizeIndicator {
+    --spectrum-table-col-resize-indicator-background-color: Highlight;
+  }
+  .spectrum-Table-colResizeNubbin {
+    --spectrum-table-col-resize-nubbin-background-color: Highlight;
+    --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
+  }
+  .spectrum-Table-bodyResizeIndicator {
+    --spectrum-table-body-resize-indicator-background-color: Highlight;
+  }
 }
