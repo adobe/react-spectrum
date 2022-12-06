@@ -130,7 +130,14 @@ function ActionBarTable(props) {
       /*- begin highlight -*/
       height="size-5000"
       /*- end highlight -*/>
-      <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
+      <TableView
+        aria-label="Table with controlled selection"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        /*- begin highlight -*/
+        height="size-3000"
+        /*- end highlight -*/>
         <TableHeader columns={columns}>
           {column => (
             <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
