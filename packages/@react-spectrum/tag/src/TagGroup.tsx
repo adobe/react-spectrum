@@ -73,15 +73,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   const {tagGroupProps} = useTagGroup(props);
 
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-
-  // Not using React.Children.toArray because it mutates the key prop.
-  let childArray: ReactElement[] = [];
-  React.Children.forEach(children, child => {
-    if (React.isValidElement(child)) {
-      childArray.push(child);
-    }
-  });
-  let [visibleTagCount, setVisibleTagCount] = useValueEffect(childArray.length);
+  let [visibleTagCount, setVisibleTagCount] = useValueEffect(gridCollection.size);
 
   let updateVisibleTagCount = useCallback(() => {
     let computeVisibleTagCount = () => {
@@ -114,7 +106,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
     setVisibleTagCount(function *() {
       // Update to show all items.
-      yield childArray.length;
+      yield gridCollection.size;
 
       // Measure, and update to show the items until maxRows is reached.
       let newVisibleTagCount = computeVisibleTagCount();
@@ -140,7 +132,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
       }
     });
-  }, [childArray.length, direction, domRef, maxRows, setVisibleTagCount]);
+  }, [direction, domRef, gridCollection.size, maxRows, setVisibleTagCount]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
 
