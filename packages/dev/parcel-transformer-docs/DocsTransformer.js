@@ -104,7 +104,10 @@ module.exports = new Transformer({
         return processExport(path.get('typeAnnotation'), node);
       }
       if (path.isTSAsExpression()) {
-        return processExport(path.get('expression'), node);
+        // see Spectrum Table package for re-export of Column which changes the types
+        // this is the correct type as it's what TS will generate when it runs
+        // we get around this in docs by using the exported type directly in the props table
+        return processExport(path.get('type'), node);
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
