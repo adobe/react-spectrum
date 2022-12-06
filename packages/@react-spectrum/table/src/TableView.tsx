@@ -668,8 +668,7 @@ function ResizableTableColumnHeader(props) {
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
-    isVirtualized: true,
-    hasMenu: true
+    isVirtualized: true
   }, state, ref);
 
   let {hoverProps, isHovered} = useHover({...props, isDisabled: isEmpty || headerMenuOpen});
