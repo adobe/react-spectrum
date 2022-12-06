@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr auto;
   grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
@@ -73,7 +73,6 @@ governing permissions and limitations under the License.
 
   .spectrum-Tag-content {
     grid-area: content;
-    block-size: 100%;
     line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
     margin-inline-end: var(--spectrum-tag-padding-x);
     flex: 1 1 auto;
