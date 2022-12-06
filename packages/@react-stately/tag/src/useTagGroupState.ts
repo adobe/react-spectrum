@@ -11,7 +11,6 @@
  */
 
 import {TagGroupProps, TagGroupState} from '@react-types/tag';
-import {useEffect, useRef} from 'react';
 import {useListState} from '@react-stately/list';
 
 /**
@@ -20,15 +19,14 @@ import {useListState} from '@react-stately/list';
 export function useTagGroupState<T extends object>(props: TagGroupProps<T>): TagGroupState<T> {
   let state = useListState(props);
 
-  let keyToRestoreOnRemove = useRef(null);
+  let onRemove = (key) => {
+    // If a tag is removed, restore focus to the tag after, or tag before if no tag after.
+    let restoreKey = state.collection.getKeyAfter(key) || state.collection.getKeyBefore(key);
+    state.selectionManager.setFocusedKey(restoreKey);
+  };
 
-  useEffect(() => {
-    // If the focused key is removed, restore focus to the tag after, or tag before if no tag after.
-    if (!state.collection.getItem(state.selectionManager.focusedKey)) {
-      state.selectionManager.setFocusedKey(keyToRestoreOnRemove.current);
-    }
-    keyToRestoreOnRemove.current = state.collection.getKeyAfter(state.selectionManager.focusedKey) || state.collection.getKeyBefore(state.selectionManager.focusedKey);
-  }, [state.collection, state.selectionManager]);
-
-  return state;
+  return {
+    onRemove,
+    ...state
+  };
 }

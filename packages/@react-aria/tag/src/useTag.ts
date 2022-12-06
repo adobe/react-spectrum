@@ -11,8 +11,8 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent} from 'react';
@@ -37,7 +37,6 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
   let {
     isFocused,
     allowsRemoving,
-    onRemove,
     item,
     tagRowRef
   } = props;
@@ -52,6 +51,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
+
+  let onRemove = (key) => chain(props.onRemove, state.onRemove)(key);
 
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
