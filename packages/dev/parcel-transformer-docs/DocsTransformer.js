@@ -104,7 +104,7 @@ module.exports = new Transformer({
         return processExport(path.get('typeAnnotation'), node);
       }
       if (path.isTSAsExpression()) {
-        return processExport(path.get('type'), node);
+        return processExport(path.get('expression'), node);
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
