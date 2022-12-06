@@ -91,13 +91,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         return;
       }
 
-      let items = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON') as HTMLDivElement[];
+      let tags = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON') as HTMLDivElement[];
       let currY = -Infinity;
       let rowCount = 0;
       let index = 0;
       // Count rows and show tags until we hit the maxRows.
-      for (let item of items) {
-        let {y} = item.getBoundingClientRect();
+      for (let tag of tags) {
+        let {y} = tag.getBoundingClientRect();
 
         if (y !== currY) {
           currY = y;
@@ -109,21 +109,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
         index++;
       }
-
-      // Hide tags on last row until there is room for the collapse button.
-      // let end = direction === 'ltr' ? 'right' : 'left';
-      // let containerEnd = currDomRef.getBoundingClientRect()[end];
-      // let collapseButtonWidth = [...currDomRef.children].find(el => el.tagName !== 'BUTTON').getBoundingClientRect().width;
-      // let lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
-      // let lastTagY = items[index - 1]?.getBoundingClientRect().y;
-      // let lastRowY = lastTagY;
-
-      // while (containerEnd - lastTagEnd < collapseButtonWidth && lastTagY === lastRowY) {
-      //   index--;
-      //   lastTagEnd = items[index - 1]?.getBoundingClientRect()[end];
-      //   lastTagY = items[index - 1]?.getBoundingClientRect().y;
-      // }
-
       return index;
     };
 
@@ -134,8 +119,28 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       // Measure, and update to show the items until maxRows is reached.
       let newVisibleTagCount = computeVisibleTagCount();
       yield newVisibleTagCount;
+
+      // Remove tags until there is space for the collapse button on the last row.
+      let tags = [...domRef.current.children].filter(el => el.tagName !== 'BUTTON');
+      let collapseButton = [...domRef.current.children].find(el => el.tagName === 'BUTTON');
+      let lastTagY = tags[newVisibleTagCount - 1].getBoundingClientRect().y;
+      if (collapseButton?.getBoundingClientRect().y > lastTagY) {
+        let end = direction === 'ltr' ? 'right' : 'left';
+        let containerEnd = domRef.current.getBoundingClientRect()[end];
+        let lastTagEnd = tags[newVisibleTagCount - 1].getBoundingClientRect()[end];
+        let collapseButtonWidth = collapseButton.getBoundingClientRect().width;
+        let firstTagY = tags[0].getBoundingClientRect().y;
+        let lastRowY = lastTagY;
+
+        while (containerEnd - lastTagEnd < collapseButtonWidth && lastTagY === lastRowY && firstTagY !== lastRowY) {
+          newVisibleTagCount--;
+          yield newVisibleTagCount;
+          lastTagEnd = tags[newVisibleTagCount - 1].getBoundingClientRect()[end];
+          lastTagY = tags[newVisibleTagCount - 1].getBoundingClientRect().y;
+        }
+      }
     });
-  }, [childArray.length, domRef, maxRows, setVisibleTagCount]);
+  }, [childArray.length, direction, domRef, maxRows, setVisibleTagCount]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
 
