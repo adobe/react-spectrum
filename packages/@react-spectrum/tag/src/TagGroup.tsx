@@ -165,12 +165,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       <div
         {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
         className={
-        classNames(
-          styles,
-          'spectrum-Tags',
-          styleProps.className
-        )
-      }
+          classNames(
+            styles,
+            'spectrum-Tags',
+            styleProps.className
+          )
+        }
         role={state.collection.size ? 'grid' : null}
         ref={domRef}>
         {visibleTags.map(item => (
@@ -183,12 +183,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             onRemove={onRemove}>
             {item.childNodes[0].rendered}
           </Tag>
-      ))}
+        ))}
         {maxRows != null && visibleTagCount < gridCollection.size &&
-        <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
-          {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
-        </ActionButton>
-      }
+          <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
+            {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
+          </ActionButton>
+        }
       </div>
     </FocusScope>
   );
