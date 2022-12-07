@@ -85,7 +85,14 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           return;
         }
 
-        let tags = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON');
+        let [tags, button] = [...currDomRef.children].reduce((acc, el) => {
+          if (el.tagName !== 'BUTTON') {
+            acc[0].push(el);
+          } else {
+            acc[1] = el;
+          }
+          return acc;
+        }, [[], null]);
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -107,21 +114,18 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         // Remove tags until there is space for the collapse button on the last row.
-        if (tagState.showCollapseButton) {
-          let collapseButtonWidth = [...domRef.current.children].find(el => el.tagName === 'BUTTON')?.getBoundingClientRect().width;
-          let end = direction === 'ltr' ? 'right' : 'left';
-          let containerEnd = currDomRef.getBoundingClientRect()[end];
-          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-          let availableWidth = containerEnd - lastTagEnd;
-          for (let tagWidth of tagWidths.reverse()) {
-            if (availableWidth > collapseButtonWidth || index <= 1) {
-              break;
-            }
-            availableWidth += tagWidth;
-            index--;
+        let buttonWidth = button.getBoundingClientRect().width;
+        let end = direction === 'ltr' ? 'right' : 'left';
+        let containerEnd = currDomRef.getBoundingClientRect()[end];
+        let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+        let availableWidth = containerEnd - lastTagEnd;
+        for (let tagWidth of tagWidths.reverse()) {
+          if (availableWidth > buttonWidth || index <= 1) {
+            break;
           }
+          availableWidth += tagWidth;
+          index--;
         }
-    
         return {visibleTagCount: index, showCollapseButton: index < gridCollection.size};
       };
     
@@ -133,7 +137,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         yield computeVisibleTagCount();
       });
     }
-  }, [direction, domRef, gridCollection.size, maxRows, setTagState, tagState.showCollapseButton]);
+  }, [direction, domRef, gridCollection.size, maxRows, setTagState]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
 
