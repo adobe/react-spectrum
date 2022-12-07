@@ -67,25 +67,24 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   );
 
   let tableWidth = props.tableWidth ?? 0;
-  let [controlledColumns, uncontrolledColumns]: [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] = useMemo(() =>
-      TableColumnLayout.splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
-  , [state.collection.columns]);
+  let [controlledColumns, uncontrolledColumns] = useMemo(() =>
+      columnLayout.splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
+  , [state.collection.columns, columnLayout]);
 
   // uncontrolled column widths
-  let [uncontrolledWidths, setUncontrolledWidths] = useState<Map<Key, ColumnSize>>(() =>
-    TableColumnLayout.getInitialUncontrolledWidths(uncontrolledColumns, columnLayout)
+  let [uncontrolledWidths, setUncontrolledWidths] = useState(() =>
+    columnLayout.getInitialUncontrolledWidths(uncontrolledColumns)
   );
   // combine columns back into one map that maintains same order as the columns
   let cWidths = useMemo(() =>
-      TableColumnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
-  , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns]);
+      columnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
+  , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns, columnLayout]);
 
   let onColumnResizeStart = useCallback((key: Key) => {
     columnLayout.setResizingColumn(key);
     propsOnColumnResizeStart?.(key);
   }, [columnLayout, propsOnColumnResizeStart]);
 
-  // TODO: move props.on* all into this file and layout, or move them all out to the aria handler..., stately would be preferable
   let onColumnResize = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, uncontrolledWidths, key, width);
