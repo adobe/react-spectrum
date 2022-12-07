@@ -52,7 +52,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
 
-  let onRemove = (key) => chain(props.onRemove, state.onRemove)(key);
+  let onRemove = chain(props.onRemove, state.onRemove);
 
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
