@@ -77,62 +77,67 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let [visibleTagCount, setVisibleTagCount] = useValueEffect(gridCollection.size);
 
   let updateVisibleTagCount = useCallback(() => {
-    let computeVisibleTagCount = () => {
-      // Refs can be null at runtime.
-      let currDomRef: HTMLDivElement | null = domRef.current;
-      if (!currDomRef) {
-        return;
-      }
-
-      let tags = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON') as HTMLDivElement[];
-      let currY = -Infinity;
-      let rowCount = 0;
-      let index = 0;
-      // Count rows and show tags until we hit the maxRows.
-      for (let tag of tags) {
-        let {y} = tag.getBoundingClientRect();
-
-        if (y !== currY) {
-          currY = y;
-          rowCount++;
+    if (maxRows !== null) {
+      let computeVisibleTagCount = (collapseButtonWidth?: number) => {
+        // Refs can be null at runtime.
+        let currDomRef: HTMLDivElement | null = domRef.current;
+        if (!currDomRef) {
+          return;
         }
 
-        if (rowCount > maxRows) {
-          break;
+        let tags = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON');
+        let currY = -Infinity;
+        let rowCount = 0;
+        let index = 0;
+        let tagWidths = [];
+        // Count rows and show tags until we hit the maxRows.
+        for (let tag of tags) {
+          let {y} = tag.getBoundingClientRect();
+
+          if (y !== currY) {
+            currY = y;
+            rowCount++;
+          }
+
+          if (rowCount > maxRows) {
+            break;
+          }
+          tagWidths.push(tag.getBoundingClientRect().width);
+          index++;
         }
-        index++;
-      }
-      return index;
-    };
 
-    setVisibleTagCount(function *() {
-      // Update to show all items.
-      yield gridCollection.size;
-
-      // Measure, and update to show the items until maxRows is reached.
-      let newVisibleTagCount = computeVisibleTagCount();
-      yield newVisibleTagCount;
-
-      // Remove tags until there is space for the collapse button on the last row.
-      let tags = [...domRef.current.children].filter(el => el.tagName !== 'BUTTON');
-      let collapseButton = [...domRef.current.children].find(el => el.tagName === 'BUTTON');
-      let lastTagY = tags[newVisibleTagCount - 1].getBoundingClientRect().y;
-      if (collapseButton?.getBoundingClientRect().y > lastTagY) {
-        let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = domRef.current.getBoundingClientRect()[end];
-        let lastTagEnd = tags[newVisibleTagCount - 1].getBoundingClientRect()[end];
-        let collapseButtonWidth = collapseButton.getBoundingClientRect().width;
-        let firstTagY = tags[0].getBoundingClientRect().y;
-        let lastRowY = lastTagY;
-
-        while (containerEnd - lastTagEnd < collapseButtonWidth && lastTagY === lastRowY && firstTagY !== lastRowY) {
-          newVisibleTagCount--;
-          yield newVisibleTagCount;
-          lastTagEnd = tags[newVisibleTagCount - 1].getBoundingClientRect()[end];
-          lastTagY = tags[newVisibleTagCount - 1].getBoundingClientRect().y;
+        // Remove tags until there is space for the collapse button on the last row.
+        if (collapseButtonWidth) {
+          let end = direction === 'ltr' ? 'right' : 'left';
+          let containerEnd = currDomRef.getBoundingClientRect()[end];
+          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+          let availableWidth = containerEnd - lastTagEnd;
+          for (let tagWidth of tagWidths.reverse()) {
+            if (availableWidth > collapseButtonWidth || index <= 1) {
+              break;
+            }
+            availableWidth += tagWidth;
+            index--;
+          }
         }
-      }
-    });
+    
+        return index;
+      };
+    
+      setVisibleTagCount(function *() {
+        // Update to show all items.
+        yield gridCollection.size;
+
+        // Measure, and update to show the items until maxRows is reached.
+        let newVisibleTagCount = computeVisibleTagCount();
+        yield newVisibleTagCount;
+      
+        if (newVisibleTagCount < gridCollection.size) {
+          let collapseButtonWidth = [...domRef.current.children].find(el => el.tagName === 'BUTTON')?.getBoundingClientRect().width;
+          yield computeVisibleTagCount(collapseButtonWidth);
+        }
+      });
+    }
   }, [direction, domRef, gridCollection.size, maxRows, setVisibleTagCount]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
