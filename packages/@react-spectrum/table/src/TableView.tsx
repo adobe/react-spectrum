@@ -140,7 +140,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     return 75;
   }, [scale]);
 
+  // Starts when the user selects resize from the menu, ends when resizing ends
+  // used to control the visibility of the resizer Nubbin
   let [isInResizeMode, setIsInResizeMode] = useState(false);
+  // Starts when the resizer is actually moved
   // entering resizing/exiting resizing doesn't trigger a render
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);

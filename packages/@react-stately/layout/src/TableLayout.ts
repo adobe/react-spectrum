@@ -33,36 +33,6 @@ interface TableColumnLayoutOptions {
   getDefaultMinWidth: (props) => string | number
 }
 
-/** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
-export function splitColumnsIntoControlledAndUncontrolled(columns): [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] {
-  return columns.reduce((acc, col) => {
-    if (col.props.width != null) {
-      acc[0].set(col.key, col);
-    } else {
-      acc[1].set(col.key, col);
-    }
-    return acc;
-  }, [new Map(), new Map()]);
-}
-
-/** Takes uncontrolled and controlled widths and joins them into a single Map. */
-export function recombineColumns(columns, uncontrolledWidths, uncontrolledColumns, controlledColumns): Map<Key, ColumnSize> {
-  return new Map(columns.map(col => {
-    if (uncontrolledColumns.has(col.key)) {
-      return [col.key, uncontrolledWidths.get(col.key)];
-    } else {
-      return [col.key, controlledColumns.get(col.key).props.width];
-    }
-  }));
-}
-
-/** Used to make an initial Map of the uncontrolled widths based on default widths. */
-export function getInitialUncontrolledWidths(uncontrolledColumns, columnLayout): Map<Key, ColumnSize> {
-  return new Map(Array.from(uncontrolledColumns).map(([key, col]) =>
-    [key, col.props.defaultWidth ?? columnLayout.getDefaultWidth?.(col.props)]
-  ));
-}
-
 export class TableColumnLayout<T> {
   resizingColumn: Key | null;
   getDefaultWidth: (props) => string | number;
@@ -75,6 +45,37 @@ export class TableColumnLayout<T> {
   constructor(options: TableColumnLayoutOptions) {
     this.getDefaultWidth = options.getDefaultWidth;
     this.getDefaultMinWidth = options.getDefaultMinWidth;
+  }
+
+
+  /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
+  static splitColumnsIntoControlledAndUncontrolled(columns): [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] {
+    return columns.reduce((acc, col) => {
+      if (col.props.width != null) {
+        acc[0].set(col.key, col);
+      } else {
+        acc[1].set(col.key, col);
+      }
+      return acc;
+    }, [new Map(), new Map()]);
+  }
+
+  /** Takes uncontrolled and controlled widths and joins them into a single Map. */
+  static recombineColumns(columns, uncontrolledWidths, uncontrolledColumns, controlledColumns): Map<Key, ColumnSize> {
+    return new Map(columns.map(col => {
+      if (uncontrolledColumns.has(col.key)) {
+        return [col.key, uncontrolledWidths.get(col.key)];
+      } else {
+        return [col.key, controlledColumns.get(col.key).props.width];
+      }
+    }));
+  }
+
+  /** Used to make an initial Map of the uncontrolled widths based on default widths. */
+  static getInitialUncontrolledWidths(uncontrolledColumns, columnLayout): Map<Key, ColumnSize> {
+    return new Map(Array.from(uncontrolledColumns).map(([key, col]) =>
+      [key, col.props.defaultWidth ?? columnLayout.getDefaultWidth?.(col.props)]
+    ));
   }
 
   setResizingColumn(key: Key | null): void {
@@ -231,11 +232,11 @@ export class TableLayout<T> extends ListLayout<T> {
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();
     this.columnLayout = options.columnLayout;
-    let [controlledColumns, uncontrolledColumns] = splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    let [controlledColumns, uncontrolledColumns] = TableColumnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
     this.lastVirtualizerWidth = 0;
-    this.uncontrolledWidths = getInitialUncontrolledWidths(uncontrolledColumns, this.columnLayout);
+    this.uncontrolledWidths = TableColumnLayout.getInitialUncontrolledWidths(uncontrolledColumns, this.columnLayout);
   }
 
   get resizingColumn(): Key {
@@ -290,10 +291,10 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildCollection(): LayoutNode[] {
-    let [controlledColumns, uncontrolledColumns] = splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    let [controlledColumns, uncontrolledColumns] = TableColumnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
-    let cWidths = recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
+    let cWidths = TableColumnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
 
     // We will be behind by one render for column prop changes since invalidate
     // will take a render to resolve.

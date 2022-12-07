@@ -28,9 +28,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {state, isEmpty, layout} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
-  // but we don't actually need the value, that is available in the layout object
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {width} = useVirtualizerContext();
+  // but we don't actually need any value, they are available on the layout object
+  useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
   const stateRef = useRef<TableLayoutState>(null);

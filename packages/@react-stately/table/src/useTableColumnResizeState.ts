@@ -11,14 +11,9 @@
  */
 
 import {ColumnSize} from '@react-types/table';
-import {
-  getInitialUncontrolledWidths,
-  recombineColumns,
-  splitColumnsIntoControlledAndUncontrolled,
-  TableColumnLayout
-} from '@react-stately/layout';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
+import {TableColumnLayout} from '@react-stately/layout';
 
 export interface TableColumnResizeStateProps<T> {
   /**
@@ -73,16 +68,16 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let tableWidth = props.tableWidth ?? 0;
   let [controlledColumns, uncontrolledColumns]: [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] = useMemo(() =>
-    splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
+      TableColumnLayout.splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
   , [state.collection.columns]);
 
   // uncontrolled column widths
   let [uncontrolledWidths, setUncontrolledWidths] = useState<Map<Key, ColumnSize>>(() =>
-    getInitialUncontrolledWidths(uncontrolledColumns, columnLayout)
+    TableColumnLayout.getInitialUncontrolledWidths(uncontrolledColumns, columnLayout)
   );
   // combine columns back into one map that maintains same order as the columns
   let cWidths = useMemo(() =>
-    recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
+      TableColumnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
   , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns]);
 
   let onColumnResizeStart = useCallback((key: Key) => {
