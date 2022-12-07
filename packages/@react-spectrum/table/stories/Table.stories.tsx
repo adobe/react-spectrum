@@ -1373,13 +1373,11 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, controlled, no widths',
     () => (
-      <ControllingResize width={900} />
+      <ControllingResize width={900} columns={uncontrolledColumns} />
     ),
   {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
-    you will see a quick flash because the entire table is re-rendered. This
-    mimics what would happen if an app reloaded the whole page and restored a saved
-    column width state.
+    you will notice that the entire table reverts, this is because no columns are controlled.
     `}}
   )
   .add(
@@ -1391,7 +1389,8 @@ storiesOf('TableView', module)
     You can use the buttons to save and restore the column widths. When restoring,
     you will see a quick flash because the entire table is re-rendered. This
     mimics what would happen if an app reloaded the whole page and restored a saved
-    column width state.
+    column width state. This is a "some widths" controlled story. It cannot restore
+    the widths of the columns that it does not manage. Height and weight are uncontrolled.
     `}}
   )
   .add(
@@ -1407,6 +1406,13 @@ storiesOf('TableView', module)
     `}}
   );
 
+let uncontrolledColumns: PokemonColumn[] = [
+  {name: 'Name', uid: 'name'},
+  {name: 'Type', uid: 'type'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level'}
+];
 
 let columnsFR: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},

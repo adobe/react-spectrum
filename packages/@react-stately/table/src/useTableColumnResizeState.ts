@@ -107,17 +107,14 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     propsOnColumnResizeEnd?.(key);
   }, [columnLayout, propsOnColumnResizeEnd]);
 
-  // done
   let getColumnWidth = useCallback((key: Key) =>
     columnLayout.getColumnWidth(key)
   , [columnLayout]);
 
-  // done
   let getColumnMinWidth = useCallback((key: Key) =>
     columnLayout.getColumnMinWidth(key)
   , [columnLayout]);
 
-  // done
   let getColumnMaxWidth = useCallback((key: Key) =>
     columnLayout.getColumnMaxWidth(key)
   , [columnLayout]);

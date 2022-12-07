@@ -153,3 +153,20 @@ export interface TableCollection<T> extends GridCollection<T> {
   /** The node that makes up the body of the table. */
   body: GridNode<T>
 }
+
+export interface TableLayoutState {
+  /** Get the current width of the specified column. */
+  getColumnWidth: (key: Key) => number,
+  /** Get the current min width of the specified column. */
+  getColumnMinWidth: (key: Key) => number,
+  /** Get the current max width of the specified column. */
+  getColumnMaxWidth: (key: Key) => number,
+  /** Get the currently resizing column. */
+  resizingColumn: Key,
+  /** Called to update the state that resizing has started. */
+  onColumnResizeStart: (key: Key) => void,
+  /** Called to update the state that a resize event has occurred. */
+  onColumnResize: (column: Key, width: number) => Map<Key, ColumnSize>,
+  /** Called to update the state that resizing has ended. */
+  onColumnResizeEnd: (key: Key) => void
+}

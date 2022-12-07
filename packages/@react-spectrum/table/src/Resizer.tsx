@@ -7,13 +7,13 @@ import intlMessages from '../intl/*.json';
 import {MoveMoveEvent} from '@react-types/shared';
 import React, {Key, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableLayoutState, useTableColumnResize} from '@react-aria/table';
+import {TableLayoutState} from '@react-types/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableView';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ResizerProps<T> {
-  layout: TableLayoutState,
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
@@ -24,8 +24,8 @@ interface ResizerProps<T> {
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
-  let {column, showResizer, layout} = props;
-  let {state, isEmpty} = useTableContext();
+  let {column, showResizer} = props;
+  let {state, isEmpty, layout} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need the value, that is available in the layout object

@@ -31,4 +31,4 @@ export type {AriaTableColumnHeaderProps, TableColumnHeaderAria} from './useTable
 export type {AriaTableCellProps, TableCellAria} from './useTableCell';
 export type {TableHeaderRowAria} from './useTableHeaderRow';
 export type {AriaTableSelectionCheckboxProps, TableSelectionCheckboxAria, TableSelectAllCheckboxAria} from './useTableSelectionCheckbox';
-export type {AriaTableColumnResizeProps, TableColumnResizeAria, TableLayoutState} from './useTableColumnResize';
+export type {AriaTableColumnResizeProps, TableColumnResizeAria} from './useTableColumnResize';

@@ -36,7 +36,7 @@ interface TableColumnLayoutOptions {
 /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
 export function splitColumnsIntoControlledAndUncontrolled(columns): [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] {
   return columns.reduce((acc, col) => {
-    if (col.props.width !== undefined) {
+    if (col.props.width != null) {
       acc[0].set(col.key, col);
     } else {
       acc[1].set(col.key, col);
@@ -179,7 +179,7 @@ export class TableColumnLayout<T> {
     return newWidths;
   }
 
-  buildColumnWidths(tableWidth: number, collection: TableCollection<T>, controlledWidths) {
+  buildColumnWidths(tableWidth: number, collection: TableCollection<T>, widths: Map<Key, ColumnSize>) {
     this.columnWidths = new Map();
     this.columnMinWidths = new Map();
     this.columnMaxWidths = new Map();
@@ -189,7 +189,7 @@ export class TableColumnLayout<T> {
     let columnWidths = calculateColumnSizes(
       tableWidth,
       collection.columns.map(col => ({...col.column.props, key: col.key})),
-      controlledWidths,
+      widths,
       (i) => this.getDefaultWidth(collection.columns[i].props),
       (i) => this.getDefaultMinWidth(collection.columns[i].props)
     );

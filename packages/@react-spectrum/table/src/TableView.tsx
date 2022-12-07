@@ -98,7 +98,6 @@ interface TableContextValue<T> {
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (key: Key) => void,
   onMoveResizer: (e: MoveMoveEvent) => void,
-  isQuiet: boolean,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void
 }
@@ -377,7 +376,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   return (
-    <TableContext.Provider value={{state, layout, isQuiet, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer, headerMenuOpen, setHeaderMenuOpen}}>
+    <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -800,7 +799,6 @@ function ResizableTableColumnHeader(props) {
         <Resizer
           ref={resizingRef}
           column={column}
-          layout={layout}
           showResizer={showResizer}
           onResizeStart={onResizeStart}
           onResize={onResize}
