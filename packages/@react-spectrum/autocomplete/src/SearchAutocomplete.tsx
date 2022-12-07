@@ -22,7 +22,17 @@ import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {forwardRef, InputHTMLAttributes, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {
+  forwardRef,
+  InputHTMLAttributes,
+  ReactElement,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
+import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -51,7 +61,7 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   }
 }
 
-const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -66,10 +76,10 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
-  let listBoxRef = useRef();
-  let inputRef = useRef<HTMLInputElement>();
+  let listBoxRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -99,7 +109,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   );
 
   // Measure the width of the inputfield to inform the width of the menu (below).
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<number>(0);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
@@ -117,7 +127,7 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
   useLayoutEffect(onResize, [scale, onResize]);
 
   let style = {
-    width: isQuiet ? null : menuWidth,
+    width: isQuiet ? undefined : menuWidth,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
@@ -162,9 +172,12 @@ const SearchAutocompleteBase = React.forwardRef(function SearchAutocompleteBase<
       </Popover>
     </>
   );
-});
+}
 
-interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<unknown> {
+let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+
+
+interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   style?: React.CSSProperties,
@@ -173,7 +186,9 @@ interface SearchAutocompleteInputProps extends SpectrumSearchAutocompleteProps<u
   clearButtonProps: AriaButtonProps
 }
 
-const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInput(props: SearchAutocompleteInputProps, ref: RefObject<HTMLElement>) {
+// any type is because we don't want to call useObjectRef because this is an internal component and we know
+// we are always passing an object ref
+function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -196,7 +211,7 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
   } = props;
   let {hoverProps, isHovered} = useHover({});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let timeout = useRef(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
@@ -248,8 +263,10 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
     } else if (!isLoading) {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
-      clearTimeout(timeout.current);
-      timeout.current = null;
+      if (timeout.current != null) {
+        clearTimeout(timeout.current);
+        timeout.current = null;
+      }
     }
 
     lastInputValue.current = inputValue;
@@ -276,6 +293,10 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
               'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
+            classNames(
+              searchAutocompleteStyles,
+              'searchautocomplete'
+            ),
             className
           )
         }>
@@ -292,7 +313,11 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
                 'is-quiet': isQuiet,
                 'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
                 'spectrum-Search--valid': validationState === 'valid' && !isDisabled
-              }
+              },
+              classNames(
+                styles,
+                'spectrum-InputGroup-field'
+              )
             )
           }
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
@@ -300,13 +325,16 @@ const SearchAutocompleteInput = React.forwardRef(function SearchAutocompleteInpu
           isQuiet={isQuiet}
           validationState={validationState}
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
-          loadingIndicator={loadingState != null && loadingCircle}
+          loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' && !isReadOnly) && clearButton} />
+          wrapperChildren={(inputValue !== '' && !isReadOnly) ? clearButton : undefined}
+          disableFocusRing />
       </div>
     </FocusRing>
   );
-});
+}
+
+let SearchAutocompleteInput = React.forwardRef(_SearchAutocompleteInput) as <T>(props: SearchAutocompleteInputProps<T> & {ref?: any}) => ReactElement;
 
 
 /**

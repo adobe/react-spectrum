@@ -63,7 +63,7 @@
   }
 
   &.react-spectrum-ActionBar--emphasized .react-spectrum-ActionBar-bar {
-    background: var(--spectrum-informative-background-color-default);
+    background: var(--spectrum-global-color-static-blue-700);
     color: white;
     box-shadow: 0 2px 6px var(--spectrum-alias-dropshadow-color);
     border: none;
