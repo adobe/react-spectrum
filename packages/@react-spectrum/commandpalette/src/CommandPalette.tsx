@@ -16,7 +16,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import commandpaletteStyles from './commandpalette.css';
-import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -27,6 +27,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   InputHTMLAttributes,
   ReactElement,
+  Ref,
   RefObject,
   useEffect,
   useRef,
@@ -214,5 +215,5 @@ const CommandPaletteInput = React.forwardRef(function CommandPaletteInput(props:
 /**
  * CommandPalettes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
  */
-const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+const _CommandPalette = React.forwardRef(CommandPalette) as <T>(props: SpectrumCommandPaletteProps<T> & {ref?: Ref<DOMRefValue<HTMLDivElement>>}) => ReactElement;
 export {_CommandPalette as CommandPalette};

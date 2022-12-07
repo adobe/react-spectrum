@@ -64,7 +64,7 @@ export const MobileCommandPalette = React.forwardRef(function MobileCommandPalet
   };
 
   return (
-    <Tray state={state} isFixedHeight {...overlayProps}>
+    <Tray isOpen={state.isOpen} isFixedHeight {...overlayProps}>
       <CommandPaletteTray
         {...props}
         onClose={state.close}
@@ -83,11 +83,7 @@ interface CommandPaletteTrayProps extends SpectrumCommandPaletteProps<unknown> {
 
 function CommandPaletteTray(props: CommandPaletteTrayProps) {
   let {
-    // completionMode = 'suggest',
     state,
-    isDisabled,
-    validationState,
-    label,
     overlayProps,
     loadingState,
     onLoadMore,
@@ -156,8 +152,7 @@ function CommandPaletteTray(props: CommandPaletteTrayProps) {
           searchStyles,
           'spectrum-ClearButton'
         )
-      }
-      isDisabled={isDisabled} />
+      } />
   );
 
   let loadingCircle = (
@@ -244,32 +239,22 @@ function CommandPaletteTray(props: CommandPaletteTrayProps) {
         }>
         <DismissButton onDismiss={onClose} />
         <TextFieldBase
-          label={label}
           inputProps={{...inputProps, onKeyDown}}
           inputRef={inputRef}
-          isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
           loadingIndicator={loadingState != null && loadingCircle}
-          validationState={validationState}
           labelAlign="start"
           labelPosition="top"
-          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
+          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering') && clearButton}
           UNSAFE_className={
             classNames(
               searchStyles,
               'spectrum-Search',
               'spectrum-Textfield',
               'spectrum-Search--loadable',
-              {
-                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
-                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
-              },
               classNames(
                 commandpaletteStyles,
-                'tray-textfield',
-                {
-                  'has-label': !!props.label
-                }
+                'tray-textfield'
               )
             )
           }
