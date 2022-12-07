@@ -22,7 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@swc/helpers": "^0.4.14",
     "intl-messageformat": "^10.1.0"
   },
   "publishConfig": {
