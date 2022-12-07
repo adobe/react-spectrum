@@ -94,31 +94,33 @@ const CommandPaletteBase = React.forwardRef(function CommandPaletteBase<T extend
 
   return (
     <>
-      <Modal ref={ref} state={state} isDismissable isKeyboardDismissDisabled UNSAFE_className={classNames(commandpaletteStyles, 'modal')}>
-        <CommandPaletteInput
-          {...props}
-          isOpen={state.isOpen}
-          loadingState={loadingState}
-          inputProps={inputProps}
-          inputRef={inputRef} />
-        <ListBoxBase
-          {...listBoxProps}
-          maxHeight={maxHeight ? maxHeight : undefined}
-          ref={listBoxRef}
-          disallowEmptySelection
-          autoFocus={state.focusStrategy}
-          shouldSelectOnPressUp
-          focusOnPointerEnter
-          layout={layout}
-          state={state}
-          shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
-          onLoadMore={onLoadMore}
-          renderEmptyState={() => (
-            <span className={classNames(commandpaletteStyles, 'no-results')}>
-              {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
-            </span>
+      <Modal ref={ref} isOpen={state.isOpen} isDismissable isKeyboardDismissDisabled UNSAFE_className={classNames(commandpaletteStyles, 'modal')}>
+        <>
+          <CommandPaletteInput
+            {...props}
+            isOpen={state.isOpen}
+            loadingState={loadingState}
+            inputProps={inputProps}
+            inputRef={inputRef} />
+          <ListBoxBase
+            {...listBoxProps}
+            maxHeight={maxHeight ? maxHeight : undefined}
+            ref={listBoxRef}
+            disallowEmptySelection
+            autoFocus={state.focusStrategy}
+            shouldSelectOnPressUp
+            focusOnPointerEnter
+            layout={layout}
+            state={state}
+            shouldUseVirtualFocus
+            isLoading={loadingState === 'loadingMore'}
+            onLoadMore={onLoadMore}
+            renderEmptyState={() => (
+              <span className={classNames(commandpaletteStyles, 'no-results')}>
+                {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
+              </span>
           )} />
+        </>
       </Modal>
     </>
   );
