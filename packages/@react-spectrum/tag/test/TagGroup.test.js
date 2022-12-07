@@ -361,7 +361,7 @@ describe('TagGroup', function () {
     );
 
     let tags = getAllByRole('gridcell');
-    expect(tags.length).toBe(4);
+    expect(tags.length).toBe(1);
 
     let button = getByRole('button');
     expect(button).toHaveTextContent('Show all (7)');
@@ -373,7 +373,7 @@ describe('TagGroup', function () {
 
     userEvent.click(button);
     tags = getAllByRole('gridcell');
-    expect(tags.length).toBe(4);
+    expect(tags.length).toBe(1);
     expect(button).toHaveTextContent('Show all (7)');
     
     offsetWidth.mockReset();
