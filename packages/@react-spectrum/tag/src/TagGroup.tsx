@@ -74,7 +74,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   const {tagGroupProps} = useTagGroup(props);
 
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-  let [visibleTagCount, setVisibleTagCount] = useValueEffect(gridCollection.size);
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: gridCollection.size, showCollapseButton: false});
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows !== null) {
@@ -105,47 +105,35 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           tagWidths.push(tag.getBoundingClientRect().width);
           index++;
         }
-    
-        return {index, tagWidths};
-      };
 
-      let clearSpaceForCollapseButton = ({index, tagWidths, collapseButtonWidth}) => {
-        // Refs can be null at runtime.
-        let currDomRef: HTMLDivElement | null = domRef.current;
-        if (!currDomRef) {
-          return;
-        }
-        let tags = [...currDomRef.children].filter(el => el.tagName !== 'BUTTON');
-        let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = currDomRef.getBoundingClientRect()[end];
-        let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
-        let availableWidth = containerEnd - lastTagEnd;
-        for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth > collapseButtonWidth || index <= 1) {
-            break;
+        // Remove tags until there is space for the collapse button on the last row.
+        if (tagState.showCollapseButton) {
+          let collapseButtonWidth = [...domRef.current.children].find(el => el.tagName === 'BUTTON')?.getBoundingClientRect().width;
+          let end = direction === 'ltr' ? 'right' : 'left';
+          let containerEnd = currDomRef.getBoundingClientRect()[end];
+          let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+          let availableWidth = containerEnd - lastTagEnd;
+          for (let tagWidth of tagWidths.reverse()) {
+            if (availableWidth > collapseButtonWidth || index <= 1) {
+              break;
+            }
+            availableWidth += tagWidth;
+            index--;
           }
-          availableWidth += tagWidth;
-          index--;
         }
-        return index;
+    
+        return {visibleTagCount: index, showCollapseButton: index < gridCollection.size};
       };
     
-      setVisibleTagCount(function *() {
+      setTagState(function *() {
         // Update to show all items.
-        yield gridCollection.size;
+        yield {visibleTagCount: gridCollection.size, showCollapseButton: true};
 
         // Measure, and update to show the items until maxRows is reached.
-        let {index, tagWidths} = computeVisibleTagCount();
-        yield index;
-      
-        // Remove tags until there is space for the collapse button on the last row.
-        if (index < gridCollection.size) {
-          let collapseButtonWidth = [...domRef.current.children].find(el => el.tagName === 'BUTTON')?.getBoundingClientRect().width;
-          yield clearSpaceForCollapseButton({index, tagWidths, collapseButtonWidth});
-        }
+        yield computeVisibleTagCount();
       });
     }
-  }, [direction, domRef, gridCollection.size, maxRows, setVisibleTagCount]);
+  }, [direction, domRef, gridCollection.size, maxRows, setTagState, tagState.showCollapseButton]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
 
@@ -154,7 +142,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
   let visibleTags = [...gridCollection];
   if (maxRows != null && isCollapsed) {
-    visibleTags = visibleTags.slice(0, visibleTagCount);
+    visibleTags = visibleTags.slice(0, tagState.visibleTagCount);
   }
 
   // Don't want the grid to be focusable or accessible via keyboard
@@ -184,7 +172,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             {item.childNodes[0].rendered}
           </Tag>
         ))}
-        {maxRows != null && visibleTagCount < gridCollection.size &&
+        {tagState.showCollapseButton &&
           <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
           </ActionButton>
