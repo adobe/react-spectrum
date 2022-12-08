@@ -64,20 +64,16 @@ export default {
       }
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isReadOnly: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     visibleMonths: {
-      control: 'number',
-      defaultValue: 1
+      control: 'number'
     },
     validationState: {
       control: {
@@ -89,8 +85,7 @@ export default {
       control: 'text'
     },
     errorMessage: {
-      control: 'text',
-      defaultValue: 'Selection may not include weekends'
+      control: 'text'
     }
   }
 } as ComponentMeta<typeof Calendar>;

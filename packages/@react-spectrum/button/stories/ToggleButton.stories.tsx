@@ -26,8 +26,7 @@ export default {
     onPress: action('press'),
     onPressStart: action('pressstart'),
     onPressEnd: action('pressend'),
-    variant: 'cta',
-    style: 'fill'
+    variant: 'cta'
   },
   argTypes: {
     onPress: {
@@ -51,20 +50,16 @@ export default {
       }
     },
     isQuiet: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isEmphasized: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof ToggleButton>;

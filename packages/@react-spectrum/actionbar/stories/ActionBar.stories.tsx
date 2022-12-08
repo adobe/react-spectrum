@@ -31,8 +31,7 @@ export default {
       }
     },
     isEmphasized: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof ActionBar>;

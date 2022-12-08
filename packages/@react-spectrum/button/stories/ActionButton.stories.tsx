@@ -51,12 +51,10 @@ export default {
       }
     },
     isQuiet: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof ActionButton>;

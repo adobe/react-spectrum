@@ -19,22 +19,18 @@ type LabelStory = ComponentStoryObj<typeof Label>;
 const argTypes = {
   labelAlign: {
     control: 'radio',
-    defaultValue: 'start',
     options: ['end', 'start']
   },
   labelPosition: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['side', 'top']
   },
   necessityIndicator: {
     control: 'radio',
-    defaultValue: 'icon',
     options: ['icon', 'label']
   },
   isRequired: {
-    control: 'boolean',
-    defaultValue: false
+    control: 'boolean'
   },
   htmlFor: {control: {disable: true}}
 };

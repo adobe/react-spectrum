@@ -23,8 +23,7 @@ export default {
   args: {
     onPress: action('press'),
     onPressStart: action('pressstart'),
-    onPressEnd: action('pressend'),
-    variant: 'and'
+    onPressEnd: action('pressend')
   },
   argTypes: {
     onPress: {
@@ -43,8 +42,7 @@ export default {
       }
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     variant: {
       control: 'select',

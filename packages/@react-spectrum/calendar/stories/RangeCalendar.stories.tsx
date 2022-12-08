@@ -56,24 +56,19 @@ export default {
       }
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isReadOnly: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     allowsNonContiguousRanges: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     visibleMonths: {
-      control: 'number',
-      defaultValue: 1
+      control: 'number'
     },
     validationState: {
       control: {
@@ -82,8 +77,7 @@ export default {
       }
     },
     errorMessage: {
-      control: 'text',
-      defaultValue: 'Selection may not include weekends'
+      control: 'text'
     }
   }
 } as ComponentMeta<typeof RangeCalendar>;

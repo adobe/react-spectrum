@@ -29,8 +29,7 @@ export default {
   component: Breadcrumbs,
   decorators: [storyFn => <CenterDecorator storyFn={storyFn} />],
   args: {
-    onAction: action('onAction'),
-    size: 'L'
+    onAction: action('onAction')
   },
   argTypes: {
     onAction: {
@@ -39,20 +38,16 @@ export default {
       }
     },
     isMultiline: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     showRoot: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocusCurrent: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     size: {
       control: 'select',

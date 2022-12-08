@@ -29,9 +29,7 @@ export default {
   args: {
     onPress: action('press'),
     onPressStart: action('pressstart'),
-    onPressEnd: action('pressend'),
-    variant: 'cta',
-    style: 'fill'
+    onPressEnd: action('pressend')
   },
   argTypes: {
     onPress: {
@@ -50,8 +48,7 @@ export default {
       }
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     variant: {
       control: 'select',
@@ -63,7 +60,7 @@ export default {
     },
     staticColor: {
       control: 'select',
-      options: [undefined, 'white', 'black']
+      options: ['white', 'black']
     }
   }
 } as ComponentMeta<typeof Button>;

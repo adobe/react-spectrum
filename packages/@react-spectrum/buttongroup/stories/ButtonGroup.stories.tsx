@@ -23,14 +23,9 @@ export type ButtonGroupStory = ComponentStoryObj<typeof ButtonGroup>;
 export default {
   title: 'ButtonGroup',
   component: ButtonGroup,
-  args: {
-    align: 'start',
-    orientation: 'horizontal'
-  },
   argTypes: {
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     orientation: {
       control: 'select',

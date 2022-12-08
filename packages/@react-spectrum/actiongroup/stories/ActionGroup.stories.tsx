@@ -95,28 +95,23 @@ export default {
       options: ['none', 'single', 'multiple']
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     density: {
       control: 'select',
       options: ['compact', 'regular', 'spacious']
     },
     isJustified: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isQuiet: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isEmphasized: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     disallowEmptySelection: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     orientation: {
       control: 'select',
