@@ -27,7 +27,7 @@ import {View} from '@react-spectrum/view';
 export type CalendarStory = ComponentStoryObj<typeof Calendar>;
 
 export default {
-  title: 'Calendar',
+  title: 'Date and Time/Calendar',
   component: Calendar,
   args: {
     onChange: action('onChange')
@@ -134,6 +134,7 @@ export const DateUnavailable: CalendarStory = {
   render: (args) => (
     <Example
       {...args}
+      defaultValue={today(getLocalTimeZone()).add({days: 1})}
       isDateUnavailable={(date: DateValue) => {
         const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
         return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
