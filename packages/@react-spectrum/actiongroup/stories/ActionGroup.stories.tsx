@@ -62,7 +62,7 @@ export default {
   component: ActionGroup,
   args: {
     onAction: action('onAction'),
-    onSelectionChange: s => onSelectionChange([...s]),
+    onSelectionChange: s => onSelectionChange([...s])
   },
   argTypes: {
     onAction: {
@@ -151,13 +151,13 @@ export const FalsyKeys: ActionGroupStory = {
 };
 
 export const AllKeysDisabled: ActionGroupStory = {
-  args: {disabledKeys: ['1', '2', '3'], items: viewItems},
-  render: (args) => render(args)
+  ...Default,
+  args: {disabledKeys: ['1', '2', '3'], items: viewItems}
 };
 
 export const SomeKeysDisabled: ActionGroupStory = {
-  args: {disabledKeys: ['1', '2'], items: viewItems},
-  render: (args) => render(args)
+  ...Default,
+  args: {disabledKeys: ['1', '2'], items: viewItems}
 };
 
 export const StaticColorWhite: ActionGroupStory = {
@@ -192,8 +192,8 @@ export const Overflow: ActionGroupStory = {
 };
 
 export const SummaryIcon: ActionGroupStory = {
+  ...Overflow,
   args: {disabledKeys: ['1', '5'], summaryIcon: <TextIcon />},
-  render: (args) => renderOverflow(args),
   storyName: 'summary icon overflow'
 };
 
