@@ -15,7 +15,6 @@ import Add from '@spectrum-icons/workflow/Add';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex, Text, View} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {ToggleButton} from '../';
 
 export type ToggleButtonStory = ComponentStoryObj<typeof ToggleButton>;
