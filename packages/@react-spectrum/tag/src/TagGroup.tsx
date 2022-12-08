@@ -77,7 +77,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let [tagState, setTagState] = useValueEffect({visibleTagCount: gridCollection.size, showCollapseButton: false});
 
   let updateVisibleTagCount = useCallback(() => {
-    if (maxRows !== null) {
+    if (maxRows > 0) {
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
         let currDomRef: HTMLDivElement | null = domRef.current;
