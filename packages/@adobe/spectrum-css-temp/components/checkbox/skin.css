@@ -231,19 +231,19 @@ governing permissions and limitations under the License.
     --spectrum-checkbox-emphasized-text-color-hover: FieldText;
     --spectrum-checkbox-emphasized-text-color-key-focus: FieldText;
     --spectrum-checkbox-focus-ring-color-key-focus: ButtonText;
-    --spectrum-checkbox-quiet-box-border-color-selected: Highlight;
-    --spectrum-checkbox-quiet-box-border-color-selected-down: Highlight;
-    --spectrum-checkbox-quiet-box-border-color-selected-hover: Highlight;
+    --spectrum-checkbox-quiet-box-border-color-selected: ButtonText;
+    --spectrum-checkbox-quiet-box-border-color-selected-down: ButtonText;
+    --spectrum-checkbox-quiet-box-border-color-selected-hover: ButtonText;
     --spectrum-checkbox-text-color: FieldText;
     --spectrum-checkbox-text-color-disabled: GrayText;
     --spectrum-checkbox-text-color-error: FieldText;
     --spectrum-checkbox-text-color-error-down: FieldText;
     --spectrum-checkbox-text-color-error-hover: FieldText;
 
-     &.is-invalid {
+    &.is-invalid {
       .spectrum-Checkbox-box {
         &:before {
-          border-color: var(--spectrum-checkbox-box-border-color);
+          border-color: ButtonText;
         }
       }
       &.is-indeterminate .spectrum-Checkbox-box {
@@ -262,6 +262,83 @@ governing permissions and limitations under the License.
         &:before {
           border-color: var(--spectrum-checkbox-box-border-color-error);
         }
+      }
+    }
+  }
+
+  /* Indeterminate is basically a checked state, so handle colors for checked state here */
+  .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox.is-checked .spectrum-Checkbox-box,
+  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+    &:before {
+      border-color: Highlight;
+    }
+  }
+
+  .spectrum-Checkbox:hover {
+    &.is-indeterminate .spectrum-Checkbox-box,
+    &.is-checked .spectrum-Checkbox-box,
+    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+      &:before {
+        border-color: Highlight;
+      }
+    }
+  }
+
+  .spectrum-Checkbox:active {
+    &.is-indeterminate .spectrum-Checkbox-box,
+    &.is-checked .spectrum-Checkbox-box,
+    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+      &:before {
+        border-color: Highlight;
+      }
+    }
+  }
+
+  .spectrum-Checkbox-input {
+    & + .spectrum-Checkbox-box {
+      &:after {
+        box-shadow: 0 0 0 var(--spectrum-checkbox-focus-ring-size-key-focus) ButtonText;
+      }
+    }
+    &:focus-ring + .spectrum-Checkbox-box {
+      &:before {
+        border-color: Highlight;
+      }
+    }
+    .spectrum-Checkbox.is-indeterminate &,
+    &:checked {
+      &:focus-ring + .spectrum-Checkbox-box {
+        &:before {
+          border-color: Highlight;
+        }
+      }
+    }
+    &:focus-ring ~ .spectrum-Checkbox-label {
+      color: FieldText;
+    }
+  }
+
+  .spectrum-Checkbox--quiet .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
+  .spectrum-Checkbox--quiet.is-indeterminate .spectrum-Checkbox-box,
+  .spectrum-Checkbox--quiet.is-indeterminate .spectrum-Checkbox-input:focus-ring + .spectrum-Checkbox-box {
+    &:before {
+      border-color: ButtonText;
+    }
+  }
+  .spectrum-Checkbox--quiet:hover {
+    &.is-indeterminate .spectrum-Checkbox-box,
+    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+      &:before {
+        border-color: ButtonText;
+      }
+    }
+  }
+  .spectrum-Checkbox--quiet:active {
+    &.is-indeterminate .spectrum-Checkbox-box,
+    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+      &:before {
+        border-color: ButtonText;
       }
     }
   }

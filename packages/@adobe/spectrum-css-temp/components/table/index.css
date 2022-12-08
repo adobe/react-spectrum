@@ -496,3 +496,17 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-columnResizer--wresize {
   cursor: w-resize !important;
 }
+
+@media (forced-colors: active) {
+  .spectrum-Table-row {
+    &:focus-ring {
+      &:after {
+        outline: var(--spectrum-table-row-sticky-focus-indicator-width) solid;
+        outline-offset: calc(-1 * var(--spectrum-table-row-sticky-focus-indicator-width));
+        /* move up 1px and grow by one px so that the focus outline covers the previous row border */
+        margin-top: -1px;
+        height: calc(100% + 1px);
+      }
+    }
+  }
+}

@@ -144,7 +144,7 @@ tbody.spectrum-Table-body {
 
   &:focus-ring {
     &:before {
-      background: var(--spectrum-selectlist-option-focus-indicator-color);
+      background-color: var(--spectrum-selectlist-option-focus-indicator-color);
     }
   }
 
@@ -303,11 +303,129 @@ tbody.spectrum-Table-body {
 }
 
 .spectrum-Table-colResizeIndicator {
+  --spectrum-table-col-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
   &.spectrum-Table-colResizeIndicator--resizing {
-    background-color: var(--spectrum-global-color-blue-600);
+    background-color: var(--spectrum-table-col-resize-indicator-background-color);
   }
 }
-.spectrum-Table-colResizeNubbin {}
+.spectrum-Table-colResizeNubbin {
+  --spectrum-table-col-resize-nubbin-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
+  svg {
+    g[fill][stroke] {
+      fill: var(--spectrum-table-col-resize-nubbin-background-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-background-color);
+    }
+    path[fill][stroke] {
+      fill: var(--spectrum-table-col-resize-nubbin-icon-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-icon-color);
+    }
+  }
+}
 .spectrum-Table-bodyResizeIndicator {
-  background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-body-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
+  background-color: var(--spectrum-table-body-resize-indicator-background-color);
+}
+
+@media (forced-colors: active) {
+  .spectrum-Table-headWrapper {
+    forced-color-adjust: none;
+    .spectrum-Table-headCell {
+      forced-color-adjust: auto;
+    }
+  }
+
+  .spectrum-Table-cell,
+  .spectrum-Table-headCell,
+  .spectrum-Table-headCellButton {
+    --spectrum-table-cell-border-color-key-focus: Highlight;
+    &:focus-ring,
+    &.is-focused {
+      &::before {
+        forced-color-adjust: none;
+      }
+    }
+  }
+
+  .spectrum-Table-columnResizer {
+    --spectrum-table-divider-border-color: CanvasText;
+  }
+
+  .spectrum-Table-colResizeIndicator {
+    --spectrum-table-col-resize-indicator-background-color: Highlight;
+  }
+
+  .spectrum-Table-colResizeNubbin {
+    --spectrum-table-col-resize-nubbin-background-color: Highlight;
+    --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
+  }
+
+  .spectrum-Table-bodyResizeIndicator {
+    --spectrum-table-body-resize-indicator-background-color: Highlight;
+  }
+
+  .spectrum-Table-row {
+    --spectrum-table-background-color: Canvas;
+    --spectrum-table-row-background-color-hover: Canvas;
+    --spectrum-selectlist-option-focus-indicator-color: Highlight;
+    --spectrum-table-row-background-color-down: Canvas;
+
+    &:focus-ring {
+      &:before {
+        forced-color-adjust: none;
+      }
+      &:after {
+        outline-color: var(--spectrum-selectlist-option-focus-indicator-color);
+      }
+    }
+
+    /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
+     * in the highlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
+     * the bottom border curved corners were cut off when using borders.
+     */
+
+    /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row. Can't omit the bottom border for last row unlike listview
+     * due to how table rows always reserve 1px for the bottom border (results in a white gap on hover otherwise).
+     */
+    &:after {
+      forced-color-adjust: none;
+      --spectrum-table-cell-border-color: CanvasText;
+    }
+
+    /* Box shadow for bottom border for non-selected row that is immediately above a selected row. */
+    &.is-next-selected {
+      --spectrum-global-color-blue-500: Highlight;
+      &:after {
+        forced-color-adjust: none;
+      }
+    }
+
+    &.is-selected {
+      --spectrum-global-color-blue-500: Highlight;
+      /* Box shadow for bottom, left, and right border for selected rows. */
+      &:after {
+        forced-color-adjust: none;
+      }
+    }
+
+    /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
+     * a top border.
+     */
+     &.spectrum-Table-row--firstRow {
+      --spectrum-global-color-blue-500: Highlight;
+      &.is-selected {
+        &:after {
+          forced-color-adjust: none;
+        }
+      }
+    }
+
+    &.is-drop-target {
+      --spectrum-alias-border-color-focus: Highlight;
+      &::before {
+        box-shadow: inset 0 0 0 2px var(--spectrum-alias-border-color-focus);
+        background-color: var(--spectrum-alias-highlight-selected);
+      }
+    }
+  }
 }
