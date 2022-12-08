@@ -101,7 +101,7 @@ export const Default: CalendarStory = {
 
 export const DefaultValue: CalendarStory = {
   ...Default,
-  args: {defaultValue: new CalendarDate(2019, 6, 5)},
+  args: {defaultValue: new CalendarDate(2019, 6, 5)}
 };
 
 export const ControlledValue: CalendarStory = {
