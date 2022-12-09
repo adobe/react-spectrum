@@ -37,13 +37,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
     "@react-aria/listbox": "^3.1.0",
-    "@react-aria/sidenav": "3.0.0-alpha.1",
     "@react-aria/selection": "^3.1.0",
+    "@react-aria/sidenav": "3.0.0-alpha.1",
     "@react-aria/utils": "^3.1.0",
     "@react-aria/virtualizer": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",
@@ -52,7 +51,8 @@
     "@react-stately/tree": "^3.1.0",
     "@react-stately/virtualizer": "^3.1.7",
     "@react-types/shared": "^3.1.0",
-    "@react-types/sidenav": "3.0.0-alpha.1"
+    "@react-types/sidenav": "3.0.0-alpha.1",
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
