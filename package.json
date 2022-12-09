@@ -79,7 +79,6 @@
     "@storybook/addon-a11y": "^6.5.12",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-controls": "^6.5.12",
-    "@storybook/addon-links": "^6.5.12",
     "@storybook/addons": "^6.5.12",
     "@storybook/api": "^6.5.12",
     "@storybook/components": "^6.5.12",
