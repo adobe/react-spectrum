@@ -99,7 +99,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let tagWidths = [];
         // Count rows and show tags until we hit the maxRows.
         for (let tag of tags) {
-          let {y} = tag.getBoundingClientRect();
+          let {width, y} = tag.getBoundingClientRect();
 
           if (y !== currY) {
             currY = y;
@@ -109,7 +109,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           if (rowCount > maxRows) {
             break;
           }
-          tagWidths.push(tag.getBoundingClientRect().width);
+          tagWidths.push(width);
           index++;
         }
 
