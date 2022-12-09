@@ -120,7 +120,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
         let availableWidth = containerEnd - lastTagEnd;
         for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth > buttonWidth || index <= 1) {
+          if (availableWidth > buttonWidth || index <= 1 || index >= gridCollection.size) {
             break;
           }
           availableWidth += tagWidth;
