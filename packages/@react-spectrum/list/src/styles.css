@@ -603,3 +603,82 @@
     box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
   }
 }
+
+@media (forced-colors: active) {
+  .react-spectrum-ListView {
+    --spectrum-table-cell-border-color: CanvasText;
+    &:not(.react-spectrum-ListView--quiet) {
+      .react-spectrum-ListViewItem {
+        /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
+        /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
+        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
+          &:after {
+            forced-color-adjust: none;
+          }
+        }
+      }
+    }
+    .react-spectrum-ListViewItem {
+      &.is-selected {
+        /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
+        &:after {
+          --spectrum-global-color-blue-500: Highlight;
+          forced-color-adjust: none;
+        }
+      }
+    }
+  }
+
+  .react-spectrum-ListView-row {
+    --spectrum-selectlist-option-focus-indicator-color: Highlight;
+    &:focus-ring {
+      &:before {
+        forced-color-adjust: none;
+      }
+      .react-spectrum-ListViewItem {
+        &:after {
+          outline: var(--spectrum-listview-row-sticky-focus-indicator-width) solid var(--spectrum-selectlist-option-focus-indicator-color);
+          outline-offset: calc(-1 * var(--spectrum-listview-row-sticky-focus-indicator-width));
+          top: -1px;
+          height: calc(100% + 1px);
+        }
+      }
+    }
+  }
+
+  .react-spectrum-ListViewInsertionIndicator {
+    &.react-spectrum-ListViewInsertionIndicator--dropTarget {
+      --spectrum-dropindicator-border-color: Highlight;
+      --spectrum-dropindicator-circle-border-color: Highlight;
+      forced-color-adjust: none;
+      &:before,
+      &:after {
+        forced-color-adjust: none;
+      }
+    }
+  }
+
+  .react-spectrum-ListViewItem-draghandle-container {
+    .react-spectrum-ListViewItem-draghandle-button {
+      --spectrum-table-cell-border-color-key-focus: CanvasText;
+      &:focus-ring {
+        forced-color-adjust: none;
+      }
+    }
+  }
+
+  .react-spectrum-ListViewItem--dropTarget {
+    --spectrum-global-color-blue-500: Highlight;
+    --spectrum-table-cell-border-color-key-focus: Highlight;
+    --spectrum-alias-highlight-selected: var(--spectrum-alias-global-color-transparent);
+    forced-color-adjust: none;
+  }
+
+  .react-spectrum-ListView.react-spectrum-ListView--dropTarget {
+    --spectrum-global-color-blue-500: Highlight;
+    --spectrum-table-cell-border-color-key-focus: Highlight;
+    --spectrum-alias-highlight-selected: var(--spectrum-alias-global-color-transparent);
+    forced-color-adjust: none;
+  }
+
+}
