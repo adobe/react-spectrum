@@ -33,6 +33,11 @@ export default {
         disable: true
       }
     },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
     defaultValue: {
       table: {
         disable: true
@@ -55,29 +60,21 @@ export default {
     isRequired: {
       control: 'boolean'
     },
-    labelPosition: {
-      control: {
-        type: 'radio',
-        options: ['top', 'side']
-      }
-    },
     necessityIndicator: {
-      control: {
-        type: 'radio',
-        options: ['icon', 'label']
-      }
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
     },
     labelAlign: {
-      control: {
-        type: 'radio',
-        options: ['start', 'end']
-      }
+      control: 'select',
+      options: ['start', 'end']
     },
     validationState: {
-      control: {
-        type: 'radio',
-        options: [null, 'valid', 'invalid']
-      }
+      control: 'select',
+      options: [null, 'valid', 'invalid']
     },
     description: {
       control: 'text'
@@ -89,10 +86,8 @@ export default {
       control: 'boolean'
     },
     orientation: {
-      control: {
-        type: 'radio',
-        options: ['horizontal', 'vertical']
-      }
+      control: 'select',
+      options: ['horizontal', 'vertical']
     },
     'aria-label': {
       control: 'text'
@@ -140,17 +135,15 @@ export const FixedWidth: CheckboxGroupStory = {
 };
 
 export const ContextualHelpStory: CheckboxGroupStory = {
-  render: (args) => (
-    render({
-      ...args,
-      contextualHelp: (
-        <ContextualHelp>
-          <Heading>What is a segment?</Heading>
-          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-        </ContextualHelp>
-      )
-    })
-  ),
+  ...Default,
+  args: {
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )
+  },
   storyName: 'contextual help'
 };
 

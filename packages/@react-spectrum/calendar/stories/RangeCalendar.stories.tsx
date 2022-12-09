@@ -71,10 +71,8 @@ export default {
       control: 'number'
     },
     validationState: {
-      control: {
-        type: 'select',
-        options: [null, 'valid', 'invalid']
-      }
+      control: 'select',
+      options: [null, 'valid', 'invalid']
     },
     errorMessage: {
       control: 'text'
