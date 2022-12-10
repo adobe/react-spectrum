@@ -70,7 +70,7 @@ export default {
       options: ['icon', 'label']
     },
     labelAlign: {
-      control: 'radio',
+      control: 'select',
       options: ['end', 'start']
     },
     labelPosition: {

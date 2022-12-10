@@ -20,14 +20,14 @@ import React from 'react';
 let styles = {
   width: '100vw'
 };
-const CenterDecorator = ({storyFn}) => <div style={styles}><div>{storyFn()}</div></div>;
+const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
 export type BreadcrumbsStory = ComponentStoryObj<typeof Breadcrumbs>;
 
 export default {
   title: 'Breadcrumbs',
   component: Breadcrumbs,
-  decorators: [storyFn => <CenterDecorator storyFn={storyFn} />],
+  decorators: [storyFn => CenterDecorator(storyFn)],
   args: {
     onAction: action('onAction')
   },
