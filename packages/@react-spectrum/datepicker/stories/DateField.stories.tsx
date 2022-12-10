@@ -90,7 +90,7 @@ export default {
         disable: true
       }
     },
-    onOpenChange: {
+    contextualHelp: {
       table: {
         disable: true
       }
@@ -180,7 +180,7 @@ export const DefaultValueZoned: DateFieldStory = {
 
 export const DateTimeValue: DateFieldStory = {
   ...Default,
-  args: {defaultValue: parseDateTime('2021-03-14T08:45')},
+  args: {defaultValue: parseDateTime('2021-03-14T08:45')}
 };
 
 export const DateTimeValueZoned: DateFieldStory = {
@@ -224,7 +224,7 @@ export const PlaceholderValTimeZoned: DateFieldStory = {
 
 export const AllEvents: DateFieldStory = {
   ...Default,
-  args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')},
+  args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')},
   storyName: 'all the events'
 };
 
