@@ -14,6 +14,7 @@ import {ColumnSize} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
 import {TableColumnLayout} from '@react-stately/layout';
+import {TableState} from './useTableState';
 
 export interface TableColumnResizeStateProps<T> {
   /**
@@ -50,7 +51,7 @@ export interface TableColumnResizeState {
 }
 
 
-export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state): TableColumnResizeState {
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState {
   let {
     getDefaultWidth,
     getDefaultMinWidth,
