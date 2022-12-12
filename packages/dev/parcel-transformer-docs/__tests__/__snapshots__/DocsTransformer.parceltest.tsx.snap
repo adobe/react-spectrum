@@ -16,6 +16,32 @@ Object {
 }
 `;
 
+exports[`DocsTransformer - API writes export entry for interface 1`] = `
+Object {
+  "exports": Object {
+    "Foo": Object {
+      "extends": Array [],
+      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "name": "Foo",
+      "properties": Object {
+        "a": Object {
+          "default": null,
+          "name": "a",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "number",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
 exports[`DocsTransformer - API writes export entry for localName React component 1`] = `
 Object {
   "exports": Object {
@@ -65,5 +91,37 @@ Object {
     "b": Object {},
   },
   "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API writes export entry for type 1`] = `
+Object {
+  "exports": Object {
+    "Foo": Object {
+      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "type": "link",
+    },
+  },
+  "links": ObjectContaining {
+    "/test/src/index.tsx:Foo": ObjectContaining {
+      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API writes export entry for type union 1`] = `
+Object {
+  "exports": Object {
+    "Foo": Object {
+      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "type": "link",
+    },
+  },
+  "links": ObjectContaining {
+    "/test/src/index.tsx:Foo": ObjectContaining {
+      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+    },
+  },
 }
 `;

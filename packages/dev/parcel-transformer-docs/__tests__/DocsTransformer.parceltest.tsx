@@ -3,6 +3,7 @@ import {MemoryFS, NodeFS} from '@parcel/fs';
 import Parcel, {createWorkerFarm} from '@parcel/core';
 
 const rootPath = join(__dirname, '..', '..', '..', '..');
+
 describe('DocsTransformer - API', () => {
   const workerFarm = createWorkerFarm();
 
@@ -61,8 +62,11 @@ describe('DocsTransformer - API', () => {
     const parcel = getParcelInstance('test');
     await parcel.run();
 
+    // this replace will change all the url paths that are variable depending on the machine and makes them predictable
+    // i was unable to find a jest matcher that could handle Object keys that varied, finding matches for the value was easy
+    // "/Users/username/parcel/packages/test/src/index.tsx:Foo" -> "/test/src/index.tsx:Foo"
     const code = JSON.parse(
-      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8')
+      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8').replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
     );
     return code;
   }
@@ -135,6 +139,60 @@ describe('DocsTransformer - API', () => {
       exports: {
         AppReal: {
           id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App2/)
+        }
+      }
+    });
+  }, 50000);
+
+  it('writes export entry for type', async () => {
+    await writeSourceFile('index', `
+    export type Foo = number;
+    `);
+    let code = await runBuild();
+    expect(code).toMatchSnapshot({
+      exports: {
+        Foo: {
+          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+        }
+      },
+      links: expect.objectContaining({
+        '/test/src/index.tsx:Foo': expect.objectContaining({
+          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+        })
+      })
+    });
+  }, 50000);
+
+  it('writes export entry for type union', async () => {
+    await writeSourceFile('index', `
+    export type Foo = number | string;
+    `);
+    let code = await runBuild();
+    expect(code).toMatchSnapshot({
+      exports: {
+        Foo: {
+          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+        }
+      },
+      links: expect.objectContaining({
+        '/test/src/index.tsx:Foo': expect.objectContaining({
+          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+        })
+      })
+    });
+  }, 50000);
+
+  it('writes export entry for interface', async () => {
+    await writeSourceFile('index', `
+    export interface Foo {
+      a: number
+    };
+    `);
+    let code = await runBuild();
+    expect(code).toMatchSnapshot({
+      exports: {
+        Foo: {
+          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
         }
       }
     });
