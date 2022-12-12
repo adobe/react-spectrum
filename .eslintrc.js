@@ -170,6 +170,7 @@ module.exports = {
     'rulesdir/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
     'rulesdir/useLayoutEffectRule': [ERROR],
+    'rulesdir/pure-render': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
