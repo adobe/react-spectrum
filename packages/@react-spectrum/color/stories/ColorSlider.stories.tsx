@@ -46,6 +46,11 @@ export default {
         disable: true
       }
     },
+    channel: {
+      table: {
+        disable: true
+      }
+    },
     label: {
       control: 'text'
     },
