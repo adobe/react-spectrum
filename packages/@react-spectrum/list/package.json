@@ -45,6 +45,7 @@
     "@react-aria/virtualizer": "^3.6.0",
     "@react-aria/visually-hidden": "^3.6.0",
     "@react-spectrum/checkbox": "^3.6.1",
+    "@react-spectrum/dnd": "^3.0.0",
     "@react-spectrum/layout": "^3.4.3",
     "@react-spectrum/progress": "^3.3.3",
     "@react-spectrum/text": "^3.3.3",
@@ -63,8 +64,7 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
     "@react-aria/dnd": "^3.0.0",
     "@react-stately/dnd": "^3.0.0",
-    "@react-spectrum/button": "^3.8.1",
-    "@react-spectrum/dnd": "^3.0.0"
+    "@react-spectrum/button": "^3.8.1"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
