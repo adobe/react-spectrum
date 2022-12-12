@@ -301,14 +301,14 @@ describe('TagGroup', function () {
 
   it('maxRows should limit the number of tags shown', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementationOnce(() => ({x: 199, y: 305, width: 77.234375, height: 32, top: 305, right: 276.234375, bottom: 337, left: 199}))
-      .mockImplementationOnce(() => ({x: 276.234375, y: 305, width: 109.75, height: 32, top: 305, right: 385.984375, bottom: 337, left: 276.234375}))
-      .mockImplementationOnce(() => ({x: 199, y: 337, width: 66.5546875, height: 32, top: 337, right: 265.5546875, bottom: 369, left: 199}))
-      .mockImplementationOnce(() => ({x: 265.5546875, y: 337, width: 77.3984375, height: 32, top: 337, right: 342.953125, bottom: 369, left: 265.5546875}))
-      .mockImplementationOnce(() => ({x: 199, y: 369, width: 119.171875, height: 32, top: 369, right: 318.171875, bottom: 401, left: 199}))
-      .mockImplementationOnce(() => ({x: 199, y: 401, width: 94.1953125, height: 32, top: 401, right: 293.1953125, bottom: 433, left: 199}))
-      .mockImplementationOnce(() => ({x: 199, y: 305, width: 200, height: 128, top: 305, right: 399, bottom: 433, left: 199}))
-      .mockImplementationOnce(() => ({x: 265.5546875, y: 337, width: 77.3984375, height: 32, top: 337, right: 342.953125, bottom: 369, left: 265.5546875}));
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
+      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
+      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
+      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}))
+      .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup maxRows={2} aria-label="tag group">
