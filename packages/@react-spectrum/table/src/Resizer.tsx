@@ -5,9 +5,8 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MoveMoveEvent} from '@react-types/shared';
-import React, {Key, RefObject, useRef} from 'react';
+import React, {Key, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableLayoutState} from '@react-types/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableView';
@@ -32,8 +31,6 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
-  const stateRef = useRef<TableLayoutState>(null);
-  stateRef.current = layout;
 
   let {inputProps, resizerProps} = useTableColumnResize<unknown>({
     ...props,
@@ -43,9 +40,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       document.body.classList.remove(classNames(styles, 'resize-ew'));
       document.body.classList.remove(classNames(styles, 'resize-e'));
       document.body.classList.remove(classNames(styles, 'resize-w'));
-      if (stateRef.current.getColumnMinWidth(column.key) >= stateRef.current.getColumnWidth(column.key)) {
+      if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
         document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
-      } else if (stateRef.current.getColumnMaxWidth(column.key) <= stateRef.current.getColumnWidth(column.key)) {
+      } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
         document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
       } else {
         document.body.classList.add(classNames(styles, 'resize-ew'));
@@ -65,8 +62,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     display: showResizer ? undefined : 'none',
     touchAction: 'none'
   };
-  let isEResizable = stateRef.current.getColumnMinWidth(column.key) >= stateRef.current.getColumnWidth(column.key);
-  let isWResizable = stateRef.current.getColumnMaxWidth(column.key) <= stateRef.current.getColumnWidth(column.key);
+  let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
+  let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
 
   return (
     <>

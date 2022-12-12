@@ -50,12 +50,12 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * Can be used with the width property on columns to put the column widths into
    * a controlled state.
    */
-  onResize?: (widths: Map<Key, number | string>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
   /**
    * Handler that is called after a user performs a column resize.
    * Can be used to store the widths of columns for another future session.
    */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 export interface TableHeaderProps<T> {
@@ -165,7 +165,10 @@ export interface TableLayoutState {
   resizingColumn: Key,
   /** Called to update the state that resizing has started. */
   onColumnResizeStart: (key: Key) => void,
-  /** Called to update the state that a resize event has occurred. */
+  /**
+   * Called to update the state that a resize event has occurred.
+   * Returns the new widths for all columns based on the resized column.
+   **/
   onColumnResize: (column: Key, width: number) => Map<Key, ColumnSize>,
   /** Called to update the state that resizing has ended. */
   onColumnResizeEnd: (key: Key) => void
