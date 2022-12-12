@@ -40,8 +40,8 @@ describe('DocsTransformer - API', () => {
     await inputFS.rimraf(join(inputFS.cwd(), 'test'));
     await outputFS.rimraf('test');
   });
-  const getParcelInstance = (workingDir: string) => {
-    return new Parcel({
+  const getParcelInstance = (workingDir: string) =>
+    new Parcel({
       config: join(rootPath, '.parcelrc'),
       entries: [workingDir],
       targets: ['apiCheck'],
@@ -51,7 +51,6 @@ describe('DocsTransformer - API', () => {
       // if we don't set this, it will cause tests to have unpredictable results
       shouldDisableCache: true
     });
-  };
 
   // every test must supply at least the 'index' file, they can include more, but that must be the entry point
   async function writeSourceFile(name, contents) {
