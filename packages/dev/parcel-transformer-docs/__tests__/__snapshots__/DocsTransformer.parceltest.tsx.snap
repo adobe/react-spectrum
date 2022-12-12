@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transforms assets with babel plugin 1`] = `
+Object {
+  "exports": Object {
+    "App": Object {
+      "description": null,
+      "id": StringMatching /\\^\\.\\*\\\\/packages\\\\/\\.\\*:App/,
+      "name": "App",
+      "props": null,
+      "type": "component",
+      "typeParameters": Array [],
+    },
+    "App2Real": Object {
+      "description": null,
+      "id": StringMatching /\\^\\.\\*\\\\/packages\\\\/\\.\\*:App2/,
+      "name": "App2",
+      "props": null,
+      "type": "component",
+      "typeParameters": Array [],
+    },
+    "f": Object {},
+    "n": Object {},
+    "s": Object {},
+  },
+  "links": Object {},
+}
+`;

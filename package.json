@@ -44,7 +44,8 @@
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "bumpVersions": "node scripts/bumpVersions.js",
     "supportESM": "node scripts/esm-support/supportESM.js",
-    "buildESM": "yarn run wsrun prepublish"
+    "buildESM": "yarn run wsrun prepublish",
+    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'"
   },
   "workspaces": [
     "packages/react-stately",
