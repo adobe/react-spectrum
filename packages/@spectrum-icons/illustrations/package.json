@@ -10,9 +10,8 @@
   "scripts": {
     "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
-    "add-exports": "babel-node --presets @babel/env ./scripts/addExports.js -i '[]'",
     "generate-types": "tsc --project ./tsconfig.types.json",
-    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types && yarn add-exports"
+    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types"
   },
   "dependencies": {
     "@react-aria/utils": "^3.14.1",
@@ -29,50 +28,10 @@
     "access": "public"
   },
   "exports": {
-    "./Error": {
-      "types": "./Error.d.ts",
-      "require": "./Error.js",
-      "import": "./Error.mjs"
-    },
-    "./File": {
-      "types": "./File.d.ts",
-      "require": "./File.js",
-      "import": "./File.mjs"
-    },
-    "./Folder": {
-      "types": "./Folder.d.ts",
-      "require": "./Folder.js",
-      "import": "./Folder.mjs"
-    },
-    "./NoSearchResults": {
-      "types": "./NoSearchResults.d.ts",
-      "require": "./NoSearchResults.js",
-      "import": "./NoSearchResults.mjs"
-    },
-    "./NotFound": {
-      "types": "./NotFound.d.ts",
-      "require": "./NotFound.js",
-      "import": "./NotFound.mjs"
-    },
-    "./Timeout": {
-      "types": "./Timeout.d.ts",
-      "require": "./Timeout.js",
-      "import": "./Timeout.mjs"
-    },
-    "./Unauthorized": {
-      "types": "./Unauthorized.d.ts",
-      "require": "./Unauthorized.js",
-      "import": "./Unauthorized.mjs"
-    },
-    "./Unavailable": {
-      "types": "./Unavailable.d.ts",
-      "require": "./Unavailable.js",
-      "import": "./Unavailable.mjs"
-    },
-    "./Upload": {
-      "types": "./Upload.d.ts",
-      "require": "./Upload.js",
-      "import": "./Upload.mjs"
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./*.mjs",
+      "require": "./*.js"
     }
   }
 }
