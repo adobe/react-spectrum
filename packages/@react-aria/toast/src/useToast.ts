@@ -11,12 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {useEffect} from 'react';
-import {useId, useSlotId} from '@react-aria/utils';
+import {RefObject, useEffect} from 'react';
+import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -30,7 +30,7 @@ export interface ToastAria {
   closeButtonProps: AriaButtonProps
 }
 
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>): ToastAria {
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
   let {
     key,
     timer,
@@ -47,6 +47,20 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>): Toa
       timer.pause();
     };
   }, [timer, timeout]);
+
+  // Restore focus to the toast container on unmount.
+  // If there are no more toasts, the container will be unmounted
+  // and will restore focus to wherever focus was before the user
+  // focused the toast region.
+  useLayoutEffect(() => {
+    let container = ref.current.closest('[role=region]') as HTMLElement;
+    return () => {
+      if (container && container.contains(document.activeElement)) {
+        container.focus();
+      }
+    };
+  }, [ref]);
+
 
   let titleId = useId();
   let descriptionId = useSlotId();

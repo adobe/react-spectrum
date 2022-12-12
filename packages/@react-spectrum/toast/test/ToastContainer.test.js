@@ -61,11 +61,11 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    let region = getByRole('region');
-    expect(region).toHaveAttribute('aria-label', 'Notifications');
-
     expect(queryByRole('alert')).toBeNull();
     triggerPress(button);
+
+    let region = getByRole('region');
+    expect(region).toHaveAttribute('aria-label', 'Notifications');
 
     let alert = getByRole('alert');
     expect(alert).toBeVisible();
@@ -283,5 +283,44 @@ describe('Toast Provider and Container', function () {
 
     let region = getByRole('region');
     expect(document.activeElement).toBe(region);
+  });
+
+  it('should restore focus when a toast exits', () => {
+    let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let button = getByRole('button');
+
+    triggerPress(button);
+
+    let toast = getByRole('alert');
+    let closeButton = within(toast).getByRole('button');
+    act(() => closeButton.focus());
+
+    triggerPress(closeButton);
+    fireAnimationEnd(toast);
+    expect(queryByRole('alert')).toBeNull();
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should move focus to container when a toast exits and there are more', () => {
+    let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let button = getByRole('button');
+
+    triggerPress(button);
+    triggerPress(button);
+
+    let toast = getByRole('alert');
+    let closeButton = within(toast).getByRole('button');
+    triggerPress(closeButton);
+    fireAnimationEnd(toast);
+
+    expect(document.activeElement).toBe(getByRole('region'));
+
+    toast = getByRole('alert');
+    closeButton = within(toast).getByRole('button');
+    triggerPress(closeButton);
+    fireAnimationEnd(toast);
+
+    expect(queryByRole('alert')).toBeNull();
+    expect(document.activeElement).toBe(button);
   });
 });

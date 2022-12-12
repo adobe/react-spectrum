@@ -15,7 +15,6 @@ import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
-import {FocusScope} from '@react-aria/focus';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -63,12 +62,12 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     state,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   let {
     closeButtonProps,
     titleProps,
     toastProps
-  } = useToast(props, state);
-  let domRef = useDOMRef(ref);
+  } = useToast(props, state, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -85,56 +84,53 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     }
   };
 
-  // TODO: if this isn't the last toast, move to the next one when closing instead?
   return (
-    <FocusScope restoreFocus>
-      <div
-        {...styleProps}
-        {...toastProps}
-        ref={domRef}
-        className={classNames(styles,
-          'spectrum-Toast',
-          {['spectrum-Toast--' + variant]: variant},
-          styleProps.className,
-          classNames(
-            toastContainerStyles,
-            'spectrum-Toast'
-          )
-        )}
-        style={{
-          ...styleProps.style,
-          zIndex: props.toast.priority
-        }}
-        data-animation={animation}
-        onAnimationEnd={e => {
-          if (e.animationName === toastContainerStyles['fade-out']) {
-            state.remove(key);
-          }
-        }}>
-        {Icon &&
-          <Icon
-            aria-label={iconLabel}
-            UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
+    <div
+      {...styleProps}
+      {...toastProps}
+      ref={domRef}
+      className={classNames(styles,
+        'spectrum-Toast',
+        {['spectrum-Toast--' + variant]: variant},
+        styleProps.className,
+        classNames(
+          toastContainerStyles,
+          'spectrum-Toast'
+        )
+      )}
+      style={{
+        ...styleProps.style,
+        zIndex: props.toast.priority
+      }}
+      data-animation={animation}
+      onAnimationEnd={e => {
+        if (e.animationName === toastContainerStyles['fade-out']) {
+          state.remove(key);
         }
-        <div className={classNames(styles, 'spectrum-Toast-body')}>
-          <div className={classNames(styles, 'spectrum-Toast-content')} {...titleProps}>{children}</div>
-          {actionLabel &&
-            <Button
-              onPress={handleAction}
-              UNSAFE_className={classNames(styles, 'spectrum-Button')}
-              variant="secondary"
-              staticColor="white">
-              {actionLabel}
-            </Button>
-          }
-        </div>
-        <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-          <ClearButton {...closeButtonProps} variant="overBackground">
-            <CrossMedium />
-          </ClearButton>
-        </div>
+      }}>
+      {Icon &&
+        <Icon
+          aria-label={iconLabel}
+          UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
+      }
+      <div className={classNames(styles, 'spectrum-Toast-body')}>
+        <div className={classNames(styles, 'spectrum-Toast-content')} {...titleProps}>{children}</div>
+        {actionLabel &&
+          <Button
+            onPress={handleAction}
+            UNSAFE_className={classNames(styles, 'spectrum-Button')}
+            variant="secondary"
+            staticColor="white">
+            {actionLabel}
+          </Button>
+        }
       </div>
-    </FocusScope>
+      <div className={classNames(styles, 'spectrum-Toast-buttons')}>
+        <ClearButton {...closeButtonProps} variant="overBackground">
+          <CrossMedium />
+        </ClearButton>
+      </div>
+    </div>
   );
 }
 

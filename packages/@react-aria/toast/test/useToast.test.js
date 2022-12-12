@@ -11,6 +11,7 @@
  */
 
 import {renderHook} from '@react-spectrum/test-utils';
+import {useRef} from 'react';
 import {useToast} from '../';
 
 describe('useToast', () => {
@@ -21,7 +22,7 @@ describe('useToast', () => {
   });
 
   let renderToastHook = (toast, state, wrapper) => {
-    let {result} = renderHook(() => useToast({toast}, state), {wrapper});
+    let {result} = renderHook(() => useToast({toast}, state, useRef(document.createElement('div'))), {wrapper});
     return result.current;
   };
 

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+@import "../../../@adobe/spectrum-css-temp/components/commons/focus-ring.css";
+
 .react-spectrum-ToastContainer {
   position: fixed;
   inset-inline-start: 0;
@@ -17,6 +19,18 @@
   z-index: 100050; /* above modals */
   display: flex;
   pointer-events: none;
+  outline: none;
+
+  > :first-child {
+    @inherit %spectrum-FocusRing-ring;
+    --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
+    --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+    --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
+  }
+
+  &:focus > :first-child {
+    @inherit %spectrum-FocusRing-active;
+  }
 
   .spectrum-Toast {
     position: absolute;

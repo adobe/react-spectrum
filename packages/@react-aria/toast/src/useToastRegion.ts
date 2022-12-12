@@ -1,7 +1,7 @@
 import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 import {ToastState} from '@react-stately/toast';
 import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useLandmark} from '@react-aria/landmark';
@@ -24,16 +24,36 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     onHoverEnd: state.resumeAll
   });
 
+  let lastFocused = useRef(null);
   let {focusWithinProps} = useFocusWithin({
-    onFocusWithin: state.pauseAll,
-    onBlurWithin: state.resumeAll
+    onFocusWithin: (e) => {
+      state.pauseAll();
+      lastFocused.current = e.relatedTarget;
+    },
+    onBlurWithin: () => {
+      state.resumeAll();
+      lastFocused.current = null;
+    }
   });
+
+  // When the region unmounts, restore focus to the last element that had focus
+  // before the user moved focus into the region.
+  // TODO: handle when the element has unmounted like FocusScope does?
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      if (lastFocused.current && document.body.contains(lastFocused.current)) {
+        lastFocused.current.focus();
+      }
+    };
+  }, [ref]);
 
   return {
     regionProps: {
       ...landmarkProps,
       ...hoverProps,
       ...focusWithinProps,
+      tabIndex: -1,
       // Mark the toast region as a "top layer", so that it:
       //   - is not aria-hidden when opening an overlay
       //   - allows focus even outside a containing focus scope

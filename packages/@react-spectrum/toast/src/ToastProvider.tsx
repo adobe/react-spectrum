@@ -87,15 +87,17 @@ function ToastProviderInner(props: ToastProviderProps) {
 
   return (
     <ToastContext.Provider value={contextValue}>
-      <ToastContainer state={state}>
-        {state.toasts.map((toast) => (
-          <Toast
-            key={toast.key}
-            toast={toast}
-            state={state} />
-        ))}
-      </ToastContainer>
       {props.children}
+      {state.toasts.length > 0 &&
+        <ToastContainer state={state}>
+          {state.toasts.map((toast) => (
+            <Toast
+              key={toast.key}
+              toast={toast}
+              state={state} />
+          ))}
+        </ToastContainer>
+      }
     </ToastContext.Provider>
   );
 }
