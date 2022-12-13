@@ -11,9 +11,9 @@
     "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx' && tsc --project ./tsconfig.types.json"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
+    "@react-aria/utils": "^3.14.1",
     "@react-spectrum/icon": "^3.6.2",
-    "@react-aria/utils": "^3.14.1"
+    "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "3.0.0-alpha.1"
