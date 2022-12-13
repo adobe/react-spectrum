@@ -78,7 +78,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     columnLayout.getInitialUncontrolledWidths(uncontrolledColumns)
   );
   // combine columns back into one map that maintains same order as the columns
-  let cWidths = useMemo(() =>
+  let colWidths = useMemo(() =>
       columnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
   , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns, columnLayout]);
 
@@ -104,8 +104,8 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   }, [propsOnColumnResizeEnd, setResizingColumn]);
 
   let columnWidths = useMemo(() =>
-      columnLayout.buildColumnWidths(tableWidth, state.collection, cWidths)
-  , [tableWidth, state.collection, cWidths, columnLayout]);
+      columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)
+  , [tableWidth, state.collection, colWidths, columnLayout]);
 
   return useMemo(() => ({
     resizingColumn,

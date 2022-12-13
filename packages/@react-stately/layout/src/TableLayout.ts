@@ -278,7 +278,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
-    let cWidths = this.columnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
+    let colWidths = this.columnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
 
     // If columns changed, clear layout cache.
     if (
@@ -311,7 +311,7 @@ export class TableLayout<T> extends ListLayout<T> {
       }
     }
 
-    this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, cWidths);
+    this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, colWidths);
 
     let header = this.buildHeader();
     let body = this.buildBody(0);
