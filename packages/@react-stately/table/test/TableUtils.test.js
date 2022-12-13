@@ -1,5 +1,5 @@
 import {calculateColumnSizes} from '../src/TableUtils';
-import {TableColumnLayout} from '../src/TableLayout';
+import {TableColumnLayout} from '../src/TableColumnLayout';
 
 describe('TableUtils', () => {
   describe('column building', () => {

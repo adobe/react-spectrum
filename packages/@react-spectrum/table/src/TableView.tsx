@@ -38,8 +38,8 @@ import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualize
 import {Resizer} from './Resizer';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableLayout} from '@react-stately/layout';
-import {TableState, useTableState} from '@react-stately/table';
+import {TableColumnLayout, TableState, useTableState} from '@react-stately/table';
+import {TableLayout} from '@react-stately/layout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';

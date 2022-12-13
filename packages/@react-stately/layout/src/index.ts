@@ -11,4 +11,4 @@
  */
 export type {ListLayoutOptions, LayoutNode} from './ListLayout';
 export {ListLayout} from './ListLayout';
-export {TableLayout, TableColumnLayout} from './TableLayout';
+export {TableLayout} from './TableLayout';

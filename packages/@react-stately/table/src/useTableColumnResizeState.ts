@@ -13,7 +13,7 @@
 import {ColumnSize} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key, useCallback, useMemo, useState} from 'react';
-import {TableColumnLayout} from '@react-stately/layout';
+import {TableColumnLayout} from './TableColumnLayout';
 import {TableState} from './useTableState';
 
 export interface TableColumnResizeStateProps<T> {
