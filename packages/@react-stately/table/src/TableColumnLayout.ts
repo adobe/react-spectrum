@@ -17,11 +17,11 @@ import {
   isStatic,
   parseFractionalUnit
 } from './TableUtils';
-import {ColumnSize, ITableColumnLayout, TableCollection, TableColumnLayoutOptions} from '@react-types/table';
+import {ColumnSize, TableCollection, TableColumnLayoutOptions} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 
-export class TableColumnLayout<T> implements ITableColumnLayout<T> {
+export class TableColumnLayout<T> {
   getDefaultWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   getDefaultMinWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   columnWidths: Map<Key, number> = new Map();

@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnSize, ITableColumnLayout, TableCollection} from '@react-types/table';
+import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  columnLayout: ITableColumnLayout<T>,
+  columnLayout: TableColumnLayout<T>,
   initialCollection: TableCollection<T>
 }
 
@@ -31,7 +32,7 @@ export class TableLayout<T> extends ListLayout<T> {
   lastPersistedKeys: Set<Key> = null;
   persistedIndices: Map<Key, number[]> = new Map();
   private disableSticky: boolean;
-  columnLayout: ITableColumnLayout<T>;
+  columnLayout: TableColumnLayout<T>;
   controlledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
