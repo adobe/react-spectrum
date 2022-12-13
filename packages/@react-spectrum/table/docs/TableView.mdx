@@ -569,33 +569,42 @@ from the dropdown.
 ### Width values
 
 Columns support four different width props: `defaultWidth`, `width`, `minWidth`, and `maxWidth`. Each of these props accepts fixed values or percentages, with `width` and `defaultWidth` accepting fractional (`fr`) units as well.
-Providing a `width` to a Column sets its width to the value provided to it, making it unaffected by any changes to other columns' widths unless a fractional value is provided. Providing a `defaultWidth` allows you
-to specify a Column's initial width, but allows the column width to freely shrink and grow in response to changes in other columns' widths. `minWidth` and `maxWidth` allows you to restrict a Column's width to a minimum and
+Providing a non-fractional value `width` to a Column sets its width to the value provided to it, making it unaffected by any changes to other columns' widths. Providing a `defaultWidth` allows you
+to specify a Column's initial width, but allows the column width to freely shrink and grow in response to changes in other column widths. `minWidth` and `maxWidth` allows you to restrict a Column's width to a minimum and
 maximum value respectively. In general, TableView prioritizes columns with defined widths and divides the remaining space evenly amongst the other columns.
 
 ### Resize events
 
 TableView accepts an `onResize` prop which is triggered whenever a column resizer is moved by the user. This can be used in combination with the `width` prop to update a Column's in a controlled fashion. TableView also accepts
-an `onResizeEnd` prop as well, triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column.
+an `onResizeEnd` prop as well, triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the TableView.
 
-The example below illustrates how each of the applied column width properties affects their resize behavior. It also demonstrates the difference between when `onResize` and `onResizeEnd` fires and the values
-provided to both.
+The example below illustrates how each of the aforementioned column width properties affects their respective column's resize behavior. It also demonstrates when `onResize` and `onResizeEnd` fire when resizing and the prints the values provided to each.
 
-TODO: fix types for width props
+TODO: highlight code
 ```tsx example
 function ResizableTable() {
+  /*- begin highlight -*/
   let [widths, setWidths] = React.useState(new Map());
   let [finalWidths, setFinalWidths] = React.useState(new Map());
-  // TODO: fix bug where null is returned when just clicking the column header
+  /*- end highlight -*/
 
   return (
     <Flex direction="column">
-      <TableView aria-label="TableView with resizable columns" width={600} height={200} onResize={setWidths} onResizeEnd={setFinalWidths}>
+      <TableView
+        /*- begin highlight -*/
+        onResize={setWidths}
+        onResizeEnd={setFinalWidths}
+        /*- end highlight -*/
+        aria-label="TableView with resizable columns"
+        width={800}
+        height={200} >
         <TableHeader>
+          {/*- begin highlight -*/}
           <Column key="file" allowsResizing maxWidth={500}>File Name</Column>
           <Column key="type" allowsResizing defaultWidth="1fr">Type</Column>
-          <Column key="size" allowsResizing width={80}>Size</Column>
+          <Column key="size" width={80}>Size</Column>
           <Column key="date" allowsResizing minWidth={100}>Date Modified</Column>
+          {/*- end highlight -*/}
         </TableHeader>
         <TableBody>
           <Row>
