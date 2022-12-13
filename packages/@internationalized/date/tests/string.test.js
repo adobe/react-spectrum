@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, parseAbsolute, parseDate, parseDateTime, parseDuration, parseTime, parseZonedDateTime, Time, ZonedDateTime} from '../';
+import {CalendarDate, CalendarDateTime, parseAbsolute, parseDate, parseDateTime, parseTime, parseZonedDateTime, Time, ZonedDateTime} from '../';
 
 describe('string conversion', function () {
   describe('parseTime', function () {
@@ -350,119 +350,6 @@ describe('string conversion', function () {
     it('should stringify a date', function () {
       let date = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 14, 32, 45);
       expect(date.toAbsoluteString()).toBe('2020-02-03T22:32:45.000Z');
-    });
-  });
-
-  describe('parseDuration', function () {
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3Y6M6W4DT12H30M5S');
-      expect(duration).toStrictEqual({
-        years: 3,
-        months: 6,
-        weeks: 6,
-        days: 4,
-        hours: 12,
-        minutes: 30,
-        seconds: 5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds in decimals and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3.75Y6.6M6.5W4.2DT12.5H30.5M5.5S');
-      expect(duration).toStrictEqual({
-        years: 3.75,
-        months: 6.6,
-        weeks: 6.5,
-        days: 4.2,
-        hours: 12.5,
-        minutes: 30.5,
-        seconds: 5.5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds in decimals expressed by commas and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3,75Y6,75M6,5W4,2DT12,5H30,5M5,5S');
-      expect(duration).toStrictEqual({
-        years: 3.75,
-        months: 6.75,
-        weeks: 6.5,
-        days: 4.2,
-        hours: 12.5,
-        minutes: 30.5,
-        seconds: 5.5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds with negative values and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3Y6M-6W4DT12H30M-5S');
-      expect(duration).toStrictEqual({
-        years: 3,
-        months: 6,
-        weeks: -6,
-        days: 4,
-        hours: 12,
-        minutes: 30,
-        seconds: -5
-      });
-    });
-  
-    it('parses a negative ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('-P3Y6M6W4DT12H30M5S');
-      expect(duration).toStrictEqual({
-        years: -3,
-        months: -6,
-        weeks: -6,
-        days: -4,
-        hours: -12,
-        minutes: -30,
-        seconds: -5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains hours, minutes, and seconds and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('PT20H35M15S');
-      expect(duration).toStrictEqual({
-        years: 0,
-        months: 0,
-        weeks: 0,
-        days: 0,
-        hours: 20,
-        minutes: 35,
-        seconds: 15
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, and days and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P7Y8M14W6DT');
-      expect(duration).toStrictEqual({
-        years: 7,
-        months: 8,
-        weeks: 14,
-        days: 6,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, hours, and seconds and returns a DateTimeDuration object', function () {
-      console.log(parseDuration);
-      const duration = parseDuration('P18Y7MT20H15S');
-      expect(duration).toStrictEqual({
-        years: 18,
-        months: 7,
-        weeks: 0,
-        days: 0,
-        hours: 20,
-        minutes: 0,
-        seconds: 15
-      });
-    });
-  
-    it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
-      expect(() => {
-        parseDuration('7Y6D85');
-      }).toThrow('Invalid ISO 8601 Duration string: 7Y6D85');
     });
   });
 });

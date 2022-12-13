@@ -72,7 +72,6 @@ export {
   parseTime,
   parseAbsolute,
   parseAbsoluteToLocal,
-  parseZonedDateTime,
-  parseDuration
+  parseZonedDateTime
 } from './string';
 export {DateFormatter} from './DateFormatter';
