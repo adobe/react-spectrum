@@ -132,8 +132,8 @@ export const TableWithResizingNoProps = {
 interface ColumnData {
   name: string,
   uid: string,
-  defaultWidth?: ColumnSize,
-  width?: ColumnSize
+  defaultWidth?: ColumnSize | null,
+  width?: ColumnSize | null
 }
 let columnsDefaultFR: ColumnData[] = [
   {name: 'Name', uid: 'name', defaultWidth: '1fr'},
@@ -163,7 +163,7 @@ export const TableWithResizingFRs = {
   )
 };
 
-function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width: ColumnSize}>, rows, onResize}) {
+function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
   let {columns, rows = defaultRows, onResize, ...otherProps} = props;
   let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
 

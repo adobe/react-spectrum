@@ -75,13 +75,13 @@ export interface ColumnProps<T> {
   /** A list of child columns used when dynamically rendering nested child columns. */
   childColumns?: T[],
   /** The width of the column. */
-  width?: ColumnSize,
+  width?: ColumnSize | null,
   /** The minimum width of the column. */
-  minWidth?: ColumnStaticSize,
+  minWidth?: ColumnStaticSize | null,
   /** The maximum width of the column. */
-  maxWidth?: ColumnStaticSize,
+  maxWidth?: ColumnStaticSize | null,
   /** The default width of the column. */
-  defaultWidth?: ColumnSize,
+  defaultWidth?: ColumnSize | null,
   /** Whether the column allows resizing. */
   allowsResizing?: boolean,
   /** Whether the column allows sorting. */

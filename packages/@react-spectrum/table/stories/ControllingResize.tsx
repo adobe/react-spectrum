@@ -18,7 +18,7 @@ import React, {Key, useCallback, useMemo, useState} from 'react';
 export interface PokemonColumn {
   name: string,
   uid: string,
-  width?: ColumnSize
+  width?: ColumnSize | null
 }
 export interface PokemonData {
   id: number,

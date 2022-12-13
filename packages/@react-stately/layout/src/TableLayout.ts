@@ -28,28 +28,28 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   initialCollection: TableCollection<T>
 }
 
-interface TableColumnLayoutOptions {
-  getDefaultWidth: (props) => ColumnSize,
-  getDefaultMinWidth: (props) => ColumnSize
+interface TableColumnLayoutOptions<T> {
+  getDefaultWidth?: (column: GridNode<T>) => ColumnSize | null | undefined,
+  getDefaultMinWidth?: (column: GridNode<T>) => ColumnSize | null | undefined
 }
 
 export class TableColumnLayout<T> {
   resizingColumn: Key | null;
-  getDefaultWidth: (props) => ColumnSize;
-  getDefaultMinWidth: (props) => ColumnSize;
+  getDefaultWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
+  getDefaultMinWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   columnWidths: Map<Key, number> = new Map();
   columnMinWidths: Map<Key, number> = new Map();
   columnMaxWidths: Map<Key, number> = new Map();
   resizerPositions: Map<Key, number> = new Map();
 
-  constructor(options: TableColumnLayoutOptions) {
+  constructor(options: TableColumnLayoutOptions<T>) {
     this.getDefaultWidth = options.getDefaultWidth;
     this.getDefaultMinWidth = options.getDefaultMinWidth;
   }
 
 
   /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
-  splitColumnsIntoControlledAndUncontrolled(columns: Array<GridNode<unknown>>): [Map<Key, GridNode<unknown>>, Map<Key, GridNode<unknown>>] {
+  splitColumnsIntoControlledAndUncontrolled(columns: Array<GridNode<T>>): [Map<Key, GridNode<T>>, Map<Key, GridNode<T>>] {
     return columns.reduce((acc, col) => {
       if (col.props.width != null) {
         acc[0].set(col.key, col);
@@ -61,7 +61,7 @@ export class TableColumnLayout<T> {
   }
 
   /** Takes uncontrolled and controlled widths and joins them into a single Map. */
-  recombineColumns(columns: Array<GridNode<T>>, uncontrolledWidths: Map<Key, ColumnSize>, uncontrolledColumns: Map<Key, GridNode<unknown>>, controlledColumns: Map<Key, GridNode<unknown>>): Map<Key, ColumnSize> {
+  recombineColumns(columns: Array<GridNode<T>>, uncontrolledWidths: Map<Key, ColumnSize>, uncontrolledColumns: Map<Key, GridNode<T>>, controlledColumns: Map<Key, GridNode<T>>): Map<Key, ColumnSize> {
     return new Map(columns.map(col => {
       if (uncontrolledColumns.has(col.key)) {
         return [col.key, uncontrolledWidths.get(col.key)];
@@ -72,9 +72,9 @@ export class TableColumnLayout<T> {
   }
 
   /** Used to make an initial Map of the uncontrolled widths based on default widths. */
-  getInitialUncontrolledWidths(uncontrolledColumns: Map<Key, GridNode<unknown>>): Map<Key, ColumnSize> {
+  getInitialUncontrolledWidths(uncontrolledColumns: Map<Key, GridNode<T>>): Map<Key, ColumnSize> {
     return new Map(Array.from(uncontrolledColumns).map(([key, col]) =>
-      [key, col.props.defaultWidth ?? this.getDefaultWidth?.(col.props)]
+      [key, col.props.defaultWidth ?? this.getDefaultWidth?.(col) ?? '1fr']
     ));
   }
 
@@ -115,7 +115,7 @@ export class TableColumnLayout<T> {
     // to the right or left of the resizing column
     collection.columns.forEach((column, i) => {
       let frKey;
-      minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i].props));
+      minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i]));
       if (col !== column.key && !column.column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
         // uncontrolled don't have props.width for us, so instead get from our state
         frKey = column.key;
@@ -149,8 +149,8 @@ export class TableColumnLayout<T> {
       tableWidth,
       collection.columns.map(col => ({...col.column.props, key: col.key})),
       resizingChanged,
-      (i) => this.getDefaultWidth(collection.columns[i].props),
-      (i) => this.getDefaultMinWidth(collection.columns[i].props)
+      (i) => this.getDefaultWidth(collection.columns[i]),
+      (i) => this.getDefaultMinWidth(collection.columns[i])
     );
 
     // set all new column widths for onResize event
@@ -191,8 +191,8 @@ export class TableColumnLayout<T> {
       tableWidth,
       collection.columns.map(col => ({...col.column.props, key: col.key})),
       widths,
-      (i) => this.getDefaultWidth(collection.columns[i].props),
-      (i) => this.getDefaultMinWidth(collection.columns[i].props)
+      (i) => this.getDefaultWidth(collection.columns[i]),
+      (i) => this.getDefaultMinWidth(collection.columns[i])
     );
 
     // columns going in will be the same order as the columns coming out
@@ -201,7 +201,7 @@ export class TableColumnLayout<T> {
       let key = collection.columns[index].key;
       let column = collection.columns[index];
       this.columnWidths.set(key, width);
-      this.columnMinWidths.set(key, getMinWidth(column.column.props.minWidth ?? this.getDefaultMinWidth(column.props), tableWidth));
+      this.columnMinWidths.set(key, getMinWidth(column.column.props.minWidth ?? this.getDefaultMinWidth(column), tableWidth));
       this.columnMaxWidths.set(key, getMaxWidth(column.column.props.maxWidth, tableWidth));
       resizerPosition += width;
       this.resizerPositions.set(key, resizerPosition);

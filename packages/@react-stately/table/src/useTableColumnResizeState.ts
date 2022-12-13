@@ -23,9 +23,9 @@ export interface TableColumnResizeStateProps<T> {
    **/
   tableWidth: number,
   /** A function that is called to find the default width for a given column. */
-  getDefaultWidth: (node: GridNode<T>) => ColumnSize,
+  getDefaultWidth?: (node: GridNode<T>) => ColumnSize | null | undefined,
   /** A function that is called to find the default minWidth for a given column. */
-  getDefaultMinWidth: (node: GridNode<T>) => ColumnSize,
+  getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined,
   /** Callback that is invoked during the entirety of the resize event. */
   onColumnResize?: (widths: Map<Key, ColumnSize>) => void,
   /** Callback that is invoked when the resize event is started. */
