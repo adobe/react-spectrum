@@ -151,14 +151,23 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    this.invalidateEverything = invalidationContext.sizeChanged;
+    return invalidationContext.sizeChanged;
+  }
 
+  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     this.collection = this.virtualizer.collection;
-    this.lastValidRect = this.validRect;
-    this.validRect = this.virtualizer.getVisibleRect();
+
+    // Reset valid rect if we will have to invalidate everything.
+    // Otherwise we can reuse cached layout infos outside the current visible rect.
+    this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
+    if (this.invalidateEverything) {
+      this.lastValidRect = this.validRect;
+      this.validRect = this.virtualizer.getVisibleRect();
+    }
+
     this.rootNodes = this.buildCollection();
 
     // Remove deleted layout nodes
@@ -187,8 +196,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
-      // Skip rows before the valid rectangle.
-      if (node.type === 'item' && y + rowHeight < this.validRect.y) {
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (node.type === 'item' && y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;
@@ -226,17 +235,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return nodes;
   }
 
-  buildChild(node: Node<T>, x: number, y: number): LayoutNode {
+  isValid(node: Node<T>, y: number) {
     let cached = this.layoutNodes.get(node.key);
-    if (
+    return (
       !this.invalidateEverything &&
       cached &&
       cached.node === node &&
       y === (cached.header || cached.layoutInfo).rect.y &&
       cached.layoutInfo.rect.intersects(this.lastValidRect) &&
       cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.validRect))
-    ) {
-      return cached;
+    );
+  }
+
+  buildChild(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.isValid(node, y)) {
+      return this.layoutNodes.get(node.key);
     }
 
     let layoutNode = this.buildNode(node, x, y);
@@ -302,8 +315,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     for (let child of node.childNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
-      // Skip rows before the valid rectangle.
-      if (y + rowHeight < this.validRect.y) {
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;

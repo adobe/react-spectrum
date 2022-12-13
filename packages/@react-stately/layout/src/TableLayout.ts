@@ -11,9 +11,10 @@
  */
 
 import {GridNode} from '@react-types/grid';
+import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
+import {Node} from '@react-types/shared';
 import {TableCollection} from '@react-types/table';
 
 
@@ -34,18 +35,16 @@ export class TableLayout<T> extends ListLayout<T> {
     this.disableSticky = this.checkChrome105();
   }
 
-
-  buildCollection(): LayoutNode[] {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>): boolean {
     // If columns changed, clear layout cache.
-    if (
+    return super.shouldInvalidateEverything(invalidationContext) || (
       !this.lastCollection ||
       this.collection.columns.length !== this.lastCollection.columns.length ||
       this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
-    ) {
-      // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
-      this.invalidateEverything = true;
-    }
+    );
+  }
 
+  buildCollection(): LayoutNode[] {
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
     let loadingState = this.collection.body.props.loadingState;
     this.wasLoading = this.isLoading;
@@ -194,8 +193,8 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let node of this.collection.body.childNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
 
-      // Skip rows before the valid rectangle.
-      if (y + rowHeight < this.validRect.y) {
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
         y += rowHeight;
         skipped++;
         continue;
