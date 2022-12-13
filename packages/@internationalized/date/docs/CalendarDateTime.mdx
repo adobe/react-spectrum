@@ -128,25 +128,6 @@ date.subtract({minutes: 30}); // 2022-02-03T09:15
 
 Adding or subtracting a duration that goes beyond the limits of a particular field will cause the date to be _balanced_. For example, adding one day to August 31st results in September 1st. In addition, if adding or subtracting one field causes another to be invalid, the date will be _constrained_. For example, adding one month to August 31st results in September 30th because September 31st does not exist.
 
-### Parsing durations
-
-Duration can often be expressed as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string (e.g. 'P3Y6M4DT12H30M5S'). The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can parse [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration strings that are expressed with decimals (using commas or periods) as well as negative values.
-
-```tsx
-let durationString = 'P3Y6M6W4DT12H30M5S'
-let duration = parseDuration(durationString)
-// => duration = {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5}
-
-let durationString = '-P3Y6M6W4DT12H30M5S'
-let duration = parseDuration(durationString)
-// => duration = {years: -3, months: -6, weeks: -6, days: -4, hours: -12, minutes: -30, seconds: -5}
-
-let durationString = 'P3,25Y6,75M6,5W4,2DT12,2H30,5M5,5S'
-let duration = parseDuration(durationString)
-// => duration = {years: 3.25, months: 6.75, weeks: 6.5, days: 4.2, hours: 12.2, minutes: 30.5, seconds: 5.5}
-
-```
-
 ### Setting fields
 
 `CalendarDateTime` objects are immutable, which means their properties cannot be set directly. Instead, use the `set` method, and pass the fields to be modified. This will return a new `CalendarDateTime` with the updated values.
