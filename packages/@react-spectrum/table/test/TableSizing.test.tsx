@@ -1259,7 +1259,7 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(null);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1310,7 +1310,7 @@ describe('TableViewSizing', function () {
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         // TODO: should call with null or the currently calculated widths?
         // might be hard to call with current values
-        expect(onResizeEnd).toHaveBeenCalledWith(null);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1360,7 +1360,7 @@ describe('TableViewSizing', function () {
 
         userEvent.tab({shift: true});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(null);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 

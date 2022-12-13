@@ -88,6 +88,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [onResize, layoutState]);
 
   let endResize = useCallback((item) => {
+    if (lastSize.current == null) {
+      lastSize.current = layoutState.onColumnResize(item.key, layoutState.getColumnWidth(item.key));
+    }
     if (isResizing.current) {
       layoutState.onColumnResizeEnd(item.key);
       onResizeEnd?.(lastSize.current);
