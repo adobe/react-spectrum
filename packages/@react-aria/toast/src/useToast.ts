@@ -18,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps, ToastState} from '@react-types/toast';
 import {useFocus, useHover} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface ToastAriaProps extends ToastProps {}
 
@@ -41,7 +41,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   let {
     onRemove
   } = state;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let domProps = filterDOMProps(props);
 
   const handleAction = (...args) => {
@@ -55,7 +55,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
     }
   };
 
-  let iconProps = variant ? {'aria-label': formatMessage(variant)} : {};
+  let iconProps = variant ? {'aria-label': stringFormatter.format(variant)} : {};
 
   let pauseTimer = () => {
     timer && timer.pause();
@@ -86,7 +86,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
       onPress: handleAction
     },
     closeButtonProps: {
-      'aria-label': formatMessage('close'),
+      'aria-label': stringFormatter.format('close'),
       ...focusProps,
       onPress: chain(onClose, () => onRemove(toastKey))
     }

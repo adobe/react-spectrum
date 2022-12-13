@@ -20,7 +20,7 @@ interface GridCollectionOptions {
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
-  let columns = [];
+  let columns: GridNode<T>[][] = [];
   let seen = new Map();
   for (let column of columnNodes) {
     let parentKey = column.parentKey;
@@ -47,6 +47,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
 
         // Adjust shifted indices
         for (let i = col.length; i < column.length; i++) {
+          // eslint-disable-next-line max-depth
           if (column[i] && seen.has(column[i])) {
             seen.get(column[i]).index = i;
           }
@@ -90,6 +91,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
             textValue: null
           };
 
+          // eslint-disable-next-line max-depth
           if (row.length > 0) {
             row[row.length - 1].nextKey = placeholder.key;
             placeholder.prevKey = row[row.length - 1].key;
@@ -104,7 +106,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
         }
 
         item.level = i;
-        item.index = colIndex;
+        item.colIndex = colIndex;
         row.push(item);
       }
 

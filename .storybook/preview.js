@@ -16,15 +16,12 @@ export const parameters = {
   },
   a11y: {},
   layout: 'fullscreen',
-  args: {
-    isQuiet: false
-  },
-  argType: {
-    isQuiet: {
-      control: {type: 'boolean'}
-    },
-  },
-  controls: {}
+  // Stops infinite loop memory crash when saving CSF stories https://github.com/storybookjs/storybook/issues/12747#issuecomment-1151803506
+  docs: {
+    source: {
+      type: 'code'
+    }
+  }
 };
 
 export const globalTypes = {
@@ -32,13 +29,13 @@ export const globalTypes = {
     name: 'strictMode',
     description: 'Global tracker for strict mode',
     defaultValue: false
-  },
+  }
 };
 
 export const decorators = [
-  story => (
+  Story => (
     <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
-      {story()}
+      <Story />
     </VerticalCenter>
   ),
   withStrictModeSwitcher,

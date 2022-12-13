@@ -27,7 +27,7 @@ import React, {forwardRef, useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
@@ -53,7 +53,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -76,7 +76,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
           slot="typeIcon"
-          aria-label={formatMessage('alert')} />
+          aria-label={stringFormatter.format('alert')} />
       }
       <Divider />
       <Content>{children}</Content>

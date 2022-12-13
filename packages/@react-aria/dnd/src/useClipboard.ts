@@ -16,14 +16,19 @@ import {readFromDataTransfer, writeToDataTransfer} from './utils';
 import {useEffect, useRef} from 'react';
 import {useFocus} from '@react-aria/interactions';
 
-interface ClipboardProps {
+export interface ClipboardProps {
+  /** A function that returns the items to copy. */
   getItems?: () => DragItem[],
+  /** Handler that is called when the user triggers a copy interaction. */
   onCopy?: () => void,
+  /** Handler that is called when the user triggers a cut interaction. */
   onCut?: () => void,
+  /** Handler that is called when the user triggers a paste interaction. */
   onPaste?: (items: DropItem[]) => void
 }
 
-interface ClipboardResult {
+export interface ClipboardResult {
+  /** Props for the element that will handle clipboard events. */
   clipboardProps: DOMAttributes
 }
 
@@ -54,6 +59,10 @@ function addGlobalEventListener(event, fn) {
   };
 }
 
+/**
+ * Handles clipboard interactions for a focusable element. Supports items of multiple
+ * data types, and integrates with the operating system native clipboard.
+ */
 export function useClipboard(options: ClipboardProps): ClipboardResult {
   let ref = useRef(options);
   ref.current = options;

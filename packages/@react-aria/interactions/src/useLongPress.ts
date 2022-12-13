@@ -15,7 +15,7 @@ import {mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils'
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
-interface LongPressProps {
+export interface LongPressProps {
   /** Whether long press events should be disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a long press interaction starts. */
@@ -42,7 +42,7 @@ interface LongPressProps {
   accessibilityDescription?: string
 }
 
-interface LongPressResult {
+export interface LongPressResult {
   /** Props to spread on the target element. */
   longPressProps: DOMAttributes
 }

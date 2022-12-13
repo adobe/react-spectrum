@@ -14,6 +14,13 @@ import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingS
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
+/** Widths that result in a constant pixel value for the same Table width. */
+export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
+/** Widths that change size in relation to the remaining space and in ratio to other dynamic columns. */
+export type ColumnDynamicSize = `${number}fr`; // match regex: /^(\d+)(?=fr$)/
+/** All possible sizes a column can be assigned. */
+export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
+
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
@@ -38,10 +45,17 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   renderEmptyState?: () => JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
-  /** Handler that is called when a user performs a column resize. */
-  onColumnResize?: (affectedColumns: {key: Key, width: number}[]) => void,
-  /** Handler that is called when a column resize ends. */
-  onColumnResizeEnd?: (affectedColumns: {key: Key, width: number}[]) => void
+  /**
+   * Handler that is called when a user performs a column resize.
+   * Can be used with the width property on columns to put the column widths into
+   * a controlled state.
+   */
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * Handler that is called after a user performs a column resize.
+   * Can be used to store the widths of columns for another future session.
+   */
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 export interface TableHeaderProps<T> {
@@ -61,13 +75,13 @@ export interface ColumnProps<T> {
   /** A list of child columns used when dynamically rendering nested child columns. */
   childColumns?: T[],
   /** The width of the column. */
-  width?: number | string,
+  width?: ColumnSize | null,
   /** The minimum width of the column. */
-  minWidth?: number | string,
+  minWidth?: ColumnStaticSize | null,
   /** The maximum width of the column. */
-  maxWidth?: number | string,
+  maxWidth?: ColumnStaticSize | null,
   /** The default width of the column. */
-  defaultWidth?: number | string,
+  defaultWidth?: ColumnSize | null,
   /** Whether the column allows resizing. */
   allowsResizing?: boolean,
   /** Whether the column allows sorting. */
@@ -129,7 +143,7 @@ export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
 export interface TableCollection<T> extends GridCollection<T> {
-  // TODO perhaps elaborate on this? maybe not clear enought, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
+  // TODO perhaps elaborate on this? maybe not clear enough, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
   /** A list of header row nodes in the table. */
   headerRows: GridNode<T>[],
   /** A list of column nodes in the table. */

@@ -13,15 +13,15 @@
 import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
+import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
 export interface AriaDateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
@@ -64,15 +64,22 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
   });
 
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    ...props,
+    onBlurWithin: (e: FocusEvent) => {
       state.confirmPlaceholder();
-    }
+
+      if (props.onBlur) {
+        props.onBlur(e);
+      }
+    },
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
   let field = state.maxGranularity === 'hour' ? 'time' : 'date';
-  let description = state.value ? formatMessage(message, {[field]: state.formatValue({month: 'long'})}) : '';
+  let description = state.value ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})}) : '';
   let descProps = useDescription(description);
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
@@ -126,7 +133,18 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps),
+    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
+      onKeyDown(e: KeyboardEvent) {
+        if (props.onKeyDown) {
+          props.onKeyDown(e);
+        }
+      },
+      onKeyUp(e: KeyboardEvent) {
+        if (props.onKeyUp) {
+          props.onKeyUp(e);
+        }
+      }
+    }),
     descriptionProps,
     errorMessageProps
   };

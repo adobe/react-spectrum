@@ -15,6 +15,7 @@ import {
   ChangeEvent,
   DOMFactory,
   HTMLAttributes,
+  LabelHTMLAttributes,
   ReactDOM,
   RefObject
 } from 'react';
@@ -47,18 +48,18 @@ type DefaultElementType = 'input';
  */
 type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
 
- /**
-  * The HTML element interfaces that `useTextField` supports based on what is
-  * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
-  * `HTMLTextAreaElement`.
-  */
+/**
+ * The HTML element interfaces that `useTextField` supports based on what is
+ * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
+ * `HTMLTextAreaElement`.
+ */
 type TextFieldHTMLElementType = Pick<IntrinsicHTMLElements, TextFieldIntrinsicElements>;
 
- /**
-  * The HTML attributes interfaces that `useTextField` supports based on what
-  * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
-  * `TextareaHTMLAttributes`.
-  */
+/**
+ * The HTML attributes interfaces that `useTextField` supports based on what
+ * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
+ * `TextareaHTMLAttributes`.
+ */
 type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrinsicElements>;
 
 /**
@@ -67,7 +68,7 @@ type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrin
  */
 type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -88,7 +89,7 @@ export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultEle
   /** Props for the input element. */
   inputProps: TextFieldInputProps<T>,
   /** Props for the text field's visible label element, if any. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the text field's description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the text field's error message element, if any. */

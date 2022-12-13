@@ -77,7 +77,7 @@ The following example shows how to use the `useToggleButton` and `useToggleState
 The toggle state is used to switch between a green and blue background when unselected and selected respectively.
 In addition, the `isPressed` state is used to adjust the background to be darker when the user presses down on the button.
 
-```tsx example
+```tsx example export=true
 import {useRef} from 'react';
 import {useToggleButton} from '@react-aria/button';
 import {useToggleState} from '@react-stately/toggle';
@@ -92,11 +92,11 @@ function ToggleButton(props) {
       {...buttonProps}
       style={{
         background: isPressed
-          ? state.isSelected ? 'darkblue' : 'darkgreen'
-          : state.isSelected ? 'blue' : 'green',
-        color: 'white',
+          ? state.isSelected ? 'darkgreen' : 'gray'
+          : state.isSelected ? 'green' : 'lightgray',
+        color: state.isSelected ? 'white' : 'black',
         padding: 10,
-        cursor: 'pointer',
+        fontSize: 16,
         userSelect: 'none',
         WebkitUserSelect: 'none',
         border: 'none'
@@ -107,5 +107,37 @@ function ToggleButton(props) {
   );
 }
 
-<ToggleButton>Test</ToggleButton>
+<ToggleButton>Pin</ToggleButton>
+```
+
+## Usage
+
+The following examples show how to use the `ToggleButton` component created in the above example.
+
+### Controlled selection state
+
+A default selection state for a toggle button can be set using the `defaultSelected` prop, or controlled with the `isSelected` prop. The `onChange` event is fired when the user presses the button, toggling the boolean. See React's documentation on
+[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
+
+```tsx example
+function Example() {
+  let [isSelected, setSelected] = React.useState(false);
+
+  return (
+    <ToggleButton
+      isSelected={isSelected}
+      onChange={setSelected}
+      aria-label="Star">
+      ★
+    </ToggleButton>
+  );
+}
+```
+
+### Disabled
+
+A `ToggleButton` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<ToggleButton isDisabled>Pin</ToggleButton>
 ```

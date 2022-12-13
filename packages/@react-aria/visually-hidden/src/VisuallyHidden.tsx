@@ -13,9 +13,9 @@
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useFocusWithin} from '@react-aria/interactions';
 
-interface VisuallyHiddenProps extends DOMAttributes {
+export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
   children?: ReactNode,
 
@@ -42,7 +42,7 @@ const styles: CSSProperties = {
   whiteSpace: 'nowrap'
 };
 
-interface VisuallyHiddenAria {
+export interface VisuallyHiddenAria {
   visuallyHiddenProps: DOMAttributes
 }
 
@@ -57,9 +57,9 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
   } = props;
 
   let [isFocused, setFocused] = useState(false);
-  let {focusProps} = useFocus({
+  let {focusWithinProps} = useFocusWithin({
     isDisabled: !isFocusable,
-    onFocusChange: setFocused
+    onFocusWithinChange: (val) => setFocused(val)
   });
 
   // If focused, don't hide the element.
@@ -71,11 +71,12 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
     } else {
       return styles;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   return {
     visuallyHiddenProps: {
-      ...focusProps,
+      ...focusWithinProps,
       style: combinedStyles
     }
   };

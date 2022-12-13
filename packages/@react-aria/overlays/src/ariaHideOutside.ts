@@ -13,6 +13,7 @@
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
+let observerStack = [];
 
 /**
  * Hides all elements in the DOM outside the given targets from screen readers using aria-hidden,
@@ -36,18 +37,14 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
         }
 
         // Skip this node and its children if it is one of the target nodes, or a live announcer.
-        // Also skip children of already hidden nodes, as aria-hidden is recursive.
+        // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
+        // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
+        // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
         if (
           visibleNodes.has(node as Element) ||
-          hiddenNodes.has(node.parentElement)
+          (hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
         ) {
           return NodeFilter.FILTER_REJECT;
-        }
-
-        // VoiceOver on iOS has issues hiding elements with role="row". Hide the cells inside instead.
-        // https://bugs.webkit.org/show_bug.cgi?id=222623
-        if (node instanceof Element && node.getAttribute('role') === 'row') {
-          return NodeFilter.FILTER_SKIP;
         }
 
         // Skip this node but continue to children if one of the targets is inside the node.
@@ -77,6 +74,12 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     refCountMap.set(node, refCount + 1);
   };
 
+  // If there is already a MutationObserver listening from a previous call,
+  // disconnect it so the new on takes over.
+  if (observerStack.length) {
+    observerStack[observerStack.length - 1].disconnect();
+  }
+
   let node = walker.nextNode() as Element;
   while (node != null) {
     hide(node);
@@ -105,6 +108,17 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   observer.observe(root, {childList: true, subtree: true});
 
+  let observerWrapper = {
+    observe() {
+      observer.observe(root, {childList: true, subtree: true});
+    },
+    disconnect() {
+      observer.disconnect();
+    }
+  };
+
+  observerStack.push(observerWrapper);
+
   return () => {
     observer.disconnect();
 
@@ -116,6 +130,16 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       } else {
         refCountMap.set(node, count - 1);
       }
+    }
+
+    // Remove this observer from the stack, and start the previous one.
+    if (observerWrapper === observerStack[observerStack.length - 1]) {
+      observerStack.pop();
+      if (observerStack.length) {
+        observerStack[observerStack.length - 1].observe();
+      }
+    } else {
+      observerStack.splice(observerStack.indexOf(observerWrapper), 1);
     }
   };
 }

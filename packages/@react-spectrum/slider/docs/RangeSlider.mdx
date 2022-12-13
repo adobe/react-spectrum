@@ -20,7 +20,7 @@ import {RangeSlider} from '@react-spectrum/slider';
 ```
 
 ---
-category: Sliders
+category: Forms
 after_version: 3.0.0-alpha.0
 ---
 
@@ -31,7 +31,8 @@ after_version: 3.0.0-alpha.0
 <HeaderInfo
 packageData={packageData}
 componentNames={['RangeSlider']}
-sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]} />
+sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/slider/'}]}
+since="3.7.0" />
 
 ## Example
 
@@ -138,6 +139,25 @@ Slider automatically uses the current locale to format the value label.
 <PropTable component={docs.exports.RangeSlider} links={docs.links} />
 
 ## Visual options
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a RangeSlider.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<RangeSlider
+  label="Search radius"
+  formatOptions={{style: 'unit', unit: 'mile'}}
+  defaultValue={{start: 15, end: 60}}
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Ranking</Heading>
+      <Content>Search results are sorted by distance from city center.</Content>
+    </ContextualHelp>
+  } />
+```
 
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/slider/#Disabled)

@@ -11,10 +11,11 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
+import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {RefObject, SyntheticEvent, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
-interface OverlayProps {
+export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
   isOpen?: boolean,
 
@@ -45,7 +46,7 @@ interface OverlayProps {
   shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
-interface OverlayAria {
+export interface OverlayAria {
   /** Props to apply to the overlay container element. */
   overlayProps: DOMAttributes,
   /** Props to apply to the underlay element, if any. */
@@ -59,7 +60,7 @@ const visibleOverlays: RefObject<Element>[] = [];
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
-export function useOverlay(props: OverlayProps, ref: RefObject<Element>): OverlayAria {
+export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): OverlayAria {
   let {
     onClose,
     shouldCloseOnBlur,
@@ -124,6 +125,13 @@ export function useOverlay(props: OverlayProps, ref: RefObject<Element>): Overla
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
     onBlurWithin: (e) => {
+      // If focus is moving into a child focus scope (e.g. menu inside a dialog),
+      // do not close the outer overlay. At this point, the active scope should
+      // still be the outer overlay, since blur events run before focus.
+      if (e.relatedTarget && isElementInChildOfActiveScope(e.relatedTarget)) {
+        return;
+      }
+
       if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
         onClose();
       }

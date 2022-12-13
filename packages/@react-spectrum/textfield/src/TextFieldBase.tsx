@@ -14,12 +14,12 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {PressEvents} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, PressEvents {
@@ -34,12 +34,11 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange'>, P
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
   isLoading?: boolean,
-  readOnlyText?: string
+  disableFocusRing?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {
-    label,
     validationState,
     icon,
     isQuiet = false,
@@ -52,17 +51,17 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     descriptionProps,
     errorMessageProps,
-    inputRef,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
     validationIconClassName,
-    readOnlyText
+    disableFocusRing
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
-  
+  let inputRef = userInputRef || defaultInputRef;
+
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -77,7 +76,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
 
   if (icon) {
     let UNSAFE_className = classNames(
@@ -101,6 +100,11 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
+  let {focusProps, isFocusVisible} = useFocusRing({
+    isTextInput: true,
+    autoFocus
+  });
+
   let textField = (
     <div
       className={
@@ -109,53 +113,53 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           'spectrum-Textfield',
           {
             'spectrum-Textfield--invalid': isInvalid,
-            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
             'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
-            'spectrum-Textfield--multiline': multiLine
+            'spectrum-Textfield--multiline': multiLine,
+            'focus-ring': !disableFocusRing && isFocusVisible
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-        <ElementType
-          {...mergeProps(inputProps, hoverProps)}
-          ref={inputRef as any}
-          rows={multiLine ? 1 : undefined}
-          className={
-            classNames(
-              styles,
-              'spectrum-Textfield-input',
-              {
-                'spectrum-Textfield-inputIcon': icon,
-                'is-hovered': isHovered
-              },
-              inputClassName
-            )
-          } />
-      </FocusRing>
+      <ElementType
+        {...mergeProps(inputProps, hoverProps, focusProps)}
+        ref={inputRef as any}
+        rows={multiLine ? 1 : undefined}
+        className={
+          classNames(
+            styles,
+            'spectrum-Textfield-input',
+            {
+              'spectrum-Textfield-inputIcon': icon,
+              'is-hovered': isHovered
+            },
+            inputClassName
+          )
+        } />
       {icon}
-      {validationState && !isLoading ? validation : null}
+      {validationState && !isLoading && !isDisabled ? validation : null}
       {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>
   );
 
-  if (label) {
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: multiLine ? 'spectrum-Field-field--multiline' : ''
-    }));
-  }
-  
   return (
     <Field
       {...props}
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      wrapperClassName={
+        classNames(
+          styles,
+          'spectrum-Textfield-wrapper',
+          {
+            'spectrum-Textfield-wrapper--quiet': isQuiet
+          }
+        )
+      }
       showErrorIcon={false}
-      ref={domRef}
-      readOnlyText={readOnlyText}
-      inputProps={inputProps}>
+      ref={domRef}>
       {textField}
     </Field>
   );

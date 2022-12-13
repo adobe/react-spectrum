@@ -20,17 +20,17 @@ import {RefObject} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-interface ColumnHeaderProps {
+export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  node: GridNode<unknown>,
+  node: GridNode<T>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
   isVirtualized?: boolean
 }
 
-interface ColumnHeaderAria {
+export interface TableColumnHeaderAria {
   /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
   columnHeaderProps: DOMAttributes
 }
@@ -41,20 +41,18 @@ interface ColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
   let {node} = props;
-  let allowsResizing = node.props.allowsResizing;
   let allowsSorting = node.props.allowsSorting;
-  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || node.props.allowsResizing || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
+  // if there are no focusable children, the column header will focus the cell
+  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
   let {pressProps} = usePress({
-    // Disabled for allowsResizing because if resizing is allowed, a menu trigger is added to the column header.
-    isDisabled: (!(allowsSorting || allowsResizing)) || isSelectionCellDisabled,
+    isDisabled: !allowsSorting || isSelectionCellDisabled,
     onPress() {
-      !allowsResizing && state.sort(node.key);
+      state.sort(node.key);
     },
     ref
   });
@@ -70,13 +68,13 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let sortDescription;
   if (allowsSorting) {
-    sortDescription = `${formatMessage('sortable')}`;
+    sortDescription = `${stringFormatter.format('sortable')}`;
     // Android Talkback doesn't support aria-sort so we add sort order details to the aria-described by here
     if (isSortedColumn && sortDirection && isAndroid()) {
-      sortDescription = `${sortDescription}, ${formatMessage(sortDirection)}`;
+      sortDescription = `${sortDescription}, ${stringFormatter.format(sortDirection)}`;
     }
   }
 
@@ -84,7 +82,14 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
 
   return {
     columnHeaderProps: {
-      ...mergeProps(gridCellProps, pressProps, focusableProps, descriptionProps),
+      ...mergeProps(
+        gridCellProps,
+        pressProps,
+        focusableProps,
+        descriptionProps,
+        // If the table is empty, make all column headers untabbable or programatically focusable
+        state.collection.size === 0 && {tabIndex: null}
+      ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,

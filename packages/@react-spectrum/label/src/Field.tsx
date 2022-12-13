@@ -10,23 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {mergeProps, mergeRefs} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import React, {RefObject} from 'react';
-import {ReadOnlyField} from './ReadOnlyField';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
-import {useMessageFormatter} from '@react-aria/i18n';
 
 function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
-  props = useFormProps(props);
+  let formProps = useFormProps(props);
+  let isInForm = formProps !== props;
+  props = formProps;
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -39,102 +37,122 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     errorMessage,
     isDisabled,
     showErrorIcon,
+    contextualHelp,
     children,
     labelProps,
-    readOnlyText,
-    isReadOnly,
-    inputProps, 
-    inputRef, 
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
     elementType,
     wrapperClassName,
-
+    wrapperProps = {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let hasHelpText = !!description || errorMessage && validationState === 'invalid';
-  let formatMessage = useMessageFormatter(intlMessages);
-  let displayReadOnly = isReadOnly && (readOnlyText || readOnlyText === '');
+  let contextualHelpId = useId();
 
-  if (label || hasHelpText) {
-    let labelWrapperClass = classNames(
+  let labelWrapperClass = classNames(
       labelStyles,
       'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
+    {
+      'spectrum-Field--positionTop': labelPosition === 'top',
+      'spectrum-Field--positionSide': labelPosition === 'side',
+      'spectrum-Field--alignEnd': labelAlign === 'end',
+      'spectrum-Field--hasContextualHelp': !!props.contextualHelp
+    },
       styleProps.className,
       wrapperClassName
     );
 
-    children = React.cloneElement(children, mergeProps(children.props, {
-      className: classNames(
+  children = React.cloneElement(children, mergeProps(children.props, {
+    className: classNames(
         labelStyles,
         'spectrum-Field-field'
       )
-    }));
+  }));
 
-    let renderHelpText = () => (
-      <HelpText
-        descriptionProps={descriptionProps}
-        errorMessageProps={errorMessageProps}
-        description={description}
-        errorMessage={errorMessage}
-        validationState={validationState}
-        isDisabled={isDisabled}
-        showErrorIcon={showErrorIcon} />
+  let renderHelpText = () => (
+    <HelpText
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      description={description}
+      errorMessage={errorMessage}
+      validationState={validationState}
+      isDisabled={isDisabled}
+      showErrorIcon={showErrorIcon}
+      gridArea="helpText" />
     );
 
-    if (displayReadOnly) {
-      if (readOnlyText === '') {
-        readOnlyText = formatMessage('(None)');
-      }
-      children = (
-        <ReadOnlyField
-          {...props} 
-          readOnlyText={readOnlyText}
-          inputProps={inputProps} 
-          ref={inputRef as RefObject<HTMLTextAreaElement>} />            
+  let renderChildren = () => {
+    if (labelPosition === 'side') {
+      return (
+        <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+          {children}
+          {hasHelpText && renderHelpText()}
+        </Flex>
       );
     }
 
-    let renderChildren = () => (
-      <Flex direction="column" UNSAFE_className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
+    return (
+      <>
         {children}
-        {hasHelpText && !displayReadOnly && renderHelpText()}
-      </Flex>
+        {hasHelpText && renderHelpText()}
+      </>
+    );
+  };
+
+  let labelAndContextualHelp = (
+    <>
+      {label && (
+        <Label
+          {...labelProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          isRequired={isRequired}
+          necessityIndicator={necessityIndicator}
+          includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
+          elementType={elementType}>
+          {label}
+        </Label>
+      )}
+      {label && contextualHelp &&
+        <SlotProvider
+          slots={{
+            actionButton: {
+              UNSAFE_className: classNames(labelStyles, 'spectrum-Field-contextualHelp'),
+              id: contextualHelpId,
+              'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined
+            }
+          }}>
+          {contextualHelp}
+        </SlotProvider>
+      }
+    </>
     );
 
-    return (
-      <div
-        {...styleProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={labelWrapperClass}>
-        {label && (
-          <Label
-            {...labelProps}
-            labelPosition={labelPosition}
-            labelAlign={labelAlign}
-            isRequired={isRequired}
-            necessityIndicator={necessityIndicator}
-            includeNecessityIndicatorInAccessibilityName={includeNecessityIndicatorInAccessibilityName}
-            elementType={elementType}>
-            {label}
-          </Label>
-        )}
-        {renderChildren()}
+    // Need to add an extra wrapper for the label and contextual help if labelPosition is side,
+    // so that the table layout works inside forms.
+  if (isInForm && labelPosition === 'side' && label && contextualHelp) {
+    labelAndContextualHelp = (
+      <div className={classNames(labelStyles, 'spectrum-Field-labelCell')}>
+        <div className={classNames(labelStyles, 'spectrum-Field-labelWrapper')}>
+          {labelAndContextualHelp}
+        </div>
       </div>
     );
   }
 
-  return React.cloneElement(children, mergeProps(children.props, {
-    ...styleProps,
-    // @ts-ignore
-    ref: mergeRefs(children.ref, ref)
-  }));
+  return (
+    <div
+      {...styleProps}
+      {...wrapperProps}
+      ref={ref as RefObject<HTMLDivElement>}
+      className={labelWrapperClass}>
+      {labelAndContextualHelp}
+      {renderChildren()}
+    </div>
+  );
 }
 
 let _Field = React.forwardRef(Field);

@@ -6,14 +6,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:14.16.0
+      - image: cimg/node:16.13.2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:14.16.0
+      - image: cimg/node:16.13.2
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -21,7 +21,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:14.16.0
+      - image: cimg/node:16.13.2
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -216,6 +216,57 @@ jobs:
           name: lint
           command: yarn lint
 
+  ts-build-branch:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build branch apis
+          command: yarn build:api-branch
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'branch-api/'
+
+  ts-build-fork-point:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build fork-point apis
+          command: |
+            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'base-api/'
+
+  ts-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/dist
+
+      - run:
+          name: compare api
+          command: |
+            mkdir -p dist
+            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'ts-diff.txt'
+
   storybook:
     executor: rsp-large
     steps:
@@ -291,6 +342,23 @@ jobs:
           paths:
             - '*/docs/'
 
+  docs-verdaccio:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: run verdaccio
+          command: ./scripts/verdaccio.sh ci
+
+      # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
+      # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/'
+
   deploy:
     executor: azure-cli/azure-docker
     steps:
@@ -301,6 +369,19 @@ jobs:
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
               az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+            fi
+
+  # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
+  deploy-verdaccio:
+    executor: azure-cli/azure-docker
+    steps:
+      - attach_workspace:
+          at: /tmp/verdaccio_dist
+      - run:
+          name: deploy
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              az storage blob upload-batch -d reactspectrum/$CIRCLE_SHA1/verdaccio -s /tmp/verdaccio_dist/*/verdaccio --account-name reactspectrum
             fi
 
   deploy-production:
@@ -319,11 +400,15 @@ jobs:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
+      - attach_workspace:
+          at: /tmp/dist
+
       - run:
           name: comment on pr
           command: |
             if [ $GITHUB_TOKEN ]; then
               node .circleci/comment.js
+              node .circleci/api-comment.js
             fi
 
   publish-nightly:
@@ -368,6 +453,25 @@ workflows:
       - lint:
           requires:
             - install
+      - ts-build-fork-point:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore: main
+      - ts-build-branch:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore: main
+      - ts-diff:
+          requires:
+            - ts-build-fork-point
+            - ts-build-branch
+          filters:
+            branches:
+              ignore: main
       - storybook:
           requires:
             - install
@@ -381,6 +485,12 @@ workflows:
           requires:
             - install
       - docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
+      - docs-verdaccio:
           filters:
             branches:
               only: main
@@ -405,9 +515,9 @@ workflows:
               only: main
           requires:
             - docs-production
-      - comment:
+      - deploy-verdaccio:
           requires:
-            - deploy
+            - docs-verdaccio
 
   nightly:
     triggers:

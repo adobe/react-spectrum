@@ -78,7 +78,7 @@ export interface SelectableItemStates {
   allowsSelection: boolean,
   /**
    * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
-   * and `disabledBehavior. It may also change depending on the current selection state
+   * and `disabledBehavior`. It may also change depending on the current selection state
    * of the list (e.g. when selection is primary). This can be used to enable or disable hover
    * styles or other visual indications of interactivity.
    */
@@ -144,13 +144,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
+  isDisabled = isDisabled || manager.isDisabled(key);
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
   // on iOS 14 doesn't try to move real DOM focus to the item anyway.
   let itemProps: SelectableItemAria['itemProps'] = {};
-  if (!shouldUseVirtualFocus) {
+  if (!shouldUseVirtualFocus && !isDisabled) {
     itemProps = {
       tabIndex: key === manager.focusedKey ? 0 : -1,
       onFocus(e) {
@@ -159,14 +161,17 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       }
     };
+  } else if (isDisabled) {
+    itemProps.onMouseDown = (e) => {
+      // Prevent focus going to the body when clicking on a disabled item.
+      e.preventDefault();
+    };
   }
-
 
   // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
-  isDisabled = isDisabled || manager.isDisabled(key);
   let allowsSelection = !isDisabled && manager.canSelectItem(key);
   let allowsActions = onAction && !isDisabled;
   let hasPrimaryAction = allowsActions && (
@@ -290,7 +295,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent native drag and drop on long press if we also select on long press.
   // Once the user is in selection mode, they can long press again to drag.
-  let onDragStart = e => {
+  // Use a capturing listener to ensure this runs before useDrag, regardless of
+  // the order the props get merged.
+  let onDragStartCapture = e => {
     if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
       e.preventDefault();
     }
@@ -301,7 +308,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStart}
+      {onDoubleClick, onDragStartCapture}
     ),
     isPressed,
     isSelected: manager.isSelected(key),

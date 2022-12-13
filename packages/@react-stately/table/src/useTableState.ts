@@ -61,6 +61,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
     selectionMode,
     columns: []
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
@@ -68,7 +69,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({...props, collection});
+  let {disabledKeys, selectionManager} = useGridState({...props, collection, disabledBehavior: 'selection'});
 
   return {
     collection,
@@ -76,7 +77,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    isKeyboardNavigationDisabled,
+    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({

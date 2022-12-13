@@ -19,6 +19,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
+import {DeletableRowsTable, EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -27,7 +28,6 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Switch} from '@react-spectrum/switch';
-import {TableWithBreadcrumbs} from '../stories/Table.stories';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -67,6 +67,11 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
+let manyColumns = [];
+for (let i = 1; i <= 100; i++) {
+  manyColumns.push({id: i, name: 'Column ' + i});
+}
+
 function ExampleSortTable() {
   let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
 
@@ -87,6 +92,25 @@ function ExampleSortTable() {
     </TableView>
   );
 }
+
+let defaultTable = (
+  <TableView aria-label="Table">
+    <TableHeader>
+      <Column key="foo">Foo</Column>
+      <Column key="bar">Bar</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Foo 1</Cell>
+        <Cell>Bar 1</Cell>
+      </Row>
+      <Row>
+        <Cell>Foo 2</Cell>
+        <Cell>Bar 2</Cell>
+      </Row>
+    </TableBody>
+  </TableView>
+);
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -120,18 +144,26 @@ describe('TableView', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-
+  let rerender = (tree, children, scale = 'medium') => {
+    let newTree = tree.rerender(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    act(() => {jest.runAllTimers();});
+    return newTree;
+  };
   // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
   let getCell = (tree, text) => {
     // Find by text, then go up to the element with the cell role.
@@ -318,6 +350,33 @@ describe('TableView', function () {
     expect(cells[3]).toHaveAttribute('aria-colindex', '1');
     expect(cells[4]).toHaveAttribute('aria-colindex', '3');
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
+  });
+
+  it('accepts a UNSAFE_className', function () {
+    let {getByRole} = render(
+      <TableView aria-label="Table" data-testid="test" selectionMode="multiple" UNSAFE_className="test-class">
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
   it('renders a dynamic table', function () {
@@ -762,42 +821,50 @@ describe('TableView', function () {
 
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
-    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderTable = (locale = 'en-US', props = {}) => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     // locale is being set here, since we can't nest them, use original render function
-    let renderNested = (locale = 'en-US') => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table">
-          <TableHeader columns={nestedColumns}>
-            {column =>
-              <Column childColumns={column.children}>{column.name}</Column>
-            }
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderNested = (locale = 'en-US') => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table">
+            <TableHeader columns={nestedColumns}>
+              {column =>
+                <Column childColumns={column.children}>{column.name}</Column>
+              }
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     let renderMany = () => render(
       <TableView aria-label="Table">
@@ -810,6 +877,23 @@ describe('TableView', function () {
           {item =>
             (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
+
+    let renderManyColumns = () => render(
+      <TableView aria-label="Table" selectionMode="multiple">
+        <TableHeader columns={manyColumns}>
+          {column =>
+            <Column>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manyItems}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item.foo + ' ' + key}</Cell>}
             </Row>)
           }
         </TableBody>
@@ -1531,6 +1615,30 @@ describe('TableView', function () {
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
       });
+
+      it('should send focus to the collection if the focused row is removed', function () {
+        let tree = render(<DeletableRowsTable />);
+
+        let rows = tree.getAllByRole('row');
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(rows[1]);
+      });
     });
 
     describe('scrolling', function () {
@@ -1544,31 +1652,44 @@ describe('TableView', function () {
       });
 
       it('should scroll to a cell when it is focused off screen', function () {
-        let tree = renderMany();
+        let tree = renderManyColumns();
         let body = tree.getByRole('grid').childNodes[1];
 
-        let cell = getCell(tree, 'Baz 5');
+        let cell = getCell(tree, 'Foo 5 5');
         act(() => cell.focus());
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should move to the table itself
+        // When scrolling the focused item out of view, focus should remain on the item,
+        // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
+        body.scrollLeft = 1000;
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(tree.queryByText('Baz 5')).toBeNull();
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('Foo 5 5')).toBe(cell.firstElementChild);
+
+        // Ensure we have the correct sticky cells in the right order.
+        let row = cell.closest('[role=row]');
+        let cells = within(row).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
+        expect(cells).toHaveLength(18);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[2]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[2]).toBe(cell);
+        expect(cells[3]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
         expect(body.scrollTop).toBe(164);
-        expect(document.activeElement).toBe(getCell(tree, 'Bar 5'));
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
       });
 
       it('should not scroll when a column header receives focus', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
+        let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
 
@@ -1576,7 +1697,7 @@ describe('TableView', function () {
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
@@ -1821,6 +1942,54 @@ describe('TableView', function () {
 
         let checkbox = tree.getByLabelText('Select All');
         expect(checkbox.checked).toBeFalsy();
+      });
+
+      describe('Space key with focus on a link within a cell', () => {
+        it('should toggle selection and prevent scrolling of the table', () => {
+          let tree = render(
+            <TableView aria-label="Table" selectionMode="multiple">
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+
+          let row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'false');
+
+          let link = within(row).getAllByRole('link')[0];
+          expect(link.textContent).toBe('Foo 1');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'true');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          link = within(row).getAllByRole('link')[0];
+
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(link.textContent).toBe('Foo 1');
+        });
       });
     });
 
@@ -3288,9 +3457,6 @@ describe('TableView', function () {
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
-
-      // focus gets reset
-      act(() => table.focus());
       expect(document.activeElement).toBe(rows[1]);
     });
 
@@ -3336,6 +3502,7 @@ describe('TableView', function () {
     it('can bulk remove items', function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
+      let addButton = tree.getAllByRole('button')[0];
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
@@ -3349,6 +3516,7 @@ describe('TableView', function () {
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
+      expect(document.activeElement).toBe(dialog);
 
       triggerPress(confirmButton);
       expect(dialog).not.toBeInTheDocument();
@@ -3359,6 +3527,8 @@ describe('TableView', function () {
       expect(rows).toHaveLength(1);
 
       expect(checkbox.checked).toBe(false);
+
+      expect(document.activeElement).toBe(addButton);
     });
 
     it('can edit items', function () {
@@ -3396,6 +3566,7 @@ describe('TableView', function () {
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
+      expect(document.activeElement).toBe(button);
     });
 
     it('keyboard navigation works as expected with menu buttons', function () {
@@ -3407,7 +3578,8 @@ describe('TableView', function () {
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      let button = within(rows[1]).getByRole('button');
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
@@ -3416,15 +3588,38 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
       expect(tree.queryByRole('menu')).toBeNull();
 
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      userEvent.tab();
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(tree.getAllByRole('button')[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+
+      expect(document.activeElement).toBe(button);
     });
 
     it('menu buttons can be opened with Alt + ArrowDown', function () {
@@ -3574,25 +3769,6 @@ describe('TableView', function () {
   });
 
   describe('async loading', function () {
-    let defaultTable = (
-      <TableView aria-label="Table">
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>Bar 1</Cell>
-          </Row>
-          <Row>
-            <Cell>Foo 2</Cell>
-            <Cell>Bar 2</Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-    );
-
     it('should display a spinner when loading', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
@@ -3758,79 +3934,8 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 3 by useLayoutEffect
-      // we can't get better results than that without mocking every single clientHeight/Width
-      // this is a good candidate for storybook interactions test
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(4);
-    });
-
-    it('should display an empty state when there are no items', function () {
-      let tree = render(
-        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
-          <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
-          </TableHeader>
-          <TableBody>
-            {[]}
-          </TableBody>
-        </TableView>
-      );
-
-      let table = tree.getByRole('grid');
-      let rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-
-      let cell = within(rows[1]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '2');
-
-      let heading = within(cell).getByRole('heading');
-      expect(heading).toBeVisible();
-      expect(heading).toHaveTextContent('No results');
-
-      rerender(tree, defaultTable);
-      act(() => jest.runAllTimers());
-
-      rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(3);
-      expect(heading).not.toBeInTheDocument();
-    });
-
-    it('empty table select all should do nothing', function () {
-      let onSelectionChange = jest.fn();
-      let tree = render(
-        <div>
-          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
-            <TableHeader>
-              <Column key="foo">Foo</Column>
-              <Column key="bar">Bar</Column>
-            </TableHeader>
-            <TableBody>
-              {[]}
-            </TableBody>
-          </TableView>
-          <input />
-        </div>
-      );
-
-      let table = tree.getByRole('grid');
-      let selectAll = tree.getByRole('checkbox');
-      let rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-
-      userEvent.tab();
-      expect(document.activeElement).toBe(table);
-      userEvent.tab();
-      // shift tab with userEvent doesn't bring you to the right place
-      fireEvent.keyDown(document.activeElement, {key: 'Tab', shift: true});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab', shift: true});
-      expect(document.activeElement).toBe(selectAll);
-
-      userEvent.type(document.activeElement, '{space}');
-      expect(onSelectionChange).toHaveBeenCalledWith('all');
-      expect(selectAll).toHaveAttribute('aria-checked', 'true');
+      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -4096,6 +4201,157 @@ describe('TableView', function () {
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
+    });
+  });
+
+  describe('empty state', function () {
+    it('should display an empty state when there are no items', function () {
+      let tree = render(
+        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </TableHeader>
+          <TableBody>
+            {[]}
+          </TableBody>
+        </TableView>
+      );
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+
+      let cell = within(rows[1]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '2');
+
+      let heading = within(cell).getByRole('heading');
+      expect(heading).toBeVisible();
+      expect(heading).toHaveTextContent('No results');
+
+      rerender(tree, defaultTable);
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(heading).not.toBeInTheDocument();
+    });
+
+    it('empty table select all should be disabled', function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <div>
+          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
+            <TableHeader>
+              <Column key="foo">Foo</Column>
+              <Column key="bar">Bar</Column>
+            </TableHeader>
+            <TableBody>
+              {[]}
+            </TableBody>
+          </TableView>
+          <input />
+        </div>
+      );
+
+      let table = tree.getByRole('grid');
+      let selectAll = tree.getByRole('checkbox');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      userEvent.tab();
+      expect(document.activeElement).not.toBe(selectAll);
+      expect(selectAll).toHaveAttribute('disabled');
+    });
+
+    it('should allow the user to tab into the table body', function () {
+      let tree = render(<EmptyStateTable />);
+      let toggleButton = tree.getAllByRole('button')[0];
+      let link = tree.getByRole('link');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      userEvent.tab();
+      expect(document.activeElement).toBe(link);
+    });
+
+    it('should disable keyboard navigation within the table', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let header = within(table).getAllByRole('columnheader')[2];
+      expect(header).not.toHaveAttribute('tabindex');
+      let headerButton = within(header).getByRole('button');
+      expect(headerButton).toHaveAttribute('aria-disabled', 'true');
+      // Can't progamatically focus the column headers since they have no tab index when table is empty
+      act(() => {
+        header.focus();
+      });
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should disable press interactions with the column headers', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+
+      let columnButton = within(headers[2]).getByRole('button');
+      triggerPress(columnButton);
+      expect(document.activeElement).toBe(toggleButton);
+      expect(tree.queryByRole('menuitem')).toBeFalsy();
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryByRole('slider')).toBeFalsy();
+    });
+
+    it.skip('should re-enable functionality when the table recieves items', function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+      let selectAll = tree.getByRole('checkbox');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+
+      expect(selectAll).not.toHaveAttribute('disabled');
+      triggerPress(selectAll);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll.checked).toBeTruthy();
+      expect(document.activeElement).toBe(selectAll);
+
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('slider')).toBeTruthy();
+
+      let column1Button = within(headers[1]).getByRole('button');
+      let column2Button = within(headers[2]).getByRole('button');
+      triggerPress(column2Button);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('menuitem')).toBeTruthy();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(column2Button);
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      expect(document.activeElement).toBe(column1Button);
+
+      triggerPress(toggleButton);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll).toHaveAttribute('disabled');
+      triggerPress(headers[2]);
+      expect(document.activeElement).toBe(toggleButton);
+      userEvent.tab();
+      expect(document.activeElement).toBe(table);
+      expect(table).toHaveAttribute('tabIndex', '0');
     });
   });
 });

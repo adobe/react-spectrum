@@ -21,3 +21,4 @@ export type {AriaDateFieldProps, DateFieldAria} from './useDateField';
 export type {DatePickerAria} from './useDatePicker';
 export type {DateRangePickerAria} from './useDateRangePicker';
 export type {DateSegmentAria} from './useDateSegment';
+export type {AriaTimeFieldProps} from '@react-types/datepicker';

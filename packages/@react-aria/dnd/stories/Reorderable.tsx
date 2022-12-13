@@ -21,13 +21,14 @@ import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import {ItemDropTarget} from '@react-types/shared';
+import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
+import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useId} from '@react-aria/utils';
 import {useListData} from '@react-stately/data';
@@ -106,6 +107,21 @@ function ReorderableGrid(props) {
     onDragStart: action('onDragStart'),
     onDragEnd: chain(action('onDragEnd'), props.onDragEnd)
   });
+  useDraggableCollection({}, dragState, ref);
+
+  let onDrop = async (e) => {
+    if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+      let keys = [];
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has(dragType)) {
+          let key = JSON.parse(await item.getText(dragType));
+          keys.push(key);
+        }
+      }
+
+      props.onMove(keys, e.target);
+    }
+  };
 
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
@@ -116,74 +132,15 @@ function ReorderableGrid(props) {
       }
 
       return 'move';
-    }
+    },
+    onDrop
   });
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
-    onDropEnter: chain(action('onDropEnter'), console.log),
-    // onDropMove: action('onDropMove'),
-    onDropExit: chain(action('onDropExit'), console.log),
+    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
     onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
-        let keys = [];
-        for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
-          }
-        }
-
-        props.onMove(keys, e.target);
-      }
-    },
-    getDropTargetFromPoint(x, y) {
-      let rect = ref.current.getBoundingClientRect();
-      x += rect.x;
-      y += rect.y;
-      let closest = null;
-      let closestDistance = Infinity;
-      let closestDir = null;
-
-      for (let child of ref.current.children) {
-        if (!(child as HTMLElement).dataset.key) {
-          continue;
-        }
-
-        let r = child.getBoundingClientRect();
-        let points: [number, number, string][] = [
-          [r.left, r.top, 'before'],
-          [r.right, r.top, 'before'],
-          [r.left, r.bottom, 'after'],
-          [r.right, r.bottom, 'after']
-        ];
-
-        for (let [px, py, dir] of points) {
-          let dx = px - x;
-          let dy = py - y;
-          let d = dx * dx + dy * dy;
-          if (d < closestDistance) {
-            closestDistance = d;
-            closest = child;
-            closestDir = dir;
-          }
-        }
-
-        if (y >= r.top + 10 && y <= r.bottom - 10) {
-          closestDir = 'on';
-        }
-      }
-
-      let key = closest?.dataset.key;
-      if (key) {
-        return {
-          type: 'item',
-          key,
-          dropPosition: closestDir
-        };
-      }
-    }
+    onDrop
   }, dropState, ref);
 
   let {gridProps} = useGrid({
@@ -267,7 +224,7 @@ function CollectionItem({item, state, dragState, dropState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let dragButtonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -283,10 +240,10 @@ function CollectionItem({item, state, dragState, dropState}) {
   let id = useId();
 
   return (
-    <div {...rowProps} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
+    <div {...mergeProps(rowProps, dragProps)} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
-          {...mergeProps(gridCellProps, dragProps)}
+          {...gridCellProps}
           aria-labelledby={id}
           ref={cellRef}
           className={classNames(dndStyles, 'draggable', 'droppable', {

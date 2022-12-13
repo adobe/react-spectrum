@@ -12,15 +12,15 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
+import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMAttributes} from '@react-types/shared';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
 
 export interface CalendarAria {
@@ -36,8 +36,8 @@ export interface CalendarAria {
   title: string
 }
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarState | RangeCalendarState): CalendarAria {
-  let formatMessage = useMessageFormatter(intlMessages);
+export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
@@ -98,14 +98,14 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
-      'aria-label': formatMessage('next'),
+      'aria-label': stringFormatter.format('next'),
       isDisabled: nextDisabled,
       onFocus: () => nextFocused.current = true,
       onBlur: () => nextFocused.current = false
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
-      'aria-label': formatMessage('previous'),
+      'aria-label': stringFormatter.format('previous'),
       isDisabled: previousDisabled,
       onFocus: () => previousFocused.current = true,
       onBlur: () => previousFocused.current = false

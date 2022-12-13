@@ -13,12 +13,12 @@
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {radioGroupNames} from './utils';
+import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAria {
+export interface RadioAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Whether the radio is disabled. */
@@ -80,7 +80,11 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       disabled: isDisabled,
       checked,
       value,
-      onChange
+      onChange,
+      'aria-describedby': [
+        state.validationState === 'invalid' ? radioGroupErrorMessageIds.get(state) : null,
+        radioGroupDescriptionIds.get(state)
+      ].filter(Boolean).join(' ') || undefined
     }),
     isDisabled,
     isSelected: checked

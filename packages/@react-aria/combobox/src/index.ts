@@ -10,3 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {useComboBox} from './useComboBox';
+export type {AriaComboBoxOptions, ComboBoxAria} from './useComboBox';

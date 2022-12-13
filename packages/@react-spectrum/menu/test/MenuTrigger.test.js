@@ -61,8 +61,7 @@ describe('MenuTrigger', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -370,26 +369,6 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
       act(() => {jest.runAllTimers();}); // FocusScope raf
     }
-
-    it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-    `('$Name closes the menu upon trigger body scroll', function ({Component, props}) {
-      tree = renderComponent(Component, props);
-      let button = tree.getByRole('button');
-      triggerPress(button);
-      act(() => {jest.runAllTimers();});
-
-      let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
-
-      let scrollable = tree.getByTestId('scrollable');
-      fireEvent.scroll(scrollable);
-      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
-      act(() => {jest.runAllTimers();}); // FocusScope raf
-      expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(button);
-    });
 
     // Can't figure out why this isn't working for the v2 component
     it.each`

@@ -11,7 +11,10 @@
  */
 
 import {CalendarDate, CalendarDateTime, parseZonedDateTime} from '@internationalized/date';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 
 export default {
@@ -27,14 +30,17 @@ const focusParams = {
   chromaticProvider: {
     locales: ['en-US'],
     scales: ['medium'],
-    colorSchemes: ['light']
+    colorSchemes: ['light'],
+    express: false
   }
 };
 
 const openParams = {
   chromaticProvider: {
-    colorSchemes: ['light', 'darkest'],
-    disableAnimations: true
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
   }
 };
 
@@ -58,6 +64,13 @@ const zoned = {
 export const Placeholder = () => <DateRangePicker label="Date" placeholderValue={value.start} />;
 export const PlaceholderFocus = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusExpress = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+PlaceholderFocusExpress.parameters = {
+  chromaticProvider: {
+    express: true
+  }
+};
 
 export const PlaceholderTime = () => <DateRangePicker label="Date" placeholderValue={dateTime.start} />;
 export const PlaceholderZoned = () => <DateRangePicker label="Date" placeholderValue={zoned.start} />;
@@ -94,6 +107,16 @@ export const CustomWidthSmall = () => <DateRangePicker label="Date" value={zoned
 export const CustomWidthSmallInvalid = () => <DateRangePicker label="Date" value={zoned} width={50} validationState="invalid" />;
 export const CustomWidthSmallNoLabel = () => <DateRangePicker aria-label="Date" value={zoned} width={50} />;
 
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = () => <DateRangePicker label="Date" contextualHelp={contextualHelp} value={value} />;
+export const ContextualHelpSideLabel = () => <DateRangePicker label="Date" labelPosition="side" contextualHelp={contextualHelp} value={value} />;
+
 export const OpenPlaceholder = () => <DateRangePicker label="Date" placeholderValue={value.start} isOpen />;
 OpenPlaceholder.parameters = openParams;
 OpenPlaceholder.decorators = openDecorators;
@@ -126,6 +149,15 @@ export const OpenUnavailable = () => <DateRangePicker label="Date" value={value}
 OpenUnavailable.parameters = openParams;
 OpenUnavailable.decorators = openDecorators;
 
+export const OpenExpress = () => <DateRangePicker label="Date" value={dateTime} isOpen />;
+OpenExpress.parameters = {
+  chromaticProvider: {
+    express: true,
+    disableAnimations: true
+  }
+};
+OpenExpress.decorators = openDecorators;
+
 export const MultipleMonths = () => <DateRangePicker label="Date" value={value} isOpen maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;
 MultipleMonths.decorators = [Story => <div style={{height: 550, width: 1000}}><Story /></div>];
@@ -136,7 +168,22 @@ Tray.parameters = {
     colorSchemes: ['light'],
     locales: ['en-US'],
     scales: ['large'],
-    disableAnimations: true
+    disableAnimations: true,
+    express: false
+  },
+  chromatic: {
+    viewports: [380]
+  }
+};
+
+export const TrayExpress = () => <DateRangePicker label="Date" value={value} isOpen />;
+TrayExpress.parameters = {
+  chromaticProvider: {
+    colorSchemes: ['light'],
+    locales: ['en-US'],
+    scales: ['large'],
+    disableAnimations: true,
+    express: true
   },
   chromatic: {
     viewports: [380]

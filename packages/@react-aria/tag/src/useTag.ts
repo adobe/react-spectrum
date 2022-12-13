@@ -18,7 +18,7 @@ import {GridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {TagProps} from '@react-types/tag';
 import {useGridCell, useGridRow} from '@react-aria/grid';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
@@ -31,16 +31,14 @@ export interface TagAria {
 export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
   let {isFocused} = props;
   const {
-    isDisabled,
-    isRemovable,
+    allowsRemoving,
     onRemove,
-    children,
     item,
     tagRef,
     tagRowRef
   } = props;
-  const formatMessage = useMessageFormatter(intlMessages);
-  const removeString = formatMessage('remove');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const removeString = stringFormatter.format('remove');
   const labelId = useId();
   const buttonId = useId();
 
@@ -56,14 +54,14 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     focusMode: 'cell'
   }, state, tagRef);
 
-  function onKeyDown(e: KeyboardEvent<Element>) {
+  function onKeyDown(e: KeyboardEvent) {
     if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
-      onRemove(children, e);
+      onRemove(item.childNodes[0].key);
       e.preventDefault();
     }
   }
   const pressProps = {
-    onPress: e => onRemove?.(children, e)
+    onPress: () => onRemove?.(item.childNodes[0].key)
   };
 
   isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;
@@ -72,19 +70,17 @@ export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAri
     clearButtonProps: mergeProps(pressProps, {
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
-      id: buttonId,
-      isDisabled
+      id: buttonId
     }),
     labelProps: {
       id: labelId
     },
     tagRowProps: otherRowProps,
     tagProps: mergeProps(domProps, gridCellProps, {
-      'aria-disabled': isDisabled,
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label'],
-      onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) && !isDisabled ? 0 : -1
+      onKeyDown: allowsRemoving ? onKeyDown : null,
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1
     })
   };
 }
