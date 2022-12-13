@@ -5,30 +5,34 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MoveMoveEvent} from '@react-types/shared';
-import React, {RefObject, useRef} from 'react';
+import React, {Key, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
-import {useTableContext} from './TableView';
+import {useTableContext, useVirtualizerContext} from './TableView';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
+  onResizeStart: (key: Key) => void,
+  onResize: (widths: Map<Key, number | string>) => void,
+  onResizeEnd: (key: Key) => void,
   onMoveResizer: (e: MoveMoveEvent) => void
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {state, columnState, isEmpty} = useTableContext();
+  let {state, isEmpty, layout} = useTableContext();
+  // Virtualizer re-renders, but these components are all cached
+  // in order to get around that and cause a rerender here, we use context
+  // but we don't actually need any value, they are available on the layout object
+  useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
-  const stateRef = useRef<TableColumnResizeState<T>>(null);
-  stateRef.current = columnState;
 
-  let {inputProps, resizerProps} = useTableColumnResize({
+  let {inputProps, resizerProps} = useTableColumnResize<unknown>({
     ...props,
     label: stringFormatter.format('columnResizer'),
     isDisabled: isEmpty,
@@ -36,9 +40,9 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       document.body.classList.remove(classNames(styles, 'resize-ew'));
       document.body.classList.remove(classNames(styles, 'resize-e'));
       document.body.classList.remove(classNames(styles, 'resize-w'));
-      if (stateRef.current.getColumnMinWidth(column.key) >= stateRef.current.getColumnWidth(column.key)) {
+      if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
         document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
-      } else if (stateRef.current.getColumnMaxWidth(column.key) <= stateRef.current.getColumnWidth(column.key)) {
+      } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
         document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
       } else {
         document.body.classList.add(classNames(styles, 'resize-ew'));
@@ -50,7 +54,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       document.body.classList.remove(classNames(styles, 'resize-e'));
       document.body.classList.remove(classNames(styles, 'resize-w'));
     }
-  }, state, columnState, ref);
+  }, state, layout, ref);
 
   let style = {
     cursor: undefined,
@@ -58,8 +62,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     display: showResizer ? undefined : 'none',
     touchAction: 'none'
   };
-  let isEResizable = columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key);
-  let isWResizable = columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key);
+  let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
+  let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
 
   return (
     <>

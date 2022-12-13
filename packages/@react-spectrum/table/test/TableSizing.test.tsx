@@ -16,10 +16,14 @@ import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {ColumnSize} from '@react-types/table';
+import {ControllingResize} from '../stories/ControllingResize';
 import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {Key} from 'react';
+import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {Scale} from '@react-types/provider';
 import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -55,6 +59,26 @@ for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
+let render = (children, scale: Scale = 'medium') => {
+  let tree = renderComponent(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+  // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+  act(() => {jest.runAllTimers();});
+  return tree;
+};
+
+let rerender = (tree, children, scale: Scale = 'medium') => {
+  let newTree = tree.rerender(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+  act(() => {jest.runAllTimers();});
+  return newTree;
+};
 describe('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
 
@@ -73,21 +97,9 @@ describe('TableViewSizing', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-
   describe('layout', function () {
     describe('row heights', function () {
-      let renderTable = (props, scale) => render(
+      let renderTable = (props = {}, scale: Scale = 'medium') => render(
         <TableView aria-label="Table" {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
@@ -114,7 +126,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('41px');
         expect(rows[2].style.height).toBe('41px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('40px');
         }
@@ -132,7 +144,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('51px');
         expect(rows[2].style.height).toBe('51px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('50px');
         }
@@ -150,7 +162,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('33px');
         expect(rows[2].style.height).toBe('33px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('32px');
         }
@@ -168,7 +180,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('41px');
         expect(rows[2].style.height).toBe('41px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('40px');
         }
@@ -186,7 +198,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('49px');
         expect(rows[2].style.height).toBe('49px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
@@ -204,7 +216,7 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('61px');
         expect(rows[2].style.height).toBe('61px');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+        for (let cell of ([...rows[1].childNodes, ...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('60px');
         }
@@ -226,12 +238,12 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('65px');
         expect(rows[2].style.height).toBe('49px');
 
-        for (let cell of rows[1].childNodes) {
+        for (let cell of ([...rows[1].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('64px');
         }
 
-        for (let cell of rows[2].childNodes) {
+        for (let cell of ([...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
@@ -270,17 +282,17 @@ describe('TableViewSizing', function () {
         expect(rows[2].style.top).toBe('82px');
         expect(rows[2].style.height).toBe('34px');
 
-        for (let cell of rows[0].childNodes) {
+        for (let cell of ([...rows[0].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('34px');
         }
 
-        for (let cell of rows[1].childNodes) {
+        for (let cell of ([...rows[1].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('48px');
         }
 
-        for (let cell of rows[2].childNodes) {
+        for (let cell of ([...rows[2].childNodes] as HTMLElement[])) {
           expect(cell.style.top).toBe('0px');
           expect(cell.style.height).toBe('34px');
         }
@@ -291,7 +303,7 @@ describe('TableViewSizing', function () {
       // To test https://github.com/adobe/react-spectrum/issues/1885
       it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
         function ControlledSelection(props) {
-          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+          let [selectedKeys, setSelectedKeys] = React.useState<Set<Key> | 'all'>(new Set([]));
           return (
             <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
               <TableHeader columns={columns}>
@@ -329,15 +341,15 @@ describe('TableViewSizing', function () {
 
         for (let [index, cell] of headerRow.childNodes.entries()) {
           // 4 because there is a checkbox column
-          expect(Number(cell.style.zIndex)).toBe(4 - index + 1);
+          expect(Number((cell as HTMLElement).style.zIndex)).toBe(4 - index + 1);
         }
 
         for (let row of bodyRows) {
           for (let [index, cell] of row.childNodes.entries()) {
             if (index === 0) {
-              expect(cell.style.zIndex).toBe('2');
+              expect((cell as HTMLElement).style.zIndex).toBe('2');
             } else {
-              expect(cell.style.zIndex).toBe('1');
+              expect((cell as HTMLElement).style.zIndex).toBe('1');
             }
           }
         }
@@ -364,10 +376,10 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320px');
-          expect(row.childNodes[2].style.width).toBe('321px');
-          expect(row.childNodes[3].style.width).toBe('321px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('321px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('321px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('320px');
         }
       });
 
@@ -390,10 +402,10 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('48px');
-          expect(row.childNodes[1].style.width).toBe('317px');
-          expect(row.childNodes[2].style.width).toBe('317px');
-          expect(row.childNodes[3].style.width).toBe('318px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('48px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('317px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('318px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('317px');
         }
       });
 
@@ -418,9 +430,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('300px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('500px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('300px');
         }
       });
 
@@ -445,10 +457,10 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('381px');
-          expect(row.childNodes[3].style.width).toBe('381px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('381px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('381px');
         }
       });
 
@@ -473,9 +485,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('100px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('400px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('100px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('500px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('400px');
         }
       });
 
@@ -500,10 +512,38 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('262px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('262px');
+        }
+      });
+
+      it('should support minWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table" selectionMode="multiple">
+            <TableHeader>
+              <Column key="foo" minWidth={200} width={100}>Foo</Column>
+              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('262px');
         }
       });
 
@@ -528,9 +568,36 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('300px');
-          expect(row.childNodes[2].style.width).toBe('500px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('300px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
+        }
+      });
+
+      it('should support maxWidth and width working together', function () {
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column key="foo" maxWidth={500} width={200}>Foo</Column>
+              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('300px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('500px');
         }
       });
 
@@ -556,14 +623,14 @@ describe('TableViewSizing', function () {
           let rows = tree.getAllByRole('row');
 
           for (let row of rows) {
-            expect(row.childNodes[0].style.width).toBe('600px');
-            expect(row.childNodes[1].style.width).toBe('200px');
-            expect(row.childNodes[2].style.width).toBe('200px');
+            expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+            expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+            expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
           }
         });
       });
 
-      describe("mutiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
+      describe("multiple columns are bounded but earlier columns are 'less bounded' than future columns", () => {
         it("should satisfy the conditions of all columns but also allocate remaining space to the 'less bounded' previous columns", () => {
           let tree = render(
             <TableView aria-label="Table">
@@ -585,9 +652,9 @@ describe('TableViewSizing', function () {
           let rows = tree.getAllByRole('row');
 
           for (let row of rows) {
-            expect(row.childNodes[0].style.width).toBe('300px');
-            expect(row.childNodes[1].style.width).toBe('500px');
-            expect(row.childNodes[2].style.width).toBe('200px');
+            expect((row.childNodes[0] as HTMLElement).style.width).toBe('300px');
+            expect((row.childNodes[1] as HTMLElement).style.width).toBe('500px');
+            expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
           }
         });
       });
@@ -610,21 +677,21 @@ describe('TableViewSizing', function () {
 
         let rows = tree.getAllByRole('row');
 
-        expect(rows[0].childNodes[0].style.width).toBe('230px');
-        expect(rows[0].childNodes[1].style.width).toBe('770px');
+        expect((rows[0].childNodes[0] as HTMLElement).style.width).toBe('230px');
+        expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('770px');
 
-        expect(rows[1].childNodes[0].style.width).toBe('230px');
-        expect(rows[1].childNodes[1].style.width).toBe('384px');
-        expect(rows[1].childNodes[2].style.width).toBe('193px');
-        expect(rows[1].childNodes[3].style.width).toBe('193px');
+        expect((rows[1].childNodes[0] as HTMLElement).style.width).toBe('230px');
+        expect((rows[1].childNodes[1] as HTMLElement).style.width).toBe('385px');
+        expect((rows[1].childNodes[2] as HTMLElement).style.width).toBe('193px');
+        expect((rows[1].childNodes[3] as HTMLElement).style.width).toBe('192px');
 
         for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('192px');
-          expect(row.childNodes[2].style.width).toBe('192px');
-          expect(row.childNodes[3].style.width).toBe('192px');
-          expect(row.childNodes[4].style.width).toBe('193px');
-          expect(row.childNodes[5].style.width).toBe('193px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('192px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('193px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('192px');
+          expect((row.childNodes[4] as HTMLElement).style.width).toBe('193px');
+          expect((row.childNodes[5] as HTMLElement).style.width).toBe('192px');
         }
       });
     });
@@ -636,9 +703,9 @@ describe('TableViewSizing', function () {
 
       it('dragging the resizer works - desktop', () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -661,9 +728,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
@@ -679,50 +746,28 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('595px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 595
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -732,9 +777,9 @@ describe('TableViewSizing', function () {
       });
 
       it('dragging the resizer works - mobile', () => {
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -757,9 +802,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         let resizableHeader = tree.getAllByRole('columnheader')[0];
@@ -775,50 +820,28 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('595px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 595
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
         fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 595, pageY: 30});
         fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 620, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(2);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(2);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 595], ['bar', '1fr'], ['baz', '1fr']]));
 
         fireEvent.pointerLeave(resizer, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerLeave(resizableHeader, {pointerType: 'mouse', pointerId: 1});
@@ -834,9 +857,9 @@ describe('TableViewSizing', function () {
       it('dragging the resizer works - desktop', () => {
         setInteractionModality('pointer');
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -860,9 +883,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         let header = tree.getAllByRole('columnheader')[0];
@@ -884,11 +907,11 @@ describe('TableViewSizing', function () {
         fireEvent.pointerMove(resizer, {pointerType: 'touch', pointerId: 1, pageX: 595, pageY: 25});
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
-
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('595px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
@@ -897,38 +920,28 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
 
       it('dragging the resizer works - mobile', () => {
         setInteractionModality('pointer');
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -953,9 +966,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         let header = tree.getAllByRole('columnheader')[0];
@@ -981,10 +994,11 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '595');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('595px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('595px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         // actual locations do not matter, the delta matters between events for the calculation of useMove
@@ -993,29 +1007,19 @@ describe('TableViewSizing', function () {
         fireEvent.pointerUp(resizer, {pointerType: 'touch', pointerId: 1});
 
 
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
         // tapping on the document.body doesn't cause a blur in jest because the body isn't focusable, so just call blur
         act(() => resizer.blur());
         act(() => {jest.runAllTimers();});
 
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 620
-          }, {
-            key: 'bar',
-            width: 190
-          }, {
-            key: 'baz',
-            width: 190
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 620], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
@@ -1024,9 +1028,9 @@ describe('TableViewSizing', function () {
     describe('keyboard', () => {
       it('arrow keys the resizer works - desktop', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1054,9 +1058,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1076,11 +1080,11 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
@@ -1089,10 +1093,11 @@ describe('TableViewSizing', function () {
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
 
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
@@ -1100,11 +1105,11 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -1112,37 +1117,26 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 600
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('arrow keys the resizer works - mobile', async () => {
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1170,9 +1164,9 @@ describe('TableViewSizing', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1192,11 +1186,11 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-
+        expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('620px');
-          expect(row.childNodes[1].style.width).toBe('190px');
-          expect(row.childNodes[2].style.width).toBe('190px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('620px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('190px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
@@ -1204,28 +1198,17 @@ describe('TableViewSizing', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
 
-
+        expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('600px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('200px');
+          expect((row.childNodes[0] as HTMLElement).style.width).toBe('600px');
+          expect((row.childNodes[1] as HTMLElement).style.width).toBe('200px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
         fireEvent.keyDown(document.activeElement, {key: 'Escape'});
         fireEvent.keyUp(document.activeElement, {key: 'Escape'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([
-          {
-            key: 'foo',
-            width: 600
-          }, {
-            key: 'bar',
-            width: 200
-          }, {
-            key: 'baz',
-            width: 200
-          }
-        ]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1233,9 +1216,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via Enter', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1275,8 +1258,8 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1284,9 +1267,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1311,7 +1294,6 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('slider')).toBeNull();
 
-
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -1325,8 +1307,10 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab();
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        // TODO: should call with null or the currently calculated widths?
+        // might be hard to call with current values
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1334,9 +1318,9 @@ describe('TableViewSizing', function () {
       });
       it('can exit resize via shift Tab', async () => {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-        let onColumnResizeEnd = jest.fn();
+        let onResizeEnd = jest.fn();
         let tree = render(
-          <TableView aria-label="Table" onColumnResizeEnd={onColumnResizeEnd}>
+          <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
             <TableHeader>
               <Column allowsResizing key="foo">Foo</Column>
               <Column key="bar" maxWidth={200}>Bar</Column>
@@ -1375,8 +1359,8 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab({shift: true});
-        expect(onColumnResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onColumnResizeEnd).toHaveBeenCalledWith([]);
+        expect(onResizeEnd).toHaveBeenCalledTimes(1);
+        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
         expect(document.activeElement).toBe(resizableHeader);
 
@@ -1389,7 +1373,7 @@ describe('TableViewSizing', function () {
     it('should support removing columns', function () {
       let tree = render(<HidingColumns />);
 
-      let checkbox = tree.getByLabelText('Net Budget');
+      let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
       expect(checkbox.checked).toBe(true);
 
       let table = tree.getByRole('grid');
@@ -1409,7 +1393,7 @@ describe('TableViewSizing', function () {
       userEvent.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
 
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(5);
@@ -1427,13 +1411,13 @@ describe('TableViewSizing', function () {
     it('should support adding columns', function () {
       let tree = render(<HidingColumns />);
 
-      let checkbox = tree.getByLabelText('Net Budget');
+      let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
       expect(checkbox.checked).toBe(true);
 
       userEvent.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
 
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
@@ -1442,7 +1426,7 @@ describe('TableViewSizing', function () {
       userEvent.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
 
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
@@ -1466,39 +1450,39 @@ describe('TableViewSizing', function () {
       }
 
       let tree = render(<HidingColumns />);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       let table = tree.getByRole('grid');
       let columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(6);
 
       let rows = tree.getAllByRole('row');
-      let oldWidth = rows[1].childNodes[1].style.width;
+      let oldWidth = (rows[1].childNodes[1] as HTMLElement).style.width;
 
-      let audienceCheckbox = tree.getByLabelText('Audience Type');
-      let budgetCheckbox = tree.getByLabelText('Net Budget');
-      let targetCheckbox = tree.getByLabelText('Target OTP');
-      let reachCheckbox = tree.getByLabelText('Reach');
+      let audienceCheckbox = tree.getByLabelText('Audience Type') as HTMLInputElement;
+      let budgetCheckbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
+      let targetCheckbox = tree.getByLabelText('Target OTP') as HTMLInputElement;
+      let reachCheckbox = tree.getByLabelText('Reach') as HTMLInputElement;
 
       userEvent.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
       userEvent.click(budgetCheckbox);
       expect(budgetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
       userEvent.click(targetCheckbox);
       expect(targetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
       // This previously failed, the first column wouldn't update its width
       // when the 2nd to last column was removed
       userEvent.click(reachCheckbox);
       expect(reachCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
+      act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
       columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(2);
@@ -1506,14 +1490,14 @@ describe('TableViewSizing', function () {
       // Re-add the column and check that the width decreases
       userEvent.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(true);
-      act(() => jest.runAllTimers());
-      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
+      act(() => {jest.runAllTimers();});
+      expect(parseInt((rows[1].childNodes[1] as HTMLElement).style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
     });
   });
 
   describe('headerless columns', function () {
 
-    let renderTable = (props, scale, showDivider = false) => render(
+    let renderTable = (props = {}, scale: Scale = 'medium', showDivider = false) => render(
       <TableView aria-label="Table" data-testid="test" {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
@@ -1556,16 +1540,16 @@ describe('TableViewSizing', function () {
       expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
       expect(headers[0]).toHaveTextContent('Foo');
       // visually hidden syle
-      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
-      expect(headers[1].childNodes[0].style.width).toBe('1px');
-      expect(headers[1].childNodes[0].style.height).toBe('1px');
+      expect((headers[1].childNodes[0] as HTMLElement).style.clipPath).toBe('inset(50%)');
+      expect((headers[1].childNodes[0] as HTMLElement).style.width).toBe('1px');
+      expect((headers[1].childNodes[0] as HTMLElement).style.height).toBe('1px');
       expect(headers[1]).not.toBeEmptyDOMElement();
 
 
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('36px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('36px');
       let rowheader = within(rows[0]).getByRole('rowheader');
       expect(rowheader).toHaveTextContent('Foo 1');
       let actionCell = within(rows[0]).getAllByRole('gridcell');
@@ -1586,7 +1570,7 @@ describe('TableViewSizing', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('44px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('44px');
     });
 
     it('renders table with headerless column and divider', function () {
@@ -1598,7 +1582,7 @@ describe('TableViewSizing', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column with divider
-      expect(rows[0].childNodes[1].style.width).toBe('37px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('37px');
     });
 
     it('renders table with headerless column with tooltip', function () {
@@ -1615,6 +1599,47 @@ describe('TableViewSizing', function () {
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
     });
-
   });
+});
+
+
+// I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
+function getColumn(tree, name) {
+  // Find by text, then go up to the element with the cell role.
+  let el = tree.getByText(name);
+  while (el && !/columnheader/.test(el.getAttribute('role'))) {
+    el = el.parentElement;
+  }
+
+  return el;
+}
+
+function resizeCol(tree, col, delta) {
+  let column = getColumn(tree, col);
+
+  // trigger pointer modality
+  act(() => {setInteractionModality('pointer');});
+  fireEvent.pointerMove(tree.container);
+
+  fireEvent.pointerEnter(column);
+  let resizer = within(column).getByRole('slider');
+  fireEvent.pointerEnter(resizer);
+
+  // actual locations do not matter, the delta matters between events for the calculation of useMove
+  fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
+  act(() => {jest.runAllTimers();});
+  fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
+  fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
+  act(() => {jest.runAllTimers();});
+}
+
+
+function resizeTable(clientWidth, newValue) {
+  clientWidth.mockImplementation(() => newValue);
+  fireEvent(window, new Event('resize'));
+  act(() => {jest.runAllTimers();});
+}
+
+describe('RSP TableView', () => {
+  resizingTests(render, rerender, ControllingResize, ControllingResize, resizeCol, resizeTable);
 });
