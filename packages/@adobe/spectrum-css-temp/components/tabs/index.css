@@ -65,7 +65,7 @@ governing permissions and limitations under the License.
   white-space: nowrap;
 
   transition: color var(--spectrum-global-animation-duration-100) ease-out;
-  cursor: default;
+  cursor: pointer;
   outline: none;
 
   &.is-disabled {
@@ -107,7 +107,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tabs-itemLabel {
-  cursor: default;
+  cursor: pointer;
   vertical-align: top;
   display: inline-block;
 
