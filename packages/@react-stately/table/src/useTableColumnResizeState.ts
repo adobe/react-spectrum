@@ -56,9 +56,11 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     getDefaultWidth,
     getDefaultMinWidth,
     onColumnResizeStart: propsOnColumnResizeStart,
-    onColumnResizeEnd: propsOnColumnResizeEnd
+    onColumnResizeEnd: propsOnColumnResizeEnd,
+    tableWidth = 0
   } = props;
 
+  let [resizingColumn, setResizingColumn] = useState<Key | null>(null);
   let columnLayout = useMemo(
     () => new TableColumnLayout({
       getDefaultWidth,
@@ -67,7 +69,6 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     [getDefaultWidth, getDefaultMinWidth]
   );
 
-  let tableWidth = props.tableWidth ?? 0;
   let [controlledColumns, uncontrolledColumns] = useMemo(() =>
       columnLayout.splitColumnsIntoControlledAndUncontrolled(state.collection.columns)
   , [state.collection.columns, columnLayout]);
@@ -82,9 +83,9 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns, columnLayout]);
 
   let onColumnResizeStart = useCallback((key: Key) => {
-    columnLayout.setResizingColumn(key);
+    setResizingColumn(key);
     propsOnColumnResizeStart?.(key);
-  }, [columnLayout, propsOnColumnResizeStart]);
+  }, [propsOnColumnResizeStart, setResizingColumn]);
 
   let onColumnResize = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
@@ -98,43 +99,32 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
 
   let onColumnResizeEnd = useCallback((key: Key) => {
-    columnLayout.setResizingColumn(null);
+    setResizingColumn(null);
     propsOnColumnResizeEnd?.(key);
-  }, [columnLayout, propsOnColumnResizeEnd]);
-
-  let getColumnWidth = useCallback((key: Key) =>
-    columnLayout.getColumnWidth(key)
-  , [columnLayout]);
-
-  let getColumnMinWidth = useCallback((key: Key) =>
-    columnLayout.getColumnMinWidth(key)
-  , [columnLayout]);
-
-  let getColumnMaxWidth = useCallback((key: Key) =>
-    columnLayout.getColumnMaxWidth(key)
-  , [columnLayout]);
+  }, [propsOnColumnResizeEnd, setResizingColumn]);
 
   let columnWidths = useMemo(() =>
       columnLayout.buildColumnWidths(tableWidth, state.collection, cWidths)
   , [tableWidth, state.collection, cWidths, columnLayout]);
 
   return useMemo(() => ({
-    resizingColumn: columnLayout.resizingColumn,
+    resizingColumn,
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
-    getColumnWidth,
-    getColumnMinWidth,
-    getColumnMaxWidth,
+    getColumnWidth: (key: Key) =>
+      columnLayout.getColumnWidth(key),
+    getColumnMinWidth: (key: Key) =>
+      columnLayout.getColumnMinWidth(key),
+    getColumnMaxWidth: (key: Key) =>
+      columnLayout.getColumnMaxWidth(key),
     widths: columnWidths
   }), [
-    columnLayout.resizingColumn,
+    columnLayout,
+    resizingColumn,
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
-    getColumnWidth,
-    getColumnMinWidth,
-    getColumnMaxWidth,
     columnWidths
   ]);
 }

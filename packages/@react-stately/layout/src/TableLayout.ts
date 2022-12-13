@@ -34,19 +34,16 @@ interface TableColumnLayoutOptions<T> {
 }
 
 export class TableColumnLayout<T> {
-  resizingColumn: Key | null;
   getDefaultWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   getDefaultMinWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   columnWidths: Map<Key, number> = new Map();
   columnMinWidths: Map<Key, number> = new Map();
   columnMaxWidths: Map<Key, number> = new Map();
-  resizerPositions: Map<Key, number> = new Map();
 
   constructor(options: TableColumnLayoutOptions<T>) {
     this.getDefaultWidth = options.getDefaultWidth;
     this.getDefaultMinWidth = options.getDefaultMinWidth;
   }
-
 
   /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
   splitColumnsIntoControlledAndUncontrolled(columns: Array<GridNode<T>>): [Map<Key, GridNode<T>>, Map<Key, GridNode<T>>] {
@@ -76,14 +73,6 @@ export class TableColumnLayout<T> {
     return new Map(Array.from(uncontrolledColumns).map(([key, col]) =>
       [key, col.props.defaultWidth ?? this.getDefaultWidth?.(col) ?? '1fr']
     ));
-  }
-
-  setResizingColumn(key: Key | null): void {
-    this.resizingColumn = key;
-  }
-
-  getResizerPosition(): number {
-    return this.resizerPositions.get(this.resizingColumn);
   }
 
   getColumnWidth(key: Key): number {
@@ -184,7 +173,6 @@ export class TableColumnLayout<T> {
     this.columnWidths = new Map();
     this.columnMinWidths = new Map();
     this.columnMaxWidths = new Map();
-    this.resizerPositions = new Map();
 
    // initial layout or table/window resizing
     let columnWidths = calculateColumnSizes(
@@ -196,15 +184,12 @@ export class TableColumnLayout<T> {
     );
 
     // columns going in will be the same order as the columns coming out
-    let resizerPosition = 0;
     columnWidths.forEach((width, index) => {
       let key = collection.columns[index].key;
       let column = collection.columns[index];
       this.columnWidths.set(key, width);
       this.columnMinWidths.set(key, getMinWidth(column.column.props.minWidth ?? this.getDefaultMinWidth(column), tableWidth));
       this.columnMaxWidths.set(key, getMaxWidth(column.column.props.maxWidth, tableWidth));
-      resizerPosition += width;
-      this.resizerPositions.set(key, resizerPosition);
     });
     return this.columnWidths;
   }
@@ -225,6 +210,7 @@ export class TableLayout<T> extends ListLayout<T> {
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
   lastVirtualizerWidth: number;
+  resizingColumn: Key | null;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -239,12 +225,8 @@ export class TableLayout<T> extends ListLayout<T> {
     this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
   }
 
-  get resizingColumn(): Key {
-    return this.columnLayout.resizingColumn;
-  }
-
   getResizerPosition(): Key {
-    return this.columnLayout.getResizerPosition();
+    return this.getLayoutInfo(this.resizingColumn)?.rect.maxX;
   }
 
   getColumnWidth(key: Key): number {
@@ -269,7 +251,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
   // outside, where this is called, should call props.onColumnResizeStart...
   onColumnResizeStart(key: Key): void {
-    this.columnLayout.setResizingColumn(key);
+    this.resizingColumn = key;
   }
 
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
@@ -289,7 +271,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   onColumnResizeEnd(): void {
-    this.columnLayout.setResizingColumn(null);
+    this.resizingColumn = null;
   }
 
   buildCollection(): LayoutNode[] {
@@ -298,8 +280,6 @@ export class TableLayout<T> extends ListLayout<T> {
     this.uncontrolledColumns = uncontrolledColumns;
     let cWidths = this.columnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
 
-    // We will be behind by one render for column prop changes since invalidate
-    // will take a render to resolve.
     // If columns changed, clear layout cache.
     if (
       !this.lastCollection ||
