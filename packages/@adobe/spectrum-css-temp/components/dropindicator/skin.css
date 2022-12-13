@@ -18,3 +18,11 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-dropindicator-circle-border-color);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-DropIndicator {
+    --spectrum-dropindicator-border-color: Highlight;
+    --spectrum-dropindicator-circle-border-color: Highlight;
+    forced-color-adjust: none;
+  }
+}

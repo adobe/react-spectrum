@@ -185,3 +185,76 @@
 .option.drop-target {
   outline: 2px solid blue;
 }
+
+@media (forced-colors: active) {
+  .draggable {
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-alias-highlight-selected: Highlight;
+    --spectrum-table-row-text-color-selected: HighlightText;
+    --spectrum-table-row-background-color-selected: Highlight;
+
+    &:focus-ring {
+      forced-color-adjust: none;
+    }
+
+    &.is-selected {
+      forced-color-adjust: none;
+      color: var(--spectrum-table-row-text-color-selected);
+      background-color: var(--spectrum-table-row-background-color-selected);
+
+      .drag-handle {
+        --spectrum-dropzone-border-color-selected-hover: HighlightText;
+        &:focus-ring {
+          forced-color-adjust: none;
+        }
+      }
+    }
+
+    &.is-dragging {
+      --spectrum-global-color-gray-75: Canvas;
+      --spectrum-global-color-gray-200: CanvasText;
+    }
+  }
+
+  .droppable {
+    --spectrum-global-color-gray-300: CanvasText;
+    --spectrum-global-color-gray-50: Canvas;
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-alias-highlight-selected: Highlight;
+    --spectrum-table-row-text-color-selected: HighlightText;
+    --spectrum-table-row-background-color-selected: Highlight;
+
+    &:focus-ring {
+      forced-color-adjust: none;
+    }
+
+    &.is-selected {
+      forced-color-adjust: none;
+      color: var(--spectrum-table-row-text-color-selected);
+      background-color: var(--spectrum-table-row-background-color-selected);
+    }
+
+    &.is-drop-target {
+      --spectrum-dropzone-background-color-selected-hover: Canvas;
+      --spectrum-dropzone-border-color-selected-hover: Highlight;
+      forced-color-adjust: none;
+    }
+  }
+
+  .drag-handle {
+    &:focus-ring {
+      forced-color-adjust: none;
+      --spectrum-dropzone-border-color-selected-hover: Highlight;
+    }
+  }
+
+  .droppable-collection {
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    &.is-drop-target {
+      forced-color-adjust: none;
+    }
+  }
+}

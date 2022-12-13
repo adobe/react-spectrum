@@ -37,3 +37,18 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Dropzone {
+    --spectrum-dropzone-border-color: CanvasText;
+
+    &.is-dragged {
+      forced-color-adjust: none;
+      --spectrum-dropzone-border-color-selected-hover: Highlight;
+      --spectrum-dropzone-background-color-selected-hover: Canvas;
+      .spectrum-IllustratedMessage-illustration {
+        --spectrum-global-color-blue-400: Highlight;
+      }
+    }
+  }
+}
