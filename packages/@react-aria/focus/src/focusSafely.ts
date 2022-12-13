@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
 import {focusWithoutScrolling, runAfterTransition} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 
@@ -17,7 +18,7 @@ import {getInteractionModality} from '@react-aria/interactions';
  * A utility function that focuses an element while avoiding undesired side effects such
  * as page scrolling and screen reader issues with CSS transitions.
  */
-export function focusSafely(element: HTMLElement) {
+export function focusSafely(element: FocusableElement) {
   // If the user is interacting with a virtual cursor, e.g. screen reader, then
   // wait until after any animated transitions that are currently occurring on
   // the page before shifting focus. This avoids issues with VoiceOver on iOS

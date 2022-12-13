@@ -17,7 +17,7 @@
 
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
-interface InteractOutsideProps {
+export interface InteractOutsideProps {
   ref: RefObject<Element>,
   onInteractOutside?: (e: SyntheticEvent) => void,
   onInteractOutsideStart?: (e: SyntheticEvent) => void,

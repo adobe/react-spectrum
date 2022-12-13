@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, typeText, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // for some reason hu-HU isn't supported in jsdom/node
@@ -34,7 +33,7 @@ describe('NumberField', function () {
   let onKeyUpSpy = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
@@ -100,7 +99,7 @@ describe('NumberField', function () {
     let ref = React.createRef();
     let {container, textField} = renderNumberField({ref});
 
-    expect(ref.current.UNSAFE_getDOMNode()).toBe(container);
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(container.parentElement);
     act(() => {
       ref.current.focus();
     });
@@ -283,6 +282,17 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
+  });
+
+  it.each`
+    Name
+    ${'NumberField'}
+  `('$Name fires state change then blur', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy, step: 5});
+    act(() => {textField.focus();});
+    typeText(textField, '3');
+    userEvent.tab();
+    expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
   });
 
   it.each`
@@ -1701,13 +1711,12 @@ describe('NumberField', function () {
         </Provider>
       );
     }
-    let {container} = render(<NumberFieldControlled onChange={onChangeSpy} />);
+    let {container, getByRole} = render(<NumberFieldControlled onChange={onChangeSpy} />);
     container = within(container).queryByRole('group');
-    let textField = container.firstChild;
+    let textField = getByRole('textbox');
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    textField = textField.firstChild;
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
@@ -2146,5 +2155,31 @@ describe('NumberField', function () {
         expect(textField).toHaveAttribute('value', '123.456.789');
       });
     });
+  });
+
+  it('can be reset to blank using null', () => {
+    function NumberFieldControlled(props) {
+      let {onChange} = props;
+      let [value, setValue] = useState(10);
+      return (
+        <Provider theme={theme} scale="medium" locale="en-US">
+          <NumberField {...props} label="reset to blank using null" value={value} onChange={value => setValue(value)} />
+          <Button
+            variant={'primary'}
+            onPress={() => chain(setValue(null), onChange())}>
+            Reset
+          </Button>
+        </Provider>
+      );
+    }
+    let resetSpy = jest.fn();
+    let {getByText, getByRole} = render(<NumberFieldControlled onChange={resetSpy} />);
+    let textField = getByRole('textbox');
+    let resetButton = getByText('Reset');
+
+    expect(textField).toHaveAttribute('value', '10');
+    triggerPress(resetButton);
+    expect(resetSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '');
   });
 });

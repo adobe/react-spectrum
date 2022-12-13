@@ -11,12 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
-import getCss from 'dom-helpers/css';
-import getOffset from 'dom-helpers/offset';
-import getPosition from 'dom-helpers/position';
-import getScrollLeft from 'dom-helpers/scrollLeft';
-import getScrollTop from 'dom-helpers/scrollTop';
-import ownerDocument from 'dom-helpers/ownerDocument';
+import {clamp} from '@react-aria/utils';
 
 interface Position {
   top?: number,
@@ -51,12 +46,12 @@ interface Offset {
 
 interface PositionOpts {
   placement: Placement,
-  targetNode: HTMLElement,
-  overlayNode: HTMLElement,
-  scrollNode: HTMLElement,
+  targetNode: Element,
+  overlayNode: Element,
+  scrollNode: Element,
   padding: number,
   shouldFlip: boolean,
-  boundaryElement: HTMLElement,
+  boundaryElement: Element,
   offset: number,
   crossOffset: number,
   maxHeight?: number
@@ -99,30 +94,27 @@ const PARSED_PLACEMENT_CACHE = {};
 // @ts-ignore
 let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 
-function getContainerDimensions(containerNode: HTMLElement): Dimensions {
+function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
-    width = visualViewport?.width ?? document.documentElement.clientWidth;
-    height = visualViewport?.height ?? document.documentElement.clientHeight;
+    let documentElement = document.documentElement;
+    width = visualViewport?.width ?? documentElement.clientWidth;
+    height = visualViewport?.height ?? documentElement.clientHeight;
 
-    scroll.top =
-      getScrollTop(ownerDocument(containerNode).documentElement) ||
-      getScrollTop(containerNode);
-    scroll.left =
-      getScrollLeft(ownerDocument(containerNode).documentElement) ||
-      getScrollLeft(containerNode);
+    scroll.top = documentElement.scrollTop || containerNode.scrollTop;
+    scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
   } else {
     ({width, height, top, left} = getOffset(containerNode));
-    scroll.top = getScrollTop(containerNode);
-    scroll.left = getScrollLeft(containerNode);
+    scroll.top = containerNode.scrollTop;
+    scroll.left = containerNode.scrollLeft;
   }
 
   return {width, height, scroll, top, left};
 }
 
-function getScroll(node: HTMLElement): Offset {
+function getScroll(node: Element): Offset {
   return {
     top: node.scrollTop,
     left: node.scrollLeft,
@@ -153,7 +145,7 @@ function getDelta(
   }
 }
 
-function getMargins(node: HTMLElement): Position {
+function getMargins(node: Element): Position {
   let style = window.getComputedStyle(node);
   return {
     top: parseInt(style.marginTop, 10) || 0,
@@ -211,13 +203,16 @@ function computePosition(
   // add the crossOffset from props
   position[crossAxis] += crossOffset;
 
-  // this is button center position - the overlay size + half of the button to align bottom of overlay with button center
-  let minViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2) - overlaySize[crossSize];
-  // this is button position of center, aligns top of overlay with button center
-  let maxViablePosition = childOffset[crossAxis] + (childOffset[crossSize] / 2);
+  // button bottom touching overlay bottom
+  let bottomsTouchPosition = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossSize];
+  // button top touching overlay top
+  let topsTouchPosition = childOffset[crossAxis];
 
-  // clamp it into the range of the min/max positions
-  position[crossAxis] = Math.min(Math.max(minViablePosition, position[crossAxis]), maxViablePosition);
+  // we can't assume which one is bigger because button could be bigger than overlay and vice versa
+  const minPosition = Math.min(bottomsTouchPosition, topsTouchPosition);
+  const maxPosition = Math.max(bottomsTouchPosition, topsTouchPosition);
+
+  position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
@@ -373,15 +368,14 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     maxHeight
   } = opts;
 
-  let container = (overlayNode.offsetParent || document.body) as HTMLElement;
+  let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
   let isBodyContainer = container.tagName === 'BODY';
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
   if (!isBodyContainer) {
-    let marginTop = String(getCss(targetNode, 'marginTop'));
-    let marginLeft = String(getCss(targetNode, 'marginLeft'));
+    let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
     childOffset.top += parseInt(marginTop, 10) || 0;
     childOffset.left += parseInt(marginLeft, 10) || 0;
   }
@@ -410,4 +404,36 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     isContainerPositioned,
     maxHeight
   );
+}
+
+function getOffset(node: Element): Offset {
+  let {top, left, width, height} = node.getBoundingClientRect();
+  let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
+  return {
+    top: top + scrollTop - clientTop,
+    left: left + scrollLeft - clientLeft,
+    width,
+    height
+  };
+}
+
+function getPosition(node: Element, parent: Element): Offset {
+  let style = window.getComputedStyle(node);
+  let offset: Offset;
+  if (style.position === 'fixed') {
+    let {top, left, width, height} = node.getBoundingClientRect();
+    offset = {top, left, width, height};
+  } else {
+    offset = getOffset(node);
+    let parentOffset = getOffset(parent);
+    let parentStyle = window.getComputedStyle(parent);
+    parentOffset.top += (parseInt(parentStyle.borderTopWidth, 10) || 0) - parent.scrollTop;
+    parentOffset.left += (parseInt(parentStyle.borderLeftWidth, 10) || 0) - parent.scrollLeft;
+    offset.top -= parentOffset.top;
+    offset.left -= parentOffset.left;
+  }
+
+  offset.top -= parseInt(style.marginTop, 10) || 0;
+  offset.left -= parseInt(style.marginLeft, 10) || 0;
+  return offset;
 }

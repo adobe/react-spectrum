@@ -49,9 +49,13 @@ A date picker can be built using `<input type="date">`, but this is very limited
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useDatePicker`.
+
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of an expanded date picker component, which consists of a labelled group containing a date field, and a button that toggles a popover dialog containing a calendar." />
 
 A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
 
@@ -84,8 +88,8 @@ A `DatePicker` composes several other components to produce a composite element 
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useDatePicker} from '@react-aria/datepicker';
 
-// Reuse the DateField, Popover, Calendar, and Button from your component library. See below for details.
-import {DateField, Popover, Calendar, Button} from 'your-component-library';
+// Reuse the DateField, Popover, Dialog, Calendar, and Button from your component library.
+import {DateField, Popover, Dialog, Calendar, Button} from 'your-component-library';
 
 function DatePicker(props) {
   let state = useDatePickerState(props);
@@ -93,15 +97,17 @@ function DatePicker(props) {
   let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} = useDatePicker(props, state, ref);
 
   return (
-    <div style={{position: 'relative'}}>
-      <span {...labelProps}>{props.label}</span>
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
+      <div {...labelProps}>{props.label}</div>
       <div {...groupProps} ref={ref} style={{display: 'flex'}}>
         <DateField {...fieldProps} />
         <Button {...buttonProps}>🗓</Button>
       </div>
       {state.isOpen &&
-        <Popover {...dialogProps} isOpen={state.isOpen} onClose={() => state.setOpen(false)}>
-          <Calendar {...calendarProps} />
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <Dialog {...dialogProps}>
+            <Calendar {...calendarProps} />
+          </Dialog>
         </Popover>
       }
     </div>
@@ -125,67 +131,6 @@ function Button(props) {
   let ref = React.useRef();
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
-}
-```
-
-</details>
-
-### Popover
-
-The `Popover` component is used to contain the popup calendar for the `DatePicker`.
-It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenuTrigger.html), [Dialog](useOverlayTrigger.html), and others.
-See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-import {FocusScope} from '@react-aria/focus';
-import {useDialog} from '@react-aria/dialog';
-import {useOverlay, useModal, DismissButton} from '@react-aria/overlays';
-import {mergeProps} from '@react-aria/utils';
-
-function Popover(props) {
-  let ref = React.useRef();
-  let { popoverRef = ref, isOpen, onClose, children, ...otherProps } = props;
-
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let { overlayProps } = useOverlay(
-    {
-      isOpen,
-      onClose,
-      shouldCloseOnBlur: true,
-      isDismissable: true
-    },
-    popoverRef
-  );
-
-  let { modalProps } = useModal();
-  let { dialogProps } = useDialog(otherProps, popoverRef);
-
-  // Add a hidden <DismissButton> component at the end of the popover
-  // to allow screen reader users to dismiss the popup easily.
-  return (
-    <FocusScope contain restoreFocus>
-      <div
-        {...mergeProps(overlayProps, modalProps, dialogProps)}
-        ref={popoverRef}
-        style={{
-          position: "absolute",
-          background: "var(--page-background)",
-          border: "1px solid gray",
-          marginTop: 4,
-          padding: 20,
-          zIndex: 1
-        }}
-      >
-        {children}
-        <DismissButton onDismiss={onClose} />
-      </div>
-    </FocusScope>
-  );
 }
 ```
 
@@ -285,6 +230,78 @@ function DateSegment({segment, state}) {
 ```
 
 </details>
+
+</details>
+
+### Popover
+
+The `Popover` component is used to contain the popup calendar for the `DatePicker`.
+It can be shared between many other components, including [Select](useSelect.html),
+[Menu](useMenu.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+
+function Popover({children, state, ...props}) {
+  let ref = React.useRef();
+  let {popoverRef = ref} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'var(--page-background)',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+```
+
+</details>
+
+### Dialog
+
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useDialog} from '@react-aria/dialog';
+
+function Dialog({title, children, ...props}) {
+  let ref = React.useRef();
+  let {dialogProps, titleProps} = useDialog(props, ref);
+
+  return (
+    <div {...dialogProps} ref={ref} style={{padding: 30}}>
+      {title &&
+        <h3 {...titleProps} style={{marginTop: 0}}>
+          {title}
+        </h3>
+      }
+      {children}
+    </div>
+  );
+}
+```
 
 </details>
 
@@ -451,7 +468,7 @@ The following examples show how to use the `DatePicker` component created in the
 
 ### Value
 
-A `DatePicker` displays a placeholder date by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+A `DatePicker` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
 
 Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `useDatePicker` supports values of the following types:
 
@@ -518,7 +535,7 @@ import {parseZonedDateTime} from '@internationalized/date';
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
 ```
 
-`useDatePicker` displays times in the time zone included in the `ZoneDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+`useDatePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
 
 ```tsx example
 import {parseAbsoluteToLocal} from '@internationalized/date';
@@ -634,7 +651,7 @@ function Example() {
 
 ### Placeholder value
 
-When no value is set, a placeholder value is shown. By default, this is today's date at midnight. However, this can be overridden by setting the `placeholderValue` prop to a more appropriate placeholder for your specific usecase.
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
 
 ```tsx example
 import {CalendarDate} from '@internationalized/date';

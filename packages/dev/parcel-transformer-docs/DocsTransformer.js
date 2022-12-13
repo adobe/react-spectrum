@@ -293,6 +293,10 @@ module.exports = new Transformer({
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
           if (property) {
+            let prev = properties[property.name];
+            if (!property.description && prev?.description) {
+              property.description = prev.description;
+            }
             properties[property.name] = property;
           } else {
             console.log('UNKNOWN PROPERTY interface declaration', propertyPath.node);
@@ -329,13 +333,39 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTypeOperator()) {
+        return Object.assign(node, {
+          type: 'typeOperator',
+          operator: path.node.operator,
+          value: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSThisType()) {
+        return Object.assign(node, {
+          type: 'this'
+        });
+      }
+
       if (path.isTSPropertySignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let name;
+        if (t.isStringLiteral(path.node.key)) {
+          name = path.node.key.value;
+        } else if (t.isNumericLiteral(path.node.key)) {
+          name = String(path.node.key.value);
+        } else if (t.isIdentifier(path.node.key)) {
+          name = path.node.key.name;
+        } else {
+          console.log('Unknown key', path.node.key);
+          name = 'unknown';
+        }
+
         let docs = getJSDocs(path);
+        let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
           type: 'property',
           name,
-          value: processExport(path.get('typeAnnotation.typeAnnotation')),
+          value,
           optional: path.node.optional || false
         }, docs));
       }
@@ -392,6 +422,10 @@ module.exports = new Transformer({
         }
         let bindings = processExport(binding.path, node);
         return bindings;
+      }
+
+      if (path.isTSSymbolKeyword()) {
+        return Object.assign(node, {type: 'symbol'});
       }
 
       if (path.isTSBooleanKeyword()) {
@@ -501,6 +535,19 @@ module.exports = new Transformer({
           extendsType: processExport(path.get('extendsType')),
           trueType: processExport(path.get('trueType')),
           falseType: processExport(path.get('falseType'))
+        });
+      }
+
+      if (path.isTSModuleDeclaration()) {
+        // TODO: decide how we want to display something from a Global namespace
+        return node;
+      }
+
+      if (path.isTSIndexedAccessType()) {
+        return Object.assign(node, {
+          type: 'indexedAccess',
+          objectType: processExport(path.get('objectType')),
+          indexType: processExport(path.get('indexType'))
         });
       }
 

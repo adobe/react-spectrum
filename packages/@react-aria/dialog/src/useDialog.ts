@@ -11,26 +11,30 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
+import {useOverlayFocusContain} from '@react-aria/overlays';
 
-interface DialogAria {
+export interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: HTMLAttributes<HTMLElement>,
+  dialogProps: DOMAttributes,
 
   /** Props for the dialog title element. */
-  titleProps: HTMLAttributes<HTMLElement>
+  titleProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): DialogAria {
+export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement>): DialogAria {
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
+
+  let isRefocusing = useRef(false);
 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
@@ -42,8 +46,10 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       // is to wait for half a second, then blur and re-focus the dialog.
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
+          isRefocusing.current = true;
           ref.current.blur();
           focusSafely(ref.current);
+          isRefocusing.current = false;
         }
       }, 500);
 
@@ -52,6 +58,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       };
     }
   }, [ref]);
+
+  useOverlayFocusContain();
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
@@ -63,7 +71,15 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId
+      'aria-labelledby': props['aria-labelledby'] || titleId,
+      // Prevent blur events from reaching useOverlay, which may cause
+      // popovers to close. Since focus is contained within the dialog,
+      // we don't want this to occur due to the above useEffect.
+      onBlur: e => {
+        if (isRefocusing.current) {
+          e.stopPropagation();
+        }
+      }
     },
     titleProps: {
       id: titleId

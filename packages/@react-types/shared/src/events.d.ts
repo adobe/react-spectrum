@@ -19,7 +19,9 @@ import {
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {
-  /** @deprecated Use continuePropagation. */
+  /**
+   * Use continuePropagation.
+   * @deprecated */
   stopPropagation(): void,
   continuePropagation(): void
 }
@@ -34,7 +36,7 @@ export interface PressEvent {
   /** The pointer type that triggered the press event. */
   pointerType: PointerType,
   /** The target element of the press event. */
-  target: HTMLElement,
+  target: Element,
   /** Whether the shift keyboard modifier was held during the press event. */
   shiftKey: boolean,
   /** Whether the ctrl keyboard modifier was held during the press event. */

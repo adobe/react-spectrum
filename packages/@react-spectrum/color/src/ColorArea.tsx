@@ -29,8 +29,8 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-  let inputXRef = useRef();
-  let inputYRef = useRef();
+  let inputXRef = useRef(null);
+  let inputYRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputXRef);
 
   let state = useColorAreaState(props);
@@ -82,5 +82,8 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
   );
 }
 
+/**
+ * ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ */
 let _ColorArea = React.forwardRef(ColorArea) as (props: SpectrumColorAreaProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;
 export {_ColorArea as ColorArea};

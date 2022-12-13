@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export * from './Toast';
-export * from './ToastContainer';
-export * from './ToastProvider';
+export {ICONS, Toast} from './Toast';
+export {ToastContainer} from './ToastContainer';
+export {ToastContext, useToastProvider, ToastProvider} from './ToastProvider';

@@ -17,7 +17,7 @@ import {StatusLight} from '../';
 import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'];
+let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'] as SpectrumStatusLightProps['variant'][];
 
 storiesOf('StatusLight', module)
   .add(

@@ -14,12 +14,12 @@ import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
 import {isInvalid} from './utils';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
+export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
    * @default true
@@ -27,7 +27,7 @@ export interface DatePickerStateOptions extends DatePickerProps<DateValue> {
   shouldCloseOnSelect?: boolean | (() => boolean)
 }
 
-export interface DatePickerState {
+export interface DatePickerState extends OverlayTriggerState {
   /** The currently selected date. */
   value: DateValue,
   /** Sets the selected date. */
@@ -64,14 +64,14 @@ export interface DatePickerState {
  * Provides state management for a date picker component.
  * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
  */
-export function useDatePickerState(props: DatePickerStateOptions): DatePickerState {
+export function useDatePickerState<T extends DateValue = DateValue>(props: DatePickerStateOptions<T>): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [value, setValue] = useControlledState<DateValue>(props.value, props.defaultValue || null, props.onChange);
 
   let v = (value || props.placeholderValue);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let dateValue = value != null ? value.toDate(defaultTimeZone ?? 'UTC') : null;
-  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second' || granularity === 'millisecond';
+  let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
   let [selectedDate, setSelectedDate] = useState<DateValue>(null);
@@ -132,7 +132,7 @@ export function useDatePickerState(props: DatePickerStateOptions): DatePickerSta
     setTimeValue: selectTime,
     granularity,
     hasTime,
-    isOpen: overlayState.isOpen,
+    ...overlayState,
     setOpen(isOpen) {
       // Commit the selected date when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time was set and not the date, don't commit. The state will be preserved until

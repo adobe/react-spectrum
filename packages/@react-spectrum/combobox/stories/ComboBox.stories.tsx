@@ -18,9 +18,14 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {ComboBox, Item, Section} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import {Link} from '@react-spectrum/link';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -206,6 +211,10 @@ storiesOf('ComboBox', module)
     () => render({isDisabled: true})
   )
   .add(
+    'isDisabled, isQuiet',
+    () => render({isDisabled: true, isQuiet: true})
+  )
+  .add(
     'isReadOnly',
     () => render({isReadOnly: true, defaultSelectedKey: 'two'})
   )
@@ -240,6 +249,15 @@ storiesOf('ComboBox', module)
   .add(
     'with error message, labelPosition: side',
     () => render({errorMessage: 'You did not select a valid spirit animal.', validationState: 'invalid', labelPosition: 'side'})
+  )
+  .add(
+    'contextual help',
+    () => render({contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add(
     'isRequired',
@@ -464,6 +482,31 @@ storiesOf('ComboBox', module)
         <ComboBox defaultItems={items} label="Combobox2">
           {(item) => <Item>{item.name}</Item>}
         </ComboBox>
+      </Flex>
+    )
+  )
+  .add(
+    'within a dialog',
+    () => <ComboBoxWithinDialog />
+  )
+  .add(
+    'within a dialog, allowsCustomValue: true',
+    () => <ComboBoxWithinDialog allowsCustomValue />
+  )
+  .add(
+    'WHCM test',
+    () => (
+      <Flex direction="column" gap="size-200">
+        <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Combobox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+        {renderRow({placeholder: 'Type here...'})}
+        {renderRow()}
+        {renderRow({labelPosition: 'side'})}
+        {renderRow({isQuiet: true, placeholder: 'Type here...'})}
+        {renderRow({isQuiet: true})}
+        {renderRow({isRequired: true})}
+        {renderRow({isRequired: true, isQuiet: true})}
+        {renderRow({validationState: 'invalid'})}
+        {renderRow({validationState: 'invalid', isQuiet: true})}
       </Flex>
     )
   );
@@ -701,6 +744,7 @@ let customFilterItems = [
 let CustomFilterComboBox = (props) => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let filteredItems = React.useMemo(() => customFilterItems.filter(item => startsWith(item.name, filterValue)), [props.items, filterValue, startsWith]);
 
   return (
@@ -905,6 +949,29 @@ function render(props = {}) {
   );
 }
 
+function renderRow(props = {}) {
+  return (
+    <Flex gap="size-200">
+      <ComboBox label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+      <ComboBox isDisabled label="Label" {...mergeProps(props, actions)}>
+        <Item key="one">Option 1</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Option 2</Text>
+        </Item>
+        <Item key="three">Option 3</Item>
+      </ComboBox>
+    </Flex>
+  );
+}
+
 function ComboBoxWithMap(props) {
   let [items, setItems] = React.useState([
     {name: 'The first item', id: 'one'},
@@ -931,5 +998,66 @@ function ComboBoxWithMap(props) {
         ))}
       </ComboBox>
     </Flex>
+  );
+}
+
+function ComboBoxWithinDialog(props) {
+  let {allowsCustomValue} = props;
+  let items = [
+    {name: 'Animals', id: 's1', children: [
+      {name: 'Aardvark', id: '1'},
+      {name: 'Kangaroo', id: '2'},
+      {name: 'Snake', id: '3'}
+    ]},
+    {name: 'People', id: 's2', children: [
+      {name: 'Danni', id: '4'},
+      {name: 'Devon', id: '5'},
+      {name: 'Ross', id: '6'}
+    ]}
+  ];
+  let [selectedKey, setSelectedKey] = useState(null);
+  return (
+    <DialogTrigger>
+      <ActionButton>Show ComboBox</ActionButton>
+      {(close) => (
+        <Dialog>
+          <Content>
+            <ComboBox
+              label="Combo Box"
+              defaultItems={items}
+              placeholder="choose wisely"
+              width="size-3000"
+              allowsCustomValue={allowsCustomValue}
+              selectedKey={selectedKey}
+              onSelectionChange={setSelectedKey}
+              onKeyDown={
+                e => {
+                  if (
+                    e.key === 'Escape' &&
+                    (
+                      selectedKey !== null ||
+                      (e.target as HTMLInputElement).value === '' ||
+                      allowsCustomValue
+                    )
+                  ) {
+                    e.continuePropagation();
+                  }
+                }
+              }>
+              {(item) => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {(item) => <Item key={item.name}>{item.name}</Item>}
+                </Section>
+              )}
+            </ComboBox>
+          </Content>
+          <ButtonGroup>
+            <Button onPress={close} variant="secondary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </Dialog>
+      )}
+    </DialogTrigger>
   );
 }

@@ -3,23 +3,25 @@ import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export default function RootDropIndicator() {
-  let {dropState, dropHooks} = useContext(ListViewContext);
-  let dropRef = useRef();
-  let {dropIndicatorProps} = dropHooks.useDropIndicator({
+  let {dropState, dragAndDropHooks} = useContext(ListViewContext);
+  let ref = useRef();
+  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({
     target: {type: 'root'}
-  }, dropState, dropRef);
-
+  }, dropState, ref);
+  let isDropTarget = dropState.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
-  if (dropIndicatorProps['aria-hidden']) {
+
+  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
     return null;
   }
 
   return (
-    <div
-      role="option"
-      aria-selected="false"
-      {...visuallyHiddenProps}
-      {...dropIndicatorProps}
-      ref={dropRef} />
+    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+      <div
+        role="gridcell"
+        aria-selected="false">
+        <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
+      </div>
+    </div>
   );
 }

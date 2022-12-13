@@ -10,41 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, Key, ReactNode, useState} from 'react';
+import {ReactNode, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
-interface AriaTagGroupProps extends DOMProps {
+export interface AriaTagGroupProps extends DOMProps {
   children: ReactNode,
-  disabledKeys?: Iterable<Key>,
-  isDisabled?: boolean,
   isReadOnly?: boolean, // removes close button
   validationState?: 'valid' | 'invalid'
 }
 
-interface TagGroupAria {
-  tagGroupProps: HTMLAttributes<HTMLElement>
+export interface TagGroupAria {
+  tagGroupProps: DOMAttributes
 }
 
-export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
-  let {isDisabled} = props;
+export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
-  let allKeys = [...listState.collection.getKeys()];
-  if (!allKeys.some(key => !listState.disabledKeys.has(key))) {
-    isDisabled = true;
-  }
   let domProps = filterDOMProps(props);
   return {
     tagGroupProps: mergeProps(domProps, {
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
-      'aria-disabled': isDisabled === true,
       ...focusWithinProps
-    } as HTMLAttributes<HTMLElement>)
+    } as DOMAttributes)
   };
 }

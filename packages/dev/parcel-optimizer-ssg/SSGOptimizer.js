@@ -35,12 +35,12 @@ module.exports = new Optimizer({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       let mainAsset = b.getMainEntry();
-      if (mainAsset && mainAsset.meta.isMDX) {
+      if (mainAsset && mainAsset.meta.isMDX && !mainAsset.meta.hidden) {
         let meta = mainAsset.meta;
         pages.push({
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
-          title: meta.title,
+          title: meta.navigationTitle ?? meta.title,
           category: meta.category,
           description: meta.description,
           keywords: meta.keywords,

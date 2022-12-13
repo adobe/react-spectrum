@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table {
+  position: relative;
   border-collapse: separate;
   border-spacing: 0;
   outline: none;
@@ -31,12 +32,22 @@ governing permissions and limitations under the License.
 svg.spectrum-Table-sortedIcon {
   display: none;
   flex: 0 0 auto;
-  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
   min-inline-size: var(--spectrum-icon-arrow-down-small-width);
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
 }
 
 .spectrum-Table-headWrapper {
@@ -44,6 +55,10 @@ svg.spectrum-Table-sortedIcon {
   border-left-style: solid;
   border-right-width: 1px;
   border-right-style: solid;
+  flex: 0 0 auto;
+  padding-bottom: 1px;
+  margin-bottom: -1px;
+  z-index: 1;
 }
 .spectrum-Table-headCellContents {
   display: inline-block;
@@ -56,15 +71,12 @@ svg.spectrum-Table-sortedIcon {
 .spectrum-Table-headCell {
   display: flex;
   box-sizing: border-box;
-  font-size: var(--spectrum-table-header-text-size);
+  font-size: var(--spectrum-global-dimension-font-size-100);
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
   min-height: var(--spectrum-table-header-min-height);
-  letter-spacing: var(--spectrum-table-header-text-letter-spacing);
-  text-transform: uppercase;
   padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
   transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
-  cursor: default;
   outline: 0;
   border-radius: var(--spectrum-table-header-border-radius);
 
@@ -86,44 +98,69 @@ svg.spectrum-Table-sortedIcon {
       transform: rotateZ(180deg);
     }
   }
-}
+  &.is-resizable {
+    padding: 0;
+    .spectrum-Table-headCellContents {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .spectrum-Table-headCellButton {
+      box-sizing: border-box;
+      padding-block-start: var(--spectrum-table-header-padding-y);
+      padding-inline-end: 0;
+      padding-block-end: var(--spectrum-table-header-padding-y);
+      padding-inline-start: var(--spectrum-table-header-padding-x);
 
-.spectrum-Table--resizingColumn {
-  .spectrum-Table-row,
-  .spectrum-Table-headCell {
-    cursor: col-resize;
+      /* truncate text with ellipsis */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  .is-hovered,
+  &.focus-ring {
+    .spectrum-Table-menuChevron {
+      display: inline-block;
+    }
   }
 }
 
 .spectrum-Table-columnResizer {
   display: flex;
-  justify-content: end;
-  box-sizing: border-box;
   position: absolute;
-  inset-block-start: 0px;
-  inset-inline-end: 0px;
-  inline-size: 10px;
+  inset-inline-end: -10px;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: 21px;
   block-size: 100%;
-  cursor: col-resize;
   user-select: none;
 
   &::after {
     content: "";
-    position: absolute;
     display: block;
     box-sizing: border-box;
     inline-size: 1px;
     block-size: 100%;
-    background-color: var(--spectrum-table-divider-border-color);
   }
 
   &:active,
-  &:focus {
-    &::after {
-      inline-size: 2px;
-      background-color: var(--spectrum-global-color-blue-400);
-    }
+  &.focus-ring {
+    outline: none;
   }
+}
+.spectrum-Table-columnResizerPlaceholder {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  inline-size: 10px;
+  block-size: 100%;
+  user-select: none;
+}
+.spectrum-Table-bodyResizeIndicator {
+  display: none;
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  top: 0px;
 }
 
 .spectrum-Table-cell--alignCenter {
@@ -160,6 +197,9 @@ svg.spectrum-Table-sortedIcon {
 
   &.is-drop-target {
     @inherit: %drop-target;
+  }
+  &.spectrum-Table-body--resizerAtTableEdge {
+    border-start-end-radius: 0;
   }
 }
 
@@ -233,7 +273,8 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-cell,
-.spectrum-Table-headCell {
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
   position: relative;
 
   &:focus {
@@ -260,8 +301,21 @@ svg.spectrum-Table-sortedIcon {
     }
   }
 }
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
+}
 
-.spectrum-Table-headCell {
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
   &:focus-ring,
   &.is-focused {
     &::before {
@@ -275,14 +329,6 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-cell--divider {
   border-inline-end-width: var(--spectrum-table-divider-border-size);
-}
-
-.spectrum-Table-cell--divider {
-  &.is-resizable {
-    &:hover {
-      border-inline-end-width: 3px;
-    }
-  }
 }
 
 .spectrum-Table-row {
@@ -410,4 +456,43 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-checkbox {
   vertical-align: super;
+}
+
+.spectrum-Table-colResizeIndicator {
+  display: none;
+  height: 100%;
+  width: 2px;
+  position: absolute;
+  top: 1px;
+  inset-inline-end: 0;
+  pointer-events: none;
+  &.spectrum-Table-colResizeIndicator--visible {
+    display: block;
+  }
+}
+.spectrum-Table-colResizeNubbin {
+  display: none;
+  position: absolute;
+  /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
+   down one pixel and the nubbin circle up one pixel to cover it completely */
+  top: -1px;
+  width: 16px;
+  height: 16px;
+  inset-inline-start: -7px;
+  &.spectrum-Table-colResizeNubbin--visible {
+    display: block;
+  }
+}
+
+.resize-ew *,
+.spectrum-Table-columnResizer--ewresize {
+  cursor: ew-resize !important;
+}
+.resize-e *,
+.spectrum-Table-columnResizer--eresize {
+  cursor: e-resize !important;
+}
+.resize-w *,
+.spectrum-Table-columnResizer--wresize {
+  cursor: w-resize !important;
 }

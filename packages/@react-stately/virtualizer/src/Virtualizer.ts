@@ -12,7 +12,7 @@
 
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection} from '@react-types/shared';
-import {concatIterators, difference} from './utils';
+import {concatIterators, difference, isSetEqual} from './utils';
 import {
   InvalidationContext,
   ScrollAnchor,
@@ -92,6 +92,7 @@ export class Virtualizer<T extends object, V, W> {
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
+  private _persistedKeys: Set<Key>;
   private _relayoutRaf: number | null;
   private _scrollAnimation: CancelablePromise<void> | null;
   private _isScrolling: boolean;
@@ -112,6 +113,7 @@ export class Virtualizer<T extends object, V, W> {
     this._children = new Set();
     this._invalidationContext = null;
     this._overscanManager = new OverscanManager();
+    this._persistedKeys = new Set();
 
     this._scrollAnimation = null;
     this._isScrolling = false;
@@ -231,6 +233,45 @@ export class Virtualizer<T extends object, V, W> {
    */
   getItem(key: Key) {
     return this._collection ? this._collection.getItem(key) : null;
+  }
+
+  /** The set of persisted keys are always present in the DOM, even if not currently in view. */
+  get persistedKeys(): Set<Key> {
+    return this._persistedKeys;
+  }
+
+  /** The set of persisted keys are always present in the DOM, even if not currently in view. */
+  set persistedKeys(persistedKeys: Set<Key>) {
+    if (!isSetEqual(persistedKeys, this._persistedKeys)) {
+      this._persistedKeys = persistedKeys;
+      this.updateSubviews();
+    }
+  }
+
+  /** Returns whether the given key, or an ancestor, is persisted. */
+  isPersistedKey(key: Key) {
+    // Quick check if the key is directly in the set of persisted keys.
+    if (this._persistedKeys.has(key)) {
+      return true;
+    }
+
+    // If not, check if the key is an ancestor of any of the persisted keys.
+    for (let k of this._persistedKeys) {
+      while (k != null) {
+        let layoutInfo = this.layout.getLayoutInfo(k);
+        if (!layoutInfo) {
+          break;
+        }
+
+        k = layoutInfo.parentKey;
+
+        if (k === key) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -384,12 +425,15 @@ export class Virtualizer<T extends object, V, W> {
     let rect = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
-    let layoutInfo = layoutInfos[0];
-    if (!layoutInfo) {
-      return null;
+    // Layout may return multiple layout infos in the case of
+    // persisted keys, so find the first one that actually intersects.
+    for (let layoutInfo of layoutInfos) {
+      if (layoutInfo.rect.intersects(rect)) {
+        return layoutInfo.key;
+      }
     }
 
-    return layoutInfo.key;
+    return null;
   }
 
   /**
@@ -782,13 +826,13 @@ export class Virtualizer<T extends object, V, W> {
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
-      if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
+      if (view.layoutInfo?.parentKey != null && !viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
 
-      viewsByParentKey.get(view.layoutInfo.parentKey).push(view);
-      if (!viewsByParentKey.has(view.layoutInfo.key)) {
-        viewsByParentKey.set(view.layoutInfo.key, []);
+      viewsByParentKey.get(view.layoutInfo?.parentKey)?.push(view);
+      if (!viewsByParentKey.has(view.layoutInfo?.key)) {
+        viewsByParentKey.set(view.layoutInfo?.key, []);
       }
     }
 
@@ -821,7 +865,7 @@ export class Virtualizer<T extends object, V, W> {
     // Apply layout infos to visible views
     for (let view of this._visibleViews.values()) {
       let cur = view.layoutInfo;
-      if (cur) {
+      if (cur?.key != null) {
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
@@ -833,9 +877,11 @@ export class Virtualizer<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
-        let layoutInfo = this.layout.getLayoutInfo(cur.key);
-        if (this._applyLayoutInfo(view, layoutInfo)) {
-          updated = true;
+        if (cur?.key != null) {
+          let layoutInfo = this.layout.getLayoutInfo(cur.key);
+          if (this._applyLayoutInfo(view, layoutInfo)) {
+            updated = true;
+          }
         }
       }
 
@@ -1164,7 +1210,7 @@ export class Virtualizer<T extends object, V, W> {
     for (let [key, view] of this._visibleViews) {
       // If an item has a width of 0, there is no need to remove it from the _visibleViews.
       // Removing an item with  width of 0 can cause a loop where the item gets added, removed,
-      // added, removed... etc in a loop. The resize buffer ("spooky column") often has a width of 0.
+      // added, removed... etc in a loop.
       if (!finalMap.has(key) && view.layoutInfo.rect.width > 0) {
         transaction.removed.set(key, view);
         this._visibleViews.delete(key);

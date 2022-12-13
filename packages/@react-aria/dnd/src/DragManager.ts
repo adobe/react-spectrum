@@ -12,8 +12,11 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget} from '@react-types/shared';
+import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
+import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
+import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
+import type {LocalizedStringFormatter} from '@internationalized/string';
 import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
@@ -22,7 +25,7 @@ let dragSession: DragSession = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
-  element: HTMLElement,
+  element: FocusableElement,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
@@ -42,7 +45,7 @@ export function registerDropTarget(target: DropTarget) {
 }
 
 interface DroppableItem {
-  element: HTMLElement,
+  element: FocusableElement,
   target: DroppableCollectionTarget,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation
 }
@@ -55,21 +58,20 @@ export function registerDropItem(item: DroppableItem) {
 }
 
 interface DragTarget {
-  element: HTMLElement,
+  element: FocusableElement,
   items: DragItem[],
   allowedDropOperations: DropOperation[],
   onDragEnd?: (e: DragEndEvent) => void
 }
 
-export function beginDragging(target: DragTarget, formatMessage: (key: string) => string) {
+export function beginDragging(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
   }
 
-  dragSession = new DragSession(target, formatMessage);
+  dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
     dragSession.setup();
-
     if (getDragModality() === 'keyboard') {
       dragSession.next();
     }
@@ -92,6 +94,11 @@ export function useDragSession() {
   }, []);
 
   return session;
+}
+
+/** @private */
+export function isVirtualDragging(): boolean {
+  return !!dragSession;
 }
 
 function endDragging() {
@@ -129,7 +136,6 @@ const CANCELED_EVENTS = [
   'touchstart',
   'touchmove',
   'touchend',
-  'keyup',
   'focusin',
   'focusout'
 ];
@@ -153,25 +159,28 @@ class DragSession {
   currentDropItem: DroppableItem;
   dropOperation: DropOperation;
   private mutationObserver: MutationObserver;
-  private mutationImmediate: NodeJS.Immediate;
   private restoreAriaHidden: () => void;
-  private formatMessage: (key: string) => string;
+  private stringFormatter: LocalizedStringFormatter;
   private isVirtualClick: boolean;
+  private initialFocused: boolean;
 
-  constructor(target: DragTarget, formatMessage: (key: string) => string) {
+  constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
     this.dragTarget = target;
-    this.formatMessage = formatMessage;
+    this.stringFormatter = stringFormatter;
 
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onPointerDown = this.onPointerDown.bind(this);
     this.cancelEvent = this.cancelEvent.bind(this);
+    this.initialFocused = false;
   }
 
   setup() {
     document.addEventListener('keydown', this.onKeyDown, true);
+    document.addEventListener('keyup', this.onKeyUp, true);
     window.addEventListener('focus', this.onFocus, true);
     window.addEventListener('blur', this.onBlur, true);
     document.addEventListener('click', this.onClick, true);
@@ -186,11 +195,12 @@ class DragSession {
     );
     this.updateValidDropTargets();
 
-    announce(this.formatMessage(MESSAGES[getDragModality()]));
+    announce(this.stringFormatter.format(MESSAGES[getDragModality()]));
   }
 
   teardown() {
     document.removeEventListener('keydown', this.onKeyDown, true);
+    document.removeEventListener('keyup', this.onKeyUp, true);
     window.removeEventListener('focus', this.onFocus, true);
     window.removeEventListener('blur', this.onBlur, true);
     document.removeEventListener('click', this.onClick, true);
@@ -202,9 +212,6 @@ class DragSession {
 
     this.mutationObserver.disconnect();
     this.restoreAriaHidden();
-    if (this.mutationImmediate) {
-      clearImmediate(this.mutationImmediate);
-    }
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -212,15 +219,6 @@ class DragSession {
 
     if (e.key === 'Escape') {
       this.cancel();
-      return;
-    }
-
-    if (e.key === 'Enter') {
-      if (e.altKey) {
-        this.activate();
-      } else {
-        this.drop();
-      }
       return;
     }
 
@@ -234,6 +232,18 @@ class DragSession {
 
     if (typeof this.currentDropTarget?.onKeyDown === 'function') {
       this.currentDropTarget.onKeyDown(e, this.dragTarget);
+    }
+  }
+
+  onKeyUp(e: KeyboardEvent) {
+    this.cancelEvent(e);
+
+    if (e.key === 'Enter') {
+      if (e.altKey) {
+        this.activate();
+      } else {
+        this.drop();
+      }
     }
   }
 
@@ -280,7 +290,7 @@ class DragSession {
 
   onClick(e: MouseEvent) {
     this.cancelEvent(e);
-    if (e.detail === 0 || this.isVirtualClick) {
+    if (isVirtualClick(e) || this.isVirtualClick) {
       if (e.target === this.dragTarget.element) {
         this.cancel();
         return;
@@ -328,6 +338,16 @@ class DragSession {
     }
 
     this.validDropTargets = findValidDropTargets(this.dragTarget);
+
+    // Shuffle drop target order based on starting drag target.
+    if (this.validDropTargets.length > 0) {
+      let nearestIndex = this.findNearestDropTarget();
+      this.validDropTargets = [
+        ...this.validDropTargets.slice(nearestIndex),
+        ...this.validDropTargets.slice(0, nearestIndex)
+      ];
+    }
+
     if (this.currentDropTarget && !this.validDropTargets.includes(this.currentDropTarget)) {
       this.setCurrentDropTarget(this.validDropTargets[0]);
     }
@@ -409,6 +429,26 @@ class DragSession {
     }
   }
 
+  findNearestDropTarget(): number {
+    let dragTargetRect = this.dragTarget.element.getBoundingClientRect();
+
+    let minDistance = Infinity;
+    let nearest = -1;
+    for (let i = 0; i < this.validDropTargets.length; i++) {
+      let dropTarget = this.validDropTargets[i];
+      let rect = dropTarget.element.getBoundingClientRect();
+      let dx = rect.left - dragTargetRect.left;
+      let dy = rect.top - dragTargetRect.top;
+      let dist = (dx * dx) + (dy * dy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearest = i;
+      }
+    }
+
+    return nearest;
+  }
+
   setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
     if (dropTarget !== this.currentDropTarget) {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
@@ -446,6 +486,13 @@ class DragSession {
 
       item?.element.focus();
       this.currentDropItem = item;
+
+      // Annouce first drop target after drag start announcement finishes.
+      // Otherwise, it will never get announced because drag start announcement is assertive.
+      if (!this.initialFocused) {
+        announce(item?.element.getAttribute('aria-label'), 'polite');
+        this.initialFocused = true;
+      }
     }
   }
 
@@ -459,13 +506,22 @@ class DragSession {
         type: 'dragend',
         x: rect.x + (rect.width / 2),
         y: rect.y + (rect.height / 2),
-        dropOperation: this.dropOperation
+        dropOperation: this.dropOperation || 'cancel'
       });
     }
 
     // Blur and re-focus the drop target so that the focus ring appears.
     if (this.currentDropTarget) {
-      this.currentDropTarget.element.blur();
+      // Since we cancel all focus events in drag sessions, refire blur to make sure state gets updated so drag target doesn't think it's still focused
+      // i.e. When you from one list to another during a drag session, we need the blur to fire on the first list after the drag.
+      if (!this.dragTarget.element.contains(this.currentDropTarget.element)) {
+        this.dragTarget.element.dispatchEvent(new FocusEvent('blur'));
+        this.dragTarget.element.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+      }
+      // Re-focus the focusedKey upon reorder. This requires a React rerender between blurring and focusing.
+      flushSync(() => {
+        this.currentDropTarget.element.blur();
+      });
       this.currentDropTarget.element.focus();
     }
 
@@ -479,7 +535,7 @@ class DragSession {
       this.dragTarget.element.focus();
     }
 
-    announce(this.formatMessage('dropCanceled'));
+    announce(this.stringFormatter.format('dropCanceled'));
   }
 
   drop(item?: DroppableItem) {
@@ -517,7 +573,7 @@ class DragSession {
     }
 
     this.end();
-    announce(this.formatMessage('dropComplete'));
+    announce(this.stringFormatter.format('dropComplete'));
   }
 
   activate() {
@@ -545,20 +601,4 @@ function findValidDropTargets(options: DragTarget) {
 
     return true;
   });
-}
-
-function isVirtualPointerEvent(event: PointerEvent) {
-  // If the pointer size is zero, then we assume it's from a screen reader.
-  // Android TalkBack double tap will sometimes return a event with width and height of 1
-  // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.
-  // Cannot use "event.pressure === 0" as the sole check due to Safari pointer events always returning pressure === 0
-  // instead of .5, see https://bugs.webkit.org/show_bug.cgi?id=206216
-  return (
-    (event.width === 0 && event.height === 0) ||
-    (event.width === 1 &&
-      event.height === 1 &&
-      event.pressure === 0 &&
-      event.detail === 0
-    )
-  );
 }

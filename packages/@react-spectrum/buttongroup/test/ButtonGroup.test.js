@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
+import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let buttonGroupId = 'button-group';
 let onPressSpy1 = jest.fn();
@@ -165,6 +164,7 @@ function ButtonGroupWithRefs(props) {
       button2: button2.current.UNSAFE_getDOMNode(),
       button3: button3.current.UNSAFE_getDOMNode()
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Provider theme={theme}>
