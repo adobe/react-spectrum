@@ -8,11 +8,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
-    "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
-    "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
-    "generate-types": "tsc --project ./tsconfig.types.json",
-    "build-icons": "yarn build-cjs && yarn build-esm",
-    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && yarn generate-types"
+    "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && tsc --project ./tsconfig.types.json"
   },
   "dependencies": {
     "@adobe/spectrum-css-ccx-workflow-icons": "1.0.2",
@@ -29,12 +26,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "exports": {
-    "./*": {
-      "types": "./*.d.ts",
-      "import": "./*.mjs",
-      "require": "./*.js"
-    }
   }
 }
