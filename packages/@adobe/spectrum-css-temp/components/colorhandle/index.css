@@ -14,9 +14,6 @@
   /* Bigger handle when focused */
   width: calc(var(--spectrum-colorhandle-size) * 2);
   height: calc(var(--spectrum-colorhandle-size) * 2);
-
-  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
-  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
 }
 
 .spectrum-ColorHandle {
