@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
 import {Provider, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, ReactNode, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -36,17 +37,19 @@ export function ToastContainer(props: ToastContainerProps): ReactElement {
 
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>
-      <div
-        {...regionProps}
-        ref={ref}
-        data-position="bottom"
-        data-placement={containerPlacement}
-        className={classNames(
-          toastContainerStyles,
-          'react-spectrum-ToastContainer'
-        )}>
-        {children}
-      </div>
+      <FocusRing focusRingClass={classNames(toastContainerStyles, 'focus-ring')}>
+        <div
+          {...regionProps}
+          ref={ref}
+          data-position="bottom"
+          data-placement={containerPlacement}
+          className={classNames(
+            toastContainerStyles,
+            'react-spectrum-ToastContainer'
+          )}>
+          {children}
+        </div>
+      </FocusRing>
     </Provider>
   );
 

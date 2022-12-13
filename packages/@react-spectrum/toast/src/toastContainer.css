@@ -28,7 +28,7 @@
     --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
   }
 
-  &:focus > :first-child {
+  &:focus-ring > :first-child {
     @inherit %spectrum-FocusRing-active;
   }
 

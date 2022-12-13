@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -52,15 +52,26 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   // If there are no more toasts, the container will be unmounted
   // and will restore focus to wherever focus was before the user
   // focused the toast region.
+  let focusOnUnmount = useRef(null);
   useLayoutEffect(() => {
     let container = ref.current.closest('[role=region]') as HTMLElement;
     return () => {
       if (container && container.contains(document.activeElement)) {
-        container.focus();
+        // Focus must be delayed for focus ring to appear, but we can't wait
+        // until useEffect cleanup to check if focus was inside the container.
+        focusOnUnmount.current = container;
       }
     };
   }, [ref]);
 
+  // eslint-disable-next-line
+  useEffect(() => {
+    return () => {
+      if (focusOnUnmount.current) {
+        focusOnUnmount.current.focus();
+      }
+    };
+  }, [ref]);
 
   let titleId = useId();
   let descriptionId = useSlotId();
