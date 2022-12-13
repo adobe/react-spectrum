@@ -31,7 +31,7 @@ export interface QueuedToast<T> extends ToastOptions {
 }
 
 export interface ToastState<T> {
-  add(content: T, options?: ToastOptions): void,
+  add(content: T, options?: ToastOptions): string,
   close(key: string): void,
   remove(key: string): void,
   pauseAll(): void,
@@ -64,6 +64,7 @@ export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
 
     queue.add({content, key: toastKey, timer, ...options});
     setCurrentToasts(queue.getVisibleToasts());
+    return toastKey;
   };
 
   const close = (toastKey: string) => {

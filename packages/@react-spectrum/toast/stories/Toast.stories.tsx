@@ -16,12 +16,10 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Heading} from '@react-spectrum/text';
-import React from 'react';
+import React, {useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastProvider';
 import {storiesOf} from '@storybook/react';
 import {ToastProvider, useToastProvider} from '../';
-
-// TODO: dialog stories with toasts, make toast go to top provider
 
 storiesOf('Toast', module)
   .addParameters({
@@ -80,6 +78,10 @@ storiesOf('Toast', module)
         </div>
       </ToastProvider>
     )
+  )
+  .add(
+    'programmatically closing',
+    args => <ToastProvider><ToastToggle {...args} /></ToastProvider>
   );
 
 function RenderProvider(options: SpectrumToastOptions) {
@@ -109,5 +111,18 @@ function RenderProvider(options: SpectrumToastOptions) {
         Show info Toast
       </Button>
     </ButtonGroup>
+  );
+}
+
+function ToastToggle(options: SpectrumToastOptions) {
+  let toastContext = useToastProvider();
+  let [close, setClose] = useState(null);
+
+  return (
+    <Button
+      onPress={() => close ? setClose(close()) : setClose(() => toastContext.positive('Toast is done!', {...options, onClose: action('onClose')}))}
+      variant="primary">
+      {close ? 'Hide' : 'Show'} Toast
+    </Button>
   );
 }

@@ -21,11 +21,12 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
   shouldCloseOnAction?: boolean
 }
 
+type CloseFunction = () => void;
 export interface ToastProviderContext {
-  positive(content: ReactNode, options?: SpectrumToastOptions): void,
-  negative(content: ReactNode, options?: SpectrumToastOptions): void,
-  neutral(content: ReactNode, options?: SpectrumToastOptions): void,
-  info(content: ReactNode, options?: SpectrumToastOptions): void
+  positive(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
+  negative(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
+  neutral(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
+  info(content: ReactNode, options?: SpectrumToastOptions): CloseFunction
 }
 
 export interface ToastProviderProps {
@@ -66,23 +67,23 @@ function ToastProviderInner(props: ToastProviderProps) {
     // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
     // It is debatable whether non-actionable toasts would also fail.
     let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
-    state.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
+    let key = state.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
+    return () => state.close(key);
   };
 
-  // TODO: return a function to allow programmatically closing the toast?
   let contextValue = {
-    neutral: (children: ReactNode, options: SpectrumToastOptions = {}) => {
-      add(children, 'neutral', options);
-    },
-    positive: (children: ReactNode, options: SpectrumToastOptions = {}) => {
-      add(children, 'positive', options);
-    },
-    negative: (children: ReactNode, options: SpectrumToastOptions = {}) => {
-      add(children, 'negative', options);
-    },
-    info: (children: ReactNode, options: SpectrumToastOptions = {}) => {
-      add(children, 'info', options);
-    }
+    neutral: (children: ReactNode, options: SpectrumToastOptions = {}) => (
+      add(children, 'neutral', options)
+    ),
+    positive: (children: ReactNode, options: SpectrumToastOptions = {}) => (
+      add(children, 'positive', options)
+    ),
+    negative: (children: ReactNode, options: SpectrumToastOptions = {}) => (
+      add(children, 'negative', options)
+    ),
+    info: (children: ReactNode, options: SpectrumToastOptions = {}) => (
+      add(children, 'info', options)
+    )
   };
 
   return (

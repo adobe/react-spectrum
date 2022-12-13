@@ -14,7 +14,7 @@ import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test
 import {Button} from '@react-spectrum/button';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
 import {ToastProvider, useToastProvider} from '../';
 import userEvent from '@testing-library/user-event';
 
@@ -322,5 +322,32 @@ describe('Toast Provider and Container', function () {
 
     expect(queryByRole('alert')).toBeNull();
     expect(document.activeElement).toBe(button);
+  });
+
+  it('should support programmatically closing toasts', () => {
+    function ToastToggle() {
+      let toastContext = useToastProvider();
+      let [close, setClose] = useState(null);
+
+      return (
+        <Button
+          onPress={() => close ? setClose(close()) : setClose(() => toastContext.positive('Toast is done!'))}
+          variant="primary">
+          {close ? 'Hide' : 'Show'} Toast
+        </Button>
+      );
+    }
+
+    let {getByRole, queryByRole} = renderComponent(<ToastToggle />);
+    let button = getByRole('button');
+
+    triggerPress(button);
+
+    let toast = getByRole('alert');
+    expect(toast).toBeVisible();
+
+    triggerPress(button);
+    fireAnimationEnd(toast);
+    expect(queryByRole('alert')).toBeNull();
   });
 });
