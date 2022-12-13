@@ -42,9 +42,7 @@
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
-    "bumpVersions": "node scripts/bumpVersions.js",
-    "supportESM": "node scripts/esm-support/supportESM.js",
-    "buildESM": "yarn run wsrun prepublish"
+    "bumpVersions": "node scripts/bumpVersions.js"
   },
   "workspaces": [
     "packages/react-stately",
@@ -107,7 +105,6 @@
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
-    "css-parse": "^2.0.0",
     "delta-e": "^0.0.8",
     "diff": "^5.1.0",
     "eslint": "^8.25.0",

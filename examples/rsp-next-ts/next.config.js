@@ -1,5 +1,4 @@
-import ntm from 'next-transpile-modules';
-const withTM = ntm([
+const withTM = require("next-transpile-modules")([
   "@adobe/react-spectrum",
   "@react-spectrum/actiongroup",
   "@react-spectrum/badge",
@@ -52,10 +51,9 @@ const withTM = ntm([
   "@spectrum-icons/workflow",
 ]);
 
-let result = withTM({
+module.exports = withTM({
   basePath:
     process.env.VERDACCIO && process.env.CIRCLE_SHA1
       ? `/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next`
       : "",
 });
-export default result;
