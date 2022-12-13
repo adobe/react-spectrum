@@ -414,8 +414,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
     let n = this.layoutNodes.get(key);
     if (n) {
-      // Invalidate by clearing node.
-      n.node = null;
+      // Invalidate by reseting validRect.
+      n.validRect = new Rect();
 
       // Replace layout info in LayoutNode
       if (n.header === oldLayoutInfo) {
