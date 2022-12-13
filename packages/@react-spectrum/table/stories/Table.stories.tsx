@@ -1404,6 +1404,15 @@ storiesOf('TableView', module)
     mimics what would happen if an app reloaded the whole page and restored a saved
     column width state.
     `}}
+  )
+  .add(
+    'allowsResizing, controlled, hideHeader',
+    () => (
+      <ControllingResize width={900} columns={columnsFRHideHeaders} />
+    ),
+  {description: {data: `
+    Hide headers columns should not be resizable.
+    `}}
   );
 
 let uncontrolledColumns: PokemonColumn[] = [
@@ -1417,6 +1426,12 @@ let uncontrolledColumns: PokemonColumn[] = [
 let columnsFR: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
   {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsFRHideHeaders: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', hideHeader: true},
+  {name: 'Type', uid: 'type', width: 300,  hideHeader: true},
   {name: 'Level', uid: 'level', width: '4fr'}
 ];
 
