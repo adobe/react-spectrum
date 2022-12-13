@@ -34,7 +34,8 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let {
     key,
     timer,
-    timeout
+    timeout,
+    animation
   } = props.toast;
 
   useEffect(() => {
@@ -83,7 +84,9 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-descibedby'] || descriptionId,
-      'aria-details': props['aria-details']
+      'aria-details': props['aria-details'],
+      // Hide toasts that are animating out so VoiceOver doesn't announce them.
+      'aria-hidden': animation === 'exiting' ? 'true' : undefined
     },
     titleProps: {
       id: titleId
