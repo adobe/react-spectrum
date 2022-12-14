@@ -4,7 +4,7 @@ import React, {StrictMode, useEffect, useState} from 'react';
 
 function StrictModeDecorator(props) {
   let {children} = props;
-  let [isStrict, setStrict] = useState(getQueryParams()?.strict || false);
+  let [isStrict, setStrict] = useState(getQueryParams()?.strict === 'true' || false);
 
   useEffect(() => {
     let channel = addons.getChannel();

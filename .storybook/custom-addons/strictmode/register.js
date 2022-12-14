@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 
 const StrictModeToolBar = ({api}) => {
   let channel = addons.getChannel();
-  let [isStrict, setStrict] = useState(getQueryParams()?.strict || false);
+  let [isStrict, setStrict] = useState(getQueryParams()?.strict === 'true' || false);
   let onChange = () => {
     setStrict((old) => {
       channel.emit('strict/updated', !old);
