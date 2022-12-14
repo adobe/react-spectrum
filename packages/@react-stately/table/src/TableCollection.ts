@@ -163,7 +163,7 @@ export class TableCollection<T> extends GridCollection<T> {
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
-  _size: number = 0;
+  _size: number;
 
   constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
@@ -231,6 +231,7 @@ export class TableCollection<T> extends GridCollection<T> {
         return node;
       }
     });
+    this._size = 0;
     this.columns = columns;
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;

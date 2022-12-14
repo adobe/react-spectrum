@@ -34,13 +34,14 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected lastCollection: GridCollection<T>;
   collection:  GridCollection<T>;
   isLoading: boolean;
-  disabledKeys: Set<Key> = new Set();
+  disabledKeys: Set<Key>;
   direction: Direction;
   scale: Scale;
   margin: number;
 
   constructor(options: BaseLayoutOptions = {}) {
     super();
+    this.disabledKeys = new Set();
     this.layoutInfos = new Map();
     this.collator = options.collator;
     this.lastCollection = null;

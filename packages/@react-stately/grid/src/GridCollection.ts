@@ -20,7 +20,7 @@ interface GridCollectionOptions<T> {
 }
 
 export class GridCollection<T> implements IGridCollection<T> {
-  keyMap: Map<Key, GridNode<T>> = new Map();
+  keyMap: Map<Key, GridNode<T>>;
   columnCount: number;
   rows: GridNode<T>[];
 

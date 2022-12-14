@@ -16,13 +16,25 @@ import {ReusableView} from './ReusableView';
 
 type LayoutInfoMap = Map<Key, LayoutInfo>;
 export class Transaction<T extends object, V> {
-  level = 0;
-  actions: (() => void)[] = [];
-  animated = true;
-  initialMap: LayoutInfoMap = new Map();
-  finalMap: LayoutInfoMap = new Map();
-  initialLayoutInfo: LayoutInfoMap = new Map();
-  finalLayoutInfo: LayoutInfoMap = new Map();
-  removed: Map<Key, ReusableView<T, V>> = new Map();
-  toRemove: Map<Key, ReusableView<T, V>> = new Map();
+  level;
+  actions: (() => void)[];
+  animated;
+  initialMap: LayoutInfoMap;
+  finalMap: LayoutInfoMap;
+  initialLayoutInfo: LayoutInfoMap;
+  finalLayoutInfo: LayoutInfoMap;
+  removed: Map<Key, ReusableView<T, V>>;
+  toRemove: Map<Key, ReusableView<T, V>>;
+
+  constructor() {
+    this.level = 0;
+    this.actions = [];
+    this.animated = true;
+    this.initialMap = new Map();
+    this.finalMap = new Map();
+    this.initialLayoutInfo = new Map();
+    this.finalLayoutInfo = new Map();
+    this.removed = new Map();
+    this.toRemove = new Map();
+  }
 }

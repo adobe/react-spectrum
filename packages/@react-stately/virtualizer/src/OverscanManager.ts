@@ -16,7 +16,7 @@ import {Rect} from './Rect';
 class RollingAverage {
   private count: number = 0;
   value: number = 0;
-  
+
   addSample(sample: number) {
     this.count++;
     this.value += (sample - this.value) / this.count;
@@ -24,14 +24,24 @@ class RollingAverage {
 }
 
 export class OverscanManager {
-  private startTime = 0;
-  private averagePerf = new RollingAverage();
-  private averageTime = new RollingAverage();
-  private velocity = new Point(5, 5);
-  private overscanX = new RollingAverage();
-  private overscanY = new RollingAverage();
-  private visibleRect = new Rect();
-  
+  private startTime;
+  private averagePerf;
+  private averageTime;
+  private velocity;
+  private overscanX;
+  private overscanY;
+  private visibleRect;
+
+  constructor() {
+    this.startTime = 0;
+    this.averagePerf = new RollingAverage();
+    this.averageTime = new RollingAverage();
+    this.velocity = new Point(5, 5);
+    this.overscanX = new RollingAverage();
+    this.overscanY = new RollingAverage();
+    this.visibleRect = new Rect();
+  }
+
   setVisibleRect(rect: Rect) {
     let time = performance.now() - this.startTime;
     if (time < 500) {
@@ -57,12 +67,12 @@ export class OverscanManager {
     }
 
     if (this.visibleRect.height > 0) {
-      let o = Math.abs(this.velocity.y * (this.averageTime.value + this.averagePerf.value));  
+      let o = Math.abs(this.velocity.y * (this.averageTime.value + this.averagePerf.value));
       this.overscanY.addSample(o);
     }
 
     if (this.visibleRect.width > 0) {
-      let o = Math.abs(this.velocity.x * (this.averageTime.value + this.averagePerf.value));  
+      let o = Math.abs(this.velocity.x * (this.averageTime.value + this.averagePerf.value));
       this.overscanX.addSample(o);
     }
   }

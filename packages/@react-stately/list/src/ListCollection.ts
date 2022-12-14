@@ -14,12 +14,13 @@ import {Collection, Node} from '@react-types/shared';
 import {Key} from 'react';
 
 export class ListCollection<T> implements Collection<Node<T>> {
-  private keyMap: Map<Key, Node<T>> = new Map();
+  private keyMap: Map<Key, Node<T>>;
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
   private lastKey: Key;
 
   constructor(nodes: Iterable<Node<T>>) {
+    this.keyMap = new Map();
     this.iterable = nodes;
 
     let visit = (node: Node<T>) => {
