@@ -34,11 +34,12 @@ type Landmark = {
 };
 
 class LandmarkManager {
-  private landmarks: Array<Landmark> = [];
+  private landmarks: Array<Landmark>;
   private static instance: LandmarkManager;
   private isListening = false;
 
   private constructor() {
+    this.landmarks = [];
     this.f6Handler = this.f6Handler.bind(this);
     this.focusinHandler = this.focusinHandler.bind(this);
     this.focusoutHandler = this.focusoutHandler.bind(this);

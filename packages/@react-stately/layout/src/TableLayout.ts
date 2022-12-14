@@ -26,12 +26,12 @@ type TableLayoutOptions<T> = ListLayoutOptions<T> & {
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number> = new Map();
+  columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
-  wasLoading = false;
-  isLoading = false;
-  lastPersistedKeys: Set<Key> = null;
-  persistedIndices: Map<Key, number[]> = new Map();
+  wasLoading: boolean;
+  isLoading: boolean;
+  lastPersistedKeys: Set<Key>;
+  persistedIndices: Map<Key, number[]>;
   private disableSticky: boolean;
   columnLayout: TableColumnLayout<T>;
   controlledColumns: Map<Key, GridNode<unknown>>;
@@ -41,6 +41,11 @@ export class TableLayout<T> extends ListLayout<T> {
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
+    this.wasLoading = false;
+    this.isLoading = false;
+    this.columnWidths = new Map();
+    this.persistedIndices = new Map();
+    this.lastPersistedKeys = null;
     this.collection = options.initialCollection;
     this.stickyColumnIndices = [];
     this.disableSticky = this.checkChrome105();

@@ -62,7 +62,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();
-  allowDisabledKeyFocus: boolean = false;
+  allowDisabledKeyFocus: boolean;
   isLoading: boolean;
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
@@ -80,6 +80,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
    */
   constructor(options: ListLayoutOptions<T> = {}) {
     super();
+    this.allowDisabledKeyFocus = false;
     this.rowHeight = options.rowHeight;
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
