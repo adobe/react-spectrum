@@ -82,8 +82,10 @@ abstract class Color implements IColor {
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 class RGBColor extends Color {
+  private colorChannels: [ColorChannel, ColorChannel, ColorChannel];
   constructor(private red: number, private green: number, private blue: number, private alpha: number) {
     super();
+    this.colorChannels = ['red', 'green', 'blue'];
   }
 
   static parse(value: string) {
@@ -267,9 +269,8 @@ class RGBColor extends Color {
     return 'rgb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['red', 'green', 'blue'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
-    return RGBColor.colorChannels;
+    return this.colorChannels;
   }
 }
 
@@ -280,8 +281,10 @@ class RGBColor extends Color {
 const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 class HSBColor extends Color {
+  private colorChannels: [ColorChannel, ColorChannel, ColorChannel];
   constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {
     super();
+    this.colorChannels = ['hue', 'saturation', 'brightness'];
   }
 
   static parse(value: string): HSBColor | void {
@@ -405,9 +408,8 @@ class HSBColor extends Color {
     return 'hsb';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
-    return HSBColor.colorChannels;
+    return this.colorChannels;
   }
 }
 
@@ -422,8 +424,10 @@ function mod(n, m) {
 }
 
 class HSLColor extends Color {
+  private colorChannels: [ColorChannel, ColorChannel, ColorChannel];
   constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
     super();
+    this.colorChannels = ['hue', 'saturation', 'lightness'];
   }
 
   static parse(value: string): HSLColor | void {
@@ -545,8 +549,7 @@ class HSLColor extends Color {
     return 'hsl';
   }
 
-  private static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
-    return HSLColor.colorChannels;
+    return this.colorChannels;
   }
 }
