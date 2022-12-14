@@ -16,7 +16,7 @@ import {ComboBox} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Item, Picker} from '@react-spectrum/picker';
+import {Item} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
@@ -26,7 +26,6 @@ import React from 'react';
 import scaleLarge from '@adobe/spectrum-css-temp/vars/spectrum-large.css';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium.css';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin} from '@react-spectrum/searchwithin';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
@@ -68,17 +67,6 @@ const Template = (): Story<ProviderProps> => (args) => (
         <Radio value="horses">Horses</Radio>
       </RadioGroup>
       <SearchField label="Search" />
-      <SearchWithin label="Search">
-        <SearchField placeholder="Search" />
-        <Picker name="favorite-color3" label="Favorite color searchwithin">
-          <Item key="red">Red</Item>
-          <Item key="orange">Orange</Item>
-          <Item key="yellow">Yellow</Item>
-          <Item key="green">Green</Item>
-          <Item key="blue">Blue</Item>
-          <Item key="purple">Purple</Item>
-        </Picker>
-      </SearchWithin>
       <Switch isSelected>Dogs!</Switch>
       <TextField
         label="A text field"
