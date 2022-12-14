@@ -493,7 +493,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: fix-verdaccio-build
           requires:
             - install
       - deploy:
