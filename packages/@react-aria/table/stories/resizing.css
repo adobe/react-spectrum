@@ -1,0 +1,30 @@
+
+.aria-table,
+.aria-table * {
+  box-sizing: border-box;
+}
+
+.aria-table {
+  width: 800px;
+  height: 300px;
+  display: block;
+  position: relative;
+  overflow: auto;
+
+  .aria-table-rowGroup {
+    display: block;
+  }
+  .aria-table-rowGroupHeader {
+    position: sticky;
+    top: 0;
+    background: var(--spectrum-gray-100);
+  }
+  .aria-table-row {
+    display: flex;
+  }
+  .aria-table-headerRow {
+    [role="columnheader"] {
+      border-bottom: 2px solid gray;
+    }
+  }
+}
