@@ -754,10 +754,11 @@ function last(walker: TreeWalker) {
 
 class Tree {
   private root: TreeNode;
-  private fastMap = new Map<ScopeRef, TreeNode>();
+  private fastMap: Map<ScopeRef, TreeNode>;
 
   constructor() {
     this.root = new TreeNode({scopeRef: null});
+    this.fastMap = new Map<ScopeRef, TreeNode>();
     this.fastMap.set(null, this.root);
   }
 
