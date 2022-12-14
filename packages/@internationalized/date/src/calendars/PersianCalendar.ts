@@ -49,7 +49,10 @@ function persianToJulianDay(year: number, month: number, day: number): number {
  * around the March equinox.
  */
 export class PersianCalendar implements Calendar {
-  identifier = 'persian';
+  identifier;
+  constructor() {
+    this.identifier = 'persian';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let d0 = jd - persianToJulianDay(475, 1, 1);

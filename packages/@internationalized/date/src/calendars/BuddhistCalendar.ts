@@ -25,7 +25,11 @@ const BUDDHIST_ERA_START = -543;
  * era, identified as 'BE'.
  */
 export class BuddhistCalendar extends GregorianCalendar {
-  identifier = 'buddhist';
+  identifier;
+  constructor() {
+    super();
+    this.identifier = 'buddhist';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let gregorianDate = super.fromJulianDay(jd);

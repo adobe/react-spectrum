@@ -69,6 +69,9 @@ const daysInMonth = {
  */
 export class GregorianCalendar implements Calendar {
   identifier = 'gregory';
+  constructor() {
+    this.identifier = 'gregory';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let jd0 = jd;

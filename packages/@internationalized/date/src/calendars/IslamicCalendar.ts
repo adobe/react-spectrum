@@ -50,7 +50,10 @@ function isLeapYear(year: number): boolean {
  * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
  */
 export class IslamicCivilCalendar implements Calendar {
-  identifier = 'islamic-civil';
+  identifier;
+  constructor() {
+    this.identifier = 'islamic-civil';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     return julianDayToIslamic(this, CIVIL_EPOC, jd);

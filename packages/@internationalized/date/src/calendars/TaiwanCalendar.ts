@@ -41,7 +41,11 @@ function gregorianToTaiwan(year: number): [string, number] {
  * 'before_minguo' and 'minguo'.
  */
 export class TaiwanCalendar extends GregorianCalendar {
-  identifier = 'roc'; // Republic of China
+  identifier; // Republic of China
+  constructor() {
+    super();
+    this.identifier = 'roc';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let date = super.fromJulianDay(jd);

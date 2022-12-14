@@ -70,7 +70,11 @@ function toGregorian(date: AnyCalendarDate) {
  * Note that eras before 1868 (Gregorian) are not currently supported by this implementation.
  */
 export class JapaneseCalendar extends GregorianCalendar {
-  identifier = 'japanese';
+  identifier;
+  constructor() {
+    super();
+    this.identifier = 'japanese';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let date = super.fromJulianDay(jd);

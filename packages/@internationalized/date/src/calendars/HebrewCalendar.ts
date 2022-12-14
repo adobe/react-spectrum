@@ -128,7 +128,10 @@ function getDaysInMonth(year: number, month: number): number {
  * In leap years, an extra month is inserted at month 6.
  */
 export class HebrewCalendar implements Calendar {
-  identifier = 'hebrew';
+  identifier;
+  constructor() {
+    this.identifier = 'hebrew';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let d = jd - HEBREW_EPOCH;

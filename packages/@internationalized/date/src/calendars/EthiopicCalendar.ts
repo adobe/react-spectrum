@@ -66,7 +66,10 @@ function getDaysInMonth(year: number, month: number) {
  * on whether it is a leap year. Two eras are supported: 'AA' and 'AM'.
  */
 export class EthiopicCalendar implements Calendar {
-  identifier = 'ethiopic';
+  identifier;
+  constructor() {
+    this.identifier = 'ethiopic';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     let [year, month, day] = julianDayToCE(ETHIOPIC_EPOCH, jd);

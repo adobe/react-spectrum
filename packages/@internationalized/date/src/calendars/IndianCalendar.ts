@@ -29,7 +29,11 @@ const INDIAN_YEAR_START = 80;
  * in each year, with either 30 or 31 days. Only one era identifier is supported: 'saka'.
  */
 export class IndianCalendar extends GregorianCalendar {
-  identifier = 'indian';
+  identifier;
+  constructor() {
+    super();
+    this.identifier = 'indian';
+  }
 
   fromJulianDay(jd: number): CalendarDate {
     // Gregorian date for Julian day
