@@ -20,7 +20,11 @@ interface CollectionBuilderState {
 
 export class CollectionBuilder<T extends object> {
   private context?: unknown;
-  private cache: WeakMap<T, Node<T>> = new WeakMap();
+  private cache: WeakMap<T, Node<T>>;
+
+  constructor() {
+    this.cache = new WeakMap();
+  }
 
   build(props: CollectionBase<T>, context?: unknown) {
     this.context = context;
