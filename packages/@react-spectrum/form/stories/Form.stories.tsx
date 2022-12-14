@@ -280,7 +280,6 @@ function FormWithControls(props: any = {}) {
   let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
   let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
   let [preventDefault, setPreventDefault] = useState(true);
-  let [favoriteColor3, setFavoriteColor3] = useState('green' as Key);
 
   return (
     <Flex>
