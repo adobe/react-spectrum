@@ -29,11 +29,14 @@ export interface TableColumnLayoutOptions<T> {
 export class TableColumnLayout<T> {
   getDefaultWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
   getDefaultMinWidth: (column: GridNode<T>) => ColumnSize | null | undefined;
-  columnWidths: Map<Key, number> = new Map();
-  columnMinWidths: Map<Key, number> = new Map();
-  columnMaxWidths: Map<Key, number> = new Map();
+  columnWidths: Map<Key, number>;
+  columnMinWidths: Map<Key, number>;
+  columnMaxWidths: Map<Key, number>;
 
   constructor(options: TableColumnLayoutOptions<T>) {
+    this.columnWidths = new Map();
+    this.columnMinWidths = new Map();
+    this.columnMaxWidths = new Map();
     this.getDefaultWidth = options.getDefaultWidth;
     this.getDefaultMinWidth = options.getDefaultMinWidth;
   }
