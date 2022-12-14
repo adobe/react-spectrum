@@ -1,9 +1,23 @@
-import {makeDecorator} from '@storybook/addons';
-import React, {StrictMode} from 'react';
+import {addons, makeDecorator} from '@storybook/addons';
+import {getQueryParams} from '@storybook/client-api';
+import React, {StrictMode, useEffect, useState} from 'react';
 
 function StrictModeDecorator(props) {
-  let {children, strictMode} = props;
-  return strictMode ? (
+  let {children} = props;
+  let [isStrict, setStrict] = useState(getQueryParams()?.strict || false);
+
+  useEffect(() => {
+    let channel = addons.getChannel();
+    let updateStrict = (val) => {
+      setStrict(val);
+    };
+    channel.on('strict/updated', updateStrict);
+    return () => {
+      channel.removeListener('strict/updated', updateStrict);
+    };
+  }, []);
+
+  return isStrict ? (
     <StrictMode>
       {children}
     </StrictMode>
@@ -15,7 +29,7 @@ export const withStrictModeSwitcher = makeDecorator({
   parameterName: 'strictModeSwitcher',
   wrapper: (getStory, context) => {
     return (
-      <StrictModeDecorator strictMode={context.globals.strictMode}>
+      <StrictModeDecorator>
         {getStory(context)}
       </StrictModeDecorator>
     );

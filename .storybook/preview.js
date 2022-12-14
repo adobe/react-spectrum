@@ -24,14 +24,6 @@ export const parameters = {
   }
 };
 
-export const globalTypes = {
-  strictMode: {
-    name: 'strictMode',
-    description: 'Global tracker for strict mode',
-    defaultValue: false
-  }
-};
-
 export const decorators = [
   Story => (
     <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
