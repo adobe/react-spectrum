@@ -25,7 +25,9 @@
   &.focus-ring {
     z-index: 2;
 
-    @extend %spectrum-ColorControl-handle--focused;
+    .spectrum-ColorArea-handle {
+      @extend %spectrum-ColorControl-handle--focused;
+    }
   }
 
   &.is-disabled {
