@@ -834,11 +834,13 @@ class TreeNode {
   public scopeRef: ScopeRef;
   public nodeToRestore: FocusableElement;
   public parent: TreeNode;
-  public children: TreeNode[] = [];
-  public contain = false;
+  public children: TreeNode[];
+  public contain: boolean;
 
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
+    this.children = [];
+    this.contain = false;
   }
   addChild(node: TreeNode) {
     this.children.push(node);
