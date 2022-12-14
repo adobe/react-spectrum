@@ -14,8 +14,13 @@ import {Point} from './Point';
 import {Rect} from './Rect';
 
 class RollingAverage {
-  private count: number = 0;
-  value: number = 0;
+  private count: number;
+  value: number;
+
+  constructor() {
+    this.count = 0;
+    this.value = 0;
+  }
 
   addSample(sample: number) {
     this.count++;
