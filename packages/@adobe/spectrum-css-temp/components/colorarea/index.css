@@ -7,7 +7,7 @@
   margin-top: calc(-1 * var(--spectrum-colorhandle-size));
 }
 
-.spectrum-ColorArea {
+.spectrum-ColorArea.spectrum-ColorArea {
   position: relative;
   display: inline-block;
   inline-size: var(--spectrum-colorarea-default-width);
@@ -21,13 +21,11 @@
 
   user-select: none;
 
-  &.is-focused,
-  &.focus-ring {
+  .spectrum-ColorArea-handle.is-focused,
+  .spectrum-ColorArea-handle.focus-ring {
     z-index: 2;
 
-    .spectrum-ColorArea-handle {
-      @extend %spectrum-ColorControl-handle--focused;
-    }
+    @extend %spectrum-ColorControl-handle--focused;
   }
 
   &.is-disabled {
@@ -54,6 +52,8 @@
   margin-left: calc(-1 * var(--spectrum-colorhandle-size) / 2);
   margin-top: calc(-1 * var(--spectrum-colorhandle-size) / 2);
 
+  &.is-focused,
+  &.focus-ring,
   &:focus-within {
     z-index: 2;
 

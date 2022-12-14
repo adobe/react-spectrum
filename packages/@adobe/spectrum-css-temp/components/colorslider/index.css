@@ -70,12 +70,10 @@
       calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
   }
 
-  &.is-focused {
+  .spectrum-ColorSlider-handle.is-focused {
     z-index: 2;
 
-    .spectrum-ColorSlider-handle {
-      @extend %spectrum-ColorControl-handle--focused;
-    }
+    @extend %spectrum-ColorControl-handle--focused;
   }
 
   &.is-disabled {
@@ -103,6 +101,14 @@
     border-radius: var(--spectrum-colorslider-handle-hitarea-border-radius);
     width: var(--spectrum-colorslider-handle-hitarea-width);
     height: var(--spectrum-colorslider-handle-hitarea-height);
+  }
+
+  &.is-focused,
+  &.focus-ring,
+  &:focus-within {
+    z-index: 2;
+
+    @extend %spectrum-ColorControl-handle--focused;
   }
 }
 
