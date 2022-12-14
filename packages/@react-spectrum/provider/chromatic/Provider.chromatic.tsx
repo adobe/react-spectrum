@@ -12,11 +12,10 @@
 
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
-import {ComboBox} from '@react-spectrum/combobox';
+import {ComboBox, Item} from '@react-spectrum/combobox';
 import customTheme from './custom-theme.css';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Item} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Provider} from '../';
