@@ -22,7 +22,7 @@ const StrictModeToolBar = ({api}) => {
     <div style={{display: 'flex', alignItems: 'center', fontSize: '12px'}}>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="strictmode">StrictMode:
-          <input style={{verticalAlign: 'center'}} type="checkbox" id="strictmode" name="strictmode" checked={isStrict} onChange={onChange} />
+          <input type="checkbox" id="strictmode" name="strictmode" checked={isStrict} onChange={onChange} />
         </label>
       </div>
     </div>
