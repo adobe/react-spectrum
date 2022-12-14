@@ -17,7 +17,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@swc/helpers": "^0.4.14"
+    "@babel/runtime": "^7.6.2"
   },
   "publishConfig": {
     "access": "public"

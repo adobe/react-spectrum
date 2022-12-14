@@ -31,6 +31,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.10.0",
     "@react-aria/i18n": "^3.6.2",
     "@react-aria/interactions": "^3.13.0",
@@ -40,8 +41,7 @@
     "@react-spectrum/utils": "^3.8.0",
     "@react-stately/slider": "^3.2.3",
     "@react-types/shared": "^3.16.0",
-    "@react-types/slider": "^3.3.1",
-    "@swc/helpers": "^0.4.14"
+    "@react-types/slider": "^3.3.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
