@@ -23,7 +23,7 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
 
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.toasts).toHaveLength(1);
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
     expect(result.current.toasts[0].animation).toBe('entering');
@@ -36,7 +36,7 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
 
-    act(() => result.current.add('Test', {timeout: 5000}));
+    act(() => {result.current.add('Test', {timeout: 5000});});
     expect(result.current.toasts).toHaveLength(1);
     expect(result.current.toasts[0].content).toBe('Test');
     expect(result.current.toasts[0].animation).toBe('entering');
@@ -53,10 +53,10 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState({maxVisibleToasts: 2}));
     expect(result.current.toasts).toStrictEqual([]);
 
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
 
-    act(() => result.current.add(secondToast.content, secondToast.props));
+    act(() => {result.current.add(secondToast.content, secondToast.props);});
     expect(result.current.toasts.length).toBe(2);
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
     expect(result.current.toasts[1].content).toBe(secondToast.content);
@@ -64,21 +64,21 @@ describe('useToastState', () => {
 
   it('should close a toast', () => {
     let {result} = renderHook(() => useToastState());
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
 
-    act(() => result.current.close(result.current.toasts[0].key));
+    act(() => {result.current.close(result.current.toasts[0].key);});
     expect(result.current.toasts).toStrictEqual([]);
   });
 
   it('should close a toast with animations', () => {
     let {result} = renderHook(() => useToastState({hasExitAnimation: true}));
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
 
-    act(() => result.current.close(result.current.toasts[0].key));
+    act(() => {result.current.close(result.current.toasts[0].key);});
     expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts[0].animation).toBe('exiting');
 
-    act(() => result.current.remove(result.current.toasts[0].key));
+    act(() => {result.current.remove(result.current.toasts[0].key);});
     expect(result.current.toasts).toStrictEqual([]);
   });
 
@@ -86,14 +86,14 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
 
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
 
-    act(() => result.current.add('Second Toast'));
+    act(() => {result.current.add('Second Toast');});
     expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
 
-    act(() => result.current.close(result.current.toasts[0].key));
+    act(() => {result.current.close(result.current.toasts[0].key);});
     expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts[0].content).toBe('Second Toast');
     expect(result.current.toasts[0].animation).toBe('queued');
@@ -103,14 +103,14 @@ describe('useToastState', () => {
     let {result} = renderHook(() => useToastState());
     expect(result.current.toasts).toStrictEqual([]);
 
-    act(() => result.current.add(newValue[0].content, newValue[0].props));
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
 
-    act(() => result.current.add('Second Toast', {priority: 1}));
+    act(() => {result.current.add('Second Toast', {priority: 1});});
     expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts[0].content).toBe('Second Toast');
 
-    act(() => result.current.close(result.current.toasts[0].key));
+    act(() => {result.current.close(result.current.toasts[0].key);});
     expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts[0].content).toBe(newValue[0].content);
     expect(result.current.toasts[0].animation).toBe('queued');
