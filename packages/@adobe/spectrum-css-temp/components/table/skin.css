@@ -13,6 +13,12 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-table-header-sort-icon-color-hover: var(--spectrum-global-color-gray-700);
 }
+.spectrum-Table {
+  --spectrum-table-col-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-col-resize-nubbin-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
+  --spectrum-table-body-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
+}
 
 .spectrum-Table-headWrapper {
   border-inline-start-color: transparent;
@@ -304,10 +310,31 @@ tbody.spectrum-Table-body {
 
 .spectrum-Table-colResizeIndicator {
   &.spectrum-Table-colResizeIndicator--resizing {
-    background-color: var(--spectrum-global-color-blue-600);
+    background-color: var(--spectrum-table-col-resize-indicator-background-color);
   }
 }
-.spectrum-Table-colResizeNubbin {}
+.spectrum-Table-colResizeNubbin {
+  svg {
+    > g {
+      fill: var(--spectrum-table-col-resize-nubbin-background-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-background-color);
+    }
+    > path {
+      fill: var(--spectrum-table-col-resize-nubbin-icon-color);
+      stroke: var(--spectrum-table-col-resize-nubbin-icon-color);
+    }
+  }
+}
 .spectrum-Table-bodyResizeIndicator {
-  background-color: var(--spectrum-global-color-blue-600);
+  background-color: var(--spectrum-table-body-resize-indicator-background-color);
+}
+
+@media (forced-colors: active) {
+  .spectrum-Table {
+    --spectrum-table-col-resize-indicator-background-color: Highlight;
+    --spectrum-table-col-resize-nubbin-background-color: Highlight;
+    --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
+    --spectrum-table-body-resize-indicator-background-color: Highlight;
+    --spectrum-table-divider-border-color: CanvasText;
+  }
 }
