@@ -94,9 +94,9 @@ interface TableContextValue<T> {
   setIsInResizeMode: (val: boolean) => void,
   isEmpty: boolean,
   onFocusedResizer: () => void,
-  onResizeStart: (key: Key) => void,
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (key: Key) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   onMoveResizer: (e: MoveMoveEvent) => void,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void
@@ -114,7 +114,7 @@ export function useVirtualizerContext() {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {isQuiet, onAction, onResizeEnd: propsOnResizeEnd} = props;
+  let {isQuiet, onAction, onResizeStart: propsOnResizeStart, onResizeEnd: propsOnResizeEnd} = props;
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
@@ -369,9 +369,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       lastResizeInteractionModality.current = undefined;
     }
   };
-  let onResizeStart = useCallback(() => {
+  let onResizeStart = useCallback((widths) => {
     setIsResizing(true);
-  }, [setIsResizing]);
+    propsOnResizeStart?.(widths);
+  }, [setIsResizing, propsOnResizeStart]);
   let onResizeEnd = useCallback((widths) => {
     setIsInResizeMode(false);
     setIsResizing(false);
@@ -504,7 +505,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
   // scrolling can cause it to lag for a moment, but it's always updated
-  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
+  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.maxX;
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   // minimize re-render caused on Resizers by memoing this

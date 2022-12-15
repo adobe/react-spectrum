@@ -482,29 +482,34 @@ module.exports = new Transformer({
         });
       }
 
-      if (path.isTemplateElement()) {
-        return Object.assign(node, {
-          type: 'templateElement',
-          value: path.node.value.raw
-        });
-      }
-
-      if (path.isTemplateLiteral()) {
-        return Object.assign(node, {
-          type: 'template',
-          expressions: path.get('expressions').map(p => processExport(p)),
-          quasis: path.get('quasis').map(p => processExport(p))
-        });
-      }
-
       if (path.isTSLiteralType()) {
-        if (path.node.literal?.expressions?.length === 0) {
+        if (t.isTemplateLiteral(path.node.literal)) {
+          let expressions = path.get('literal.expressions').map(e => processExport(e));
+          let elements = [];
+          let i = 0;
+          for (let q of path.node.literal.quasis) {
+            if (q.value.raw) {
+              elements.push({
+                type: 'string',
+                value: q.value.raw
+              });
+            }
+
+            if (!q.tail) {
+              elements.push(expressions[i++]);
+            }
+          }
+
           return Object.assign(node, {
-            type: typeof path.node.literal.value,
-            value: path.node.literal.value
+            type: 'template',
+            elements
           });
         }
-        return processExport(path.get('literal'), node);
+
+        return Object.assign(node, {
+          type: typeof path.node.literal.value,
+          value: path.node.literal.value
+        });
       }
 
       if (path.isTSFunctionType() || path.isTSConstructorType()) {
