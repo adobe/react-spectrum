@@ -52,6 +52,10 @@
 
   cursor: default;
 
+  .spectrum-ColorSlider-handle.spectrum-ColorSlider-handle {
+    margin: 0;
+  }
+
   /* The checkerboard is a separate element so that the gradient is overlaid on top. */
   &:before {
     content: "";
@@ -117,7 +121,7 @@
   justify-items: start;
 }
 
-.spectrum-ColorSlider-contextualHelp {
+.spectrum-ColorSlider-contextualHelp.spectrum-ColorSlider-contextualHelp {
   grid-area: contextualHelp;
   margin-inline-start: var(--spectrum-global-dimension-size-50);
   margin-top: var(--spectrum-global-dimension-size-25);

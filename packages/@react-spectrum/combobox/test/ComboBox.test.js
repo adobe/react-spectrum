@@ -248,8 +248,7 @@ describe('ComboBox', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   beforeEach(() => {
@@ -412,8 +411,7 @@ describe('ComboBox', function () {
     it('attaches a ref to the combobox wrapper if no label', function () {
       let ref = React.createRef();
       let {getByRole} = renderComboBox({ref, label: null, 'aria-label': 'test'});
-
-      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement);
+      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('combobox').parentElement.parentElement.parentElement.parentElement);
     });
 
     it('calling focus() on the ref focuses the input field', function () {
@@ -884,11 +882,9 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
@@ -904,11 +900,9 @@ describe('ComboBox', function () {
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
 
-      act(() => {
-        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
-        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
-        jest.runAllTimers();
-      });
+      fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+      act(() => jest.runAllTimers());
 
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
@@ -925,11 +919,9 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenLastCalledWith('Two');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       expect(onInputChange).toHaveBeenCalledTimes(2);
       expect(onInputChange).toHaveBeenLastCalledWith('Tw');
@@ -938,10 +930,8 @@ describe('ComboBox', function () {
       let items = within(listbox).getAllByRole('option');
       expect(items.length).toBe(1);
 
-      act(() => {
-        triggerPress(items[0]);
-        jest.runAllTimers();
-      });
+      triggerPress(items[0]);
+      act(() => jest.runAllTimers());
 
       expect(queryByRole('listbox')).toBeNull();
       expect(combobox.value).toBe('Two');
@@ -1369,11 +1359,9 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox({allowsCustomValue: true});
       let combobox = getByRole('combobox');
       // Change input value to something matching a combobox value
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Two'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Two'}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
@@ -1383,11 +1371,9 @@ describe('ComboBox', function () {
       expect(items[0].textContent).toBe('Two');
 
       // Change input text to something that doesn't match any combobox items but still shows the menu
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: 'Tw'}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: 'Tw'}});
+      act(() => jest.runAllTimers());
 
       // check that no item is focused in the menu
       listbox = getByRole('listbox');
@@ -2036,23 +2022,45 @@ describe('ComboBox', function () {
       );
 
       let button = getByRole('button');
+      let combobox = getByRole('combobox');
 
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(load).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledTimes(0);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
+      // open menu
+      triggerPress(button);
+      // use async act to resolve initial load
       await act(async () => {
-        triggerPress(button);
-        jest.runAllTimers();
+        // advance to open state from Transition
+        jest.advanceTimersToNextTimer();
       });
-
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
+      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
+      // update size, virtualizer raf kicks in
+      act(() => {jest.advanceTimersToNextTimer();});
+      // onLoadMore queued by previous timer, run it now
+      act(() => {jest.advanceTimersToNextTimer();});
 
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(load).toHaveBeenCalledTimes(1);
+
+      // close menu
+      act(() => {combobox.blur();});
+      // raf from virtualizer relayout
+      act(() => {jest.advanceTimersToNextTimer();});
+      // previous act wraps up onExiting
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // exited
+      act(() => {jest.advanceTimersToNextTimer();});
+
+      expect(listbox).not.toBeInTheDocument();
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
@@ -2064,29 +2072,46 @@ describe('ComboBox', function () {
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(load).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledTimes(0);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       // this call and the one below are more correct for how the code should
-      // behave, the inital call would have a height of zero and after that a measureable height
+      // behave, the initial call would have a height of zero and after that a measureable height
       clientHeightSpy.mockRestore();
       clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // open menu
+      triggerPress(button);
+      // use async act to resolve initial load
       await act(async () => {
-        triggerPress(button);
-        jest.runAllTimers();
+        // advance to open state from Transition
+        jest.advanceTimersToNextTimer();
       });
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
+      // update size, virtualizer raf kicks in
+      act(() => {jest.advanceTimersToNextTimer();});
+      // onLoadMore queued by previous timer, run it now
+      act(() => {jest.advanceTimersToNextTimer();});
 
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
       // close menu
-      act(() => {
-        combobox.blur();
-        jest.runAllTimers();
-      });
+      act(() => {combobox.blur();});
+      // raf from virtualizer relayout
+      act(() => {jest.advanceTimersToNextTimer();});
+      // previous act wraps up onExiting
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // raf
+      act(() => {jest.advanceTimersToNextTimer();});
+      // exited
+      act(() => {jest.advanceTimersToNextTimer();});
+
+      expect(listbox).not.toBeInTheDocument();
 
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
@@ -2095,10 +2120,18 @@ describe('ComboBox', function () {
       clientHeightSpy.mockRestore();
       clientHeightSpy = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(() => 40);
       // reopen menu
+      triggerPress(button);
       await act(async () => {
-        triggerPress(button);
-        jest.runAllTimers();
+        // advance to open state from Transition
+        jest.advanceTimersToNextTimer();
       });
+      listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      jest.spyOn(listbox, 'clientHeight', 'get').mockImplementation(() => 100);
+      // update size, virtualizer raf kicks in
+      act(() => {jest.advanceTimersToNextTimer();});
+      // onLoadMore queued by previous timer, run it now
+      act(() => {jest.advanceTimersToNextTimer();});
 
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'manual');
@@ -2107,7 +2140,10 @@ describe('ComboBox', function () {
       // because the browser limits the popover height via calculatePosition(),
       // while the test doesn't, causing virtualizer to try to load more
       expect(onLoadMore).toHaveBeenCalledTimes(2);
-      await waitFor(() => expect(load).toHaveBeenCalledTimes(1));
+      expect(load).toHaveBeenCalledTimes(1);
+
+      // close menu
+      act(() => {combobox.blur();});
     });
   });
 
@@ -2875,10 +2911,8 @@ describe('ComboBox', function () {
 
       expect(combobox.value).toBe('Aardvark');
 
-      act(() => {
-        combobox.blur();
-        jest.runAllTimers();
-      });
+      act(() => combobox.blur());
+      act(() => jest.runAllTimers());
       expect(document.activeElement).not.toBe(combobox);
 
       let newItems = [
@@ -2890,11 +2924,9 @@ describe('ComboBox', function () {
       rerender(<ComboBoxWithMap listItems={newItems} />);
       expect(combobox.value).toBe('New Text');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: ''}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: ''}});
+      act(() => jest.runAllTimers());
 
       listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
@@ -3016,21 +3048,17 @@ describe('ComboBox', function () {
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('One');
 
-      act(() => {
-        combobox.focus();
-        fireEvent.change(combobox, {target: {value: ''}});
-        jest.runAllTimers();
-      });
+      act(() => combobox.focus());
+      fireEvent.change(combobox, {target: {value: ''}});
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       let items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(3);
 
-      act(() => {
-        triggerPress(items[2]);
-        jest.runAllTimers();
-      });
+      triggerPress(items[2]);
+      act(() => jest.runAllTimers());
 
       expect(combobox.value).toBe('Three');
     });
@@ -4435,11 +4463,11 @@ describe('ComboBox', function () {
         expect(ref.current.UNSAFE_getDOMNode()).toBe(getByText('Test').parentElement);
       });
 
-      it('attaches a ref to the button if no label', function () {
+      it('attaches a ref to the wrapper if no label', function () {
         let ref = React.createRef();
         let {getByRole} = renderComboBox({ref, label: null, 'aria-label': 'test'});
 
-        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+        expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button').parentElement);
       });
 
       it('calling focus() on the ref focuses the button', function () {

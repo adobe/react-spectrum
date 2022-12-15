@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, ColorVersion, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useBreakpoint} from './BreakpointProvider';
 import {useLocale} from '@react-aria/i18n';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
-type StyleHandler = (value: any) => string;
+type StyleHandler = (value: any, colorVersion?: number) => string;
 export interface StyleHandlers {
   [key: string]: [StyleName, StyleHandler]
 }
@@ -145,20 +145,24 @@ export function responsiveDimensionValue(value: Responsive<DimensionValue>, matc
 }
 
 type ColorType = 'default' | 'background' | 'border' | 'icon' | 'status';
-function colorValue(value: ColorValue, type: ColorType = 'default') {
-  return `var(--spectrum-global-color-${value}, var(--spectrum-semantic-${value}-color-${type}))`;
+function colorValue(value: ColorValue, type: ColorType = 'default', version = 5) {
+  if (version > 5) {
+    return `var(--spectrum-${value}, var(--spectrum-semantic-${value}-color-${type}))`;
+  }
+
+  return `var(--spectrum-legacy-color-${value}, var(--spectrum-global-color-${value}, var(--spectrum-semantic-${value}-color-${type})))`;
 }
 
-function backgroundColorValue(value: BackgroundColorValue) {
-  return `var(--spectrum-alias-background-color-${value}, ${colorValue(value as ColorValue, 'background')})`;
+function backgroundColorValue(value: BackgroundColorValue, version = 5) {
+  return `var(--spectrum-alias-background-color-${value}, ${colorValue(value as ColorValue, 'background', version)})`;
 }
 
-function borderColorValue(value: BorderColorValue) {
+function borderColorValue(value: BorderColorValue, version = 5) {
   if (value === 'default') {
     return 'var(--spectrum-alias-border-color)';
   }
 
-  return `var(--spectrum-alias-border-color-${value}, ${colorValue(value as ColorValue, 'border')})`;
+  return `var(--spectrum-alias-border-color-${value}, ${colorValue(value as ColorValue, 'border', version)})`;
 }
 
 function borderSizeValue(value: BorderSizeValue) {
@@ -185,7 +189,7 @@ function flexValue(value: boolean | number | string) {
   return '' + value;
 }
 
-export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction, matchedBreakpoints: Breakpoint[]) {
+export function convertStyleProps<C extends ColorVersion>(props: ViewStyleProps<C>, handlers: StyleHandlers, direction: Direction, matchedBreakpoints: Breakpoint[]) {
   let style: CSSProperties = {};
   for (let key in props) {
     let styleProp = handlers[key];
@@ -199,7 +203,7 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
     }
 
     let prop = getResponsiveProp(props[key], matchedBreakpoints);
-    let value = convert(prop);
+    let value = convert(prop, props.colorVersion);
     if (Array.isArray(name)) {
       for (let k of name) {
         style[k] = value;
