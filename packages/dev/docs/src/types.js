@@ -154,13 +154,6 @@ function StringLiteral({value}) {
   return <span className="token hljs-string">{`'${value.replace(/'/, '\\\'')}'`}</span>;
 }
 
-function TemplateLiteral({value}) {
-  console.log(value);
-  // let parts = value.expressions.map((element, index) => [element, `\${${value.quasis[index]}}`]).flat();
-  // return <span className="token hljs-string">{`\`${parts.join('')}\``}</span>;
-  return <span>{JSON.stringify(value)}</span>;
-}
-
 function NumberLiteral({value}) {
   return <span className="token hljs-number">{'' + value}</span>;
 }
