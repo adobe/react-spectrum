@@ -194,8 +194,7 @@ describe('calculatePosition', function () {
       noOffset: [50, 200, undefined, 100, 350],
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [50, 210, undefined, 90, 340],
-      crossAxisOffsetNegative: [50, 190, undefined, 110, 360],
+      crossAxisOffset: [50, 210, undefined, 90, 340],
       mainAxisOffset: [40, 200, undefined, 100, 350]
     },
     {
@@ -203,8 +202,7 @@ describe('calculatePosition', function () {
       noOffset: [50, 250, undefined, 50, 300],
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [50, 250, undefined, 50, 300],
-      crossAxisOffsetNegative: [50, 240, undefined, 60, 310],
+      crossAxisOffset: [50, 260, undefined, 40, 290],
       mainAxisOffset: [40, 250, undefined, 50, 300]
     },
     {
@@ -212,8 +210,7 @@ describe('calculatePosition', function () {
       noOffset: [50, 150, undefined, 150, 400],
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [50, 160, undefined, 140, 390],
-      crossAxisOffsetNegative: [50, 150, undefined, 150, 400],
+      crossAxisOffset: [50, 160, undefined, 140, 390],
       mainAxisOffset: [40, 150, undefined, 150, 400]
     },
     {
@@ -221,62 +218,55 @@ describe('calculatePosition', function () {
       noOffset: [200, 50, 100, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      crossAxisOffsetPositive: [210, 50, 90, undefined, 200],
-      crossAxisOffsetNegative: [190, 50, 110, undefined, 200],
-      mainAxisOffset: [200, 40, 100, undefined, 200]
+      mainAxisOffset: [200, 40, 100, undefined, 200],
+      crossAxisOffset: [210, 50, 90, undefined, 200]
     },
     {
       placement: 'top left',
       noOffset: [250, 50, 50, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      crossAxisOffsetPositive: [250, 50, 50, undefined, 200],
-      crossAxisOffsetNegative: [240, 50, 60, undefined, 200],
-      mainAxisOffset: [250, 40, 50, undefined, 200]
+      mainAxisOffset: [250, 40, 50, undefined, 200],
+      crossAxisOffset: [260, 50, 40, undefined, 200]
     },
     {
       placement: 'top right',
       noOffset: [150, 50, 150, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      crossAxisOffsetPositive: [160, 50, 140, undefined, 200],
-      crossAxisOffsetNegative: [150, 50, 150, undefined, 200],
-      mainAxisOffset: [150, 40, 150, undefined, 200]
+      mainAxisOffset: [150, 40, 150, undefined, 200],
+      crossAxisOffset: [160, 50, 140, undefined, 200]
     },
     {
       placement: 'bottom',
       noOffset: [200, 350, 100, undefined, 200],
       offsetBefore: [50, 100, 0, undefined, 450],
       offsetAfter: [350, 600, 200, undefined, 0],
-      crossAxisOffsetPositive: [210, 350, 90, undefined, 200],
-      crossAxisOffsetNegative: [190, 350, 110, undefined, 200],
-      mainAxisOffset: [200, 360, 100, undefined, 190]
+      mainAxisOffset: [200, 360, 100, undefined, 190],
+      crossAxisOffset: [210, 350, 90, undefined, 200]
     },
     {
       placement: 'bottom left',
       noOffset: [250, 350, 50, undefined, 200],
       offsetBefore: [50, 100, 0, undefined, 450],
       offsetAfter: [350, 600, 200, undefined, 0],
-      crossAxisOffsetPositive: [250, 350, 50, undefined, 200],
-      crossAxisOffsetNegative: [240, 350, 60, undefined, 200],
-      mainAxisOffset: [250, 360, 50, undefined, 190]
+      mainAxisOffset: [250, 360, 50, undefined, 190],
+      crossAxisOffset: [260, 350, 40, undefined, 200]
     },
     {
       placement: 'bottom right',
       noOffset: [150, 350, 150, undefined, 200],
       offsetBefore: [50, 100, 0, undefined, 450],
       offsetAfter: [350, 600, 200, undefined, 0],
-      crossAxisOffsetPositive: [160, 350, 140, undefined, 200],
-      crossAxisOffsetNegative: [150, 350, 150, undefined, 200],
-      mainAxisOffset: [150, 360, 150, undefined, 190]
+      mainAxisOffset: [150, 360, 150, undefined, 190],
+      crossAxisOffset: [160, 350, 140, undefined, 200]
     },
     {
       placement: 'right',
       noOffset: [350, 200, undefined, 100, 350],
       offsetBefore: [100, 50, undefined, 0, 500],
       offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [350, 210, undefined, 90, 340],
-      crossAxisOffsetNegative: [350, 190, undefined, 110, 360],
+      crossAxisOffset: [350, 210, undefined, 90, 340],
       mainAxisOffset: [360, 200, undefined, 100, 350]
     },
     {
@@ -284,8 +274,7 @@ describe('calculatePosition', function () {
       noOffset: [350, 250, undefined, 50, 300],
       offsetBefore: [100, 50, undefined, 0, 500],
       offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [350, 250, undefined, 50, 300],
-      crossAxisOffsetNegative: [350, 240, undefined, 60, 310],
+      crossAxisOffset: [350, 260, undefined, 40, 290],
       mainAxisOffset: [360, 250, undefined, 50, 300]
     },
     {
@@ -293,8 +282,7 @@ describe('calculatePosition', function () {
       noOffset: [350, 150, undefined, 150, 400],
       offsetBefore: [100, 50, undefined, 0, 500],
       offsetAfter: [600, 350, undefined, 200, 200],
-      crossAxisOffsetPositive: [350, 160, undefined, 140, 390],
-      crossAxisOffsetNegative: [350, 150, undefined, 150, 400],
+      crossAxisOffset: [350, 160, undefined, 140, 390],
       mainAxisOffset: [360, 150, undefined, 150, 400]
     }
   ];
@@ -333,15 +321,9 @@ describe('calculatePosition', function () {
         );
       });
 
-      describe('cross axis offset positive', function () {
+      describe('cross axis offset', function () {
         checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetPositive, 0, 10
-        );
-      });
-
-      describe('cross axis offset negative', function () {
-        checkPosition(
-          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffsetNegative, 0, -10
+          placement, getTargetDimension({left: 250, top: 250}), testCase.crossAxisOffset, 0, 10
         );
       });
     });

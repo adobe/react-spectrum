@@ -41,7 +41,7 @@ svg.spectrum-Table-sortedIcon {
               color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Table-menuChevron {
+.spectrum-Table-menuChevron.spectrum-Table-menuChevron {
   display: none;
   flex: 0 0 auto;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
@@ -51,10 +51,10 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-headWrapper {
-  border-left-width: 1px;
-  border-left-style: solid;
-  border-right-width: 1px;
-  border-right-style: solid;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
   flex: 0 0 auto;
   padding-bottom: 1px;
   margin-bottom: -1px;
@@ -472,6 +472,7 @@ svg.spectrum-Table-sortedIcon {
 }
 .spectrum-Table-colResizeNubbin {
   display: none;
+  pointer-events: none;
   position: absolute;
   /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
    down one pixel and the nubbin circle up one pixel to cover it completely */

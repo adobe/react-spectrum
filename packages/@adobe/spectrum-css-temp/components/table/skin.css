@@ -15,8 +15,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-headWrapper {
-  border-left-color: transparent;
-  border-right-color: transparent;
+  border-inline-start-color: transparent;
+  border-inline-end-color: transparent;
 }
 
 .spectrum-Table-headCell {
