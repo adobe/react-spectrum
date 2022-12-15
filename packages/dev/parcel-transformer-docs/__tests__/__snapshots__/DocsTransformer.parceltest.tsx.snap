@@ -159,7 +159,7 @@ Object {
       "type": "alias",
       "typeParameters": Array [],
       "value": Object {
-        "expression": Array [
+        "expressions": Array [
           Object {
             "type": "number",
           },

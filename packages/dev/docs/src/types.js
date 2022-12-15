@@ -153,8 +153,10 @@ function StringLiteral({value}) {
 }
 
 function TemplateLiteral({value}) {
-  let parts = value.expression.map((element, index) => [element, `\${${value.quasis[index]}}`]).flat();
-  return <span className="token hljs-string">{`\`${parts.join('')}\``}</span>;
+  console.log(value);
+  // let parts = value.expressions.map((element, index) => [element, `\${${value.quasis[index]}}`]).flat();
+  // return <span className="token hljs-string">{`\`${parts.join('')}\``}</span>;
+  return <span>{JSON.stringify(value)}</span>;
 }
 
 function NumberLiteral({value}) {
