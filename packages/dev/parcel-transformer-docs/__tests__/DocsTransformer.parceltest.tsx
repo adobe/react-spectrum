@@ -70,62 +70,65 @@ describe('DocsTransformer - API', () => {
     return code;
   }
 
-  it('writes export entry for static number', async () => {
-    await writeSourceFile('index', `
+  describe('builtins', () => {
+    it('writes export entry for static number', async () => {
+      await writeSourceFile('index', `
     export let a: number = 4;
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot();
-  }, 50000);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
 
-  it('writes export entry for static string', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for static string', async () => {
+      await writeSourceFile('index', `
     export let b: string = "foo";
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot();
-  }, 50000);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
 
-  it('writes export entry for referenced string', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for referenced string', async () => {
+      await writeSourceFile('index', `
     let name = 'foo';
     export let c = name;
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot();
-  }, 50000);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
 
-  it('writes export entry for referenced function', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for referenced function', async () => {
+      await writeSourceFile('index', `
     function foo() {
       return 'foo';
     }
     export let d = foo();
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot();
-  }, 50000);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
 
-  it('writes export entry for React component', async () => {
-    await writeSourceFile('index', `
+  describe('components', () => {
+    it('writes export entry for React component', async () => {
+      await writeSourceFile('index', `
     import React from 'react';
 
     export function App1(props) {
       return <div />;
     }
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot({
-      exports: {
-        App1: {
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App1/)
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          App1: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App1/)
+          }
         }
-      }
-    });
-  }, 50000);
+      });
+    }, 50000);
 
-  it('writes export entry for localName React component', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for localName React component', async () => {
+      await writeSourceFile('index', `
     import React from 'react';
 
     function App2(props) {
@@ -133,68 +136,108 @@ describe('DocsTransformer - API', () => {
     }
     export {App2 as AppReal};
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot({
-      exports: {
-        AppReal: {
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App2/)
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          AppReal: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App2/)
+          }
         }
-      }
-    });
-  }, 50000);
+      });
+    }, 50000);
+  });
 
-  it('writes export entry for type', async () => {
-    await writeSourceFile('index', `
+  describe('types', () => {
+    it('writes export entry for type', async () => {
+      await writeSourceFile('index', `
     export type Foo = number;
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot({
-      exports: {
-        Foo: {
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-        }
-      },
-      links: expect.objectContaining({
-        '/test/src/index.tsx:Foo': expect.objectContaining({
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          Foo: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          }
+        },
+        links: expect.objectContaining({
+          '/test/src/index.tsx:Foo': expect.objectContaining({
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          })
         })
-      })
-    });
-  }, 50000);
+      });
+    }, 50000);
 
-  it('writes export entry for type union', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for type union', async () => {
+      await writeSourceFile('index', `
     export type Foo = number | string;
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot({
-      exports: {
-        Foo: {
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-        }
-      },
-      links: expect.objectContaining({
-        '/test/src/index.tsx:Foo': expect.objectContaining({
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          Foo: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          }
+        },
+        links: expect.objectContaining({
+          '/test/src/index.tsx:Foo': expect.objectContaining({
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          })
         })
-      })
-    });
-  }, 50000);
+      });
+    }, 50000);
 
-  it('writes export entry for interface', async () => {
-    await writeSourceFile('index', `
+    it('writes export entry for type regex', async () => {
+      await writeSourceFile('index', `
+    export type Foo = \`\${number}%\`;
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          Foo: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          }
+        },
+        links: expect.objectContaining({
+          '/test/src/index.tsx:Foo': expect.objectContaining({
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          })
+        })
+      });
+    }, 50000);
+  });
+
+  describe('interfaces', () => {
+    it('writes export entry for interface', async () => {
+      await writeSourceFile('index', `
     export interface Foo {
       a: number
     };
     `);
-    let code = await runBuild();
-    expect(code).toMatchSnapshot({
-      exports: {
-        Foo: {
-          id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+      let code = await runBuild();
+      expect(code).toMatchSnapshot({
+        exports: {
+          Foo: {
+            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
+          }
         }
-      }
-    });
-  }, 50000);
+      });
+    }, 50000);
+
+    it('follows imported interfaces', async () => {
+      await writeSourceFile('component', `
+    export interface Foo {
+      a: number
+    };
+    `);
+      await writeSourceFile('index', `
+    import {Foo} from './component';
+    export function Bar(props: Foo) {
+      return null;
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
 
 });
