@@ -1304,6 +1304,32 @@ storiesOf('TableView', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'allowsResizing, onColumnResizeStart action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeStart={action('onResizeStart')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
     'allowsResizing, onColumnResize action',
     () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200} onResize={action('onResize')}>
