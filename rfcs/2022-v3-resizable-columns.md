@@ -73,11 +73,11 @@ Resizing a column will only affect the dynamic columns that come after that colu
 Calculating column widths follows this flow:
 
 1. Static columns are calculated first. Pixel values are straightforward, these are simply checked to see if they should be clamped by a min or max. Percent values are set as a percent of the visible table width (not the total width of all table contents).
-2. Dynamic colmns are calculated next. With dynamic columns, the amount of space remaining is divided up amongst the remaining columns. If no `defaultWidth` is provided, the column defaults to `1fr`.
+2. Dynamic columns are calculated next. With dynamic columns, the amount of space remaining is divided up amongst the remaining columns. If no `defaultWidth` is provided, the column defaults to `1fr`.
 
 ### Accessibilty Functionality
 * Using arrow keys, users can navigate to the column header
-* While the column header is focussed, pressing `return/enter` or `space` will activate a dropdown
+* While the column header is focused, pressing `return/enter` or `space` will activate a dropdown
 * One of the options in the dropdown will be to resize the column (if column is resizable)
 * User can navigate through the dropdown using arrow keys
 * Pressing `return/enter` or `space` on the dropdown item will activate the resize mode, closing the dropdown and focussing the resizer
@@ -94,7 +94,7 @@ Stories will be added to the storybook for column resizing. The react spectrum d
 
 There may be minor performance hits from adding resizing. This adds to the amount of calculation that happens each time the table renders.
 
-The a11y proposal involves changing the default behavior for clicking on a table oclumn header if it is sortable and resizable. Currently clicking on a column header that is sortable will toggle the sort. If it is resizable and sortable, clicking on the column header will activate a dropdown where the user can select to sort or resize. This is an extra click for the end user.
+The a11y proposal involves changing the default behavior for clicking on a table column header if it is sortable and resizable. Currently clicking on a column header that is sortable will toggle the sort. If it is resizable and sortable, clicking on the column header will activate a dropdown where the user can select to sort or resize. This is an extra click for the end user.
 
 ## Backwards Compatibility Analysis
 
@@ -104,7 +104,7 @@ The only change in existing behavior is the change to table header click behavio
 
 ## Alternatives
 
-We researched many commonly used tables components to help define the desired behavior for this column resizing feature. Three main examples that were researched were Excel, Marketo Engage and AG Grid.
+We researched many commonly used tables components to help define the desired behavior for this column resizing feature. Three main examples that we researched were Excel, Marketo Engage and AG Grid.
 
 ## Open Questions
 
