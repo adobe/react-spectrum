@@ -225,7 +225,8 @@ describe('TableViewSizing', function () {
       it('should support variable row heights with overflowMode="wrap"', function () {
         let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
           .mockImplementation(function () {
-            return this.textContent === 'Foo 1' ? 64 : 48;
+            let row = this.closest('[role=row]');
+            return row && row.textContent.includes('Foo 1') ? 64 : 48;
           });
 
         let tree = renderTable({overflowMode: 'wrap'});
