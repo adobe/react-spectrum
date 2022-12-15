@@ -127,7 +127,7 @@ governing permissions and limitations under the License.
       min-width: 0;
     }
 
-    .spectrum-Field-contextualHelp.spectrum-Field-contextualHelp {
+    .spectrum-Field-contextualHelp {
       margin-top: var(--spectrum-global-dimension-size-65);
       margin-inline-end: var(--spectrum-fieldlabel-side-padding-x);
     }
@@ -219,6 +219,7 @@ governing permissions and limitations under the License.
     .spectrum-Field-contextualHelp {
       position: relative;
       top: var(--spectrum-global-dimension-size-40);
+      margin-top: var(--spectrum-global-dimension-size-65);
     }
   }
 
