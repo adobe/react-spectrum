@@ -41,7 +41,7 @@ Object {
   "exports": Object {
     "App1": Object {
       "description": null,
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:App1/,
+      "id": "/test/src/index.tsx:App1",
       "name": "App1",
       "props": null,
       "type": "component",
@@ -57,7 +57,7 @@ Object {
   "exports": Object {
     "AppReal": Object {
       "description": null,
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:App2/,
+      "id": "/test/src/index.tsx:App2",
       "name": "App2",
       "props": null,
       "type": "component",
@@ -122,7 +122,7 @@ Object {
   "exports": Object {
     "Foo": Object {
       "extends": Array [],
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "id": "/test/src/index.tsx:Foo",
       "name": "Foo",
       "properties": Object {
         "a": Object {
@@ -147,13 +147,20 @@ exports[`DocsTransformer - API types writes export entry for type 1`] = `
 Object {
   "exports": Object {
     "Foo": Object {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": ObjectContaining {
-    "/test/src/index.tsx:Foo": ObjectContaining {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+  "links": Object {
+    "/test/src/index.tsx:Foo": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "type": "number",
+      },
     },
   },
 }
@@ -163,13 +170,20 @@ exports[`DocsTransformer - API types writes export entry for type regex 1`] = `
 Object {
   "exports": Object {
     "Foo": Object {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": ObjectContaining {
-    "/test/src/index.tsx:Foo": ObjectContaining {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+  "links": Object {
+    "/test/src/index.tsx:Foo": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "type": "undefined",
+      },
     },
   },
 }
@@ -179,13 +193,28 @@ exports[`DocsTransformer - API types writes export entry for type union 1`] = `
 Object {
   "exports": Object {
     "Foo": Object {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+      "id": "/test/src/index.tsx:Foo",
       "type": "link",
     },
   },
-  "links": ObjectContaining {
-    "/test/src/index.tsx:Foo": ObjectContaining {
-      "id": StringMatching /\\^\\.\\*\\\\/test\\\\/src\\\\/index\\.tsx:Foo/,
+  "links": Object {
+    "/test/src/index.tsx:Foo": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "type": "number",
+          },
+          Object {
+            "type": "string",
+          },
+        ],
+        "type": "union",
+      },
     },
   },
 }

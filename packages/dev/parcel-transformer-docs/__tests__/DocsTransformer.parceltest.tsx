@@ -118,13 +118,7 @@ describe('DocsTransformer - API', () => {
     }
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          App1: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App1/)
-          }
-        }
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for localName React component', async () => {
@@ -137,13 +131,7 @@ describe('DocsTransformer - API', () => {
     export {App2 as AppReal};
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          AppReal: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:App2/)
-          }
-        }
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
   });
 
@@ -153,18 +141,7 @@ describe('DocsTransformer - API', () => {
     export type Foo = number;
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          Foo: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          }
-        },
-        links: expect.objectContaining({
-          '/test/src/index.tsx:Foo': expect.objectContaining({
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          })
-        })
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for type union', async () => {
@@ -172,18 +149,7 @@ describe('DocsTransformer - API', () => {
     export type Foo = number | string;
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          Foo: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          }
-        },
-        links: expect.objectContaining({
-          '/test/src/index.tsx:Foo': expect.objectContaining({
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          })
-        })
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
 
     it('writes export entry for type regex', async () => {
@@ -191,18 +157,7 @@ describe('DocsTransformer - API', () => {
     export type Foo = \`\${number}%\`;
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          Foo: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          }
-        },
-        links: expect.objectContaining({
-          '/test/src/index.tsx:Foo': expect.objectContaining({
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          })
-        })
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
   });
 
@@ -214,13 +169,7 @@ describe('DocsTransformer - API', () => {
     };
     `);
       let code = await runBuild();
-      expect(code).toMatchSnapshot({
-        exports: {
-          Foo: {
-            id: expect.stringMatching(/^.*\/test\/src\/index.tsx:Foo/)
-          }
-        }
-      });
+      expect(code).toMatchSnapshot();
     }, 50000);
 
     it('follows imported interfaces', async () => {
