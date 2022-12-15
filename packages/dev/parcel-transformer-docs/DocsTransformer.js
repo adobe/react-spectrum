@@ -482,11 +482,29 @@ module.exports = new Transformer({
         });
       }
 
-      if (path.isTSLiteralType()) {
+      if (path.isTemplateElement()) {
         return Object.assign(node, {
-          type: typeof path.node.literal.value,
-          value: path.node.literal.value
+          type: 'templateElement',
+          value: path.node.value.raw
         });
+      }
+
+      if (path.isTemplateLiteral()) {
+        return Object.assign(node, {
+          type: 'template',
+          expression: path.get('expressions').map(p => processExport(p)),
+          quasis: path.get('quasis').map(p => processExport(p))
+        });
+      }
+
+      if (path.isTSLiteralType()) {
+        if (!path.node.literal.expressions) {
+          return Object.assign(node, {
+            type: typeof path.node.literal.value,
+            value: path.node.literal.value
+          });
+        }
+        return processExport(path.get('literal'), node);
       }
 
       if (path.isTSFunctionType() || path.isTSConstructorType()) {

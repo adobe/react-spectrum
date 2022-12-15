@@ -143,6 +143,58 @@ Object {
 }
 `;
 
+exports[`DocsTransformer - API types writes export entry for complex type regex 1`] = `
+Object {
+  "exports": Object {
+    "Foo": Object {
+      "id": "/test/src/index.tsx:Foo",
+      "type": "link",
+    },
+  },
+  "links": Object {
+    "/test/src/index.tsx:Foo": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "expression": Array [
+          Object {
+            "type": "number",
+          },
+          Object {
+            "type": "number",
+          },
+          Object {
+            "type": "string",
+          },
+        ],
+        "quasis": Array [
+          Object {
+            "type": "templateElement",
+            "value": "",
+          },
+          Object {
+            "type": "templateElement",
+            "value": ".",
+          },
+          Object {
+            "type": "templateElement",
+            "value": " ",
+          },
+          Object {
+            "type": "templateElement",
+            "value": "",
+          },
+        ],
+        "type": "template",
+      },
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API types writes export entry for type 1`] = `
 Object {
   "exports": Object {
@@ -182,7 +234,22 @@ Object {
       "type": "alias",
       "typeParameters": Array [],
       "value": Object {
-        "type": "undefined",
+        "expression": Array [
+          Object {
+            "type": "number",
+          },
+        ],
+        "quasis": Array [
+          Object {
+            "type": "templateElement",
+            "value": "",
+          },
+          Object {
+            "type": "templateElement",
+            "value": "%",
+          },
+        ],
+        "type": "template",
       },
     },
   },

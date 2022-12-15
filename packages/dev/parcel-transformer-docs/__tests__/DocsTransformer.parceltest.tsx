@@ -159,6 +159,14 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('writes export entry for complex type regex', async () => {
+      await writeSourceFile('index', `
+    export type Foo = \`\${number}.\${number} \${string}\`;
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('interfaces', () => {
