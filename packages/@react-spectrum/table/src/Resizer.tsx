@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
+import {ColumnSize} from '@react-types/table';
 import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -16,9 +17,9 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onResizeStart: (key: Key) => void,
-  onResize: (widths: Map<Key, number | string>) => void,
-  onResizeEnd: (key: Key) => void,
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
+  onResize: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   onMoveResizer: (e: MoveMoveEvent) => void
 }
 
