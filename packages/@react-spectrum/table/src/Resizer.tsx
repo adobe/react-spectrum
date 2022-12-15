@@ -16,9 +16,9 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onResizeStart: (key: Key) => void,
+  onResizeStart: (widths: Map<Key, number | string>) => void,
   onResize: (widths: Map<Key, number | string>) => void,
-  onResizeEnd: (key: Key) => void,
+  onResizeEnd: (widths: Map<Key, number | string>) => void,
   onMoveResizer: (e: MoveMoveEvent) => void
 }
 
