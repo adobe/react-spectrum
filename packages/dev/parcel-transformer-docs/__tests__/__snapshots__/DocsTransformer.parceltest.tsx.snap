@@ -159,33 +159,23 @@ Object {
       "type": "alias",
       "typeParameters": Array [],
       "value": Object {
-        "expressions": Array [
+        "elements": Array [
           Object {
             "type": "number",
+          },
+          Object {
+            "type": "string",
+            "value": ".",
           },
           Object {
             "type": "number",
           },
           Object {
             "type": "string",
-          },
-        ],
-        "quasis": Array [
-          Object {
-            "type": "templateElement",
-            "value": "",
-          },
-          Object {
-            "type": "templateElement",
-            "value": ".",
-          },
-          Object {
-            "type": "templateElement",
             "value": " ",
           },
           Object {
-            "type": "templateElement",
-            "value": "",
+            "type": "string",
           },
         ],
         "type": "template",
@@ -234,18 +224,12 @@ Object {
       "type": "alias",
       "typeParameters": Array [],
       "value": Object {
-        "expression": Array [
+        "elements": Array [
           Object {
             "type": "number",
           },
-        ],
-        "quasis": Array [
           Object {
-            "type": "templateElement",
-            "value": "",
-          },
-          Object {
-            "type": "templateElement",
+            "type": "string",
             "value": "%",
           },
         ],
