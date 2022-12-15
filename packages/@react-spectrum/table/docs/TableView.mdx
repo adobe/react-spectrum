@@ -605,7 +605,7 @@ The example below illustrates how each of the aforementioned column width proper
 ### Resize events
 
 TableView accepts an `onResize` prop which is triggered whenever a column resizer is moved by the user. This can be used in combination with the `width` prop to update a Column's width in a controlled fashion. TableView also accepts
-an `onResizeEnd` props, which is triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the TableView.
+an `onResizeEnd` prop, which is triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the TableView.
 
 The example below uses `onResize` to update each of the TableView's controlled column widths. It also saves the finalized column widths to `localStorage` in `onResizeEnd`, allowing the TableView's state to be preserved between
 page loads and refreshes.
@@ -642,29 +642,28 @@ function ResizableTable() {
     localStorage.setItem('RSPWidths', JSON.stringify(Object.fromEntries(widths)));
   };
   /*- end highlight -*/
+
   return (
-    <Flex direction="column">
-      <TableView
-        /*- begin highlight -*/
-        onResize={onResize}
-        onResizeEnd={onResizeEnd}
-        /*- end highlight -*/
-        aria-label="TableView with controlled, resizable columns saved in local storage"
-        maxWidth={320}
-        height={200} >
-        <TableHeader columns={columns}>
-          {(column) => {
-            const {name, id, width} = column;
-            return <Column allowsResizing key={id} width={width}>{name}</Column>;
-          }}
-        </TableHeader>
-        <TableBody items={items}>
-          {(item) => (
-            <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
-          )}
-        </TableBody>
-      </TableView>
-    </Flex>
+    <TableView
+      /*- begin highlight -*/
+      onResize={onResize}
+      onResizeEnd={onResizeEnd}
+      /*- end highlight -*/
+      aria-label="TableView with controlled, resizable columns saved in local storage"
+      maxWidth={320}
+      height={200} >
+      <TableHeader columns={columns}>
+        {(column) => {
+          const {name, id, width} = column;
+          return <Column allowsResizing key={id} width={width}>{name}</Column>;
+        }}
+      </TableHeader>
+      <TableBody items={items}>
+        {(item) => (
+          <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+        )}
+      </TableBody>
+    </TableView>
   );
 }
 
