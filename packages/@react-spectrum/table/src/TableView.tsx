@@ -25,7 +25,7 @@ import {
 import {ColumnSize, SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import {DOMRef, FocusableRef} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, useHover, useInteractionModality, usePress} from '@react-aria/interactions';
+import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -360,8 +360,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
   };
 
-  let lastResizeInteractionModality = useInteractionModality();
-
   let onResizeStart = useCallback((widths) => {
     setIsResizing(true);
     propsOnResizeStart?.(widths);
@@ -404,7 +402,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         headerRef={headerRef}
-        lastResizeInteractionModality={lastResizeInteractionModality}
         bodyRef={bodyRef}
         isFocusVisible={isFocusVisible} />
     </TableContext.Provider>
@@ -412,7 +409,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, lastResizeInteractionModality, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -459,11 +456,11 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (lastResizeInteractionModality === 'keyboard' && headerRef.current.contains(document.activeElement)) {
+    if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
       document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
-  }, [state.contentSize, headerRef, bodyRef, lastResizeInteractionModality]);
+  }, [state.contentSize, headerRef, bodyRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
