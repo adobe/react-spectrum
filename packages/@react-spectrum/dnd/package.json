@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/dnd",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -31,8 +31,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/dnd": "^3.0.0",
-    "@react-stately/dnd": "^3.0.0",
+    "@react-aria/dnd": "^3.0.1",
+    "@react-stately/dnd": "^3.0.1",
     "@react-types/shared": "^3.16.0",
     "@swc/helpers": "^0.4.14"
   },

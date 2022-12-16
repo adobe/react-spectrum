@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/illustrations",
-  "version": "3.5.1",
+  "version": "3.5.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -11,8 +11,8 @@
     "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx' && tsc --project ./tsconfig.types.json"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.14.1",
-    "@react-spectrum/icon": "^3.6.2",
+    "@react-aria/utils": "^3.14.2",
+    "@react-spectrum/icon": "^3.6.3",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
