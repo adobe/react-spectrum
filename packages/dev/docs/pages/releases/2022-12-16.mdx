@@ -1,0 +1,40 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new `allowsResizing` prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table.
+date: 2022-12-16
+---
+
+It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new `allowsResizing` prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table. See the examples added to the [React Spectrum docs](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing) and try it for yourself.
+
+In addition to this new feature, we have also made some performance improvements to TableView and ListView in React Spectrum, updated some of our types and fixed some accessibility issues related to focus. 
+
+Thanks to all our contributors and happy holidays!!
+
+## Fixes
+- Update TS strict types for `ListLayout` and others - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3544)
+- Fix useListData crash when dropping on empty list - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3769)
+- Upgrade React Transition Group - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3706)
+- Fix `TextField` focus issue with HelpText and no label condition - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3621)
+- Pass through generic to `AriaSliderProps` from `useSlider` - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/3611)
+- Restore page scrollability for `DialogContainer`  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3784)
+- Upgrade parcel to v2.8.0 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3729)
+- Fix type dependency in `@react-spectrum/list` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3808)
+- Improve incremental layout for `TableView` and `ListView` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3795)
+- Add support for column resizing in controlled state - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3672)
+- Add WHCM/forced-colors support for column resizing - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3818)
+
+## Released packages
+```
+
+```
