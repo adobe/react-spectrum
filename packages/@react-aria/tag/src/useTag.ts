@@ -16,7 +16,8 @@ import {DOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent} from 'react';
-import {TagGroupState, TagProps} from '@react-types/tag';
+import type {TagGroupState} from '@react-stately/tag';
+import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

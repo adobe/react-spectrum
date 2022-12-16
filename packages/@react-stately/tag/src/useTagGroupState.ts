@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {TagGroupProps, TagGroupState} from '@react-types/tag';
-import {useListState} from '@react-stately/list';
+import {Key} from 'react';
+import {ListState, useListState} from '@react-stately/list';
+import {TagGroupProps} from '@react-types/tag';
+
+export interface TagGroupState<T> extends ListState<T>{
+  onRemove?: (key: Key) => void
+}
 
 /**
  * Provides state management for a TagGroup component.
