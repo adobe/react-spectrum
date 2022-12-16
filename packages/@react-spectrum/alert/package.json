@@ -5,12 +5,7 @@
   "license": "Apache-2.0",
   "private": true,
   "main": "dist/Alert.js",
-  "module": "dist/Alert.module.mjs",
-  "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/Alert.module.mjs",
-    "require": "./dist/Alert.js"
-  },
+  "module": "dist/Alert.module.js",
   "types": "dist/Alert.d.ts",
   "source": "src/index.ts",
   "files": [

@@ -109,6 +109,20 @@ function ReorderableGrid(props) {
   });
   useDraggableCollection({}, dragState, ref);
 
+  let onDrop = async (e) => {
+    if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
+      let keys = [];
+      for (let item of e.items) {
+        if (item.kind === 'text' && item.types.has(dragType)) {
+          let key = JSON.parse(await item.getText(dragType));
+          keys.push(key);
+        }
+      }
+
+      props.onMove(keys, e.target);
+    }
+  };
+
   let dropState = useDroppableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
@@ -118,26 +132,15 @@ function ReorderableGrid(props) {
       }
 
       return 'move';
-    }
+    },
+    onDrop
   });
 
   let {collectionProps} = useDroppableCollection({
     keyboardDelegate,
     dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
     onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop: async e => {
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
-        let keys = [];
-        for (let item of e.items) {
-          if (item.kind === 'text' && item.types.has(dragType)) {
-            let key = JSON.parse(await item.getText(dragType));
-            keys.push(key);
-          }
-        }
-
-        props.onMove(keys, e.target);
-      }
-    }
+    onDrop
   }, dropState, ref);
 
   let {gridProps} = useGrid({
