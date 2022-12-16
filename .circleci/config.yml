@@ -27,14 +27,6 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-  rsp-xlarge-nodeupdate:
-    docker:
-      - image: cimg/node:16.18.0
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
 jobs:
   install:
     executor: rsp-large
@@ -213,20 +205,6 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-
-
-  test-esm:
-    executor: rsp-xlarge-nodeupdate
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test
-          command: |
-            make build
-            yarn lerna run prepublishOnly
-            node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
     executor: rsp
@@ -472,9 +450,6 @@ workflows:
       - test-17:
           requires:
             - install-17
-      - test-esm:
-          requires:
-            - install
       - lint:
           requires:
             - install
@@ -530,7 +505,6 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
-            - test-esm
             - storybook
             - storybook-16
             - storybook-17
