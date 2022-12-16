@@ -33,7 +33,7 @@ export interface TagProps<T> extends ItemProps<any> {
   tagRowRef: RefObject<HTMLElement>
 }
 
-export interface TagGroupState<T>  extends ListState<T>{
+export interface TagGroupState<T> extends ListState<T>{
   onRemove?: (key: Key) => void
 }
 
