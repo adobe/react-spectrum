@@ -37,6 +37,6 @@ export interface TagGroupState<T> extends ListState<T>{
   onRemove?: (key: Key) => void
 }
 
-interface SpectrumTagProps<T> extends TagProps<T> {
+export interface SpectrumTagProps<T> extends TagProps<T> {
   state: TagGroupState<T>
 }
