@@ -446,7 +446,6 @@ describe('string conversion', function () {
     });
   
     it('parses an ISO 8601 duration string that contains years, months, hours, and seconds and returns a DateTimeDuration object', function () {
-      console.log(parseDuration);
       const duration = parseDuration('P18Y7MT20H15S');
       expect(duration).toStrictEqual({
         years: 18,
