@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/listbox",
-  "version": "3.8.2",
+  "version": "3.8.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -48,7 +48,7 @@
     "@react-stately/virtualizer": "^3.4.1",
     "@react-types/listbox": "^3.3.5",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.1",
+    "@spectrum-icons/ui": "^3.4.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
