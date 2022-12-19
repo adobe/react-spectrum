@@ -1,15 +1,10 @@
 {
   "name": "@internationalized/message",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
-    "require": "./dist/main.js"
-  },
+  "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
