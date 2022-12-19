@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/actionbar",
-  "version": "3.0.0-alpha.15",
+  "version": "3.0.0-alpha.16",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,8 +36,8 @@
     "@react-aria/interactions": "^3.13.1",
     "@react-aria/live-announcer": "^3.1.2",
     "@react-aria/utils": "^3.14.2",
-    "@react-spectrum/actiongroup": "^3.7.2",
-    "@react-spectrum/button": "^3.11.1",
+    "@react-spectrum/actiongroup": "^3.7.3",
+    "@react-spectrum/button": "^3.11.2",
     "@react-spectrum/layout": "^3.4.4",
     "@react-spectrum/overlays": "^4.1.0",
     "@react-spectrum/text": "^3.3.4",
@@ -45,7 +45,7 @@
     "@react-stately/collections": "^3.5.1",
     "@react-types/actionbar": "3.0.0-alpha.11",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.1",
+    "@spectrum-icons/ui": "^3.4.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
