@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/overlays",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -31,10 +31,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/overlays": "^3.12.0",
-    "@react-aria/utils": "^3.14.1",
-    "@react-spectrum/utils": "^3.8.0",
-    "@react-stately/overlays": "^3.4.3",
+    "@react-aria/overlays": "^3.12.1",
+    "@react-aria/utils": "^3.14.2",
+    "@react-spectrum/utils": "^3.8.1",
+    "@react-stately/overlays": "^3.4.4",
     "@react-types/overlays": "^3.6.5",
     "@react-types/shared": "^3.16.0",
     "@swc/helpers": "^0.4.14",
