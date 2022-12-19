@@ -1,6 +1,6 @@
 {
   "name": "@react-types/breadcrumbs",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/link": "^3.3.5",
+    "@react-types/link": "^3.3.6",
     "@react-types/shared": "^3.16.0"
   },
   "peerDependencies": {
