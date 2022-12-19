@@ -483,6 +483,29 @@ module.exports = new Transformer({
       }
 
       if (path.isTSLiteralType()) {
+        if (t.isTemplateLiteral(path.node.literal)) {
+          let expressions = path.get('literal.expressions').map(e => processExport(e));
+          let elements = [];
+          let i = 0;
+          for (let q of path.node.literal.quasis) {
+            if (q.value.raw) {
+              elements.push({
+                type: 'string',
+                value: q.value.raw
+              });
+            }
+
+            if (!q.tail) {
+              elements.push(expressions[i++]);
+            }
+          }
+
+          return Object.assign(node, {
+            type: 'template',
+            elements
+          });
+        }
+
         return Object.assign(node, {
           type: typeof path.node.literal.value,
           value: path.node.literal.value

@@ -11,13 +11,8 @@ function addDep(dep, seen = new Set()) {
   if (seen.has(dep)) {
     let arr = [...seen];
     let index = arr.indexOf(dep);
-    // ok for pkg to depend on itself
-    if (arr.slice(index).length > 1) {
-      console.log(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${dep}`);
-      process.exit(1);
-    } else {
-      return;
-    }
+    console.log(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${dep}`);
+    process.exit(1);
   }
 
   seen.add(dep);
