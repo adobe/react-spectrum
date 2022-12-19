@@ -48,11 +48,11 @@ export interface AriaTableColumnResizeProps<T> {
    * */
   onMoveEnd?: (e: MoveEndEvent) => void,
   /** Called when resizing starts. */
-  onResizeStart: (key: Key) => void,
+  onResizeStart?: (widths: Map<Key, number | string>) => void,
   /** Called for every resize event that results in new column sizes. */
-  onResize: (widths: Map<Key, number | string>) => void,
+  onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
-  onResizeEnd: (key: Key) => void
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
 
@@ -96,8 +96,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let startResize = useCallback((item) => {
     if (!isResizing.current) {
+      lastSize.current = layoutState.onColumnResize(item.key, layoutState.getColumnWidth(item.key));
       layoutState.onColumnResizeStart(item.key);
-      onResizeStart?.(item.key);
+      onResizeStart?.(lastSize.current);
     }
     isResizing.current = true;
   }, [isResizing, onResizeStart, layoutState]);
