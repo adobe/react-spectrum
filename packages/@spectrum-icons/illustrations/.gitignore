@@ -6,4 +6,3 @@
 !tsconfig.types.json
 !/src
 !.npmignore
-!/scripts

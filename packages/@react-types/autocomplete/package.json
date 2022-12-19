@@ -1,6 +1,6 @@
 {
   "name": "@react-types/autocomplete",
-  "version": "3.0.0-alpha.10",
+  "version": "3.0.0-alpha.11",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-types/combobox": "^3.5.5",
-    "@react-types/searchfield": "^3.3.5",
+    "@react-types/searchfield": "^3.3.6",
     "@react-types/shared": "^3.16.0"
   },
   "peerDependencies": {
