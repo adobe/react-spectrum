@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/labeledvalue",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -34,7 +34,7 @@
     "@internationalized/date": "^3.0.2",
     "@react-aria/i18n": "^3.6.3",
     "@react-aria/utils": "^3.14.2",
-    "@react-spectrum/label": "^3.10.0",
+    "@react-spectrum/label": "^3.10.1",
     "@react-spectrum/utils": "^3.8.1",
     "@react-types/shared": "^3.16.0",
     "@swc/helpers": "^0.4.14"
