@@ -31,9 +31,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
+  let domRef = useDOMRef(ref);
 
   return (
     <OpenTransition
+      nodeRef={domRef}
       in={isOpen}
       mountOnEnter
       unmountOnExit>
