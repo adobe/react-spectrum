@@ -14,12 +14,17 @@ import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectr
 import {ClearButton} from '@react-spectrum/button';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
-import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import type {TagGroupState} from '@react-stately/tag';
+import {TagProps} from '@react-types/tag';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
+
+export interface SpectrumTagProps<T> extends TagProps<T> {
+  state: TagGroupState<T>
+}
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
