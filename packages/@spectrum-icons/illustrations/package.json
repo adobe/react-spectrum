@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/illustrations",
-  "version": "3.5.1",
+  "version": "3.5.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -8,14 +8,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
-    "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
-    "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
-    "generate-types": "tsc --project ./tsconfig.types.json",
-    "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types"
+    "build-icons": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx' && tsc --project ./tsconfig.types.json"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.14.1",
-    "@react-spectrum/icon": "^3.6.2",
+    "@react-aria/utils": "^3.14.2",
+    "@react-spectrum/icon": "^3.6.3",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
@@ -26,12 +23,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "exports": {
-    "./*": {
-      "types": "./*.d.ts",
-      "import": "./*.mjs",
-      "require": "./*.js"
-    }
   }
 }
