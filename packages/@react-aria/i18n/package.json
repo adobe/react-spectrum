@@ -4,9 +4,14 @@
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.js",
+  "module": "dist/module.mjs",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/module.mjs",
+    "require": "./dist/main.js"
+  },
   "real-main": "dist/real-main.js",
-  "real-module": "dist/real-module.js",
+  "real-module": "dist/real-module.mjs",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "targets": {
@@ -27,8 +32,8 @@
     "./src/useMessageFormatter.ts": false
   },
   "scripts": {
-    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js && cp src/main.js dist",
-    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.cjs.js && cp src/module.js dist",
+    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.mjs && cp src/main.js dist",
+    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.cjs.js && cp src/module.js dist/module.mjs",
     "prepublishOnly": "yarn build:module && yarn build:cjs"
   },
   "files": [

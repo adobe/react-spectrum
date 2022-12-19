@@ -4,7 +4,12 @@
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/index.js",
-  "module": "dist/module.js",
+  "module": "dist/module.mjs",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/module.mjs",
+    "require": "./dist/index.js"
+  },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
