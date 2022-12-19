@@ -18,7 +18,7 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
 
@@ -29,25 +29,18 @@ interface ModalProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
 }
 
 interface ModalWrapperProps extends ModalProps {
-  isOpen?: boolean
+  isOpen?: boolean,
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-
-  let underlayRef = useRef(null);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} nodeRef={underlayRef}>
-      <Underlay ref={underlayRef} />
-      <ModalWrapper
-        {...styleProps}
-        onClose={onClose}
-        type={type}
-        isDismissable={isDismissable}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        ref={domRef}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={domRef}>
+      <ModalWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -60,10 +53,9 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  let {type, children, state, isOpen} = props;
+  let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = typeMap[type];
   let {styleProps} = useStyleProps(props);
-
   let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   let wrapperClassName = classNames(
@@ -99,7 +91,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   return (
     <>
       <Underlay {...underlayProps} isOpen={isOpen} />
-      <div className={wrapperClassName} style={style}>
+      <div className={wrapperClassName} style={style} ref={wrapperRef}>
         <div
           {...styleProps}
           {...modalProps}

@@ -17,7 +17,7 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, ReactNode, RefObject} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
@@ -29,25 +29,18 @@ interface TrayProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
 }
 
 interface TrayWrapperProps extends TrayProps {
-  isOpen?: boolean
+  isOpen?: boolean,
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
-
-  let underlayRef = useRef(null);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} nodeRef={underlayRef}>
-      <Underlay ref={underlayRef} />
-      <TrayWrapper
-        {...styleProps}
-        onClose={onClose}
-        shouldCloseOnBlur={shouldCloseOnBlur}
-        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        ref={domRef}
-        isFixedHeight={isFixedHeight}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={domRef}>
+      <TrayWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </TrayWrapper>
     </Overlay>
@@ -59,7 +52,8 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     children,
     isOpen,
     isFixedHeight,
-    state
+    state,
+    wrapperRef
   } = props;
   let {styleProps} = useStyleProps(props);
 
@@ -103,7 +97,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   return (
     <>
       <Underlay {...underlayProps} isOpen={isOpen} />
-      <div className={wrapperClassName} style={wrapperStyle}>
+      <div className={wrapperClassName} style={wrapperStyle} ref={wrapperRef}>
         <div
           {...styleProps}
           {...modalProps}
