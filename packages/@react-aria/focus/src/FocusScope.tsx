@@ -85,12 +85,16 @@ export function FocusScope(props: FocusScopeProps) {
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
-  let ctx = useContext(FocusContext);
+  let {
+    addParentToFocusScopeTree: addParentToTreeMap,
+    scopeRef: parentScopeRef
+  } = useContext(FocusContext) || {};
 
+  // Called to add parent and every ancestor scopeRef if they haven't been added yet.
   let addParentToFocusScopeTree = useCallback(() => {
     let parentScope = null;
-    if (ctx) {
-      parentScope = ctx.addParentToFocusScopeTree();
+    if (addParentToTreeMap != null) {
+      parentScope = addParentToTreeMap();
     }
 
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
@@ -98,35 +102,20 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     return scopeRef;
-  }, [ctx]);
-
-  // TODO: useCallback?
-  // let addParentToFocusScopeTree = () => {
-  //   let parentScope = null;
-  //   if (ctx) {
-  //     parentScope = ctx.addParentToFocusScopeTree();
-  //   }
-
-  //   if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
-  //     focusScopeTree.addTreeNode(scopeRef, parentScope);
-  //   }
-
-  //   return scopeRef;
-  // };
+  }, [addParentToTreeMap]);
 
   useLayoutEffect(() => {
     let parentScope = null;
-    if (ctx) {
-      // Add parent to tree and every parent all the way up
-      parentScope = ctx.addParentToFocusScopeTree();
+    if (addParentToTreeMap != null) {
+      parentScope = addParentToTreeMap();
     }
 
-    // Add self to tree
+    // For outer most leaf in tree, need to add self to tree map
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
       focusScopeTree.addTreeNode(scopeRef, parentScope);
     }
-  // TODO: double check this dep arrays
-  }, [ctx]);
+  // TODO: double check this dep array
+  }, [addParentToTreeMap]);
 
   useLayoutEffect(() => {
     let node = focusScopeTree.getTreeNode(scopeRef);
@@ -136,7 +125,7 @@ export function FocusScope(props: FocusScopeProps) {
   // The parent scope is based on the JSX tree, using context.
   // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
   // we want the parent scope to be the active scope instead.
-  let ctxParent = ctx?.scopeRef ?? null;
+  let ctxParent = parentScopeRef ?? null;
   // TODO: in render, move inside the useLayoutEffects? Maybe ok now since the focusScopeTree fast map is only updated in layoutEffect
   let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
 
