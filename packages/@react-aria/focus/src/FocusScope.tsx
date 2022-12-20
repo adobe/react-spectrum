@@ -13,7 +13,7 @@
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 
@@ -62,7 +62,8 @@ export interface FocusManager {
 type ScopeRef = RefObject<Element[]>;
 interface IFocusContext {
   scopeRef: ScopeRef,
-  focusManager: FocusManager
+  focusManager: FocusManager,
+  addParentToFocusScopeTree: () => ScopeRef
 }
 
 const FocusContext = React.createContext<IFocusContext>(null);
@@ -86,10 +87,57 @@ export function FocusScope(props: FocusScopeProps) {
   let scopeRef = useRef<Element[]>([]);
   let ctx = useContext(FocusContext);
 
+  let addParentToFocusScopeTree = useCallback(() => {
+    let parentScope = null;
+    if (ctx) {
+      parentScope = ctx.addParentToFocusScopeTree();
+    }
+
+    if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
+      focusScopeTree.addTreeNode(scopeRef, parentScope);
+    }
+
+    return scopeRef;
+  }, [ctx]);
+
+  // TODO: useCallback?
+  // let addParentToFocusScopeTree = () => {
+  //   let parentScope = null;
+  //   if (ctx) {
+  //     parentScope = ctx.addParentToFocusScopeTree();
+  //   }
+
+  //   if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
+  //     focusScopeTree.addTreeNode(scopeRef, parentScope);
+  //   }
+
+  //   return scopeRef;
+  // };
+
+  useLayoutEffect(() => {
+    let parentScope = null;
+    if (ctx) {
+      // Add parent to tree and every parent all the way up
+      parentScope = ctx.addParentToFocusScopeTree();
+    }
+
+    // Add self to tree
+    if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
+      focusScopeTree.addTreeNode(scopeRef, parentScope);
+    }
+  // TODO: double check this dep arrays
+  }, [ctx]);
+
+  useLayoutEffect(() => {
+    let node = focusScopeTree.getTreeNode(scopeRef);
+    node.contain = contain;
+  }, [contain]);
+
   // The parent scope is based on the JSX tree, using context.
   // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
   // we want the parent scope to be the active scope instead.
   let ctxParent = ctx?.scopeRef ?? null;
+  // TODO: in render, move inside the useLayoutEffects? Maybe ok now since the focusScopeTree fast map is only updated in layoutEffect
   let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
 
   useLayoutEffect(() => {
@@ -103,15 +151,6 @@ export function FocusScope(props: FocusScopeProps) {
 
     scopeRef.current = nodes;
   }, [children, parentScope]);
-
-  // add to the focus scope tree in render order because useEffects/useLayoutEffects run children first whereas render runs parent first
-  // which matters when constructing a tree
-  if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
-    focusScopeTree.addTreeNode(scopeRef, parentScope);
-  }
-
-  let node = focusScopeTree.getTreeNode(scopeRef);
-  node.contain = contain;
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
@@ -140,9 +179,8 @@ export function FocusScope(props: FocusScopeProps) {
   }, [scopeRef, parentScope]);
 
   let focusManager = createFocusManagerForScope(scopeRef);
-
   return (
-    <FocusContext.Provider value={{scopeRef, focusManager}}>
+    <FocusContext.Provider value={{scopeRef, focusManager, addParentToFocusScopeTree}}>
       <span data-focus-scope-start hidden ref={startRef} />
       {children}
       <span data-focus-scope-end hidden ref={endRef} />
@@ -608,6 +646,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             // ancestor scope that is still in the tree.
             treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
+              // TODO: in raf
               if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
                 focusFirstInScope(treeNode.scopeRef.current, true);
                 return;
@@ -805,6 +844,7 @@ class Tree {
     if (children.length > 0) {
       children.forEach(child => parentNode.addChild(child));
     }
+    // debugger
     this.fastMap.delete(node.scopeRef);
   }
 
