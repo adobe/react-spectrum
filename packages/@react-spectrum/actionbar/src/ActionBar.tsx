@@ -21,7 +21,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
-import React, {ReactElement, RefObject, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
@@ -48,7 +48,7 @@ interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
   isOpen?: boolean
 }
 
-function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: RefObject<HTMLDivElement>) {
+function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -128,7 +128,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: RefObject<HTMLDiv
   );
 }
 
-const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: SpectrumActionBarProps<T> & {ref?: RefObject<HTMLDivElement>}) => ReturnType<typeof ActionBarInner>;
+const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;
 
 /**
  * TODO: Add description of component here.
