@@ -12,56 +12,73 @@
 
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
-import {Icon} from '@react-spectrum/icon';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, TagGroup} from '../src';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
+import {TagGroupProps} from '@react-types/tag';
 import {Text} from '@react-spectrum/text';
 
-storiesOf('TagGroup', module)
-  .add(
-    'default',
-    () => render({})
-  )
-  .add('icons', () => (
-    <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
-      {item => (
+let manyItems = [];
+for (let i = 0; i < 50; i++) {
+  let item = {key: i};
+  manyItems.push(item);
+}
+
+export default {
+  title: 'TagGroup',
+  component: TagGroup,
+  args: {
+    onRemove: action('onRemove')
+  },
+  argTypes: {
+    onRemove: {
+      table: {
+        disable: true
+      }
+    },
+    maxRows: {type: 'number'}
+  }
+} as ComponentMeta<typeof TagGroup>;
+
+export type TagGroupStory = ComponentStoryObj<any>;
+
+export const Default: TagGroupStory = {
+  render: (args) => render(args)
+};
+
+function render(props: TagGroupProps<unknown>) {
+  return (
+    <TagGroup {...props} aria-label="tag group">
+      <Item key="1">Cool Tag 1</Item>
+      <Item key="2">Cool Tag 2</Item>
+      <Item key="3">Cool Tag 3</Item>
+    </TagGroup>
+  );
+}
+
+export const WithIcons: TagGroupStory = {
+  args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
+  render: (args) => (
+    <TagGroup aria-label="tag group" {...args}>
+      {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          <Icon>
-            <Audio />
-          </Icon>
+          <Audio />
           <Text>{item.label}</Text>
         </Item>
       )}
     </TagGroup>
-  ))
-  .add(
-    'onRemove',
-    () => {
-      const [items, setItems] = useState([
-        {key: 1, label: 'Cool Tag 1'},
-        {key: 2, label: 'Another cool tag'},
-        {key: 3, label: 'This tag'},
-        {key: 4, label: 'What tag?'},
-        {key: 5, label: 'This tag is cool too'},
-        {key: 6, label: 'Shy tag'}
-      ]);
-      const onRemove = (key) => {
-        const newItems = [...items].filter((item) => key !== item.key.toString());
-        setItems(newItems);
-        action('onRemove')(key);
-      };
-
-      return (<TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>
-        {item => (
-          <Item key={item.key}>{item.label}</Item>
-        )}
-      </TagGroup>);
-    }
   )
-  .add('wrapping', () => (
+};
+
+export const OnRemove: TagGroupStory = {
+  render: (args) => <OnRemoveExample {...args} />,
+  storyName: 'onRemove'
+};
+
+export const Wrapping: TagGroupStory = {
+  render: (args) => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup aria-label="tag group">
+      <TagGroup aria-label="tag group" {...args}>
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>
@@ -71,30 +88,25 @@ storiesOf('TagGroup', module)
       </TagGroup>
     </div>
     )
-  )
-  .add('label truncation', () => (
+};
+
+export const LabelTruncation: TagGroupStory = {
+  render: (args) => (
     <div style={{width: '100px'}}>
-      <TagGroup aria-label="tag group">
+      <TagGroup aria-label="tag group" {...args}>
         <Item key="1">Cool Tag 1 with a really long label</Item>
         <Item key="2">Another long cool tag label</Item>
         <Item key="3">This tag</Item>
       </TagGroup>
     </div>
     )
-  )
-  .add(
-    'using items prop',
-    () => (
-      <TagGroup aria-label="tag group" items={[{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]}>
-        {item =>
-          <Item key={item.key} textValue={item.label}><Text>{item.label}</Text></Item>
-        }
-      </TagGroup>
-    )
-  )
-  .add('maxRows: 2', () => (
+};
+
+export const MaxRows: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup width="100%" aria-label="tag group" maxRows={2}>
+      <TagGroup width="100%" aria-label="tag group" {...args}>
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>
@@ -103,14 +115,44 @@ storiesOf('TagGroup', module)
         <Item key="6">Shy tag</Item>
       </TagGroup>
     </div>
-  ));
+    ),
+  storyName: 'maxRows'
+};
 
-function render(props: any = {}) {
+export const MaxRowsManyTags: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => (
+    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <TagGroup width="100%" aria-label="tag group" items={manyItems} {...args}>
+        {(item: any) => (
+          <Item key={item.key}>{`Tag ${item.key}`}</Item>
+        )}
+      </TagGroup>
+    </div>
+    ),
+  storyName: 'maxRows with many tags'
+};
+
+function OnRemoveExample() {
+  let [items, setItems] = useState([
+    {key: 1, label: 'Cool Tag 1'},
+    {key: 2, label: 'Another cool tag'},
+    {key: 3, label: 'This tag'},
+    {key: 4, label: 'What tag?'},
+    {key: 5, label: 'This tag is cool too'},
+    {key: 6, label: 'Shy tag'}
+  ]);
+  let onRemove = (key) => {
+    const newItems = [...items].filter((item) => key !== item.key.toString());
+    setItems(newItems);
+    action('onRemove')(key);
+  };
+
   return (
-    <TagGroup {...props} aria-label="tag group">
-      <Item key="1">Cool Tag 1</Item>
-      <Item key="2">Cool Tag 2</Item>
-      <Item key="3">Cool Tag 3</Item>
+    <TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>
+      {item => (
+        <Item key={item.key}>{item.label}</Item>
+      )}
     </TagGroup>
   );
 }
