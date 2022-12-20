@@ -22,7 +22,7 @@ import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
 
-interface TrayProps extends AriaModalOverlayProps, StyleProps, OverlayProps {
+interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef'> {
   children: ReactNode,
   state: OverlayTriggerState,
   isFixedHeight?: boolean
