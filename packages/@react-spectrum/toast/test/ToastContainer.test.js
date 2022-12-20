@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
-import {clearToastQueue, ToastProvider} from '../src/ToastProvider';
+import {clearToastQueue, ToastContainer, ToastQueue} from '../src/ToastContainer';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
@@ -22,7 +22,7 @@ function RenderToastButton(props = {}) {
   return (
     <div>
       <Button
-        onPress={() => ToastProvider[props.variant || 'neutral']('Toast is default', props)}
+        onPress={() => ToastQueue[props.variant || 'neutral']('Toast is default', props)}
         variant="primary">
         Show Default Toast
       </Button>
@@ -33,7 +33,7 @@ function RenderToastButton(props = {}) {
 function renderComponent(contents) {
   return render(
     <Provider theme={defaultTheme}>
-      <ToastProvider />
+      <ToastContainer />
       {contents}
     </Provider>
   );
@@ -55,7 +55,7 @@ describe('Toast Provider and Container', function () {
     act(() => jest.runAllTimers());
   });
 
-  it('Renders a button that triggers a toast via the provider', () => {
+  it('renders a button that triggers a toast', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
@@ -202,12 +202,12 @@ describe('Toast Provider and Container', function () {
       return (
         <div>
           <Button
-            onPress={() => ToastProvider.info('Info', props)}
+            onPress={() => ToastQueue.info('Info', props)}
             variant="primary">
             Info
           </Button>
           <Button
-            onPress={() => ToastProvider.negative('Error', props)}
+            onPress={() => ToastQueue.negative('Error', props)}
             variant="primary">
             Error
           </Button>
@@ -326,7 +326,7 @@ describe('Toast Provider and Container', function () {
 
       return (
         <Button
-          onPress={() => close ? setClose(close()) : setClose(() => ToastProvider.positive('Toast is done!'))}
+          onPress={() => close ? setClose(close()) : setClose(() => ToastQueue.positive('Toast is done!'))}
           variant="primary">
           {close ? 'Hide' : 'Show'} Toast
         </Button>
@@ -346,11 +346,11 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('should only render one ToastProvider', () => {
+  it('should only render one ToastContainer', () => {
     let {getByRole, getAllByRole, rerender} = render(
       <Provider theme={defaultTheme}>
-        <ToastProvider key="first" />
-        <ToastProvider key="second" />
+        <ToastContainer key="first" />
+        <ToastContainer key="second" />
         <RenderToastButton />
       </Provider>
     );
@@ -363,7 +363,7 @@ describe('Toast Provider and Container', function () {
 
     rerender(
       <Provider theme={defaultTheme}>
-        <ToastProvider key="second" />
+        <ToastContainer key="second" />
         <RenderToastButton />
       </Provider>
     );
@@ -373,7 +373,7 @@ describe('Toast Provider and Container', function () {
 
     rerender(
       <Provider theme={defaultTheme}>
-        <ToastProvider key="first" />
+        <ToastContainer key="first" />
         <RenderToastButton />
       </Provider>
     );
@@ -383,8 +383,8 @@ describe('Toast Provider and Container', function () {
 
     rerender(
       <Provider theme={defaultTheme}>
-        <ToastProvider key="first" />
-        <ToastProvider key="second" />
+        <ToastContainer key="first" />
+        <ToastContainer key="second" />
         <RenderToastButton />
       </Provider>
     );
@@ -416,7 +416,7 @@ describe('Toast Provider and Container', function () {
   it('should support custom aria-label', () => {
     let {getByRole} = render(
       <Provider theme={defaultTheme}>
-        <ToastProvider aria-label="Toasts" />
+        <ToastContainer aria-label="Toasts" />
         <RenderToastButton />
       </Provider>
     );

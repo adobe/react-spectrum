@@ -11,18 +11,19 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/toast';
-import {HeaderInfo, PropTable, PageDescription, ClassAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, ClassAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/toast/package.json';
 import {Keyboard} from '@react-spectrum/text';
 
 ```tsx import
 import {ButtonGroup, Button} from '@adobe/react-spectrum';
-import {ToastProvider} from '@react-spectrum/toast';
+import {ToastContainer, ToastQueue} from '@react-spectrum/toast';
 ```
 
 ---
 category: Status
 keywords: [toast, notifications, alert]
+after_version: 3.0.0
 ---
 
 # Toast
@@ -31,17 +32,24 @@ keywords: [toast, notifications, alert]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ToastProvider']}
+  componentNames={['ToastContainer', 'ToastQueue']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/toast/'}
   ]} />
 
 ## Example
 
+First, render a toast container at the root of your app:
+
+```tsx example hidden
+<ToastContainer />
+```
+
+Then, queue a toast from anywhere:
+
 ```tsx example
-<ToastProvider />
 <Button
-  onPress={() => ToastProvider.positive('Toast is done!')}
+  onPress={() => ToastQueue.positive('Toast is done!')}
   variant="primary">
   Show toast
 </Button>
@@ -49,37 +57,38 @@ keywords: [toast, notifications, alert]
 
 ## Content
 
-Toasts are triggered using one of the methods of `ToastProvider`. A `<ToastProvider />` element must be rendered at the root of your app in order to display the queued toasts.
+<p>{console.log(docs.exports)}</p>
+
+Toasts are triggered using one of the methods of <TypeLink links={docs.links} type={docs.exports.ToastQueue} />. A &lt;<TypeLink links={docs.links} type={docs.exports.ToastContainer} />&gt; element must be rendered at the root of your app in order to display the queued toasts.
 
 Toasts are shown according to a priority queue, depending on their variant. Actionable toasts are prioritized over non-actionable toasts, and errors are prioritized over other types of notifications. Only one toast is displayed at a time. See the [Spectrum design docs](https://spectrum.adobe.com/page/toast/#Priority-queue) for full information on toast priorities.
 
 ```tsx example
-<ToastProvider />
 <ButtonGroup>
   <Button
     ///- begin highlight -///
-    onPress={() => ToastProvider.neutral('Toast available')}
+    onPress={() => ToastQueue.neutral('Toast available')}
     ///- end highlight -///
     variant="secondary">
     Show Default Toast
   </Button>
   <Button
     ///- begin highlight -///
-    onPress={() => ToastProvider.positive('Toast is done!')}
+    onPress={() => ToastQueue.positive('Toast is done!')}
     ///- end highlight -///
     variant="primary">
     Show Primary Toast
   </Button>
   <Button
     ///- begin highlight -///
-    onPress={() => ToastProvider.negative('Toast is burned!')}
+    onPress={() => ToastQueue.negative('Toast is burned!')}
     ///- end highlight -///
     variant="negative">
     Show Negative Toast
   </Button>
   <Button
     ///- begin highlight -///
-    onPress={() => ToastProvider.info('Toasting…')}
+    onPress={() => ToastQueue.info('Toasting…')}
     ///- end highlight -///
     variant="accent"
     style="outline">
@@ -94,7 +103,7 @@ To internationalize a Toast, all text content within the toast should be localiz
 
 ### Accessibility
 
-Toasts are automatically displayed in a landmark region labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastProvider` element. Landmark regions can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
+Toasts are automatically displayed in a landmark region labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastContainer` element. Landmark regions can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
 ## Events
 
@@ -102,7 +111,7 @@ Toasts can include an optional action by specifying the `actionLabel` and `onAct
 
 ```tsx example
 <Button
-  onPress={() => ToastProvider.info('An update is available', {
+  onPress={() => ToastQueue.info('An update is available', {
     ///- begin highlight -///
     actionLabel: 'Update',
     onAction: () => alert('Updating!'),
@@ -123,7 +132,7 @@ Be sure only to automatically dismiss toasts when the information is not importa
 ```tsx example
 <Button
   ///- begin highlight -///
-  onPress={() => ToastProvider.positive('Toast is done!', {timeout: 5000})}
+  onPress={() => ToastQueue.positive('Toast is done!', {timeout: 5000})}
   ///- end highlight -///
   variant="primary">
   Show toast
@@ -132,7 +141,7 @@ Be sure only to automatically dismiss toasts when the information is not importa
 
 ## Programmatic dismissal
 
-Toasts may be programmatically dismissed if they become irrelevant before the user manually closes them. Each method of `ToastProvider` returns a function which may be used to close a toast.
+Toasts may be programmatically dismissed if they become irrelevant before the user manually closes them. Each method of `ToastQueue` returns a function which may be used to close a toast.
 
 ```tsx example
 function Example() {
@@ -143,7 +152,7 @@ function Example() {
       onPress={() => {
         if (!close) {
           ///- begin highlight -///
-          let close = ToastProvider.negative('Unable to save', {onClose: () => setClose(null)});
+          let close = ToastQueue.negative('Unable to save', {onClose: () => setClose(null)});
           ///- end highlight -///
           setClose(() => close);
         } else {
@@ -161,16 +170,24 @@ function Example() {
 
 ## API
 
+### ToastQueue
+
+<div style={{marginBottom: 40}}>
+  <TypeContext.Provider value={docs.links}>
+    <InterfaceType properties={docs.exports.ToastQueue.properties} />
+  </TypeContext.Provider>
+</div>
+
 ### Toast options
 
-<TypeContext.Provider value={docs.links}>
-  <div style={{marginBottom: 40}}>
+<div style={{marginBottom: 40}}>
+  <TypeContext.Provider value={docs.links}>
     <InterfaceType properties={docs.exports.SpectrumToastOptions.properties} />
-  </div>
-</TypeContext.Provider>
+  </TypeContext.Provider>
+</div>
 
-### ToastProvider props
+### ToastContainer props
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.exports.ToastProvider.props.properties} showRequired showDefault isComponent />
+  <InterfaceType properties={docs.exports.ToastContainer.props.properties} showRequired showDefault isComponent />
 </TypeContext.Provider>

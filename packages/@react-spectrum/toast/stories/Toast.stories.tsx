@@ -19,9 +19,9 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {useState} from 'react';
-import {SpectrumToastOptions} from '../src/ToastProvider';
+import {SpectrumToastOptions} from '../src/ToastContainer';
 import {storiesOf} from '@storybook/react';
-import {ToastProvider} from '../';
+import {ToastContainer, ToastQueue} from '../';
 
 storiesOf('Toast', module)
   .addParameters({
@@ -40,7 +40,7 @@ storiesOf('Toast', module)
   })
   .addDecorator((story, {parameters}) => (
     <>
-      {!parameters.disableToastProvider && <ToastProvider />}
+      {!parameters.disableToastContainer && <ToastContainer />}
       {story()}
     </>
   ))
@@ -67,9 +67,9 @@ storiesOf('Toast', module)
     )
   )
   .add(
-    'multiple ToastProviders',
+    'multiple ToastContainers',
     args => <Multiple {...args} />,
-    {disableToastProvider: true}
+    {disableToastContainer: true}
   )
   .add(
     'programmatically closing',
@@ -80,22 +80,22 @@ function RenderProvider(options: SpectrumToastOptions) {
   return (
     <ButtonGroup>
       <Button
-        onPress={() => ToastProvider.neutral('Toast available', {...options, onClose: action('onClose')})}
+        onPress={() => ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})}
         variant="secondary">
         Show Default Toast
       </Button>
       <Button
-        onPress={() => ToastProvider.positive('Toast is done!', {...options, onClose: action('onClose')})}
+        onPress={() => ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})}
         variant="primary">
         Show Primary Toast
       </Button>
       <Button
-        onPress={() => ToastProvider.negative('Toast is burned!', {...options, onClose: action('onClose')})}
+        onPress={() => ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})}
         variant="negative">
         Show Negative Toast
       </Button>
       <Button
-        onPress={() => ToastProvider.info('Toasting…', {...options, onClose: action('onClose')})}
+        onPress={() => ToastQueue.info('Toasting…', {...options, onClose: action('onClose')})}
         variant="accent"
         style="outline">
         Show info Toast
@@ -111,7 +111,7 @@ function ToastToggle(options: SpectrumToastOptions) {
     <Button
       onPress={() => {
         if (!close) {
-          let close = ToastProvider.negative('Unable to save', {...options, onClose: () => setClose(null)});
+          let close = ToastQueue.negative('Unable to save', {...options, onClose: () => setClose(null)});
           setClose(() => close);
         } else {
           close();
@@ -129,7 +129,7 @@ function Multiple(options: SpectrumToastOptions) {
   return (
     <Flex direction="column">
       <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
-      {isMounted1 && <ToastProvider />}
+      {isMounted1 && <ToastContainer />}
       <MultipleInner />
       <RenderProvider {...options} />
     </Flex>
@@ -142,7 +142,7 @@ function MultipleInner() {
   return (
     <>
       <Checkbox isSelected={isMounted2} onChange={setMounted2}>Second mounted</Checkbox>
-      {isMounted2 && <ToastProvider />}
+      {isMounted2 && <ToastContainer />}
     </>
   );
 }
