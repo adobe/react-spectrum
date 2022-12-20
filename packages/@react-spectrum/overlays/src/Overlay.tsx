@@ -53,7 +53,8 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
           onExited={handleExited}
           onEnter={onEnter}
           onEntering={onEntering}
-          onEntered={handleEntered}>
+          onEntered={handleEntered}
+          nodeRef={nodeRef}>
           {children}
         </OpenTransition>
       </Provider>
