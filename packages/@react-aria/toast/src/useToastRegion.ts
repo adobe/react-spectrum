@@ -13,7 +13,7 @@ export interface AriaToastRegionProps extends AriaLabelingProps {
    * An accessibility label for the toast region.
    * @default "Notifications"
    */
-   'aria-label'?: string
+  'aria-label'?: string
 }
 
 export interface ToastRegionAria {
