@@ -39,7 +39,7 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={domRef}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
       <TrayWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </TrayWrapper>

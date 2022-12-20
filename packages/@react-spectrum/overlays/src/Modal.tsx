@@ -39,7 +39,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={domRef}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
       <ModalWrapper {...props} wrapperRef={wrapperRef} ref={domRef}>
         {children}
       </ModalWrapper>
