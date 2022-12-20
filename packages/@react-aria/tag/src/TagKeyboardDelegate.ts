@@ -12,6 +12,7 @@
 
 import {Collection, Direction, KeyboardDelegate} from '@react-types/shared';
 import {Key} from 'react';
+
 export class TagKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;
   private direction: Direction;
