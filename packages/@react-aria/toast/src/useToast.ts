@@ -20,16 +20,25 @@ import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
+  /** The toast object. */
   toast: QueuedToast<T>
 }
 
 export interface ToastAria {
+  /** Props for the toast container element. */
   toastProps: DOMAttributes,
+  /** Props for the toast title element. */
   titleProps: DOMAttributes,
+  /** Props for the toast description element, if any. */
   descriptionProps: DOMAttributes,
+  /** Props for the toast close button. */
   closeButtonProps: AriaButtonProps
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a toast component.
+ * Toasts are transient notifications of actions, errors, or other events in an application.
+ */
 export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
   let {
     key,

@@ -14,4 +14,4 @@
 
 export {ToastProvider} from './ToastProvider';
 
-export type {SpectrumToastOptions} from './ToastProvider';
+export type {SpectrumToastOptions, SpectrumToastProviderProps} from './ToastProvider';

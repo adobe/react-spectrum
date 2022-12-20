@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaToastRegionProps, useToastRegion} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Provider, useProvider} from '@react-spectrum/provider';
@@ -17,9 +18,8 @@ import React, {ReactElement, ReactNode, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
-import {useToastRegion} from '@react-aria/toast';
 
-interface ToastContainerProps {
+interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
   state: ToastState<unknown>
 }
@@ -33,7 +33,7 @@ export function ToastContainer(props: ToastContainerProps): ReactElement {
   let containerPlacement = provider.scale === 'large' ? 'center' : 'right';
 
   let ref = useRef();
-  let {regionProps} = useToastRegion({}, state, ref);
+  let {regionProps} = useToastRegion(props, state, ref);
 
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>

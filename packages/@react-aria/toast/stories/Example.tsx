@@ -33,7 +33,7 @@ function ToastRegion() {
   let {regionProps} = useToastRegion({}, state, ref);
   return (
     <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0}}>
-      {state.toasts.map(toast => (
+      {state.visibleToasts.map(toast => (
         <Toast key={toast.key} toast={toast} />
       ))}
     </div>

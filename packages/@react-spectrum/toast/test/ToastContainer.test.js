@@ -345,4 +345,86 @@ describe('Toast Provider and Container', function () {
     fireAnimationEnd(toast);
     expect(queryByRole('alert')).toBeNull();
   });
+
+  it('should only render one ToastProvider', () => {
+    let {getByRole, getAllByRole, rerender} = render(
+      <Provider theme={defaultTheme}>
+        <ToastProvider key="first" />
+        <ToastProvider key="second" />
+        <RenderToastButton />
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    expect(getAllByRole('region')).toHaveLength(1);
+    expect(getAllByRole('alert')).toHaveLength(1);
+
+    rerender(
+      <Provider theme={defaultTheme}>
+        <ToastProvider key="second" />
+        <RenderToastButton />
+      </Provider>
+    );
+
+    expect(getAllByRole('region')).toHaveLength(1);
+    expect(getAllByRole('alert')).toHaveLength(1);
+
+    rerender(
+      <Provider theme={defaultTheme}>
+        <ToastProvider key="first" />
+        <RenderToastButton />
+      </Provider>
+    );
+
+    expect(getAllByRole('region')).toHaveLength(1);
+    expect(getAllByRole('alert')).toHaveLength(1);
+
+    rerender(
+      <Provider theme={defaultTheme}>
+        <ToastProvider key="first" />
+        <ToastProvider key="second" />
+        <RenderToastButton />
+      </Provider>
+    );
+
+    expect(getAllByRole('region')).toHaveLength(1);
+    expect(getAllByRole('alert')).toHaveLength(1);
+  });
+
+  it('should support custom toast events', () => {
+    let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+
+    let onToast = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-spectrum-toast', onToast);
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    expect(queryByRole('alert')).toBeNull();
+    expect(onToast).toHaveBeenCalledTimes(1);
+    expect(onToast.mock.calls[0][0].detail).toEqual({
+      children: 'Toast is default',
+      variant: 'neutral',
+      options: {}
+    });
+
+    window.removeEventListener('react-spectrum-toast', onToast);
+  });
+
+  it('should support custom aria-label', () => {
+    let {getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <ToastProvider aria-label="Toasts" />
+        <RenderToastButton />
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    let region = getByRole('region');
+    expect(region).toHaveAttribute('aria-label', 'Toasts');
+  });
 });

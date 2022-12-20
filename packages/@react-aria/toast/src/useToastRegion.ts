@@ -1,17 +1,30 @@
 import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {focusWithoutScrolling} from '@react-aria/utils';
+import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RefObject, useEffect, useRef} from 'react';
 import {ToastState} from '@react-stately/toast';
-import {useFocusWithin, useHover} from '@react-aria/interactions';
 import {useLandmark} from '@react-aria/landmark';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface AriaToastRegionProps extends AriaLabelingProps {}
+export interface AriaToastRegionProps extends AriaLabelingProps {
+  /**
+   * An accessibility label for the toast region.
+   * @default "Notifications"
+   */
+   'aria-label'?: string
+}
+
 export interface ToastRegionAria {
+  /** Props for the landmark region element. */
   regionProps: DOMAttributes
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
+ * Toasts are transient notifications of actions, errors, or other events in an application.
+ */
 export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement>): ToastRegionAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {landmarkProps} = useLandmark({
@@ -43,7 +56,11 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   useEffect(() => {
     return () => {
       if (lastFocused.current && document.body.contains(lastFocused.current)) {
-        lastFocused.current.focus();
+        if (getInteractionModality() === 'pointer') {
+          focusWithoutScrolling(lastFocused.current);
+        } else {
+          lastFocused.current.focus();
+        }
       }
     };
   }, [ref]);

@@ -10,15 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaToastRegionProps} from '@react-aria/toast';
 import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {ToastContainer} from './ToastContainer';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim';
 
+export interface SpectrumToastProviderProps extends AriaToastRegionProps {}
+
 export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
+  /** A label for the action button within the toast. */
   actionLabel?: ReactNode,
+  /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
+  /** Whether the toast should automatically close when an action is performed. */
   shouldCloseOnAction?: boolean
 }
 
@@ -57,7 +63,11 @@ function useActiveToastProvider() {
   return useSyncExternalStore(subscribe, getActiveToastProvider);
 }
 
-export function ToastProvider(): ReactElement {
+/**
+ * A ToastProvider renders the queued toasts in an application. It should be placed
+ * at the root of the app.
+ */
+export function ToastProvider(props: SpectrumToastProviderProps): ReactElement {
   // Track all toast provider instances in a set.
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
@@ -87,10 +97,10 @@ export function ToastProvider(): ReactElement {
   // Only render if this is the active toast provider instance, and there are visible toasts.
   let activeToastProvider = useActiveToastProvider();
   let state = useToastQueue(getGlobalToastQueue());
-  if (ref === activeToastProvider && state.toasts.length > 0) {
+  if (ref === activeToastProvider && state.visibleToasts.length > 0) {
     return (
-      <ToastContainer state={state}>
-        {state.toasts.map((toast) => (
+      <ToastContainer state={state} {...props}>
+        {state.visibleToasts.map((toast) => (
           <Toast
             key={toast.key}
             toast={toast}
@@ -136,7 +146,7 @@ function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], o
   let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
   let queue = getGlobalToastQueue();
   let key = queue.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
-  return () => queue.remove(key);
+  return () => queue.close(key);
 }
 
 ToastProvider.neutral = function (children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {

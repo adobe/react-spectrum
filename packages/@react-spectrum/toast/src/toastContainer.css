@@ -34,7 +34,7 @@
 
   .spectrum-Toast {
     position: absolute;
-    margin: 8px;
+    margin: 16px;
     pointer-events: all;
   }
 
