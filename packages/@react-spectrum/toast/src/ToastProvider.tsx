@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactElement, ReactNode, useContext} from 'react';
+import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {ToastContainer} from './ToastContainer';
-import {ToastOptions, useToastState} from '@react-stately/toast';
+import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
+import {useSyncExternalStore} from 'use-sync-external-store/shim';
 
 export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
   actionLabel?: ReactNode,
@@ -22,86 +23,137 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
 }
 
 type CloseFunction = () => void;
-export interface ToastProviderContext {
-  positive(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
-  negative(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
-  neutral(content: ReactNode, options?: SpectrumToastOptions): CloseFunction,
-  info(content: ReactNode, options?: SpectrumToastOptions): CloseFunction
-}
 
-export interface ToastProviderProps {
-  children: ReactNode
-}
-
-const ToastContext = React.createContext<ToastProviderContext | null>(null);
-
-export function useToastProvider(): ToastProviderContext {
-  return useContext(ToastContext);
-}
-
-export function ToastProvider(props: ToastProviderProps): ReactElement {
-  // If there's already a ToastProvider above us in the React tree, don't render another one.
-  let ctx = useToastProvider();
-  if (ctx) {
-    return <>{props.children}</>;
+// There is a single global toast queue instance for the whole app, initialized lazily.
+let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
+function getGlobalToastQueue() {
+  if (!globalToastQueue) {
+    globalToastQueue = new ToastQueue({
+      maxVisibleToasts: 1,
+      hasExitAnimation: true
+    });
   }
 
-  return <ToastProviderInner {...props} />;
+  return globalToastQueue;
 }
 
-function ToastProviderInner(props: ToastProviderProps) {
-  let state = useToastState<SpectrumToastValue>({
-    hasExitAnimation: true
-  });
+// For testing. Not exported from the package index.
+export function clearToastQueue() {
+  globalToastQueue = null;
+}
 
-  let add = (children: ReactNode, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) => {
-    let value = {
-      children,
-      variant,
-      actionLabel: options.actionLabel,
-      onAction: options.onAction,
-      shouldCloseOnAction: options.shouldCloseOnAction
-    };
+let toastProviders = new Set();
+let subscriptions = new Set<() => void>();
+function subscribe(fn: () => void) {
+  subscriptions.add(fn);
+  return () => subscriptions.delete(fn);
+}
 
-    // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
-    // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
-    // It is debatable whether non-actionable toasts would also fail.
-    let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
-    let key = state.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
-    return () => state.close(key);
-  };
+function getActiveToastProvider() {
+  return toastProviders.values().next().value;
+}
 
-  let contextValue = {
-    neutral: (children: ReactNode, options: SpectrumToastOptions = {}) => (
-      add(children, 'neutral', options)
-    ),
-    positive: (children: ReactNode, options: SpectrumToastOptions = {}) => (
-      add(children, 'positive', options)
-    ),
-    negative: (children: ReactNode, options: SpectrumToastOptions = {}) => (
-      add(children, 'negative', options)
-    ),
-    info: (children: ReactNode, options: SpectrumToastOptions = {}) => (
-      add(children, 'info', options)
-    )
-  };
+function useActiveToastProvider() {
+  return useSyncExternalStore(subscribe, getActiveToastProvider);
+}
 
-  return (
-    <ToastContext.Provider value={contextValue}>
-      {props.children}
-      {state.toasts.length > 0 &&
-        <ToastContainer state={state}>
-          {state.toasts.map((toast) => (
-            <Toast
-              key={toast.key}
-              toast={toast}
-              state={state} />
-          ))}
-        </ToastContainer>
+export function ToastProvider(): ReactElement {
+  // Track all toast provider instances in a set.
+  // Only the first one will actually render.
+  // We use a ref to do this, since it will have a stable identity
+  // over the lifetime of the component.
+  let ref = useRef();
+  toastProviders.add(ref);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      // When this toast provider unmounts, reset all animations so that
+      // when the new toast provider renders, it is seamless.
+      for (let toast of getGlobalToastQueue().visibleToasts) {
+        toast.animation = null;
       }
-    </ToastContext.Provider>
-  );
+
+      // Remove this toast provider, and call subscriptions.
+      // This will cause all other instances to re-render,
+      // and the first one to become the new active toast provider.
+      toastProviders.delete(ref);
+      for (let fn of subscriptions) {
+        fn();
+      }
+    };
+  }, []);
+
+  // Only render if this is the active toast provider instance, and there are visible toasts.
+  let activeToastProvider = useActiveToastProvider();
+  let state = useToastQueue(getGlobalToastQueue());
+  if (ref === activeToastProvider && state.toasts.length > 0) {
+    return (
+      <ToastContainer state={state}>
+        {state.toasts.map((toast) => (
+          <Toast
+            key={toast.key}
+            toast={toast}
+            state={state} />
+        ))}
+      </ToastContainer>
+    );
+  }
+
+  return null;
 }
+
+function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
+  // Dispatch a custom event so that toasts can be intercepted and re-targeted, e.g. when inside an iframe.
+  if (typeof CustomEvent !== 'undefined' && typeof window !== 'undefined') {
+    let event = new CustomEvent('react-spectrum-toast', {
+      cancelable: true,
+      bubbles: true,
+      detail: {
+        children,
+        variant,
+        options
+      }
+    });
+
+    let shouldContinue = window.dispatchEvent(event);
+    if (!shouldContinue) {
+      return;
+    }
+  }
+
+  let value = {
+    children,
+    variant,
+    actionLabel: options.actionLabel,
+    onAction: options.onAction,
+    shouldCloseOnAction: options.shouldCloseOnAction
+  };
+
+  // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
+  // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
+  // It is debatable whether non-actionable toasts would also fail.
+  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
+  let queue = getGlobalToastQueue();
+  let key = queue.add(value, {priority: getPriority(variant, options), timeout, onClose: options.onClose});
+  return () => queue.remove(key);
+}
+
+ToastProvider.neutral = function (children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  return addToast(children, 'neutral', options);
+};
+
+ToastProvider.positive = function (children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  return addToast(children, 'positive', options);
+};
+
+ToastProvider.negative = function (children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  return addToast(children, 'negative', options);
+};
+
+ToastProvider.info = function (children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  return addToast(children, 'info', options);
+};
 
 // https://spectrum.adobe.com/page/toast/#Priority-queue
 // TODO: if a lower priority toast comes in, no way to know until you dismiss the higher priority one.

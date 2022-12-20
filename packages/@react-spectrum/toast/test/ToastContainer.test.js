@@ -12,19 +12,17 @@
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
+import {clearToastQueue, ToastProvider} from '../src/ToastProvider';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
-import {ToastProvider, useToastProvider} from '../';
 import userEvent from '@testing-library/user-event';
 
 function RenderToastButton(props = {}) {
-  let toastContext = useToastProvider();
-
   return (
     <div>
       <Button
-        onPress={() => toastContext[props.variant || 'neutral']('Toast is default', props)}
+        onPress={() => ToastProvider[props.variant || 'neutral']('Toast is default', props)}
         variant="primary">
         Show Default Toast
       </Button>
@@ -35,9 +33,8 @@ function RenderToastButton(props = {}) {
 function renderComponent(contents) {
   return render(
     <Provider theme={defaultTheme}>
-      <ToastProvider>
-        {contents}
-      </ToastProvider>
+      <ToastProvider />
+      {contents}
     </Provider>
   );
 }
@@ -51,6 +48,7 @@ function fireAnimationEnd(alert) {
 describe('Toast Provider and Container', function () {
   beforeEach(() => {
     jest.useFakeTimers();
+    clearToastQueue();
   });
 
   afterEach(() => {
@@ -201,17 +199,15 @@ describe('Toast Provider and Container', function () {
 
   it('prioritizes toasts based on variant', () => {
     function ToastPriorites(props = {}) {
-      let toastContext = useToastProvider();
-
       return (
         <div>
           <Button
-            onPress={() => toastContext.info('Info', props)}
+            onPress={() => ToastProvider.info('Info', props)}
             variant="primary">
             Info
           </Button>
           <Button
-            onPress={() => toastContext.negative('Error', props)}
+            onPress={() => ToastProvider.negative('Error', props)}
             variant="primary">
             Error
           </Button>
@@ -326,12 +322,11 @@ describe('Toast Provider and Container', function () {
 
   it('should support programmatically closing toasts', () => {
     function ToastToggle() {
-      let toastContext = useToastProvider();
       let [close, setClose] = useState(null);
 
       return (
         <Button
-          onPress={() => close ? setClose(close()) : setClose(() => toastContext.positive('Toast is done!'))}
+          onPress={() => close ? setClose(close()) : setClose(() => ToastProvider.positive('Toast is done!'))}
           variant="primary">
           {close ? 'Hide' : 'Show'} Toast
         </Button>

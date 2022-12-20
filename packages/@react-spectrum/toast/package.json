@@ -41,11 +41,13 @@
     "@react-stately/toast": "3.0.0-alpha.1",
     "@react-types/shared": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.4.14",
+    "use-sync-external-store": "^1.2.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/test-utils": "3.0.0-alpha.1"
+    "@react-spectrum/test-utils": "3.0.0-alpha.1",
+    "@types/use-sync-external-store": "^0.0.3"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",

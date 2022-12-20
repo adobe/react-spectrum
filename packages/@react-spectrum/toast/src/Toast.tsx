@@ -103,8 +103,8 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         zIndex: props.toast.priority
       }}
       data-animation={animation}
-      onAnimationEnd={e => {
-        if (e.animationName === toastContainerStyles['fade-out']) {
+      onAnimationEnd={() => {
+        if (animation === 'exiting') {
           state.remove(key);
         }
       }}>

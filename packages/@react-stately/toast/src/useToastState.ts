@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {useMemo, useState} from 'react';
+import {useCallback, useMemo} from 'react';
+import {useSyncExternalStore} from 'use-sync-external-store/shim';
 
 export interface ToastStateProps {
   maxVisibleToasts?: number,
@@ -40,73 +41,52 @@ export interface ToastState<T> {
 }
 
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
-  let {maxVisibleToasts = 1, hasExitAnimation} = props;
-  let queue = useMemo(() => new ToastQueue<T>(maxVisibleToasts), [maxVisibleToasts]);
-  let [visibleToasts, setVisibleToasts] = useState<QueuedToast<T>[]>([]);
+  let {maxVisibleToasts = 1, hasExitAnimation = false} = props;
+  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, hasExitAnimation}), [maxVisibleToasts, hasExitAnimation]);
+  return useToastQueue(queue);
+}
 
-  let setCurrentToasts = (toasts: QueuedToast<T>[]) => {
-    setVisibleToasts(visibleToasts => {
-      if (hasExitAnimation) {
-        let prevToasts: QueuedToast<T>[] = visibleToasts
-          .filter(t => !toasts.some(t2 => t.key === t2.key))
-          .map(t => ({...t, animation: 'exiting'}));
-
-        return prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
-      } else {
-        return toasts;
-      }
-    });
-  };
-
-  const add = (content: T, options: ToastOptions = {}) => {
-    let toastKey = Math.random().toString(36);
-    let timer = options.timeout ? new Timer(() => close(toastKey), options.timeout) : null;
-
-    queue.add({content, key: toastKey, timer, ...options});
-    setCurrentToasts(queue.getVisibleToasts());
-    return toastKey;
-  };
-
-  const close = (toastKey: string) => {
-    queue.remove(toastKey);
-    setCurrentToasts(queue.getVisibleToasts());
-  };
-
-  let remove = (toastKey: string) => {
-    setVisibleToasts(visibleToasts => visibleToasts.filter(t => t.key !== toastKey));
-  };
+export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
+  let subscribe = useCallback(fn => queue.subscribe(fn), [queue]);
+  let getSnapshot = useCallback(() => queue.visibleToasts, [queue]);
+  let visibleToasts = useSyncExternalStore(subscribe, getSnapshot);
 
   return {
-    add,
-    close,
-    remove,
     toasts: visibleToasts,
-    pauseAll: () => {
-      for (let toast of visibleToasts) {
-        if (toast.timer) {
-          toast.timer.pause();
-        }
-      }
-    },
-    resumeAll: () => {
-      for (let toast of visibleToasts) {
-        if (toast.timer) {
-          toast.timer.resume();
-        }
-      }
-    }
+    add: (content, options) => queue.add(content, options),
+    close: key => queue.remove(key),
+    remove: key => queue.exit(key),
+    pauseAll: () => queue.pauseAll(),
+    resumeAll: () => queue.resumeAll()
   };
 }
 
-class ToastQueue<T> {
-  queue: QueuedToast<T>[] = [];
+export class ToastQueue<T> {
+  private queue: QueuedToast<T>[] = [];
+  private subscriptions: Set<() => void> = new Set();
   maxVisibleToasts: number;
+  hasExitAnimation: boolean;
+  visibleToasts: QueuedToast<T>[] = [];
 
-  constructor(maxVisibleToasts: number) {
-    this.maxVisibleToasts = maxVisibleToasts;
+  constructor(options?: ToastStateProps) {
+    this.maxVisibleToasts = options?.maxVisibleToasts ?? 1;
+    this.hasExitAnimation = options?.hasExitAnimation ?? false;
   }
 
-  add(toast: QueuedToast<T>) {
+  subscribe(fn: () => void) {
+    this.subscriptions.add(fn);
+    return () => this.subscriptions.delete(fn);
+  }
+
+  add(content: T, options: ToastOptions = {}) {
+    let toastKey = Math.random().toString(36);
+    let toast: QueuedToast<T> = {
+      ...options,
+      content,
+      key: toastKey,
+      timer: options.timeout ? new Timer(() => this.remove(toastKey), options.timeout) : null
+    };
+
     let low = 0;
     let high = this.queue.length;
     while (low < high) {
@@ -126,7 +106,8 @@ class ToastQueue<T> {
       this.queue[i++].animation = 'queued';
     }
 
-    return low;
+    this.updateVisibleToasts();
+    return toastKey;
   }
 
   remove(key: string) {
@@ -135,10 +116,46 @@ class ToastQueue<T> {
       this.queue[index].onClose?.();
       this.queue.splice(index, 1);
     }
+
+    this.updateVisibleToasts();
   }
 
-  getVisibleToasts(): QueuedToast<T>[] {
-    return this.queue.slice(0, this.maxVisibleToasts);
+  exit(key: string) {
+    this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
+    this.updateVisibleToasts();
+  }
+
+  private updateVisibleToasts() {
+    let toasts = this.queue.slice(0, this.maxVisibleToasts);
+    if (this.hasExitAnimation) {
+      let prevToasts: QueuedToast<T>[] = this.visibleToasts
+        .filter(t => !toasts.some(t2 => t.key === t2.key))
+        .map(t => ({...t, animation: 'exiting'}));
+
+      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
+    } else {
+      this.visibleToasts = toasts;
+    }
+
+    for (let fn of this.subscriptions) {
+      fn();
+    }
+  }
+
+  pauseAll() {
+    for (let toast of this.visibleToasts) {
+      if (toast.timer) {
+        toast.timer.pause();
+      }
+    }
+  }
+
+  resumeAll() {
+    for (let toast of this.visibleToasts) {
+      if (toast.timer) {
+        toast.timer.resume();
+      }
+    }
   }
 }
 

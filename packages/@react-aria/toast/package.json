@@ -20,7 +20,7 @@
   "dependencies": {
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
-    "@react-aria/landmark": "3.0.0-alpha.4",
+    "@react-aria/landmark": "3.0.0-alpha.5",
     "@react-aria/utils": "^3.1.0",
     "@react-stately/toast": "3.0.0-alpha.1",
     "@react-types/button": "^3.7.0",
