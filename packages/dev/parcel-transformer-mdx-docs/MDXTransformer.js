@@ -471,8 +471,7 @@ export default {};
       specifier: 'client',
       specifierType: 'esm',
       needsStableName: false,
-      priority: 'parallel',
-      bundleBehavior: 'isolated'
+      priority: 'parallel'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
