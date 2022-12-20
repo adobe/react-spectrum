@@ -90,8 +90,8 @@ export function FocusScope(props: FocusScopeProps) {
     scopeRef: parentScopeRef
   } = useContext(FocusContext) || {};
 
-  // Called to add parent and every ancestor scopeRef if they haven't been added yet.
-  let addParentToFocusScopeTree = useCallback(() => {
+  // Call to add current scope to Tree if it hasn't been added yet. Adds parent scope to Tree if it doesn't exist.
+  let addParentToFocusScopeTree = () => {
     let parentScope = null;
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
@@ -102,8 +102,9 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     return scopeRef;
-  }, [addParentToTreeMap]);
+  };
 
+  // Construct Tree on inital mount. Generate from top most parent to bottom most child by calling addParentToTreeMap from parent context.
   useLayoutEffect(() => {
     let parentScope = null;
     if (addParentToTreeMap != null) {
@@ -114,8 +115,8 @@ export function FocusScope(props: FocusScopeProps) {
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
       focusScopeTree.addTreeNode(scopeRef, parentScope);
     }
-  // TODO: double check this dep array
-  }, [addParentToTreeMap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useLayoutEffect(() => {
     let node = focusScopeTree.getTreeNode(scopeRef);
