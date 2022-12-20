@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/radio",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -35,7 +35,7 @@
     "@react-aria/interactions": "^3.13.1",
     "@react-aria/radio": "^3.4.2",
     "@react-spectrum/form": "^3.5.2",
-    "@react-spectrum/label": "^3.10.0",
+    "@react-spectrum/label": "^3.10.1",
     "@react-spectrum/utils": "^3.8.1",
     "@react-stately/radio": "^3.6.2",
     "@react-types/radio": "^3.3.1",

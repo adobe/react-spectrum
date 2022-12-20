@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,11 +40,11 @@
     "@react-aria/utils": "^3.14.2",
     "@react-aria/virtualizer": "^3.6.1",
     "@react-aria/visually-hidden": "^3.6.1",
-    "@react-spectrum/button": "^3.11.1",
-    "@react-spectrum/checkbox": "^3.6.2",
-    "@react-spectrum/menu": "^3.9.1",
+    "@react-spectrum/button": "^3.11.2",
+    "@react-spectrum/checkbox": "^3.6.3",
+    "@react-spectrum/menu": "^3.9.2",
     "@react-spectrum/progress": "^3.3.4",
-    "@react-spectrum/tooltip": "^3.3.4",
+    "@react-spectrum/tooltip": "^3.3.5",
     "@react-spectrum/utils": "^3.8.1",
     "@react-stately/collections": "^3.5.1",
     "@react-stately/grid": "^3.4.2",
@@ -54,7 +54,7 @@
     "@react-types/grid": "^3.1.5",
     "@react-types/shared": "^3.16.0",
     "@react-types/table": "^3.4.0",
-    "@spectrum-icons/ui": "^3.4.1",
+    "@spectrum-icons/ui": "^3.4.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {
