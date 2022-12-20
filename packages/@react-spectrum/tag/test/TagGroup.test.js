@@ -342,40 +342,28 @@ describe('TagGroup', function () {
     offsetWidth.mockReset();
   });
 
-  // Commented out until spectrum can provide use case for these scenarios
-  // it.each`
-  //  Name           | Component     | TagComponent | props
-  //  ${'TagGroup'}  | ${TagGroup}   | ${Item}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
-  // `('$Name is read only', ({Component, TagComponent, props}) => {
-  //   let {getByText} = render(
-  //     <Component
-  //       {...props}
-  //       aria-label="tag group">
-  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-  //     </Component>
-  //   );
-  //   let tag = getByText('Tag 1');
-  //   fireEvent.keyDown(tag, {key: 'Delete', keyCode: 46});
-  //   expect(onRemoveSpy).not.toHaveBeenCalledWith('Tag 1', expect.anything());
-  // });
-  //
-  // it.each`
-  //  Name          | Component         | TagComponent     | props
-  //  ${'Tag'}      | ${TagGroup}       | ${Item}          | ${{validationState: 'invalid'}}
-  // `('$Name can be invalid', function ({Component, TagComponent, props}) {
-  //   let {getByRole, debug} = render(
-  //     <Component
-  //       {...props}
-  //       aria-label="tag group">
-  //       <TagComponent aria-label="Tag 1">Tag 1</TagComponent>
-  //     </Component>
-  //   );
-  //
-  //   debug();
-  //
-  //   let tag = getByRole('row');
-  //   expect(tag).toHaveAttribute('aria-invalid', 'true');
-  // });
-});
+  it('maxRows should not show button if there is enough room to show all tags', function () {
+    let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
+      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
+      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
+      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+    let {getAllByRole, queryAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup maxRows={2} aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+        </TagGroup>
+      </Provider>
+    );
 
-// need to add test for focus after onremove
+    let tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(2);
+
+    let buttons = queryAllByRole('button');
+    expect(buttons.length).toBe(0);
+    
+    offsetWidth.mockReset();
+  });
+});
