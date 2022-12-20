@@ -89,9 +89,9 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   };
 
   return (
-    <>
+    <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
-      <div className={wrapperClassName} style={style} ref={wrapperRef}>
+      <div className={wrapperClassName} style={style}>
         <div
           {...styleProps}
           {...modalProps}
@@ -101,7 +101,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
           {children}
         </div>
       </div>
-    </>
+    </div>
   );
 });
 

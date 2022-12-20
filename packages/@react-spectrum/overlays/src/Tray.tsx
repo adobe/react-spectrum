@@ -95,9 +95,9 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   );
 
   return (
-    <>
+    <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
-      <div className={wrapperClassName} style={wrapperStyle} ref={wrapperRef}>
+      <div className={wrapperClassName} style={wrapperStyle}>
         <div
           {...styleProps}
           {...modalProps}
@@ -109,7 +109,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
           <DismissButton onDismiss={state.close} />
         </div>
       </div>
-    </>
+    </div>
   );
 });
 
