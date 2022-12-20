@@ -17,6 +17,13 @@ import packageData from '@react-spectrum/actionbar/package.json';
 
 ```jsx import
 import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+import {ListView} from '@react-spectrum/list';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {Flex} from '@react-spectrum/layout';
+import {Text} from '@react-spectrum/text';
+import {TableView, TableHeader, TableBody, Row, Column, Cell} from '@react-spectrum/table';
 ```
 
 ---
@@ -38,26 +45,47 @@ after_version: 3.1.0
 
 ## Example
 ```tsx example
-function StaticActionBar() {
+function Example() {
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
   return (
-    <ActionBarContainer>
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
       <ActionBar
         isEmphasized
-        selectedItemCount={3}>
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
         <Item key="edit">
-          Edit
+          <Edit />
+          <Text>Edit</Text>
         </Item>
         <Item key="copy">
-          Copy
+          <Copy />
+          <Text>Copy</Text>
         </Item>
         <Item key="delete">
-          Delete
+          <Delete />
+          <Text>Delete</Text>
         </Item>
       </ActionBar>
     </ActionBarContainer>
   );
 }
-<StaticActionBar />
+
+<Example />
 ```
 
 ## Content
@@ -68,18 +96,35 @@ elements as children, each with a `key` prop. Alternatively, a function that ret
 docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
 
 ```tsx example
-function DynamicActionBar() {
+function Example() {
   let barItems = [
     {key: 'edit', label: 'Edit'},
     {key: 'copy', label: 'Copy'},
     {key: 'delete', label: 'Delete'}
   ];
 
+  let listItems = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
   return (
-    <ActionBarContainer>
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={listItems} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
       <ActionBar
         items={barItems}
-        selectedItemCount={3}
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}
         isEmphasized>
         {item => (
           <Item key={item.key}>
@@ -91,82 +136,7 @@ function DynamicActionBar() {
   );
 }
 
-<DynamicActionBar />
-```
-
-### Layout
-ActionBarContainer accepts an ActionBar alongside any renderable children. It accepts the typical selection of [style props](#props), allowing you to customize its layout.
-The example below applies a static height on the ActionBarContainer instead of matching the height of the TableView.
-
-```tsx example
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
-import {Text} from '@react-spectrum/text';
-
-function ActionBarTable(props) {
-  // Same bar items as example above...
-  ///- begin collapse -///
-  let barItems = [
-    {key: 'edit', label: 'Edit'},
-    {key: 'copy', label: 'Copy'},
-    {key: 'delete', label: 'Delete'}
-  ];
-  ///- end collapse -///
-  let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Level', uid: 'level'}
-  ];
-
-  let rows = [
-    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
-    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
-  return (
-    <ActionBarContainer
-      /*- begin highlight -*/
-      height="size-5000"
-      /*- end highlight -*/>
-      <TableView
-        aria-label="Table with controlled selection"
-        selectionMode="multiple"
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys}
-        /*- begin highlight -*/
-        height="size-3000"
-        /*- end highlight -*/>
-        <TableHeader columns={columns}>
-          {column => (
-            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
-        <TableBody items={rows}>
-          {item => (
-            <Row>
-              {columnKey => <Cell>{item[columnKey]}</Cell>}
-            </Row>
-          )}
-        </TableBody>
-      </TableView>
-      <ActionBar
-        items={barItems}
-        isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
-        onClearSelection={() => setSelectedKeys(new Set([]))}>
-        {item => (
-          <Item key={item.key}>
-            {item.label}
-          </Item>
-        )}
-      </ActionBar>
-    </ActionBarContainer>
-  );
-}
+<Example />
 ```
 
 ### Accessibility
@@ -260,30 +230,48 @@ function ActionBarActions(props) {
 with the rest of the UI, directing a user’s focus to elsewhere in a view.
 
 ```tsx example
-<ActionBarContainer>
-  <ActionBar selectedItemCount={1}>
-    <Item key="edit">
-      Edit
-    </Item>
-    <Item key="copy">
-      Copy
-    </Item>
-    <Item key="delete">
-      Delete
-    </Item>
-  </ActionBar>
-</ActionBarContainer>
-<ActionBarContainer>
-<ActionBar isEmphasized selectedItemCount={1}>
-    <Item key="edit">
-      Edit
-    </Item>
-    <Item key="copy">
-      Copy
-    </Item>
-    <Item key="delete">
-      Delete
-    </Item>
-  </ActionBar>
-</ActionBarContainer>
+function Example({isEmphasized}) {
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
+  return (
+    <ActionBarContainer height={300} width="size-5000">
+      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        isEmphasized={isEmphasized}
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<Flex direction="row" gap="size-200">
+  <Example />
+  <Example isEmphasized />
+</Flex>
 ```
