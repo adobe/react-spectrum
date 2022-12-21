@@ -95,6 +95,8 @@ export function FocusScope(props: FocusScopeProps) {
     let parentScope = null;
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
+    } else {
+      parentScope = activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : parentScope
     }
 
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
