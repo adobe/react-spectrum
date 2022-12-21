@@ -57,7 +57,9 @@ export interface PopoverAria {
   /** Props to apply to the underlay element, if any. */
   underlayProps: DOMAttributes,
   /** Placement of the popover with respect to the trigger. */
-  placement: PlacementAxis
+  placement: PlacementAxis,
+  /** Updates the position of the overlay. */
+  updatePosition(): void
 }
 
 /**
@@ -84,7 +86,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverRef
   );
 
-  let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, arrowProps, placement, updatePosition} = useOverlayPosition({
     ...otherProps,
     targetRef: triggerRef,
     overlayRef: popoverRef,
@@ -116,6 +118,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverProps: mergeProps(overlayProps, positionProps),
     arrowProps,
     underlayProps,
-    placement
+    placement,
+    updatePosition
   };
 }
