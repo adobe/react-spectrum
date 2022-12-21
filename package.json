@@ -12,6 +12,7 @@
     "install-16": "yarn add -W react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8",
     "install-17": "yarn add -W react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8",
     "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook'",
+    "start-strict": "cross-env NODE_ENV=storybook STRICT_MODE=1 start-storybook -p 9003 --ci -c '.storybook'",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
     "build:storybook-16": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-16",
     "build:storybook-17": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-17",
