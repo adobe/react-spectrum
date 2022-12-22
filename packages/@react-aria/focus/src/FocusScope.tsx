@@ -95,8 +95,12 @@ export function FocusScope(props: FocusScopeProps) {
     let parentScope = null;
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
-    } else {
-      parentScope = activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : parentScope
+    } else if (activeScope && focusScopeTree.getTreeNode(activeScope)) {
+      // TODO: I removed the ancestorScope check since the ctxParent is null in this case so isAncestorScope will never to true unles the activeScope is somehow null as well
+      // in which it is a moot point anyways (activeScope === ctxParent then)
+      // If addParentToTreeMap doesn't exist on context, then the current FocusScope is either standalone or could be a overlay (e.g. DialogContainer launched from a menu)
+      // and thus perhaps outside the active scope. For the latter, we'll want
+      parentScope = activeScope;
     }
 
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
@@ -111,13 +115,15 @@ export function FocusScope(props: FocusScopeProps) {
     let parentScope = null;
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
+    } else if (activeScope && focusScopeTree.getTreeNode(activeScope)) {
+      parentScope = activeScope;
     }
 
     // For outer most leaf in tree, need to add self to tree map
     if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
       focusScopeTree.addTreeNode(scopeRef, parentScope);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   useLayoutEffect(() => {
@@ -131,7 +137,7 @@ export function FocusScope(props: FocusScopeProps) {
   let ctxParent = parentScopeRef ?? null;
   // TODO: in render, move inside the useLayoutEffects? Maybe ok now since the focusScopeTree fast map is only updated in layoutEffect
   let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
-
+  // TODO: remove this parentScope and its existanve in the other layouteffects
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current.nextSibling;
@@ -638,7 +644,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             // ancestor scope that is still in the tree.
             treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
-              // TODO: in raf
               if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
                 focusFirstInScope(treeNode.scopeRef.current, true);
                 return;
