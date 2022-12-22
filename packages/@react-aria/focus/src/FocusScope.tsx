@@ -91,7 +91,7 @@ export function FocusScope(props: FocusScopeProps) {
   } = useContext(FocusContext) || {};
 
   // Call to add current scope to Tree if it hasn't been added yet. Adds parent scope to Tree if it doesn't exist.
-  let addParentToFocusScopeTree = () => {
+  let addParentToFocusScopeTree = useCallback(() => {
     let parentScope = null;
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
@@ -108,7 +108,7 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     return scopeRef;
-  };
+  }, [addParentToTreeMap]);
 
   // Construct Tree on inital mount. Generate from top most parent to bottom most child by calling addParentToTreeMap from parent context.
   useLayoutEffect(() => {
@@ -124,7 +124,7 @@ export function FocusScope(props: FocusScopeProps) {
       focusScopeTree.addTreeNode(scopeRef, parentScope);
     }
 
-  }, []);
+  }, [addParentToTreeMap]);
 
   useLayoutEffect(() => {
     let node = focusScopeTree.getTreeNode(scopeRef);
@@ -176,9 +176,15 @@ export function FocusScope(props: FocusScopeProps) {
     }
   }, [scopeRef, parentScope]);
 
-  let focusManager = createFocusManagerForScope(scopeRef);
+  let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
+  let value = useMemo(() => ({
+    scopeRef,
+    focusManager,
+    addParentToFocusScopeTree
+  }), [addParentToFocusScopeTree, focusManager]);
+
   return (
-    <FocusContext.Provider value={{scopeRef, focusManager, addParentToFocusScopeTree}}>
+    <FocusContext.Provider value={value}>
       <span data-focus-scope-start hidden ref={startRef} />
       {children}
       <span data-focus-scope-end hidden ref={endRef} />
