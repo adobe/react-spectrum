@@ -50,7 +50,10 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   let state = useOverlayTriggerState(props);
   let wasOpen = useRef(false);
-  wasOpen.current = state.isOpen;
+  useEffect(() => {
+    wasOpen.current = state.isOpen;
+  }, [state.isOpen]);
+
   let isExiting = useRef(false);
   let onExiting = () => isExiting.current = true;
   let onExited = () => isExiting.current = false;
