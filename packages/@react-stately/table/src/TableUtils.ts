@@ -82,11 +82,11 @@ export interface IColumn {
  * They have deemed this to be acceptable because the number of elements is usually small and the flex factors
  * are usually not high variance. I believe we can make the same assumptions. Particularly once resizing is
  * started, it will convert all columns to the left to static widths, so it will cut down on the number of FR columns.
- * @param availableWidth
- * @param columns
- * @param changedColumns
- * @param getDefaultWidth
- * @param getDefaultMinWidth
+ * @param availableWidth - The visible width of the table.
+ * @param columns - The table defined columns.
+ * @param changedColumns - Any columns we want to override, for example, during resizing.
+ * @param getDefaultWidth - A function that returns the default width of a column by its index.
+ * @param getDefaultMinWidth - A function that returns the default min width of a column by its index.
  */
 export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth, getDefaultMinWidth) {
   let flexItems = columns.map((column, index) => {
