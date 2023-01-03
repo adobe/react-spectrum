@@ -11,11 +11,13 @@ module.exports = {
     'storybook-dark-mode',
     './custom-addons/provider/register',
     './custom-addons/descriptions/register',
-    './custom-addons/theme/register',
-    './custom-addons/strictmode/register'
+    './custom-addons/theme/register'
   ],
   typescript: {
     check: false,
     reactDocgen: false
-  }
+  },
+  reactOptions: {
+    strictMode: process.env.STRICT_MODE
+  },
 };
