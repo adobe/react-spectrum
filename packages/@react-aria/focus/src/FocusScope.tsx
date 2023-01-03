@@ -158,6 +158,24 @@ export function FocusScope(props: FocusScopeProps) {
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
   useLayoutEffect(() => {
     if (scopeRef) {
+      let activeElement = document.activeElement;
+      let scope = null;
+      // In strict mode, active scope is incorrectly updated since cleanup will run even though scope hasn't unmounted.
+      // To fix this, we need to update the actual activeScope here
+      if (isElementInScope(activeElement, scopeRef.current)) {
+        // Since useLayoutEffect runs for children first, we need to traverse the focusScope tree and find the bottom most scope that
+        // contains the active element and set that as the activeScope
+        for (let node of focusScopeTree.traverse()) {
+          if (isElementInScope(activeElement, node.scopeRef.current)) {
+            scope = node;
+          }
+        }
+
+        if (scope === focusScopeTree.getTreeNode(scopeRef)) {
+          activeScope = scope.scopeRef;
+        }
+      }
+
       return () => {
         // Scope may have been re-parented.
         let parentScope = focusScopeTree.getTreeNode(scopeRef).parent.scopeRef;
