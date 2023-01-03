@@ -1526,7 +1526,7 @@ describe('FocusScope', function () {
       act(() => {
         jest.runAllTimers();
       });
-      // Needed useRestoreFocus raf
+      // Needed for useRestoreFocus layout cleanup raf
       act(() => {
         jest.runAllTimers();
       });

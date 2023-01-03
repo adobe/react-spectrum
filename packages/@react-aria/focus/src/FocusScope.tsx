@@ -96,10 +96,8 @@ export function FocusScope(props: FocusScopeProps) {
     if (addParentToTreeMap != null) {
       parentScope = addParentToTreeMap();
     } else if (activeScope && focusScopeTree.getTreeNode(activeScope)) {
-      // TODO: I removed the ancestorScope check since the ctxParent is null in this case so isAncestorScope will never to true unles the activeScope is somehow null as well
-      // in which it is a moot point anyways (activeScope === ctxParent then)
       // If addParentToTreeMap doesn't exist on context, then the current FocusScope is either standalone or could be a overlay (e.g. DialogContainer launched from a menu)
-      // and thus perhaps outside the active scope. For the latter, we'll want
+      // and thus perhaps outside the active scope. For the latter, we'll want to set the new scope's parent as the active scope so we can restore focus when the scope unmounts
       parentScope = activeScope;
     }
 
@@ -131,13 +129,6 @@ export function FocusScope(props: FocusScopeProps) {
     node.contain = contain;
   }, [contain]);
 
-  // The parent scope is based on the JSX tree, using context.
-  // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
-  // we want the parent scope to be the active scope instead.
-  let ctxParent = parentScopeRef ?? null;
-  // TODO: in render, move inside the useLayoutEffects? Maybe ok now since the focusScopeTree fast map is only updated in layoutEffect
-  let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
-  // TODO: remove this parentScope and its existanve in the other layouteffects
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current.nextSibling;
@@ -148,7 +139,7 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-  }, [children, parentScope]);
+  }, [children]);
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
@@ -192,7 +183,7 @@ export function FocusScope(props: FocusScopeProps) {
         focusScopeTree.removeTreeNode(scopeRef);
       };
     }
-  }, [scopeRef, parentScope]);
+  }, [scopeRef]);
 
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(() => ({
@@ -865,7 +856,7 @@ class Tree {
     if (children.length > 0) {
       children.forEach(child => parentNode.addChild(child));
     }
-    // debugger
+
     this.fastMap.delete(node.scopeRef);
   }
 
