@@ -82,6 +82,9 @@ export interface IColumn {
  * They have deemed this to be acceptable because the number of elements is usually small and the flex factors
  * are usually not high variance. I believe we can make the same assumptions. Particularly once resizing is
  * started, it will convert all columns to the left to static widths, so it will cut down on the number of FR columns.
+ *
+ * There are likely faster ways to do this, I've chosen to stick to the spec as closely as possible for readability, accuracy, and for the
+ * note that this behaving quadratically is unlikely to be a problem.
  * @param availableWidth - The visible width of the table.
  * @param columns - The table defined columns.
  * @param changedColumns - Any columns we want to override, for example, during resizing.
