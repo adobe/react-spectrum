@@ -61,7 +61,6 @@ export interface FocusManager {
 
 type ScopeRef = RefObject<Element[]>;
 interface IFocusContext {
-  scopeRef: ScopeRef,
   focusManager: FocusManager,
   addParentToFocusScopeTree: () => ScopeRef
 }
@@ -85,10 +84,7 @@ export function FocusScope(props: FocusScopeProps) {
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
-  let {
-    addParentToFocusScopeTree: addParentToTreeMap,
-    scopeRef: parentScopeRef
-  } = useContext(FocusContext) || {};
+  let {addParentToFocusScopeTree: addParentToTreeMap} = useContext(FocusContext) || {};
 
   // Call to add current scope to Tree if it hasn't been added yet. Adds parent scope to Tree if it doesn't exist.
   let addParentToFocusScopeTree = useCallback(() => {
@@ -187,7 +183,6 @@ export function FocusScope(props: FocusScopeProps) {
 
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(() => ({
-    scopeRef,
     focusManager,
     addParentToFocusScopeTree
   }), [addParentToFocusScopeTree, focusManager]);
