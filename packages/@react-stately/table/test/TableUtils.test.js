@@ -33,19 +33,18 @@ describe('TableUtils', () => {
       let tableWidth = 1000;
       let widths = calculateColumnSizes(
         tableWidth,
-        [ // total fr = 10, total px = 1000 - 50 = 950, 1fr = 950 / 10 = 95
-          {key: 'id', label: 'ID', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'name', label: 'Name', allowsToggle: false, minWidth: '20%'}, // minWidth = 200px, width 1fr -> 200px -> 225px
-          {key: 'info', hideHeader: true, allowsToggle: false}, // minWidth 50px ->
-          {key: 'hp', label: 'HP', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'attack', label: 'Attack', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'defense', label: 'Defense', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'speed', label: 'Speed', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'total', label: 'Total', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'weight', label: 'Weight', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'height', label: 'Height', align: 'right', maxWidth: '5%'}, // maxWidth = 50px, width 1fr -> 50px
-          {key: 'abilities', label: 'Abilities', minWidth: '20%'} // minWidth = 200px, width 1fr -> 200px -> 225px
-          // totals = 50 + 200 + 50 + 50 + 50 + 50 + 50 + 50 + 50 + 50 + 200 = 950 -> divide remaining 50px between minWidth, empty columns 50 / 3 = 16.666666666666668
+        [
+          {key: 'id', label: 'ID', maxWidth: '5%'},
+          {key: 'name', label: 'Name', allowsToggle: false, minWidth: '20%'},
+          {key: 'info', hideHeader: true, allowsToggle: false},
+          {key: 'hp', label: 'HP', align: 'right', maxWidth: '5%'},
+          {key: 'attack', label: 'Attack', align: 'right', maxWidth: '5%'},
+          {key: 'defense', label: 'Defense', align: 'right', maxWidth: '5%'},
+          {key: 'speed', label: 'Speed', align: 'right', maxWidth: '5%'},
+          {key: 'total', label: 'Total', align: 'right', maxWidth: '5%'},
+          {key: 'weight', label: 'Weight', align: 'right', maxWidth: '5%'},
+          {key: 'height', label: 'Height', align: 'right', maxWidth: '5%'},
+          {key: 'abilities', label: 'Abilities', minWidth: '20%'}
         ],
         new Map(),
         () => '1fr',
