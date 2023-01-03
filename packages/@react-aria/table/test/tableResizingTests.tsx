@@ -123,7 +123,7 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         let tree = render(<Table columns={columns} rows={rows} />);
         expect(getColumnWidths(tree)).toStrictEqual([450, 100, 100, 250]);
       });
-      it.skip('cannot size less than the minWidth', () => {
+      it('cannot size less than the minWidth', () => {
         let columns = [
           {name: 'Name', id: 'name', minWidth: 500, defaultWidth: '50%', allowsResizing},
           {name: 'Type', id: 'type', minWidth: 100, defaultWidth: '1fr', allowsResizing},
