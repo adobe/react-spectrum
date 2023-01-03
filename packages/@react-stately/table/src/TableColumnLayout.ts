@@ -84,47 +84,42 @@ export class TableColumnLayout<T> {
     let prevColumnWidths = this.columnWidths;
     // resizing a column
     let resizeIndex = Infinity;
-    let controlledArray = Array.from(controlledWidths);
-    let uncontrolledArray = Array.from(uncontrolledWidths);
-    let combinedArray = controlledArray.concat(uncontrolledArray);
-    let resizingChanged = new Map<Key, ColumnSize>(combinedArray);
-    let frKeys = new Map();
+    let resizingChanged = new Map<Key, ColumnSize>([...controlledWidths, ...uncontrolledWidths]);
     let percentKeys = new Map();
     let frKeysToTheRight = new Map();
     let minWidths = new Map();
     // freeze columns to the left to their previous pixel value
-    // at the same time count how many total FR's are in play and which of those FRs are
-    // to the right or left of the resizing column
     collection.columns.forEach((column, i) => {
       let frKey;
+      let frValue;
       minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i]));
       if (col !== column.key && !column.column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
         // uncontrolled don't have props.width for us, so instead get from our state
         frKey = column.key;
-        frKeys.set(column.key, parseFractionalUnit(uncontrolledWidths.get(column.key) as string));
+        frValue = parseFractionalUnit(uncontrolledWidths.get(column.key) as string);
       } else if (col !== column.key && !isStatic(column.column.props.width) && !uncontrolledWidths.get(column.key)) {
         // controlledWidths will be the same in the collection
         frKey = column.key;
-        frKeys.set(column.key, parseFractionalUnit(column.column.props.width));
+        frValue = parseFractionalUnit(column.column.props.width);
       } else if (col !== column.key && column.column.props.width?.endsWith?.('%')) {
         percentKeys.set(column.key, column.column.props.width);
       }
       // don't freeze columns to the right of the resizing one
       if (resizeIndex < i) {
         if (frKey) {
-          frKeysToTheRight.set(frKey, frKeys.get(frKey));
+          frKeysToTheRight.set(frKey, frValue);
         }
         return;
       }
       // we already know the new size of the resizing column
       if (column.key === col) {
         resizeIndex = i;
+        resizingChanged.set(column.key, Math.floor(width));
         return;
       }
       // freeze column to previous value
       resizingChanged.set(column.key, prevColumnWidths.get(column.key));
     });
-    resizingChanged.set(col, Math.floor(width));
 
     // predict pixels sizes for all columns based on resize
     let columnWidths = calculateColumnSizes(
@@ -145,10 +140,8 @@ export class TableColumnLayout<T> {
     });
 
     // add FR's back as they were to columns to the right
-    Array.from(frKeys).forEach(([key]) => {
-      if (frKeysToTheRight.has(key)) {
-        newWidths.set(key, `${frKeysToTheRight.get(key)}fr`);
-      }
+    Array.from(frKeysToTheRight).forEach(([key]) => {
+      newWidths.set(key, `${frKeysToTheRight.get(key)}fr`);
     });
 
     // put back in percents
