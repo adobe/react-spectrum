@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
-import {GridState} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
@@ -21,17 +20,14 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
   onRemove?: (key: Key) => void
 }
 
-export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps, AriaLabelingProps {}
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
 
 export interface TagProps<T> extends ItemProps<any> {
   isFocused: boolean,
   allowsRemoving?: boolean,
   item: Node<T>,
   onRemove?: (key: Key) => void,
-  tagRef: RefObject<HTMLElement>,
   tagRowRef: RefObject<HTMLElement>
-}
-
-interface SpectrumTagProps<T> extends TagProps<T> {
-  state: GridState<any, any>
 }
