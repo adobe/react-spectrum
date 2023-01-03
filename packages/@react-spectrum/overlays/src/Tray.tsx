@@ -94,6 +94,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     styleProps.className
   );
 
+  // Attach Transition's nodeRef to outer most wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
     <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
