@@ -3530,6 +3530,7 @@ describe('TableView', function () {
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
+      act(() => jest.runAllTimers());
       expect(rows[1]).not.toBeInTheDocument();
 
       rows = within(table).getAllByRole('row');

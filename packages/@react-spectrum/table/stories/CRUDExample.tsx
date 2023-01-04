@@ -95,7 +95,7 @@ export function CRUDExample() {
             title="Delete"
             variant="destructive"
             primaryActionLabel="Delete"
-            onPrimaryAction={() => list.remove(dialog.item.id)}>
+            onPrimaryAction={() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => list.remove(dialog.item.id))))}>
             Are you sure you want to delete {dialog.item.firstName} {dialog.item.lastName}?
           </AlertDialog>
         }
