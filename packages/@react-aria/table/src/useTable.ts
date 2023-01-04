@@ -18,7 +18,7 @@ import intlMessages from '../intl/*.json';
 import {Layout} from '@react-stately/virtualizer';
 import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import {RefObject, useMemo} from 'react';
+import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
@@ -115,6 +115,34 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   useUpdateEffect(() => {
     announce(sortDescription, 'assertive', 500);
   }, [sortDescription]);
+
+  const cachedFocusedKey = useRef(null);
+  const cachedDelegate = useRef(null);
+  useEffect(() => {
+    if (state.selectionManager.focusedKey === null && cachedFocusedKey.current !== null) {
+      let nextKeyBelow = cachedDelegate.current.getKeyBelow(cachedFocusedKey.current);
+      while (nextKeyBelow) {
+        if (state.collection.getItem(nextKeyBelow)) {
+          state.selectionManager.setFocusedKey(nextKeyBelow);
+          break;
+        }
+        nextKeyBelow = cachedDelegate.current.getKeyBelow(nextKeyBelow);
+      }
+      if (!nextKeyBelow) {
+        let nextKeyAbove = cachedDelegate.current.getKeyAbove(cachedFocusedKey.current);
+        while (nextKeyAbove) {
+          if (state.collection.getItem(nextKeyAbove)) {
+            state.selectionManager.setFocusedKey(nextKeyAbove);
+            break;
+          }
+          nextKeyAbove = cachedDelegate.current.getKeyBelow(nextKeyAbove);
+        }
+      }
+    }
+    cachedFocusedKey.current = state.selectionManager.focusedKey;
+    cachedDelegate.current = delegate;
+  },
+  [delegate, state.collection, state.selectionManager]);
 
   return {
     gridProps: mergeProps(

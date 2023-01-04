@@ -1616,7 +1616,7 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(before);
       });
 
-      it('should send focus to the collection if the focused row is removed', function () {
+      it('should send focus to the appropriate key below if the focused row is removed', function () {
         let tree = render(<DeletableRowsTable />);
 
         let rows = tree.getAllByRole('row');
@@ -1631,13 +1631,43 @@ describe('TableView', function () {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
 
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
+      });
+
+      it('should send focus to the appropriate key above if the focused last row is removed', function () {
+        let tree = render(<DeletableRowsTable />);
+
+        let rows = tree.getAllByRole('row');
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
 
         rows = tree.getAllByRole('row');
-        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
       });
     });
 
@@ -3429,17 +3459,28 @@ describe('TableView', function () {
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
-      let button = within(rows[2]).getByRole('button');
-      triggerPress(button);
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement).toBe(rows[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       let menu = tree.getByRole('menu');
-      expect(document.activeElement).toBe(menu);
-
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
+      expect(document.activeElement).toBe(menuItems[0]);
 
-      triggerPress(menuItems[1]);
-      act(() => jest.runAllTimers());
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(menuItems[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
@@ -3450,14 +3491,15 @@ describe('TableView', function () {
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
-      expect(rows[2]).not.toBeInTheDocument();
+      expect(rows[1]).not.toBeInTheDocument();
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
 
-      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
-      expect(rowHeaders[0]).toHaveTextContent('Sam');
-      expect(document.activeElement).toBe(rows[1]);
+      expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Julia');
+
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
     });
 
     it('resets row indexes after deleting a row', function () {
