@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {ActionBar, ActionBarContainer} from '../../actionbar';
+import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
@@ -374,6 +374,14 @@ storiesOf('ListView/Drag and Drop', module)
     'Drag within list (Reorder)',
     args => (
       <Flex direction="row" wrap alignItems="center">
+        <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+      </Flex>
+    )
+  )
+  .add(
+    'Drag within list scrolling (Reorder)',
+    args => (
+      <Flex direction="row" wrap alignItems="center" height={100}>
         <ReorderExample {...args} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
       </Flex>
     )
@@ -802,6 +810,7 @@ export function ReorderExample(props) {
       aria-label="reorderable list view"
       selectionMode="multiple"
       width="300px"
+      height="100%"
       items={list.items}
       disabledKeys={disabledKeys}
       dragAndDropHooks={dragAndDropHooks}

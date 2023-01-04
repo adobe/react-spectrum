@@ -12,97 +12,53 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {GridCollection, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, useMemo} from 'react';
+import React, {ReactElement} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {useGrid} from '@react-aria/grid';
-import {useListState} from '@react-stately/list';
-import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-
+import {useTagGroup} from '@react-aria/tag';
+import {useTagGroupState} from '@react-stately/tag';
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
-    isDisabled,
-    isRemovable,
+    allowsRemoving,
     onRemove,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let {direction} = useLocale();
-  let listState = useListState(props);
-  let gridCollection = useMemo(() => new GridCollection({
-    columnCount: 1, // unused, but required for grid collections
-    items: [...listState.collection].map(item => {
-      let childNodes = [{
-        ...item,
-        index: 0,
-        type: 'cell'
-      }];
-
-      return {
-        type: 'item',
-        childNodes
-      };
-    })
-  }), [listState.collection, isRemovable]);
-  let state = useGridState({
-    ...props,
-    collection: gridCollection,
-    focusMode: 'cell'
-  });
-  let keyboardDelegate = new TagKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: state.disabledKeys,
-    ref: domRef,
-    direction,
-    focusMode: 'cell'
-  });
-  let {gridProps} = useGrid({
-    ...props,
-    keyboardDelegate
-  }, state, domRef);
-  const {tagGroupProps} = useTagGroup(props, listState);
-
-  // Don't want the grid to be focusable or accessible via keyboard
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, role, ...otherGridProps} = gridProps;
+  let state = useTagGroupState(props);
+  let {tagGroupProps} = useTagGroup(props, state, domRef);
   return (
     <div
-      {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
+      {...mergeProps(styleProps, tagGroupProps)}
       className={
         classNames(
           styles,
           'spectrum-Tags',
-          {
-            'is-disabled': isDisabled
-          },
           styleProps.className
         )
       }
       role={state.collection.size ? 'grid' : null}
       ref={domRef}>
-      {[...gridCollection].map(item => (
+      {[...state.collection].map(item => (
         <Tag
-          {...item.childNodes[0].props}
+          {...item.props}
           key={item.key}
           item={item}
           state={state}
-          isDisabled={isDisabled || state.disabledKeys.has(item?.childNodes[0]?.key)}
-          isRemovable={isRemovable}
+          allowsRemoving={allowsRemoving}
           onRemove={onRemove}>
-          {item.childNodes[0].rendered}
+          {item.rendered}
         </Tag>
-        ))}
+      ))}
     </div>
   );
 }
 
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
 const _TagGroup = React.forwardRef(TagGroup) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_TagGroup as TagGroup};

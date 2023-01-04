@@ -29,7 +29,7 @@ const GROUPS = {
     'padding', 'paddingTop', 'paddingLeft', 'paddingRight', 'paddingBottom', 'paddingStart', 'paddingEnd', 'paddingX', 'paddingY'
   ],
   Sizing: [
-    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'
+    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight', 'defaultWidth'
   ],
   Background: [
     'background', 'backgroundColor', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backgroundRepeat',
@@ -106,6 +106,7 @@ function groupProps(props) {
     for (let propName of GROUPS[group]) {
       if (propName instanceof RegExp) {
         for (let key in props) {
+          // eslint-disable-next-line max-depth
           if (propName.test(key)) {
             groupProps[key] = props[key];
             delete props[key];

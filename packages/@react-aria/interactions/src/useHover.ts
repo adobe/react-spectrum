@@ -197,6 +197,7 @@ export function useHover(props: HoverProps): HoverResult {
     if (isDisabled) {
       triggerHoverEnd({currentTarget: state.target}, state.pointerType);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisabled]);
 
   return {

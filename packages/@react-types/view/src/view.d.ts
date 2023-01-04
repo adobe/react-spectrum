@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ViewStyleProps} from '@react-types/shared';
+import {ColorVersion, DOMProps, ViewStyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactNode} from 'react';
 
-export interface ViewProps extends ViewStyleProps, DOMProps {
+export interface ViewProps<C extends ColorVersion> extends ViewStyleProps<C>, DOMProps {
   /**
    * The element to render as the node.
    */

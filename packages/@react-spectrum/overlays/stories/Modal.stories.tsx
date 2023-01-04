@@ -18,8 +18,9 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
-import React, {Fragment, useState} from 'react';
+import React, {Fragment} from 'react';
 import {storiesOf} from '@storybook/react';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
 storiesOf('Modal', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -33,17 +34,17 @@ storiesOf('Modal', module)
   );
 
 function ModalExample() {
-  let [isOpen, setOpen] = useState(false);
+  let state = useOverlayTriggerState({});
 
   return (
     <Fragment>
-      <ActionButton onPress={() => setOpen(true)}>Open modal</ActionButton>
-      <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+      <ActionButton onPress={state.open}>Open modal</ActionButton>
+      <Modal state={state}>
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></ButtonGroup>
+          <ButtonGroup><Button variant="cta" onPress={state.close}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
@@ -51,18 +52,18 @@ function ModalExample() {
 }
 
 function UnmountingTrigger() {
-  let [isPopoverOpen, setPopoverOpen] = useState(false);
-  let [isModalOpen, setModalOpen] = useState(false);
+  let popoverState = useOverlayTriggerState({});
+  let modalState = useOverlayTriggerState({});
 
   let openModal = () => {
-    setPopoverOpen(false);
-    setModalOpen(true);
+    popoverState.close();
+    modalState.open();
   };
 
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
-      <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
+      <DialogTrigger type="popover" isOpen={popoverState.isOpen} onOpenChange={popoverState.setOpen}>
         <ActionButton>Open popover</ActionButton>
         <Dialog>
           <Heading>Title</Heading>
@@ -75,12 +76,12 @@ function UnmountingTrigger() {
           </Content>
         </Dialog>
       </DialogTrigger>
-      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+      <Modal state={modalState}>
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
+          <ButtonGroup><Button variant="cta" onPress={modalState.close}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>

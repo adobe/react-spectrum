@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, DimensionValue} from './dna';
+import {BackgroundColorValue, BackgroundColorValueV6, BorderColorValue, BorderColorValueV6, BorderRadiusValue, BorderSizeValue, DimensionValue} from './dna';
 import {CSSProperties} from 'react';
 
 type ResponsiveProp<T> = {
@@ -112,11 +112,28 @@ export interface StyleProps {
   isHidden?: Responsive<boolean>
 }
 
+export type ColorVersion = 5 | 6;
+type BackgroundColor = {
+  5: BackgroundColorValue,
+  6: BackgroundColorValueV6
+};
+
+type BorderColor = {
+  5: BorderColorValue,
+  6: BorderColorValueV6
+}
+
 // These support more properties than specific Spectrum components
 // but still based on spectrum global/alias variables.
-export interface ViewStyleProps extends StyleProps {
+export interface ViewStyleProps<C extends ColorVersion> extends StyleProps {
+  /**
+   * The Spectrum color token version number.
+   * @default 5
+   */
+  colorVersion?: C,
+
   /** The background color for the element. */
-  backgroundColor?: Responsive<BackgroundColorValue>,
+  backgroundColor?: Responsive<BackgroundColor[C]>,
 
   /** The width of the element's border on all four sides. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width). */
   borderWidth?: Responsive<BorderSizeValue>,
@@ -136,21 +153,21 @@ export interface ViewStyleProps extends StyleProps {
   borderYWidth?: Responsive<BorderSizeValue>,
 
   /** The color of the element's border on all four sides. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color). */
-  borderColor?: Responsive<BorderColorValue>,
+  borderColor?: Responsive<BorderColor[C]>,
   /** The color of the border on the logical start side, depending on the layout direction. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-inline-start-color). */
-  borderStartColor?: Responsive<BorderColorValue>,
+  borderStartColor?: Responsive<BorderColor[C]>,
   /** The color of the border on the logical end side, depending on the layout direction. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-inline-end-color). */
-  borderEndColor?: Responsive<BorderColorValue>,
+  borderEndColor?: Responsive<BorderColor[C]>,
   // borderLeftColor?: BorderColorValue,
   // borderRightColor?: BorderColorValue,
   /** The color of the top border. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-top-color). */
-  borderTopColor?: Responsive<BorderColorValue>,
+  borderTopColor?: Responsive<BorderColor[C]>,
   /** The color of the bottom border. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-bottom-color). */
-  borderBottomColor?: Responsive<BorderColorValue>,
+  borderBottomColor?: Responsive<BorderColor[C]>,
   /** The color of the left and right borders. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color). */
-  borderXColor?: Responsive<BorderColorValue>,
+  borderXColor?: Responsive<BorderColor[C]>,
   /** The color of the top and bottom borders. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width). */
-  borderYColor?: Responsive<BorderColorValue>,
+  borderYColor?: Responsive<BorderColor[C]>,
 
   /** The border radius on all four sides of the element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius). */
   borderRadius?: Responsive<BorderRadiusValue>,

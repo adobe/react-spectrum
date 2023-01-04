@@ -333,13 +333,39 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTypeOperator()) {
+        return Object.assign(node, {
+          type: 'typeOperator',
+          operator: path.node.operator,
+          value: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSThisType()) {
+        return Object.assign(node, {
+          type: 'this'
+        });
+      }
+
       if (path.isTSPropertySignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let name;
+        if (t.isStringLiteral(path.node.key)) {
+          name = path.node.key.value;
+        } else if (t.isNumericLiteral(path.node.key)) {
+          name = String(path.node.key.value);
+        } else if (t.isIdentifier(path.node.key)) {
+          name = path.node.key.name;
+        } else {
+          console.log('Unknown key', path.node.key);
+          name = 'unknown';
+        }
+
         let docs = getJSDocs(path);
+        let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
           type: 'property',
           name,
-          value: processExport(path.get('typeAnnotation.typeAnnotation')),
+          value,
           optional: path.node.optional || false
         }, docs));
       }
@@ -398,6 +424,10 @@ module.exports = new Transformer({
         return bindings;
       }
 
+      if (path.isTSSymbolKeyword()) {
+        return Object.assign(node, {type: 'symbol'});
+      }
+
       if (path.isTSBooleanKeyword()) {
         return Object.assign(node, {type: 'boolean'});
       }
@@ -453,6 +483,29 @@ module.exports = new Transformer({
       }
 
       if (path.isTSLiteralType()) {
+        if (t.isTemplateLiteral(path.node.literal)) {
+          let expressions = path.get('literal.expressions').map(e => processExport(e));
+          let elements = [];
+          let i = 0;
+          for (let q of path.node.literal.quasis) {
+            if (q.value.raw) {
+              elements.push({
+                type: 'string',
+                value: q.value.raw
+              });
+            }
+
+            if (!q.tail) {
+              elements.push(expressions[i++]);
+            }
+          }
+
+          return Object.assign(node, {
+            type: 'template',
+            elements
+          });
+        }
+
         return Object.assign(node, {
           type: typeof path.node.literal.value,
           value: path.node.literal.value
@@ -505,6 +558,19 @@ module.exports = new Transformer({
           extendsType: processExport(path.get('extendsType')),
           trueType: processExport(path.get('trueType')),
           falseType: processExport(path.get('falseType'))
+        });
+      }
+
+      if (path.isTSModuleDeclaration()) {
+        // TODO: decide how we want to display something from a Global namespace
+        return node;
+      }
+
+      if (path.isTSIndexedAccessType()) {
+        return Object.assign(node, {
+          type: 'indexedAccess',
+          objectType: processExport(path.get('objectType')),
+          indexType: processExport(path.get('indexType'))
         });
       }
 

@@ -131,7 +131,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     menuProps: {
       ...overlayProps,
       'aria-labelledby': menuTriggerId,
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy || true,
       onClose: state.close
     }
   };

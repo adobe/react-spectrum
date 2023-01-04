@@ -106,6 +106,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);
 
   let descriptionProps = useDescription(sortDescription);
