@@ -31,26 +31,32 @@ describe('TableUtils', () => {
 
     it('real life case 3', () => {
       let tableWidth = 1000;
+      let columns = [
+        {key: 'id', label: 'ID', maxWidth: '5%'},
+        {key: 'name', label: 'Name', allowsToggle: false, minWidth: '20%'},
+        {key: 'info', hideHeader: true, allowsToggle: false},
+        {key: 'hp', label: 'HP', align: 'right', maxWidth: '5%'},
+        {key: 'attack', label: 'Attack', align: 'right', maxWidth: '5%'},
+        {key: 'defense', label: 'Defense', align: 'right', maxWidth: '5%'},
+        {key: 'speed', label: 'Speed', align: 'right', maxWidth: '5%'},
+        {key: 'total', label: 'Total', align: 'right', maxWidth: '5%'},
+        {key: 'weight', label: 'Weight', align: 'right', maxWidth: '5%'},
+        {key: 'height', label: 'Height', align: 'right', maxWidth: '5%'},
+        {key: 'abilities', label: 'Abilities', minWidth: '20%'}
+      ];
       let widths = calculateColumnSizes(
         tableWidth,
-        [
-          {key: 'id', label: 'ID', maxWidth: '5%'},
-          {key: 'name', label: 'Name', allowsToggle: false, minWidth: '20%'},
-          {key: 'info', hideHeader: true, allowsToggle: false},
-          {key: 'hp', label: 'HP', align: 'right', maxWidth: '5%'},
-          {key: 'attack', label: 'Attack', align: 'right', maxWidth: '5%'},
-          {key: 'defense', label: 'Defense', align: 'right', maxWidth: '5%'},
-          {key: 'speed', label: 'Speed', align: 'right', maxWidth: '5%'},
-          {key: 'total', label: 'Total', align: 'right', maxWidth: '5%'},
-          {key: 'weight', label: 'Weight', align: 'right', maxWidth: '5%'},
-          {key: 'height', label: 'Height', align: 'right', maxWidth: '5%'},
-          {key: 'abilities', label: 'Abilities', minWidth: '20%'}
-        ],
+        columns,
         new Map(),
-        () => '1fr',
+        (index) => {
+          if (columns[index].hideHeader) {
+            return 30;
+          }
+          return '1fr';
+        },
         () => 25
       );
-      expect(widths).toStrictEqual([50, 200, 200, 50, 50, 50, 50, 50, 50, 50, 200]);
+      expect(widths).toStrictEqual([50, 285, 30, 50, 50, 50, 50, 50, 50, 50, 285]);
     });
 
     it('defaultWidths', () => {
