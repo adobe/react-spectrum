@@ -14,17 +14,15 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
-import {GridCollection, useGridState} from '@react-stately/grid';
 import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import React, {ReactElement, useCallback, useMemo, useState} from 'react';
+import React, {ReactElement, useCallback, useState} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {useGrid} from '@react-aria/grid';
-import {useListState} from '@react-stately/list';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTagGroup} from '@react-aria/tag';
+import {useTagGroupState} from '@react-stately/tag';
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -38,43 +36,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
-  let listState = useListState(props);
-  let gridCollection = useMemo(() => new GridCollection({
-    columnCount: 1, // unused, but required for grid collections
-    items: [...listState.collection].map(item => {
-      let childNodes = [{
-        ...item,
-        index: 0,
-        type: 'cell'
-      }];
 
-      return {
-        type: 'item',
-        childNodes
-      };
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [listState.collection, allowsRemoving]);
-  let state = useGridState({
-    ...props,
-    collection: gridCollection,
-    focusMode: 'cell'
-  });
-  let keyboardDelegate = new TagKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: new Set(),
-    ref: domRef,
-    direction,
-    focusMode: 'cell'
-  });
-  let {gridProps} = useGrid({
-    ...props,
-    keyboardDelegate
-  }, state, domRef);
-  const {tagGroupProps} = useTagGroup(props);
+  let state = useTagGroupState(props);
+  let {tagGroupProps} = useTagGroup(props, state, domRef);
 
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
-  let [tagState, setTagState] = useValueEffect({visibleTagCount: gridCollection.size, showCollapseButton: false});
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -120,42 +87,39 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
         let availableWidth = containerEnd - lastTagEnd;
         for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth >= buttonWidth || index <= 1 || index >= gridCollection.size) {
+          if (availableWidth >= buttonWidth || index <= 1 || index >= state.collection.size) {
             break;
           }
           availableWidth += tagWidth;
           index--;
         }
-        return {visibleTagCount: index, showCollapseButton: index < gridCollection.size};
+        return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
       };
     
       setTagState(function *() {
         // Update to show all items.
-        yield {visibleTagCount: gridCollection.size, showCollapseButton: true};
+        yield {visibleTagCount: state.collection.size, showCollapseButton: true};
 
         // Measure, and update to show the items until maxRows is reached.
         yield computeVisibleTagCount();
       });
     }
-  }, [direction, domRef, gridCollection.size, maxRows, setTagState]);
+  }, [direction, domRef, state.collection.size, maxRows, setTagState]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
 
-  let visibleTags = [...gridCollection];
+  let visibleTags = [...state.collection];
   if (maxRows != null && isCollapsed) {
     visibleTags = visibleTags.slice(0, tagState.visibleTagCount);
   }
 
-  // Don't want the grid to be focusable or accessible via keyboard
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, role, ...otherGridProps} = gridProps;
   return (
     <FocusScope>
       <div
-        {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
+        {...mergeProps(styleProps, tagGroupProps)}
         className={
           classNames(
             styles,
@@ -167,18 +131,18 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         ref={domRef}>
         {visibleTags.map(item => (
           <Tag
-            {...item.childNodes[0].props}
+            {...item.props}
             key={item.key}
             item={item}
             state={state}
             allowsRemoving={allowsRemoving}
             onRemove={onRemove}>
-            {item.childNodes[0].rendered}
+            {item.rendered}
           </Tag>
         ))}
         {tagState.showCollapseButton &&
           <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
-            {isCollapsed ? `Show all (${gridCollection.size})` : 'Show less '}
+            {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
         }
       </div>

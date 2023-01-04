@@ -48,7 +48,7 @@ export const Default: TagGroupStory = {
 
 function render(props: TagGroupProps<unknown>) {
   return (
-    <TagGroup {...props} aria-label="tag group">
+    <TagGroup {...props} aria-label="Tag group">
       <Item key="1">Cool Tag 1</Item>
       <Item key="2">Cool Tag 2</Item>
       <Item key="3">Cool Tag 3</Item>
@@ -59,7 +59,7 @@ function render(props: TagGroupProps<unknown>) {
 export const WithIcons: TagGroupStory = {
   args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
   render: (args) => (
-    <TagGroup aria-label="tag group" {...args}>
+    <TagGroup aria-label="Tag group with icons" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
           <Audio />
@@ -78,7 +78,7 @@ export const OnRemove: TagGroupStory = {
 export const Wrapping: TagGroupStory = {
   render: (args) => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup aria-label="tag group" {...args}>
+      <TagGroup aria-label="Tag group with wrapping" {...args}>
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>
@@ -93,7 +93,7 @@ export const Wrapping: TagGroupStory = {
 export const LabelTruncation: TagGroupStory = {
   render: (args) => (
     <div style={{width: '100px'}}>
-      <TagGroup aria-label="tag group" {...args}>
+      <TagGroup aria-label="Tag group with label truncation" {...args}>
         <Item key="1">Cool Tag 1 with a really long label</Item>
         <Item key="2">Another long cool tag label</Item>
         <Item key="3">This tag</Item>
@@ -106,7 +106,7 @@ export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup width="100%" aria-label="tag group" {...args}>
+      <TagGroup width="100%" aria-label="Tag group" {...args}>
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Another cool tag</Item>
         <Item key="3">This tag</Item>
@@ -123,7 +123,7 @@ export const MaxRowsManyTags: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => (
     <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup width="100%" aria-label="tag group" items={manyItems} {...args}>
+      <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
         {(item: any) => (
           <Item key={item.key}>{`Tag ${item.key}`}</Item>
         )}
@@ -135,23 +135,23 @@ export const MaxRowsManyTags: TagGroupStory = {
 
 function OnRemoveExample() {
   let [items, setItems] = useState([
-    {key: 1, label: 'Cool Tag 1'},
-    {key: 2, label: 'Another cool tag'},
-    {key: 3, label: 'This tag'},
-    {key: 4, label: 'What tag?'},
-    {key: 5, label: 'This tag is cool too'},
-    {key: 6, label: 'Shy tag'}
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'},
+    {id: 3, label: 'This tag'},
+    {id: 4, label: 'What tag?'},
+    {id: 5, label: 'This tag is cool too'},
+    {id: 6, label: 'Shy tag'}
   ]);
+
   let onRemove = (key) => {
-    const newItems = [...items].filter((item) => key !== item.key.toString());
-    setItems(newItems);
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
     action('onRemove')(key);
   };
 
   return (
-    <TagGroup allowsRemoving aria-label="tag group" items={items} onRemove={key => onRemove(key)}>
+    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)}>
       {item => (
-        <Item key={item.key}>{item.label}</Item>
+        <Item>{item.label}</Item>
       )}
     </TagGroup>
   );
