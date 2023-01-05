@@ -36,14 +36,14 @@ import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Section} from '@react-stately/collections';
+import SelectAdd from '@spectrum-icons/workflow/SelectAdd';
+import SelectIntersect from '@spectrum-icons/workflow/SelectIntersect';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
-import SelectAdd from "@spectrum-icons/workflow/SelectAdd";
-import SelectIntersect from "@spectrum-icons/workflow/SelectIntersect";
 
 let columns = [
   {name: 'Foo', key: 'foo'},
