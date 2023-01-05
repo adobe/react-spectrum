@@ -29,14 +29,13 @@ import {getInteractionModality, useHover, usePress} from '@react-aria/interactio
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   Key,
   ReactElement,
-  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -717,8 +716,11 @@ function ResizableTableColumnHeader(props) {
   let customActions = null;
   if (hasCustomActions) {
     customActions = actions.props.children;
-    if (Section.prototype === actions.type.prototype) {
-      customActions = actions;
+    if (React.isValidElement(actions)) {
+      let type = actions.type as any;
+      if (typeof type === 'function' && typeof type.getCollectionNode === 'function') {
+        customActions = actions;
+      }
     }
   }
 

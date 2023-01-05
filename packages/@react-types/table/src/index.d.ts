@@ -10,9 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AsyncLoadable,
+  CollectionChildren,
+  DOMProps, ItemElement, ItemRenderer,
+  LoadingState,
+  MultipleSelection, SectionElement,
+  SectionProps,
+  Sortable,
+  SpectrumSelectionProps,
+  StyleProps
+} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key, ReactElement, ReactFragment, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
@@ -113,7 +124,12 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
    * that contain ActionButtons in place of text content.
    */
   hideHeader?: boolean,
-  actions?: ReactNode,
+  /**
+   * Custom actions to be displayed in a drop-down menu on the column header. These may appear in addition
+   * to sorting and resizing. A Section can be used to group actions together.
+   */
+  actions?: ReactElement<ReactFragment & {children: ItemElement<T> | SectionElement<T> | Array<ItemElement<T> | SectionElement<T>> | ItemRenderer<T>}> | ReactElement<SectionProps<T>>,
+  /** Called when a custom action is selected in the drop-down menu. */
   onAction?: (action: string, key: Key) => void
 }
 

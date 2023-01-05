@@ -20,8 +20,10 @@ import {Content} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
+import Deselect from '@spectrum-icons/workflow/Deselect';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
@@ -40,8 +42,8 @@ import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
-import Deselect from "@spectrum-icons/workflow/Deselect";
-import Filter from "@spectrum-icons/workflow/Filter";
+import SelectAdd from "@spectrum-icons/workflow/SelectAdd";
+import SelectIntersect from "@spectrum-icons/workflow/SelectIntersect";
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -151,6 +153,61 @@ storiesOf('TableView', module)
           <Keyboard>⌘Z</Keyboard>
         </Item>
       </Section>
+    );
+
+    return (
+      <TableView aria-label="TableView with static contents" width={300} height={200}>
+        <TableHeader>
+          <Column key="foo" actions={actions} onAction={action('action')}>Foo</Column>
+          <Column key="bar" actions={actions} onAction={action('action')}>Bar</Column>
+          <Column key="baz" actions={actions} onAction={action('action')}>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+  })
+  .add('static column actions multiple sections', () => {
+    let actions = (
+      <>
+        <Section>
+          <Item key="hide" textValue="Hide">
+            <Deselect />
+            <Text>Hide</Text>
+            <Keyboard>⌘X</Keyboard>
+          </Item>
+          <Item key="filter" textValue="Filter">
+            <Filter />
+            <Text>Filter</Text>
+            <Keyboard>⌘Y</Keyboard>
+          </Item>
+          <Item key="delete" textValue="Delete">
+            <Delete />
+            <Text>Delete</Text>
+            <Keyboard>⌘Z</Keyboard>
+          </Item>
+        </Section>
+        <Section>
+          <Item key="group" textValue="Group">
+            <SelectAdd />
+            <Text>Group</Text>
+          </Item>
+          <Item key="ungroup" textValue="Ungroup">
+            <SelectIntersect />
+            <Text>Ungroup</Text>
+          </Item>
+        </Section>
+      </>
     );
 
     return (
@@ -1229,6 +1286,71 @@ storiesOf('TableView', module)
           <Item key="hide">Hide</Item>
           <Item key="filter">Filter</Item>
           <Item key="delete">Delete</Item>
+        </>
+      );
+      return (
+        <>
+          <label htmlFor="focusable-before">Focusable before</label>
+          <input id="focusable-before" />
+          <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+            <TableHeader>
+              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>File Name</Column>
+              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Type</Column>
+              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Size</Column>
+              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>Weight</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>2018 Proposal</Cell>
+                <Cell>PDF</Cell>
+                <Cell>214 KB</Cell>
+                <Cell>1 LB</Cell>
+              </Row>
+              <Row>
+                <Cell>Budget</Cell>
+                <Cell>XLS</Cell>
+                <Cell>120 KB</Cell>
+                <Cell>20 LB</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+          <label htmlFor="focusable-after">Focusable after</label>
+          <input id="focusable-after" />
+        </>
+      );
+    })
+  .add(
+    'allowsResizing, uncontrolled, dynamic widths with custom actions multiple sections',
+    () => {
+      let actions = (
+        <>
+          <Section>
+            <Item key="hide" textValue="Hide">
+              <Deselect />
+              <Text>Hide</Text>
+              <Keyboard>⌘X</Keyboard>
+            </Item>
+            <Item key="filter" textValue="Filter">
+              <Filter />
+              <Text>Filter</Text>
+              <Keyboard>⌘Y</Keyboard>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+              <Keyboard>⌘Z</Keyboard>
+            </Item>
+          </Section>
+          <Section>
+            <Item key="group" textValue="Group">
+              <SelectAdd />
+              <Text>Group</Text>
+            </Item>
+            <Item key="ungroup" textValue="Ungroup">
+              <SelectIntersect />
+              <Text>Ungroup</Text>
+            </Item>
+          </Section>
         </>
       );
       return (
