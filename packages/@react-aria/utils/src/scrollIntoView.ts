@@ -85,27 +85,41 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
 
 // Determines if a target element is fully out of view and thus should be scrolled into view if possible.
 // Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
-function shouldScrollIntoView(target: Element, originalTarget?: Element) {
+function shouldScrollIntoView(target: Element, scrollContainer?: Element) {
   let root = document.scrollingElement || document.documentElement;
   if (target === root || target == null) {
     return false;
   }
 
   // Note: there are cases where the target can be out of view but doesn't have a scrollable parent that would accurately determine
-  // if it is out of view (e.g. table resizer is absolutely positioned and can be moved out of view but the scrollable element that would bring it
-  // into view is the table's body rather than the column headers).
-  let scrollParent = getScrollParent(target);
-  let targetToCompare = originalTarget || target;
-  let {bottom: targetBottom, top: targetTop, left: targetLeft, right: targetRight} = targetToCompare.getBoundingClientRect();
-  let {bottom: scrollParentBottom, top: scrollParentTop, left: scrollParentLeft, right: scrollParentRight} = scrollParent.getBoundingClientRect();
+  // if it is out of view. Example: the table resizer is absolutely positioned and can be moved out of view but the scrollable element
+  // to check would the table's body since the column headers aren't scrollable. However, the table body isn't a scrollable parent of the resizer and thus this function
+  // fails to determine that the resizer should be scrolled into view.
+  let scrollParent = scrollContainer || getScrollParent(target);
+  let scrollIntoView = false;
 
-  if (scrollParent === root) {
-    let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-    let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-    return (targetBottom < 0 || targetTop > viewportHeight || targetLeft > viewportWidth || targetRight < 0);
+  while (root.contains(scrollParent) && !scrollIntoView) {
+    let {bottom: targetBottom, top: targetTop, left: targetLeft, right: targetRight} = target.getBoundingClientRect();
+    let {bottom: scrollParentBottom, top: scrollParentTop, left: scrollParentLeft, right: scrollParentRight} = scrollParent.getBoundingClientRect();
+
+    // Guard against cases where the target is technically barely in view due to subpixel values but we would still want to scroll it into view
+    targetBottom--;
+    targetTop++;
+    targetLeft++;
+    targetRight--;
+
+    if (scrollParent === root) {
+      // Account for pinch zooming on mobile devices
+      let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+      return (targetBottom <= 0 || targetTop >= viewportHeight || targetLeft >= viewportWidth || targetRight <= 0);
+    }
+
+    scrollIntoView = targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft;
+    scrollParent = getScrollParent(scrollParent);
   }
 
-  return targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft || shouldScrollIntoView(scrollParent, targetToCompare);
+  return scrollIntoView;
 }
 
 function scrollIntoViewHelper(target: Element, scrollOptions: ScrollIntoViewOptions) {
