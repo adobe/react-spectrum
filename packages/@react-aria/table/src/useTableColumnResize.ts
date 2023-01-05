@@ -28,26 +28,6 @@ export interface TableColumnResizeAria {
   resizerProps: DOMAttributes
 }
 
-export interface AriaTableColumnResizeProps<T> {
-  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  column: GridNode<T>,
-  /** Aria label for the hidden input. Gets read when resizing. */
-  label: string,
-  /**
-   * Ref to the trigger if resizing was started from a column header menu. If it's provided,
-   * focus will be returned there when resizing is done.
-   * */
-  triggerRef?: RefObject<HTMLDivElement>,
-  /** If resizing is disabled. */
-  isDisabled?: boolean,
-  /** Called when resizing starts. */
-  onResizeStart?: (widths: Map<Key, number | string>) => void,
-  /** Called for every resize event that results in new column sizes. */
-  onResize?: (widths: Map<Key, number | string>) => void,
-  /** Called when resizing ends. */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void
-}
-
 
 export interface TableLayoutState {
   /** Get the current width of the specified column. */
@@ -69,8 +49,30 @@ export interface TableLayoutState {
   onColumnResizeEnd: (key: Key) => void
 }
 
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, layoutState: TableLayoutState, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
+export interface AriaTableColumnResizeProps<T> {
+  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
+  column: GridNode<T>,
+  /** Aria label for the hidden input. Gets read when resizing. */
+  label: string,
+  /**
+   * Ref to the trigger if resizing was started from a column header menu. If it's provided,
+   * focus will be returned there when resizing is done.
+   * */
+  triggerRef?: RefObject<HTMLDivElement>,
+  /** If resizing is disabled. */
+  isDisabled?: boolean,
+  /** Called when resizing starts. */
+  onResizeStart?: (widths: Map<Key, number | string>) => void,
+  /** Called for every resize event that results in new column sizes. */
+  onResize?: (widths: Map<Key, number | string>) => void,
+  /** Called when resizing ends. */
+  onResizeEnd?: (widths: Map<Key, number | string>) => void,
+  /** ?? */
+  layout: TableLayoutState
+}
+
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, layout: layoutState} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
