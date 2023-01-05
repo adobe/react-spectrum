@@ -16,7 +16,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {Key, RefObject, useMemo} from 'react';
+import {Key, RefObject, useEffect, useMemo, useRef} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
@@ -97,6 +97,41 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     scrollRef
   });
+
+  const cachedFocusedKey = useRef(null);
+  const cachedDelegate = useRef(null);
+  useEffect(() => {
+    let keyToFocus:Key;
+    if (
+      state.selectionManager.focusedKey === null &&
+      cachedFocusedKey.current !== null
+    ) {
+      let keyBelow = cachedDelegate.current.getKeyBelow(cachedFocusedKey.current);
+      while (keyBelow) {
+        if (state.collection.getItem(keyBelow)) {
+          keyToFocus = keyBelow;
+          break;
+        }
+        keyBelow = cachedDelegate.current.getKeyBelow(keyBelow);
+      }
+      if (!keyBelow) {
+        let keyAbove = cachedDelegate.current.getKeyAbove(cachedFocusedKey.current);
+        while (keyAbove) {
+          if (state.collection.getItem(keyAbove)) {
+            keyToFocus = keyAbove;
+            break;
+          }
+          keyAbove = cachedDelegate.current.getKeyBelow(keyAbove);
+        }
+      }
+    }
+    if (keyToFocus) {
+      state.selectionManager.setFocusedKey(keyToFocus);
+    }
+    cachedFocusedKey.current = state.selectionManager.focusedKey;
+    cachedDelegate.current = delegate;
+  },
+  [delegate, state.collection, state.selectionManager, state.selectionManager.focusedKey]);
 
   let id = useId(props.id);
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});

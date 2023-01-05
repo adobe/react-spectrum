@@ -95,7 +95,11 @@ export function CRUDExample() {
             title="Delete"
             variant="destructive"
             primaryActionLabel="Delete"
-            onPrimaryAction={() => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => list.remove(dialog.item.id))))}>
+            onPrimaryAction={() => {
+              // Add delay so that dialog closes and restores focus
+              // to the TableView before removing the row.
+              setTimeout(() => list.remove(dialog.item.id), 60);
+            }}>
             Are you sure you want to delete {dialog.item.firstName} {dialog.item.lastName}?
           </AlertDialog>
         }
