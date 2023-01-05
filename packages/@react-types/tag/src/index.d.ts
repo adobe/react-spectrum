@@ -12,6 +12,7 @@
 
 import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
 import {Key, RefObject} from 'react';
+import type {TagKeyboardDelegate} from '@react-aria/tag';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
@@ -22,7 +23,13 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
   maxRows?: number
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>
+}
 
 export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
 

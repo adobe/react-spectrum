@@ -40,6 +40,7 @@
     "@react-spectrum/text": "^3.3.4",
     "@react-spectrum/utils": "^3.8.1",
     "@react-stately/collections": "^3.5.1",
+    "@react-stately/list": "^3.6.1",
     "@react-stately/tag": "3.0.0-alpha.1",
     "@react-types/shared": "^3.16.0",
     "@react-types/tag": "3.0.0-beta.1",

@@ -33,7 +33,7 @@ export interface TagGroupAria {
  */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let keyboardDelegate = new TagKeyboardDelegate(state.collection, direction);
+  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard

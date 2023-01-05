@@ -14,14 +14,15 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
+import {ListCollection} from '@react-stately/list';
 import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import React, {ReactElement, useCallback, useState} from 'react';
+import React, {ReactElement, useCallback, useMemo, useState} from 'react';
 import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
+import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTagGroup} from '@react-aria/tag';
 import {useTagGroupState} from '@react-stately/tag';
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -36,12 +37,15 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
-
-  let state = useTagGroupState(props);
-  let {tagGroupProps} = useTagGroup(props, state, domRef);
-
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
+  let state = useTagGroupState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
+  let keyboardDelegate = useMemo(() => (
+    isCollapsed
+      ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
+      : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
+  ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
+  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
