@@ -13,18 +13,11 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
-import {ActionButton} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {ColumnSize} from '@react-types/table';
-import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, triggerPress, triggerTouch} from '@react-spectrum/test-utils';
-import {HidingColumns} from '../stories/HidingColumns';
+import {fireEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
-import React, {Key} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import React from 'react';
 import {Scale} from '@react-types/provider';
-import {setInteractionModality} from '@react-aria/interactions';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
@@ -34,30 +27,10 @@ let columns = [
   {name: 'Baz', key: 'baz'}
 ];
 
-let nestedColumns = [
-  {name: 'Test', key: 'test'},
-  {name: 'Tiered One Header', key: 'tier1', children: [
-      {name: 'Tier Two Header A', key: 'tier2a', children: [
-          {name: 'Foo', key: 'foo'},
-          {name: 'Bar', key: 'bar'}
-        ]},
-      {name: 'Yay', key: 'yay'},
-      {name: 'Tier Two Header B', key: 'tier2b', children: [
-          {name: 'Baz', key: 'baz'}
-        ]}
-    ]}
-];
-
 let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
-
-
-let manyItems = [];
-for (let i = 1; i <= 100; i++) {
-  manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
-}
 
 let render = (children, scale: Scale = 'medium') => {
   let tree = renderComponent(
@@ -70,15 +43,6 @@ let render = (children, scale: Scale = 'medium') => {
   return tree;
 };
 
-let rerender = (tree, children, scale: Scale = 'medium') => {
-  let newTree = tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-  act(() => {jest.runAllTimers();});
-  return newTree;
-};
 describe('TableView Custom Menu Actions', function () {
   let offsetWidth, offsetHeight;
   let onAction = jest.fn();
@@ -282,16 +246,3 @@ describe('TableView Custom Menu Actions', function () {
     });
   });
 });
-
-
-// I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
-function getColumn(tree, name) {
-  // Find by text, then go up to the element with the cell role.
-  let el = tree.getByText(name);
-  while (el && !/columnheader/.test(el.getAttribute('role'))) {
-    el = el.parentElement;
-  }
-
-  return el;
-}
-

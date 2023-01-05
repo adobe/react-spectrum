@@ -724,11 +724,11 @@ function ResizableTableColumnHeader(props) {
       id: 'custom-actions',
       children: actions
     };
-    if (actions.length > 0) {
+    if (actions && actions.length > 0) {
       return section;
     }
     return undefined;
-  }, [allowsSorting, allowsResizing, stringFormatter]);
+  }, [actions]);
   let hasPriorityActions = !!priorityActions;
   let hasCustomActions = !!customActions;
   let items: Array<{name: string, id: string, children: Array<{label: string, id: string}>}> = useMemo(() => {
