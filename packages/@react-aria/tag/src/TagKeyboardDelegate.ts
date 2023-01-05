@@ -45,7 +45,6 @@ export class TagKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Find the next item
-    console.log(this.collection);
     key = this.collection.getKeyAfter(key);
 
     if (key != null) {
