@@ -33,7 +33,17 @@ import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  Key,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -692,55 +702,26 @@ function ResizableTableColumnHeader(props) {
   };
   let allowsSorting = column.props?.allowsSorting;
   let allowsResizing = column.props?.allowsResizing;
+  let hasPriorityActions = allowsSorting || allowsResizing;
+  let hasCustomActions = !!actions;
   let priorityActions = useMemo(() => {
-    let actions = [
-      allowsSorting ? {
-        label: stringFormatter.format('sortAscending'),
-        id: 'sort-asc'
-      } : undefined,
-      allowsSorting ? {
-        label: stringFormatter.format('sortDescending'),
-        id: 'sort-desc'
-      } : undefined,
-      allowsResizing ? {
-        label: stringFormatter.format('resizeColumn'),
-        id: 'resize'
-      } : undefined
-    ].filter(val => !!val);
-    let section = {
-      name: 'Priority Actions',
-      id: 'priority-actions',
-      children: actions
-    };
-    if (actions.length > 0) {
-      return section;
+    let actions = (
+      <>
+        {allowsSorting && <Item key="sort-asc">{stringFormatter.format('sortAscending')}</Item>}
+        {allowsSorting && <Item key="sort-desc">{stringFormatter.format('sortDescending')}</Item>}
+        {allowsResizing && <Item key="resize">{stringFormatter.format('resizeColumn')}</Item>}
+      </>
+    );
+    return actions;
+  }, [allowsSorting, allowsResizing, stringFormatter]).props.children;
+  let customActions = null;
+  if (hasCustomActions) {
+    customActions = actions.props.children;
+    if (Section.prototype === actions.type.prototype) {
+      customActions = actions;
     }
-    return undefined;
-  }, [allowsSorting, allowsResizing, stringFormatter]);
-  let customActions = useMemo(() => {
-    let section = {
-      // need better names for these
-      name: 'Custom Actions',
-      id: 'custom-actions',
-      children: actions
-    };
-    if (actions && actions.length > 0) {
-      return section;
-    }
-    return undefined;
-  }, [actions]);
-  let hasPriorityActions = !!priorityActions;
-  let hasCustomActions = !!customActions;
-  let items: Array<{name: string, id: string, children: Array<{label: string, id: string}>}> = useMemo(() => {
-    let options = [];
-    if (hasPriorityActions) {
-      options.push(priorityActions);
-    }
-    if (hasCustomActions) {
-      options.push(customActions);
-    }
-    return options;
-  }, [priorityActions, customActions, hasPriorityActions, hasCustomActions]);
+  }
+
   let isMobile = useIsMobileDevice();
 
   let resizingColumn = layout.resizingColumn;
@@ -819,12 +800,13 @@ function ResizableTableColumnHeader(props) {
               (columnProps.allowsResizing && resizingColumn == null || onAction) && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
-          <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
-            {item => (
-              <Section items={item.children} aria-label={item.name}>
-                {item => <Item>{item.label}</Item>}
-              </Section>
-            )}
+          <Menu onAction={onMenuSelect} minWidth="size-2000">
+            {
+              hasPriorityActions && priorityActions
+            }
+            {
+              hasCustomActions && customActions
+            }
           </Menu>
         </MenuTrigger>
         { allowsResizing ?

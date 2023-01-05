@@ -96,10 +96,6 @@ export interface ColumnProps<T> {
   textValue?: string
 }
 
-type CustomAction = {
-  label: string,
-  id: string
-}
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   /**
@@ -117,7 +113,7 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
    * that contain ActionButtons in place of text content.
    */
   hideHeader?: boolean,
-  actions?: Array<CustomAction>,
+  actions?: ReactNode,
   onAction?: (action: string, key: Key) => void
 }
 

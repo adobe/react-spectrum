@@ -23,7 +23,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -33,12 +33,15 @@ import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {Section} from '@react-stately/collections';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
+import Deselect from "@spectrum-icons/workflow/Deselect";
+import Filter from "@spectrum-icons/workflow/Filter";
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -129,28 +132,33 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
-  .add('static column actions', () => {
-    let actions = [
-      {
-        label: 'Hide',
-        id: 'hide'
-      },
-      {
-        label: 'Filter',
-        id: 'filter'
-      },
-      {
-        label: 'Delete',
-        id: 'delete'
-      }
-    ];
+  .add('static column actions complex items', () => {
+    let actions = (
+      <Section>
+        <Item key="hide" textValue="Hide">
+          <Deselect />
+          <Text>Hide</Text>
+          <Keyboard>⌘X</Keyboard>
+        </Item>
+        <Item key="filter" textValue="Filter">
+          <Filter />
+          <Text>Filter</Text>
+          <Keyboard>⌘Y</Keyboard>
+        </Item>
+        <Item key="delete" textValue="Delete">
+          <Delete />
+          <Text>Delete</Text>
+          <Keyboard>⌘Z</Keyboard>
+        </Item>
+      </Section>
+    );
 
     return (
       <TableView aria-label="TableView with static contents" width={300} height={200}>
         <TableHeader>
-          <Column key="foo" actions={actions} onAction={action('foo action')}>Foo</Column>
-          <Column key="bar" actions={actions} onAction={action('bar action')}>Bar</Column>
-          <Column key="baz" actions={actions} onAction={action('baz action')}>Baz</Column>
+          <Column key="foo" actions={actions} onAction={action('action')}>Foo</Column>
+          <Column key="bar" actions={actions} onAction={action('action')}>Bar</Column>
+          <Column key="baz" actions={actions} onAction={action('action')}>Baz</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -209,20 +217,13 @@ storiesOf('TableView', module)
     )
   )
   .add('dynamic, column actions', () => {
-    let actions = [
-      {
-        label: 'Hide',
-        id: 'hide'
-      },
-      {
-        label: 'Filter',
-        id: 'filter'
-      },
-      {
-        label: 'Delete',
-        id: 'delete'
-      }
-    ];
+    let actions = (
+      <>
+        <Item key="hide">Hide</Item>
+        <Item key="filter">Filter</Item>
+        <Item key="delete">Delete</Item>
+      </>
+    );
 
     return (
       <TableView aria-label="TableView with dynamic contents" width={300} height={200}>
@@ -1223,20 +1224,13 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, dynamic widths with custom actions',
     () => {
-      let actions = [
-        {
-          label: 'Hide',
-          id: 'hide'
-        },
-        {
-          label: 'Filter',
-          id: 'filter'
-        },
-        {
-          label: 'Delete',
-          id: 'delete'
-        }
-      ];
+      let actions = (
+        <>
+          <Item key="hide">Hide</Item>
+          <Item key="filter">Filter</Item>
+          <Item key="delete">Delete</Item>
+        </>
+      );
       return (
         <>
           <label htmlFor="focusable-before">Focusable before</label>
@@ -1397,6 +1391,11 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, sortable columns, custom actions',
     () => <AsyncLoadingExample isResizable hasCustomActions />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, uncontrolled, sortable columns, custom actions in section',
+    () => <AsyncLoadingExample isResizable hasCustomActions hasSection />,
     {chromatic: {disable: true}}
   )
   .add(
@@ -1592,7 +1591,7 @@ let columnsSomeFR: PokemonColumn[] = [
 ];
 
 function AsyncLoadingExample(props) {
-  const {isResizable, hasCustomActions} = props;
+  const {isResizable, hasCustomActions, hasSection} = props;
   interface Item {
     data: {
       id: string,
@@ -1601,20 +1600,20 @@ function AsyncLoadingExample(props) {
     }
   }
 
-  let actions = hasCustomActions ? [
-    {
-      label: 'Hide',
-      id: 'hide'
-    },
-    {
-      label: 'Filter',
-      id: 'filter'
-    },
-    {
-      label: 'Delete',
-      id: 'delete'
-    }
-  ] : undefined;
+  let actions = hasCustomActions ? (
+    <>
+      <Item key="hide">Hide</Item>
+      <Item key="filter">Filter</Item>
+      <Item key="delete">Delete</Item>
+    </>
+  ) : undefined;
+  actions = hasSection ? (
+    <Section>
+      <Item key="hide">Hide</Item>
+      <Item key="filter">Filter</Item>
+      <Item key="delete">Delete</Item>
+    </Section>
+  ) : actions;
   let onAction = hasCustomActions ? action('action') : undefined;
 
   let list = useAsyncList<Item>({

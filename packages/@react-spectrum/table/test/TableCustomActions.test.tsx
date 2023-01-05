@@ -14,7 +14,12 @@
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Deselect from '@spectrum-icons/workflow/Deselect';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {fireEvent, triggerPress} from '@react-spectrum/test-utils';
+import {Item, Section} from '@react-stately/collections';
+import {Keyboard, Text} from '@react-spectrum/text';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
@@ -64,20 +69,39 @@ describe('TableView Custom Menu Actions', function () {
   });
 
   describe('dynamic', function () {
-    let actions = [
-      {
-        label: 'Hide',
-        id: 'hide'
-      },
-      {
-        label: 'Filter',
-        id: 'filter'
-      },
-      {
-        label: 'Delete',
-        id: 'delete'
-      }
-    ];
+    let actions = (
+      <>
+        <Item key="hide">Hide</Item>
+        <Item key="filter">Filter</Item>
+        <Item key="delete">Delete</Item>
+      </>
+    );
+    let sectionedActions = (
+      <Section>
+        <Item key="hide">Hide</Item>
+        <Item key="filter">Filter</Item>
+        <Item key="delete">Delete</Item>
+      </Section>
+    );
+    let complexActions = (
+      <Section>
+        <Item key="hide" textValue="Hide">
+          <Deselect />
+          <Text>Hide</Text>
+          <Keyboard>⌘X</Keyboard>
+        </Item>
+        <Item key="filter" textValue="Filter">
+          <Filter />
+          <Text>Hide</Text>
+          <Keyboard>⌘Y</Keyboard>
+        </Item>
+        <Item key="delete" textValue="Delete">
+          <Delete />
+          <Text>Delete</Text>
+          <Keyboard>⌘Z</Keyboard>
+        </Item>
+      </Section>
+    );
     describe('pointer', function () {
       it('can trigger a custom action', function () {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
@@ -114,12 +138,137 @@ describe('TableView Custom Menu Actions', function () {
         expect(document.activeElement).toBe(menuHeader);
       });
 
+      it('can trigger a custom action inside a section', function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader columns={columns}>
+              {column => <Column actions={sectionedActions} onAction={onAction}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+          , 'medium');
+
+        // trigger pointer modality
+        fireEvent.pointerMove(tree.container);
+        let header = tree.getAllByRole('columnheader')[0];
+        let menuHeader = within(header).getByRole('button');
+
+        triggerPress(menuHeader);
+        act(() => {jest.runAllTimers();});
+
+        let menuItems = tree.getAllByRole('menuitem');
+        expect(menuItems).toHaveLength(3);
+
+        triggerPress(menuItems[2]);
+        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        act(() => {jest.runAllTimers();});
+        act(() => {jest.runAllTimers();});
+        expect(document.activeElement).toBe(menuHeader);
+      });
+
       it('can trigger a custom action even with our actions', function () {
         jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
               {column => <Column actions={actions} onAction={onAction} allowsResizing>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+          , 'medium');
+
+        // trigger pointer modality
+        fireEvent.pointerMove(tree.container);
+        let header = tree.getAllByRole('columnheader')[0];
+        let menuHeader = within(header).getByRole('button');
+
+        triggerPress(menuHeader);
+        act(() => {jest.runAllTimers();});
+
+        let menuItems = tree.getAllByRole('menuitem');
+        expect(menuItems).toHaveLength(4);
+
+        triggerPress(menuItems[0]);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+        fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+        act(() => {jest.runAllTimers();});
+
+        triggerPress(menuHeader);
+        act(() => {jest.runAllTimers();});
+
+        menuItems = tree.getAllByRole('menuitem');
+
+        triggerPress(menuItems[3]);
+        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        act(() => {jest.runAllTimers();});
+      });
+
+      it('can trigger a custom action in a section even with our actions', function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader columns={columns}>
+              {column => <Column actions={sectionedActions} onAction={onAction} allowsResizing>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+          , 'medium');
+
+        // trigger pointer modality
+        fireEvent.pointerMove(tree.container);
+        let header = tree.getAllByRole('columnheader')[0];
+        let menuHeader = within(header).getByRole('button');
+
+        triggerPress(menuHeader);
+        act(() => {jest.runAllTimers();});
+
+        let menuItems = tree.getAllByRole('menuitem');
+        expect(menuItems).toHaveLength(4);
+
+        triggerPress(menuItems[0]);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+        fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+        act(() => {jest.runAllTimers();});
+
+        triggerPress(menuHeader);
+        act(() => {jest.runAllTimers();});
+
+        menuItems = tree.getAllByRole('menuitem');
+
+        triggerPress(menuItems[3]);
+        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        act(() => {jest.runAllTimers();});
+      });
+
+      it('can trigger actions on complex custom actions', function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        let tree = render(
+          <TableView aria-label="Table">
+            <TableHeader columns={columns}>
+              {column => <Column actions={complexActions} onAction={onAction} allowsResizing>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
