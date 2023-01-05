@@ -37,7 +37,7 @@ export interface AriaTableColumnResizeProps<T> {
    * Ref to the trigger if resizing was started from a column header menu. If it's provided,
    * focus will be returned there when resizing is done.
    * */
-  triggerRef?: RefObject<HTMLDivElement>,
+  triggerRef?: RefObject<HTMLElement>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */

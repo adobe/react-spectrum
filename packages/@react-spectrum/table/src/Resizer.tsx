@@ -17,7 +17,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLElement>,
   onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void

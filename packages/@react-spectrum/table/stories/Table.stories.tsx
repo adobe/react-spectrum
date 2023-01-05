@@ -129,6 +129,44 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
+  .add('static column actions', () => {
+    let actions = [
+      {
+        label: 'Hide',
+        id: 'hide'
+      },
+      {
+        label: 'Filter',
+        id: 'filter'
+      },
+      {
+        label: 'Delete',
+        id: 'delete'
+      }
+    ];
+
+    return (
+      <TableView aria-label="TableView with static contents" width={300} height={200}>
+        <TableHeader>
+          <Column key="foo" actions={actions} onAction={action('foo action')}>Foo</Column>
+          <Column key="bar" actions={actions} onAction={action('bar action')}>Bar</Column>
+          <Column key="baz" actions={actions} onAction={action('baz action')}>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+  })
   .add(
     'static with selection',
     () => (
@@ -170,6 +208,37 @@ storiesOf('TableView', module)
       </TableView>
     )
   )
+  .add('dynamic, column actions', () => {
+    let actions = [
+      {
+        label: 'Hide',
+        id: 'hide'
+      },
+      {
+        label: 'Filter',
+        id: 'filter'
+      },
+      {
+        label: 'Delete',
+        id: 'delete'
+      }
+    ];
+
+    return (
+      <TableView aria-label="TableView with dynamic contents" width={300} height={200}>
+        <TableHeader columns={columns}>
+          {column => <Column actions={actions} onAction={action(`${column.name} action`)}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
+  })
   .add(
     'dynamic, falsy row keys',
     () => (
@@ -1152,6 +1221,54 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'allowsResizing, uncontrolled, dynamic widths with custom actions',
+    () => {
+      let actions = [
+        {
+          label: 'Hide',
+          id: 'hide'
+        },
+        {
+          label: 'Filter',
+          id: 'filter'
+        },
+        {
+          label: 'Delete',
+          id: 'delete'
+        }
+      ];
+      return (
+        <>
+          <label htmlFor="focusable-before">Focusable before</label>
+          <input id="focusable-before" />
+          <TableView aria-label="TableView with resizable columns" width={800} height={200}>
+            <TableHeader>
+              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>File Name</Column>
+              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Type</Column>
+              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Size</Column>
+              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>Weight</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>2018 Proposal</Cell>
+                <Cell>PDF</Cell>
+                <Cell>214 KB</Cell>
+                <Cell>1 LB</Cell>
+              </Row>
+              <Row>
+                <Cell>Budget</Cell>
+                <Cell>XLS</Cell>
+                <Cell>120 KB</Cell>
+                <Cell>20 LB</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+          <label htmlFor="focusable-after">Focusable after</label>
+          <input id="focusable-after" />
+        </>
+      );
+    })
+  .add(
     'allowsResizing, uncontrolled, static widths', () => (
       <TableView aria-label="TableView with resizable columns" width={800} height={200}>
         <TableHeader>
@@ -1275,6 +1392,11 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, sortable columns',
     () => <AsyncLoadingExample isResizable />,
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'allowsResizing, uncontrolled, sortable columns, custom actions',
+    () => <AsyncLoadingExample isResizable hasCustomActions />,
     {chromatic: {disable: true}}
   )
   .add(
@@ -1470,7 +1592,7 @@ let columnsSomeFR: PokemonColumn[] = [
 ];
 
 function AsyncLoadingExample(props) {
-  const {isResizable} = props;
+  const {isResizable, hasCustomActions} = props;
   interface Item {
     data: {
       id: string,
@@ -1478,6 +1600,22 @@ function AsyncLoadingExample(props) {
       title: string
     }
   }
+
+  let actions = hasCustomActions ? [
+    {
+      label: 'Hide',
+      id: 'hide'
+    },
+    {
+      label: 'Filter',
+      id: 'filter'
+    },
+    {
+      label: 'Delete',
+      id: 'delete'
+    }
+  ] : undefined;
+  let onAction = hasCustomActions ? action('action') : undefined;
 
   let list = useAsyncList<Item>({
     getKey: (item) => item.data.id,
@@ -1509,10 +1647,10 @@ function AsyncLoadingExample(props) {
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Score</Column>
-          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting>Title</Column>
-          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting>Author</Column>
-          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Score</Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Title</Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Author</Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Comments</Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>

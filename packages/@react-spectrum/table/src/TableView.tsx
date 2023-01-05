@@ -29,7 +29,7 @@ import {getInteractionModality, useHover, usePress} from '@react-aria/interactio
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -310,7 +310,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing) {
+        if (item.props.allowsResizing || (item.props.actions && item.props.onAction)) {
           return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
@@ -668,6 +668,7 @@ function ResizableTableColumnHeader(props) {
   const allProps = [columnHeaderProps, pressProps, hoverProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let {actions, onAction} = columnProps;
 
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -683,11 +684,16 @@ function ResizableTableColumnHeader(props) {
         layout.onColumnResizeStart(column.key);
         setIsInResizeMode(true);
         break;
+      default:
+        if (onAction) {
+          onAction(key, column.key);
+        }
     }
   };
   let allowsSorting = column.props?.allowsSorting;
-  let items = useMemo(() => {
-    let options = [
+  let allowsResizing = column.props?.allowsResizing;
+  let priorityActions = useMemo(() => {
+    let actions = [
       allowsSorting ? {
         label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
@@ -696,14 +702,45 @@ function ResizableTableColumnHeader(props) {
         label: stringFormatter.format('sortDescending'),
         id: 'sort-desc'
       } : undefined,
-      {
+      allowsResizing ? {
         label: stringFormatter.format('resizeColumn'),
         id: 'resize'
-      }
-    ];
+      } : undefined
+    ].filter(val => !!val);
+    let section = {
+      name: 'Priority Actions',
+      id: 'priority-actions',
+      children: actions
+    };
+    if (actions.length > 0) {
+      return section;
+    }
+    return undefined;
+  }, [allowsSorting, allowsResizing, stringFormatter]);
+  let customActions = useMemo(() => {
+    let section = {
+      // need better names for these
+      name: 'Custom Actions',
+      id: 'custom-actions',
+      children: actions
+    };
+    if (actions.length > 0) {
+      return section;
+    }
+    return undefined;
+  }, [allowsSorting, allowsResizing, stringFormatter]);
+  let hasPriorityActions = !!priorityActions;
+  let hasCustomActions = !!customActions;
+  let items: Array<{name: string, id: string, children: Array<{label: string, id: string}>}> = useMemo(() => {
+    let options = [];
+    if (hasPriorityActions) {
+      options.push(priorityActions);
+    }
+    if (hasCustomActions) {
+      options.push(customActions);
+    }
     return options;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowsSorting]);
+  }, [priorityActions, customActions, hasPriorityActions, hasCustomActions]);
   let isMobile = useIsMobileDevice();
 
   let resizingColumn = layout.resizingColumn;
@@ -738,6 +775,7 @@ function ResizableTableColumnHeader(props) {
   }, []);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
+  let resizerTriggerRef = useUnwrapDOMRef(triggerRef);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -778,46 +816,51 @@ function ResizableTableColumnHeader(props) {
               <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
             }
             {
-              columnProps.allowsResizing && resizingColumn == null && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
+              (columnProps.allowsResizing && resizingColumn == null || onAction) && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
           <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
-            {(item) => (
-              <Item>
-                {item.label}
-              </Item>
+            {item => (
+              <Section items={item.children} aria-label={item.name}>
+                {item => <Item>{item.label}</Item>}
+              </Section>
             )}
           </Menu>
         </MenuTrigger>
-        <Resizer
-          ref={resizingRef}
-          column={column}
-          showResizer={showResizer}
-          onResizeStart={onResizeStart}
-          onResize={onResize}
-          onResizeEnd={onResizeEnd}
-          triggerRef={useUnwrapDOMRef(triggerRef)} />
-        <div
-          aria-hidden
-          className={classNames(
-            styles,
-            'spectrum-Table-colResizeIndicator',
-            {
-              'spectrum-Table-colResizeIndicator--visible': resizingColumn != null,
-              'spectrum-Table-colResizeIndicator--resizing': resizingColumn === column.key
-            }
-          )}>
-          <div
-            className={classNames(
-              styles,
-              'spectrum-Table-colResizeNubbin',
-              {
-                'spectrum-Table-colResizeNubbin--visible': isInResizeMode && resizingColumn === column.key
-              }
-            )}>
-            <Nubbin />
-          </div>
-        </div>
+        { allowsResizing ?
+          <>
+            <Resizer
+              ref={resizingRef}
+              column={column}
+              showResizer={showResizer}
+              onResizeStart={onResizeStart}
+              onResize={onResize}
+              onResizeEnd={onResizeEnd}
+              triggerRef={resizerTriggerRef} />
+            <div
+              aria-hidden
+              className={classNames(
+                styles,
+                'spectrum-Table-colResizeIndicator',
+                {
+                  'spectrum-Table-colResizeIndicator--visible': resizingColumn != null,
+                  'spectrum-Table-colResizeIndicator--resizing': resizingColumn === column.key
+                }
+              )}>
+              <div
+                className={classNames(
+                  styles,
+                  'spectrum-Table-colResizeNubbin',
+                  {
+                    'spectrum-Table-colResizeNubbin--visible': isInResizeMode && resizingColumn === column.key
+                  }
+                )}>
+                <Nubbin />
+              </div>
+            </div>
+          </>
+          : undefined
+        }
       </div>
     </FocusRing>
   );

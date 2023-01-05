@@ -96,6 +96,10 @@ export interface ColumnProps<T> {
   textValue?: string
 }
 
+type CustomAction = {
+  label: string,
+  id: string
+}
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   /**
@@ -112,7 +116,9 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
    * will be displayed when the column header is focused instead. Note that this prop is specifically for columns
    * that contain ActionButtons in place of text content.
    */
-  hideHeader?: boolean
+  hideHeader?: boolean,
+  actions?: Array<CustomAction>,
+  onAction?: (action: string, key: Key) => void
 }
 
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
