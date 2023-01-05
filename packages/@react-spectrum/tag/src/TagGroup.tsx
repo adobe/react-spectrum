@@ -45,7 +45,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
       : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
-  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate, allowsTabNavigation: tagState.showCollapseButton}, state, domRef);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {

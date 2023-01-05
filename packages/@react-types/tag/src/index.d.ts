@@ -28,7 +28,11 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
    * An optional keyboard delegate to handle arrow key navigation,
    * to override the default.
    */
-  keyboardDelegate?: TagKeyboardDelegate<T>
+  keyboardDelegate?: TagKeyboardDelegate<T>,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
