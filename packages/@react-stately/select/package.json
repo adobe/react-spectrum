@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/select",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -17,11 +17,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.5.0",
-    "@react-stately/list": "^3.6.0",
-    "@react-stately/menu": "^3.4.3",
-    "@react-stately/selection": "^3.11.1",
-    "@react-stately/utils": "^3.5.1",
+    "@react-stately/collections": "^3.5.1",
+    "@react-stately/list": "^3.6.1",
+    "@react-stately/menu": "^3.4.4",
+    "@react-stately/selection": "^3.11.2",
+    "@react-stately/utils": "^3.5.2",
     "@react-types/select": "^3.6.5",
     "@react-types/shared": "^3.16.0",
     "@swc/helpers": "^0.4.14"

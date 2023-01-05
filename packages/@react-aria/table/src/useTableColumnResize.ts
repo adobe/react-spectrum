@@ -12,7 +12,7 @@
 
 import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
-import {DOMAttributes, MoveEndEvent, MoveMoveEvent} from '@react-types/shared';
+import {DOMAttributes} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
@@ -40,19 +40,12 @@ export interface AriaTableColumnResizeProps<T> {
   triggerRef?: RefObject<HTMLDivElement>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
-  /** If the resizer was moved. Different from onResize because it is always called. */
-  onMove?: (e: MoveMoveEvent) => void,
-  /**
-   * If the resizer was moved. Different from onResizeEnd because it is always called.
-   * It also carries the interaction details in the object.
-   * */
-  onMoveEnd?: (e: MoveEndEvent) => void,
   /** Called when resizing starts. */
-  onResizeStart: (key: Key) => void,
+  onResizeStart?: (widths: Map<Key, number | string>) => void,
   /** Called for every resize event that results in new column sizes. */
-  onResize: (widths: Map<Key, number | string>) => void,
+  onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
-  onResizeEnd: (key: Key) => void
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
 
@@ -96,8 +89,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let startResize = useCallback((item) => {
     if (!isResizing.current) {
+      lastSize.current = layoutState.onColumnResize(item.key, layoutState.getColumnWidth(item.key));
       layoutState.onColumnResizeStart(item.key);
-      onResizeStart?.(item.key);
+      onResizeStart?.(lastSize.current);
     }
     isResizing.current = true;
   }, [isResizing, onResizeStart, layoutState]);
@@ -137,7 +131,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         }
         deltaX *= 10;
       }
-      props.onMove?.(e);
       // if moving up/down only, no need to resize
       if (deltaX !== 0) {
         columnResizeWidthRef.current += deltaX;
@@ -147,7 +140,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     onMoveEnd(e) {
       let {pointerType} = e;
       columnResizeWidthRef.current = 0;
-      props.onMoveEnd?.(e);
       if (pointerType === 'mouse') {
         endResize(item);
       }
@@ -185,8 +177,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     } else {
       nextValue = currentWidth - 10;
     }
-    props.onMove({pointerType: 'virtual'} as MoveMoveEvent);
-    props.onMoveEnd({pointerType: 'virtual'} as MoveEndEvent);
     resize(item, nextValue);
   };
 

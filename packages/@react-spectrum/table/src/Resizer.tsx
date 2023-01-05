@@ -1,10 +1,12 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
+import {ColumnSize} from '@react-types/table';
 import {FocusRing} from '@react-aria/focus';
+import {getInteractionModality} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MoveMoveEvent} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import React, {Key, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -16,10 +18,9 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onResizeStart: (key: Key) => void,
-  onResize: (widths: Map<Key, number | string>) => void,
-  onResizeEnd: (key: Key) => void,
-  onMoveResizer: (e: MoveMoveEvent) => void
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
+  onResize: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void
 }
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
@@ -32,29 +33,30 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let {inputProps, resizerProps} = useTableColumnResize<unknown>({
-    ...props,
-    label: stringFormatter.format('columnResizer'),
-    isDisabled: isEmpty,
-    onMove: (e) => {
-      document.body.classList.remove(classNames(styles, 'resize-ew'));
-      document.body.classList.remove(classNames(styles, 'resize-e'));
-      document.body.classList.remove(classNames(styles, 'resize-w'));
-      if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
-        document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
-      } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
-        document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
-      } else {
-        document.body.classList.add(classNames(styles, 'resize-ew'));
+  let {inputProps, resizerProps} = useTableColumnResize<unknown>(
+    mergeProps(props, {
+      label: stringFormatter.format('columnResizer'),
+      isDisabled: isEmpty,
+      onResize: () => {
+        document.body.classList.remove(classNames(styles, 'resize-ew'));
+        document.body.classList.remove(classNames(styles, 'resize-e'));
+        document.body.classList.remove(classNames(styles, 'resize-w'));
+        if (getInteractionModality() === 'pointer') {
+          if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
+            document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
+          } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
+            document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
+          } else {
+            document.body.classList.add(classNames(styles, 'resize-ew'));
+          }
+        }
+      },
+      onResizeEnd: () => {
+        document.body.classList.remove(classNames(styles, 'resize-ew'));
+        document.body.classList.remove(classNames(styles, 'resize-e'));
+        document.body.classList.remove(classNames(styles, 'resize-w'));
       }
-      props.onMoveResizer(e);
-    },
-    onMoveEnd: () => {
-      document.body.classList.remove(classNames(styles, 'resize-ew'));
-      document.body.classList.remove(classNames(styles, 'resize-e'));
-      document.body.classList.remove(classNames(styles, 'resize-w'));
-    }
-  }, state, layout, ref);
+    }), state, layout, ref);
 
   let style = {
     cursor: undefined,

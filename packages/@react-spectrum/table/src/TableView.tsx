@@ -23,7 +23,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
-import {DOMRef, FocusableRef, MoveMoveEvent} from '@react-types/shared';
+import {DOMRef, FocusableRef} from '@react-types/shared';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
@@ -94,10 +94,9 @@ interface TableContextValue<T> {
   setIsInResizeMode: (val: boolean) => void,
   isEmpty: boolean,
   onFocusedResizer: () => void,
-  onResizeStart: (key: Key) => void,
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
   onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (key: Key) => void,
-  onMoveResizer: (e: MoveMoveEvent) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void
 }
@@ -114,7 +113,7 @@ export function useVirtualizerContext() {
 
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {isQuiet, onAction, onResizeEnd: propsOnResizeEnd} = props;
+  let {isQuiet, onAction, onResizeStart: propsOnResizeStart, onResizeEnd: propsOnResizeEnd} = props;
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
@@ -361,17 +360,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
   };
 
-  let lastResizeInteractionModality = useRef(undefined);
-  let onMoveResizer = (e) => {
-    if (e.pointerType === 'keyboard') {
-      lastResizeInteractionModality.current = e.pointerType;
-    } else {
-      lastResizeInteractionModality.current = undefined;
-    }
-  };
-  let onResizeStart = useCallback(() => {
+  let onResizeStart = useCallback((widths) => {
     setIsResizing(true);
-  }, [setIsResizing]);
+    propsOnResizeStart?.(widths);
+  }, [setIsResizing, propsOnResizeStart]);
   let onResizeEnd = useCallback((widths) => {
     setIsInResizeMode(false);
     setIsResizing(false);
@@ -379,7 +371,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
   return (
-    <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, onMoveResizer, headerMenuOpen, setHeaderMenuOpen}}>
+    <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
         {...mergeProps(gridProps, focusProps)}
         {...styleProps}
@@ -410,7 +402,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         onVisibleRectChange={onVisibleRectChange}
         domRef={domRef}
         headerRef={headerRef}
-        lastResizeInteractionModality={lastResizeInteractionModality}
         bodyRef={bodyRef}
         isFocusVisible={isFocusVisible} />
     </TableContext.Provider>
@@ -418,7 +409,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, lastResizeInteractionModality, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, ...otherProps}) {
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -465,11 +456,11 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (lastResizeInteractionModality.current === 'keyboard' && headerRef.current.contains(document.activeElement)) {
+    if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
       document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
-  }, [state.contentSize, headerRef, bodyRef, lastResizeInteractionModality]);
+  }, [state.contentSize, headerRef, bodyRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
@@ -504,7 +495,7 @@ function TableVirtualizer({layout, collection, lastResizeInteractionModality, fo
   let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
   // scrolling can cause it to lag for a moment, but it's always updated
-  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.width + (isNaN(bodyRef.current?.scrollLeft) ? 0 : bodyRef.current?.scrollLeft);
+  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.maxX;
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   // minimize re-render caused on Resizers by memoing this
@@ -661,7 +652,6 @@ function ResizableTableColumnHeader(props) {
     setIsInResizeMode,
     isEmpty,
     onFocusedResizer,
-    onMoveResizer,
     isInResizeMode,
     headerMenuOpen,
     setHeaderMenuOpen
@@ -806,8 +796,7 @@ function ResizableTableColumnHeader(props) {
           onResizeStart={onResizeStart}
           onResize={onResize}
           onResizeEnd={onResizeEnd}
-          triggerRef={useUnwrapDOMRef(triggerRef)}
-          onMoveResizer={onMoveResizer} />
+          triggerRef={useUnwrapDOMRef(triggerRef)} />
         <div
           aria-hidden
           className={classNames(
