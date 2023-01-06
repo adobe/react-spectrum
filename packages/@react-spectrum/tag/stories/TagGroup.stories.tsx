@@ -25,27 +25,13 @@ for (let i = 0; i < 50; i++) {
   manyItems.push(item);
 }
 
-export default {
-  title: 'TagGroup',
-  component: TagGroup,
-  args: {
-    onRemove: action('onRemove')
-  },
-  argTypes: {
-    onRemove: {
-      table: {
-        disable: true
-      }
-    },
-    maxRows: {type: 'number'}
-  }
-} as ComponentMeta<typeof TagGroup>;
-
-export type TagGroupStory = ComponentStoryObj<any>;
-
-export const Default: TagGroupStory = {
-  render: (args) => render(args)
-};
+function ResizableContainer({children}) {
+  return (
+    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      {children}
+    </div>
+  );
+}
 
 function render(props: SpectrumTagGroupProps<unknown>) {
   return (
@@ -56,6 +42,24 @@ function render(props: SpectrumTagGroupProps<unknown>) {
     </TagGroup>
   );
 }
+
+export default {
+  title: 'TagGroup',
+  component: TagGroup,
+  argTypes: {
+    onRemove: {
+      table: {
+        disable: true
+      }
+    },
+    maxRows: {type: 'number'}
+  },
+  render: args => render(args)
+} as ComponentMeta<typeof TagGroup>;
+
+export type TagGroupStory = ComponentStoryObj<any>;
+
+export const Default: TagGroupStory = {};
 
 export const WithIcons: TagGroupStory = {
   args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
@@ -77,18 +81,7 @@ export const OnRemove: TagGroupStory = {
 };
 
 export const Wrapping: TagGroupStory = {
-  render: (args) => (
-    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup aria-label="Tag group with wrapping" {...args}>
-        <Item key="1">Cool Tag 1</Item>
-        <Item key="2">Another cool tag</Item>
-        <Item key="3">This tag</Item>
-        <Item key="4">What tag?</Item>
-        <Item key="5">This tag is cool too</Item>
-        <Item key="6">Shy tag</Item>
-      </TagGroup>
-    </div>
-    )
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>]
 };
 
 export const LabelTruncation: TagGroupStory = {
@@ -100,41 +93,46 @@ export const LabelTruncation: TagGroupStory = {
         <Item key="3">This tag</Item>
       </TagGroup>
     </div>
-    )
+  )
 };
 
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => (
-    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup width="100%" aria-label="Tag group" {...args}>
-        <Item key="1">Cool Tag 1</Item>
-        <Item key="2">Another cool tag</Item>
-        <Item key="3">This tag</Item>
-        <Item key="4">What tag?</Item>
-        <Item key="5">This tag is cool too</Item>
-        <Item key="6">Shy tag</Item>
-      </TagGroup>
-    </div>
-    ),
+    <TagGroup width="100%" aria-label="Tag group" {...args}>
+      <Item key="1">Cool Tag 1</Item>
+      <Item key="2">Another cool tag</Item>
+      <Item key="3">This tag</Item>
+      <Item key="4">What tag?</Item>
+      <Item key="5">This tag is cool too</Item>
+      <Item key="6">Shy tag</Item>
+    </TagGroup>
+  ),
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'maxRows'
 };
 
 export const MaxRowsManyTags: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => (
-    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-      <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
-        {(item: any) => (
-          <Item key={item.key}>{`Tag ${item.key}`}</Item>
-        )}
-      </TagGroup>
-    </div>
-    ),
+    <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
+      {(item: any) => (
+        <Item key={item.key}>{`Tag ${item.key}`}</Item>
+      )}
+    </TagGroup>
+  ),
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'maxRows with many tags'
 };
 
-function OnRemoveExample() {
+export const MaxRowsOnRemove: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => <OnRemoveExample {...args} />,
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'maxRows + onRemove'
+};
+
+function OnRemoveExample(props) {
   let [items, setItems] = useState([
     {id: 1, label: 'Cool Tag 1'},
     {id: 2, label: 'Another cool tag'},
@@ -150,8 +148,8 @@ function OnRemoveExample() {
   };
 
   return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)}>
-      {item => (
+    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...props}>
+      {(item: any) => (
         <Item>{item.label}</Item>
       )}
     </TagGroup>
