@@ -3567,7 +3567,11 @@ describe('TableView', function () {
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(1);
+
+      // account for renderEmptyState
+      expect(rows).toHaveLength(2);
+      expect(rows[1].firstChild.getAttribute('aria-colspan')).toBe('5');
+      expect(rows[1].textContent).toBe('No results');
 
       expect(checkbox.checked).toBe(false);
 
