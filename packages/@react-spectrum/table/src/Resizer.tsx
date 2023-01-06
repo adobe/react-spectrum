@@ -7,7 +7,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import React, {Key, RefObject} from 'react';
+import React, {Key, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
@@ -23,6 +23,12 @@ interface ResizerProps<T> {
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void
 }
 
+let CURSOR_CLASSES = {
+  w: classNames(styles, 'resize-w'),
+  e: classNames(styles, 'resize-e'),
+  ew: classNames(styles, 'resize-ew')
+};
+
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
   let {state, isEmpty, layout} = useTableContext();
@@ -32,29 +38,40 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
+  let prevCursorDirection = useRef(null);
 
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
       label: stringFormatter.format('columnResizer'),
       isDisabled: isEmpty,
       onResize: () => {
-        document.body.classList.remove(classNames(styles, 'resize-ew'));
-        document.body.classList.remove(classNames(styles, 'resize-e'));
-        document.body.classList.remove(classNames(styles, 'resize-w'));
+        let nextCursorDirection = null;
         if (getInteractionModality() === 'pointer') {
           if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
-            document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
+            document.body.classList.add(direction === 'rtl' ? CURSOR_CLASSES.w : CURSOR_CLASSES.e);
+            nextCursorDirection = direction === 'rtl' ? 'w' : 'e';
           } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
-            document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
+            document.body.classList.add(direction === 'rtl' ? CURSOR_CLASSES.e : CURSOR_CLASSES.w);
+            nextCursorDirection = direction === 'rtl' ? 'e' : 'w';
           } else {
-            document.body.classList.add(classNames(styles, 'resize-ew'));
+            document.body.classList.add(CURSOR_CLASSES.ew);
+            nextCursorDirection = 'ew';
           }
         }
+
+        if (nextCursorDirection == null && prevCursorDirection.current != null) {
+          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e, CURSOR_CLASSES.w);
+        } else if (nextCursorDirection === 'e' && (prevCursorDirection.current !== 'e' && prevCursorDirection.current != null)) {
+          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.w);
+        } else if (nextCursorDirection === 'w' && (prevCursorDirection.current !== 'w' && prevCursorDirection.current != null)) {
+          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e);
+        } else if (nextCursorDirection === 'ew' && (prevCursorDirection.current !== 'ew' && prevCursorDirection.current != null)) {
+          document.body.classList.remove(CURSOR_CLASSES.e, CURSOR_CLASSES.w);
+        }
+        prevCursorDirection.current = nextCursorDirection;
       },
       onResizeEnd: () => {
-        document.body.classList.remove(classNames(styles, 'resize-ew'));
-        document.body.classList.remove(classNames(styles, 'resize-e'));
-        document.body.classList.remove(classNames(styles, 'resize-w'));
+        document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e, CURSOR_CLASSES.w);
       }
     }), state, layout, ref);
 
