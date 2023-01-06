@@ -19,7 +19,7 @@ function ProviderUpdater(props) {
   let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
   let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'bottom');
   let [expressValue, setExpress] = useState(providerValuesFromUrl.express === 'true');
-  let [storyReady, setStoryReady] = useState(window.parent === window); // reduce content flash because it takes a moment to get the provider details
+  let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
   let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
