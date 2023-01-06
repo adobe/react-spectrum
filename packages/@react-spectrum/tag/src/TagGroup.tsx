@@ -121,6 +121,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     visibleTags = visibleTags.slice(0, tagState.visibleTagCount);
   }
 
+  let handlePressCollapse = () => {
+    // Prevents button from losing focus if focusedKey got collapsed.
+    state.selectionManager.setFocusedKey(null);
+    setIsCollapsed(prevCollapsed => !prevCollapsed);
+  };
+
   return (
     <FocusScope>
       <div
@@ -146,7 +152,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           </Tag>
         ))}
         {tagState.showCollapseButton &&
-          <ActionButton isQuiet onPress={() => setIsCollapsed(!isCollapsed)}>
+          <ActionButton isQuiet onPress={handlePressCollapse}>
             {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
         }
