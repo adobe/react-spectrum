@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
+import {CollectionBase, ItemProps, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
-import type {TagKeyboardDelegate} from '@react-aria/tag';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
@@ -22,20 +21,6 @@ export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
   maxRows?: number
 }
-
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
-  /**
-   * An optional keyboard delegate to handle arrow key navigation,
-   * to override the default.
-   */
-  keyboardDelegate?: TagKeyboardDelegate<T>,
-  /**
-   * Whether navigation through tab key is enabled.
-   */
-  allowsTabNavigation?: boolean
-}
-
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
 
 export interface TagProps<T> extends ItemProps<any> {
   isFocused: boolean,

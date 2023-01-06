@@ -11,19 +11,20 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {ListCollection} from '@react-stately/list';
 import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import React, {ReactElement, useCallback, useMemo, useState} from 'react';
-import {SpectrumTagGroupProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
+
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);

@@ -13,9 +13,8 @@
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Item, TagGroup} from '../src';
+import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import React, {useState} from 'react';
-import {TagGroupProps} from '@react-types/tag';
 import {Text} from '@react-spectrum/text';
 
 let manyItems = [];
@@ -46,7 +45,7 @@ export const Default: TagGroupStory = {
   render: (args) => render(args)
 };
 
-function render(props: TagGroupProps<unknown>) {
+function render(props: SpectrumTagGroupProps<unknown>) {
   return (
     <TagGroup {...props} aria-label="Tag group">
       <Item key="1">Cool Tag 1</Item>

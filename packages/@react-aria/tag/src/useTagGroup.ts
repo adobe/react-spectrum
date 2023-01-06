@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps} from '@react-types/tag';
-import {DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject, useState} from 'react';
+import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -22,6 +22,18 @@ import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   tagGroupProps: DOMAttributes
+}
+
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>,
+  /**
+   * Whether navigation through tab key is enabled.
+   */
+  allowsTabNavigation?: boolean
 }
 
 /**
@@ -51,6 +63,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
-    } as DOMAttributes)
+    })
   };
 }
