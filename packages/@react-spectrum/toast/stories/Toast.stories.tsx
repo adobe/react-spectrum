@@ -238,7 +238,7 @@ function IframeExample() {
       title="iframe"
       width="500"
       height="500"
-      src="/iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=toast--with-dialog"
+      src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=toast--with-dialog"
       onLoad={onLoad}
       tabIndex={-1} />
   );

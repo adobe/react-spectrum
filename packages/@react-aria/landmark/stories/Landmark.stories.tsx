@@ -404,7 +404,7 @@ function IframeExample() {
         {...landmarkProps}
         title="iframe"
         style={{width: '100%', height: '100%'}}
-        src="/iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&providerSwitcher-locale=&providerSwitcher-theme=&providerSwitcher-scale=&args=&id=landmark--application-with-landmarks&viewMode=story"
+        src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&providerSwitcher-locale=&providerSwitcher-theme=&providerSwitcher-scale=&args=&id=landmark--application-with-landmarks&viewMode=story"
         onLoad={onLoad}
         tabIndex={-1} />
     </div>
