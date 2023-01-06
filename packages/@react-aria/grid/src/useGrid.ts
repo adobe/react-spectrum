@@ -121,7 +121,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
             keyToFocus = keyAbove;
             break;
           }
-          keyAbove = cachedDelegate.current.getKeyBelow(keyAbove);
+          keyAbove = cachedDelegate.current.getKeyAbove(keyAbove);
         }
       }
     }
