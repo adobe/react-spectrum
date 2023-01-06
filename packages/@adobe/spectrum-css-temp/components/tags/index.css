@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum-Tags {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
 
   margin: 0;
@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr auto;
   grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
@@ -58,28 +58,36 @@ governing permissions and limitations under the License.
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
     width: var(--spectrum-global-dimension-size-300);
   }
-}
 
-.spectrum-Tag-icon {
-  grid-area: icon;
-  margin-inline-end: var(--spectrum-global-dimension-size-100);
-}
+  .spectrum-Tag-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+  }
 
-.spectrum-Tag-content {
-  grid-area: content;
-  block-size: 100%;
-  line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
-  margin-inline-end: var(--spectrum-tag-padding-x);
-  flex: 1 1 auto;
-  font-size: var(--spectrum-tag-text-size);
-  cursor: default;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  outline: none;
-}
+  .spectrum-Tag-icon {
+    grid-area: icon;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
 
-.tags-removable {
-  margin-inline-end: 0;
+  .spectrum-Tag-content {
+    grid-area: content;
+    line-height: calc(var(--spectrum-tag-height) - calc(var(--spectrum-tag-border-size) * 2));
+    margin-inline-end: var(--spectrum-tag-padding-x);
+    flex: 1 1 auto;
+    font-size: var(--spectrum-tag-text-size);
+    cursor: default;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    outline: none;
+  }
+
+  &.is-removable {
+    .spectrum-Tag-content {
+      margin-inline-end: 0;
+    }
+  }
 }
 
