@@ -12,19 +12,24 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {ListCollection} from '@react-stately/list';
 import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import React, {ReactElement, useCallback, useMemo, useState} from 'react';
+import React, {ReactElement, ReactNode, useCallback, useMemo, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {
+  /**
+   * Provide one or more ActionButtons to be rendered next to the tag group.
+   */
+  actions?: ReactNode
+}
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -33,6 +38,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     onRemove,
     maxRows,
     children,
+    actions,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -46,7 +52,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
       : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
-  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate, allowsTabNavigation: tagState.showCollapseButton}, state, domRef);
+  let {tagGroupProps} = useTagGroup({
+    ...props,
+    keyboardDelegate,
+    allowsTabNavigation: tagState.showCollapseButton || actions !== null
+  }, state, domRef);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -155,6 +165,16 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           <ActionButton isQuiet onPress={handlePressCollapse}>
             {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
+        }
+        {actions && 
+          <SlotProvider
+            slots={{
+              actionButton: {
+                isQuiet: true
+              }
+            }}>
+            {actions}
+          </SlotProvider>
         }
       </div>
     </FocusScope>

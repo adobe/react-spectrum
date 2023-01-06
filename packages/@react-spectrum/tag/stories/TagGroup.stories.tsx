@@ -11,6 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
@@ -155,4 +157,67 @@ function OnRemoveExample() {
     </TagGroup>
   );
 }
+
+export const WithAction: TagGroupStory = {
+  args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
+  render: (args) => (
+    <TagGroup
+      aria-label="Tag group with an action button"
+      actions={<ActionButton onPress={action('clear')}>Clear</ActionButton>}
+      {...args}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.label}>
+          {item.label}
+        </Item>
+      )}
+    </TagGroup>
+  ),
+  storyName: 'with action'
+};
+
+export const WithMultipleActions: TagGroupStory = {
+  args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}]},
+  render: (args) => (
+    <TagGroup
+      aria-label="Tag group with multiple action buttons"
+      actions={
+        <>
+          <ActionButton onPress={action('clear')}>Clear</ActionButton>
+          <ActionButton onPress={action('add')}>
+            <Add />
+            <Text>Add</Text>
+          </ActionButton>
+        </>
+      }
+      {...args}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.label}>
+          {item.label}
+        </Item>
+      )}
+    </TagGroup>
+  ),
+  storyName: 'with multiple actions'
+};
+
+export const WithActionAndMaxRows: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => (
+    <div style={{width: '200px', height: '200px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <TagGroup
+        width="100%"
+        aria-label="Tag group"
+        actions={<ActionButton onPress={action('clear')}>Clear</ActionButton>}
+        {...args}>
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Another cool tag</Item>
+        <Item key="3">This tag</Item>
+        <Item key="4">What tag?</Item>
+        <Item key="5">This tag is cool too</Item>
+        <Item key="6">Shy tag</Item>
+      </TagGroup>
+    </div>
+    ),
+  storyName: 'with action and maxRows'
+};
 
