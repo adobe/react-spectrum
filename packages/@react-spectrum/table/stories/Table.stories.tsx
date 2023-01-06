@@ -1824,7 +1824,15 @@ export function DeletableRowsTable() {
   });
 
   return (
-    <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+    <TableView
+      aria-label="People"
+      width={500}
+      height={300}
+      selectionMode="multiple"
+      isQuiet
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
       <TableHeader>
         <Column isRowHeader key="firstName">First Name</Column>
         <Column isRowHeader key="lastName">Last Name</Column>
