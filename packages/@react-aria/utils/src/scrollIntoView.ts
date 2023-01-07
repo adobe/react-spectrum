@@ -83,6 +83,44 @@ export function scrollIntoViewFully(target: Element, scrollOptions?: ScrollIntoV
   }
 }
 
+// TODO: use Rect from stately and perhaps add getPercentageOutofView to Rect's methods
+// Determines if a the target rect intersects the container rect
+function intersects(targetRect, containerRect): boolean {
+  return targetRect.x <= containerRect.x + containerRect.width
+      && containerRect.x <= targetRect.x + targetRect.width
+      && targetRect.y <= containerRect.y + containerRect.height
+      && containerRect.y <= targetRect.y + targetRect.height;
+}
+
+// Determines if the container rect contains the target rect
+function containsRect(targetRect, containerRect): boolean {
+  return containerRect.x <= targetRect.x
+      && containerRect.y <= targetRect.y
+      && containerRect.x + containerRect.width >= targetRect.x + targetRect.width
+      && containerRect.y + containerRect.height >= targetRect.y + targetRect.height;
+}
+
+// Get the percentage that the target rect is outside the container
+// TODO: think about if I should just do percentage out of view for just the x direction and y direction instead of
+// doing an area percentage diff. Also note that this approach really only works with block: nearest since block:nearest isn't very
+// aggressive in its scroll adjustments when bringing a item into view. block: center wouldn't really work for Table rows which
+// can have a large percentage outside of the viewport even if the whole table fits in the viewport
+function getPercentageOutOfView(targetRect, containerRect): number {
+  if (!intersects(targetRect, containerRect)) {
+    if (!containsRect(targetRect, containerRect)) {
+      return 100;
+    } else {
+      return 0;
+    }
+  }
+
+  let x = Math.max(targetRect.x, containerRect.x);
+  let y = Math.max(targetRect.y, containerRect.y);
+  let width = Math.min(targetRect.x + targetRect.width, containerRect.x + containerRect.width) - x;
+  let height = Math.min(targetRect.y + targetRect.height, containerRect.y + containerRect.height) - y;
+  return  (1 - ((width * height) / (targetRect.width * targetRect.height))) * 100;
+}
+
 // Determines if a target element is fully out of view and thus should be scrolled into view if possible.
 // Recurses through every scrollable parent of the target and returns true the target is not visible in any of the scrollable parents.
 function shouldScrollIntoView(target: Element, scrollContainer?: Element) {
@@ -98,28 +136,24 @@ function shouldScrollIntoView(target: Element, scrollContainer?: Element) {
   let scrollParent = scrollContainer || getScrollParent(target);
   let scrollIntoView = false;
 
+  let targetRect = target.getBoundingClientRect();
   while (root.contains(scrollParent) && !scrollIntoView) {
-    let {bottom: targetBottom, top: targetTop, left: targetLeft, right: targetRight} = target.getBoundingClientRect();
-    let {bottom: scrollParentBottom, top: scrollParentTop, left: scrollParentLeft, right: scrollParentRight} = scrollParent.getBoundingClientRect();
-
-    // Guard against cases where the target is technically barely in view due to subpixel values but we would still want to scroll it into view
-    targetBottom--;
-    targetTop++;
-    targetLeft++;
-    targetRight--;
-
+    let containerRect;
     if (scrollParent === root) {
       // Account for pinch zooming on mobile devices
       let viewportTop = window.visualViewport?.offsetTop ?? 0;
       let viewportLeft = window.visualViewport?.offsetLeft ?? 0;
       let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-      let viewportBottom = viewportTop + viewportHeight;
-      let viewportRight = viewportLeft + viewportWidth;
-      return (targetBottom <= viewportTop || targetTop >= viewportBottom || targetLeft >= viewportRight || targetRight <= viewportLeft);
+      let viewportRect = {width: viewportWidth, height: viewportHeight, x: viewportLeft, y: viewportTop};
+
+      // TODO: consider configurable tolerence value here
+      return getPercentageOutOfView(targetRect, viewportRect) > 10;
+    } else {
+      containerRect = scrollParent.getBoundingClientRect();
     }
 
-    scrollIntoView = targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft;
+    scrollIntoView = getPercentageOutOfView(targetRect, containerRect) > 10;
     scrollParent = getScrollParent(scrollParent);
   }
 
