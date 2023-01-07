@@ -110,9 +110,13 @@ function shouldScrollIntoView(target: Element, scrollContainer?: Element) {
 
     if (scrollParent === root) {
       // Account for pinch zooming on mobile devices
+      let viewportTop = window.visualViewport?.offsetTop ?? 0;
+      let viewportLeft = window.visualViewport?.offsetLeft ?? 0;
       let viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       let viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-      return (targetBottom <= 0 || targetTop >= viewportHeight || targetLeft >= viewportWidth || targetRight <= 0);
+      let viewportBottom = viewportTop + viewportHeight;
+      let viewportRight = viewportLeft + viewportWidth;
+      return (targetBottom <= viewportTop || targetTop >= viewportBottom || targetLeft >= viewportRight || targetRight <= viewportLeft);
     }
 
     scrollIntoView = targetBottom <= scrollParentTop || targetTop >= scrollParentBottom || targetLeft >= scrollParentRight || targetRight <= scrollParentLeft;
