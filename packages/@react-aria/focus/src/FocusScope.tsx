@@ -13,7 +13,7 @@
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {isElementVisible} from './isElementVisible';
-import React, {ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 
@@ -62,7 +62,7 @@ export interface FocusManager {
 type ScopeRef = RefObject<Element[]>;
 interface IFocusContext {
   focusManager: FocusManager,
-  addParentToFocusScopeTree: () => ScopeRef
+  parentNode: TreeNode | null
 }
 
 const FocusContext = React.createContext<IFocusContext>(null);
@@ -84,41 +84,28 @@ export function FocusScope(props: FocusScopeProps) {
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
-  let {addParentToFocusScopeTree: addParentToTreeMap} = useContext(FocusContext) || {};
+  let {parentNode} = useContext(FocusContext) || {};
 
-  // Call to add current scope to Tree if it hasn't been added yet. Adds parent scope to Tree if it doesn't exist.
-  let addParentToFocusScopeTree = useCallback(() => {
-    let parentScope = null;
-    if (addParentToTreeMap != null) {
-      parentScope = addParentToTreeMap();
-    } else if (activeScope && focusScopeTree.getTreeNode(activeScope)) {
-      // If addParentToTreeMap doesn't exist on context, then the current FocusScope is either standalone or could be a overlay (e.g. DialogContainer launched from a menu)
-      // and thus perhaps outside the active scope. For the latter, we'll want to set the new scope's parent as the active scope so we can restore focus when the scope unmounts
-      parentScope = activeScope;
-    }
+  // Create a tree node here so we can add children to it even before it is added to the tree.
+  let node = useMemo(() => new TreeNode({scopeRef}), [scopeRef]);
 
-    if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
-      focusScopeTree.addTreeNode(scopeRef, parentScope);
-    }
-
-    return scopeRef;
-  }, [addParentToTreeMap]);
-
-  // Construct Tree on inital mount. Generate from top most parent to bottom most child by calling addParentToTreeMap from parent context.
   useLayoutEffect(() => {
-    let parentScope = null;
-    if (addParentToTreeMap != null) {
-      parentScope = addParentToTreeMap();
-    } else if (activeScope && focusScopeTree.getTreeNode(activeScope)) {
-      parentScope = activeScope;
+    // If a new scope mounts outside the active scope, (e.g. DialogContainer launched from a menu),
+    // use the active scope as the parent instead of the parent from context. Layout effects run bottom
+    // up, so if the parent is not yet added to the tree, don't do this. Only the outer-most FocusScope
+    // that is being added should get the activeScope as its parent.
+    let parent = parentNode || focusScopeTree.root;
+    if (focusScopeTree.getTreeNode(parent.scopeRef) && activeScope && !isAncestorScope(activeScope, parent.scopeRef)) {
+      let activeNode = focusScopeTree.getTreeNode(activeScope);
+      if (activeNode) {
+        parent = activeNode;
+      }
     }
 
-    // For outer most leaf in tree, need to add self to tree map
-    if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
-      focusScopeTree.addTreeNode(scopeRef, parentScope);
-    }
-
-  }, [addParentToTreeMap]);
+    // Add the node to the parent, and to the tree.
+    parent.addChild(node);
+    focusScopeTree.addNode(node);
+  }, [node, parentNode]);
 
   useLayoutEffect(() => {
     let node = focusScopeTree.getTreeNode(scopeRef);
@@ -184,8 +171,8 @@ export function FocusScope(props: FocusScopeProps) {
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(() => ({
     focusManager,
-    addParentToFocusScopeTree
-  }), [addParentToFocusScopeTree, focusManager]);
+    parentNode: node
+  }), [node, focusManager]);
 
   return (
     <FocusContext.Provider value={value}>
@@ -799,7 +786,7 @@ function last(walker: TreeWalker) {
 
 
 class Tree {
-  private root: TreeNode;
+  root: TreeNode;
   private fastMap = new Map<ScopeRef, TreeNode>();
 
   constructor() {
@@ -826,6 +813,10 @@ class Tree {
     }
   }
 
+  addNode(node: TreeNode) {
+    this.fastMap.set(node.scopeRef, node);
+  }
+
   removeTreeNode(scopeRef: ScopeRef) {
     // never remove the root
     if (scopeRef === null) {
@@ -848,7 +839,7 @@ class Tree {
     }
     let children = node.children;
     parentNode.removeChild(node);
-    if (children.length > 0) {
+    if (children.size > 0) {
       children.forEach(child => parentNode.addChild(child));
     }
 
@@ -860,7 +851,7 @@ class Tree {
     if (node.scopeRef != null) {
       yield node;
     }
-    if (node.children.length > 0) {
+    if (node.children.size > 0) {
       for (let child of node.children) {
         yield* this.traverse(child);
       }
@@ -880,18 +871,18 @@ class TreeNode {
   public scopeRef: ScopeRef;
   public nodeToRestore: FocusableElement;
   public parent: TreeNode;
-  public children: TreeNode[] = [];
+  public children: Set<TreeNode> = new Set();
   public contain = false;
 
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
   }
   addChild(node: TreeNode) {
-    this.children.push(node);
+    this.children.add(node);
     node.parent = this;
   }
   removeChild(node: TreeNode) {
-    this.children.splice(this.children.indexOf(node), 1);
+    this.children.delete(node);
     node.parent = undefined;
   }
 }
