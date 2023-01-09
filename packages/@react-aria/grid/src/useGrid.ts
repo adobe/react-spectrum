@@ -99,39 +99,33 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   const cachedFocusedKey = useRef(null);
-  const cachedDelegate = useRef(null);
+  const cachedCollection = useRef(null);
   useEffect(() => {
-    let keyToFocus:Key;
     if (
+      state.collection.size > 0 &&
       state.selectionManager.focusedKey === null &&
       cachedFocusedKey.current !== null
     ) {
-      let keyBelow = cachedDelegate.current.getKeyBelow(cachedFocusedKey.current);
-      while (keyBelow) {
-        if (state.collection.getItem(keyBelow)) {
-          keyToFocus = keyBelow;
-          break;
-        }
-        keyBelow = cachedDelegate.current.getKeyBelow(keyBelow);
+      const node = cachedCollection.current.getItem(cachedFocusedKey.current);
+      const isCell = node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
+      const parentNode =
+        node.parentKey && isCell ?
+        cachedCollection.current.getItem(node.parentKey) :
+        cachedCollection.current.getItem(node.key);
+      const rows = state.collection.rows;
+      const newRow = parentNode.index < rows.length ? rows[parentNode.index] : rows[rows.length - 1];
+      const keyToFocus =
+        newRow && newRow.hasChildNodes && isCell ?
+        [...newRow.childNodes][node.index].key :
+        newRow.key;
+      if (keyToFocus) {
+        state.selectionManager.setFocusedKey(keyToFocus);
       }
-      if (!keyBelow) {
-        let keyAbove = cachedDelegate.current.getKeyAbove(cachedFocusedKey.current);
-        while (keyAbove) {
-          if (state.collection.getItem(keyAbove)) {
-            keyToFocus = keyAbove;
-            break;
-          }
-          keyAbove = cachedDelegate.current.getKeyAbove(keyAbove);
-        }
-      }
-    }
-    if (keyToFocus) {
-      state.selectionManager.setFocusedKey(keyToFocus);
     }
     cachedFocusedKey.current = state.selectionManager.focusedKey;
-    cachedDelegate.current = delegate;
+    cachedCollection.current = state.collection;
   },
-  [delegate, state.collection, state.selectionManager, state.selectionManager.focusedKey]);
+  [state.collection, state.selectionManager, state.selectionManager.focusedKey]);
 
   let id = useId(props.id);
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
