@@ -26,9 +26,11 @@ export const parameters = {
 
 export const decorators = [
   Story => (
-    <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
-      <Story />
-    </VerticalCenter>
+    <div style={{overflow: 'auto', height: '100vh', width: '100vw'}}>
+      <VerticalCenter style={{alignItems: 'center', height: '300vh', width: '300vw', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+        <Story />
+      </VerticalCenter>
+    </div>
   ),
   withStrictModeSwitcher,
   withProviderSwitcher
