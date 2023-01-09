@@ -22,7 +22,6 @@ import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin} from '@react-spectrum/searchwithin';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
@@ -62,12 +61,6 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       <Radio value="dragons">Dragons</Radio>
     </RadioGroup>
     <SearchField label="Search" />
-    <SearchWithin label="Search">
-      <SearchField placeholder="Search" />
-      <Picker label="State" placeholder="Select a state" items={flatOptions}>
-        {item => <Item key={item.id}>{item.name}</Item>}
-      </Picker>
-    </SearchWithin>
     <TextArea label="Comments" placeholder="How do you feel?" />
     <TextField
       label="City"
