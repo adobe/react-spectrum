@@ -24,6 +24,7 @@ import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/src/NoSearchResults';
 import React, {useEffect, useState} from 'react';
+import RemoveCircle from '@spectrum-icons/workflow/RemoveCircle';
 import {storiesOf} from '@storybook/react';
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragAndDrop} from '@react-spectrum/dnd';
@@ -296,7 +297,8 @@ storiesOf('ListView/Actions', module)
           </Item>
         </ActionMenu>
       </>
-    ), args));
+    ), args))
+  .add('Restore focus after item removal', () => <FocusExample />);
 
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
@@ -2146,3 +2148,35 @@ function DragBetweenListsOverride(props) {
     </Flex>
   );
 }
+
+const FocusExample = () => {
+  const items = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+
+  const list = useListData({
+    initialItems: items,
+    initialSelectedKeys: []
+  });
+
+  return (
+    <ListView aria-label="listview with removable items" width="250px" items={list.items} >
+      {(item: any) => (
+        <Item textValue={item.name}>
+          <Text>{item.name}</Text>
+          <ActionButton aria-label={`Remove ${item.name}`} isQuiet onPress={() => list.remove(item.id)}>
+            <RemoveCircle />
+          </ActionButton>
+        </Item>
+      )}
+    </ListView>
+  );
+};

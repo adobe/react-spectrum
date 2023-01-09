@@ -20,7 +20,7 @@ import {
   MultipleSelection
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {Key, RefObject, useEffect, useRef} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
@@ -80,6 +80,29 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
   });
+
+  const cachedFocusedKey = useRef(null);
+  const cachedCollection = useRef(null);
+  useEffect(() => {
+    if (
+      state.collection.size > 0 &&
+      state.selectionManager.focusedKey === null &&
+      cachedFocusedKey.current !== null
+    ) {
+      const node = cachedCollection.current.getItem(cachedFocusedKey.current);
+      const newNode =
+        node.index < state.collection.size ?
+        state.collection.at(node.index) :
+        state.collection.at(state.collection.size - 1);
+      const keyToFocus = newNode ? newNode.key : null;
+      if (keyToFocus) {
+        state.selectionManager.setFocusedKey(keyToFocus);
+      }
+    }
+    cachedFocusedKey.current = state.selectionManager.focusedKey;
+    cachedCollection.current = state.collection;
+  },
+  [state.collection, state.selectionManager, state.selectionManager.focusedKey]);
 
   let id = useId();
   listMap.set(state, {id, onAction});
