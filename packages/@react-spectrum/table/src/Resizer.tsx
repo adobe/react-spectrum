@@ -25,7 +25,7 @@ interface ResizerProps<T> {
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {state, isEmpty, layout} = useTableContext();
+  let {isEmpty, layout} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -55,8 +55,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         document.body.classList.remove(classNames(styles, 'resize-ew'));
         document.body.classList.remove(classNames(styles, 'resize-e'));
         document.body.classList.remove(classNames(styles, 'resize-w'));
-      },
-      tableState: state
+      }
     }), layout, ref);
 
   let style = {
