@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
@@ -141,10 +141,19 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       } else {
         virtualizer.scrollToItem(focusedKey, {duration: 0});
       }
+
+      if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
+        // Wait till virtualizer scrolls the focused key into view before checking if we need to scroll it into the viewport
+        // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
+        // syncing is a bit delayed compared to when scrollToItem is fired.
+        requestAnimationFrame(() => {
+          scrollIntoViewport(document.activeElement, ref.current);
+        });
+      }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
 
   // Persist the focusedKey and prevent it from being removed from the DOM when scrolled out of view.
   virtualizer.persistedKeys = useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]);
