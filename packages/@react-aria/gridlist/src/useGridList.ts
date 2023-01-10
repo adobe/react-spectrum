@@ -45,11 +45,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-  /**
-   * Whether navigation through tab key is enabled.
-   */
-  allowsTabNavigation?: boolean
+  keyboardDelegate?: KeyboardDelegate
 }
 
 export interface GridListAria {
@@ -68,8 +64,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
-    onAction,
-    allowsTabNavigation
+    onAction
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -83,8 +78,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     ref,
     keyboardDelegate: keyboardDelegate,
     isVirtualized,
-    selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
-    allowsTabNavigation
+    selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
   });
 
   let id = useId();
