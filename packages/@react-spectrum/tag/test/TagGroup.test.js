@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
