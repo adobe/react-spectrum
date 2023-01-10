@@ -10,6 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {getScrollParent} from './';
+
+let isScrollPrevented = false;
+
+export function setScrollPrevented(value: boolean) {
+  isScrollPrevented = value;
+}
+
 /**
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
@@ -64,21 +72,32 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
   return sum;
 }
 
-// TODO: need to call this for Listview and Calendar cell
 export function scrollIntoViewport(targetElement: Element, containingElement?: Element) {
-  let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
-  // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
-  // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
-  // TODO: For some reason in the useSelectableList stories, originalTop and newTop differ by 1px, causing us to unecessarily
-  // scroll the containing element even though it may already be fully in view
-  // This is because the scrollable parent (ul) has a border of 1 that partially obscures the focused item even after scrollIntoView is called...
-  // Perhaps modify scrollIntoView calculations to take into account the borders, bleh...
-  targetElement?.scrollIntoView?.({block: 'nearest'});
-  let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-  if (originalLeft !== newLeft || originalTop !== newTop) {
-    // TODO: will need to account for if usePreventScroll is active or not since there might be a
-    // collection in a popopver or this could be the calendar case, grab that from my PR
-    containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
-    targetElement.scrollIntoView?.({block: 'nearest'});
+  // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+  if (!isScrollPrevented) {
+    let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+
+    // TODO: For some reason in the useSelectableList stories, originalTop and newTop differ by 1px, causing us to unecessarily
+    // scroll the containing element even though it may already be fully in view
+    // This is because the scrollable parent (ul) has a border of 1 that partially obscures the focused item even after scrollIntoView is called...
+    // Perhaps modify scrollIntoView calculations to take into account the borders, bleh...
+
+    // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
+    // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
+    targetElement?.scrollIntoView?.({block: 'nearest'});
+    let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
+    if (originalLeft !== newLeft || originalTop !== newTop) {
+      containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
+      targetElement.scrollIntoView?.({block: 'nearest'});
+    }
+  } else {
+    let root = document.scrollingElement || document.documentElement;
+    let scrollParent = getScrollParent(targetElement);
+    // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
+    while (targetElement && scrollParent && targetElement !== root && scrollParent !== root) {
+      scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
+      targetElement = scrollParent;
+      scrollParent = getScrollParent(targetElement);
+    }
   }
 }

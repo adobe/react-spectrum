@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, scrollIntoViewport, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -288,12 +288,14 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
-      // Only scroll the direct scroll parent, not the whole page, so
-      // we don't scroll to the bottom when opening date picker popover.
+      // If in a overlay, scrollIntoViewport will only cause scrolling
+      // up to the overlay scroll body to prevent overlay shifting
       if (getInteractionModality() !== 'pointer') {
-        // TODO: we will want to call scrollIntoViewport so that a standalone calendar will scroll the keyboard focused cell into view
-        // Right now getScrollParent returns the calendar's wrapping div
-        scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+        // If this calendar is in a popover, we need to wait till it is fully positioned before attempting to
+        // scroll it into view, otherwise it won't be brought into view properly
+        requestAnimationFrame(() => {
+          scrollIntoViewport(ref.current, getScrollParent(ref.current));
+        });
       }
     }
   }, [isFocused, ref]);
