@@ -16,10 +16,10 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {ListCollection} from '@react-stately/list';
-import {mergeProps, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import React, {ReactElement, ReactNode, useCallback, useMemo, useState} from 'react';
+import React, {ReactElement, useCallback, useMemo, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
+import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
@@ -52,11 +52,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
       : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
-  let {tagGroupProps} = useTagGroup({
-    ...props,
-    keyboardDelegate,
-    allowsTabNavigation: tagState.showCollapseButton || actions !== null
-  }, state, domRef);
+  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -67,14 +63,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           return;
         }
 
-        let [tags, button] = [...currDomRef.children].reduce((acc, el) => {
-          if (el.tagName !== 'BUTTON') {
-            acc[0].push(el);
-          } else {
-            acc[1] = el;
-          }
-          return acc;
-        }, [[], null]);
+        let tags = [...currDomRef.children];
+        let button = currDomRef.parentElement.querySelector('button');
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -140,29 +130,30 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   return (
     <FocusScope>
       <div
-        {...mergeProps(styleProps, tagGroupProps)}
-        className={
-          classNames(
-            styles,
-            'spectrum-Tags',
-            styleProps.className
-          )
-        }
-        role={state.collection.size ? 'grid' : null}
-        ref={domRef}>
-        {visibleTags.map(item => (
-          <Tag
-            {...item.props}
-            key={item.key}
-            item={item}
-            state={state}
-            allowsRemoving={allowsRemoving}
-            onRemove={onRemove}>
-            {item.rendered}
-          </Tag>
-        ))}
+        {...styleProps}
+        className={classNames(styles, 'spectrum-Tags-container', styleProps.className)}>
+        <div
+          {...tagGroupProps}
+          className={classNames(styles, 'spectrum-Tags')}
+          role={state.collection.size ? 'grid' : null}
+          ref={domRef}>
+          {visibleTags.map(item => (
+            <Tag
+              {...item.props}
+              key={item.key}
+              item={item}
+              state={state}
+              allowsRemoving={allowsRemoving}
+              onRemove={onRemove}>
+              {item.rendered}
+            </Tag>
+          ))}
+        </div>
         {tagState.showCollapseButton &&
-          <ActionButton isQuiet onPress={handlePressCollapse}>
+          <ActionButton
+            isQuiet
+            onPress={handlePressCollapse}
+            UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
             {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
         }
