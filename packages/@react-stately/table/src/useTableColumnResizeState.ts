@@ -34,8 +34,11 @@ export interface TableColumnResizeStateProps<T> {
   onColumnResizeEnd?: (key: Key) => void
 }
 export interface TableColumnResizeState {
-  /** Trigger a resize and recalculation. */
-  onColumnResize: (key: Key, width: number) => void,
+  /**
+   * Called to update the state that a resize event has occurred.
+   * Returns the new widths for all columns based on the resized column.
+   **/
+  onColumnResize: (key: Key, width: number) => Map<Key, ColumnSize>,
   /** Callback for when onColumnResize has started. */
   onColumnResizeStart: (key: Key) => void,
   /** Callback for when onColumnResize has ended. */
@@ -47,7 +50,9 @@ export interface TableColumnResizeState {
   /** Gets the current maxWidth for the specified column. */
   getColumnMaxWidth: (key: Key) => number,
   /** Currently calculated widths for all columns. */
-  widths: Map<Key, number>
+  widths: Map<Key, number>,
+  /** Key of the currently resizing column. */
+  resizingColumn: Key | null
 }
 
 

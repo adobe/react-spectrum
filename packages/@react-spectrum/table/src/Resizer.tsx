@@ -56,8 +56,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         document.body.classList.remove(classNames(styles, 'resize-e'));
         document.body.classList.remove(classNames(styles, 'resize-w'));
       },
-      layout
-    }), state, ref);
+      tableState: state
+    }), layout, ref);
 
   let style = {
     cursor: undefined,
