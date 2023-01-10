@@ -18,7 +18,7 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {TableColumnResizeState, TableState} from '@react-stately/table';
+import {TableColumnResizeState} from '@react-stately/table';
 import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -44,14 +44,13 @@ export interface AriaTableColumnResizeProps<T> {
   /** Called for every resize event that results in new column sizes. */
   onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void,
-  tableState: TableState<T>
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
-export interface AriaTableColumnResizeState extends Omit<TableColumnResizeState, 'widths'> {}
+export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
 
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, tableState} = props;
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
@@ -136,7 +135,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let ariaProps = {
     'aria-label': props.label,
     'aria-orientation': 'horizontal' as 'horizontal',
-    'aria-labelledby': `${id} ${getColumnHeaderId(tableState, item.key)}`,
+    'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
     min,
     max,
@@ -199,11 +198,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
           // call instead during focus and blur
           startResize(item);
-          tableState.setKeyboardNavigationDisabled(true);
+          state.tableState.setKeyboardNavigationDisabled(true);
         },
         onBlur: () => {
           endResize(item);
-          tableState.setKeyboardNavigationDisabled(false);
+          state.tableState.setKeyboardNavigationDisabled(false);
         },
         onChange,
         disabled: isDisabled

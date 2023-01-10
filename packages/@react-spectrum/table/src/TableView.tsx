@@ -192,6 +192,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.overflowMode, scale, density, columnLayout]
   );
+  layout.tableState = state;
 
   let {gridProps} = useTable({
     ...props,
