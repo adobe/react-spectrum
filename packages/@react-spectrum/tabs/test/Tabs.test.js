@@ -347,13 +347,29 @@ describe('Tabs', function () {
   });
 
   it('collapses when it can\'t render all the tabs horizontally', function () {
+    // First two mock implementations are for scrollIntoView's check
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          left: 0
+        };
+      }
+    })
+    .mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          left: 0
+        };
+      }
+    })
+    .mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 500
         };
       }
-    }).mockImplementationOnce(function () {
+    })
+    .mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 700
@@ -570,13 +586,29 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
+    // First two mock implementations are for scrollIntoView's check
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          left: 0
+        };
+      }
+    })
+    .mockImplementationOnce(function () {
+      if (this instanceof HTMLDivElement) {
+        return {
+          left: 0
+        };
+      }
+    })
+    .mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 500
         };
       }
-    }).mockImplementationOnce(function () {
+    })
+    .mockImplementationOnce(function () {
       if (this instanceof HTMLDivElement) {
         return {
           right: 700
