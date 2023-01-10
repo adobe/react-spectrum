@@ -63,7 +63,7 @@ export interface ToastState<T> {
 }
 
 /**
- * Provides state management for a toast queue. Toasts are transient notifications
+ * Provides state management for a toast queue. Toasts display brief, temporary notifications
  * of actions, errors, or other events in an application.
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {

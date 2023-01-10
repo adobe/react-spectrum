@@ -82,12 +82,12 @@ function RenderProvider(options: SpectrumToastOptions) {
       <Button
         onPress={() => ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})}
         variant="secondary">
-        Show Default Toast
+        Show Neutral Toast
       </Button>
       <Button
         onPress={() => ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})}
         variant="primary">
-        Show Primary Toast
+        Show Positive Toast
       </Button>
       <Button
         onPress={() => ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})}
@@ -98,7 +98,7 @@ function RenderProvider(options: SpectrumToastOptions) {
         onPress={() => ToastQueue.info('Toasting…', {...options, onClose: action('onClose')})}
         variant="accent"
         style="outline">
-        Show info Toast
+        Show Info Toast
       </Button>
     </ButtonGroup>
   );
