@@ -53,6 +53,7 @@ export interface TableColumnResizeState<T> {
   widths: Map<Key, number>,
   /** Key of the currently resizing column. */
   resizingColumn: Key | null,
+  /** A reference to the table state. */
   tableState: TableState<T>
 }
 
