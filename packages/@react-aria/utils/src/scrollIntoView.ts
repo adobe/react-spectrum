@@ -63,3 +63,20 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
   }
   return sum;
 }
+
+// TODO: need to call this for Listview and Calendar cell
+export function blahUtil(targetElement: HTMLElement, containingElement?: Element) {
+  let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+  // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
+  // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
+  // TODO: For some reason in the useSelectableList stories, originalTop and newTop differ by 1px, causing us to unecessarily
+  // scroll the containing element even though it may already be fully in view
+  targetElement?.scrollIntoView?.({block: 'nearest'});
+  let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
+  if (originalLeft !== newLeft || originalTop !== newTop) {
+    // TODO: will need to account for if usePreventScroll is active or not since there might be a
+    // collection in a popopver or this could be the calendar case, grab that from my PR
+    containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
+    targetElement.scrollIntoView?.({block: 'nearest'});
+  }
+}

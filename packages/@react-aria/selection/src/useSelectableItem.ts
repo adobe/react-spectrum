@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {blahUtil, getScrollParent, mergeProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
+import {getInteractionModality, PressProps, useLongPress, usePress} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
 export interface SelectableItemOptions {
   /**
@@ -142,6 +142,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focus();
       } else {
         focusSafely(ref.current);
+      }
+
+      if (getInteractionModality() === 'keyboard') {
+        // Wait for virtualizer to scroll items into view, otherwise we may calculate that the targetElement is out of view when it won't be after
+        // virtualizer scrolls it into view
+        requestAnimationFrame(() => {
+          // TODO: getScrollParent for the table column headers is not the table body, it is actually the page body so we'll need
+          // to provide the table body ref to useSelectableItem
+          blahUtil(ref.current as HTMLElement, getScrollParent(ref.current));
+        });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

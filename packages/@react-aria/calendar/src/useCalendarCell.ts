@@ -291,6 +291,8 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Only scroll the direct scroll parent, not the whole page, so
       // we don't scroll to the bottom when opening date picker popover.
       if (getInteractionModality() !== 'pointer') {
+        // TODO: we will want to call blahUtil so that a standalone calendar will scroll the keyboard focused cell into view
+        // Right now getScrollParent returns the calendar's wrapping div
         scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
       }
     }

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {blahUtil, getScrollParent, mergeProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -91,18 +91,22 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         if (focusable) {
           e.preventDefault();
           e.stopPropagation();
+          // TODO: revert to calling focus in blahUtil and get rid of focusSafely?
           focusSafely(focusable);
+          blahUtil(focusable, getScrollParent(ref.current));
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
+            blahUtil(ref.current, getScrollParent(ref.current));
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              blahUtil(lastElement, getScrollParent(ref.current));
             }
           }
         }
@@ -117,16 +121,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          blahUtil(focusable, getScrollParent(ref.current));
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
+            blahUtil(ref.current, getScrollParent(ref.current));
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              blahUtil(lastElement, getScrollParent(ref.current));
             }
           }
         }
