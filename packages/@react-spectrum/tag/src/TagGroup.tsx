@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {ListCollection} from '@react-stately/list';
@@ -25,10 +25,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
 
 export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {
-  /**
-   * Provide one or more ActionButtons to be rendered next to the tag group.
-   */
-  actions?: ReactNode
+  /** The label to display on the action button.  */
+  actionLabel?: string,
+  /** Handler that is called when the action button is pressed. */
+  onAction?: () => void
 }
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -38,7 +38,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     onRemove,
     maxRows,
     children,
-    actions,
+    actionLabel,
+    onAction,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -64,7 +65,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         let tags = [...currDomRef.children];
-        let button = currDomRef.parentElement.querySelector('button');
+        let buttons = [...currDomRef.parentElement.querySelectorAll('button')];
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -85,14 +86,14 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           index++;
         }
 
-        // Remove tags until there is space for the collapse button on the last row.
-        let buttonWidth = button.getBoundingClientRect().width;
+        // Remove tags until there is space for the collapse button and action button (if present) on the last row.
+        let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
         let end = direction === 'ltr' ? 'right' : 'left';
         let containerEnd = currDomRef.getBoundingClientRect()[end];
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
         let availableWidth = containerEnd - lastTagEnd;
         for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth >= buttonWidth || index <= 1 || index >= state.collection.size) {
+          if (availableWidth >= buttonsWidth || index <= 1 || index >= state.collection.size) {
             break;
           }
           availableWidth += tagWidth;
@@ -157,15 +158,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
         }
-        {actions && 
-          <SlotProvider
-            slots={{
-              actionButton: {
-                isQuiet: true
-              }
-            }}>
-            {actions}
-          </SlotProvider>
+        {actionLabel && onAction &&
+          <ActionButton
+            isQuiet
+            onPress={onAction}
+            UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+            {actionLabel}
+          </ActionButton>
         }
       </div>
     </FocusScope>

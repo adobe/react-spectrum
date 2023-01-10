@@ -46,7 +46,6 @@ function pressArrowDown(button) {
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
   let onClearSpy = jest.fn();
-  let onAddSpy = jest.fn();
   beforeAll(() => {
     jest.useFakeTimers();
   });
@@ -57,7 +56,6 @@ describe('TagGroup', function () {
     });
     onRemoveSpy.mockClear();
     onClearSpy.mockClear();
-    onAddSpy.mockClear();
   });
 
   it('provides context for Tag component', function () {
@@ -475,7 +473,8 @@ describe('TagGroup', function () {
       <Provider theme={theme}>
         <TagGroup
           aria-label="tag group"
-          actions={<ActionButton onPress={onClearSpy}>Clear</ActionButton>}>
+          actionLabel="Clear"
+          onAction={onClearSpy}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
           <Item key="3" aria-label="Tag 3">Tag 3</Item>
@@ -513,57 +512,7 @@ describe('TagGroup', function () {
     expect(document.activeElement).toBe(tags[1]);
   });
 
-  it('can keyboard navigate to multiple custom actions', function () {
-    let {getAllByRole} = render(
-      <Provider theme={theme}>
-        <TagGroup
-          aria-label="tag group"
-          actions={
-            <>
-              <ActionButton onPress={onClearSpy}>Clear</ActionButton>
-              <ActionButton onPress={onAddSpy}>Add</ActionButton>
-            </>
-          }>
-          <Item key="1" aria-label="Tag 1">Tag 1</Item>
-          <Item key="2" aria-label="Tag 2">Tag 2</Item>
-          <Item key="3" aria-label="Tag 3">Tag 3</Item>
-          <Item key="4" aria-label="Tag 4">Tag 4</Item>
-        </TagGroup>
-      </Provider>
-    );
-
-    let tags = getAllByRole('row');
-    let actions = getAllByRole('button');
-    expect(tags.length).toBe(4);
-    expect(actions.length).toBe(2);
-    expect(actions[0]).toHaveTextContent('Clear');
-    expect(actions[1]).toHaveTextContent('Add');
-    
-    userEvent.tab();
-    expect(document.activeElement).toBe(tags[0]);
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(actions[0]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    expect(onClearSpy).toHaveBeenCalledTimes(1);
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(actions[1]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    expect(onAddSpy).toHaveBeenCalledTimes(1);
-
-    userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(actions[0]);
-
-    userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(tags[0]);
-  });
-
-  it('can keyboard navigate to show all button and custom actions', function () {
+  it('can keyboard navigate to show all button and custom action', function () {
     let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
       .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
@@ -572,18 +521,15 @@ describe('TagGroup', function () {
       .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
       .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
-      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}));
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <TagGroup
           maxRows={2}
           aria-label="tag group"
-          actions={
-            <>
-              <ActionButton onPress={onClearSpy}>Clear</ActionButton>
-              <ActionButton onPress={onAddSpy}>Add</ActionButton>
-            </>
-          }>
+          actionLabel="Clear"
+          onAction={onClearSpy}>
           <Item key="1" aria-label="Tag 1">Tag 1</Item>
           <Item key="2" aria-label="Tag 2">Tag 2</Item>
           <Item key="3" aria-label="Tag 3">Tag 3</Item>
@@ -597,11 +543,10 @@ describe('TagGroup', function () {
 
     let tags = getAllByRole('row');
     let buttons = getAllByRole('button');
-    expect(tags.length).toBe(3);
-    expect(buttons.length).toBe(3);
+    expect(tags.length).toBe(1);
+    expect(buttons.length).toBe(2);
     expect(buttons[0]).toHaveTextContent('Show all (7)');
     expect(buttons[1]).toHaveTextContent('Clear');
-    expect(buttons[2]).toHaveTextContent('Add');
     
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
@@ -615,16 +560,6 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
-
-    userEvent.tab();
-    expect(document.activeElement).toBe(buttons[2]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-    expect(onAddSpy).toHaveBeenCalledTimes(1);
-
-    userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(buttons[1]);
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttons[0]);

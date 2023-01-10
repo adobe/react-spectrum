@@ -150,29 +150,15 @@ function OnRemoveExample(props) {
 }
 
 export const WithAction: TagGroupStory = {
-  args: {actions: <ActionButton onPress={action('clear')}>Clear</ActionButton>},
+  args: {onAction: action('clear'), actionLabel: 'Clear'},
   storyName: 'with action'
-};
-
-export const WithMultipleActions: TagGroupStory = {
-  args: {
-    actions: (
-      <>
-        <ActionButton onPress={action('clear')}>Clear</ActionButton>
-        <ActionButton onPress={action('add')}>
-          <Add />
-          <Text>Add</Text>
-        </ActionButton>
-      </>
-   )
-  },
-  storyName: 'with multiple actions'
 };
 
 export const WithActionAndMaxRows: TagGroupStory = {
   args: {
     maxRows: 2,
-    actions: <ActionButton onPress={action('clear')}>Clear</ActionButton>
+    onAction: action('clear'),
+    actionLabel: 'Clear'
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'with action and maxRows'
