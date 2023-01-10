@@ -11,8 +11,6 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
-import Add from '@spectrum-icons/workflow/Add';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
