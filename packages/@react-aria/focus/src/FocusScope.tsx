@@ -130,7 +130,7 @@ export function FocusScope(props: FocusScopeProps) {
   useAutoFocus(scopeRef, autoFocus);
 
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (scopeRef) {
       let activeElement = document.activeElement;
       let scope = null;
