@@ -43,8 +43,16 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
   let [isPointerDown, setIsPointerDown] = useState(false);
   useEffect(() => {
-    let setDown = () => setIsPointerDown(true);
-    let setUp = () => setIsPointerDown(false);
+    let setDown = (e) => {
+      if (e.pointerType === 'mouse') {
+        setIsPointerDown(true);
+      }
+    };
+    let setUp = (e) => {
+      if (e.pointerType === 'mouse') {
+        setIsPointerDown(false);
+      }
+    };
     document.addEventListener('pointerdown', setDown, {capture: true});
     document.addEventListener('pointerup', setUp, {capture: true});
     return () => {
