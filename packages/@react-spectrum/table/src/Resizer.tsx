@@ -7,7 +7,8 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import React, {Key, RefObject, useRef} from 'react';
+import React, {Key, RefObject, useEffect, useState} from 'react';
+import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
@@ -38,40 +39,52 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
-  let prevCursorDirection = useRef(null);
+  let [directionClass, setDirectionClass] = React.useState(null);
+
+  let [isPointerDown, setIsPointerDown] = useState(false);
+  useEffect(() => {
+    let setDown = () => setIsPointerDown(true);
+    let setUp = () => setIsPointerDown(false);
+    document.addEventListener('pointerdown', setDown, {capture: true});
+    document.addEventListener('pointerup', setUp, {capture: true});
+    return () => {
+      document.removeEventListener('pointerdown', setDown, {capture: true});
+      document.removeEventListener('pointerup', setUp, {capture: true});
+    };
+  }, []);
 
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
       label: stringFormatter.format('columnResizer'),
       isDisabled: isEmpty,
-      onResize: () => {
-        let nextCursorDirection = null;
+      onResizeStart: () => {
         if (getInteractionModality() === 'pointer') {
           if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
-            document.body.classList.add(direction === 'rtl' ? CURSOR_CLASSES.w : CURSOR_CLASSES.e);
-            nextCursorDirection = direction === 'rtl' ? 'w' : 'e';
+            setDirectionClass(direction === 'rtl' ? CURSOR_CLASSES.w : CURSOR_CLASSES.e);
           } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
-            document.body.classList.add(direction === 'rtl' ? CURSOR_CLASSES.e : CURSOR_CLASSES.w);
-            nextCursorDirection = direction === 'rtl' ? 'e' : 'w';
+            setDirectionClass(direction === 'rtl' ? CURSOR_CLASSES.e : CURSOR_CLASSES.w);
           } else {
-            document.body.classList.add(CURSOR_CLASSES.ew);
-            nextCursorDirection = 'ew';
+            setDirectionClass(CURSOR_CLASSES.ew);
           }
+        } else {
+          setDirectionClass(null);
         }
-
-        if (nextCursorDirection == null && prevCursorDirection.current != null) {
-          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e, CURSOR_CLASSES.w);
-        } else if (nextCursorDirection === 'e' && (prevCursorDirection.current !== 'e' && prevCursorDirection.current != null)) {
-          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.w);
-        } else if (nextCursorDirection === 'w' && (prevCursorDirection.current !== 'w' && prevCursorDirection.current != null)) {
-          document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e);
-        } else if (nextCursorDirection === 'ew' && (prevCursorDirection.current !== 'ew' && prevCursorDirection.current != null)) {
-          document.body.classList.remove(CURSOR_CLASSES.e, CURSOR_CLASSES.w);
+      },
+      onResize: () => {
+        if (getInteractionModality() === 'pointer') {
+          if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {
+            setDirectionClass(direction === 'rtl' ? CURSOR_CLASSES.w : CURSOR_CLASSES.e);
+          } else if (layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key)) {
+            setDirectionClass(direction === 'rtl' ? CURSOR_CLASSES.e : CURSOR_CLASSES.w);
+          } else {
+            setDirectionClass(CURSOR_CLASSES.ew);
+          }
+        } else {
+          setDirectionClass(null);
         }
-        prevCursorDirection.current = nextCursorDirection;
       },
       onResizeEnd: () => {
-        document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e, CURSOR_CLASSES.w);
+        setDirectionClass(null);
       }
     }), state, layout, ref);
 
@@ -83,6 +96,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   };
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
   let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
+  let isResizing = layout.resizingColumn === column.key;
 
   return (
     <>
@@ -113,8 +127,16 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         aria-hidden
         role="presentation"
         className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')} />
+      <CursorOverlay show={isResizing && isPointerDown}>
+        <div className={directionClass} style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0}} />
+      </CursorOverlay>
     </>
   );
+}
+
+function CursorOverlay(props) {
+  let {show, children} = props;
+  return show ? ReactDOM.createPortal(children, document.body) : null;
 }
 
 const _Resizer = React.forwardRef(Resizer);
