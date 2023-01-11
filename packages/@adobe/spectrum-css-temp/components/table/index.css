@@ -37,10 +37,11 @@ svg.spectrum-Table-sortedIcon {
 
   vertical-align: middle;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
-.spectrum-Table-menuChevron {
+.spectrum-Table-menuChevron.spectrum-Table-menuChevron {
   display: none;
   flex: 0 0 auto;
   margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
@@ -50,10 +51,10 @@ svg.spectrum-Table-sortedIcon {
 }
 
 .spectrum-Table-headWrapper {
-  border-left-width: 1px;
-  border-left-style: solid;
-  border-right-width: 1px;
-  border-right-style: solid;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
   flex: 0 0 auto;
   padding-bottom: 1px;
   margin-bottom: -1px;
@@ -105,7 +106,10 @@ svg.spectrum-Table-sortedIcon {
     }
     .spectrum-Table-headCellButton {
       box-sizing: border-box;
-      padding: var(--spectrum-table-header-padding-y) 0 var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+      padding-block-start: var(--spectrum-table-header-padding-y);
+      padding-inline-end: 0;
+      padding-block-end: var(--spectrum-table-header-padding-y);
+      padding-inline-start: var(--spectrum-table-header-padding-x);
 
       /* truncate text with ellipsis */
       overflow: hidden;
@@ -468,6 +472,7 @@ svg.spectrum-Table-sortedIcon {
 }
 .spectrum-Table-colResizeNubbin {
   display: none;
+  pointer-events: none;
   position: absolute;
   /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
    down one pixel and the nubbin circle up one pixel to cover it completely */

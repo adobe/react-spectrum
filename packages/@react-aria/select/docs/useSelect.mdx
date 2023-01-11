@@ -119,14 +119,10 @@ and another for the dropdown arrow icon (hidden from screen readers with `aria-h
 A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native
 `<select>`, which enables browser form autofill support.
 
-The same `Popover`, `ListBox`, and `Button` components created with [useOverlay](useOverlay.html), [useListBox](useListBox.html),
+The same `Popover`, `ListBox`, and `Button` components created with [usePopover](usePopover.html), [useListBox](useListBox.html),
 and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
 components such as a `ComboBox` created with [useComboBox](useComboBox.html) or a `Dialog` popover created with [useDialog](useDialog.html).
 The code for these components is also included below in the collapsed sections.
-
-This example does not do any advanced popover positioning or portaling to escape its visual container.
-See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
-using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
 options. For an example of the description and error message elements, see [useTextField](useTextField.html).
@@ -153,7 +149,7 @@ function Select(props) {
   } = useSelect(props, state, ref);
 
   return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
+    <div style={{display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
       <HiddenSelect
         state={state}
@@ -177,7 +173,7 @@ function Select(props) {
         </span>
       </Button>
       {state.isOpen &&
-        <Popover isOpen={state.isOpen} onClose={state.close}>
+        <Popover state={state} triggerRef={ref} placement="bottom start">
           <ListBox
             {...menuProps}
             state={state} />
@@ -205,52 +201,39 @@ function Select(props) {
 
 The `Popover` component is used to contain the popup listbox for the Select.
 It can be shared between many other components, including [ComboBox](useComboBox.html),
-[Menu](useMenu.html), [Dialog](useOverlayTrigger.html), and others.
-See [useOverlayTrigger](useOverlayTrigger.html) for more examples of popovers.
+[Menu](useMenu.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {DismissButton, useOverlay} from '@react-aria/overlays';
-import {FocusScope} from '@react-aria/focus';
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover(props) {
+function Popover({children, state, ...props}) {
   let ref = React.useRef();
-  let {
-    popoverRef = ref,
-    isOpen,
-    onClose,
-    children
-  } = props;
+  let {popoverRef = ref} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef
+  }, state);
 
-  // Handle events that should cause the popup to close,
-  // e.g. blur, clicking outside, or pressing the escape key.
-  let {overlayProps} = useOverlay({
-    isOpen,
-    onClose,
-    shouldCloseOnBlur: true,
-    isDismissable: true
-  }, popoverRef);
-
-  // Add a hidden <DismissButton> component at the end of the popover
-  // to allow screen reader users to dismiss the popup easily.
   return (
-    <FocusScope restoreFocus>
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
       <div
-        {...overlayProps}
+        {...popoverProps}
         ref={popoverRef}
         style={{
-          position: "absolute",
-          width: "100%",
-          border: "1px solid gray",
-          background: "lightgray",
-          marginTop: 4
+          ...popoverProps.style,
+          background: 'lightgray',
+          border: '1px solid gray'
         }}>
+        <DismissButton onDismiss={state.close} />
         {children}
-        <DismissButton onDismiss={onClose} />
+        <DismissButton onDismiss={state.close} />
       </div>
-    </FocusScope>
+    </Overlay>
   );
 }
 ```
@@ -282,8 +265,9 @@ function ListBox(props) {
         margin: 0,
         padding: 0,
         listStyle: "none",
-        maxHeight: "150px",
-        overflow: "auto"
+        maxHeight: 150,
+        overflow: "auto",
+        minWidth: 100
       }}>
       {[...state.collection].map(item => (
         <Option

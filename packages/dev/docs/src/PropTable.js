@@ -29,7 +29,7 @@ const GROUPS = {
     'padding', 'paddingTop', 'paddingLeft', 'paddingRight', 'paddingBottom', 'paddingStart', 'paddingEnd', 'paddingX', 'paddingY'
   ],
   Sizing: [
-    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'
+    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight', 'defaultWidth'
   ],
   Background: [
     'background', 'backgroundColor', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backgroundRepeat',

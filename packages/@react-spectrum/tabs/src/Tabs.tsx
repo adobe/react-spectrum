@@ -426,7 +426,8 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           isDisabled={!visible || isDisabled}
           selectedKey={state.selectedKey}
           disabledKeys={state.disabledKeys}
-          onSelectionChange={state.setSelectedKey}>
+          onSelectionChange={state.setSelectedKey}
+          UNSAFE_className={classNames(styles, 'spectrum-Tabs-picker')}>
           {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
         </Picker>
         {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}

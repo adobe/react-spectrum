@@ -408,6 +408,7 @@ jobs:
           command: |
             if [ $GITHUB_TOKEN ]; then
               node .circleci/comment.js
+              node .circleci/api-comment.js
             fi
 
   publish-nightly:
@@ -517,18 +518,6 @@ workflows:
       - deploy-verdaccio:
           requires:
             - docs-verdaccio
-      - comment:
-          name: comment-pr
-          filters:
-            branches:
-              ignore: main
-          requires:
-            - ts-diff
-            - deploy
-      - comment:
-          name: comment-verdaccio
-          requires:
-            - deploy-verdaccio
 
   nightly:
     triggers:

@@ -348,7 +348,18 @@ module.exports = new Transformer({
       }
 
       if (path.isTSPropertySignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let name;
+        if (t.isStringLiteral(path.node.key)) {
+          name = path.node.key.value;
+        } else if (t.isNumericLiteral(path.node.key)) {
+          name = String(path.node.key.value);
+        } else if (t.isIdentifier(path.node.key)) {
+          name = path.node.key.name;
+        } else {
+          console.log('Unknown key', path.node.key);
+          name = 'unknown';
+        }
+
         let docs = getJSDocs(path);
         let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
@@ -472,6 +483,29 @@ module.exports = new Transformer({
       }
 
       if (path.isTSLiteralType()) {
+        if (t.isTemplateLiteral(path.node.literal)) {
+          let expressions = path.get('literal.expressions').map(e => processExport(e));
+          let elements = [];
+          let i = 0;
+          for (let q of path.node.literal.quasis) {
+            if (q.value.raw) {
+              elements.push({
+                type: 'string',
+                value: q.value.raw
+              });
+            }
+
+            if (!q.tail) {
+              elements.push(expressions[i++]);
+            }
+          }
+
+          return Object.assign(node, {
+            type: 'template',
+            elements
+          });
+        }
+
         return Object.assign(node, {
           type: typeof path.node.literal.value,
           value: path.node.literal.value
