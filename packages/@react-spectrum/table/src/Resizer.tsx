@@ -31,7 +31,7 @@ let CURSOR_CLASSES = {
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {state, isEmpty, layout} = useTableContext();
+  let {isEmpty, layout} = useTableContext();
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -73,7 +73,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       onResizeEnd: () => {
         document.body.classList.remove(CURSOR_CLASSES.ew, CURSOR_CLASSES.e, CURSOR_CLASSES.w);
       }
-    }), state, layout, ref);
+    }), layout, ref);
 
   let style = {
     cursor: undefined,
