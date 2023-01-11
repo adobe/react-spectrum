@@ -65,7 +65,7 @@ async function run() {
   }
 
   if (pr != null) {
-    await octokit.issues.createComment({
+    let res = await octokit.issues.createComment({
       owner: 'adobe',
       repo: 'react-spectrum',
       issue_number: pr,
@@ -76,5 +76,6 @@ async function run() {
   * [View the storybook-16](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-16/index.html)
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
     });
+    console.log('res', res);
   }
 }
