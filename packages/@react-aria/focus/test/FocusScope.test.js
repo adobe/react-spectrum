@@ -1521,6 +1521,12 @@ describe('FocusScope', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      // Needed for onBlur raf in useFocusContainment
+      act(() => {
+        jest.runAllTimers();
+      });
+      // Needed for useRestoreFocus layout cleanup raf
       act(() => {
         jest.runAllTimers();
       });
