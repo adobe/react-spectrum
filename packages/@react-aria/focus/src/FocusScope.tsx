@@ -360,7 +360,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
           if (document.body.contains(e.target)) {
             focusedNode.current = e.target;
             focusedNode.current.focus();
-          } else if (activeScope) {
+          } else if (activeScope && getScopeRoot(activeScope.current) !== null) {
             focusFirstInScope(activeScope.current);
           }
         }
