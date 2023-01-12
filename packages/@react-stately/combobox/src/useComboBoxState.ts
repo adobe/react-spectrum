@@ -284,18 +284,23 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
+  let close = () => {
+    let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+    if (allowsCustomValue && inputValue !== itemText) {
+      commitCustomValue();
+    } else {
+      commitSelection();
+    }
+    triggerState.close();
+  };
+
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
       if (menuTrigger === 'focus') {
         open(null, 'focus');
       }
     } else if (shouldCloseOnBlur) {
-      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-      if (allowsCustomValue && inputValue !== itemText) {
-        commitCustomValue();
-      } else {
-        commitSelection();
-      }
+      close();
     }
 
     setFocusedState(isFocused);
@@ -305,7 +310,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     ...triggerState,
     toggle,
     open,
-    close: commit,
+    close,
     selectionManager,
     selectedKey,
     setSelectedKey,
