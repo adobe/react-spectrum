@@ -31,6 +31,7 @@ import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
+import {Menu} from '@react-spectrum/menu';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
@@ -135,32 +136,34 @@ storiesOf('TableView', module)
     )
   )
   .add('static column actions complex items', () => {
-    let actions = (
-      <Section>
-        <Item key="hide" textValue="Hide">
-          <Deselect />
-          <Text>Hide</Text>
-          <Keyboard>⌘X</Keyboard>
-        </Item>
-        <Item key="filter" textValue="Filter">
-          <Filter />
-          <Text>Filter</Text>
-          <Keyboard>⌘Y</Keyboard>
-        </Item>
-        <Item key="delete" textValue="Delete">
-          <Delete />
-          <Text>Delete</Text>
-          <Keyboard>⌘Z</Keyboard>
-        </Item>
-      </Section>
+    let menu = (
+      <Menu onAction={action('action')}>
+        <Section>
+          <Item key="hide" textValue="Hide">
+            <Deselect />
+            <Text>Hide</Text>
+            <Keyboard>⌘X</Keyboard>
+          </Item>
+          <Item key="filter" textValue="Filter">
+            <Filter />
+            <Text>Filter</Text>
+            <Keyboard>⌘Y</Keyboard>
+          </Item>
+          <Item key="delete" textValue="Delete">
+            <Delete />
+            <Text>Delete</Text>
+            <Keyboard>⌘Z</Keyboard>
+          </Item>
+        </Section>
+      </Menu>
     );
 
     return (
       <TableView aria-label="TableView with static contents" width={300} height={200}>
         <TableHeader>
-          <Column key="foo" actions={actions} onAction={action('action')}>Foo</Column>
-          <Column key="bar" actions={actions} onAction={action('action')}>Bar</Column>
-          <Column key="baz" actions={actions} onAction={action('action')}>Baz</Column>
+          <Column key="foo" menu={menu}>Foo</Column>
+          <Column key="bar" menu={menu}>Bar</Column>
+          <Column key="baz" menu={menu}>Baz</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -178,8 +181,8 @@ storiesOf('TableView', module)
     );
   })
   .add('static column actions multiple sections', () => {
-    let actions = (
-      <>
+    let menu = (
+      <Menu onAction={action('action')} disabledKeys={new Set(['filter'])}>
         <Section>
           <Item key="hide" textValue="Hide">
             <Deselect />
@@ -207,15 +210,15 @@ storiesOf('TableView', module)
             <Text>Ungroup</Text>
           </Item>
         </Section>
-      </>
+      </Menu>
     );
 
     return (
       <TableView aria-label="TableView with static contents" width={300} height={200}>
         <TableHeader>
-          <Column key="foo" actions={actions} onAction={action('action')}>Foo</Column>
-          <Column key="bar" actions={actions} onAction={action('action')}>Bar</Column>
-          <Column key="baz" actions={actions} onAction={action('action')}>Baz</Column>
+          <Column key="foo" menu={menu}>Foo</Column>
+          <Column key="bar" menu={menu}>Bar</Column>
+          <Column key="baz" menu={menu}>Baz</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -274,18 +277,18 @@ storiesOf('TableView', module)
     )
   )
   .add('dynamic, column actions', () => {
-    let actions = (
-      <>
+    let menu = (
+      <Menu onAction={action('action')}>
         <Item key="hide">Hide</Item>
         <Item key="filter">Filter</Item>
         <Item key="delete">Delete</Item>
-      </>
+      </Menu>
     );
 
     return (
       <TableView aria-label="TableView with dynamic contents" width={300} height={200}>
         <TableHeader columns={columns}>
-          {column => <Column actions={actions} onAction={action(`${column.name} action`)}>{column.name}</Column>}
+          {column => <Column menu={menu}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {item =>
@@ -1281,12 +1284,12 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, dynamic widths with custom actions',
     () => {
-      let actions = (
-        <>
+      let menu = (
+        <Menu onAction={action('action')}>
           <Item key="hide">Hide</Item>
           <Item key="filter">Filter</Item>
           <Item key="delete">Delete</Item>
-        </>
+        </Menu>
       );
       return (
         <>
@@ -1294,10 +1297,10 @@ storiesOf('TableView', module)
           <input id="focusable-before" />
           <TableView aria-label="TableView with resizable columns" width={800} height={200}>
             <TableHeader>
-              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>File Name</Column>
-              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Type</Column>
-              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Size</Column>
-              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>Weight</Column>
+              <Column allowsResizing defaultWidth="1fr" menu={menu}>File Name</Column>
+              <Column allowsResizing defaultWidth="2fr" menu={menu}>Type</Column>
+              <Column allowsResizing defaultWidth="2fr" menu={menu}>Size</Column>
+              <Column allowsResizing defaultWidth="1fr" menu={menu}>Weight</Column>
             </TableHeader>
             <TableBody>
               <Row>
@@ -1322,8 +1325,8 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, uncontrolled, dynamic widths with custom actions multiple sections',
     () => {
-      let actions = (
-        <>
+      let menu = (
+        <Menu onAction={action('action')}>
           <Section>
             <Item key="hide" textValue="Hide">
               <Deselect />
@@ -1351,7 +1354,7 @@ storiesOf('TableView', module)
               <Text>Ungroup</Text>
             </Item>
           </Section>
-        </>
+        </Menu>
       );
       return (
         <>
@@ -1359,10 +1362,10 @@ storiesOf('TableView', module)
           <input id="focusable-before" />
           <TableView aria-label="TableView with resizable columns" width={800} height={200}>
             <TableHeader>
-              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>File Name</Column>
-              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Type</Column>
-              <Column allowsResizing defaultWidth="2fr" actions={actions} onAction={action('action')}>Size</Column>
-              <Column allowsResizing defaultWidth="1fr" actions={actions} onAction={action('action')}>Weight</Column>
+              <Column allowsResizing defaultWidth="1fr" menu={menu}>File Name</Column>
+              <Column allowsResizing defaultWidth="2fr" menu={menu}>Type</Column>
+              <Column allowsResizing defaultWidth="2fr" menu={menu}>Size</Column>
+              <Column allowsResizing defaultWidth="1fr" menu={menu}>Weight</Column>
             </TableHeader>
             <TableBody>
               <Row>
@@ -1722,21 +1725,27 @@ function AsyncLoadingExample(props) {
     }
   }
 
-  let actions = hasCustomActions ? (
-    <>
-      <Item key="hide">Hide</Item>
-      <Item key="filter">Filter</Item>
-      <Item key="delete">Delete</Item>
-    </>
-  ) : undefined;
-  actions = hasSection ? (
-    <Section>
-      <Item key="hide">Hide</Item>
-      <Item key="filter">Filter</Item>
-      <Item key="delete">Delete</Item>
-    </Section>
-  ) : actions;
-  let onAction = hasCustomActions ? action('action') : undefined;
+  let columns = ['score', 'title', 'author', 'num_comments'];
+  let menus = columns.map(column => {
+    let menu = hasCustomActions ? (
+      <Menu onAction={action(`${column} action`)}>
+        <Item key="hide">Hide</Item>
+        <Item key="filter">Filter</Item>
+        <Item key="delete">Delete</Item>
+      </Menu>
+    ) : undefined;
+    menu = hasSection ? (
+      <Menu onAction={action(`${column} action`)}>
+        <Section>
+          <Item key="hide">Hide</Item>
+          <Item key="filter">Filter</Item>
+          <Item key="delete">Delete</Item>
+        </Section>
+      </Menu>
+    ) : menu;
+    return menu;
+  });
+
 
   let list = useAsyncList<Item>({
     getKey: (item) => item.data.id,
@@ -1768,10 +1777,10 @@ function AsyncLoadingExample(props) {
       <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <TableView aria-label="Top news from Reddit" selectionMode="multiple" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Score</Column>
-          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Title</Column>
-          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Author</Column>
-          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting actions={actions} onAction={onAction}>Comments</Column>
+          <Column key="score" defaultWidth={100} allowsResizing={isResizable} allowsSorting menu={menus[0]}>Score</Column>
+          <Column key="title" isRowHeader allowsResizing={isResizable} allowsSorting menu={menus[1]}>Title</Column>
+          <Column key="author" defaultWidth={200} allowsResizing={isResizable} allowsSorting menu={menus[2]}>Author</Column>
+          <Column key="num_comments" defaultWidth={100} allowsResizing={isResizable} allowsSorting menu={menus[3]}>Comments</Column>
         </TableHeader>
         <TableBody items={list.items} loadingState={list.loadingState} onLoadMore={list.loadMore}>
           {item =>

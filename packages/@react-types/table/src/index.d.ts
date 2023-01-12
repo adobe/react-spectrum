@@ -14,16 +14,15 @@ import {
   AriaLabelingProps,
   AsyncLoadable,
   CollectionChildren,
-  DOMProps, ItemElement, ItemRenderer,
+  DOMProps,
   LoadingState,
-  MultipleSelection, SectionElement,
-  SectionProps,
+  MultipleSelection,
   Sortable,
   SpectrumSelectionProps,
   StyleProps
 } from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, ReactElement, ReactFragment, ReactNode} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
@@ -125,12 +124,9 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
    */
   hideHeader?: boolean,
   /**
-   * Custom actions to be displayed in a drop-down menu on the column header. These may appear in addition
-   * to sorting and resizing. A Section can be used to group actions together.
+   * Menu that is displayed when the column header is clicked.
    */
-  actions?: ReactElement<ReactFragment & {children: ItemElement<T> | SectionElement<T> | Array<ItemElement<T> | SectionElement<T>> | ItemRenderer<T>}> | ReactElement<SectionProps<T>>,
-  /** Called when a custom action is selected in the drop-down menu. */
-  onAction?: (action: string, key: Key) => void
+  menu?: ReactNode
 }
 
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {

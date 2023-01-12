@@ -29,7 +29,7 @@ import {getInteractionModality, useHover, usePress} from '@react-aria/interactio
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Item, Menu, MenuTrigger, SpectrumMenuProps} from '@react-spectrum/menu';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -319,7 +319,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing || (item.props.actions && item.props.onAction)) {
+        if (item.props.allowsResizing || (item.props.menu)) {
           return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
@@ -677,7 +677,8 @@ function ResizableTableColumnHeader(props) {
   const allProps = [columnHeaderProps, pressProps, hoverProps];
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
-  let {actions, onAction} = columnProps;
+  let {menu} = columnProps;
+  let menuProps = (menu as ReactElement<SpectrumMenuProps<unknown>>)?.props;
 
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -694,15 +695,15 @@ function ResizableTableColumnHeader(props) {
         setIsInResizeMode(true);
         break;
       default:
-        if (onAction) {
-          onAction(key, column.key);
+        if (menuProps.onAction) {
+          menuProps.onAction(key);
         }
     }
   };
   let allowsSorting = column.props?.allowsSorting;
   let allowsResizing = column.props?.allowsResizing;
   let hasPriorityActions = allowsSorting || allowsResizing;
-  let hasCustomActions = !!actions;
+  let hasCustomActions = !!menu;
   let priorityActions = useMemo(() => {
     let actions = (
       <>
@@ -713,16 +714,6 @@ function ResizableTableColumnHeader(props) {
     );
     return actions;
   }, [allowsSorting, allowsResizing, stringFormatter]).props.children;
-  let customActions = null;
-  if (hasCustomActions) {
-    customActions = actions.props.children;
-    if (React.isValidElement(actions)) {
-      let type = actions.type as any;
-      if (typeof type === 'function' && typeof type.getCollectionNode === 'function') {
-        customActions = actions;
-      }
-    }
-  }
 
   let isMobile = useIsMobileDevice();
 
@@ -799,15 +790,15 @@ function ResizableTableColumnHeader(props) {
               <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
             }
             {
-              (columnProps.allowsResizing && resizingColumn == null || onAction) && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
+              (columnProps.allowsResizing && resizingColumn == null || hasCustomActions) && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
-          <Menu onAction={onMenuSelect} minWidth="size-2000">
+          <Menu {...menuProps} onAction={onMenuSelect} minWidth="size-2000">
             {
               hasPriorityActions && priorityActions
             }
             {
-              hasCustomActions && customActions
+              menuProps?.children
             }
           </Menu>
         </MenuTrigger>

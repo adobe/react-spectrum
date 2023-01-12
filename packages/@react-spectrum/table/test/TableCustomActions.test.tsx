@@ -20,6 +20,7 @@ import Filter from '@spectrum-icons/workflow/Filter';
 import {fireEvent, triggerPress} from '@react-spectrum/test-utils';
 import {Item, Section} from '@react-stately/collections';
 import {Keyboard, Text} from '@react-spectrum/text';
+import {Menu} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
@@ -69,38 +70,42 @@ describe('TableView Custom Menu Actions', function () {
   });
 
   describe('dynamic', function () {
-    let actions = (
-      <>
+    let menu = (
+      <Menu onAction={onAction}>
         <Item key="hide">Hide</Item>
         <Item key="filter">Filter</Item>
         <Item key="delete">Delete</Item>
-      </>
+      </Menu>
     );
-    let sectionedActions = (
-      <Section>
-        <Item key="hide">Hide</Item>
-        <Item key="filter">Filter</Item>
-        <Item key="delete">Delete</Item>
-      </Section>
+    let sectionedMenu = (
+      <Menu onAction={onAction}>
+        <Section>
+          <Item key="hide">Hide</Item>
+          <Item key="filter">Filter</Item>
+          <Item key="delete">Delete</Item>
+        </Section>
+      </Menu>
     );
-    let complexActions = (
-      <Section>
-        <Item key="hide" textValue="Hide">
-          <Deselect />
-          <Text>Hide</Text>
-          <Keyboard>⌘X</Keyboard>
-        </Item>
-        <Item key="filter" textValue="Filter">
-          <Filter />
-          <Text>Hide</Text>
-          <Keyboard>⌘Y</Keyboard>
-        </Item>
-        <Item key="delete" textValue="Delete">
-          <Delete />
-          <Text>Delete</Text>
-          <Keyboard>⌘Z</Keyboard>
-        </Item>
-      </Section>
+    let complexMenu = (
+      <Menu onAction={onAction}>
+        <Section>
+          <Item key="hide" textValue="Hide">
+            <Deselect />
+            <Text>Hide</Text>
+            <Keyboard>⌘X</Keyboard>
+          </Item>
+          <Item key="filter" textValue="Filter">
+            <Filter />
+            <Text>Hide</Text>
+            <Keyboard>⌘Y</Keyboard>
+          </Item>
+          <Item key="delete" textValue="Delete">
+            <Delete />
+            <Text>Delete</Text>
+            <Keyboard>⌘Z</Keyboard>
+          </Item>
+        </Section>
+      </Menu>
     );
     describe('pointer', function () {
       it('can trigger a custom action', function () {
@@ -108,7 +113,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={actions} onAction={onAction}>{column.name}</Column>}
+              {column => <Column menu={menu}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -132,7 +137,7 @@ describe('TableView Custom Menu Actions', function () {
         expect(menuItems).toHaveLength(3);
 
         triggerPress(menuItems[0]);
-        expect(onAction).toHaveBeenCalledWith('hide', 'foo');
+        expect(onAction).toHaveBeenCalledWith('hide');
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(menuHeader);
@@ -143,7 +148,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={sectionedActions} onAction={onAction}>{column.name}</Column>}
+              {column => <Column menu={sectionedMenu}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -167,7 +172,7 @@ describe('TableView Custom Menu Actions', function () {
         expect(menuItems).toHaveLength(3);
 
         triggerPress(menuItems[2]);
-        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        expect(onAction).toHaveBeenCalledWith('delete');
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(document.activeElement).toBe(menuHeader);
@@ -178,7 +183,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={actions} onAction={onAction} allowsResizing>{column.name}</Column>}
+              {column => <Column menu={menu} allowsResizing>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -214,7 +219,7 @@ describe('TableView Custom Menu Actions', function () {
         menuItems = tree.getAllByRole('menuitem');
 
         triggerPress(menuItems[3]);
-        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        expect(onAction).toHaveBeenCalledWith('delete');
         act(() => {jest.runAllTimers();});
       });
 
@@ -223,7 +228,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={sectionedActions} onAction={onAction} allowsResizing>{column.name}</Column>}
+              {column => <Column menu={sectionedMenu} allowsResizing>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -259,7 +264,7 @@ describe('TableView Custom Menu Actions', function () {
         menuItems = tree.getAllByRole('menuitem');
 
         triggerPress(menuItems[3]);
-        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        expect(onAction).toHaveBeenCalledWith('delete');
         act(() => {jest.runAllTimers();});
       });
 
@@ -268,7 +273,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={complexActions} onAction={onAction} allowsResizing>{column.name}</Column>}
+              {column => <Column menu={complexMenu} allowsResizing>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -304,7 +309,7 @@ describe('TableView Custom Menu Actions', function () {
         menuItems = tree.getAllByRole('menuitem');
 
         triggerPress(menuItems[3]);
-        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        expect(onAction).toHaveBeenCalledWith('delete');
         act(() => {jest.runAllTimers();});
       });
     });
@@ -319,7 +324,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={actions} onAction={onAction}>{column.name}</Column>}
+              {column => <Column menu={menu}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -344,7 +349,7 @@ describe('TableView Custom Menu Actions', function () {
 
         pressKey('ArrowDown');
         pressKey('Enter');
-        expect(onAction).toHaveBeenCalledWith('filter', 'foo');
+        expect(onAction).toHaveBeenCalledWith('filter');
       });
 
       it('can trigger a custom action even with our actions', function () {
@@ -352,7 +357,7 @@ describe('TableView Custom Menu Actions', function () {
         let tree = render(
           <TableView aria-label="Table">
             <TableHeader columns={columns}>
-              {column => <Column actions={actions} onAction={onAction} allowsResizing>{column.name}</Column>}
+              {column => <Column menu={menu} allowsResizing>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
               {item =>
@@ -390,7 +395,7 @@ describe('TableView Custom Menu Actions', function () {
         pressKey('ArrowDown');
         pressKey('ArrowDown');
         pressKey('Enter');
-        expect(onAction).toHaveBeenCalledWith('delete', 'foo');
+        expect(onAction).toHaveBeenCalledWith('delete');
       });
     });
   });
