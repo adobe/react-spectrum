@@ -153,7 +153,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           <ActionButton
             isQuiet
             onPress={handlePressCollapse}
-            UNSAFE_style={{display: 'inline'}}
             UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
             {isCollapsed ? stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) : stringFormatter.format('hideButtonLabel')}
           </ActionButton>
