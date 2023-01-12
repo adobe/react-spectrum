@@ -15,12 +15,14 @@ import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/t
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListCollection} from '@react-stately/list';
 import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
 
@@ -39,6 +41,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let containerRef = useRef(null);
   let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useTagGroupState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
@@ -152,7 +155,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             onPress={handlePressCollapse}
             UNSAFE_style={{display: 'inline'}}
             UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-            {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
+            {isCollapsed ? stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) : stringFormatter.format('hideButtonLabel')}
           </ActionButton>
         }
       </div>
