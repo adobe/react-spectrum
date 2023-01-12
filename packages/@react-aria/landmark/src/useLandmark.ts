@@ -17,7 +17,8 @@ import {useLayoutEffect} from '@react-aria/utils';
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
 export interface AriaLandmarkProps extends AriaLabelingProps {
-  role: AriaLandmarkRole
+  role: AriaLandmarkRole,
+  focus?: (direction: 'forward' | 'backward') => void
 }
 
 export interface LandmarkAria {
@@ -29,7 +30,7 @@ type Landmark = {
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: FocusableElement,
-  focus: () => void,
+  focus: (direction: 'forward' | 'backward') => void,
   blur: () => void
 };
 
@@ -66,8 +67,8 @@ class LandmarkManager {
     this.isListening = false;
   }
 
-  private focusLandmark(landmark: Element) {
-    this.landmarks.find(l => l.ref.current === landmark)?.focus();
+  private focusLandmark(landmark: Element, direction: 'forward' | 'backward') {
+    this.landmarks.find(l => l.ref.current === landmark)?.focus(direction);
   }
 
   /**
@@ -190,16 +191,46 @@ class LandmarkManager {
     }
 
     let currentLandmark = this.closestLandmark(element);
-    let nextLandmarkIndex = backward ? -1 : 0;
+    let nextLandmarkIndex = backward ? this.landmarks.length - 1 : 0;
     if (currentLandmark) {
-      nextLandmarkIndex = this.landmarks.findIndex(landmark => landmark === currentLandmark) + (backward ? -1 : 1);
+      nextLandmarkIndex = this.landmarks.indexOf(currentLandmark) + (backward ? -1 : 1);
     }
 
-    // Wrap if necessary
-    if (nextLandmarkIndex < 0) {
-      nextLandmarkIndex = this.landmarks.length - 1;
-    } else if (nextLandmarkIndex >= this.landmarks.length) {
-      nextLandmarkIndex = 0;
+    let wrapIfNeeded = () => {
+      // When we reach the end of the landmark sequence, fire a custom event that can be listened for by applications.
+      // If this event is canceled, we return immediately. This can be used to implement landmark navigation across iframes.
+      if (nextLandmarkIndex < 0) {
+        if (!element.dispatchEvent(new CustomEvent('react-aria-landmark-navigation', {detail: {direction: 'backward'}, bubbles: true, cancelable: true}))) {
+          return true;
+        }
+
+        nextLandmarkIndex = this.landmarks.length - 1;
+      } else if (nextLandmarkIndex >= this.landmarks.length) {
+        if (!element.dispatchEvent(new CustomEvent('react-aria-landmark-navigation', {detail: {direction: 'forward'}, bubbles: true, cancelable: true}))) {
+          return true;
+        }
+
+        nextLandmarkIndex = 0;
+      }
+
+      return false;
+    };
+
+    if (wrapIfNeeded()) {
+      return undefined;
+    }
+
+    // Skip over hidden landmarks.
+    let i = nextLandmarkIndex;
+    while (this.landmarks[nextLandmarkIndex].ref.current.closest('[aria-hidden]')) {
+      nextLandmarkIndex += backward ? -1 : 1;
+      if (wrapIfNeeded()) {
+        return undefined;
+      }
+
+      if (nextLandmarkIndex === i) {
+        break;
+      }
     }
 
     return this.landmarks[nextLandmarkIndex];
@@ -212,9 +243,6 @@ class LandmarkManager {
    */
   public f6Handler(e: KeyboardEvent) {
     if (e.key === 'F6') {
-      e.preventDefault();
-      e.stopPropagation();
-
       let backward = e.shiftKey;
       let nextLandmark = this.getNextLandmark(e.target as Element, {backward});
 
@@ -223,11 +251,14 @@ class LandmarkManager {
         return;
       }
 
+      e.preventDefault();
+      e.stopPropagation();
+
       // If alt key pressed, focus main landmark
       if (e.altKey) {
         let main = this.getLandmarkByRole('main');
         if (main && document.contains(main.ref.current)) {
-          this.focusLandmark(main.ref.current);
+          this.focusLandmark(main.ref.current, 'forward');
         }
         return;
       }
@@ -243,7 +274,7 @@ class LandmarkManager {
 
       // Otherwise, focus the landmark itself
       if (document.contains(nextLandmark.ref.current)) {
-        this.focusLandmark(nextLandmark.ref.current);
+        this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
       }
     }
   }
@@ -292,13 +323,14 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
   const {
     role,
     'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    'aria-labelledby': ariaLabelledby,
+    focus
   } = props;
   let manager = LandmarkManager.getInstance();
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
-  let focus = useCallback(() => {
+  let defaultFocus = useCallback(() => {
     setIsLandmarkFocused(true);
   }, [setIsLandmarkFocused]);
 
@@ -316,7 +348,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
   }, []);
 
   useLayoutEffect(() => {
-    manager.updateLandmark({ref, label, role, focus, blur});
+    manager.updateLandmark({ref, label, role, focus: focus || defaultFocus, blur});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [label, ref, role]);
 
