@@ -12,106 +12,137 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import React from 'react';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {Content} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import React, {useState} from 'react';
+import {SpectrumToastOptions} from '../src/ToastContainer';
 import {storiesOf} from '@storybook/react';
-import {Toast} from '../';
-import {ToastProps} from '@react-types/toast';
-import {ToastProvider, useToastProvider} from '../';
+import {ToastContainer, ToastQueue} from '../';
 
 storiesOf('Toast', module)
+  .addParameters({
+    args: {
+      shouldCloseOnAction: false,
+      timeout: null
+    },
+    argTypes: {
+      timeout: {
+        control: {
+          type: 'radio',
+          options: [null, 5000]
+        }
+      }
+    }
+  })
+  .addDecorator((story, {parameters}) => (
+    <>
+      {!parameters.disableToastContainer && <ToastContainer />}
+      {story()}
+    </>
+  ))
   .add(
     'Default',
-    () => render({onClose: action('onClose')}, 'Toast is done.')
+    args => <RenderProvider {...args} />
   )
   .add(
-    'variant = info',
-    () => render({variant: 'info', onClose: action('onClose')}, 'Toast is happening.')
+    'With action',
+    args => <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
   )
   .add(
-    'variant = positive',
-    () => render({variant: 'positive', onClose: action('onClose')}, 'Toast is perfect.')
+    'With dialog',
+    args => (
+      <DialogTrigger isDismissable>
+        <Button variant="accent">Open dialog</Button>
+        <Dialog>
+          <Heading>Toasty</Heading>
+          <Content>
+            <RenderProvider {...args} />
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+    )
   )
   .add(
-    'variant = Negative',
-    () => render({variant: 'negative', onClose: action('onClose')}, 'Toast is not done.')
+    'multiple ToastContainers',
+    args => <Multiple {...args} />,
+    {disableToastContainer: true}
   )
   .add(
-    'actionable',
-      () => render({actionLabel: 'Undo', onAction: action('onAction'), onClose: action('onClose')}, 'Untoast the toast')
-  )
-  .add(
-    'action triggers close',
-    () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
-  ).add(
-    'add via provider',
-    () => <ToastProvider><RenderProvider /></ToastProvider>
-  ).add(
-    'add via provider with timers',
-    () => <ToastProvider><RenderProviderTimers /></ToastProvider>
+    'programmatically closing',
+    args => <ToastToggle {...args} />
   );
 
-function render(props:ToastProps = {}, message:String) {
+function RenderProvider(options: SpectrumToastOptions) {
   return (
-    <Toast {...props}>
-      {message}
-    </Toast>
-  );
-}
-
-function RenderProvider() {
-  let toastContext = useToastProvider();
-
-  return (
-    <div>
+    <ButtonGroup>
       <Button
-        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})}
         variant="secondary">
-        Show Default Toast
+        Show Neutral Toast
       </Button>
       <Button
-        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})}
         variant="primary">
-        Show Primary Toast
+        Show Positive Toast
       </Button>
       <Button
-        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})}
         variant="negative">
         Show Negative Toast
       </Button>
       <Button
-        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
-        variant="cta">
-        Show info Toast
+        onPress={() => ToastQueue.info('Toasting…', {...options, onClose: action('onClose')})}
+        variant="accent"
+        style="outline">
+        Show Info Toast
       </Button>
-    </div>
+    </ButtonGroup>
   );
 }
 
-function RenderProviderTimers() {
-  let toastContext = useToastProvider();
+function ToastToggle(options: SpectrumToastOptions) {
+  let [close, setClose] = useState(null);
 
   return (
-    <div>
-      <Button
-        onPress={() => toastContext.neutral('Toast defaults to 5 second timeout', {onClose: action('onClose')})}
-        variant="secondary">
-        Show Default Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Actionable Toast defaults to no timeout', {onClose: action('onClose'), onAction: action('onAction'), shouldCloseOnAction: true, actionLabel: 'no timeout'})}
-        variant="secondary">
-        Show Actionable Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Toast has a 7 second timeout', {onClose: action('onClose'), timeout: 7000})}
-        variant="secondary">
-        Show 7 Second Timeout Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Toast with "timeout=0" has no timeout', {onClose: action('onClose'), timeout: 0})}
-        variant="secondary">
-        Show No Timeout Toast
-      </Button>
-    </div>
+    <Button
+      onPress={() => {
+        if (!close) {
+          let close = ToastQueue.negative('Unable to save', {...options, onClose: () => setClose(null)});
+          setClose(() => close);
+        } else {
+          close();
+        }
+      }}
+      variant="primary">
+      {close ? 'Hide' : 'Show'} Toast
+    </Button>
+  );
+}
+
+function Multiple(options: SpectrumToastOptions) {
+  let [isMounted1, setMounted1] = useState(true);
+
+  return (
+    <Flex direction="column">
+      <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
+      {isMounted1 && <ToastContainer />}
+      <MultipleInner />
+      <RenderProvider {...options} />
+    </Flex>
+  );
+}
+
+function MultipleInner() {
+  let [isMounted2, setMounted2] = useState(true);
+
+  return (
+    <>
+      <Checkbox isSelected={isMounted2} onChange={setMounted2}>Second mounted</Checkbox>
+      {isMounted2 && <ToastContainer />}
+    </>
   );
 }

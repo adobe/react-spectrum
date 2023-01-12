@@ -26,16 +26,17 @@ let observerStack = [];
 export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+
+  // Keep live announcer and top layer elements (e.g. toasts) visible.
+  for (let element of document.querySelectorAll('[data-live-announcer], [data-react-aria-top-layer]')) {
+    visibleNodes.add(element);
+  }
+
   let walker = document.createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
     {
       acceptNode(node) {
-        // If this node is a live announcer, add it to the set of nodes to keep visible.
-        if (((node instanceof HTMLElement || node instanceof SVGElement) && node.dataset.liveAnnouncer === 'true')) {
-          visibleNodes.add(node);
-        }
-
         // Skip this node and its children if it is one of the target nodes, or a live announcer.
         // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
         // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
@@ -48,8 +49,10 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
         }
 
         // Skip this node but continue to children if one of the targets is inside the node.
-        if (targets.some(target => node.contains(target))) {
-          return NodeFilter.FILTER_SKIP;
+        for (let target of visibleNodes) {
+          if (node.contains(target)) {
+            return NodeFilter.FILTER_SKIP;
+          }
         }
 
         return NodeFilter.FILTER_ACCEPT;
@@ -96,7 +99,10 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       // and not already inside a hidden node, hide all of the new children.
       if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
         for (let node of change.addedNodes) {
-          if (((node instanceof HTMLElement || node instanceof SVGElement) && node.dataset.liveAnnouncer === 'true')) {
+          if (
+            (node instanceof HTMLElement || node instanceof SVGElement) &&
+            (node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer === 'true')
+          ) {
             visibleNodes.add(node);
           } else if (node instanceof Element) {
             hide(node);

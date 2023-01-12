@@ -353,7 +353,7 @@ function processType(value) {
   if (value.type === 'parameter') {
     return processType(value.value);
   }
-  if (value.type === 'link') {
+  if (value.type === 'link' && value.id) {
     let name = value.id.substr(value.id.lastIndexOf(':') + 1);
     if (dependantOnLinks.has(currentlyProcessing)) {
       let foo = dependantOnLinks.get(currentlyProcessing);
