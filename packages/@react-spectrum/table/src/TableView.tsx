@@ -773,10 +773,12 @@ function ResizableTableColumnHeader(props) {
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
   let alignment = 'start';
+  let menuAlign = 'start' as 'start' | 'end';
   if (columnProps.align === 'center' || column.colspan > 1) {
     alignment = 'center';
   } else if (columnProps.align === 'end') {
     alignment = 'end';
+    menuAlign = 'end';
   }
 
   return (
@@ -808,7 +810,7 @@ function ResizableTableColumnHeader(props) {
             )
           )
         }>
-        <MenuTrigger onOpenChange={setHeaderMenuOpen}>
+        <MenuTrigger onOpenChange={setHeaderMenuOpen} align={menuAlign}>
           <TableColumnHeaderButton alignment={alignment} ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
