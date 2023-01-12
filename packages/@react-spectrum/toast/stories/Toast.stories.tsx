@@ -18,10 +18,11 @@ import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import React, {useState} from 'react';
+import React, {SyntheticEvent, useEffect, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
 import {storiesOf} from '@storybook/react';
 import {ToastContainer, ToastQueue} from '../';
+import {useLandmark} from '@react-aria/landmark';
 
 storiesOf('Toast', module)
   .addParameters({
@@ -41,7 +42,9 @@ storiesOf('Toast', module)
   .addDecorator((story, {parameters}) => (
     <>
       {!parameters.disableToastContainer && <ToastContainer />}
-      {story()}
+      <MainLandmark>
+        {story()}
+      </MainLandmark>
     </>
   ))
   .add(
@@ -74,6 +77,10 @@ storiesOf('Toast', module)
   .add(
     'programmatically closing',
     args => <ToastToggle {...args} />
+  )
+  .add(
+    'with iframe',
+    () => <IframeExample />
   );
 
 function RenderProvider(options: SpectrumToastOptions) {
@@ -145,4 +152,100 @@ function MultipleInner() {
       {isMounted2 && <ToastContainer />}
     </>
   );
+}
+
+function IframeExample() {
+  let onLoad = (e: SyntheticEvent) => {
+    let iframe = e.target as HTMLIFrameElement;
+    let window = iframe.contentWindow;
+    let document = window.document;
+
+    // Catch toasts inside the iframe and redirect them outside.
+    window.addEventListener('react-spectrum-toast', (e: CustomEvent) => {
+      e.preventDefault();
+      ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
+    });
+
+    let prevFocusedElement = null;
+    window.addEventListener('react-aria-landmark-navigation', (e: CustomEvent) => {
+      e.preventDefault();
+      let el = document.activeElement;
+      if (el !== document.body) {
+        prevFocusedElement = el;
+      }
+
+      // Prevent focus scope from stealing focus back when we move focus to the iframe.
+      document.body.setAttribute('data-react-aria-top-layer', 'true');
+
+      window.parent.postMessage({
+        type: 'landmark-navigation',
+        direction: e.detail.direction
+      });
+
+      setTimeout(() => {
+        document.body.removeAttribute('data-react-aria-top-layer');
+      }, 100);
+    });
+
+    // When the iframe is re-focused, restore focus back inside where it was before.
+    window.addEventListener('focus', () => {
+      if (prevFocusedElement) {
+        prevFocusedElement.focus();
+        prevFocusedElement = null;
+      }
+    });
+
+    // Move focus to first or last landmark when we receive a message from the parent page.
+    window.addEventListener('message', e => {
+      if (e.data.type === 'landmark-navigation') {
+        document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+      }
+    });
+  };
+
+  useEffect(() => {
+    let onMessage = (e: MessageEvent) => {
+      let iframe = ref.current;
+      if (e.data.type === 'landmark-navigation') {
+        // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
+        iframe.focus();
+
+        // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
+        iframe.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  let ref = useRef(null);
+  let {landmarkProps} = useLandmark({
+    role: 'main',
+    focus(direction) {
+      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+      ref.current.contentWindow.postMessage({
+        type: 'landmark-navigation',
+        direction
+      });
+    }
+  }, ref);
+
+  return (
+    <iframe
+      ref={ref}
+      {...landmarkProps}
+      title="iframe"
+      width="500"
+      height="500"
+      src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=toast--with-dialog"
+      onLoad={onLoad}
+      tabIndex={-1} />
+  );
+}
+
+function MainLandmark(props) {
+  let ref = useRef();
+  let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
+  return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
 }
