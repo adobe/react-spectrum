@@ -17,7 +17,6 @@ function ProviderUpdater(props) {
   let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
   let [themeValue, setTheme] = useState(providerValuesFromUrl.theme || undefined);
   let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
-  let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'bottom');
   let [expressValue, setExpress] = useState(providerValuesFromUrl.express === 'true');
   let [storyReady, setStoryReady] = useState(window.parent === window); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
@@ -30,7 +29,6 @@ function ProviderUpdater(props) {
       setLocale(event.locale);
       setTheme(event.theme === 'Auto' ? undefined : event.theme);
       setScale(event.scale === 'Auto' ? undefined : event.scale);
-      setToastPosition(event.toastPosition);
       setExpress(event.express);
       setStoryReady(true);
     };
@@ -44,7 +42,7 @@ function ProviderUpdater(props) {
 
   if (props.options.mainElement == null) {
     return (
-      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
+      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
         <main>
           {storyReady && props.children}
         </main>
@@ -52,7 +50,7 @@ function ProviderUpdater(props) {
     );
   } else {
     return (
-      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
+      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
         {storyReady && props.children}
       </Provider>
     );
