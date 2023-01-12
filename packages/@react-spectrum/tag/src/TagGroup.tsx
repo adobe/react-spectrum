@@ -16,7 +16,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {ListCollection} from '@react-stately/list';
-import React, {ReactElement, useCallback, useMemo, useState} from 'react';
+import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
@@ -36,6 +36,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
+  let containerRef = useRef(null);
   let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
@@ -53,12 +54,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
         let currDomRef: HTMLDivElement | null = domRef.current;
-        if (!currDomRef) {
+        let currContainerRef: HTMLDivElement | null = containerRef.current; 
+        if (!currDomRef || !currContainerRef) {
           return;
         }
 
         let tags = [...currDomRef.children];
-        let button = currDomRef.parentElement.querySelector('button');
+        let button = currContainerRef.querySelector('button');
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -82,7 +84,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         // Remove tags until there is space for the collapse button on the last row.
         let buttonWidth = button.getBoundingClientRect().width;
         let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = currDomRef.getBoundingClientRect()[end];
+        let containerEnd = currContainerRef.getBoundingClientRect()[end];
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
         let availableWidth = containerEnd - lastTagEnd;
         for (let tagWidth of tagWidths.reverse()) {
@@ -103,9 +105,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         yield computeVisibleTagCount();
       });
     }
-  }, [direction, domRef, state.collection.size, maxRows, setTagState]);
+  }, [maxRows, setTagState, domRef, direction, state.collection.size]);
 
-  useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
+  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
@@ -124,6 +126,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   return (
     <FocusScope>
       <div
+        ref={containerRef}
         {...styleProps}
         className={classNames(styles, 'spectrum-Tags-container', styleProps.className)}>
         <div
@@ -147,6 +150,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           <ActionButton
             isQuiet
             onPress={handlePressCollapse}
+            UNSAFE_style={{display: 'inline'}}
             UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
             {isCollapsed ? `Show all (${state.collection.size})` : 'Show less '}
           </ActionButton>
