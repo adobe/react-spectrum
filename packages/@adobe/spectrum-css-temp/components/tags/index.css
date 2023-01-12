@@ -91,6 +91,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-actionButton {
+  display: inline;
   height: var(--spectrum-tag-height);
   font-size: var(--spectrum-tag-text-size);
   margin: var(--spectrum-tag-margin);
