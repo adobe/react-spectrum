@@ -1,5 +1,5 @@
 import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -23,7 +23,7 @@ export interface ToastRegionAria {
 
 /**
  * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
- * Toasts are transient notifications of actions, errors, or other events in an application.
+ * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement>): ToastRegionAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -66,10 +66,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   }, [ref]);
 
   return {
-    regionProps: {
-      ...landmarkProps,
-      ...hoverProps,
-      ...focusWithinProps,
+    regionProps: mergeProps(landmarkProps, hoverProps, focusWithinProps, {
       tabIndex: -1,
       // Mark the toast region as a "top layer", so that it:
       //   - is not aria-hidden when opening an overlay
@@ -77,6 +74,6 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       //   - doesn’t dismiss overlays when clicking on it, even though it is outside
       // @ts-ignore
       'data-react-aria-top-layer': true
-    }
+    })
   };
 }

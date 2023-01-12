@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/button",
-  "version": "3.11.1",
+  "version": "3.11.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,7 +40,7 @@
     "@react-stately/toggle": "^3.4.4",
     "@react-types/button": "^3.7.0",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.1",
+    "@spectrum-icons/ui": "^3.4.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {

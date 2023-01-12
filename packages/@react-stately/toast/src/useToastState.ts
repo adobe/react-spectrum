@@ -11,6 +11,7 @@
  */
 
 import {useCallback, useMemo} from 'react';
+// Shim to support React 17 and below.
 import {useSyncExternalStore} from 'use-sync-external-store/shim';
 
 export interface ToastStateProps {
@@ -29,7 +30,7 @@ export interface ToastOptions {
   onClose?: () => void,
   /** A timeout to automatically close the toast after, in milliseconds. */
   timeout?: number,
-  /** The priority of the toast relative to other toasts. */
+  /** The priority of the toast relative to other toasts. Larger numbers indicate higher priority. */
   priority?: number
 }
 
@@ -63,7 +64,7 @@ export interface ToastState<T> {
 }
 
 /**
- * Provides state management for a toast queue. Toasts are transient notifications
+ * Provides state management for a toast queue. Toasts display brief, temporary notifications
  * of actions, errors, or other events in an application.
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {

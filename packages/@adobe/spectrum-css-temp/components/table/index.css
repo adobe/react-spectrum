@@ -485,15 +485,15 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.resize-ew *,
+.resize-ew,
 .spectrum-Table-columnResizer--ewresize {
   cursor: ew-resize !important;
 }
-.resize-e *,
+.resize-e,
 .spectrum-Table-columnResizer--eresize {
   cursor: e-resize !important;
 }
-.resize-w *,
+.resize-w,
 .spectrum-Table-columnResizer--wresize {
   cursor: w-resize !important;
 }

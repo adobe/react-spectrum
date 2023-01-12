@@ -37,7 +37,7 @@ export interface ToastAria {
 
 /**
  * Provides the behavior and accessibility implementation for a toast component.
- * Toasts are transient notifications of actions, errors, or other events in an application.
+ * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
   let {
@@ -92,7 +92,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       role: 'alert',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
-      'aria-describedby': props['aria-descibedby'] || descriptionId,
+      'aria-describedby': props['aria-describedby'] || descriptionId,
       'aria-details': props['aria-details'],
       // Hide toasts that are animating out so VoiceOver doesn't announce them.
       'aria-hidden': animation === 'exiting' ? 'true' : undefined

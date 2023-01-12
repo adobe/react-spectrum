@@ -28,7 +28,7 @@ after_version: 3.0.0
 
 # Toast
 
-<PageDescription>Toasts are transient notifications of actions, errors, or other events in an application.</PageDescription>
+<PageDescription>Toasts display brief, temporary notifications of actions, errors, or other events in an application.</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -68,14 +68,14 @@ Toasts are shown according to a priority queue, depending on their variant. Acti
     onPress={() => ToastQueue.neutral('Toast available')}
     ///- end highlight -///
     variant="secondary">
-    Show Default Toast
+    Show Neutral Toast
   </Button>
   <Button
     ///- begin highlight -///
     onPress={() => ToastQueue.positive('Toast is done!')}
     ///- end highlight -///
     variant="primary">
-    Show Primary Toast
+    Show Positive Toast
   </Button>
   <Button
     ///- begin highlight -///
@@ -90,7 +90,7 @@ Toasts are shown according to a priority queue, depending on their variant. Acti
     ///- end highlight -///
     variant="accent"
     style="outline">
-    Show info Toast
+    Show Info Toast
   </Button>
 </ButtonGroup>
 ```
@@ -101,7 +101,7 @@ To internationalize a Toast, all text content within the toast should be localiz
 
 ### Accessibility
 
-Toasts are automatically displayed in a landmark region labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastContainer` element. Landmark regions can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
+Toasts are automatically displayed in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastContainer` element. Landmark regions can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
 ## Events
 
