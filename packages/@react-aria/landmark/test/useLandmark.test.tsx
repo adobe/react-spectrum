@@ -1231,7 +1231,7 @@ describe('LandmarkManager', function () {
     window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
   });
 
-  it('goes skips over aria-hidden landmarks', function () {
+  it('skips over aria-hidden landmarks', function () {
     let tree = render(
       <div>
         <Main>
