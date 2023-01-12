@@ -55,7 +55,6 @@ governing permissions and limitations under the License.
 
 .spectrum-ClearButton {
   background-color: var(--spectrum-clearbutton-medium-background-color);
-
   color: var(--spectrum-clearbutton-medium-icon-color);
 
   .spectrum-Icon {
@@ -64,7 +63,6 @@ governing permissions and limitations under the License.
 
   &:hover {
     background-color: var(--spectrum-clearbutton-medium-background-color-hover);
-
     color: var(--spectrum-clearbutton-medium-icon-color-hover);
 
     .spectrum-Icon {
@@ -74,7 +72,6 @@ governing permissions and limitations under the License.
 
   &.is-active {
     background-color: var(--spectrum-clearbutton-medium-background-color-down);
-
     color: var(--spectrum-clearbutton-medium-icon-color-down);
 
     .spectrum-Icon {
@@ -84,7 +81,6 @@ governing permissions and limitations under the License.
 
   &:focus-ring {
     background-color: var(--spectrum-clearbutton-medium-background-color-key-focus);
-
     color: var(--spectrum-clearbutton-medium-icon-color-key-focus);
 
     .spectrum-Icon {
@@ -95,13 +91,26 @@ governing permissions and limitations under the License.
   &:disabled,
   &.is-disabled {
     background-color: var(--spectrum-clearbutton-medium-background-color-disabled);
-
     color: var(--spectrum-clearbutton-medium-icon-color-disabled);
 
     .spectrum-Icon {
       fill: var(--spectrum-clearbutton-medium-icon-color-disabled);
     }
   }
+}
+
+.spectrum-ClearButton--overBackground {
+  --spectrum-clearbutton-medium-background-color: transparent;
+  --spectrum-clearbutton-medium-background-color-hover: rgba(255, 255, 255, 0.1);
+  --spectrum-clearbutton-medium-background-color-key-focus: rgba(255, 255, 255, 0.1);
+  --spectrum-clearbutton-medium-background-color-down: rgba(255, 255, 255, 0.15);
+  --spectrum-clearbutton-medium-background-color-disabled: transparent;
+  --spectrum-clearbutton-medium-icon-color: white;
+  --spectrum-clearbutton-medium-icon-color-hover: white;
+  --spectrum-clearbutton-medium-icon-color-down: white;
+  --spectrum-clearbutton-medium-icon-color-key-focus: white;
+  --spectrum-clearbutton-medium-icon-color-disabled: rgba(255, 255, 255, 0.55);
+  --spectrum-focus-ring-color: white;
 }
 
 .spectrum-Button {

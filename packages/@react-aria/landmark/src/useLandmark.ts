@@ -329,7 +329,9 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
   return {
     landmarkProps: {
       role,
-      tabIndex: isLandmarkFocused ? -1 : undefined
+      tabIndex: isLandmarkFocused ? -1 : undefined,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby
     }
   };
 }

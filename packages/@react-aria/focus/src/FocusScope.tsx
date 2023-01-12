@@ -398,6 +398,11 @@ function isElementInScope(element: Element, scope: Element[]) {
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
+  // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
+  if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
+    return true;
+  }
+
   // node.contains in isElementInScope covers child scopes that are also DOM children,
   // but does not cover child scopes in portals.
   for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
