@@ -1,4 +1,4 @@
-%spectrum-FocusRing {
+%spectrum-FocusRing-ring {
   --spectrum-focus-ring-border-radius: var(--spectrum-textfield-border-radius);
   --spectrum-focus-ring-gap: var(--spectrum-alias-input-focusring-gap);
   --spectrum-focus-ring-size: var(--spectrum-alias-input-focusring-size);
@@ -20,12 +20,20 @@
     transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
                 margin var(--spectrum-global-animation-duration-100) ease-out;
   }
+}
+
+%spectrum-FocusRing-active {
+  &:after {
+    margin: calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size));
+    box-shadow: 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
+  }
+}
+
+%spectrum-FocusRing {
+  @inherit %spectrum-FocusRing-ring;
 
   &:focus-ring {
-    &:after {
-      margin: calc(var(--spectrum-focus-ring-gap) * -1 - var(--spectrum-focus-ring-border-size));
-      box-shadow: 0 0 0 var(--spectrum-focus-ring-size) var(--spectrum-focus-ring-color);
-    }
+    @inherit %spectrum-FocusRing-active;
   }
 }
 

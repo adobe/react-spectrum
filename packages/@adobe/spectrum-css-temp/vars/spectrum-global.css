@@ -654,5 +654,5 @@
 
   --spectrum-actiongroup-compact-button-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
 
-  --spectrum-tooltip-background-color: var(--spectrum-neutral-subdued-background-color-default);
+  --spectrum-alias-neutral-background-color: var(--spectrum-neutral-subdued-background-color-default);
 }
