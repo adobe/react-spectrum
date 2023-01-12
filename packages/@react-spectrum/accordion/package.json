@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/accordion",
-  "version": "3.0.0-alpha.15",
+  "version": "3.0.0-alpha.16",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,7 +41,7 @@
     "@react-stately/tree": "^3.4.1",
     "@react-types/accordion": "3.0.0-alpha.11",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.1",
+    "@spectrum-icons/ui": "^3.4.2",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {

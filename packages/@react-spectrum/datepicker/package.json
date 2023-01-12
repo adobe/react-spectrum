@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/datepicker",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -38,10 +38,10 @@
     "@react-aria/i18n": "^3.6.3",
     "@react-aria/interactions": "^3.13.1",
     "@react-aria/utils": "^3.14.2",
-    "@react-spectrum/button": "^3.11.1",
-    "@react-spectrum/calendar": "^3.1.4",
-    "@react-spectrum/dialog": "^3.6.1",
-    "@react-spectrum/label": "^3.10.0",
+    "@react-spectrum/button": "^3.11.2",
+    "@react-spectrum/calendar": "^3.1.5",
+    "@react-spectrum/dialog": "^3.6.2",
+    "@react-spectrum/label": "^3.10.1",
     "@react-spectrum/layout": "^3.4.4",
     "@react-spectrum/utils": "^3.8.1",
     "@react-spectrum/view": "^3.4.1",
@@ -49,8 +49,8 @@
     "@react-stately/utils": "^3.5.2",
     "@react-types/datepicker": "^3.1.4",
     "@react-types/shared": "^3.16.0",
-    "@spectrum-icons/ui": "^3.4.1",
-    "@spectrum-icons/workflow": "^4.0.5",
+    "@spectrum-icons/ui": "^3.4.2",
+    "@spectrum-icons/workflow": "^4.0.6",
     "@swc/helpers": "^0.4.14"
   },
   "devDependencies": {

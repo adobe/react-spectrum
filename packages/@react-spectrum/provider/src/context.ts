@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {ProviderContext} from '@react-types/provider';
+import React from 'react';
 
-export * from './events';
-export * from './testSSR';
-export * from './renderOverride';
-export * from './StrictModeWrapper';
-export * from './mockImplementation';
+// Context is placed in a separate file to avoid fast refresh issue where the old provider context values
+// are immediately replaced with the null default. Stopgap solution until we fix this in parcel.
+export const Context = React.createContext<ProviderContext | null>(null);
+Context.displayName = 'ProviderContext';
