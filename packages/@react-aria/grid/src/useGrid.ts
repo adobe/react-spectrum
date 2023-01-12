@@ -16,7 +16,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {Key, RefObject, useEffect, useMemo, useRef} from 'react';
+import {Key, RefObject, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
@@ -97,35 +97,6 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     scrollRef
   });
-
-  const cachedFocusedKey = useRef(null);
-  const cachedCollection = useRef(null);
-  useEffect(() => {
-    if (
-      state.collection.size > 0 &&
-      state.selectionManager.focusedKey === null &&
-      cachedFocusedKey.current !== null
-    ) {
-      const node = cachedCollection.current.getItem(cachedFocusedKey.current);
-      const isCell = node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
-      const parentNode =
-        node.parentKey && isCell ?
-        cachedCollection.current.getItem(node.parentKey) :
-        cachedCollection.current.getItem(node.key);
-      const rows = state.collection.rows;
-      const newRow = parentNode.index < rows.length ? rows[parentNode.index] : rows[rows.length - 1];
-      const keyToFocus =
-        newRow && newRow.hasChildNodes && isCell ?
-        [...newRow.childNodes][node.index].key :
-        newRow.key;
-      if (keyToFocus) {
-        state.selectionManager.setFocusedKey(keyToFocus);
-      }
-    }
-    cachedFocusedKey.current = state.selectionManager.focusedKey;
-    cachedCollection.current = state.collection;
-  },
-  [state.collection, state.selectionManager, state.selectionManager.focusedKey]);
 
   let id = useId(props.id);
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
