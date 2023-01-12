@@ -18,7 +18,7 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection} from '@react-stately/list';
-import React, {ReactElement, useCallback, useMemo, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
@@ -114,6 +114,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
+
+  useEffect(() => {
+    // Recalculate visible tags when fonts are loaded.
+    document.fonts?.ready.then(() => updateVisibleTagCount());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let visibleTags = [...state.collection];
   if (maxRows != null && isCollapsed) {
