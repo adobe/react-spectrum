@@ -9,5 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useToastState} from './useToastState';
-export {Timer} from './timer';
+export {useToastState, ToastQueue, useToastQueue} from './useToastState';
+
+export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from './useToastState';
