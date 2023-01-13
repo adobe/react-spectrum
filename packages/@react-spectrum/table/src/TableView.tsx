@@ -581,6 +581,9 @@ function TableColumnHeader(props) {
   let {state, isEmpty} = useTableContext();
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let columnProps = column.props as SpectrumColumnProps<unknown>;
+  if (column.hasChildNodes && columnProps.allowsResizing) {
+    console.warn('Columns with child columns don\'t allow resizing.');
+  }
 
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
