@@ -1388,7 +1388,7 @@ describe('TableViewSizing', function () {
 
       let headers = tree.getAllByRole('columnheader');
       for (let colheader of headers) {
-        if (parseInt(colheader.getAttribute('aria-colindex'), 10) > 1) {
+        if (parseInt(colheader.getAttribute('aria-colspan'), 10) > 1) {
           expect(within(colheader).queryByRole('button')).toBeFalsy();
         }
       }
