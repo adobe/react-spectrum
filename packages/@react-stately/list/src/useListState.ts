@@ -69,14 +69,23 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
           }
         }
       );
-      let index = startItem.index < itemNodes.length ? startItem.index : itemNodes.length - 1;
+      let index = Math.min(startItem.index, itemNodes.length - 1);
       let newNode:Node<T>;
       while (index >= 0) {
         if (!selectionManager.isDisabled(itemNodes[index].key)) {
           newNode = itemNodes[index];
           break;
         }
-        index--;
+        // Find next, not disabled item.
+        if (index < itemNodes.length - 1) {
+          index++;
+        // Otherwise, find previous, not disabled item.
+        } else {
+          if (index > startItem.index) {
+            index = startItem.index;
+          }
+          index--;
+        }
       }
       selectionState.setFocusedKey(newNode ? newNode.key : null);
     }

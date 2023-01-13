@@ -61,14 +61,23 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         cachedCollection.current.getItem(node.parentKey) :
         node;
       const rows = collection.rows;
-      let index = parentNode.index < rows.length ? parentNode.index : rows.length - 1;
+      let index = Math.min(parentNode.index, rows.length - 1);
       let newRow:GridNode<T>;
       while (index >= 0) {
         if (!selectionManager.isDisabled(rows[index].key)) {
           newRow = rows[index];
           break;
         }
-        index--;
+        // Find next, not disabled row.
+        if (index < rows.length - 1) {
+          index++;
+        // Otherwise, find previous, not disabled row.
+        } else {
+          if (index > parentNode.index) {
+            index = parentNode.index;
+          }
+          index--;
+        }
       }
       if (newRow) {
         const keyToFocus =
