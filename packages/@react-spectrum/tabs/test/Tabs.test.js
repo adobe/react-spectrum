@@ -373,8 +373,6 @@ describe('Tabs', function () {
 
     mockImplementation(target, mockCalls, false);
 
-    mockImplementation(target, mockCalls, false);
-
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
       'aria-labelledby': 'external label',
