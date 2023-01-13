@@ -84,11 +84,31 @@ function handleClickEvent(e: MouseEvent) {
   }
 }
 
+function isNegativeEventTargetTabIndex(e: Event) {
+  if (!(e.target instanceof Element)) {
+    return false;
+  }
+
+  const tabIndex = e.target.getAttribute('tabIndex');
+
+  if (tabIndex === null) {
+    return false;
+  }
+
+  const numberedTabIndex = parseInt(tabIndex, 10);
+  return isNaN(numberedTabIndex) ? false : numberedTabIndex < 0;
+}
+
 function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
   if (e.target === window || e.target === document) {
+    return;
+  }
+  // Elements with a negative tabIndex will fire focus events. In Chrome and Firefox, this can happen briefly
+  // when clicking on a label inside an element with a negative tabIndex. This can lead to an erroneous focus is visible.
+  if (isNegativeEventTargetTabIndex(e)) {
     return;
   }
 
