@@ -13,112 +13,151 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Calendar} from '../';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
-storiesOf('Date and Time/Calendar', module)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5)})
-  )
-  .add(
-    'controlled value',
-    () => render({value: new CalendarDate(2019, 5, 5)})
-  )
-  .add(
-    'with time',
-    () => <CalendarWithTime />
-  )
-  .add(
-    'with zoned time',
-    () => <CalendarWithZonedTime />
-  )
-  .add(
-    'minValue: today, maxValue: 1 week from now',
-    () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})})
-  )
-  .add(
-    'defaultValue + minValue + maxValue',
-    () => render({defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)})
-  )
-  .add(
-    'isDisabled',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), isDisabled: true})
-  )
-  .add(
-    'isDateUnavailable',
-    () => render({isDateUnavailable: (date: DateValue) => {
-      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-    }})
-  )
-  .add(
-    'isReadOnly',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), isReadOnly: true})
-  )
-  .add(
-    'autoFocus',
-    () => render({defaultValue: new CalendarDate(2019, 6, 5), autoFocus: true})
-  )
-  .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2})
-  )
-  .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3})
-  )
-  .add(
-    'minValue: today, visibleMonths: 3',
-    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
-  )
-  .add(
-    'minValue, visibleMonths: 3, defaultValue',
-    () => render({minValue: new CalendarDate(2019, 6, 1), defaultValue: new CalendarDate(2019, 6, 5), visibleMonths: 3})
-  )
-  .add(
-    'defaultFocusedValue',
-    () => render({defaultFocusedValue: new CalendarDate(2019, 6, 5)})
-  )
-  .add(
-    'focusedValue',
-    () => <ControlledFocus />
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', defaultValue: new CalendarDate(2021, 10, 3)})
-  )
-  .add(
-    'validationState: invalid, errorMessage',
-    () => render({validationState: 'invalid', errorMessage: 'Selection may not include weekends.', defaultValue: new CalendarDate(2021, 10, 3)})
-  )
-  .add(
-    'isDateUnavailable, invalid',
-    () => {
-      let {locale} = useLocale();
-      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: new CalendarDate(2021, 10, 3)});
-    }
-  )
-  .add(
-    'aria-label',
-    () => render({'aria-label': 'Appointment date'})
-  );
+export type CalendarStory = ComponentStoryObj<typeof Calendar>;
 
-function render(props = {}) {
-  return <Example onChange={action('change')} {...props} />;
-}
+export default {
+  title: 'Date and Time/Calendar',
+  component: Calendar,
+  args: {
+    onChange: action('onChange')
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    defaultValue: {
+      table: {
+        disable: true
+      }
+    },
+    minValue: {
+      table: {
+        disable: true
+      }
+    },
+    value: {
+      table: {
+        disable: true
+      }
+    },
+    maxValue: {
+      table: {
+        disable: true
+      }
+    },
+    defaultFocusedValue: {
+      table: {
+        disable: true
+      }
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    visibleMonths: {
+      control: 'number'
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    'aria-label': {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    }
+  }
+} as ComponentMeta<typeof Calendar>;
+
+export const Default: CalendarStory = {
+  render: (args) => <Example {...args} />
+};
+
+export const DefaultValue: CalendarStory = {
+  ...Default,
+  args: {defaultValue: new CalendarDate(2019, 6, 5)}
+};
+
+export const ControlledValue: CalendarStory = {
+  ...Default,
+  args: {value: new CalendarDate(2019, 5, 5)}
+};
+
+export const WithTime: CalendarStory = {
+  render: (args) => <CalendarWithTime {...args} />
+};
+
+export const ZonedTime: CalendarStory = {
+  render: (args) => <CalendarWithZonedTime {...args} />,
+  storyName: 'with zoned time'
+};
+
+export const OneWeek: CalendarStory = {
+  ...Default,
+  args: {minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})},
+  storyName: 'minValue: today, maxValue: 1 week from now'
+};
+
+export const DefaultMinMax: CalendarStory = {
+  ...Default,
+  args: {defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
+  storyName: 'defaultValue + minValue + maxValue'
+};
+
+export const DateUnavailable: CalendarStory = {
+  render: (args) => (
+    <Example
+      {...args}
+      defaultValue={today(getLocalTimeZone()).add({days: 1})}
+      isDateUnavailable={(date: DateValue) => {
+        const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+        return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+      }} />
+  ),
+  storyName: 'isDateUnavailable'
+};
+
+export const MinValue: CalendarStory = {
+  ...Default,
+  args: {minValue: today(getLocalTimeZone())},
+  storyName: 'minValue: today'
+};
+
+export const MinValueDefaultVal: CalendarStory = {
+  ...Default,
+  args: {minValue: today(getLocalTimeZone()), defaultValue: new CalendarDate(2019, 6, 5)},
+  storyName: 'minValue: today, defaultValue'
+};
+
+export const DefaultFocusedValue: CalendarStory = {
+  ...Default,
+  args: {defaultFocusedValue: new CalendarDate(2019, 6, 5)},
+  storyName: 'defaultFocusedValue'
+};
+
+export const FocusedValue: CalendarStory = {
+  render: (args) => <ControlledFocus {...args} />,
+  storyName: 'focusedValue'
+};
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
@@ -193,42 +232,42 @@ function Example(props) {
   );
 }
 
-function CalendarWithTime() {
+function CalendarWithTime(props) {
   let [value, setValue] = useState(new CalendarDateTime(2019, 6, 5, 8));
   let onChange = (v: CalendarDateTime) => {
     setValue(v);
-    action('onChange')(v);
+    props?.onChange?.(v);
   };
 
   return (
     <Flex direction="column">
-      <Calendar value={value} onChange={onChange} />
+      <Calendar {...props} value={value} onChange={onChange} />
       <TimeField label="Time" value={value} onChange={onChange} />
     </Flex>
   );
 }
 
-function CalendarWithZonedTime() {
+function CalendarWithZonedTime(props) {
   let [value, setValue] = useState(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
   let onChange = (v: ZonedDateTime) => {
     setValue(v);
-    action('onChange')(v);
+    props?.onChange?.(v);
   };
 
   return (
     <Flex direction="column">
-      <Calendar value={value} onChange={onChange} />
+      <Calendar {...props} value={value} onChange={onChange} />
       <TimeField label="Time" value={value} onChange={onChange} />
     </Flex>
   );
 }
 
-function ControlledFocus() {
+function ControlledFocus(props) {
   let [focusedDate, setFocusedDate] = useState(new CalendarDate(2019, 6, 5));
   return (
     <Flex direction="column" alignItems="start" gap="size-200">
       <ActionButton onPress={() => setFocusedDate(new CalendarDate(2019, 6, 5))}>Reset focused date</ActionButton>
-      <Calendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
+      <Calendar {...props} focusedValue={focusedDate} onFocusChange={setFocusedDate} />
     </Flex>
   );
 }

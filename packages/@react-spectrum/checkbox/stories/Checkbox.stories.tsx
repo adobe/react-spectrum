@@ -12,107 +12,94 @@
 
 import {action} from '@storybook/addon-actions';
 import {Checkbox} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Checkbox', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'Default',
-    () => render()
+export type CheckboxStory = ComponentStoryObj<typeof Checkbox>;
+
+export default {
+  title: 'Checkbox',
+  component: Checkbox,
+  args: {
+    onChange: action('onChange')
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    defaultSelected: {
+      control: 'boolean'
+    },
+    isSelected: {
+      control: 'boolean'
+    },
+    isIndeterminate: {
+      control: 'boolean'
+    },
+    isEmphasized: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    validationState: {
+      control: {
+        type: 'select',
+        options: [null, 'valid', 'invalid']
+      }
+    }
+  }
+} as ComponentMeta<typeof Checkbox>;
+
+export const Default: CheckboxStory = {
+  render: (args) => render(args)
+};
+
+export const CustomLabel: CheckboxStory = {
+  render: (args) => renderCustomLabel(args)
+};
+
+export const LongLabel: CheckboxStory = {
+  render: (args) => (
+    <Checkbox
+      {...args}>
+      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
+    </Checkbox>
   )
-  .add(
-    'defaultSelected: true',
-    () => render({defaultSelected: true})
+};
+
+export const NoLabel: CheckboxStory = {
+  render: (args) => renderNoLabel(args)
+};
+
+export const WHCM: CheckboxStory = {
+  render: () => (
+    <Flex direction="column" gap="size-200">
+      <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Checkbox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+      {renderRow()}
+      {renderRow({isSelected: true, isEmphasized: true})}
+      {renderRow({isIndeterminate: true, isEmphasized: true})}
+      {renderRow({isSelected: true, isEmphasized: false})}
+      {renderRow({isIndeterminate: true, isEmphasized: false})}
+      {renderRow({validationState: 'invalid'})}
+      {renderRow({isSelected: true, validationState: 'invalid'})}
+    </Flex>
   )
-  .add(
-    'isSelected: true',
-    () => render({isSelected: true})
-  )
-  .add(
-    'isSelected: false',
-    () => render({isSelected: false})
-  )
-  .add(
-    'isIndeterminate: true',
-    () => render({isIndeterminate: true})
-  )
-  .add(
-    'validationState: "invalid"',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isEmphasized: true',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'isEmphasized: true, isIndeterminate: true',
-    () => render({isEmphasized: true, isIndeterminate: true})
-  )
-  .add(
-    'isEmphasized: true, validationState: "invalid"',
-    () => render({isEmphasized: true, validationState: 'invalid'})
-  )
-  .add(
-    'isEmphasized: true, validationState: "invalid", isIndeterminate: true',
-    () => render({isEmphasized: true, validationState: 'invalid', isIndeterminate: true})
-  )
-  .add(
-    'isEmphasized: true, isDisabled: true',
-    () => render({isEmphasized: true, isDisabled: true})
-  )
-  .add(
-    'isReadOnly: true, isSelected: true',
-    () => render({isReadOnly: true, isSelected: true})
-  )
-  .add(
-    'autoFocus: true',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'custom label',
-    () => renderCustomLabel()
-  )
-  .add(
-    'long label',
-    () => (
-      <Checkbox
-        onChange={action('change')}>
-        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
-      </Checkbox>
-    )
-  )
-  .add(
-    'no label',
-    () => renderNoLabel({'aria-label': 'This checkbox has no visible label'})
-  )
-  .add(
-    'WHCM test',
-    () => (
-      <Flex direction="column" gap="size-200">
-        <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Checkbox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
-        {renderRow()}
-        {renderRow({isSelected: true, isEmphasized: true})}
-        {renderRow({isIndeterminate: true, isEmphasized: true})}
-        {renderRow({isSelected: true, isEmphasized: false})}
-        {renderRow({isIndeterminate: true, isEmphasized: false})}
-        {renderRow({validationState: 'invalid'})}
-        {renderRow({isSelected: true, validationState: 'invalid'})}
-      </Flex>
-   )
-  );
+};
 
 function render(props = {}) {
   return (
-    <Checkbox
-      onChange={action('change')}
-      {...props}>
+    <Checkbox {...props}>
       Checkbox Label
     </Checkbox>
   );
@@ -120,9 +107,7 @@ function render(props = {}) {
 
 function renderCustomLabel(props = {}) {
   return (
-    <Checkbox
-      onChange={action('change')}
-      {...props}>
+    <Checkbox {...props}>
       <span><i>Italicized</i> Checkbox Label</span>
     </Checkbox>
   );
@@ -130,26 +115,19 @@ function renderCustomLabel(props = {}) {
 
 function renderNoLabel(props = {}) {
   return (
-    <Checkbox
-      onChange={action('change')}
-      {...props} />
+    <Checkbox {...props} />
   );
 }
 
 function renderRow(props = {}) {
   return (
     <Flex gap="size-200">
-      <Checkbox
-        onChange={action('change')}
-        {...props}>
+      <Checkbox {...props}>
         Option
       </Checkbox>
-      <Checkbox 
-        isDisabled
-        onChange={action('change')}
-        {...props}>
+      <Checkbox isDisabled {...props}>
         Option
       </Checkbox>
-    </Flex>  
+    </Flex>
   );
 }

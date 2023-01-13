@@ -13,87 +13,93 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
-storiesOf('Button/ActionButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'icon',
-    () => renderWithIcon()
-  )
-  .add(
-    'icon only',
-    () => (
-      <Flex gap="size-100">
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-        </ActionButton>
-        <ActionButton
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Add />
-        </ActionButton>
-      </Flex>
-    )
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'staticColor: white',
-    () => (
-      <View backgroundColor="static-blue-700" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {renderWithIcon({staticColor: 'white'})}
-          {renderWithIcon({staticColor: 'white', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  )
-  .add(
-    'staticColor: black',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {renderWithIcon({staticColor: 'black'})}
-          {renderWithIcon({staticColor: 'black', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  );
+export type ActionButtonStory = ComponentStoryObj<typeof ActionButton>;
+
+export default {
+  title: 'Button/ActionButton',
+  component: ActionButton,
+  args: {
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  },
+  argTypes: {
+    onPress: {
+      table: {
+        disable: true
+      }
+    },
+    onPressStart: {
+      table: {
+        disable: true
+      }
+    },
+    onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    staticColor: {
+      table: {
+        disable: true
+      }
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    }
+  }
+} as ComponentMeta<typeof ActionButton>;
+
+
+export const Default: ActionButtonStory = {
+  render: (args) => render(args)
+};
+
+export const WithIcon: ActionButtonStory = {
+  render: (args) => renderWithIcon(args)
+};
+
+export const IconOnly: ActionButtonStory = {
+  render: (args) => renderOnlyIcon(args)
+};
+
+export const StaticWhite: ActionButtonStory = {
+  args: {staticColor: 'white'},
+  render: (args) => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      {renderWithIcon(args)}
+    </View>
+  ),
+  storyName: 'staticColor: white'
+};
+
+export const StaticBlack: ActionButtonStory = {
+  args: {staticColor: 'black'},
+  render: (args) => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      {renderWithIcon(args)}
+    </View>
+  ),
+  storyName: 'staticColor: black'
+};
 
 function render(props = {}) {
   return (
     <Flex gap="size-100">
       <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         {...props}>
         Default
       </ActionButton>
       <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         Disabled
@@ -106,20 +112,32 @@ function renderWithIcon(props = {}) {
   return (
     <Flex gap="size-100">
       <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         {...props}>
         <Add />
         <Text>Default</Text>
       </ActionButton>
       <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         <Text>Disabled</Text>
+        <Add />
+      </ActionButton>
+    </Flex>
+  );
+}
+
+function renderOnlyIcon(props = {}) {
+  return (
+    <Flex gap="size-100">
+      <ActionButton
+        {...props}
+        aria-label="Add button">
+        <Add />
+      </ActionButton>
+      <ActionButton
+        isDisabled
+        {...props}
+        aria-label="Disabled add button">
         <Add />
       </ActionButton>
     </Flex>

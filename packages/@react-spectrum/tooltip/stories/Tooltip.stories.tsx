@@ -18,17 +18,14 @@ type TooltipStory = ComponentStoryObj<typeof Tooltip>;
 const argTypes = {
   placement: {
     control: 'radio',
-    defaultValue: 'top',
     options: ['top', 'bottom', 'left', 'right']
   },
   variant: {
     control: 'radio',
-    defaultValue: undefined,
     options: [undefined, 'neutral', 'info', 'positive', 'negative']
   },
   showIcon: {
-    control: 'boolean',
-    defaultValue: false
+    control: 'boolean'
   },
   isOpen: {
     control: {disable: true}
