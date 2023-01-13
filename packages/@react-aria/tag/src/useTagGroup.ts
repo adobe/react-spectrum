@@ -42,14 +42,6 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
   keyboardDelegate?: TagKeyboardDelegate<T>
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
-  /**
-   * An optional keyboard delegate to handle arrow key navigation,
-   * to override the default.
-   */
-  keyboardDelegate?: TagKeyboardDelegate<T>
-}
-
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
  * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
