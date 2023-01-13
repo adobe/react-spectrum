@@ -607,7 +607,7 @@ function TableColumnHeader(props) {
             'spectrum-Table-headCell',
             {
               'is-active': isPressed,
-              'is-resizable': columnProps.allowsResizing,
+              'is-resizable': columnProps.allowsResizing && !column.hasChildNodes,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
