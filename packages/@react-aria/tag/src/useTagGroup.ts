@@ -59,13 +59,9 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
  */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-<<<<<<< HEAD
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let actionsId = useId();
-=======
-  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
->>>>>>> main
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
@@ -83,7 +79,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
-<<<<<<< HEAD
     }),
     tagGroupActionsProps: gridProps['aria-label'] ? {
       role: 'group',
@@ -91,8 +86,5 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-label': stringFormatter.format('actions'),
       'aria-labelledby': `${gridProps.id} ${actionsId}`
     } : {}
-=======
-    })
->>>>>>> main
   };
 }
