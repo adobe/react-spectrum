@@ -128,6 +128,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   let lastFocusedKey = useRef(null);
   let isFocusWithin = useRef(false);
   useEffect(() => {
+    let raf;
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
@@ -146,13 +147,19 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
         // Wait till virtualizer scrolls the focused key into view before checking if we need to scroll it into the viewport
         // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
         // syncing is a bit delayed compared to when scrollToItem is fired.
-        requestAnimationFrame(() => {
+        raf = requestAnimationFrame(() => {
           scrollIntoViewport(document.activeElement, ref.current);
         });
       }
     }
 
     lastFocusedKey.current = focusedKey;
+
+    return () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
+    };
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
 
   // Persist the focusedKey and prevent it from being removed from the DOM when scrolled out of view.

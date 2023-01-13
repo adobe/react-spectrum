@@ -283,6 +283,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
+    let raf;
     if (isFocused && ref.current) {
       focusWithoutScrolling(ref.current);
 
@@ -293,11 +294,16 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       if (getInteractionModality() !== 'pointer') {
         // If this calendar is in a popover, we need to wait till it is fully positioned before attempting to
         // scroll it into view, otherwise it won't be brought into view properly
-        requestAnimationFrame(() => {
+        raf = requestAnimationFrame(() => {
           scrollIntoViewport(ref.current, getScrollParent(ref.current));
         });
       }
     }
+    return () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+      }
+    };
   }, [isFocused, ref]);
 
   let cellDateFormatter = useDateFormatter({
