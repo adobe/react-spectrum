@@ -88,7 +88,7 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
 
 interface TableContextValue<T> {
   state: TableState<T>,
-  layout: TableLayout<T>,
+  layout: TableLayout<T> & {tableState: TableState<T>},
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
@@ -171,7 +171,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }),
     [getDefaultWidth, getDefaultMinWidth]
   );
-  let layout = useMemo(() => new TableLayout({
+  let tableLayout = useMemo(() => new TableLayout({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
       ? null
@@ -192,6 +192,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.overflowMode, scale, density, columnLayout]
   );
+  let layout = useMemo(() => {
+    let proxy = new Proxy(tableLayout, {
+      get(target, prop, receiver) {
+        return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
+      }
+    });
+    return proxy as TableLayout<T> & {tableState: TableState<T>};
+  }, [state, tableLayout]);
 
   let {gridProps} = useTable({
     ...props,
@@ -624,14 +632,40 @@ function TableColumnHeader(props) {
 }
 
 let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
-  let {focusProps, ...otherProps} = props;
+  let {focusProps, alignment, ...otherProps} = props;
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
   let {buttonProps} = useButton({...otherProps, elementType: 'div', isDisabled: isEmpty}, domRef);
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: isEmpty});
+
   return (
-    <div className={classNames(styles, 'spectrum-Table-headCellContents', {'is-hovered': isHovered})} {...hoverProps}>
-      <div className={classNames(styles, 'spectrum-Table-headCellButton')} {...mergeProps(buttonProps, focusProps)} ref={domRef}>{props.children}</div>
+    <div
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-headCellContents',
+          {
+            'is-hovered': isHovered
+          }
+        )
+      }
+      {...hoverProps}>
+      <div
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-headCellButton',
+            {
+              'spectrum-Table-headCellButton--alignStart': alignment === 'start',
+              'spectrum-Table-headCellButton--alignCenter': alignment === 'center',
+              'spectrum-Table-headCellButton--alignEnd': alignment === 'end'
+            }
+          )
+        }
+        {...mergeProps(buttonProps, focusProps)}
+        ref={domRef}>
+        {props.children}
+      </div>
     </div>
   );
 };
@@ -738,6 +772,14 @@ function ResizableTableColumnHeader(props) {
   }, []);
 
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
+  let alignment = 'start';
+  let menuAlign = 'start' as 'start' | 'end';
+  if (columnProps.align === 'center' || column.colspan > 1) {
+    alignment = 'center';
+  } else if (columnProps.align === 'end') {
+    alignment = 'end';
+    menuAlign = 'end';
+  }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -762,14 +804,14 @@ function ResizableTableColumnHeader(props) {
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
-                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+                'react-spectrum-Table-cell--alignCenter': alignment === 'center',
+                'react-spectrum-Table-cell--alignEnd': alignment === 'end'
               }
             )
           )
         }>
-        <MenuTrigger onOpenChange={setHeaderMenuOpen}>
-          <TableColumnHeaderButton ref={triggerRef} focusProps={focusProps}>
+        <MenuTrigger onOpenChange={setHeaderMenuOpen} align={menuAlign}>
+          <TableColumnHeaderButton alignment={alignment} ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
             }
@@ -778,7 +820,7 @@ function ResizableTableColumnHeader(props) {
               <div className={classNames(styles, 'spectrum-Table-headerCellText')}>{column.rendered}</div>
             }
             {
-              columnProps.allowsResizing && resizingColumn == null && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
+              columnProps.allowsResizing && <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Table-menuChevron')} />
             }
           </TableColumnHeaderButton>
           <Menu onAction={onMenuSelect} minWidth="size-2000" items={items}>
