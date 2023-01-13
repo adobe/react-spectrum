@@ -581,9 +581,11 @@ function TableColumnHeader(props) {
   let {state, isEmpty} = useTableContext();
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let columnProps = column.props as SpectrumColumnProps<unknown>;
-  if (column.hasChildNodes && columnProps.allowsResizing) {
-    console.warn('Columns with child columns don\'t allow resizing.');
-  }
+  useEffect(() => {
+    if (column.hasChildNodes && columnProps.allowsResizing) {
+      console.warn(`Column key: ${column.key}. Columns with child columns don't allow resizing.`);
+    }
+  }, [column.hasChildNodes, column.key, columnProps.allowsResizing]);
 
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
