@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -347,35 +347,33 @@ describe('Tabs', function () {
   });
 
   it('collapses when it can\'t render all the tabs horizontally', function () {
-    // First two mock implementations are for scrollIntoView's check
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
         return {
           left: 0
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
-          left: 0
+          right: 0
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           right: 500
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           right: 700
         };
       }
-    });
+    ];
+
+    mockImplementation(target, mockCalls, false);
+
+    mockImplementation(target, mockCalls, false);
 
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
@@ -410,18 +408,14 @@ describe('Tabs', function () {
   });
 
   it('doesn\'t collapse when it can render all the tabs horizontally', function () {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+    jest.spyOn(HTMLDivElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 400
-        };
-      }
+      return {
+        right: 400
+      };
     });
 
     let {getByRole, queryByRole} = renderComponent();
@@ -431,20 +425,21 @@ describe('Tabs', function () {
   });
 
   it('dynamically collapses and expands on tab addition/subtraction', function () {
-
-    let spy = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
         return {
           right: 500
         };
-      }
-    }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           right: 400
         };
       }
-    });
+    ];
+
+    let spy = mockImplementation(target, mockCalls, false);
 
     let {getByRole, queryByRole, rerender} = render(
       <Provider theme={theme}>
@@ -469,17 +464,13 @@ describe('Tabs', function () {
     expect(queryByRole('button')).toBeNull();
 
     spy.mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+      return {
+        right: 500
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 700
-        };
-      }
+      return {
+        right: 700
+      };
     });
 
     let newItems = [...defaultItems];
@@ -541,17 +532,13 @@ describe('Tabs', function () {
     expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[0].id);
 
     spy.mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 500
-        };
-      }
+      return {
+        right: 500
+      };
     }).mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
-        return {
-          right: 400
-        };
-      }
+      return {
+        right: 400
+      };
     });
 
     newItems = [...defaultItems];
@@ -586,35 +573,31 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
-    // First two mock implementations are for scrollIntoView's check
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
         return {
           left: 0
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           left: 0
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           right: 500
         };
-      }
-    })
-    .mockImplementationOnce(function () {
-      if (this instanceof HTMLDivElement) {
+      },
+      function () {
         return {
           right: 700
         };
       }
-    });
+    ];
+
+    mockImplementation(target, mockCalls);
 
     let {getByRole, queryByRole} = renderComponent({
       'aria-label': 'Test Tabs',
