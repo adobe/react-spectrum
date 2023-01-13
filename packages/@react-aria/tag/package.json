@@ -21,6 +21,7 @@
     "@react-aria/i18n": "^3.6.3",
     "@react-aria/interactions": "^3.13.1",
     "@react-aria/utils": "^3.14.2",
+    "@react-stately/list": "^3.6.1",
     "@react-stately/tag": "3.0.0-alpha.1",
     "@react-types/button": "^3.7.0",
     "@react-types/shared": "^3.16.0",

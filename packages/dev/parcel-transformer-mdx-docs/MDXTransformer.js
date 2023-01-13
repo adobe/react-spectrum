@@ -69,11 +69,12 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
+              let props = options.includes('hidden') ? 'isHidden' : '';
               if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
-                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}><${name} /></${provider}>, document.getElementById("${id}")));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}>$1</${provider}>, document.getElementById("${id}")));`);
               }
             }
 
@@ -109,7 +110,7 @@ module.exports = new Transformer({
               ];
             }
 
-            node.meta = 'example';
+            node.meta = options.includes('hidden') ? null : 'example';
 
             return [
               ...transformExample(node, preRelease, keepIndividualImports),
@@ -436,7 +437,11 @@ module.exports = new Transformer({
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+let RENDER_FNS = [];
 ${exampleCode.join('\n')}
+for (let render of RENDER_FNS) {
+  render();
+}
 export default {};
 `;
     }

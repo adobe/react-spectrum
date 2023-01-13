@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {ICONS, Toast} from './Toast';
-export {ToastContainer} from './ToastContainer';
-export {ToastContext, useToastProvider, ToastProvider} from './ToastProvider';
+export {ToastContainer, ToastQueue} from './ToastContainer';
+
+export type {SpectrumToastOptions, SpectrumToastContainerProps} from './ToastContainer';
