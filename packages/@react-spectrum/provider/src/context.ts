@@ -10,24 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-export function Timer(callback: () => void, delay: number) {
-  let timerId, start;
-  let remaining = delay;
+import {ProviderContext} from '@react-types/provider';
+import React from 'react';
 
-  this.pause = () => {
-    clearTimeout(timerId);
-    remaining -= Date.now() - start;
-  };
-
-  this.resume = () => {
-    start = Date.now();
-    timerId && clearTimeout(timerId);
-    timerId = setTimeout(callback, remaining);
-  };
-
-  this.clear = () => {
-    clearTimeout(timerId);
-  };
-
-  this.resume();
-}
+// Context is placed in a separate file to avoid fast refresh issue where the old provider context values
+// are immediately replaced with the null default. Stopgap solution until we fix this in parcel.
+export const Context = React.createContext<ProviderContext | null>(null);
+Context.displayName = 'ProviderContext';

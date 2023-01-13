@@ -27,6 +27,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('DialogTrigger', function () {
   let matchMedia;
+  let warnMock;
   beforeAll(() => {
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers('legacy');
@@ -40,6 +41,9 @@ describe('DialogTrigger', function () {
     matchMedia = new MatchMediaMock();
     // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+    if (process.env.STRICT_MODE) {
+      warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
+    }
   });
 
   afterEach(() => {
@@ -55,6 +59,12 @@ describe('DialogTrigger', function () {
 
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
+
+    if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
+      expect(warnMock).toHaveBeenCalledTimes(1);
+      expect(warnMock).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      warnMock.mockRestore();
+    }
   });
 
   it('should trigger a modal by default', function () {
