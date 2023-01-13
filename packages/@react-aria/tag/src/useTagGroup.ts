@@ -11,13 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
-<<<<<<< HEAD
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-=======
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
->>>>>>> main
 import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
