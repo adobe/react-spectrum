@@ -318,7 +318,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing) {
+        if (item.props.allowsResizing && !item.hasChildNodes) {
           return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
