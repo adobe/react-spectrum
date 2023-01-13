@@ -31,7 +31,8 @@ function SelectableList(props: CollectionBase<any> & {
       className={styles.list}
       style={{
         height: 200, overflow: 'auto', padding: 10, margin: 0, listStyle: 'none',
-        position: props.isUlRelativelyPositioned ? 'relative' : 'static'
+        position: props.isUlRelativelyPositioned ? 'relative' : 'static',
+        borderTopWidth: '10px', borderBottomWidth: '20px'
       }}
       ref={listRef}>
       {Array.from(state.collection).map(node => {

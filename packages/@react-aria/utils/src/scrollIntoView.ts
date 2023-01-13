@@ -30,20 +30,25 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let height = element.offsetHeight;
   let x = scrollView.scrollLeft;
   let y = scrollView.scrollTop;
-  let maxX = x + scrollView.offsetWidth;
-  let maxY = y + scrollView.offsetHeight;
+
+  // Account for top/left border offsetting the scroll top/Left
+  let {borderTopWidth, borderLeftWidth} = window.getComputedStyle(scrollView);
+  let borderAdjustedX = scrollView.scrollLeft + parseInt(borderLeftWidth, 10);
+  let borderAdjustedY = scrollView.scrollTop + parseInt(borderTopWidth, 10);
+  // Ignore end/bottom border via clientHeight/Width instead of offsetHeight/Width
+  let maxX = borderAdjustedX + scrollView.clientWidth;
+  let maxY = borderAdjustedY + scrollView.clientHeight;
 
   if (offsetX <= x) {
-    x = offsetX;
+    x = offsetX - parseInt(borderLeftWidth, 10);
   } else if (offsetX + width > maxX) {
     x += offsetX + width - maxX;
   }
-  if (offsetY <= y) {
-    y = offsetY;
+  if (offsetY <= borderAdjustedY) {
+    y = offsetY - parseInt(borderTopWidth, 10);
   } else if (offsetY + height > maxY) {
     y += offsetY + height - maxY;
   }
-
   scrollView.scrollLeft = x;
   scrollView.scrollTop = y;
 }
@@ -77,16 +82,12 @@ export function scrollIntoViewport(targetElement: Element, containingElement?: E
   if (!isScrollPrevented) {
     let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
 
-    // TODO: For some reason in the useSelectableList stories, originalTop and newTop differ by 1px, causing us to unecessarily
-    // scroll the containing element even though it may already be fully in view
-    // This is because the scrollable parent (ul) has a border of 1 that partially obscures the focused item even after scrollIntoView is called...
-    // Perhaps modify scrollIntoView calculations to take into account the borders, bleh...
-
     // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
     // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
     targetElement?.scrollIntoView?.({block: 'nearest'});
     let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-    if (originalLeft !== newLeft || originalTop !== newTop) {
+    // Account for sub pixel differences from rounding
+    if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
       containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
       targetElement.scrollIntoView?.({block: 'nearest'});
     }
