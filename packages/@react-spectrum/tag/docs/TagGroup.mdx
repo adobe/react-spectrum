@@ -22,6 +22,7 @@ import Airplane from '@spectrum-icons/workflow/Airplane';
 import Game from '@spectrum-icons/workflow/Game';
 import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -168,4 +169,23 @@ TagGroup supports an `onAction` handler that, when used with the `actionLabel` p
     <Text>Shopping</Text>
   </Item>
 </TagGroup>
+```
+
+### Limit rows
+
+TagGroup supports a `maxRows` prop that will limit the number of rows initially shown. This will add an action button that can be pressed to show the remaining tags.
+
+```tsx example
+<View maxWidth="size-3400" minHeight="size-3400" padding="size-150" borderWidth="thin" borderColor="dark" borderRadius="medium">
+  <TagGroup maxRows={3} aria-label="Static TagGroup items example">
+    <Item>Adobe Photoshop</Item>
+    <Item>Adobe InDesign</Item>
+    <Item>Adobe AfterEffects</Item>
+    <Item>Adobe Illustrator</Item>
+    <Item>Adobe Lightroom</Item>
+    <Item>Adobe Premiere Pro</Item>
+    <Item>Adobe Fresco</Item>
+    <Item>Adobe Dreamweaver</Item>
+  </TagGroup>
+</View>
 ```
