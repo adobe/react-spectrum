@@ -69,25 +69,14 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
           }
         }
       );
-      let index = startItem.index;
+      let index = startItem.index < itemNodes.length ? startItem.index : itemNodes.length - 1;
       let newNode:Node<T>;
-      if (index < itemNodes.length) {
-        while (index >= 0) {
-          if (!selectionManager.isDisabled(itemNodes[index].key)) {
-            newNode = itemNodes[index];
-            break;
-          }
-          index--;
+      while (index >= 0) {
+        if (!selectionManager.isDisabled(itemNodes[index].key)) {
+          newNode = itemNodes[index];
+          break;
         }
-      } else {
-        index = itemNodes.length - 1;
-        while (index >= 0) {
-          if (!selectionManager.isDisabled(itemNodes[index].key)) {
-            newNode = itemNodes[index];
-            break;
-          }
-          index--;
-        }
+        index--;
       }
       selectionState.setFocusedKey(newNode ? newNode.key : null);
     }
