@@ -12,7 +12,8 @@ module.exports = {
     './custom-addons/provider/register',
     './custom-addons/descriptions/register',
     './custom-addons/theme/register',
-    './custom-addons/strictmode/register'
+    './custom-addons/strictmode/register',
+    './custom-addons/scrolling/register'
   ],
   typescript: {
     check: false,
