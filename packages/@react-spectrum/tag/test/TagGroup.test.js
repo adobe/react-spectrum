@@ -566,6 +566,11 @@ describe('TagGroup', function () {
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(tags[0]);
+
+    // Ensure onAction isn't triggered when clicking a tag.
+    fireEvent.mouseDown(document.activeElement, {key: 'Enter'});
+    fireEvent.mouseUp(document.activeElement, {key: 'Enter'});
+    expect(onClearSpy).toHaveBeenCalledTimes(1);
     
     offsetWidth.mockReset();
   });
