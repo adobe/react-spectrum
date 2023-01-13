@@ -57,7 +57,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
       : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
-  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let {tagGroupProps, tagGroupActionsProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -139,6 +139,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     setIsCollapsed(prevCollapsed => !prevCollapsed);
   };
 
+  let showActions = tagState.showCollapseButton || (actionLabel && onAction);
+
   return (
     <FocusScope>
       <div
@@ -162,21 +164,28 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             </Tag>
           ))}
         </div>
-        {tagState.showCollapseButton &&
-          <ActionButton
-            isQuiet
-            onPress={handlePressCollapse}
-            UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-            {isCollapsed ? stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) : stringFormatter.format('hideButtonLabel')}
-          </ActionButton>
-        }
-        {actionLabel && onAction &&
-          <ActionButton
-            isQuiet
-            onPress={onAction}
-            UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-            {actionLabel}
-          </ActionButton>
+        {showActions &&
+          <div className={classNames(styles, 'spectrum-Tags-actions')} {...tagGroupActionsProps}>
+            {tagState.showCollapseButton &&
+              <ActionButton
+                isQuiet
+                onPress={handlePressCollapse}
+                UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                {isCollapsed ?
+                  stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
+                  stringFormatter.format('hideButtonLabel')
+                }
+              </ActionButton>
+            }
+            {actionLabel && onAction &&
+              <ActionButton
+                isQuiet
+                onPress={onAction}
+                UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                {actionLabel}
+              </ActionButton>
+            }
+          </div>
         }
       </div>
     </FocusScope>
