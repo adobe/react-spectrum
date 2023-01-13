@@ -11,9 +11,13 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
+<<<<<<< HEAD
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+=======
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+>>>>>>> main
 import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
@@ -38,6 +42,14 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
   keyboardDelegate?: TagKeyboardDelegate<T>
 }
 
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>
+}
+
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
  * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
@@ -47,9 +59,13 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
  */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
+<<<<<<< HEAD
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let actionsId = useId();
+=======
+  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
+>>>>>>> main
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
@@ -67,6 +83,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
+<<<<<<< HEAD
     }),
     tagGroupActionsProps: gridProps['aria-label'] ? {
       role: 'group',
@@ -74,5 +91,8 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-label': stringFormatter.format('actions'),
       'aria-labelledby': `${gridProps.id} ${actionsId}`
     } : {}
+=======
+    })
+>>>>>>> main
   };
 }

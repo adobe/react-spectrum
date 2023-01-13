@@ -37,9 +37,12 @@ function render(props: SpectrumTagGroupProps<unknown>) {
       <Item key="1">Cool Tag 1</Item>
       <Item key="2">Cool Tag 2</Item>
       <Item key="3">Cool Tag 3</Item>
+<<<<<<< HEAD
       <Item key="4">Cool Tag 4</Item>
       <Item key="5">Cool Tag 5</Item>
       <Item key="6">Cool Tag 6</Item>
+=======
+>>>>>>> main
     </TagGroup>
   );
 }
@@ -96,6 +99,7 @@ export const LabelTruncation: TagGroupStory = {
     </div>
   )
 };
+<<<<<<< HEAD
 
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
@@ -138,6 +142,60 @@ function OnRemoveExample(props) {
     action('onRemove')(key);
   };
 
+=======
+
+export const MaxRows: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => (
+    <TagGroup width="100%" aria-label="Tag group" {...args}>
+      <Item key="1">Cool Tag 1</Item>
+      <Item key="2">Another cool tag</Item>
+      <Item key="3">This tag</Item>
+      <Item key="4">What tag?</Item>
+      <Item key="5">This tag is cool too</Item>
+      <Item key="6">Shy tag</Item>
+    </TagGroup>
+  ),
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'maxRows'
+};
+
+export const MaxRowsManyTags: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => (
+    <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
+      {(item: any) => (
+        <Item key={item.key}>{`Tag ${item.key}`}</Item>
+      )}
+    </TagGroup>
+  ),
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'maxRows with many tags'
+};
+
+export const MaxRowsOnRemove: TagGroupStory = {
+  args: {maxRows: 2},
+  render: (args) => <OnRemoveExample {...args} />,
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'maxRows + onRemove'
+};
+
+function OnRemoveExample(props) {
+  let [items, setItems] = useState([
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'},
+    {id: 3, label: 'This tag'},
+    {id: 4, label: 'What tag?'},
+    {id: 5, label: 'This tag is cool too'},
+    {id: 6, label: 'Shy tag'}
+  ]);
+
+  let onRemove = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+    action('onRemove')(key);
+  };
+
+>>>>>>> main
   return (
     <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...props}>
       {(item: any) => (

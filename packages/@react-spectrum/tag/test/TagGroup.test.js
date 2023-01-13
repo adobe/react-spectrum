@@ -467,6 +467,7 @@ describe('TagGroup', function () {
     
     offsetWidth.mockReset();
   });
+<<<<<<< HEAD
 
   it('can keyboard navigate to a custom action', function () {
     let {getAllByRole, getByRole} = render(
@@ -569,4 +570,6 @@ describe('TagGroup', function () {
     
     offsetWidth.mockReset();
   });
+=======
+>>>>>>> main
 });

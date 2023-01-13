@@ -90,10 +90,13 @@ governing permissions and limitations under the License.
   }
 }
 
+<<<<<<< HEAD
 .spectrum-Tags-actions {
   display: inline;
 }
 
+=======
+>>>>>>> main
 .spectrum-Tags-actionButton {
   display: inline;
   height: var(--spectrum-tag-height);
