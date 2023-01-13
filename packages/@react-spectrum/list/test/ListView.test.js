@@ -14,10 +14,10 @@ jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
+import {FocusExample, renderEmptyState} from '../stories/ListView.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderEmptyState} from '../stories/ListView.stories';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -541,6 +541,65 @@ describe('ListView', function () {
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
+    });
+
+    it('should move focus to the next item that is not disabled when the focused item is removed', () => {
+      let tree = render(<FocusExample />);
+      let rows = tree.getAllByRole('row');
+      act(() => rows[3].focus());
+      expect(document.activeElement).toBe(rows[3]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('button'));
+      expect(rows[4]).toHaveAttribute('aria-disabled', 'true');
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[4]);
+      act(() => rows[rows.length - 1].focus());
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 1]);
+      moveFocus('ArrowRight');
+      expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
+      triggerPress(document.activeElement);
+      act(() => {
+        jest.runAllTimers();
+      });
+      rows = tree.getAllByRole('row');
+      expect(document.activeElement).toBe(rows[rows.length - 2]);
+      expect(rows[rows.length - 1]).toHaveAttribute('aria-disabled', 'true');
     });
   });
 
@@ -1403,4 +1462,6 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
     });
   });
+
+
 });

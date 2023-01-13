@@ -2149,17 +2149,18 @@ function DragBetweenListsOverride(props) {
   );
 }
 
-const FocusExample = () => {
+export const FocusExample = () => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},
     {id: 3, name: 'Adobe InDesign'},
     {id: 4, name: 'Adobe AfterEffects'},
-    {id: 5, name: 'Adobe Illustrator'},
-    {id: 6, name: 'Adobe Lightroom'},
-    {id: 7, name: 'Adobe Premiere Pro'},
-    {id: 8, name: 'Adobe Fresco'},
-    {id: 9, name: 'Adobe Dreamweaver'}
+    {id: 5, name: 'Adobe Flash', isDisabled: true},
+    {id: 6, name: 'Adobe Illustrator'},
+    {id: 7, name: 'Adobe Lightroom'},
+    {id: 8, name: 'Adobe Premiere Pro'},
+    {id: 9, name: 'Adobe Fresco'},
+    {id: 10, name: 'Adobe Dreamweaver'}
   ];
 
   const list = useListData({
@@ -2168,11 +2169,11 @@ const FocusExample = () => {
   });
 
   return (
-    <ListView aria-label="listview with removable items" width="250px" items={list.items} >
+    <ListView aria-label="listview with removable items" width="250px" items={list.items} disabledKeys={['5']}>
       {(item: any) => (
-        <Item textValue={item.name}>
+        <Item key={item.id} textValue={item.name}>
           <Text>{item.name}</Text>
-          <ActionButton aria-label={`Remove ${item.name}`} isQuiet onPress={() => list.remove(item.id)}>
+          <ActionButton aria-label={`Remove ${item.name}`} isQuiet onPress={() => list.remove(item.id)} isDisabled={item.isDisabled}>
             <RemoveCircle />
           </ActionButton>
         </Item>
