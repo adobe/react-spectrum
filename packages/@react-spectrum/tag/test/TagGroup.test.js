@@ -397,4 +397,72 @@ describe('TagGroup', function () {
     pressArrowRight(tags[0]);
     expect(document.activeElement).toBe(tags[1]);
   });
+
+  it('maxRows should limit the number of tags shown', function () {
+    let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
+      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
+      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
+      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}))
+      .mockImplementationOnce(() => ({x: 200, y: 400, width: 95, height: 32, top: 400, right: 290, bottom: 435, left: 200}))
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 200, height: 128, top: 300, right: 400, bottom: 435, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}));
+    let {getAllByRole, getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup maxRows={2} aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+          <Item key="4" aria-label="Tag 4">Tag 4</Item>
+          <Item key="5" aria-label="Tag 5">Tag 5</Item>
+          <Item key="6" aria-label="Tag 6">Tag 6</Item>
+          <Item key="7" aria-label="Tag 7">Tag 7</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(3);
+
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Show all (7)');
+
+    userEvent.click(button);
+    tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(7);
+    expect(button).toHaveTextContent('Show less');
+
+    userEvent.click(button);
+    tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(3);
+    expect(button).toHaveTextContent('Show all (7)');
+    
+    offsetWidth.mockReset();
+  });
+
+  it('maxRows should not show button if there is enough room to show all tags', function () {
+    let offsetWidth = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementationOnce(() => ({x: 200, y: 300, width: 75, height: 32, top: 300, right: 275, bottom: 335, left: 200}))
+      .mockImplementationOnce(() => ({x: 275, y: 300, width: 110, height: 32, top: 300, right: 385, bottom: 335, left: 275}))
+      .mockImplementationOnce(() => ({x: 200, y: 335, width: 65, height: 32, top: 335, right: 265, bottom: 370, left: 200}))
+      .mockImplementationOnce(() => ({x: 265, y: 335, width: 75, height: 32, top: 335, right: 345, bottom: 370, left: 265}))
+      .mockImplementationOnce(() => ({x: 200, y: 370, width: 120, height: 32, top: 370, right: 320, bottom: 400, left: 200}));
+    let {getAllByRole, queryAllByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup maxRows={2} aria-label="tag group">
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let tags = getAllByRole('gridcell');
+    expect(tags.length).toBe(2);
+
+    let buttons = queryAllByRole('button');
+    expect(buttons.length).toBe(0);
+    
+    offsetWidth.mockReset();
+  });
 });
