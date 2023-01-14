@@ -84,7 +84,7 @@ function handleClickEvent(e: MouseEvent) {
   }
 }
 
-function isNegativeEventTargetTabIndex(e: Event) {
+function isEventTargetNegativeTabIndex(e: Event) {
   if (!(e.target instanceof Element)) {
     return false;
   }
@@ -108,7 +108,7 @@ function handleFocusEvent(e: FocusEvent) {
   }
   // Elements with a negative tabIndex will fire focus events. In Chrome and Firefox, this can happen briefly
   // when clicking on a label inside an element with a negative tabIndex. This can lead to an erroneous focus is visible.
-  if (isNegativeEventTargetTabIndex(e)) {
+  if (isEventTargetNegativeTabIndex(e)) {
     return;
   }
 
