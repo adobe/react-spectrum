@@ -64,11 +64,9 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
       const itemNodes = [...collection.getKeys()].map(
         key => {
           const itemNode = collection.getItem(key);
-          if (itemNode.type === 'item') {
-            return itemNode;
-          }
+          return itemNode.type === 'item' ? itemNode : null;
         }
-      );
+      ).filter(node => node !== null);
       let index = Math.min(startItem.index, itemNodes.length - 1);
       let newNode:Node<T>;
       while (index >= 0) {
