@@ -1560,10 +1560,8 @@ describe('Unmounting cleanup', () => {
   it('should not leak request animation frames',  () => {
     let tree = render(
       <FocusScope restoreFocus contain>
-        <FocusScope restoreFocus contain>
-          <button>Focus me</button>
-          <button>Then Focus me</button>
-        </FocusScope>
+        <button>Focus me</button>
+        <button>Then Focus me</button>
       </FocusScope>
     );
     let buttons = tree.getAllByRole('button');
