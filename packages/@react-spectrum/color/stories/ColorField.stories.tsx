@@ -13,124 +13,133 @@
 import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useId} from '@react-aria/utils';
 import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-storiesOf('ColorField', module)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'has default value',
-    () => render({defaultValue: '#abcdef'})
-  )
-  .add(
-    'value',
-    () => render({
-      value: '#FF00AA',
-      onChange: action('change')
-    })
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true, defaultValue: '#abcdef'})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, defaultValue: '#abcdef'})
-  )
-  .add(
-    'validationState valid',
-    () => render({validationState: 'valid'})
-  )
-  .add(
-    'validationState invalid',
-    () => render({validationState: 'invalid'})
-  )
-  .add(
-    'required, label, optional',
-    () => (
-      <Flex direction="column" gap="size-100">
-        {render({isRequired: 'true'})}
-        {render({isRequired: 'true', necessityIndicator: 'label'})}
-        {render({necessityIndicator: 'label'})}
-      </Flex>
-    )
-  )
-  .add(
-    'controlled value',
-    () => (
-      <ControlledColorField
-        value={parseColor('#FF00AA')}
-        onChange={action('change')} />
-    )
-  )
-  .add(
-    'autofocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'label side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'no visible label',
-    () => renderNoLabel({isRequired: true, 'aria-label': 'Primary Color'})
-  )
-  .add(
-    'aria-labelledby',
-    () => (
-      <>
-        <label htmlFor="colorfield" id="label">Primary Color</label>
-        {renderNoLabel({isRequired: true, id: 'colorfield', 'aria-labelledby': 'label'})}
-      </>
-    )
-  )
-  .add(
-    'custom width',
-    () => render({width: 'size-3000'})
-  )
-  .add(
-    'custom width no visible label',
-    () => renderNoLabel({width: 'size-3000', isRequired: true, 'aria-label': 'Primary Color'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    () => render({width: 'size-3000', labelPosition: 'side'})
-  )
-  .add(
-    'custom width, 10px for min-width',
-    () => (
-      <Flex direction="column" gap="size-100">
-        {render({width: '10px'})}
-        <div style={{width: '10px'}}>
-          {render()}
-        </div>
-      </Flex>
-    )
-  )
-  .add(
-    'contextual help',
-    () => render({contextualHelp: (
+export type ColorFieldStory = ComponentStoryObj<typeof ColorField>;
+
+export default {
+  title: 'ColorField',
+  component: ColorField,
+  args: {
+    onChange: action('onChange'),
+    label: 'Primary Color'
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
+    label: {
+      control: 'text'
+    },
+    'aria-label': {
+      control: 'text'
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    necessityIndicator: {
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    labelAlign: {
+      control: 'select',
+      options: ['end', 'start']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    description: {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    },
+    width: {
+      control: 'text'
+    }
+  }
+} as ComponentMeta<typeof ColorField>;
+
+export const Default: ColorFieldStory = {
+  render: (args) => render(args)
+};
+
+export const DefaultValue: ColorFieldStory = {
+  ...Default,
+  args: {defaultValue: '#abcdef'}
+};
+
+export const ControlledValue: ColorFieldStory = {
+  render: (args) => <ControlledColorField {...args} value={parseColor('#FF00AA')} />
+};
+
+export const AriaLabelledBy: ColorFieldStory = {
+  render: (args) => (
+    <>
+      <label htmlFor="colorfield" id="label">Primary Color</label>
+      {render({...args, id: 'colorfield', 'aria-labelledby': 'label'})}
+    </>
+  ),
+  storyName: 'aria-labelledy'
+};
+
+export const MinWidth: ColorFieldStory = {
+  render: (args) => (
+    <Flex direction="column" gap="size-100">
+      {render({...args, width: '10px'})}
+      <div style={{width: '10px'}}>
+        {render(args)}
+      </div>
+    </Flex>
+  ),
+  storyName: 'custom width, 10px for min-width'
+};
+
+export const ContextualHelpStory: ColorFieldStory = {
+  ...Default,
+  args: {
+    contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
         <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
       </ContextualHelp>
-    )})
-  );
+    )
+  },
+  storyName: 'contextual help'
+};
 
 function ControlledColorField(props: SpectrumColorFieldProps) {
   let [color, setColor] = useState<string | Color | null | undefined>(props.value);
@@ -160,15 +169,6 @@ function ControlledColorField(props: SpectrumColorFieldProps) {
 
 function render(props: any = {}) {
   return (
-    <ColorField
-      label="Primary Color"
-      onChange={action('change')}
-      {...props} />
-  );
-}
-
-function renderNoLabel(props: any = {}) {
-  return (
-    <ColorField {...props} onChange={action('onChange')} />
+    <ColorField {...props} />
   );
 }

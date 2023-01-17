@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/table';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
 
@@ -560,6 +560,159 @@ function AsyncSortTable() {
 }
 ```
 
+## Column widths
+
+By default, TableView divides the available space evenly among the columns. The `Column` component also supports four different width props that allow you to control column sizing behavior: `defaultWidth`, `width`, `minWidth`, and `maxWidth`.
+
+The `width` and `defaultWidth` props define the width of a column. The former defines a controlled width, and the latter defines an uncontrolled width when the column is [resizable](#column-resizing). These props accept fixed pixel values, percentages of the total table width, or [fractional](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) values (the `fr` unit), which represent a fraction of the available space. Columns without a defined width are equivalent to `1fr`.
+
+The `minWidth` and `maxWidth` props define constraints on the size of a column, which may be defined either as fixed pixel values or as percentages of the total table width. These are respected when calculating the size of a column, and also provide limits for column resizing.
+
+```tsx example
+<TableView aria-label="Example table for column widths" maxWidth={320}>
+  <TableHeader>
+    <Column defaultWidth="1fr" align="start">Name</Column>
+    <Column maxWidth={80}>Type</Column>
+    <Column width={80}>Size</Column>
+    <Column minWidth={100} align="end">Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2021406_Proposal</Cell>
+      <Cell>PDF</Cell>
+      <Cell>86 KB</Cell>
+      <Cell>April 12</Cell>
+    </Row>
+    <Row>
+      <Cell>Budget Template</Cell>
+      <Cell>XLS</Cell>
+      <Cell>120 KB</Cell>
+      <Cell>November 27</Cell>
+    </Row>
+    <Row>
+      <Cell>Onboarding</Cell>
+      <Cell>PPT</Cell>
+      <Cell>472 KB</Cell>
+      <Cell>January 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Welcome</Cell>
+      <Cell>TXT</Cell>
+      <Cell>24 KB</Cell>
+      <Cell>February 11</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Column Resizing <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+TableView supports resizable columns, allowing users to dynamically adjust the width of a column. To designate that a Column is resizable, provide it with the `allowsResizing` prop. This will render a draggable
+resizer handle that becomes visible on hover. Keyboard, touch, and screen reader users can start resizing by interacting with the target column's header and selecting the "Resize column" option
+from the dropdown.
+
+### Width values
+
+An initial, uncontrolled width can be provided to a Column using the `defaultWidth` prop. This allows the column width to freely shrink and grow in relation to other column widths. Alternatively, a controlled value can be provided by the `width` prop. The `minWidth` and `maxWidth` props allow you to restrict a Column's size. See [column widths](#column-widths) above for more details.
+
+The example below illustrates how each of the column width props affects their respective column's resize behavior.
+
+```tsx example
+<TableView
+  aria-label="TableView with resizable columns"
+  maxWidth={320}
+  height={200} >
+  <TableHeader>
+    {/*- begin highlight -*/}
+    <Column key="file" allowsResizing maxWidth={500}>File Name</Column>
+    <Column key="size" width={80}>Size</Column>
+    <Column key="date" allowsResizing minWidth={100}>Date Modified</Column>
+    {/*- end highlight -*/}
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>2022-Roadmap-Proposal-Revision-012822-Copy(2)</Cell>
+      <Cell>214 KB</Cell>
+      <Cell>November 27, 2022 at 4:56PM</Cell>
+    </Row>
+    <Row>
+      <Cell>62259692_p0_master1200</Cell>
+      <Cell>120 KB</Cell>
+      <Cell>January 27, 2021 at 1:56AM</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+### Resize events
+
+TableView accepts an `onResize` prop which is triggered whenever a column resizer is moved by the user. This can be used in combination with the `width` prop to update a Column's width in a controlled fashion. TableView also accepts
+an `onResizeEnd` prop, which is triggered when the user finishes a column resize operation. Both events receive a Map object containing the widths of every column in the TableView.
+
+The example below uses `onResize` to update each of the TableView's controlled column widths. It also saves the finalized column widths to `localStorage` in `onResizeEnd`, allowing the TableView's state to be preserved between
+page loads and refreshes.
+
+```tsx example
+let items = [
+  {id: '1', file: '2022-Roadmap-Proposal-Revision-012822-Copy(2)', size: '214 KB', date: 'November 27, 2022 at 4:56PM'},
+  {id: '2', file: '62259692_p0_master1200', size: '120 KB', date: 'January 27, 2021 at 1:56AM'}
+];
+
+let columnsData = [
+  {name: 'File Name', id: 'file', width: '1fr'},
+  {name: 'Size', id: 'size', width: 80},
+  {name: 'Date', id: 'date', width: 100}
+];
+
+function ResizableTable() {
+  /*- begin highlight -*/
+  let [columns, setColumns] = React.useState(() => {
+    let localStorageWidths = localStorage.getItem('RSPWidths');
+    if (localStorageWidths) {
+      let widths = JSON.parse(localStorageWidths);
+      return columnsData.map(col => ({...col, width: widths[col.id]}));
+    } else {
+      return columnsData;
+    }
+  });
+
+  let onResize = (widths) => {
+    setColumns(columns => columns.map(col => ({...col, width: widths.get(col.id)})));
+  };
+
+  let onResizeEnd = (widths) => {
+    localStorage.setItem('RSPWidths', JSON.stringify(Object.fromEntries(widths)));
+  };
+  /*- end highlight -*/
+
+  return (
+    <TableView
+      /*- begin highlight -*/
+      onResize={onResize}
+      onResizeEnd={onResizeEnd}
+      /*- end highlight -*/
+      aria-label="TableView with controlled, resizable columns saved in local storage"
+      maxWidth={320}
+      height={200} >
+      <TableHeader columns={columns}>
+        {(column) => {
+          const {name, id, width} = column;
+          return <Column allowsResizing key={id} width={width}>{name}</Column>;
+        }}
+      </TableHeader>
+      <TableBody items={items}>
+        {(item) => (
+          <Row key={item.id}>{(key) => <Cell>{item[key]}</Cell>}</Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+<ResizableTable />
+```
+
+
 ## Props
 
 ### TableView props
@@ -616,41 +769,6 @@ function AsyncSortTable() {
     <Column align="start">Name</Column>
     <Column align="center">Type</Column>
     <Column align="end">Size</Column>
-  </TableHeader>
-  <TableBody>
-    <Row>
-      <Cell>2021406_Proposal</Cell>
-      <Cell>PDF</Cell>
-      <Cell>86 KB</Cell>
-    </Row>
-    <Row>
-      <Cell>Budget Template</Cell>
-      <Cell>XLS</Cell>
-      <Cell>120 KB</Cell>
-    </Row>
-    <Row>
-      <Cell>Onboarding</Cell>
-      <Cell>PPT</Cell>
-      <Cell>472 KB</Cell>
-    </Row>
-    <Row>
-      <Cell>Welcome</Cell>
-      <Cell>TXT</Cell>
-      <Cell>24 KB</Cell>
-    </Row>
-  </TableBody>
-</TableView>
-```
-
-### Column widths
-Columns support three different width props: `minWidth`, `width`, and `maxWidth`. Each of these props accepts fixed values or percentages. TableView prioritizes columns with defined widths and divides the remaining space evenly amongst the other columns.
-
-```tsx example
-<TableView aria-label="Example table for column widths">
-  <TableHeader>
-    <Column maxWidth={300} align="start">Name</Column>
-    <Column width={80}>Type</Column>
-    <Column minWidth={100} align="end">Size</Column>
   </TableHeader>
   <TableBody>
     <Row>

@@ -14,10 +14,10 @@ governing permissions and limitations under the License.
   --spectrum-table-header-sort-icon-color-hover: var(--spectrum-global-color-gray-700);
 }
 .spectrum-Table {
-  --spectrum-table-col-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
-  --spectrum-table-col-resize-nubbin-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-col-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
+  --spectrum-table-col-resize-nubbin-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
   --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
-  --spectrum-table-body-resize-indicator-background-color: var(--spectrum-global-color-blue-600);
+  --spectrum-table-body-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
 }
 
 .spectrum-Table-headWrapper {
