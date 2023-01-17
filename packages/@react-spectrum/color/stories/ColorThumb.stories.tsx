@@ -11,28 +11,39 @@
  */
 
 import {ColorThumb} from '../src/ColorThumb';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('ColorThumb', module)
-  .add(
-    'default',
-    () => <ColorThumb value={parseColor('#f00')} />
-  )
-  .add(
-    'focused',
-    () => <ColorThumb value={parseColor('#f00')} isFocused />
-  )
-  .add(
-    'focused, dragging',
-    () => <ColorThumb value={parseColor('#f00')} isFocused isDragging />
-  )
-  .add(
-    'focused, dragging, alpha',
-    () => <ColorThumb value={parseColor('hsla(0, 100%, 100%, 0)')} isFocused isDragging />
-  )
-  .add(
-    'disabled',
-    () => <ColorThumb value={parseColor('#f00')} isDisabled />
-  );
+export type ColorThumbStory = ComponentStoryObj<typeof ColorThumb>;
+
+export default {
+  title: 'ColorThumb',
+  component: ColorThumb,
+  argTypes: {
+    value: {
+      table: {
+        disable: true
+      }
+    },
+    isFocused: {
+      control: 'boolean'
+    },
+    isDragging: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    }
+  }
+} as ComponentMeta<typeof ColorThumb>;
+
+export const Default: ColorThumbStory = {
+  args: {value: parseColor('#f00')},
+  render: (args) => <ColorThumb {...args} />
+};
+
+export const Alpha: ColorThumbStory = {
+  ...Default,
+  args: {value: parseColor('hsla(0, 100%, 100%, 0)')}
+};

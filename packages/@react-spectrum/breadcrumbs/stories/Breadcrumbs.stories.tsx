@@ -12,157 +12,131 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 // import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
 let styles = {
   width: '100vw'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
-storiesOf('Breadcrumbs', module)
-  .addDecorator(CenterDecorator)
-  .addParameters({providerSwitcher: {status: 'negative'}})
-  .add(
-    'Default (with 3 items)',
-    () => render()
-  )
-  .add(
-    'Default (with 7 items)',
-    () => renderMany({})
-  )
-  .add(
-    'isMultiline',
-    () => render({isMultiline: true})
-  )
-  .add(
-    'size: S',
-    () => render({size: 'S'})
-  )
-  .add(
-    'size: S, isMultiline',
-    () => render({size: 'S', isMultiline: true})
-  )
-  .add(
-    'size: M',
-    () => render({size: 'M'})
-  )
-  .add(
-    'size: M, isMultiline',
-    () => render({size: 'M', isMultiline: true})
-  )
-  .add(
-    'truncated',
-    () => (
-      <div style={{width: '120px'}}>
-        {render({})}
-      </div>
-    )
-  )
-  .add(
-    'truncated, isMultiline',
-    () => (
-      <div style={{width: '100px'}}>
-        {render({isMultiline: true})}
-      </div>
-    )
-  )
-  .add(
-    'many items, showRoot: true',
-    () => renderMany({showRoot: true})
-  )
-  .add(
-    'many items, isMultiline',
-    () => renderMany({isMultiline: true})
-  )
-  .add(
-    'many items, isMultiline, showRoot: true',
-    () => renderMany({maxVisibleItems: 'auto', isMultiline: true, showRoot: true})
-  )
-  .add(
-    'isDisabled: true',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isDisabled: true, isMultiline',
-    () => render({isDisabled: true, isMultiline: true})
-  )
-  .add(
-    'resizeable',
-    () => (
-      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderMany({})}
-      </div>
-    )
-  )
-  // .add(
-  //   'last item Heading',
-  //   () => renderHeading()
-  // )
-  // .add(
-  //   'last item Heading, size: S',
-  //   () => renderHeading({size: 'S'})
-  // )
-  // .add(
-  //   'last item Heading, size: M',
-  //   () => renderHeading({size: 'M'})
-  // )
-  // .add(
-  //   'last item Heading, isMultiline',
-  //   () => renderHeading({isMultiline: true})
-  // )
-  // .add(
-  //   'last item Heading, size: S, isMultiline',
-  //   () => renderHeading({isMultiline: true, size: 'S'})
-  // )
-  // .add(
-  //   'last item Heading, size: M, isMultiline',
-  //   () => renderHeading({isMultiline: true, size: 'M'})
-  // )
-  .add(
-    'Only one item',
-    () => (
-      <Breadcrumbs>
-        <Item>Root</Item>
-      </Breadcrumbs>
-    )
-  )
-  .add(
-    'Only one item, isMultiline',
-    () => (
-      <Breadcrumbs isMultiline>
-        <Item>Root</Item>
-      </Breadcrumbs>
-    )
-  )
-  .add(
-    'Only one item, showRoot',
-    () => (
-      <Breadcrumbs showRoot>
-        <Item key="Root-1">Root</Item>
-      </Breadcrumbs>
-    )
-  )
-  .add(
-    'autoFocusCurrent',
-    () => (
-      <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderMany({autoFocusCurrent: true})}
-      </div>
-    )
-  );
+export type BreadcrumbsStory = ComponentStoryObj<typeof Breadcrumbs>;
 
-function render(props = {}) {
+export default {
+  title: 'Breadcrumbs',
+  component: Breadcrumbs,
+  decorators: [storyFn => CenterDecorator(storyFn)],
+  args: {
+    onAction: action('onAction')
+  },
+  argTypes: {
+    onAction: {
+      table: {
+        disable: true
+      }
+    },
+    isMultiline: {
+      control: 'boolean'
+    },
+    showRoot: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    autoFocusCurrent: {
+      control: 'boolean'
+    },
+    size: {
+      control: 'select',
+      options: ['S', 'M', 'L']
+    }
+  }
+} as ComponentMeta<typeof Breadcrumbs>;
+
+export const Default: BreadcrumbsStory = {
+  render: (args) => render(args),
+  storyName: '3 items'
+};
+
+export const DefaultTruncated: BreadcrumbsStory = {
+  render: (args) => (
+    <div style={{width: '120px'}}>
+      {render(args)}
+    </div>
+  ),
+  storyName: 'truncated'
+};
+
+export const RenderMany: BreadcrumbsStory = {
+  render: (args) => (
+    <div style={{minWidth: '100px', width: '300px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      {renderMany(args)}
+    </div>
+  ),
+  storyName: '7 items, resizable container'
+};
+
+export const OneItem: BreadcrumbsStory = {
+  render: (args) => (
+    <Breadcrumbs {...args}>
+      <Item>Root</Item>
+    </Breadcrumbs>
+  ),
+  storyName: '1 item'
+};
+
+function render(props) {
   return (
-    <Breadcrumbs {...props} onAction={action('onAction')}>
+    <Breadcrumbs {...props}>
       <Item key="Folder 1">The quick brown fox jumps over</Item>
       <Item key="Folder 2">My Documents</Item>
       <Item key="Folder 3">Kangaroos jump high</Item>
     </Breadcrumbs>
   );
 }
+
+function renderMany(props = {}) {
+  return (
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item key="Folder 1">The quick brown fox jumps over</Item>
+      <Item key="Folder 2">My Documents</Item>
+      <Item key="Folder 3">Kangaroos jump high</Item>
+      <Item key="Folder 4">Koalas are very cute</Item>
+      <Item key="Folder 5">Wombat's noses</Item>
+      <Item key="Folder 6">Wattle trees</Item>
+      <Item key="Folder 7">April 7</Item>
+    </Breadcrumbs>
+  );
+}
+
+// TODO: add back in when heading case is fixed?
+// .add(
+//   'last item Heading',
+//   () => renderHeading()
+// )
+// .add(
+//   'last item Heading, size: S',
+//   () => renderHeading({size: 'S'})
+// )
+// .add(
+//   'last item Heading, size: M',
+//   () => renderHeading({size: 'M'})
+// )
+// .add(
+//   'last item Heading, isMultiline',
+//   () => renderHeading({isMultiline: true})
+// )
+// .add(
+//   'last item Heading, size: S, isMultiline',
+//   () => renderHeading({isMultiline: true, size: 'S'})
+// )
+// .add(
+//   'last item Heading, size: M, isMultiline',
+//   () => renderHeading({isMultiline: true, size: 'M'})
+// )
 
 // function renderHeading(props = {}) {
 //   return (
@@ -181,17 +155,3 @@ function render(props = {}) {
 //     </Breadcrumbs>
 //   );
 // }
-
-function renderMany(props = {}) {
-  return (
-    <Breadcrumbs {...props} onAction={action('onAction')}>
-      <Item key="Folder 1">The quick brown fox jumps over</Item>
-      <Item key="Folder 2">My Documents</Item>
-      <Item key="Folder 3">Kangaroos jump high</Item>
-      <Item key="Folder 4">Koalas are very cute</Item>
-      <Item key="Folder 5">Wombat's noses</Item>
-      <Item key="Folder 6">Wattle trees</Item>
-      <Item key="Folder 7">April 7</Item>
-    </Breadcrumbs>
-  );
-}
