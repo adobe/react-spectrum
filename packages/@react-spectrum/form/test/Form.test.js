@@ -27,7 +27,7 @@ import {within} from '@testing-library/dom';
 describe('Form', function () {
   beforeAll(() => {
     jest.useFakeTimers();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
   });
 
   afterAll(() => {

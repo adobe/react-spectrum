@@ -184,7 +184,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    windowSpy.mockImplementation(() => 600);
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -211,7 +211,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    windowSpy.mockImplementation(() => 600);
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -693,7 +693,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    windowSpy.mockImplementation(() => 600);
+    windowSpy.mockImplementation(() => 700);
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>

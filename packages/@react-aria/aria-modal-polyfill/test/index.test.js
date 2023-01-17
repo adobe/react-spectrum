@@ -225,7 +225,7 @@ describe('watchModals', () => {
       ]}
     ];
     // menu should be a tray
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
