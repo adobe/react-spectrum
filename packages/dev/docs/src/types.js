@@ -134,8 +134,6 @@ export function Type({type}) {
       return <IndexedAccess {...type} />;
     case 'keyof':
       return <Keyof {...type} />;
-    case 'template':
-      return <TemplateLiteral {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
