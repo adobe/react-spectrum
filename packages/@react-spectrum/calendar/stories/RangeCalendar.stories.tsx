@@ -12,188 +12,182 @@
 
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
-import {classNames} from '@react-spectrum/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DateValue} from '@react-types/calendar';
-import {Flex, Grid, repeat} from '@react-spectrum/layout';
-import {generatePowerset} from '@react-spectrum/story-utils';
+import {Flex} from '@react-spectrum/layout';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {TimeField} from '@react-spectrum/datepicker';
 import {useLocale} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
-storiesOf('Date and Time/RangeCalendar', module)
-  .add(
-    'Default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}})
-  )
-  .add(
-    'controlled value',
-    () => render({value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}})
-  )
-  .add(
-    'with time',
-    () => <RangeCalendarWithTime />
-  )
-  .add(
-    'with zoned time',
-    () => <RangeCalendarWithZonedTime />
-  )
-  .add(
-    'minValue: today, maxValue: 1 week from now',
-    () => render({minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})})
-  )
-  .add(
-    'defaultValue + minValue + maxValue',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)})
-  )
-  .add(
-    'isDisabled',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isDisabled: true})
-  )
-  .add(
-    'isDateUnavailable',
-    () => render({isDateUnavailable: (date: DateValue) => {
-      const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-    }})
-  )
-  .add(
-    'isDateUnavailable, allowsNonContiguousRanges',
-    () => {
-      let {locale} = useLocale();
-      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true});
+export type RangeCalendarStory = ComponentStoryObj<typeof RangeCalendar>;
+
+export default {
+  title: 'Date and Time/RangeCalendar',
+  component: RangeCalendar,
+  args: {
+    onChange: action('onChange')
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    defaultValue: {
+      table: {
+        disable: true
+      }
+    },
+    minValue: {
+      table: {
+        disable: true
+      }
+    },
+    value: {
+      table: {
+        disable: true
+      }
+    },
+    maxValue: {
+      table: {
+        disable: true
+      }
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    allowsNonContiguousRanges: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    visibleMonths: {
+      control: 'number'
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    errorMessage: {
+      control: 'text'
     }
-  )
-  .add(
-    'isReadOnly',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, isReadOnly: true})
-  )
-  .add(
-    'autoFocus',
-    () => render({defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}, autoFocus: true})
-  )
-  .add(
-    'visibleMonths: 2',
-    () => render({visibleMonths: 2})
-  )
-  .add(
-    'visibleMonths: 3',
-    () => render({visibleMonths: 3})
-  )
-  .add(
-    'minValue: today, visibleMonths: 3',
-    () => render({minValue: today(getLocalTimeZone()), visibleMonths: 3})
-  )
-  .add(
-    'defaultValue, visibleMonths: 3',
-    () => render({visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 10, 14)}})
-  )
-  .add(
-    'validationState: invalid, errorMessage',
-    () => render({validationState: 'invalid', errorMessage: 'Selection may not include weekends.', defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 10, 14)}})
-  )
-  .add(
-    'isDateUnavailable, invalid',
-    () => {
-      let {locale} = useLocale();
-      return render({isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 16)}});
-    }
-  );
+  }
+} as ComponentMeta<typeof RangeCalendar>;
 
-  // Fake cell for testing css
-function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled, isRangeStart, isRangeEnd, isRangeSelection, isSelectionStart, isSelectionEnd}) {
-  return (
-    <span
-      className={classNames(styles, 'spectrum-Calendar-date', {
-        'is-today': isToday,
-        'is-selected': isSelected,
-        'is-focused': isFocused,
-        'is-disabled': isDisabled,
-        'is-range-start': isRangeStart,
-        'is-range-end': isRangeEnd,
-        'is-range-selection': isRangeSelection,
-        'is-selection-start': isSelectionStart,
-        'is-selection-end': isSelectionEnd,
-        'is-hovered': isHovered,
-        'is-pressed': isPressed
-      })}>
-      <span className={classNames(styles, 'spectrum-Calendar-dateText')}>12</span>
-    </span>
-  );
-}
+export const Default: RangeCalendarStory = {
+  render: (args) => render(args)
+};
 
-let states = [
-  {isToday: true},
-  {isSelected: true},
-  {isFocused: true},
-  {isHovered: true},
-  {isPressed: true},
-  {isDisabled: true},
-  {isRangeSelection: true},
-  {isRangeStart: true},
-  {isRangeEnd: true},
-  {isSelectionStart: true},
-  {isSelectionEnd: true}
-];
+export const DefaultValue: RangeCalendarStory = {
+  ...Default,
+  args: {defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+};
 
-storiesOf('Date and Time/RangeCalendar/cell', module)
-  .add('default', () => (
-    <Grid columns={repeat(10, 100)}>
-      {generatePowerset(states, (merged) =>
-        (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed)) ||
-        (!merged.isSelected && (merged.isRangeSelection || merged.isSelectionStart || merged.isSelectionEnd || merged.isRangeStart || merged.isRangeEnd)) ||
-        ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
-        (merged.isRangeStart && merged.isRangeEnd) ||
-        (merged.isSelectionStart && !merged.isRangeStart) ||
-        (merged.isSelectionEnd && !merged.isRangeEnd)
-      ).map(props => <div>{Object.keys(props).join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
-    </Grid>
-  )
-);
+export const ControlledValue: RangeCalendarStory = {
+  ...Default,
+  args: {value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}
+};
 
-function render(props = {}) {
+export const WithTime: RangeCalendarStory = {
+  render: (args) => <RangeCalendarWithTime {...args} />
+};
+
+export const ZonedTime: RangeCalendarStory = {
+  render: (args) => <RangeCalendarWithZonedTime {...args} />,
+  storyName: 'with zoned time'
+};
+
+export const OneWeek: RangeCalendarStory = {
+  ...Default,
+  args: {minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})},
+  storyName: 'minValue: today, maxValue: 1 week from now'
+};
+
+export const DefaultMinMax: RangeCalendarStory = {
+  ...Default,
+  args: {defaultValue: {start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 12)}, minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
+  storyName: 'defaultValue + minValue + maxValue'
+};
+
+export const DateUnavailable: RangeCalendarStory = {
+  ...Default,
+  args: {isDateUnavailable: (date: DateValue) => {
+    const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
+    return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+  }},
+  storyName: 'isDateUnavailable'
+};
+
+export const MinValue: RangeCalendarStory = {
+  ...Default,
+  args: {minValue: today(getLocalTimeZone())},
+  storyName: 'minValue: today'
+};
+
+export const DefaultValVisibleMonths: RangeCalendarStory = {
+  ...Default,
+  args: {visibleMonths: 3, defaultValue: {start: new CalendarDate(2021, 10, 5), end: new CalendarDate(2021, 12, 10)}},
+  storyName: 'defaultValue, visibleMonths: 3'
+};
+
+export const DateUnavailableInvalid: RangeCalendarStory = {
+  render: (args) => <DateUnavailableAndInvalid {...args} />,
+  storyName: 'isDateUnavailable, invalid'
+};
+
+function render(props) {
   return (
     <View maxWidth="100vw" overflow="auto">
-      <RangeCalendar onChange={action('change')} {...props} />
+      <RangeCalendar {...props} />
     </View>
   );
 }
 
-function RangeCalendarWithTime() {
+function RangeCalendarWithTime(props) {
   let [value, setValue] = useState({start: new CalendarDateTime(2019, 6, 5, 8), end: new CalendarDateTime(2019, 6, 10, 12)});
+  let onChange = (v) => {
+    setValue(v);
+    props?.onChange?.(v);
+  };
 
   return (
     <Flex direction="column">
-      <RangeCalendar value={value} onChange={setValue} />
+      <RangeCalendar {...props} value={value} onChange={onChange} />
       <Flex gap="size-100">
-        <TimeField label="Start time" value={value.start} onChange={v => setValue({...value, start: v})} />
-        <TimeField label="End time" value={value.end} onChange={v => setValue({...value, end: v})} />
+        <TimeField label="Start time" value={value.start} onChange={v => onChange({...value, start: v})} />
+        <TimeField label="End time" value={value.end} onChange={v => onChange({...value, end: v})} />
       </Flex>
     </Flex>
   );
 }
 
-function RangeCalendarWithZonedTime() {
+function RangeCalendarWithZonedTime(props) {
   let [value, setValue] = useState({start: parseZonedDateTime('2021-03-10T00:45-05:00[America/New_York]'), end: parseZonedDateTime('2021-03-26T18:05-07:00[America/Los_Angeles]')});
+  let onChange = (v) => {
+    setValue(v);
+    props?.onChange?.(v);
+  };
 
   return (
     <Flex direction="column">
-      <RangeCalendar value={value} onChange={setValue} />
+      <RangeCalendar {...props} value={value} onChange={onChange} />
       <Flex gap="size-100">
-        <TimeField label="Start time" value={value.start} onChange={v => setValue({...value, start: v})} />
-        <TimeField label="End time" value={value.end} onChange={v => setValue({...value, end: v})} />
+        <TimeField label="Start time" value={value.start} onChange={v => onChange({...value, start: v})} />
+        <TimeField label="End time" value={value.end} onChange={v => onChange({...value, end: v})} />
       </Flex>
     </Flex>
+  );
+}
+
+function DateUnavailableAndInvalid(props) {
+  let {locale} = useLocale();
+  return (
+    render({...props, isDateUnavailable: (date: DateValue) => isWeekend(date, locale), allowsNonContiguousRanges: true, defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 16)}})
   );
 }
