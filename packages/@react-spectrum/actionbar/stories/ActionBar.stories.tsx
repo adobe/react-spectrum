@@ -11,24 +11,42 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionBar} from '../src';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useViewportSize} from '@react-aria/utils';
 
-storiesOf('ActionBar', module)
-  .add(
-    'default',
-    () => <Example onAction={action('onAction')} />
-  )
-  .add(
-    'isEmphasized',
-    () => <Example isEmphasized onAction={action('onAction')} />
-  )
-  .add(
-    'full width',
-    () => {
-      let viewport = useViewportSize();
-      return <Example isEmphasized tableWidth="100vw" containerHeight={viewport.height} isQuiet onAction={action('onAction')} />;
+
+export default {
+  title: 'ActionBar',
+  component: ActionBar,
+  args: {
+    onAction: action('onAction')
+  },
+  argTypes: {
+    onAction: {
+      table: {
+        disable: true
+      }
+    },
+    isEmphasized: {
+      control: 'boolean'
     }
-  );
+  }
+} as ComponentMeta<typeof ActionBar>;
+
+export type ActionBarStory = ComponentStoryObj<any>;
+
+export const Default: ActionBarStory = {
+  render: (args) => <Example {...args} />
+};
+
+export const FullWidthStory: ActionBarStory = {
+  render: (args) => <FullWidth {...args} />
+};
+
+function FullWidth(props) {
+  let viewport = useViewportSize();
+  return <Example tableWidth="100vw" containerHeight={viewport.height} isQuiet {...props} />;
+}
