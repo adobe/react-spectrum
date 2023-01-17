@@ -327,7 +327,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           );
         }
 
-        if (item.props.allowsResizing || (item.props.menu)) {
+        if ((item.props.allowsResizing && !item.hasChildNodes) || !!item.props.menu) {
           return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
         }
 
@@ -590,6 +590,11 @@ function TableColumnHeader(props) {
   let {state, isEmpty} = useTableContext();
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let columnProps = column.props as SpectrumColumnProps<unknown>;
+  useEffect(() => {
+    if (column.hasChildNodes && columnProps.allowsResizing) {
+      console.warn(`Column key: ${column.key}. Columns with child columns don't allow resizing.`);
+    }
+  }, [column.hasChildNodes, column.key, columnProps.allowsResizing]);
 
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -611,7 +616,6 @@ function TableColumnHeader(props) {
             'spectrum-Table-headCell',
             {
               'is-active': isPressed,
-              'is-resizable': columnProps.allowsResizing,
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
               'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
