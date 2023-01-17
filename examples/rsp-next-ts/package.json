@@ -15,8 +15,7 @@
     "@react-spectrum/color": "^3.0.0-beta.16",
     "@spectrum-icons/illustrations": "^3.5.0",
     "@spectrum-icons/workflow": "^4.0.3",
-    "next": "^12.3.1",
-    "next-transpile-modules": "^9.0.0",
+    "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -24,7 +23,7 @@
     "@types/node": "^18.8.2",
     "@types/react": "^18.0.21",
     "eslint": "^8.24.0",
-    "eslint-config-next": "^12.3.1",
+    "eslint-config-next": "^13.1.1",
     "typescript": "^4.8.4"
   }
 }

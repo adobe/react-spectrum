@@ -10,3 +10,7 @@
  * governing permissions and limitations under the License.
  */
 export {useToast} from './useToast';
+export {useToastRegion} from './useToastRegion';
+
+export type {AriaToastRegionProps, ToastRegionAria} from './useToastRegion';
+export type {AriaToastProps, ToastAria} from './useToast';

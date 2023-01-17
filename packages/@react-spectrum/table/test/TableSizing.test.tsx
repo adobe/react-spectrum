@@ -1368,6 +1368,33 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
     });
+
+    it('should prevent columns with child columns from being resizable', function () {
+      let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+      let tree = render(
+        <TableView aria-label="Table" selectionMode="multiple">
+          <TableHeader columns={nestedColumns}>
+            {column => <Column allowsResizing childColumns={column.children}>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={items}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+      );
+
+      let headers = tree.getAllByRole('columnheader');
+      for (let colheader of headers) {
+        if (parseInt(colheader.getAttribute('aria-colspan'), 10) > 1) {
+          expect(within(colheader).queryByRole('button')).toBeFalsy();
+        }
+      }
+      expect(warn).toHaveBeenCalledTimes(3);
+      warn.mockRestore();
+    });
   });
 
   describe('updating columns', function () {

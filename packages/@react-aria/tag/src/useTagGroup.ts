@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps} from '@react-types/tag';
-import {DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject, useState} from 'react';
+import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -22,6 +22,14 @@ import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   tagGroupProps: DOMAttributes
+}
+
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>
 }
 
 /**
@@ -33,7 +41,7 @@ export interface TagGroupAria {
  */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let keyboardDelegate = new TagKeyboardDelegate(state.collection, direction);
+  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
@@ -51,6 +59,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
-    } as DOMAttributes)
+    })
   };
 }

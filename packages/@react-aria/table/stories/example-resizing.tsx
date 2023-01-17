@@ -132,8 +132,9 @@ function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeE
     label: 'Resizer',
     onResizeStart,
     onResize,
-    onResizeEnd
-  } as AriaTableColumnResizeProps<any>, state, layoutState, ref);
+    onResizeEnd,
+    tableState: state
+  } as AriaTableColumnResizeProps<any>, layoutState, ref);
 
   return (
     <>
