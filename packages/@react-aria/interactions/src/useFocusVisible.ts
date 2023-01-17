@@ -109,6 +109,8 @@ function handleFocusEvent(e: FocusEvent) {
   // Elements with a negative tabIndex will fire focus events. In Chrome and Firefox, this can happen briefly
   // when clicking on a label inside an element with a negative tabIndex. This can lead to an erroneous focus is visible.
   if (isEventTargetNegativeTabIndex(e)) {
+    hasEventBeforeFocus = false;
+    hasBlurredWindowRecently = false;
     return;
   }
 
