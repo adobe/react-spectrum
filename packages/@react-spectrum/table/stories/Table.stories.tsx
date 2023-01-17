@@ -484,6 +484,25 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'dynamic with nested columns with resizing',
+    () => (
+      <TableView aria-label="TableView with nested columns" selectionMode="multiple" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={nestedColumns}>
+          {column =>
+            <Column allowsResizing childColumns={column.children}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'focusable cells',
     () => (
       <Flex direction="column">
