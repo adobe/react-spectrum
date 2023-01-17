@@ -84,7 +84,7 @@ describe('useSelectableCollection', () => {
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
       let {getAllByRole} = render(
         <List selectionMode="multiple" selectionBehavior="replace">
           <Item>Paco de Lucia</Item>
