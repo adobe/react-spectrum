@@ -88,7 +88,6 @@ async function build() {
             }
           } else {
             fs.copySync(docFile, destFile);
-            hasDocs = true;
           }
         }
       }

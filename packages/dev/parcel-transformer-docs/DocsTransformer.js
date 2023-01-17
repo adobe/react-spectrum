@@ -78,7 +78,11 @@ module.exports = new Transformer({
           for (let specifier of path.node.specifiers) {
             let binding = path.scope.getBinding(specifier.local.name);
             if (binding) {
-              exports[specifier.exported.name] = processExport(binding.path);
+              let value = processExport(binding.path);
+              if (value.name) {
+                value.name = specifier.exported.name;
+              }
+              exports[specifier.exported.name] = value;
               asset.symbols.set(specifier.exported.name, specifier.local.name);
             }
           }
@@ -115,6 +119,10 @@ module.exports = new Transformer({
         let docs = getJSDocs(path.parentPath);
         processExport(path.get('init'), node);
         addDocs(node, docs);
+        if (node.type === 'interface') {
+          node.id = `${asset.filePath}:${path.node.id.name}`;
+          node.name = path.node.id.name;
+        }
         return node;
       }
 
@@ -160,7 +168,37 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isClassMethod() || path.isTSDeclareMethod()) {
+      if (path.isObjectExpression()) {
+        let properties = {};
+        for (let propertyPath of path.get('properties')) {
+          let property = processExport(propertyPath);
+          if (property) {
+            properties[property.name] = property;
+          } else {
+            console.log('UNKNOWN PROPERTY', propertyPath.node);
+          }
+        }
+
+        return Object.assign(node, {
+          type: 'interface',
+          extends: [],
+          properties,
+          typeParameters: []
+        });
+      }
+
+      if (path.isObjectProperty()) {
+        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let docs = getJSDocs(path);
+        return Object.assign(node, addDocs({
+          type: 'property',
+          name,
+          value: processExport(path.get('value')),
+          optional: false
+        }, docs));
+      }
+
+      if (path.isClassMethod() || path.isTSDeclareMethod() || path.isObjectMethod()) {
         // not sure why isTSDeclareMethod isn't a recognized method, can't find documentation on it either, but it works and that's the type
         // it seems to be mostly abstract class methods that comes through as this?
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
