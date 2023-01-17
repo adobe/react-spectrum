@@ -113,7 +113,7 @@ function Example() {
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={listItems} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+      <ListView items={listItems} aria-label="ListView with action bar, dynamic collection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
         {(item) => (
           <Item>
             {item.name}
@@ -178,7 +178,7 @@ function ActionBarActions(props) {
   ///- end collapse -///
   return (
     <ActionBarContainer height="size-5000">
-      <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
+      <TableView aria-label="Table with action bar and controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
         <TableHeader columns={columns}>
           {column => (
             <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
@@ -241,7 +241,7 @@ function Example({isEmphasized}) {
 
   return (
     <ActionBarContainer height={300} width="size-5000">
-      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+      <ListView items={items} aria-label={`ListView with${isEmphasized ? ' emphasized' : ''} action bar`} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
         {(item) => (
           <Item>
             {item.name}
@@ -249,7 +249,9 @@ function Example({isEmphasized}) {
         )}
       </ListView>
       <ActionBar
+        /*- begin highlight -*/
         isEmphasized={isEmphasized}
+        /*- end highlight -*/
         selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
         onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
         onClearSelection={() => setSelectedKeys(new Set([]))}>

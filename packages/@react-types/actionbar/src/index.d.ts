@@ -27,7 +27,7 @@ export interface ActionBarProps<T> extends CollectionBase<T> {
 export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {}
 
 interface ActionBarContainerProps {
-  /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with.*/
+  /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */
   children: ReactNode
 }
 
