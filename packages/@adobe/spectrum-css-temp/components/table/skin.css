@@ -340,8 +340,45 @@ tbody.spectrum-Table-body {
     --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
     --spectrum-table-body-resize-indicator-background-color: Highlight;
     --spectrum-table-divider-border-color: CanvasText;
+
+    .spectrum-Table-cell,
+    .spectrum-Table-headCell,
+    .spectrum-Table-headCellButton {
+      --spectrum-table-cell-border-color-key-focus: Highlight;
+    }
+
+    .spectrum-Table-colResizeIndicator {
+      --spectrum-table-col-resize-indicator-background-color: Highlight;
+    }
+
+    .spectrum-Table-colResizeNubbin {
+      --spectrum-table-col-resize-nubbin-background-color: Highlight;
+      --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
+    }
+
+    .spectrum-Table-bodyResizeIndicator {
+      --spectrum-table-body-resize-indicator-background-color: Highlight;
+    }
+
+    .spectrum-Table-row {
+      --spectrum-table-background-color: Canvas;
+      --spectrum-table-row-background-color-hover: Canvas;
+      --spectrum-table-row-background-color-down: Canvas;
+      --spectrum-selectlist-option-focus-indicator-color: Highlight;
+      &:after {
+        --spectrum-table-cell-border-color: CanvasText;
+      }
+      &.is-next-selected,
+      &.is-selected,
+      &.spectrum-Table-row--firstRow.is-selected {
+        --spectrum-global-color-blue-500: Highlight;
+      }
+      &.is-drop-target {
+        --spectrum-alias-border-color-focus: Highlight;
+      }
+    }
   }
-  
+
   .spectrum-Table-headWrapper {
     forced-color-adjust: none;
     .spectrum-Table-headCell {
@@ -352,7 +389,6 @@ tbody.spectrum-Table-body {
   .spectrum-Table-cell,
   .spectrum-Table-headCell,
   .spectrum-Table-headCellButton {
-    --spectrum-table-cell-border-color-key-focus: Highlight;
     &:focus-ring,
     &.is-focused {
       &::before {
@@ -361,29 +397,7 @@ tbody.spectrum-Table-body {
     }
   }
 
-  .spectrum-Table-columnResizer {
-    --spectrum-table-divider-border-color: CanvasText;
-  }
-
-  .spectrum-Table-colResizeIndicator {
-    --spectrum-table-col-resize-indicator-background-color: Highlight;
-  }
-
-  .spectrum-Table-colResizeNubbin {
-    --spectrum-table-col-resize-nubbin-background-color: Highlight;
-    --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
-  }
-
-  .spectrum-Table-bodyResizeIndicator {
-    --spectrum-table-body-resize-indicator-background-color: Highlight;
-  }
-
   .spectrum-Table-row {
-    --spectrum-table-background-color: Canvas;
-    --spectrum-table-row-background-color-hover: Canvas;
-    --spectrum-selectlist-option-focus-indicator-color: Highlight;
-    --spectrum-table-row-background-color-down: Canvas;
-
     &:focus-ring {
       &:before {
         forced-color-adjust: none;
@@ -403,40 +417,23 @@ tbody.spectrum-Table-body {
      */
     &:after {
       forced-color-adjust: none;
-      --spectrum-table-cell-border-color: CanvasText;
     }
 
     /* Box shadow for bottom border for non-selected row that is immediately above a selected row. */
-    &.is-next-selected {
-      --spectrum-global-color-blue-500: Highlight;
-      &:after {
-        forced-color-adjust: none;
-      }
-    }
-
-    &.is-selected {
-      --spectrum-global-color-blue-500: Highlight;
-      /* Box shadow for bottom, left, and right border for selected rows. */
-      &:after {
-        forced-color-adjust: none;
-      }
-    }
-
+    &.is-next-selected,
+    /* Box shadow for bottom, left, and right border for selected rows. */
+    &.is-selected,
     /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
      * a top border.
      */
-     &.spectrum-Table-row--firstRow {
-      --spectrum-global-color-blue-500: Highlight;
-      &.is-selected {
-        &:after {
-          forced-color-adjust: none;
-        }
+    &.spectrum-Table-row--firstRow.is-selected {
+      &:after {
+        forced-color-adjust: none;
       }
     }
 
     &.is-drop-target {
-      --spectrum-alias-border-color-focus: Highlight;
-      &::before {
+      &:before {
         box-shadow: inset 0 0 0 2px var(--spectrum-alias-border-color-focus);
         background-color: var(--spectrum-alias-highlight-selected);
       }
