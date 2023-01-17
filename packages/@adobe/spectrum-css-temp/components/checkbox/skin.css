@@ -80,6 +80,22 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-Checkbox-input,
+  .spectrum-Checkbox-input:checked {
+    &:disabled + .spectrum-Checkbox-box,
+    &:disabled:active + .spectrum-Checkbox-box {
+      &:before {
+        border-color: var(--spectrum-checkbox-emphasized-box-border-color-disabled);
+        background-color: var(--spectrum-checkbox-emphasized-box-background-color-disabled);
+      }
+    }
+
+    &:disabled ~ .spectrum-Checkbox-label,
+    &:disabled:active ~ .spectrum-Checkbox-label {
+      color: var(--spectrum-checkbox-text-color-disabled);
+    }
+  }
+
   &.is-disabled {
     .spectrum-Checkbox-input,
     .spectrum-Checkbox-input:checked {
@@ -110,6 +126,8 @@ governing permissions and limitations under the License.
       }
     }
   }
+
+
 
   /* Focus */
   .spectrum-Checkbox-input {
@@ -180,7 +198,9 @@ governing permissions and limitations under the License.
   &.is-invalid {
     /* Extra-specific selectors added here to handle checked state */
     .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
-    .spectrum-Checkbox-box {
+    .spectrum-Checkbox-box,
+    &.is-indeterminate .spectrum-Checkbox-box,
+    .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
       &:before {
         border-color: var(--spectrum-checkbox-box-border-color-error);
       }
@@ -205,7 +225,8 @@ governing permissions and limitations under the License.
 
     &:hover {
       .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box,
-      .spectrum-Checkbox-box {
+      .spectrum-Checkbox-box,
+      &.is-indeterminate .spectrum-Checkbox-box {
         &:before {
           border-color: var(--spectrum-checkbox-box-border-color-error-hover);
         }
