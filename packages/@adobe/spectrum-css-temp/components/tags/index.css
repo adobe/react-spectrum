@@ -12,13 +12,12 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-.spectrum-Tags {
-  display: flex;
-  flex-wrap: wrap;
+:root {
+  --spectrum-tag-margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+}
 
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.spectrum-Tags {
+  display: inline;
 }
 
 .spectrum-Tags-item {
@@ -26,15 +25,15 @@ governing permissions and limitations under the License.
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
-  display: grid;
+  display: inline-grid;
   grid-template-columns: auto 1fr auto;
   grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
   position: relative;
 
-  margin: calc(var(--spectrum-taggroup-tag-gap-y) / 2) calc(var(--spectrum-taggroup-tag-gap-x) / 2);
-  padding-inline-start:calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
+  margin: var(--spectrum-tag-margin);
+  padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
 
@@ -88,6 +87,18 @@ governing permissions and limitations under the License.
     .spectrum-Tag-content {
       margin-inline-end: 0;
     }
+  }
+}
+
+.spectrum-Tags-actionButton {
+  display: inline;
+  height: var(--spectrum-tag-height);
+  font-size: var(--spectrum-tag-text-size);
+  margin: var(--spectrum-tag-margin);
+  
+  > span {
+    padding-inline-start: var(--spectrum-tag-padding-x);
+    padding-inline-end: var(--spectrum-tag-padding-x);
   }
 }
 
