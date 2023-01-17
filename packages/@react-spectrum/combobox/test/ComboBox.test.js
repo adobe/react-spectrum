@@ -3600,7 +3600,7 @@ describe('ComboBox', function () {
 
   describe('mobile combobox', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     });
 
     afterEach(() => {
