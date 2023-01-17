@@ -223,20 +223,21 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
       });
     } else if (!isGrow) {
       flexItems.forEach((item) => {
-        item.scaledFlexShrinkFactor = 1;
+        item.scaledFlexShrinkFactor = 0;
         if (!item.frozen) {
           item.scaledFlexShrinkFactor = item.flex * item.baseSize;
         }
       });
       let totalShrinkFactors = flexItems.reduce((acc, item) => acc + item.scaledFlexShrinkFactor, 0);
-
-      flexItems.forEach(item => {
-        if (item.frozen) {
-          return;
-        }
-        let ratio = item.scaledFlexShrinkFactor / totalShrinkFactors;
-        item.targetMainSize = item.baseSize - Math.abs(ratio * remainingFreeSpace);
-      });
+      if (totalShrinkFactors > 0) {
+        flexItems.forEach(item => {
+          if (item.frozen) {
+            return;
+          }
+          let ratio = item.scaledFlexShrinkFactor / totalShrinkFactors;
+          item.targetMainSize = item.baseSize - Math.abs(ratio * remainingFreeSpace);
+        });
+      }
     } else {
       // do nothing
     }
