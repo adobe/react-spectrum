@@ -37,6 +37,9 @@ function render(props: SpectrumTagGroupProps<unknown>) {
       <Item key="1">Cool Tag 1</Item>
       <Item key="2">Cool Tag 2</Item>
       <Item key="3">Cool Tag 3</Item>
+      <Item key="4">Cool Tag 4</Item>
+      <Item key="5">Cool Tag 5</Item>
+      <Item key="6">Cool Tag 6</Item>
     </TagGroup>
   );
 }
@@ -96,16 +99,6 @@ export const LabelTruncation: TagGroupStory = {
 
 export const MaxRows: TagGroupStory = {
   args: {maxRows: 2},
-  render: (args) => (
-    <TagGroup width="100%" aria-label="Tag group" {...args}>
-      <Item key="1">Cool Tag 1</Item>
-      <Item key="2">Another cool tag</Item>
-      <Item key="3">This tag</Item>
-      <Item key="4">What tag?</Item>
-      <Item key="5">This tag is cool too</Item>
-      <Item key="6">Shy tag</Item>
-    </TagGroup>
-  ),
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'maxRows'
 };
@@ -153,4 +146,19 @@ function OnRemoveExample(props) {
     </TagGroup>
   );
 }
+
+export const WithAction: TagGroupStory = {
+  args: {onAction: action('clear'), actionLabel: 'Clear'},
+  storyName: 'with action'
+};
+
+export const WithActionAndMaxRows: TagGroupStory = {
+  args: {
+    maxRows: 2,
+    onAction: action('clear'),
+    actionLabel: 'Clear'
+  },
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'with action and maxRows'
+};
 
