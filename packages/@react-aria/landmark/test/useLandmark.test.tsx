@@ -1156,4 +1156,122 @@ describe('LandmarkManager', function () {
     expect(nav).toHaveAttribute('tabIndex', '-1');
     expect(document.activeElement).toBe(nav);
   });
+
+  it('landmark navigation fires custom event when wrapping forward', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+
+    expect(document.activeElement).toBe(main);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'forward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('landmark navigation fires custom event when wrapping backward', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'backward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('skips over aria-hidden landmarks', function () {
+    let tree = render(
+      <div>
+        <Main>
+          <div aria-hidden="true">
+            <Region aria-label="Region 1">
+              <Checkbox>Checkbox label 1</Checkbox>
+            </Region>
+          </div>
+
+          <TextField label="First Name" />
+
+          <Region aria-label="Region 2">
+            <Checkbox>Checkbox label 2</Checkbox>
+          </Region>
+
+          <TextField label="Last Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+    let region2 = tree.getAllByRole('region')[0];
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(main);
+  });
 });
