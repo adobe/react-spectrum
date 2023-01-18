@@ -30,9 +30,6 @@ import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
 import {Link} from '@react-spectrum/link';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Edit from '@spectrum-icons/workflow/Edit';
-import Delete from '@spectrum-icons/workflow/Delete';
 ```
 
 ---
@@ -364,55 +361,6 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonList onAction={key => alert(`Opening item ${key}...`)} aria-label="Checkbox selection ListView with row actions" width="size-2400" />
   <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
 </Flex>
-```
-
-
-### Action bar <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
-
-An [Action bar](ActionBar.html) can be used when a user needs to perform actions on one or more items at the same time.
-
-```tsx example keepIndividualImports
-import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
-
-function Example() {
-  let items = [
-    {key: 0, name: 'Adobe Photoshop'},
-    {key: 1, name: 'Adobe Illustrator'},
-    {key: 2, name: 'Adobe XD'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
-
-  return (
-    <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        {(item) => (
-          <Item>
-            {item.name}
-          </Item>
-        )}
-      </ListView>
-      <ActionBar
-        isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
-        onAction={(key) => alert(`Action: ${key}`)}
-        onClearSelection={() => setSelectedKeys(new Set([]))}>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="copy">
-          <Copy />
-          <Text>Copy</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionBar>
-    </ActionBarContainer>
-  );
-}
 ```
 
 ## Drag and drop
