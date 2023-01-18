@@ -20,6 +20,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -580,8 +581,8 @@ storiesOf('ListBox', module)
     )
   )
   .add(
-    'restore focus after deleting selected items', () => (
-      <FocusExample />
+    'restore focus after deleting selected items', (args = {}) => (
+      <FocusExample {...args} />
     )
   );
 
@@ -710,7 +711,7 @@ function App() {
   );
 }
 
-function FocusExample() {
+export function FocusExample(args = {}) {
   let tree = useTreeData({
     initialItems: withSection,
     getKey: (item) => item.name,
@@ -719,47 +720,47 @@ function FocusExample() {
   let [dialog, setDialog] = useState(null);
   let ref = useRef(null);
   return (
-    <Flex direction={'column'}>
-      <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-        {tree.selectedKeys.size > 0 &&
-          <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
-        }
-      </ActionGroup>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <Label id="label">Choose items</Label>
-        <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
-          {
-            <ListBox
-              ref={ref}
-              flexGrow={1}
-              aria-labelledby="label"
-              items={tree.items}
-              selectedKeys={tree.selectedKeys}
-              onSelectionChange={tree.setSelectedKeys}
-              selectionMode="multiple">
-              {item => item.children.length && (
-                <Section key={item.value.name} items={item.children} title={item.value.name}>
-                  {item => <Item key={item.value.name}>{item.value.name}</Item>}
-                </Section>
-              )}
-            </ListBox>
+    <FocusScope>
+      <Flex direction={'column'}>
+        <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
+          {tree.selectedKeys.size > 0 &&
+            <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
           }
+        </ActionGroup>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          <Label id="label">Choose items</Label>
+          <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
+            {
+              <ListBox
+                ref={ref}
+                flexGrow={1}
+                aria-labelledby="label"
+                items={tree.items}
+                selectedKeys={tree.selectedKeys}
+                onSelectionChange={tree.setSelectedKeys}
+                selectionMode="multiple"
+                {...args}>
+                {item => item.children.length && (
+                  <Section key={item.value.name} items={item.children} title={item.value.name}>
+                    {item => <Item key={item.value.name}>{item.value.name}</Item>}
+                  </Section>
+                )}
+              </ListBox>
+            }
+          </div>
         </div>
-      </div>
-      <DialogContainer onDismiss={() => setDialog(null)}>
-        {dialog?.action === 'bulk-delete' &&
-          <AlertDialog
-            title="Delete"
-            variant="destructive"
-            primaryActionLabel="Delete"
-            onPrimaryAction={() => {
-              tree.removeSelectedItems();
-              setTimeout(() => ref.current && ref.current.UNSAFE_getDOMNode().focus(), 400);
-            }}>
-            Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
-          </AlertDialog>
-        }
-      </DialogContainer>
-    </Flex>
+        <DialogContainer onDismiss={() => setDialog(null)}>
+          {dialog?.action === 'bulk-delete' &&
+            <AlertDialog
+              title="Delete"
+              variant="destructive"
+              primaryActionLabel="Delete"
+              onPrimaryAction={() => tree.removeSelectedItems()}>
+              Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
+            </AlertDialog>
+          }
+        </DialogContainer>
+      </Flex>
+    </FocusScope>
   );
 }

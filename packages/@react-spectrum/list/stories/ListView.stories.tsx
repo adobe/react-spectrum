@@ -298,7 +298,7 @@ storiesOf('ListView/Actions', module)
         </ActionMenu>
       </>
     ), args))
-  .add('Restore focus after item removal', args => <FocusExample {...args} />);
+  .add('Restore focus after item removal', (args = {}) => <FocusExample {...args} />);
 
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
@@ -2149,7 +2149,7 @@ function DragBetweenListsOverride(props) {
   );
 }
 
-export const FocusExample = (args) => {
+export const FocusExample = (args = {}) => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},
