@@ -10,28 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
-import {GridState} from '@react-stately/grid';
+import {CollectionBase, ItemProps, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
   allowsRemoving?: boolean,
   /** Called when the user removes a tag.  */
-  onRemove?: (key: Key) => void
+  onRemove?: (key: Key) => void,
+  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  maxRows?: number
 }
-
-export interface SpectrumTagGroupProps<T> extends TagGroupProps<T>, DOMProps, StyleProps, AriaLabelingProps {}
 
 export interface TagProps<T> extends ItemProps<any> {
   isFocused: boolean,
   allowsRemoving?: boolean,
   item: Node<T>,
   onRemove?: (key: Key) => void,
-  tagRef: RefObject<HTMLElement>,
   tagRowRef: RefObject<HTMLElement>
-}
-
-interface SpectrumTagProps<T> extends TagProps<T> {
-  state: GridState<any, any>
 }

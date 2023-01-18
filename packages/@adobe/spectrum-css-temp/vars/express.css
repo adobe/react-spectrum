@@ -1,4 +1,4 @@
-.express {
+.express.express {
   --spectrum-accent-color-100: var(--spectrum-indigo-100);
   --spectrum-accent-color-200: var(--spectrum-indigo-200);
   --spectrum-accent-color-300: var(--spectrum-indigo-300);
@@ -152,13 +152,13 @@
   --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
 
-  --spectrum-tooltip-background-color: var(--spectrum-neutral-background-color-default);
+  --spectrum-alias-neutral-background-color: var(--spectrum-neutral-background-color-default);
 }
 
-.medium {
+.express.medium {
   --spectrum-switch-track-width: 28px;
 }
 
-.large {
+.express.large {
   --spectrum-switch-track-width: 36px;
 }

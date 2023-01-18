@@ -17,6 +17,7 @@ import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
+import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -483,6 +484,25 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'dynamic with nested columns with resizing',
+    () => (
+      <TableView aria-label="TableView with nested columns" selectionMode="multiple" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={nestedColumns}>
+          {column =>
+            <Column allowsResizing childColumns={column.children}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'focusable cells',
     () => (
       <Flex direction="column">
@@ -572,6 +592,115 @@ storiesOf('TableView', module)
           <Column align="center">Type</Column>
           <Column align="end">Size</Column>
           <Column>Description</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>very very very very very very long long long long long description</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="50%"
+                backgroundColor="gray-200">
+                50% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child</span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                very very very very very very long long long long long description
+              </span>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'should fill cell width allowsResizing',
+    () => (
+      <TableView aria-label="TableView with filled cells" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column allowsResizing>File Name</Column>
+          <Column align="center" allowsResizing>Type</Column>
+          <Column align="end" allowsResizing>Size</Column>
+          <Column allowsResizing>Description</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -1303,9 +1432,35 @@ storiesOf('TableView', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'allowsResizing, onColumnResizeStart action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeStart={action('onResizeStart')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
     'allowsResizing, onColumnResize action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResize={action('onResize')}>
         <TableHeader>
           <Column allowsResizing defaultWidth="1fr">File Name</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>
@@ -1331,7 +1486,7 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, onColumnResizeEnd action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeEnd={action('onResizeEnd')}>
         <TableHeader>
           <Column allowsResizing defaultWidth="1fr">File name for reference</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>
@@ -1368,7 +1523,79 @@ storiesOf('TableView', module)
       </div>
     ),
     {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
+  )
+  .add(
+    'allowsResizing, controlled, no widths',
+    () => (
+      <ControllingResize width={900} columns={uncontrolledColumns} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will notice that the entire table reverts, this is because no columns are controlled.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, some widths',
+    () => (
+      <ControllingResize width={900} columns={columnsSomeFR} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will see a quick flash because the entire table is re-rendered. This
+    mimics what would happen if an app reloaded the whole page and restored a saved
+    column width state. This is a "some widths" controlled story. It cannot restore
+    the widths of the columns that it does not manage. Height and weight are uncontrolled.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, all widths',
+    () => (
+      <ControllingResize width={900} columns={columnsFR} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will see a quick flash because the entire table is re-rendered. This
+    mimics what would happen if an app reloaded the whole page and restored a saved
+    column width state.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, hideHeader',
+    () => (
+      <ControllingResize width={900} columns={columnsFRHideHeaders} />
+    ),
+  {description: {data: `
+    Hide headers columns should not be resizable.
+    `}}
   );
+
+let uncontrolledColumns: PokemonColumn[] = [
+  {name: 'Name', uid: 'name'},
+  {name: 'Type', uid: 'type'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level'}
+];
+
+let columnsFR: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsFRHideHeaders: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', hideHeader: true},
+  {name: 'Type', uid: 'type', width: 300,  hideHeader: true},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsSomeFR: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
 
 function AsyncLoadingExample(props) {
   const {isResizable} = props;

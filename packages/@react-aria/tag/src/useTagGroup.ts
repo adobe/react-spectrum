@@ -10,33 +10,56 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {ReactNode, useState} from 'react';
+import {RefObject, useState} from 'react';
+import {TagGroupProps} from '@react-types/tag';
+import type {TagGroupState} from '@react-stately/tag';
+import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
-
-export interface AriaTagGroupProps extends DOMProps {
-  children: ReactNode,
-  isReadOnly?: boolean, // removes close button
-  validationState?: 'valid' | 'invalid'
-}
+import {useGridList} from '@react-aria/gridlist';
+import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
+  /** Props for the tag grouping element. */
   tagGroupProps: DOMAttributes
 }
 
-export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a tag group component.
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
+ * @param props - Props to be applied to the tag group.
+ * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param ref - A ref to a DOM element for the tag group.
+ */
+export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+  let {direction} = useLocale();
+  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
+  let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
+
+  // Don't want the grid to be focusable or accessible via keyboard
+  delete gridProps.role;
+  delete gridProps.tabIndex;
+
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
   let domProps = filterDOMProps(props);
   return {
-    tagGroupProps: mergeProps(domProps, {
+    tagGroupProps: mergeProps(gridProps, domProps, {
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
-    } as DOMAttributes)
+    })
   };
 }

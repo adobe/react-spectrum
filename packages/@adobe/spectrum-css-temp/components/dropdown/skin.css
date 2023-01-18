@@ -24,7 +24,8 @@ governing permissions and limitations under the License.
   }
 
   &.is-invalid {
-    .spectrum-Dropdown-invalidIcon {
+    /* override all states (e.g. active) */
+    .spectrum-Dropdown-invalidIcon.spectrum-Dropdown-invalidIcon {
       fill: var(--spectrum-dropdown-validation-icon-color-error);
     }
 

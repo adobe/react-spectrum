@@ -16,7 +16,6 @@ import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render, triggerPress} from '@react-spectrum/test-utils';
@@ -26,13 +25,13 @@ import userEvent from '@testing-library/user-event';
 import {within} from '@testing-library/dom';
 
 describe('Form', function () {
-  let matchMedia;
   beforeAll(() => {
     jest.useFakeTimers();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
   });
 
-  beforeEach(() => {
-    matchMedia = new MatchMediaMock();
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 
   it('should render a form', () => {
@@ -199,8 +198,6 @@ describe('Form', function () {
     });
 
     it('contextual help should not be disabled nor should its dismiss button be disabled', () => {
-      matchMedia.useMediaQuery('(max-width: 700px)');
-
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <Form aria-label="Test" isDisabled>
