@@ -298,7 +298,7 @@ storiesOf('ListView/Actions', module)
         </ActionMenu>
       </>
     ), args))
-  .add('Restore focus after item removal', () => <FocusExample />);
+  .add('Restore focus after item removal', args => <FocusExample {...args} />);
 
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
@@ -2149,7 +2149,7 @@ function DragBetweenListsOverride(props) {
   );
 }
 
-export const FocusExample = () => {
+export const FocusExample = (args) => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},
@@ -2169,7 +2169,7 @@ export const FocusExample = () => {
   });
 
   return (
-    <ListView aria-label="listview with removable items" width="250px" items={list.items} disabledKeys={['5']}>
+    <ListView aria-label="listview with removable items" width="250px" items={list.items} disabledKeys={['5']} {...args}>
       {(item: any) => (
         <Item key={item.id} textValue={item.name}>
           <Text>{item.name}</Text>

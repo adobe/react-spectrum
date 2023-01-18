@@ -80,9 +80,12 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         }
       }
       if (newRow) {
+        const childNodes = newRow.hasChildNodes ? [...newRow.childNodes] : [];
         const keyToFocus =
-          newRow.hasChildNodes && parentNode !== node ?
-          [...newRow.childNodes][node.index].key :
+          newRow.hasChildNodes &&
+          parentNode !== node &&
+          node.index < childNodes.length ?
+          childNodes[node.index].key :
           newRow.key;
         selectionState.setFocusedKey(keyToFocus);
       } else {
