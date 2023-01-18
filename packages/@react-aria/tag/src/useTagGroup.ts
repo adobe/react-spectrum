@@ -21,6 +21,7 @@ import {useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
+  /** Props for the tag grouping element. */
   tagGroupProps: DOMAttributes
 }
 
