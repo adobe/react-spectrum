@@ -18,20 +18,20 @@ export function clamp(value: number, min: number = -Infinity, max: number = Infi
   return newValue;
 }
 
-export function snapValueToStep(value: number, min: number, max: number, step: number): number {
-  let remainder = ((value - (isNaN(min) ? 0 : min)) % step);
+export function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number): number {
+  let remainder = ((value - (Number.isNaN(min) ? 0 : (min as number))) % step);
   let snappedValue = Math.abs(remainder) * 2 >= step
     ? value + Math.sign(remainder) * (step - Math.abs(remainder))
     : value - remainder;
 
-  if (!isNaN(min)) {
-    if (snappedValue < min) {
-      snappedValue = min;
-    } else if (!isNaN(max) && snappedValue > max) {
-      snappedValue = min + Math.floor((max - min) / step) * step;
+  if (!Number.isNaN(min)) {
+    if (snappedValue < (min as number)) {
+      snappedValue = (min as number);
+    } else if (!Number.isNaN(max) && snappedValue > (max as number)) {
+      snappedValue = (min as number) + Math.floor(((max as number) - (min as number)) / step) * step;
     }
-  } else if (!isNaN(max) && snappedValue > max) {
-    snappedValue = Math.floor(max / step) * step;
+  } else if (!Number.isNaN(max) && snappedValue > (max as number)) {
+    snappedValue = Math.floor((max as number) / step) * step;
   }
 
   // correct floating point behavior by rounding to step precision
