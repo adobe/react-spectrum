@@ -1522,6 +1522,12 @@ describe('FocusScope', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      // Needed for onBlur raf in useFocusContainment
+      act(() => {
+        jest.runAllTimers();
+      });
+      // Needed for useRestoreFocus layout cleanup raf
       act(() => {
         jest.runAllTimers();
       });
@@ -1579,5 +1585,28 @@ describe('FocusScope', function () {
 
       expect(document.activeElement.textContent).toBe('Actions▼');
     });
+  });
+});
+
+describe('Unmounting cleanup', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.runAllTimers();
+  });
+
+  // this test will fail in the 'afterAll' if there are any rafs left over
+  it('should not leak request animation frames',  () => {
+    let tree = render(
+      <FocusScope restoreFocus contain>
+        <button>Focus me</button>
+        <button>Then Focus me</button>
+      </FocusScope>
+    );
+    let buttons = tree.getAllByRole('button');
+    act(() => buttons[0].focus());
+    act(() => buttons[1].focus());
+    act(() => buttons[1].blur());
   });
 });

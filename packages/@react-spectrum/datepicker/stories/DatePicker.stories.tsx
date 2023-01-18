@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
@@ -23,212 +24,263 @@ import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {useLocale} from '@react-aria/i18n';
 
+export type DatePickerStory = ComponentStoryObj<typeof DatePicker>;
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
-storiesOf('Date and Time/DatePicker', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'default',
-    () => render()
-  )
-  .add(
-    'defaultValue',
-    () => render({defaultValue: parseDate('2020-02-03')})
-  )
-  .add(
-    'controlled value',
-    () => <ControlledExample />
-  )
-  .add(
-    'defaultValue, zoned',
-    () => render({defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')})
-  )
-  .add(
-    'granularity: minute',
-    () => render({granularity: 'minute'})
-  )
-  .add(
-    'granularity: second',
-    () => render({granularity: 'second'})
-  )
-  .add(
-    'hourCycle: 12',
-    () => render({granularity: 'minute', hourCycle: 12})
-  )
-  .add(
-    'hourCycle: 24',
-    () => render({granularity: 'minute', hourCycle: 24})
-  )
-  .add(
-    'granularity: minute, defaultValue',
-    () => render({granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
-  )
-  .add(
-    'granularity: minute, defaultValue, zoned',
-    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')})
-  )
-  .add('granularity: minute, defaultValue, zoned, absolute',
-    () => render({granularity: 'minute', defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')})
-  )
-  .add('granularity: minute, defaultValue, zoned, absolute, timeZone',
-    () => render({granularity: 'minute', defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')})
-  )
-  .add(
-    'defaultValue with time, granularity: day',
-    () => render({granularity: 'day', defaultValue: parseDateTime('2021-03-14T08:45')})
-  )
-  .add(
-    'hideTimeZone',
-    () => render({granularity: 'minute', defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]'), hideTimeZone: true})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => render({isQuiet: true, isDisabled: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true, value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'autoFocus',
-    () => render({autoFocus: true})
-  )
-  .add(
-    'validationState: invalid',
-    () => render({validationState: 'invalid', value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'validationState: valid',
-    () => render({validationState: 'valid', value: new CalendarDate(2020, 2, 3)})
-  )
-  .add(
-    'minValue: 2010/1/1, maxValue: 2020/1/1',
-    () => render({minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)})
-  )
-  .add(
-    'isDateUnavailable',
-    () => render({isDateUnavailable: (date: DateValue) => {
+export default {
+  title: 'Date and Time/DatePicker',
+  component: DatePicker,
+  decorators: [storyFn => BlockDecorator(storyFn)],
+  args: {
+    onChange: action('onChange')
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    defaultValue: {
+      table: {
+        disable: true
+      }
+    },
+    value: {
+      table: {
+        disable: true
+      }
+    },
+    minValue: {
+      table: {
+        disable: true
+      }
+    },
+    maxValue: {
+      table: {
+        disable: true
+      }
+    },
+    placeholderValue: {
+      table: {
+        disable: true
+      }
+    },
+    onBlur: {
+      table: {
+        disable: true
+      }
+    },
+    onFocus: {
+      table: {
+        disable: true
+      }
+    },
+    onFocusChange: {
+      table: {
+        disable: true
+      }
+    },
+    onKeyDown: {
+      table: {
+        disable: true
+      }
+    },
+    onKeyUp: {
+      table: {
+        disable: true
+      }
+    },
+    onOpenChange: {
+      table: {
+        disable: true
+      }
+    },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
+    isDateUnavailable: {
+      table: {
+        disable: true
+      }
+    },
+    label: {
+      control: 'text'
+    },
+    granularity: {
+      control: 'select',
+      options: ['day', 'hour', 'minute', 'second']
+    },
+    hourCycle: {
+      control: 'select',
+      options: [12, 24]
+    },
+    hideTimeZone: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    necessityIndicator: {
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    description: {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    },
+    labelAlign: {
+      control: 'select',
+      options: ['end', 'start']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    showFormatHelpText: {
+      control: 'boolean'
+    },
+    'aria-label': {
+      control: 'text'
+    },
+    width: {
+      control: 'text'
+    },
+    maxVisibleMonths: {
+      control: 'number'
+    },
+    shouldFlip: {
+      control: 'boolean'
+    },
+    defaultOpen: {
+      control: 'boolean'
+    },
+    isOpen: {
+      control: 'boolean'
+    }
+  }
+} as ComponentMeta<typeof DatePicker>;
+
+export const Default: DatePickerStory = {
+  render: (args) => render(args)
+};
+
+export const DefaultValue: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: parseDate('2020-02-03')}
+};
+
+export const ControlledValue: DatePickerStory = {
+  args: {value: new CalendarDate(2020, 2, 3)},
+  render: (args) => <ControlledExample {...args} />
+};
+
+export const DefaultValueZoned: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')},
+  storyName: 'defaultValue date, zoned'
+};
+
+export const DateTimeValue: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: parseDateTime('2021-03-14T08:45')}
+};
+
+export const DateTimeValueZoned: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Angeles]')}
+};
+
+export const DateTimeValueAbsolute: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
+};
+
+export const DateTimeValueAbsoluteZoned: DatePickerStory = {
+  ...Default,
+  args: {defaultValue: parseAbsolute('2021-11-07T07:45:00Z', 'America/New_York')}
+};
+
+
+export const MinMaxValue: DatePickerStory = {
+  ...Default,
+  args: {minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)},
+  storyName: 'minValue: 2010/1/1, maxValue: 2020/1/1'
+};
+
+export const PlaceholderVal: DatePickerStory = {
+  ...Default,
+  args: {placeholderValue: new CalendarDate(1980, 1, 1)},
+  storyName: 'placeholder value: 1980/1/1'
+};
+
+export const PlaceholderValTime: DatePickerStory = {
+  ...Default,
+  args: {placeholderValue: new CalendarDateTime(1980, 1, 1, 8)},
+  storyName: 'placeholder value: 1980/1/1 8AM'
+};
+
+export const PlaceholderValTimeZoned: DatePickerStory = {
+  ...Default,
+  args: {placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')},
+  storyName: 'placeholder value: 1980/1/1 zoned'
+};
+
+export const DateUnavailable: DatePickerStory = {
+  ...Default,
+  args: {
+    isDateUnavailable: (date: DateValue) => {
       const disabledIntervals = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
       return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
-    }})
-  )
-  .add(
-    'placeholderValue: 1980/1/1',
-    () => render({placeholderValue: new CalendarDate(1980, 1, 1)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1 8 AM',
-    () => render({placeholderValue: new CalendarDateTime(1980, 1, 1, 8)})
-  )
-  .add(
-    'placeholderValue: 1980/1/1, zoned',
-    () => render({placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')})
-  )
-  .add(
-    'maxVisibleMonths: 2',
-    () => render({maxVisibleMonths: 2, granularity: 'minute'})
-  )
-  .add(
-    'maxVisibleMonths: 3',
-    () => render({maxVisibleMonths: 3, granularity: 'minute'})
-  )
-  .add(
-    'showFormatHelpText',
-    () => render({showFormatHelpText: true})
-  )
-  .add(
-    'all the events',
-    () => render({onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'), onOpenChange: action('onOpenChange')})
-  );
+    }
+  },
+  storyName: 'isDateUnavailable'
+};
 
-storiesOf('Date and Time/DatePicker/styling', module)
-  .addDecorator(BlockDecorator)
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
-    'labelAlign: end',
-    () => render({labelPosition: 'top', labelAlign: 'end'})
-  )
-  .add(
-    'required',
-    () => render({isRequired: true})
-  )
-  .add(
-    'required with label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'optional',
-    () => render({necessityIndicator: 'label'})
-  )
-  .add(
-    'no visible label',
-    () => render({'aria-label': 'Date', label: null})
-  )
-  .add(
-    'quiet no visible label',
-    () => render({isQuiet: true, 'aria-label': 'Date', label: null})
-  )
-  .add(
-    'custom width',
-    () => render({width: 'size-3000'})
-  )
-  .add(
-    'quiet custom width',
-    () => render({isQuiet: true, width: 'size-3000'})
-  )
-  .add(
-    'custom width no visible label',
-    () => render({width: 'size-3000', label: null, 'aria-label': 'Date'})
-  )
-  .add(
-    'custom width, labelPosition=side',
-    () => render({width: 'size-3000', labelPosition: 'side'})
-  )
-  .add(
-    'description',
-    () => render({description: 'Help text'})
-  )
-  .add(
-    'errorMessage',
-    () => render({errorMessage: 'Enter a date after today', validationState: 'invalid'})
-  )
-  .add(
-    'invalid with time',
-    () => render({validationState: 'invalid', granularity: 'minute', defaultValue: parseDateTime('2021-03-14T08:45')})
-  )
-  .add(
-    'contextual help',
-    () => render({contextualHelp: (
+export const AllEvents: DatePickerStory = {
+  ...Default,
+  args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp'),  onOpenChange: action('onOpenChange')},
+  storyName: 'all the events'
+};
+
+export const ContextualHelpStory: DatePickerStory = {
+  ...Default,
+  args: {
+    contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
         <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
       </ContextualHelp>
-    )})
-  )
-  .add(
-    'shouldFlip: false',
-    () => render({shouldFlip: false})
-  );
+    )
+  },
+  storyName: 'contextual help'
+};
 
 function render(props = {}) {
   return (
     <Example
       label="Date"
-      onChange={action('change')}
       maxWidth="calc(100vw - 40px)"
       {...props} />
   );
@@ -312,7 +364,7 @@ function ControlledExample(props) {
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">
-      <Example label="Controlled" {...props} value={value} onChange={chain(setValue, action('onChange'))} />
+      <Example label="Controlled" {...props} value={value} onChange={chain(setValue, props?.onChange)} />
       <ActionButton onPress={() => setValue(new CalendarDate(2020, 2, 3))}>Change value</ActionButton>
       <ActionButton onPress={() => setValue(null)}>Clear</ActionButton>
     </Flex>

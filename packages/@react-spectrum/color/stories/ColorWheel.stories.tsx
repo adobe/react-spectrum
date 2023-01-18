@@ -12,49 +12,53 @@
 
 import {action} from '@storybook/addon-actions';
 import {ColorWheel} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@adobe/react-spectrum';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('ColorWheel', module)
-  .add(
-    'default',
-    () => <ColorWheel defaultValue="hsl(0, 100%, 50%)')" onChange={action('change')} />
-  )
-  .add(
-    'disabled',
-    () => <ColorWheel isDisabled defaultValue="hsl(0, 100%, 50%)" />
-  )
-  .add(
-    'custom size',
-    () => {
-      let [size, setSize] = useState('size-2400');
-      return (<Flex direction="column" alignItems="center" gap="size-200">
-        <Flex direction="row">
-          <button onClick={() => setSize('size-2400')}>size-2400</button>
-          <button onClick={() => setSize('size-5000')}>size-5000</button>
-          <button onClick={() => setSize('50vh')}>50vh</button>
-        </Flex>
-        <ColorWheel defaultValue="hsl(0, 100%, 50%)" size={size} />
-      </Flex>);
+export type ColorWheelStory = ComponentStoryObj<typeof ColorWheel>;
+
+export default {
+  title: 'ColorWheel',
+  component: ColorWheel,
+  excludeStories: ['ControlledHSL'],
+  args: {
+    onChange: action('onChange'),
+    onChangeEnd: action('onChangeEnd')
+  },
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    onChangeEnd: {
+      table: {
+        disable: true
+      }
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    size: {
+      control: 'text'
     }
+  }
+} as ComponentMeta<typeof ColorWheel>;
+
+export const Default: ColorWheelStory = {
+  args: {defaultValue: 'hsl(0, 100%, 50%)'},
+  render: (args) => <ColorWheel {...args} />
+};
+
+export const Controlled: ColorWheelStory = {
+  render: (args) => (
+    <Flex gap={'size-500'} direction="row" alignItems="center">
+      <ControlledHSL {...args} />
+    </Flex>
   )
-  .add(
-    'controlled',
-    () => {
-      let [color, setColor] = useState(parseColor('hsl(0, 100%, 50%)'));
-      let colorCSS = color?.toString('css');
-      return (<Flex gap={'size-500'} direction="row" alignItems="center">
-        <ColorWheel onChange={setColor} value={color} />
-        <div style={{width: '50px', height: '50px', backgroundColor: colorCSS, border: '1px solid black'}} />
-      </Flex>);
-    }
-  )
-  .add(
-    'controlled hsl',
-    () => <Flex gap={'size-500'} direction="row" alignItems="center"><ControlledHSL onChangeEnd={action('onChangeEnd')} /></Flex>
-  );
+};
 
 export function ControlledHSL(props) {
   let [color, setColor] = useState(props.defaultValue || parseColor('hsl(0, 100%, 50%)'));

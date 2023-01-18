@@ -33,9 +33,12 @@ export interface TableColumnResizeStateProps<T> {
   /** Callback that is invoked when the resize event is ended. */
   onColumnResizeEnd?: (key: Key) => void
 }
-export interface TableColumnResizeState {
-  /** Trigger a resize and recalculation. */
-  onColumnResize: (key: Key, width: number) => void,
+export interface TableColumnResizeState<T> {
+  /**
+   * Called to update the state that a resize event has occurred.
+   * Returns the new widths for all columns based on the resized column.
+   **/
+  onColumnResize: (key: Key, width: number) => Map<Key, ColumnSize>,
   /** Callback for when onColumnResize has started. */
   onColumnResizeStart: (key: Key) => void,
   /** Callback for when onColumnResize has ended. */
@@ -47,11 +50,15 @@ export interface TableColumnResizeState {
   /** Gets the current maxWidth for the specified column. */
   getColumnMaxWidth: (key: Key) => number,
   /** Currently calculated widths for all columns. */
-  widths: Map<Key, number>
+  widths: Map<Key, number>,
+  /** Key of the currently resizing column. */
+  resizingColumn: Key | null,
+  /** A reference to the table state. */
+  tableState: TableState<T>
 }
 
 
-export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState {
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState<T> {
   let {
     getDefaultWidth,
     getDefaultMinWidth,
@@ -118,13 +125,15 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
       columnLayout.getColumnMinWidth(key),
     getColumnMaxWidth: (key: Key) =>
       columnLayout.getColumnMaxWidth(key),
-    widths: columnWidths
+    widths: columnWidths,
+    tableState: state
   }), [
     columnLayout,
     resizingColumn,
     onColumnResize,
     onColumnResizeStart,
     onColumnResizeEnd,
-    columnWidths
+    columnWidths,
+    state
   ]);
 }
