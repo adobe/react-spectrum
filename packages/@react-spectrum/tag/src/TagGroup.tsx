@@ -21,12 +21,17 @@ import {ListCollection} from '@react-stately/list';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {
+  /** The label to display on the action button.  */
+  actionLabel?: string,
+  /** Handler that is called when the action button is pressed. */
+  onAction?: () => void
+}
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -35,6 +40,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     onRemove,
     maxRows,
     children,
+    actionLabel,
+    onAction,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -50,7 +57,10 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
       : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
+  // Remove onAction from props so it doesn't make it into useGridList.
+  delete props.onAction;
   let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -63,7 +73,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
 
         let tags = [...currDomRef.children];
-        let button = currContainerRef.querySelector('button');
+        let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
@@ -84,14 +94,14 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           index++;
         }
 
-        // Remove tags until there is space for the collapse button on the last row.
-        let buttonWidth = button.getBoundingClientRect().width;
+        // Remove tags until there is space for the collapse button and action button (if present) on the last row.
+        let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
         let end = direction === 'ltr' ? 'right' : 'left';
         let containerEnd = currContainerRef.getBoundingClientRect()[end];
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
         let availableWidth = containerEnd - lastTagEnd;
         for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth >= buttonWidth || index <= 1 || index >= state.collection.size) {
+          if (availableWidth >= buttonsWidth || index <= 1 || index >= state.collection.size) {
             break;
           }
           availableWidth += tagWidth;
@@ -132,6 +142,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     setIsCollapsed(prevCollapsed => !prevCollapsed);
   };
 
+  let showActions = tagState.showCollapseButton || (actionLabel && onAction);
+
   return (
     <FocusScope>
       <div
@@ -155,13 +167,33 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             </Tag>
           ))}
         </div>
-        {tagState.showCollapseButton &&
-          <ActionButton
-            isQuiet
-            onPress={handlePressCollapse}
-            UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-            {isCollapsed ? stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) : stringFormatter.format('hideButtonLabel')}
-          </ActionButton>
+        {showActions &&
+          <div
+            role="group"
+            id={actionsId}
+            aria-label={stringFormatter.format('actions')}
+            aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+            className={classNames(styles, 'spectrum-Tags-actions')}>
+            {tagState.showCollapseButton &&
+              <ActionButton
+                isQuiet
+                onPress={handlePressCollapse}
+                UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                {isCollapsed ?
+                  stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
+                  stringFormatter.format('hideButtonLabel')
+                }
+              </ActionButton>
+            }
+            {actionLabel && onAction &&
+              <ActionButton
+                isQuiet
+                onPress={onAction}
+                UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                {actionLabel}
+              </ActionButton>
+            }
+          </div>
         }
       </div>
     </FocusScope>

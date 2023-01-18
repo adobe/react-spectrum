@@ -17,7 +17,6 @@ import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -26,10 +25,9 @@ import userEvent from '@testing-library/user-event';
 
 
 describe('DialogTrigger', function () {
-  let matchMedia;
   let warnMock;
+  let windowSpy;
   beforeAll(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers('legacy');
   });
   afterAll(() => {
@@ -38,7 +36,7 @@ describe('DialogTrigger', function () {
   });
 
   beforeEach(() => {
-    matchMedia = new MatchMediaMock();
+    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
     if (process.env.STRICT_MODE) {
@@ -57,7 +55,6 @@ describe('DialogTrigger', function () {
       });
     }
 
-    matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
 
     if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
@@ -187,7 +184,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -214,7 +211,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -696,7 +693,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
