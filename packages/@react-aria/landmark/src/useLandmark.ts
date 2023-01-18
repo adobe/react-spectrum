@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
-import {MutableRefObject, useCallback, useEffect, useState} from 'react';
+import {RefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -26,11 +26,11 @@ export interface LandmarkAria {
 }
 
 type Landmark = {
-  ref: MutableRefObject<Element>,
+  ref: RefObject<Element>,
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: FocusableElement,
-  focus: (direction: 'forward' | 'backward') => void,
+  focus?: (direction: 'forward' | 'backward') => void,
   blur: () => void
 };
 
@@ -68,7 +68,7 @@ class LandmarkManager {
   }
 
   private focusLandmark(landmark: Element, direction: 'forward' | 'backward') {
-    this.landmarks.find(l => l.ref.current === landmark)?.focus(direction);
+    this.landmarks.find(l => l.ref.current === landmark)?.focus?.(direction);
   }
 
   /**
@@ -89,7 +89,7 @@ class LandmarkManager {
     if (!this.isListening) {
       this.setup();
     }
-    if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
+    if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref) || !newLandmark.ref.current) {
       return;
     }
 
@@ -130,7 +130,7 @@ class LandmarkManager {
     }
   }
 
-  public removeLandmark(ref: MutableRefObject<Element>) {
+  public removeLandmark(ref: RefObject<Element>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
     if (this.landmarks.length === 0) {
       this.teardown();
@@ -173,7 +173,7 @@ class LandmarkManager {
   private closestLandmark(element: Element) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
-    while (!landmarkMap.has(currentElement) && currentElement !== document.body) {
+    while (!landmarkMap.has(currentElement) && currentElement !== document.body && currentElement.parentElement) {
       currentElement = currentElement.parentElement;
     }
     return landmarkMap.get(currentElement);
@@ -222,7 +222,7 @@ class LandmarkManager {
 
     // Skip over hidden landmarks.
     let i = nextLandmarkIndex;
-    while (this.landmarks[nextLandmarkIndex].ref.current.closest('[aria-hidden]')) {
+    while (this.landmarks[nextLandmarkIndex].ref.current?.closest('[aria-hidden]')) {
       nextLandmarkIndex += backward ? -1 : 1;
       if (wrapIfNeeded()) {
         return undefined;
@@ -258,7 +258,7 @@ class LandmarkManager {
       if (e.altKey) {
         let main = this.getLandmarkByRole('main');
         if (main && document.contains(main.ref.current)) {
-          this.focusLandmark(main.ref.current, 'forward');
+          this.focusLandmark(main.ref.current as HTMLElement, 'forward');
         }
         return;
       }
@@ -274,7 +274,7 @@ class LandmarkManager {
 
       // Otherwise, focus the landmark itself
       if (document.contains(nextLandmark.ref.current)) {
-        this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
+        this.focusLandmark(nextLandmark.ref.current as HTMLElement, backward ? 'backward' : 'forward');
       }
     }
   }
@@ -319,7 +319,7 @@ class LandmarkManager {
  * @param props - Props for the landmark.
  * @param ref - Ref to the landmark.
  */
-export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<FocusableElement>): LandmarkAria {
+export function useLandmark(props: AriaLandmarkProps, ref: RefObject<FocusableElement>): LandmarkAria {
   const {
     role,
     'aria-label': ariaLabel,
@@ -354,7 +354,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
 
   useEffect(() => {
     if (isLandmarkFocused) {
-      ref.current.focus();
+      ref.current?.focus();
     }
   }, [isLandmarkFocused, ref]);
 

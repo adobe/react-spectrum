@@ -13,7 +13,7 @@
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
@@ -44,28 +44,28 @@ const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (prop
 const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
 function Main(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return <nav aria-label="Rainbow lookout"  ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
   return <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
 function Search(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
@@ -317,12 +317,18 @@ function IframeExample() {
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
     let window = iframe.contentWindow;
-    let document = window.document;
+    let document = window?.document;
+    if (!window || !document) {
+      return;
+    }
 
-    let prevFocusedElement = null;
-    window.addEventListener('react-aria-landmark-navigation', (e: CustomEvent) => {
+    let prevFocusedElement: HTMLElement | null = null;
+    window.addEventListener('react-aria-landmark-navigation', ((e: CustomEvent) => {
       e.preventDefault();
-      let el = document.activeElement;
+      if (!window || !document) {
+        return;
+      }
+      let el = document.activeElement as HTMLElement;
       if (el !== document.body) {
         prevFocusedElement = el;
       }
@@ -336,14 +342,14 @@ function IframeExample() {
       });
 
       setTimeout(() => {
-        document.body.removeAttribute('data-react-aria-top-layer');
+        document?.body.removeAttribute('data-react-aria-top-layer');
       }, 100);
-    });
+    }) as EventListener);
 
     // When the iframe is re-focused, restore focus back inside where it was before.
     window.addEventListener('focus', () => {
       if (prevFocusedElement) {
-        prevFocusedElement.focus();
+        prevFocusedElement?.focus();
         prevFocusedElement = null;
       }
     });
@@ -351,20 +357,21 @@ function IframeExample() {
     // Move focus to first or last landmark when we receive a message from the parent page.
     window.addEventListener('message', e => {
       if (e.data.type === 'landmark-navigation') {
-        document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+        document?.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
       }
     });
   };
 
+  let ref = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
     let onMessage = (e: MessageEvent) => {
       let iframe = ref.current;
       if (e.data.type === 'landmark-navigation') {
         // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
-        iframe.focus();
+        iframe?.focus();
 
         // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
-        iframe.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+        iframe?.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
       }
     };
 
@@ -372,12 +379,11 @@ function IframeExample() {
     return () => window.removeEventListener('message', onMessage);
   }, []);
 
-  let ref = useRef(null);
   let {landmarkProps} = useLandmark({
     role: 'main',
     focus(direction) {
       // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
-      ref.current.contentWindow.postMessage({
+      ref.current?.contentWindow?.postMessage({
         type: 'landmark-navigation',
         direction
       });

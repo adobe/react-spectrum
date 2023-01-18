@@ -30,7 +30,7 @@ function InputButton(props: InputButtonProps) {
     value = 'Test'
   } = props;
 
-  let ref = useRef();
+  let ref = useRef(null);
   let {buttonProps, isPressed} = useButton({...props, elementType: 'input'}, ref);
 
   return (
