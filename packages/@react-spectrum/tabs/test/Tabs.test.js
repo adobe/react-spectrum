@@ -645,7 +645,6 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
-    console.log('start')
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
