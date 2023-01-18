@@ -21,6 +21,10 @@ import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableView, TableBody, TableHeader} from '@react-spectrum/table';
 import {Flex} from '@react-spectrum/layout';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -498,6 +502,71 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonTable aria-label="Pokemon table with row actions and checkbox selection" selectionMode="multiple" onAction={key => alert(`Opening item ${key}...`)} />
   <PokemonTable aria-label="Pokemon table with row actions and highlight selection" selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
 </Flex>
+```
+
+### Action bar <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+An [Action bar](ActionBar.html) can be used when a user needs to perform actions on one or more rows at the same time.
+
+```tsx example keepIndividualImports
+import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+
+function Example() {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([1]));
+
+  return (
+    <ActionBarContainer height="size-5000">
+      <TableView
+        aria-label="TableView with ActionBar"
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={setSelectedKeys}
+        height="size-3000">
+        <TableHeader columns={columns}>
+          {column => <Column key={column.uid}>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionBar
+        isEmphasized
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        onClearSelection={() => setSelectedKeys(new Set())}
+        onAction={(key) => alert(`Action: ${key}`)}>
+        <Item key="edit" textValue="Edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy" textValue="Copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete" textValue="Delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
 ```
 
 ## Sorting
