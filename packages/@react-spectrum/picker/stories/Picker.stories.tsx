@@ -112,27 +112,22 @@ export default {
       control: 'text'
     },
     isDisabled: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     labelAlign: {
       control: 'radio',
-      defaultValue: 'start',
       options: ['end', 'start']
     },
     labelPosition: {
       control: 'radio',
-      defaultValue: 'top',
       options: ['side', 'top']
     },
     necessityIndicator: {
       control: 'radio',
-      defaultValue: 'icon',
       options: ['icon', 'label']
     },
     isRequired: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     validationState: {
       control: {
@@ -141,8 +136,7 @@ export default {
       }
     },
     isQuiet: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     width: {
       control: {
@@ -157,12 +151,10 @@ export default {
       }
     },
     isLoading: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     autoFocus: {
-      control: 'boolean',
-      defaultValue: false
+      control: 'boolean'
     },
     isOpen: {
       control: 'boolean'
