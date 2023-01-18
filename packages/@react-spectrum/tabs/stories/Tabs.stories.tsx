@@ -251,17 +251,19 @@ storiesOf('Tabs', module)
     }
   )
   .add(
-    'Tab 1 controlled TabList item',
+    'changing tab titles',
     () => {
       let [tab1Text, setTab1Text] = useState('Tab 1');
+      let [tab2Text, setTab2Text] = useState('Tab 2');
 
       return (
         <Flex minHeight={400} minWidth={400} direction="column">
-          <TextField label="Tab Title" value={tab1Text} onChange={setTab1Text} />
+          <TextField label="Tab1 Title" value={tab1Text} onChange={setTab1Text} />
+          <TextField label="Tab2 Title" value={tab2Text} onChange={setTab2Text} />
           <Tabs maxWidth={500}>
             <TabList>
               <Item>{tab1Text}</Item>
-              <Item>Tab 2</Item>
+              <Item>{tab2Text}</Item>
             </TabList>
             <TabPanels>
               <Item>Tab 1 Content</Item>
