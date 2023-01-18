@@ -1,0 +1,279 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import Anatomy from './ActionBarAnatomy.svg';
+import docs from 'docs:@react-spectrum/actionbar';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/actionbar/package.json';
+
+```jsx import
+import {ActionBar, ActionBarContainer, Item} from '@react-spectrum/actionbar';
+import {ListView} from '@react-spectrum/list';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import {Flex} from '@react-spectrum/layout';
+import {Text} from '@react-spectrum/text';
+import {TableView, TableHeader, TableBody, Row, Column, Cell} from '@react-spectrum/table';
+```
+
+---
+category: Toolbars
+keywords: [actionbar, selection, actions, collections, toolbar]
+after_version: 3.1.0
+---
+
+# ActionBar
+
+<PageDescription>{docs.exports.ActionBar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ActionBar, ActionBarContainer, Item']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/action-bar/'}
+  ]} />
+
+## Example
+```tsx example
+function Example() {
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
+  return (
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        isEmphasized
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<Example />
+```
+
+## Content
+<Anatomy role="img" aria-label="Action bar anatomy diagram, showing a close button, item counter, and action group." />
+
+An ActionBar is a companion component intended to facilitate bulk actions on selected items within a collection component. It consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
+elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported as seen below. See the [collection components](../react-stately/collections.html)
+docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
+
+```tsx example
+function Example() {
+  let barItems = [
+    {key: 'edit', label: 'Edit'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'delete', label: 'Delete'}
+  ];
+
+  let listItems = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
+  return (
+    <ActionBarContainer height={300} maxWidth="size-6000">
+      <ListView items={listItems} aria-label="ListView with action bar, dynamic collection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        items={barItems}
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}
+        isEmphasized>
+        {item => (
+          <Item key={item.key}>
+            {item.label}
+          </Item>
+        )}
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<Example />
+```
+
+### Accessibility
+The contents of the ActionBar should follow the same accessibility guidelines as ActionGroup's items, see the [ActionGroup docs](./ActionGroup.html#accessibility) for more details.
+
+### Internationalization
+To internationalize an ActionBar, the content provided to all child items should be localized. A localized string for the selection count and clear button `aria-label` will be provided
+automatically. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ActionBar is automatically flipped.
+
+## Events
+Use the `onClearSelection` prop as a callback to handle when the clear button in the ActionBar is pressed. Additionally, the `onAction` prop can be used as a callback for when the user
+presses any of the buttons in the ActionBar's ActionGroup. The `key` from the pressed button will be passed into the callback.
+
+The following example clears row selection within the TableView when the clear button is pressed and alerts the user as to what
+action is being taken on the selected rows when the ActionButtons are pressed.
+
+```tsx example
+function ActionBarActions(props) {
+  // Same bar items, table columns, and table rows as example above...
+  ///- begin collapse -///
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+
+  ];
+  let barItems = [
+    {key: 'edit', label: 'Edit'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'delete', label: 'Delete'}
+  ];
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  ///- end collapse -///
+  return (
+    <ActionBarContainer height="size-5000">
+      <TableView aria-label="Table with action bar and controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
+        <TableHeader columns={columns}>
+          {column => (
+            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              {columnKey => <Cell>{item[columnKey]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <ActionBar
+        items={barItems}
+        isEmphasized
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        /*- begin highlight -*/
+        onClearSelection={() => {
+          setSelectedKeys(new Set());
+        }}
+        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        /*- end highlight -*/>
+        {item => (
+          <Item key={item.key}>
+            {item.label}
+          </Item>
+        )}
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+```
+
+## Props
+
+### ActionBarContainer props
+<PropTable component={docs.exports.ActionBarContainer} links={docs.links} style={{marginBottom: '40px'}} />
+
+### ActionBar props
+<PropTable component={docs.exports.ActionBar} links={docs.links} />
+
+## Visual options
+
+### isEmphasized
+`isEmphasized` should be applied to the ActionBar when it should call attention, such as when floating in a TableView. It should be omitted if the ActionBar should blend in
+with the rest of the UI, directing a user’s focus to elsewhere in a view.
+
+```tsx example
+function Example({isEmphasized}) {
+  let items = [
+    {key: 0, name: 'Adobe Photoshop'},
+    {key: 1, name: 'Adobe Illustrator'},
+    {key: 2, name: 'Adobe XD'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+
+  return (
+    <ActionBarContainer height={300} width="size-5000">
+      <ListView items={items} aria-label={`ListView with${isEmphasized ? ' emphasized' : ''} action bar`} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        {(item) => (
+          <Item>
+            {item.name}
+          </Item>
+        )}
+      </ListView>
+      <ActionBar
+        /*- begin highlight -*/
+        isEmphasized={isEmphasized}
+        /*- end highlight -*/
+        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onClearSelection={() => setSelectedKeys(new Set([]))}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="copy">
+          <Copy />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+<Flex direction="row" gap="size-200">
+  <Example />
+  <Example isEmphasized />
+</Flex>
+```
