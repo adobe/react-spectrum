@@ -46,6 +46,7 @@
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-stately/utils",
           "./packages/@react-types/a",
           "./packages/@react-types/button",
           "./packages/@react-types/checkbox",

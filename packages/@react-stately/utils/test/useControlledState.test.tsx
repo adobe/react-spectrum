@@ -18,7 +18,7 @@ import userEvent from '@testing-library/user-event';
 describe('useControlledState tests', function () {
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -65,13 +65,15 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
+  // @deprecated - ignore TS
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('defaultValue');
       return 'newValue';
@@ -109,7 +111,7 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled setValue behavior', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState('controlledValue', 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() => useControlledState<string>('controlledValue', 'defaultValue', onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -127,6 +129,7 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
+  // @deprecated - ignore TS
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -135,6 +138,7 @@ describe('useControlledState tests', function () {
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('controlledValue');
       return 'newValue';
@@ -145,6 +149,7 @@ describe('useControlledState tests', function () {
 
     onChangeSpy.mockClear();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('controlledValue');
       return 'controlledValue';
@@ -155,6 +160,7 @@ describe('useControlledState tests', function () {
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320');
   });
 
+  // @deprecated - ignore TS
   it('can handle controlled callback setValue behavior after prop change', () => {
     let onChangeSpy = jest.fn();
     let propValue = 'controlledValue';
@@ -167,6 +173,7 @@ describe('useControlledState tests', function () {
     propValue = 'updated';
     rerender();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
       return 'newValue';
@@ -177,6 +184,7 @@ describe('useControlledState tests', function () {
 
     onChangeSpy.mockClear();
 
+    // @ts-ignore
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
       return 'updated';
@@ -193,12 +201,12 @@ describe('useControlledState tests', function () {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result, rerender} = renderHook(
-      ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
+      ({value, defaultValue, onChange}) => useControlledState<string>(value, defaultValue, onChange),
       {
         initialProps: {
-          value: 'controlledValue',
-          defaultValue: 'defaultValue',
-          onChange: onChangeSpy
+          value: 'controlledValue' as string | undefined | null,
+          defaultValue: 'defaultValue' as string | undefined | null,
+          onChange: onChangeSpy as (val: string | undefined | null) => void
         }
       }
     );
@@ -216,9 +224,9 @@ describe('useControlledState tests', function () {
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {
         initialProps: {
-          value: undefined,
-          defaultValue: 'defaultValue',
-          onChange: onChangeSpy
+          value: undefined as string | undefined | null,
+          defaultValue: 'defaultValue' as string | undefined | null,
+          onChange: onChangeSpy as (val: string | undefined | null) => void
         }
       }
     );

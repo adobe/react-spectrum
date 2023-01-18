@@ -13,11 +13,11 @@
 import {useCallback, useRef, useState} from 'react';
 
 export function useControlledState<T>(
-  value: T,
-  defaultValue: T,
-  onChange: (value: T, ...args: any[]) => void
-): [T, (value: T, ...args: any[]) => void]  {
-  let [stateValue, setStateValue] = useState(value || defaultValue);
+  value?: T | null,
+  defaultValue?: T | null,
+  onChange?: (value: T | undefined | null, ...args: any[]) => void
+): [T | undefined | null, (value: T | undefined | null, ...args: any[]) => void]  {
+  let [stateValue, setStateValue] = useState<T | undefined | null>(value || defaultValue);
   let ref = useRef(value !== undefined);
   let wasControlled = ref.current;
   let isControlled = value !== undefined;
