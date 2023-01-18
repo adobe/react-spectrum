@@ -32,7 +32,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let y = scrollView.scrollTop;
 
   // Account for top/left border offsetting the scroll top/Left
-  let {borderTopWidth, borderLeftWidth} = window.getComputedStyle(scrollView);
+  let {borderTopWidth, borderLeftWidth} = getComputedStyle(scrollView);
   let borderAdjustedX = scrollView.scrollLeft + parseInt(borderLeftWidth, 10);
   let borderAdjustedY = scrollView.scrollTop + parseInt(borderTopWidth, 10);
   // Ignore end/bottom border via clientHeight/Width instead of offsetHeight/Width
