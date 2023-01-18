@@ -57,7 +57,8 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
     onAction,
     onClearSelection,
     selectedItemCount,
-    isOpen
+    isOpen,
+    items
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -100,6 +101,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
         )}>
         <div className={classNames(styles, 'react-spectrum-ActionBar-bar')}>
           <ActionGroup
+            items={items}
             aria-label={stringFormatter.format('actions')}
             isQuiet
             staticColor={isEmphasized ? 'white' : undefined}
@@ -131,7 +133,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
 const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;
 
 /**
- * TODO: Add description of component here.
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
  */
 const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionBar as ActionBar};
