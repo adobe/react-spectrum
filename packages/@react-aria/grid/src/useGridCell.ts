@@ -121,7 +121,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
-          scrollIntoViewport(focusable, getScrollParent(ref.current));
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
@@ -137,7 +137,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'rtl') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, getScrollParent(ref.current));
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -145,7 +145,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : last(walker);
             if (focusable) {
               focusSafely(focusable);
-              scrollIntoViewport(focusable, getScrollParent(ref.current));
+              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -164,7 +164,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
-          scrollIntoViewport(focusable, getScrollParent(ref.current));
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
@@ -175,7 +175,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'ltr') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, getScrollParent(ref.current));
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -183,7 +183,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : walker.firstChild() as FocusableElement;
             if (focusable) {
               focusSafely(focusable);
-              scrollIntoViewport(focusable, getScrollParent(ref.current));
+              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }
         }

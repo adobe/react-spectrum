@@ -18,16 +18,38 @@ export function setScrollPrevented(value: boolean) {
   isScrollPrevented = value;
 }
 
+interface ScrollOpts {
+  scrollView: HTMLElement
+}
+
+/**
+ * Scrolls `scrollView` so that `element` is visible.
+ * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+ * but doesn't affect parents above `scrollView`.
+ * @deprecated
+ */
+export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement);
 /**
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
-  let offsetX = relativeOffset(scrollView, element, 'left');
-  let offsetY = relativeOffset(scrollView, element, 'top');
-  let width = element.offsetWidth;
-  let height = element.offsetHeight;
+export function scrollIntoView(element: HTMLElement, opts: ScrollOpts);
+export function scrollIntoView(element: HTMLElement, opts: HTMLElement | ScrollOpts) {
+  let scrollView;
+  let targetElement;
+  if ('scrollView' in opts) {
+    scrollView = opts.scrollView;
+    targetElement = element;
+  } else {
+    scrollView = element;
+    targetElement = opts;
+  }
+
+  let offsetX = relativeOffset(scrollView, targetElement, 'left');
+  let offsetY = relativeOffset(scrollView, targetElement, 'top');
+  let width = targetElement.offsetWidth;
+  let height = targetElement.offsetHeight;
   let x = scrollView.scrollLeft;
   let y = scrollView.scrollTop;
 
@@ -77,7 +99,16 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
   return sum;
 }
 
-export function scrollIntoViewport(targetElement: Element, containingElement?: Element) {
+interface ScrollIntoViewportOpts {
+  containingElement?: Element
+}
+
+/**
+ * Scrolls `scrollView` so that `element` is visible.
+ * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+ * but doesn't affect parents above `scrollView`.
+ */
+export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoViewportOpts) {
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
   if (!isScrollPrevented) {
     let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
@@ -88,7 +119,7 @@ export function scrollIntoViewport(targetElement: Element, containingElement?: E
     let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
     // Account for sub pixel differences from rounding
     if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
-      containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
+      opts?.containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
       targetElement.scrollIntoView?.({block: 'nearest'});
     }
   } else {
@@ -96,7 +127,7 @@ export function scrollIntoViewport(targetElement: Element, containingElement?: E
     let scrollParent = getScrollParent(targetElement);
     // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
     while (targetElement && scrollParent && targetElement !== root && scrollParent !== root) {
-      scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
+      scrollIntoView(targetElement as HTMLElement, {scrollView: scrollParent as HTMLElement});
       targetElement = scrollParent;
       scrollParent = getScrollParent(targetElement);
     }

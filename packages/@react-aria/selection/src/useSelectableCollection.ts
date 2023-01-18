@@ -311,7 +311,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection
         focusWithoutScrolling(element);
-        scrollIntoView(scrollRef.current, element);
+        scrollIntoView(element, {scrollView: scrollRef.current});
       }
     }
   };
@@ -359,8 +359,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        scrollIntoView(scrollRef.current, element);
-        scrollIntoViewport(element, ref.current);
+        scrollIntoView(element, {scrollView: scrollRef.current});
+        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
   }, [isVirtualized, scrollRef, manager.focusedKey, ref]);

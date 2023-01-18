@@ -92,20 +92,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
-          scrollIntoViewport(focusable, getScrollParent(ref.current));
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, getScrollParent(ref.current));
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
-              scrollIntoViewport(lastElement, getScrollParent(ref.current));
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -120,19 +120,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
-          scrollIntoViewport(focusable, getScrollParent(ref.current));
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, getScrollParent(ref.current));
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
-              scrollIntoViewport(lastElement, getScrollParent(ref.current));
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }

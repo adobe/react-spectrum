@@ -148,7 +148,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
         // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
         // syncing is a bit delayed compared to when scrollToItem is fired.
         raf = requestAnimationFrame(() => {
-          scrollIntoViewport(document.activeElement, ref.current);
+          scrollIntoViewport(document.activeElement, {containingElement: ref.current});
         });
       }
     }
