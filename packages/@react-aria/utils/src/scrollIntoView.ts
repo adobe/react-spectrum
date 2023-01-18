@@ -26,15 +26,7 @@ interface ScrollOpts {
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
- * @deprecated
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement);
-/**
- * Scrolls `scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `scrollView`.
- */
-export function scrollIntoView(element: HTMLElement, opts: ScrollOpts);
 export function scrollIntoView(element: HTMLElement, opts: HTMLElement | ScrollOpts) {
   let scrollView;
   let targetElement;
