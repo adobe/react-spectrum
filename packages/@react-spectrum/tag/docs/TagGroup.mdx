@@ -114,7 +114,13 @@ function Example() {
 
   return (
     <Flex width={500}>
-      <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
+      <TagGroup
+        items={items}
+        /*- begin highlight -*/
+        allowsRemoving
+        onRemove={removeItem}
+        /*- end highlight -*/
+        aria-label="Removable TagGroup example">
         {item => <Item>{item.name}</Item>}
       </TagGroup>
     </Flex>
@@ -127,7 +133,12 @@ function Example() {
 TagGroup supports an `onAction` handler that, when used with the `actionLabel` prop, will add an action button at the end of the tags that can be used to perform a custom action.
 
 ```tsx example
-<TagGroup actionLabel="Clear" onAction={() => alert('Clear action pressed.')} aria-label="TagGroup with action">
+<TagGroup
+  /*- begin highlight -*/
+  actionLabel="Clear"
+  onAction={() => alert('Clear action pressed.')}
+  /*- end highlight -*/
+  aria-label="TagGroup with action">
   <Item>Adobe Photoshop</Item>
   <Item>Adobe InDesign</Item>
   <Item>Adobe AfterEffects</Item>
@@ -177,7 +188,11 @@ TagGroup supports a `maxRows` prop that will limit the number of rows initially 
 
 ```tsx example
 <View maxWidth="size-3400" minHeight="size-3400" padding="size-150" borderWidth="thin" borderColor="dark" borderRadius="medium">
-  <TagGroup maxRows={3} aria-label="Static TagGroup items example">
+  <TagGroup
+    /*- begin highlight -*/
+    maxRows={3}
+    /*- end highlight -*/
+    aria-label="Static TagGroup items example with maxRows set">
     <Item>Adobe Photoshop</Item>
     <Item>Adobe InDesign</Item>
     <Item>Adobe AfterEffects</Item>
