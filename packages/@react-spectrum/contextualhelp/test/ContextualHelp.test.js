@@ -21,6 +21,7 @@ import {theme} from '@react-spectrum/theme-default';
 describe('ContextualHelp', function () {
   beforeAll(() => {
     jest.useFakeTimers();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
   });
   afterAll(() => {
     jest.clearAllMocks();

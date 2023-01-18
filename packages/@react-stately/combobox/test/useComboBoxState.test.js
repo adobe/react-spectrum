@@ -124,6 +124,22 @@ describe('useComboBoxState tests', function () {
       expect(onInputChange).toHaveBeenCalledWith('hellow');
     });
 
+    it('does not change selection on close', () => {
+      let initialProps = defaultProps;
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.open();
+      });
+      act(() => {
+        result.current.selectionManager.setFocusedKey(1);
+      });
+      act(() => {
+        result.current.close();
+      });
+      expect(result.current.selectedKey).not.toBe(1);
+    });
+
     it('starts blank if no (default) value', function () {
       let initialProps = {...defaultProps};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});

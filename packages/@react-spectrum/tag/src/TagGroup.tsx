@@ -21,7 +21,7 @@ import {ListCollection} from '@react-stately/list';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
@@ -59,7 +59,8 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
-  let {tagGroupProps, tagGroupActionsProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let {tagGroupProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows > 0) {
@@ -167,7 +168,12 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           ))}
         </div>
         {showActions &&
-          <div className={classNames(styles, 'spectrum-Tags-actions')} {...tagGroupActionsProps}>
+          <div
+            role="group"
+            id={actionsId}
+            aria-label={stringFormatter.format('actions')}
+            aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+            className={classNames(styles, 'spectrum-Tags-actions')}>
             {tagState.showCollapseButton &&
               <ActionButton
                 isQuiet

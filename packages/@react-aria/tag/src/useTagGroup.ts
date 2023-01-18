@@ -11,9 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
@@ -21,13 +19,10 @@ import {TagKeyboardDelegate} from './TagKeyboardDelegate';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   /** Props for the tag grouping element. */
-  tagGroupProps: DOMAttributes,
-  /** Props for an optional group of actions. */
-  tagGroupActionsProps: DOMAttributes
+  tagGroupProps: DOMAttributes
 }
 
 export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
@@ -47,9 +42,7 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
  */
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
-  let actionsId = useId();
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
@@ -67,12 +60,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       ...focusWithinProps
-    }),
-    tagGroupActionsProps: gridProps['aria-label'] ? {
-      role: 'group',
-      id: actionsId,
-      'aria-label': stringFormatter.format('actions'),
-      'aria-labelledby': `${gridProps.id} ${actionsId}`
-    } : {}
+    })
   };
 }

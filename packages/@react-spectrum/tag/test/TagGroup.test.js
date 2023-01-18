@@ -574,4 +574,25 @@ describe('TagGroup', function () {
     
     offsetWidth.mockReset();
   });
+
+  it('action group is labelled correctly', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TagGroup
+          aria-label="tag group"
+          actionLabel="Clear"
+          onAction={onClearSpy}>
+          <Item key="1" aria-label="Tag 1">Tag 1</Item>
+          <Item key="2" aria-label="Tag 2">Tag 2</Item>
+          <Item key="3" aria-label="Tag 3">Tag 3</Item>
+          <Item key="4" aria-label="Tag 4">Tag 4</Item>
+        </TagGroup>
+      </Provider>
+    );
+
+    let actionGroup = getByRole('group');
+    let tagGroup = getByRole('grid');
+    expect(actionGroup).toHaveAttribute('aria-label', 'Actions');
+    expect(actionGroup).toHaveAttribute('aria-labelledby', `${tagGroup.id} ${actionGroup.id}`);
+  });
 });
