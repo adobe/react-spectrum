@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import React, {useState} from 'react';
@@ -123,29 +124,25 @@ export const MaxRowsOnRemove: TagGroupStory = {
   storyName: 'maxRows + onRemove'
 };
 
-function OnRemoveExample(props) {
-  let [items, setItems] = useState([
-    {id: 1, label: 'Cool Tag 1'},
-    {id: 2, label: 'Another cool tag'},
-    {id: 3, label: 'This tag'},
-    {id: 4, label: 'What tag?'},
-    {id: 5, label: 'This tag is cool too'},
-    {id: 6, label: 'Shy tag'}
-  ]);
-
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
-  };
-
-  return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...props}>
+export const WithAvatar: TagGroupStory = {
+  args: {items: [{key: '1', label: 'Cool Person 1'}, {key: '2', label: 'Cool Person 2'}]},
+  render: (args) => (
+    <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
-        <Item>{item.label}</Item>
+        <Item key={item.key} textValue={item.label}>
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Text>{item.label}</Text>
+        </Item>
       )}
     </TagGroup>
-  );
-}
+  ),
+  storyName: 'with avatar'
+};
+
+export const WithAvatarOnRemove: TagGroupStory = {
+  render: (args) => <OnRemoveExample withAvatar {...args} />,
+  storyName: 'with avatar + onRemove'
+};
 
 export const WithAction: TagGroupStory = {
   args: {onAction: action('clear'), actionLabel: 'Clear'},
@@ -161,4 +158,32 @@ export const WithActionAndMaxRows: TagGroupStory = {
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'with action and maxRows'
 };
+
+function OnRemoveExample(props) {
+  let {withAvatar, ...otherProps} = props;
+  let [items, setItems] = useState([
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'},
+    {id: 3, label: 'This tag'},
+    {id: 4, label: 'What tag?'},
+    {id: 5, label: 'This tag is cool too'},
+    {id: 6, label: 'Shy tag'}
+  ]);
+
+  let onRemove = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+    action('onRemove')(key);
+  };
+
+  return (
+    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.label}>
+          {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </TagGroup>
+  );
+}
 
