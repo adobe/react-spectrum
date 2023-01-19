@@ -1,4 +1,8 @@
 {
+  "columnResizer": "Sarakekoon muuttaja",
   "loading": "Ladataan…",
-  "loadingMore": "Ladataan lisää…"
+  "loadingMore": "Ladataan lisää…",
+  "resizeColumn": "Muuta sarakkeen kokoa",
+  "sortAscending": "Lajittelujärjestys: nouseva",
+  "sortDescending": "Lajittelujärjestys: laskeva"
 }

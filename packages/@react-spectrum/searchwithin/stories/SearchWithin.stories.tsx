@@ -11,23 +11,24 @@
  */
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker} from '@react-spectrum/picker';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchWithin} from '../';
 import {SpectrumPickerProps} from '@react-types/select';
+import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 
 export default {
   title: 'SearchWithin'
 };
 
-function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="This is label" {...props}>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
         <Item key="all">All</Item>
         <Item key="campaigns">Campaigns</Item>
@@ -39,7 +40,7 @@ function render(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchF
   );
 }
 
-function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
+function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, searchFieldProps: SpectrumSearchFieldProps = {}, pickerProps: Omit<SpectrumPickerProps<object>, 'children'> = {}) {
   return (
     <SearchWithin label="Test label" {...props}>
       <Picker defaultSelectedKey="all" {...pickerProps} onSelectionChange={action('selectionChange')}>
@@ -49,7 +50,7 @@ function renderReverse(props: Omit<SpectrumSearchWithinProps, 'children'> = {}, 
         <Item key="tags">Tags</Item>
         <Item key="long">This item is very long and word wraps poorly</Item>
       </Picker>
-      <SearchField placeholder="Search" {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
+      <SearchField {...searchFieldProps} onChange={action('change')} onSubmit={action('submit')} />
     </SearchWithin>
   );
 }
@@ -61,7 +62,7 @@ function ResizeSearchWithinApp(props) {
     <Flex direction="column" gap="size-200" alignItems="start">
       <div style={{width: state ? '300px' : '400px'}}>
         <SearchWithin label="Test label" {...props} width="100%">
-          <SearchField placeholder="Search" onChange={action('change')} onSubmit={action('submit')} />
+          <SearchField onChange={action('change')} onSubmit={action('submit')} />
           <Picker defaultSelectedKey="all" onSelectionChange={action('selectionChange')}>
             <Item key="all">All</Item>
             <Item key="campaigns">Campaigns</Item>
@@ -141,3 +142,9 @@ export const ReverseChildrenOrder = () => renderReverse({});
 export const ResizeSearchWithin = () => <ResizeSearchWithinApp />;
 
 export const ResizeSearchWithinNoLabel = () => <ResizeSearchWithinApp label={null} />;
+
+export const iconFilter = () => render({}, {icon: <Filter />});
+iconFilter.storyName = 'icon: Filter';
+
+export const iconNull = () => render({}, {icon: null});
+iconNull.storyName = 'icon: null';

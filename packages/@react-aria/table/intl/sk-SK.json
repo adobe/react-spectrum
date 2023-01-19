@@ -1,6 +1,7 @@
 {
   "ascending": "vzostupne",
   "ascendingSort": "zoradené zostupne podľa stĺpca {columnName}",
+  "columnSize": "Počet pixelov: {value}",
   "descending": "zostupne",
   "descendingSort": "zoradené zostupne podľa stĺpca {columnName}",
   "select": "Vybrať",

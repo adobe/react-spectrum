@@ -18,6 +18,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
+import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import {storiesOf} from '@storybook/react';
@@ -73,6 +74,18 @@ storiesOf('Tabs', module)
     () => renderWithIcons({orientation: 'vertical', density: 'compact'})
   )
   .add(
+    'isEmphasized: true',
+    () => render({isEmphasized: true})
+  )
+  .add(
+    'isEmphasized: true, icons, isQuiet: true',
+    () => renderWithIcons({isEmphasized: true, isQuiet: true})
+  )
+  .add(
+    'isEmphasized: true, orientation: vertical',
+    () => render({isEmphasized: true, orientation: 'vertical'})
+  )
+  .add(
     'disable all tabs',
     () => render({isDisabled: true}))
   .add(
@@ -110,6 +123,10 @@ storiesOf('Tabs', module)
   .add(
     'collapse behavior, density: compact, isQuiet',
     () => <DynamicTabs isQuiet density="compact" />
+  )
+  .add(
+    'collapse behavior, isEmphasized: true',
+    () => <DynamicTabs isEmphasized />
   )
   .add(
     'orientation flip',
@@ -232,6 +249,12 @@ storiesOf('Tabs', module)
         </Tabs>
       );
     }
+  )
+  .add(
+    'changing selection programatically',
+    () => (
+      <ControlledSelection />
+    )
   );
 
 
@@ -423,9 +446,11 @@ let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) =
   };
 
   let removeTab = () => {
-    let newTabs = [...tabs];
-    newTabs.pop();
-    setTabs(newTabs);
+    if (tabs.length > 1) {
+      let newTabs = [...tabs];
+      newTabs.pop();
+      setTabs(newTabs);
+    }
   };
 
   return (
@@ -532,7 +557,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
               </Item>
             )}
           </TabList>
-          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'}}>
             <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
               <Item key="add">
                 <Text>Add Tab</Text>
@@ -543,6 +568,40 @@ let DynamicTabsWithDecoration = (props = {}) => {
             </ActionGroup>
           </Flex>
         </Flex>
+        <TabPanels>
+          {(item: DynamicTabItem) => (
+            <Item key={item.name}>
+              <Heading>{item.children}</Heading>
+              <Text>
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
+                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+              </Text>
+            </Item>
+          )}
+        </TabPanels>
+      </Tabs>
+    </div>
+  );
+};
+
+let ControlledSelection = () => {
+  let [selectedKey, setSelectedKey] = useState<React.Key>('Tab 1');
+
+  return (
+    <div style={{width: '80%'}}>
+      <Picker label="Set selected tab" selectedKey={selectedKey} onSelectionChange={setSelectedKey} items={items}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <Tabs aria-label="Tab example" items={items} selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+        <TabList>
+          {(item: DynamicTabItem) => (
+            <Item key={item.name}>
+              {item.icon}
+              <Text>{item.name}</Text>
+            </Item>
+          )}
+        </TabList>
         <TabPanels>
           {(item: DynamicTabItem) => (
             <Item key={item.name}>

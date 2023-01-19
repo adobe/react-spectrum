@@ -12,6 +12,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
@@ -93,7 +94,8 @@ function CustomOnSubmit(props) {
     if (value) {
       setSearchTerm(value);
     } else if (key) {
-      setSearchTerm(options.find(o => o.id === key).name);
+      let term = options.find(o => o.id === key)?.name;
+      setSearchTerm(term ? term : '');
     }
   };
 
@@ -166,9 +168,6 @@ validationStateInvalidIsQuiet.storyName = 'validationState: invalid, isQuiet';
 export const validationStateValidIsQuiet = (props) => <Default {...props} validationState="valid" isQuiet />;
 validationStateValidIsQuiet.storyName = 'validationState: valid, isQuiet';
 
-export const placeholder = (props) => <Default {...props} placeholder="Search for an item..." />;
-placeholder.storyName = 'placeholder';
-
 export const autoFocus = (props) => <Default {...props} autoFocus />;
 autoFocus.storyName = 'autoFocus: true';
 
@@ -186,3 +185,9 @@ customWidth6000.storyName = 'custom width: size-6000';
 
 export const customOnSubmit = (props) => <CustomOnSubmit {...props} />;
 customOnSubmit.storyName = 'custom onSubmit';
+
+export const iconFilter = (props) => <Default {...props} icon={<Filter />} />;
+iconFilter.storyName = 'icon: Filter';
+
+export const iconNull = (props) => <Default {...props} icon={null} />;
+iconNull.storyName = 'icon: null';

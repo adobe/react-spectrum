@@ -12,9 +12,11 @@
 
 import {Collection} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
+import {useHasTabbableChild} from './useHasTabbableChild';
 import {VirtualizerItem} from './VirtualizerItem';
 
 interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
@@ -124,12 +126,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
+  let isFocusWithin = useRef(false);
   useEffect(() => {
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
 
-    if (focusedKey !== lastFocusedKey.current) {
+    // Only scroll the focusedKey into view if the modality is not pointer to avoid jumps in position when clicking/pressing tall items.
+    // Exception made if focus isn't within the virtualizer (e.g. opening a picker via click should scroll the selected item into view)
+    let modality = getInteractionModality();
+    if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
@@ -140,12 +146,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     lastFocusedKey.current = focusedKey;
   }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
-  let isFocusWithin = useRef(false);
+  // Persist the focusedKey and prevent it from being removed from the DOM when scrolled out of view.
+  virtualizer.persistedKeys = useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]);
+
   let onFocus = useCallback((e: FocusEvent) => {
     // If the focused item is scrolled out of view and is not in the DOM, the collection
     // will have tabIndex={0}. When tabbing in from outside, scroll the focused item into view.
     // Ignore focus events that bubble through portals (e.g. focus that happens on a menu popover child of the virtualizer)
-    if (!isFocusWithin.current && ref.current.contains(e.target)) {
+    // Don't scroll focused key into view if modality is pointer to prevent sudden jump in position (e.g. CardView).
+    let modality = getInteractionModality();
+    if (!isFocusWithin.current && ref.current.contains(e.target) && modality !== 'pointer') {
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
@@ -169,13 +179,21 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     }
   });
 
+  let hasTabbableChild = useHasTabbableChild({
+    isEmpty: virtualizer.collection.size === 0,
+    hasRenderedAnything: virtualizer.contentSize.height > 0 || virtualizer.contentSize.width > 0
+  }, ref);
+
   // Set tabIndex to -1 if the focused view is in the DOM, otherwise 0 so that the collection
   // itself is tabbable. When the collection receives focus, we scroll the focused item back into
   // view, which will allow it to be properly focused. If using virtual focus, don't set a
   // tabIndex at all so that VoiceOver on iOS 14 doesn't try to move real DOM focus to the element anyway.
   let tabIndex: number;
   if (!shouldUseVirtualFocus) {
-    tabIndex = focusedView ? -1 : 0;
+    // When there is no focusedView the default tabIndex is 0. We include logic for empty collections too.
+    // For collections that are empty, but have a link in the empty children we want to skip focusing this
+    // and let focus move to the link similar to link moving to children.
+    tabIndex = focusedView || hasTabbableChild ? -1 : 0;
   }
 
   return {

@@ -1,0 +1,341 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import colorTypes from 'docs:@react-types/color/src/index.d.ts';
+import docs from 'docs:@react-spectrum/color';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Layout} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
+
+export default Layout;
+
+```jsx import
+import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
+import {Flex, Grid} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {View} from '@react-spectrum/view';
+```
+
+---
+category: Color
+keywords: [color area]
+---
+
+# ColorArea
+
+<PageDescription>{docs.exports.ColorArea.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorArea']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/color-area/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ColorArea defaultValue="#7f0000" />
+```
+
+## Value
+
+A ColorArea requires either an uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively.
+The value provided to either of these props should be a color string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
+`xChannel` and `yChannel` props may also be provided to specify which color channels the color area should display, and the direction of each channel in the color gradient.
+This must be one of the channels included in the color value, for example, for RGB colors, the "red", "green", and "blue" channels are available.
+For a full list of supported channels, see the [Props](#props) table below.
+
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string
+so that `value`'s type remains consistent.
+
+```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [value, setValue] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <Flex gap="size-300" wrap>
+      <div>
+        <Label id="hsl-uncontrolled-id">x: Saturation, y: Lightness (uncontrolled)</Label>
+        <ColorArea
+          aria-labelledby="hsl-uncontrolled-id"
+          defaultValue={value}
+          xChannel="saturation"
+          yChannel="lightness" />
+      </div>
+      <div>
+        <Label id="hsl-controlled-id">x: Saturation, y: Lightness (controlled)</Label>
+        <ColorArea
+          aria-labelledby="hsl-controlled-id"
+          value={value}
+          onChange={setValue}
+          xChannel="saturation"
+          yChannel="lightness" />
+      </div>
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+By default, ColorArea uses an `aria-label` for the localized string "Color Picker",
+which labels the visually hidden `<input>` elements for the two color channels, or on mobile devices,
+the group containing them. If you wish to override this with a more specific label, an `aria-label` or
+`aria-labelledby` prop may be passed to further identify the element to assistive technologies.
+For example, for a ColorArea that adjusts a background color you might pass the `aria-label` prop,
+"Background color", which ColorArea will return as the `aria-label` prop "Background color, Color picker". If you provide your own
+`aria-label` or `aria-labelledby`, be sure to localize the string or labeling element appropriately.
+
+Note that like [ColorWheel](ColorWheel.html), ColorArea does not include an integrated visible label or a `label` prop.
+Use `aria-labelledby` to label the ColorArea using the IDREF assigned to a visible label.
+
+```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+
+<Flex gap="size-300" wrap alignItems="flex-end">
+  <ColorArea
+    aria-label="Background color"
+    defaultValue="hsl(0, 100%, 50%)"
+    xChannel="saturation"
+    yChannel="lightness" />
+  <div>
+    <Label
+      id="hsl-aria-labelledby-id">Background color</Label>
+    <ColorArea
+      aria-labelledby="hsl-aria-labelledby-id"
+      defaultValue="hsl(0, 100%, 50%)"
+      xChannel="saturation"
+      yChannel="lightness" />
+  </div>
+</Flex>
+```
+
+### Accessibility
+
+#### Role description
+
+In order to communicate to a screen reader user that the ColorArea adjusts in two dimensions,
+ColorArea provides an `aria-roledescription`, using the localized string "2D Slider", on each of the
+visually hidden `<input>` elements.
+
+#### Value formatting
+
+The `aria-valuetext` of each `<input>` element within the ColorArea is formatted according to the user's locale automatically.
+It will include the localized color channel name and current value for each channel, with the channel name
+and value that the `<input>` element controls coming before the channel name and value for the adjacent
+`<input>` element. For example, for an RGB ColorArea where the `xChannel` is "blue", the `yChannel`
+is "green", when the current selected color is yellow (`rgb(255, 255, 0)`), the `<input>` representing the
+blue channel will have `aria-valuetext` to announce as "Blue: 0, Green: 255", and the `<input>`
+representing the green channel will have `aria-valuetext` to announce as "Green: 255, Blue: 0".
+
+### Internationalization
+
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ColorArea is automatically flipped. As mentioned previously,
+ColorArea automatically uses the current locale to format the `aria-valuetext` for each of the `<input>` element with the channel name and current value.
+
+## Events
+
+ColorArea supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorArea's handle is dragged, and `onChangeEnd`
+is triggered when the user stops dragging the handle. Both events receive a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object
+as a parameter.
+
+The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorArea's value.
+
+```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+
+  return (
+    <div>
+      <ColorArea
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+      <pre>Current value: {currentValue.toString('hsl')}</pre>
+      <pre>Final value: {finalValue.toString('hsl')}</pre>
+    </div>
+  );
+}
+```
+
+## Creating a color picker
+
+To build a fully functional color picker, combine a ColorArea, which adjusts two channels of a color value stored in state, with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](useColorWheel.html), for
+adjusting the value of the third channel within the color space for the color value stored in state.
+The current color space for a color can be returned using the `color.getColorSpace` method.
+An array of channel names for a color can be returned using the `color.getColorChannels` method.
+To get a localized channel name to use as a label, you can use the `color.getChannelName` method.
+
+
+### RGBA
+
+This example shows how you could build an RGB color picker using a color area and color sliders bound to the same
+color value in state. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} />
+function is used to parse the initial color from a hex value, stored in state. The `value` and `onChange` props
+of both the ColorArea and ColorSlider are used to make the components controlled, so that they both update when the
+color is modified.
+
+```tsx example
+import {ColorArea, ColorSlider} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('#ff00ff'));
+  let [redChannel, greenChannel, blueChannel] = color.getColorChannels();
+  return (
+    <fieldset style={{border: 0}}>
+      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <Flex direction="column">
+        <ColorArea xChannel={redChannel} yChannel={greenChannel} value={color} onChange={setColor} />
+        <ColorSlider channel={blueChannel} value={color} onChange={setColor} />
+        <ColorSlider channel="alpha" value={color} onChange={setColor} />
+        <p>Current value: {color.toString('css')}</p>
+      </Flex>
+    </fieldset>
+  );
+}
+```
+
+### HSLA
+
+This example shows how to build a similar color picker to the one above, using HSLA colors instead,
+and a ColorWheel instead of a ColorSlider for the Hue channel.
+
+```tsx example
+import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
+import {Flex, Grid} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+import {View} from '@react-spectrum/view';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
+  let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
+  return (
+    <fieldset style={{border: 0}}>
+      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <Flex
+        direction="column">
+        <View
+          position="relative"
+          width="size-2400">
+          <Grid
+            position="absolute"
+            justifyContent="center"
+            alignContent="center"
+            width="100%"
+            height="100%">
+            <ColorArea
+              xChannel={saturationChannel}
+              yChannel={lightnessChannel}
+              value={color}
+              onChange={setColor}
+              size="size-1200" />
+          </Grid>
+          <ColorWheel
+            value={color}
+            onChange={setColor}
+            size="size-2400" />
+        </View>
+        <ColorSlider channel="alpha" value={color} onChange={setColor} />
+        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+      </Flex>
+    </fieldset>
+  );
+}
+```
+
+### HSBA
+
+This example shows how to build an HSBA color picker.
+
+```tsx example
+import {ColorArea, ColorSlider, ColorWheel} from '@react-spectrum/color';
+import {Flex, Grid} from '@react-spectrum/layout';
+import {Label} from '@react-spectrum/label';
+import {parseColor} from '@react-stately/color';
+import {View} from '@react-spectrum/view';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
+  let [hueChannel, saturationChannel, brightnessChannel] = color.getColorChannels();
+  return (
+    <fieldset style={{border: 0}}>
+      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <Flex
+        direction="column">
+        <View
+          position="relative"
+          width="size-2400">
+          <Grid
+            position="absolute"
+            justifyContent="center"
+            alignContent="center"
+            width="100%"
+            height="100%">
+            <ColorArea
+              xChannel={saturationChannel}
+              yChannel={brightnessChannel}
+              value={color}
+              onChange={setColor}
+              size="size-1200" />
+          </Grid>
+          <ColorWheel
+            value={color}
+            onChange={setColor}
+            size="size-2400" />
+        </View>
+        <ColorSlider channel="alpha" value={color} onChange={setColor} />
+        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+      </Flex>
+    </fieldset>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorArea} links={docs.links} />
+
+## Visual options
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/color-area/#Disabled)
+
+```tsx example
+import {ColorArea} from '@react-spectrum/color';
+
+<ColorArea defaultValue="#7f0000" isDisabled />
+```
+
+### Custom Size
+[View guidelines](https://spectrum.adobe.com/page/color-area/#Width)
+
+```tsx example
+import {ColorArea} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+
+<Flex direction="column" gap="size-300">
+  <ColorArea defaultValue="#7f0000" size="size-3600" maxWidth="100%" />
+</Flex>
+```

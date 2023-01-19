@@ -12,6 +12,7 @@
 
 import {
   Collection,
+  DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
   LongPressEvent,
@@ -102,7 +103,9 @@ export class SelectionManager implements MultipleSelectionManager {
    * Sets the focused key.
    */
   setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
-    this.state.setFocusedKey(key, childFocusStrategy);
+    if (key == null || this.collection.getItem(key)) {
+      this.state.setFocusedKey(key, childFocusStrategy);
+    }
   }
 
   /**
@@ -132,7 +135,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
     key = this.getKey(key);
     return this.state.selectedKeys === 'all'
-      ? !this.state.disabledKeys.has(key)
+      ? this.canSelectItem(key)
       : this.state.selectedKeys.has(key);
   }
 
@@ -189,6 +192,14 @@ export class SelectionManager implements MultipleSelectionManager {
     return last?.key;
   }
 
+  get disabledKeys(): Set<Key> {
+    return this.state.disabledKeys;
+  }
+
+  get disabledBehavior(): DisabledBehavior {
+    return this.state.disabledBehavior;
+  }
+
   /**
    * Extends the selection to the given key.
    */
@@ -218,7 +229,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
 
       for (let key of this.getKeyRange(toKey, anchorKey)) {
-        if (!this.state.disabledKeys.has(key)) {
+        if (this.canSelectItem(key)) {
           selection.add(key);
         }
       }
@@ -307,7 +318,7 @@ export class SelectionManager implements MultipleSelectionManager {
       keys.delete(key);
       // TODO: move anchor to last selected key...
       // Does `current` need to move here too?
-    } else {
+    } else if (this.canSelectItem(key)) {
       keys.add(key);
       keys.anchorKey = key;
       keys.currentKey = key;
@@ -333,7 +344,11 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    this.state.setSelectedKeys(new Selection([key], key, key));
+    let selection = this.canSelectItem(key)
+      ? new Selection([key], key, key)
+      : new Selection();
+
+    this.state.setSelectedKeys(selection);
   }
 
   /**
@@ -362,7 +377,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let keys: Key[] = [];
     let addKeys = (key: Key) => {
       while (key) {
-        if (!this.state.disabledKeys.has(key)) {
+        if (this.canSelectItem(key)) {
           let item = this.collection.getItem(key);
           if (item.type === 'item') {
             keys.push(key);
@@ -470,5 +485,9 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     return true;
+  }
+
+  isDisabled(key: Key) {
+    return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
   }
 }

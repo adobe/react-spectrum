@@ -10,9 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import fs from 'fs';
+import Module from 'module';
 import path from 'path';
 import React from 'react';
 import resolve from 'resolve';
+import resolver from '../../../../lib/jestResolver';
 import vm from 'vm';
 
 export function evaluate(code, filename) {
@@ -22,15 +25,24 @@ export function evaluate(code, filename) {
   let ctx = {
     React,
     require(id) {
-      let resolved = resolve.sync(id, {
-        basedir: path.dirname(filename),
-        extensions: ['.js', '.json', '.ts', '.tsx']
-      });
-
-      return require(resolved);
+      return require(Module._resolveFilename(id, {filename}));
     }
   };
 
   vm.createContext(ctx);
   return vm.runInContext(code, ctx);
 }
+
+Module._resolveFilename = (request, parent) => {
+  if (Module.builtinModules.includes(request)) {
+    return request;
+  }
+
+  let resolved = resolver(request, {
+    basedir: path.dirname(parent.filename),
+    extensions: ['.js', '.json', '.ts', '.tsx'],
+    defaultResolver: (request, opts) => resolve.sync(request, opts)
+  });
+
+  return fs.realpathSync(resolved);
+};

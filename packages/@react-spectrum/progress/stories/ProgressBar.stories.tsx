@@ -10,17 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {number, withKnobs} from '@storybook/addon-knobs';
 import {ProgressBar} from '../';
 import React, {CSSProperties} from 'react';
 import {storiesOf} from '@storybook/react';
-
-const sliderOptions = {
-  range: true,
-  min: 0,
-  max: 100,
-  step: 1
-};
 
 const formatOptions = {
   style: 'currency',
@@ -37,11 +29,22 @@ const grayedBoxStyle: CSSProperties = {
 };
 
 storiesOf('Progress/ProgressBar', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .addDecorator(withKnobs)
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {value: 32},
+    argTypes: {
+      value: {
+        control: {
+          type: 'range',
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => render()
+    (args) => render(args)
   )
   .add(
     'value: 50',
@@ -53,24 +56,15 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'size: S',
-    () => {
-      const value = number('Value', 50, sliderOptions);
-      return render({value, size: 'S'});
-    }
+    args => render({size: 'S', ...args})
   )
   .add(
     'showValueLabel: true',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({showValueLabel: true, value});
-    }
+    args =>  render({showValueLabel: true, ...args})
   )
   .add(
     'showValueLabel: false',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({showValueLabel: false, value});
-    }
+    args => render({showValueLabel: false, ...args})
   )
   .add(
     'valueLabel: 1 of 4',
@@ -78,56 +72,35 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'Using number formatOptions with currency style',
-    () => {
-      const value = number('Value', 60, sliderOptions);
-      return render({
-        showValueLabel: true,
-        value,
-        formatOptions
-      });
-    }
+    args => render({
+      ...args,
+      showValueLabel: true,
+      formatOptions
+    })
   )
   .add(
     'no visible label',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({label: null, 'aria-label': 'Loading…', value});
-    }
+    args => render({label: null, 'aria-label': 'Loading…', ...args})
   )
   .add(
     'labelPosition: side',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, labelPosition: 'side'});
-    }
+    args => render({labelPosition: 'side', ...args})
   )
   .add(
     'labelPosition: top',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, labelPosition: 'top'});
-    }
+    args => render({labelPosition: 'top', ...args})
   )
   .add(
     'long label',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, label: 'Super long progress bar label. Sample label copy. Loading...'});
-    }
+    args => render({label: 'Super long progress bar label. Sample label copy. Loading...', ...args})
   )
   .add(
     'long label, labelPosition: side',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({value, labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...'});
-    }
+    args => render({labelPosition: 'side', label: 'Super long progress bar label. Sample label copy. Loading...', ...args})
   )
   .add(
     'isIndeterminate: true',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return render({isIndeterminate: true, value});
-    }
+    args => render({isIndeterminate: true, ...args})
   )
   .add(
     'isIndeterminate: true, size: S',
@@ -135,14 +108,11 @@ storiesOf('Progress/ProgressBar', module)
   )
   .add(
     'variant: overBackground',
-    () => {
-      const value = number('Value', 32, sliderOptions);
-      return (
-        <div style={grayedBoxStyle}>
-          {render({variant: 'overBackground', value})}
-        </div>
-      );
-    }
+    args => (
+      <div style={grayedBoxStyle}>
+        {render({variant: 'overBackground', ...args})}
+      </div>
+    )
   )
   .add(
     'parent width 100%',

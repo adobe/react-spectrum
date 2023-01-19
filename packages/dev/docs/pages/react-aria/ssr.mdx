@@ -61,7 +61,7 @@ function MyComponent() {
 
 ## Locale selection
 
-When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
+When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale-specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
 
 ```tsx
 import {SSRProvider} from '@react-aria/ssr';

@@ -1,0 +1,17 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 43.5px) / 2) 10px" height="43.5" viewBox="0 0 72 43.5">
+  <g id="useHover" transform="translate(-1875 -1117)">
+    <g id="Button" transform="translate(1875 1117)">
+      <rect id="Placement_Area" data-name="Placement Area" width="72" height="32" fill="red" opacity="0"/>
+      <g id="Background" fill="var(--anatomy-gray-300)" stroke="var(--anatomy-gray-400)" stroke-width="2">
+        <rect width="72" height="32" rx="16" stroke="none"/>
+        <rect x="1" y="1" width="70" height="30" rx="15" fill="none"/>
+      </g>
+    </g>
+    <g id="Group_6" data-name="Group 6" transform="translate(1865.748 930.169)">
+      <g id="Cursors" transform="translate(61 203)">
+        <path id="Path_63877" data-name="Path 63877" d="M2,2V26.032a.366.366,0,0,0,.626.259l6.7-6.7H18.7a.366.366,0,0,0,.259-.626Z" transform="translate(-0.534 -0.534)" fill="var(--anatomy-gray-900)"/>
+        <path id="Path_63878" data-name="Path 63878" d="M19.415,17.342,2.5.429A1.466,1.466,0,0,0,1.465,0H1.1A1.1,1.1,0,0,0,0,1.1V25.386a1.911,1.911,0,0,0,1.6,1.93,1.821,1.821,0,0,0,1.526-.523L9.4,20.519h8.768a1.833,1.833,0,0,0,1.817-1.58A1.894,1.894,0,0,0,19.415,17.342Zm-1.246,1.712H8.794l-6.7,6.7a.359.359,0,0,1-.256.108.366.366,0,0,1-.369-.367V1.466L18.428,18.428a.366.366,0,0,1-.259.626Z" transform="translate(0.001 0)" fill="var(--anatomy-gray-50)" opacity="0.65"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-loader-circle-medium-track-fill-color: var(--spectrum-accent-color-900);
+}
+
 .spectrum-CircleLoader-track {
   border-color: var(--spectrum-loader-circle-medium-track-color);
 }

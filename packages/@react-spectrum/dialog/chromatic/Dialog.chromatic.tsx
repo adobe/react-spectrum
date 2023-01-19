@@ -30,18 +30,23 @@ import {TextField} from '@react-spectrum/textfield';
 // Dialogs are really only meant to have one visible at a time, so we must make individual stories for each one
 // might be good to eventually make the stories display-able without the trigger that imposes this restriction
 storiesOf('Dialog', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
   .add(
     'default',
     () => render({})
   )
   .add(
-  'isDismissable',
-  () => render({isDismissable: true})
+    'isDismissable',
+    () => render({isDismissable: true})
   )
   .add(
     'long content',
     () => renderLongContent({})
+  )
+  .add(
+    'long content, mobile viewport',
+    () => renderLongContent({}),
+    {chromatic: {viewports: [320]}}
   )
   .add(
     'with hero',
@@ -76,6 +81,11 @@ storiesOf('Dialog', module)
     () => renderWithForm({type: 'fullscreenTakeover'})
   )
   .add(
+    'fullscreenTakeover form, mobile viewport',
+    () => renderWithForm({type: 'fullscreenTakeover'}),
+    {chromatic: {viewports: [320]}}
+  )
+  .add(
     'three buttons',
     () => renderWithThreeButtons({})
   )
@@ -84,12 +94,72 @@ storiesOf('Dialog', module)
     () => renderWithThreeButtonsVertical({})
   )
   .add(
+    'three buttons, footer',
+    () => renderWithThreeButtons({showFooter: true})
+  )
+  .add(
+    'three buttons, footer, extraLabel',
+    () => renderWithThreeButtons({showFooter: true, extraLabel: ': This is the extra text'})
+  )
+  .add(
     'cleared content',
     () => renderWithDividerInContent({})
+  )
+  .add(
+    'extra long footer',
+    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap'})
+  )
+  .add(
+    'showHeader, longer heading and header',
+    () => renderWithOptions({showHeader: true, extraHeadering: ' This is extra text for long heading and header'})
+  )
+  .add(
+    'extra long footer, longer heading and header',
+    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', extraHeadering: ' This is extra text for long heading that wraps to make sure it fills the width'})
+  )
+  .add(
+    'extra long footer, showHeader, longer heading and header',
+    () => renderWithOptions({extraFooterLabel: 'This is all the extra text for a long footer to get it to wrap', showHeader: true, extraHeadering: ' This is extra text for long heading and header'})
+   )
+  .add(
+    'tray',
+    () => renderTriggerProps({type: 'tray'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'popover',
+    () => renderTriggerProps({type: 'popover'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType fullscreenTakeover, modal',
+    () => renderTriggerProps({type: 'modal', mobileType: 'fullscreenTakeover'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType: modal, popover',
+    () => renderTriggerProps({type: 'popover', mobileType: 'modal'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
+  )
+  .add(
+    'mobileType: tray, popover',
+    () => renderTriggerProps({type: 'popover', mobileType: 'tray'}), {
+      chromatic: {viewports: [320, 1200]},
+      chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
+    }
   );
 
+
 storiesOf('Dialog/Alert', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
   .add(
     'destructive',
     () => renderAlert({
@@ -200,6 +270,71 @@ storiesOf('Dialog/Alert', module)
     })
   );
 
+storiesOf('Dialog/Express', module)
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true}})
+  .add(
+    'destructive',
+    () => renderAlert({
+      variant: 'destructive',
+      title: 'Warning Destructive',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'confirmation',
+    () => renderAlert({
+      variant: 'confirmation',
+      title: 'Confirmation Required',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'information',
+    () => renderAlert({
+      variant: 'information',
+      title: 'Informative Alert',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'error',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'warning',
+    () => renderAlert({
+      variant: 'warning',
+      title: 'This is a warning',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'tray',
+    () => renderTriggerProps({type: 'tray'}), {
+      chromatic: {viewports: [320, 1200]}
+    }
+  )
+  .add(
+    'popover',
+    () => renderTriggerProps({type: 'popover'}), {
+      chromatic: {viewports: [320, 1200]}
+    }
+  );
+
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
@@ -207,6 +342,29 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            {!isDismissable &&
+              <ButtonGroup>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </ButtonGroup>}
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderTriggerProps({width = 'auto', isDismissable = undefined, ...triggerProps}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen {...triggerProps}>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog>
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
@@ -359,14 +517,15 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Heading>The Heading</Heading>
+            <Heading>The Heading{props.extraLabel}</Heading>
             <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
+            {props.showFooter && <Footer><Checkbox>I have read and accept{props.extraLabel}</Checkbox></Footer>}
             <ButtonGroup>
               <Button variant="secondary" onPress={close}>Secondary</Button>
-              <Button variant="primary" onPress={close}>Primary</Button>
-              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+              <Button variant="primary" onPress={close}>Primary{props.extraLabel}</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA{props.extraLabel}</Button>
             </ButtonGroup>
           </Dialog>
         )}
@@ -414,6 +573,29 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
                 <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
               </Flex>
             </Content>
+            <ButtonGroup>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithOptions({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading{props.extraHeadering}</Heading>
+            {props.showHeader && <Header>The Header{props.extraHeadering}</Header>}
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            {props.extraFooterLabel && <Footer><Checkbox>I have read and accept{props.extraFooterLabel}</Checkbox></Footer>}
             <ButtonGroup>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>

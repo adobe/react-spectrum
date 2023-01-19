@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
-import {installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -85,7 +84,7 @@ describe('useSelectableCollection', () => {
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
       let {getAllByRole} = render(
         <List selectionMode="multiple" selectionBehavior="replace">
           <Item>Paco de Lucia</Item>

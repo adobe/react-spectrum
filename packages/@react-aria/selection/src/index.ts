@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useSelectableCollection';
-export * from './useSelectableItem';
-export * from './useSelectableList';
-export * from './ListKeyboardDelegate';
-export * from './useTypeSelect';
+export {useSelectableCollection} from './useSelectableCollection';
+export {useSelectableItem} from './useSelectableItem';
+export {useSelectableList} from './useSelectableList';
+export {ListKeyboardDelegate} from './ListKeyboardDelegate';
+export {useTypeSelect} from './useTypeSelect';
+
+export type {AriaSelectableCollectionOptions, SelectableCollectionAria} from './useSelectableCollection';
+export type {AriaSelectableListOptions, SelectableListAria} from './useSelectableList';
+export type {SelectableItemOptions, SelectableItemStates, SelectableItemAria} from './useSelectableItem';
+export type {AriaTypeSelectOptions, TypeSelectAria} from './useTypeSelect';

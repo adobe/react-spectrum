@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+:root {
+  --spectrum-barloader-large-track-fill-color: var(--spectrum-accent-color-900);
+}
+
 .spectrum-BarLoader {
   .spectrum-BarLoader-fill {
     background: var(--spectrum-barloader-large-track-fill-color);

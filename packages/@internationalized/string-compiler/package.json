@@ -1,0 +1,22 @@
+{
+  "name": "@internationalized/string-compiler",
+  "version": "3.0.0",
+  "description": "Localized string compiler for @internationalized/string",
+  "license": "Apache-2.0",
+  "main": "src/stringCompiler.js",
+  "types": "src/stringCompiler.d.ts",
+  "files": [
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "2.0.19"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

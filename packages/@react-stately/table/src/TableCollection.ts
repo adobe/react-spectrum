@@ -20,7 +20,7 @@ interface GridCollectionOptions {
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
-  let columns = [];
+  let columns: GridNode<T>[][] = [];
   let seen = new Map();
   for (let column of columnNodes) {
     let parentKey = column.parentKey;
@@ -47,6 +47,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
 
         // Adjust shifted indices
         for (let i = col.length; i < column.length; i++) {
+          // eslint-disable-next-line max-depth
           if (column[i] && seen.has(column[i])) {
             seen.get(column[i]).index = i;
           }
@@ -90,6 +91,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
             textValue: null
           };
 
+          // eslint-disable-next-line max-depth
           if (row.length > 0) {
             row[row.length - 1].nextKey = placeholder.key;
             placeholder.prevKey = row[row.length - 1].key;
@@ -104,7 +106,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
         }
 
         item.level = i;
-        item.index = colIndex;
+        item.colIndex = colIndex;
         row.push(item);
       }
 
@@ -161,6 +163,7 @@ export class TableCollection<T> extends GridCollection<T> {
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
+  _size: number = 0;
 
   constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
@@ -216,6 +219,7 @@ export class TableCollection<T> extends GridCollection<T> {
     for (let node of nodes) {
       visit(node);
     }
+
     let headerRows = buildHeaderRows(columnKeyMap, columns) as GridNode<T>[];
     headerRows.forEach((row, i) => rows.splice(i, 0, row));
 
@@ -231,6 +235,7 @@ export class TableCollection<T> extends GridCollection<T> {
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
     this.headerRows = headerRows;
+    this._size = [...body.childNodes].length;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
@@ -243,7 +248,7 @@ export class TableCollection<T> extends GridCollection<T> {
   }
 
   get size() {
-    return [...this.body.childNodes].length;
+    return this._size;
   }
 
   getKeys() {

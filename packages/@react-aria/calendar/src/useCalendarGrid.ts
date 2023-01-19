@@ -10,24 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
-import {CalendarGridAria} from './types';
-import {calendarIds, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
-import {CalendarPropsBase} from '@react-types/calendar';
+import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {KeyboardEvent} from 'react';
-import {mergeProps, useDescription, useLabels} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
+import {DOMAttributes} from '@react-types/shared';
+import {hookData, useVisibleRangeDescription} from './utils';
+import {KeyboardEvent, useMemo} from 'react';
+import {mergeProps, useLabels} from '@react-aria/utils';
+import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
-interface CalendarGridProps extends CalendarPropsBase {
+export interface AriaCalendarGridProps {
+  /**
+   * The first date displayed in the calendar grid.
+   * Defaults to the first visible date in the calendar.
+   * Override this to display multiple date grids in a calendar.
+   */
   startDate?: CalendarDate,
+  /**
+   * The last date displayed in the calendar grid.
+   * Defaults to the last visible date in the calendar.
+   * Override this to display multiple date grids in a calendar.
+   */
   endDate?: CalendarDate
 }
 
-export function useCalendarGrid(props: CalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
+export interface CalendarGridAria {
+  /** Props for the date grid element (e.g. `<table>`). */
+  gridProps: DOMAttributes,
+  /** Props for the grid header element (e.g. `<thead>`). */
+  headerProps: DOMAttributes,
+  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
+  weekDays: string[]
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a calendar grid component.
+ * A calendar grid displays a single grid of days within a calendar or range calendar which
+ * can be keyboard navigated and selected by the user.
+ */
+export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
-    isReadOnly = false,
-    isDisabled = false,
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end
   } = props;
@@ -43,30 +64,27 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'PageUp':
         e.preventDefault();
-        if (e.shiftKey) {
-          state.focusPreviousSection();
-        } else {
-          state.focusPreviousPage();
-        }
+        e.stopPropagation();
+        state.focusPreviousSection(e.shiftKey);
         break;
       case 'PageDown':
         e.preventDefault();
-        if (e.shiftKey) {
-          state.focusNextSection();
-        } else {
-          state.focusNextPage();
-        }
+        e.stopPropagation();
+        state.focusNextSection(e.shiftKey);
         break;
       case 'End':
         e.preventDefault();
-        state.focusPageEnd();
+        e.stopPropagation();
+        state.focusSectionEnd();
         break;
       case 'Home':
         e.preventDefault();
-        state.focusPageStart();
+        e.stopPropagation();
+        state.focusSectionStart();
         break;
       case 'ArrowLeft':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
@@ -75,10 +93,12 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'ArrowUp':
         e.preventDefault();
+        e.stopPropagation();
         state.focusPreviousRow();
         break;
       case 'ArrowRight':
         e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
@@ -87,6 +107,7 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
         break;
       case 'ArrowDown':
         e.preventDefault();
+        e.stopPropagation();
         state.focusNextRow();
         break;
       case 'Escape':
@@ -99,24 +120,40 @@ export function useCalendarGrid(props: CalendarGridProps, state: CalendarState |
     }
   };
 
-  let selectedDateDescription = useSelectedDateDescription(state);
-  let descriptionProps = useDescription(selectedDateDescription);
-  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone);
+  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
+  let {ariaLabel, ariaLabelledBy} = hookData.get(state);
   let labelProps = useLabels({
-    'aria-label': visibleRangeDescription,
-    'aria-labelledby': calendarIds.get(state)
+    'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
+    'aria-labelledby': ariaLabelledBy
   });
 
+  let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
+  let {locale} = useLocale();
+  let weekDays = useMemo(() => {
+    let weekStart = startOfWeek(today(state.timeZone), locale);
+    return [...new Array(7).keys()].map((index) => {
+      let date = weekStart.add({days: index});
+      let dateDay = date.toDate(state.timeZone);
+      return dayFormatter.format(dateDay);
+    });
+  }, [locale, state.timeZone, dayFormatter]);
+
   return {
-    gridProps: mergeProps(descriptionProps, labelProps, {
+    gridProps: mergeProps(labelProps, {
       role: 'grid',
-      'aria-readonly': isReadOnly || null,
-      'aria-disabled': isDisabled || null,
+      'aria-readonly': state.isReadOnly || null,
+      'aria-disabled': state.isDisabled || null,
       'aria-multiselectable': ('highlightedRange' in state) || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
-    })
+    }),
+    headerProps: {
+      // Column headers are hidden to screen readers to make navigating with a touch screen reader easier.
+      // The day names are already included in the label of each cell, so there's no need to announce them twice.
+      'aria-hidden': true
+    },
+    weekDays
   };
 }

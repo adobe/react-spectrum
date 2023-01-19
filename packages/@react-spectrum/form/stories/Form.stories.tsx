@@ -16,15 +16,17 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin} from '@react-spectrum/searchwithin';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
@@ -63,16 +65,16 @@ storiesOf('Form', module)
     () => (
       <Form>
         <Flex>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} description="Please enter your first name." />
-          <TextField label="Last Name" placeholder="Smith" flex={1} description="Please enter your last name." />
+          <TextField label="First Name" marginEnd="size-100" flex={1} description="Please enter your first name." />
+          <TextField label="Last Name" flex={1} description="Please enter your last name." />
         </Flex>
-        <TextField label="Street Address" placeholder="123 Any Street" description="Please include apartment or suite number." />
+        <TextField label="Street Address" description="Please include apartment or suite number." />
         <Flex>
-          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
-          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+          <TextField label="City" marginEnd="size-100" flex={1} description="Please enter the city you live in." />
+          <Picker label="State" items={states} marginEnd="size-100" flex={1}>
             {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
-          <TextField label="Zip code" placeholder="12345" flex={1} description="Please enter a five-digit zip code." />
+          <TextField label="Zip code" flex={1} description="Please enter a five-digit zip code." />
         </Flex>
       </Form>
     )
@@ -86,27 +88,27 @@ storiesOf('Form', module)
           <Well role="group" aria-labelledby="billing-legend">
             <h2 id="billing-legend" className={typographyStyles['spectrum-Heading4']}>Billing address</h2>
             <Flex>
-              <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
-              <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+              <TextField autoComplete="billing given-name" name="firstName" isRequired label="First Name" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing family-name" name="lastName" isRequired label="Last Name" flex={1} />
             </Flex>
             <Flex>
-              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+              <TextArea autoComplete="billing street-address" name="streetAddress" isRequired label="Street Address" flex={1} />
             </Flex>
             <Flex>
-              <TextField autoComplete="billing address-level2" name="city" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
-              <Picker autoComplete="billing address-level1" name="state" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+              <TextField autoComplete="billing address-level2" name="city" isRequired label="City" marginEnd="size-100" flex={1} />
+              <Picker autoComplete="billing address-level1" name="state" isRequired label="State" items={states} marginEnd="size-100" flex={1}>
                 {item => <Item key={item.abbr}>{item.name}</Item>}
               </Picker>
-              <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" placeholder="12345" flex={1} />
+              <TextField autoComplete="billing postal-code" name="zip" isRequired label="Zip code" flex={1} />
             </Flex>
             <Flex>
-              <Picker autoComplete="billing country" name="country" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+              <Picker autoComplete="billing country" name="country" isRequired label="Country" items={countries} marginEnd="size-100" flex={1}>
                 {item => <Item key={item.code}>{item.name}</Item>}
               </Picker>
             </Flex>
             <Flex>
-              <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
-              <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing tel" type="tel" name="phone" label="Phone number" marginEnd="size-100" flex={1} />
+              <TextField autoComplete="billing email" type="email" name="email" isRequired label="Email address" marginEnd="size-100" flex={1} />
             </Flex>
           </Well>
           <Well role="group" aria-labelledby="shipping-legend">
@@ -116,27 +118,27 @@ storiesOf('Form', module)
               !checked &&
               <>
                 <Flex>
-                  <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
-                  <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" placeholder="Smith" flex={1} />
+                  <TextField autoComplete="shipping given-name" name="shippingFirstName" isRequired label="First Name" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping family-name" name="shippingLastName" isRequired label="Last Name" flex={1} />
                 </Flex>
                 <Flex>
-                  <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" placeholder="123 Any Street" flex={1} />
+                  <TextArea autoComplete="shipping street-address" name="shippingStreetAddress" isRequired label="Street Address" flex={1} />
                 </Flex>
                 <Flex>
-                  <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
-                  <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+                  <TextField autoComplete="shipping address-level2" name="shippingCity" isRequired label="City" marginEnd="size-100" flex={1} />
+                  <Picker autoComplete="shipping address-level1" name="shippingState" isRequired label="State" items={states} marginEnd="size-100" flex={1}>
                     {item => <Item key={item.abbr}>{item.name}</Item>}
                   </Picker>
-                  <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" placeholder="12345" flex={1} />
+                  <TextField autoComplete="shipping postal-code" name="shippingZip" isRequired label="Zip code" flex={1} />
                 </Flex>
                 <Flex>
-                  <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" placeholder="Select a country" items={countries} marginEnd="size-100" flex={1}>
+                  <Picker autoComplete="shipping country" name="shippingCountry" isRequired label="Country" items={countries} marginEnd="size-100" flex={1}>
                     {item => <Item key={item.code}>{item.name}</Item>}
                   </Picker>
                 </Flex>
                 <Flex>
-                  <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" placeholder="123-456-7890" marginEnd="size-100" flex={1} />
-                  <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" placeholder="me@example.org" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping tel" type="tel" name="shippingPhone" label="Phone number" marginEnd="size-100" flex={1} />
+                  <TextField autoComplete="shipping email" type="email" name="shippingEmail" isRequired label="Email address" marginEnd="size-100" flex={1} />
                 </Flex>
               </>
             }
@@ -182,6 +184,14 @@ storiesOf('Form', module)
     () => render({validationState: 'valid'})
   )
   .add(
+    'validationState: invalid, isQuiet: true',
+    () => render({validationState: 'invalid', isQuiet: true})
+  )
+  .add(
+    'validationState: valid, isQuiet: true',
+    () => render({validationState: 'valid', isQuiet: true})
+  )
+  .add(
     'form with reset',
     () => <FormWithControls />
   )
@@ -198,10 +208,10 @@ storiesOf('Form', module)
           <NumberField label="Inside form" />
         </Form>
         <Form>
-          <TextField label="First Name" placeholder="John" />
+          <TextField label="First Name" />
         </Form>
         <Form>
-          <TextField label="First Name" placeholder="John" />
+          <TextField label="First Name" />
           <NumberField label="Inside form" />
         </Form>
       </Flex>
@@ -223,10 +233,10 @@ function render(props: any = {}) {
         <Item key="snake">Snake</Item>
       </ComboBox>
       <NumberField label="Years lived there" />
-      <Picker label="State" placeholder="Select a state" items={states}>
+      <Picker label="State" items={states}>
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" placeholder="Select a country" items={countries}>
+      <Picker label="Country" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
@@ -243,16 +253,17 @@ function render(props: any = {}) {
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
       <SearchField label="Search" />
-      <SearchWithin label="Search cities">
-        <SearchField placeholder="City" />
-        <Picker label="State" placeholder="Select a state" items={states}>
-          {item => <Item key={item.abbr}>{item.name}</Item>}
-        </Picker>
-      </SearchWithin>
       <Switch>Low power mode</Switch>
-      <TextArea label="Comments" placeholder="How do you feel?" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
-      <TextField label="City" placeholder="San Francisco" />
-      <TextField label="Zip code" placeholder="12345" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TextArea label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <TextField
+        label="City"
+        contextualHelp={(
+          <ContextualHelp>
+            <Heading>What is a segment?</Heading>
+            <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+          </ContextualHelp>
+        )} />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
     </Form>
   );
 }
@@ -269,7 +280,6 @@ function FormWithControls(props: any = {}) {
   let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
   let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
   let [preventDefault, setPreventDefault] = useState(true);
-  let [favoriteColor3, setFavoriteColor3] = useState('green' as Key);
 
   return (
     <Flex>
@@ -282,10 +292,10 @@ function FormWithControls(props: any = {}) {
           }
         }}
         {...props}>
-        <TextField name="first-name" label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
-        <TextField name="last-name" label="Last Name default" placeholder="Smith" defaultValue="world" />
-        <TextField name="street-address" label="Street Address none" placeholder="123 Any Street" />
-        <Picker name="country" label="Country none" placeholder="Select a country" items={countries}>
+        <TextField name="first-name" label="First Name controlled" value={firstName} onChange={setFirstName} />
+        <TextField name="last-name" label="Last Name default" defaultValue="world" />
+        <TextField name="street-address" label="Street Address none" />
+        <Picker name="country" label="Country none" items={countries}>
           {item => <Item key={item.name}>{item.name}</Item>}
         </Picker>
         <Checkbox name="is-hunter" isSelected={isHunter} onChange={setIsHunter}>I am a hunter! controlled</Checkbox>
@@ -308,19 +318,14 @@ function FormWithControls(props: any = {}) {
           <Item key="blue">Blue</Item>
           <Item key="purple">Purple</Item>
         </Picker>
-        <TextArea name="comments-controlled" label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
-        <TextArea name="comments-uncontrolled" label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
-        <SearchWithin label="Search">
-          <SearchField placeholder="Search" />
-          <Picker name="favorite-color3" label="Favorite color searchwithin" selectedKey={favoriteColor3} onSelectionChange={setFavoriteColor3}>
-            <Item key="red">Red</Item>
-            <Item key="orange">Orange</Item>
-            <Item key="yellow">Yellow</Item>
-            <Item key="green">Green</Item>
-            <Item key="blue">Blue</Item>
-            <Item key="purple">Purple</Item>
-          </Picker>
-        </SearchWithin>
+        <TextArea name="comments-controlled" label="Comments" value={howIFeel} onChange={setHowIFeel} />
+        <TextArea name="comments-uncontrolled" label="Comments" defaultValue="hello" />
+        <ComboBox label="Favorite Animal" name="favorite-animal">
+          <Item key="red panda">Red Panda</Item>
+          <Item key="aardvark">Aardvark</Item>
+          <Item key="kangaroo">Kangaroo</Item>
+          <Item key="snake">Snake</Item>
+        </ComboBox>
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
@@ -336,19 +341,19 @@ function FormWithControls(props: any = {}) {
         <Flex direction="column" gap="size-500" marginTop="size-500">
           <label>
             First Name controlled
-            <input type="text" placeholder="John" value={firstName2} onChange={e => setFirstName2(e.target.value)} />
+            <input type="text" value={firstName2} onChange={e => setFirstName2(e.target.value)} />
           </label>
           <label>
             Last Name default
-            <input type="text" placeholder="Smith" defaultValue="world" />
+            <input type="text" defaultValue="world" />
           </label>
           <label>
             Street Address none
-            <input type="text" placeholder="123 Any Street" />
+            <input type="text" />
           </label>
           <label>
             Country none
-            <select name="Country" placeholder="Select a country">
+            <select name="Country">
               {countries.map(item => <option value={item.name}>{item.name}</option>)}
             </select>
           </label>
@@ -403,23 +408,11 @@ function FormWithControls(props: any = {}) {
           </label>
           <label>
             Comments controlled
-            <textarea placeholder="How do you feel?" value={howIFeel2} onChange={e => setHowIFeel2(e.target.value)} />
+            <textarea value={howIFeel2} onChange={e => setHowIFeel2(e.target.value)} />
           </label>
           <label>
             Comments default
-            <textarea placeholder="How do you feel?" defaultValue="hello" />
-          </label>
-          <label>
-            Favorite Color searchwithin
-            <input type="text" placeholder="Search" />
-            <select onChange={e => setFavoriteColor3(e.target.value)}>
-              <option value="red" selected={favoriteColor3 === 'red'}>Red</option>
-              <option value="orange" selected={favoriteColor3 === 'orange'}>Orange</option>
-              <option value="yellow" selected={favoriteColor3 === 'yellow'}>Yellow</option>
-              <option value="green" selected={favoriteColor3 === 'green'}>Green</option>
-              <option value="blue" selected={favoriteColor3 === 'blue'}>Blue</option>
-              <option value="purple" selected={favoriteColor3 === 'purple'}>Purple</option>
-            </select>
+            <textarea defaultValue="hello" />
           </label>
           <ButtonGroup>
             <Button variant="secondary" type="reset">Reset</Button>

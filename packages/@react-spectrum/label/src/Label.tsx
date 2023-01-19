@@ -19,7 +19,7 @@ import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
@@ -41,12 +41,12 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let formatMessage = useMessageFormatter(intlMessages);
-  let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let necessityLabel = isRequired ? stringFormatter.format('(required)') : stringFormatter.format('(optional)');
   let icon = (
     <Asterisk
       UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
-      aria-label={includeNecessityIndicatorInAccessibilityName ? formatMessage('(required)') : undefined} />
+      aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('(required)') : undefined} />
   );
 
   let labelClassNames = classNames(

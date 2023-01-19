@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
-import {CalendarProps, DateValue} from '@react-types/calendar';
+import {AriaCalendarProps, DateValue} from '@react-types/calendar';
+import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {CalendarState} from '@react-stately/calendar';
-import {useCalendarBase} from './useCalendarBase';
 
-export function useCalendar<T extends DateValue>(props: CalendarProps<T>, state: CalendarState): CalendarAria {
+/**
+ * Provides the behavior and accessibility implementation for a calendar component.
+ * A calendar displays one or more date grids and allows users to select a single date.
+ */
+export function useCalendar<T extends DateValue>(props: AriaCalendarProps<T>, state: CalendarState): CalendarAria {
   return useCalendarBase(props, state);
 }

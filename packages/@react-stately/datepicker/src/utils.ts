@@ -27,7 +27,8 @@ interface FormatterOptions {
   hideTimeZone?: boolean,
   granularity?: DatePickerProps<any>['granularity'],
   maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
-  hourCycle?: 12 | 24
+  hourCycle?: 12 | 24,
+  showEra?: boolean
 }
 
 const DEFAULT_FIELD_OPTIONS: FieldOptions = {
@@ -74,6 +75,10 @@ export function getFormatOptions(
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   if (hasTime && options.timeZone && !options.hideTimeZone) {
     opts.timeZoneName = 'short';
+  }
+
+  if (options.showEra && startIdx === 0) {
+    opts.era = 'short';
   }
 
   return opts;

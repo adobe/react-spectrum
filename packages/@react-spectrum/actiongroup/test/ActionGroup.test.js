@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen, within} from '@testing-library/react';
+import {act, fireEvent, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -21,7 +21,6 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
@@ -512,6 +511,19 @@ describe('ActionGroup', function () {
 
     let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('ActionGroup Item allows custom props', function () {
+    let {getAllByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item data-testid="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let item = getAllByRole('button')[0];
+    expect(item).toHaveAttribute('data-testid', 'test');
   });
 
   it('fires onAction when a button is pressed', function () {

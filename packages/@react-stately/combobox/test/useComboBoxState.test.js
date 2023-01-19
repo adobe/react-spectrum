@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useComboBoxState} from '../';
@@ -122,6 +122,22 @@ describe('useComboBoxState tests', function () {
       act(() => result.current.setInputValue('hellow'));
       expect(result.current.inputValue).toBe('hellow');
       expect(onInputChange).toHaveBeenCalledWith('hellow');
+    });
+
+    it('does not change selection on close', () => {
+      let initialProps = defaultProps;
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+
+      act(() => {
+        result.current.open();
+      });
+      act(() => {
+        result.current.selectionManager.setFocusedKey(1);
+      });
+      act(() => {
+        result.current.close();
+      });
+      expect(result.current.selectedKey).not.toBe(1);
     });
 
     it('starts blank if no (default) value', function () {

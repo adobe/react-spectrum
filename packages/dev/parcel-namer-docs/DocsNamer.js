@@ -15,6 +15,10 @@ const path = require('path');
 
 module.exports = new Namer({
   name({bundle, bundleGraph, options}) {
+    if (!process.env.DOCS_ENV) {
+      return null;
+    }
+
     let main = bundle.getMainEntry();
     if (main && main.meta.isMDX) {
       // A docs page. Generate the correct URL for it based on its location.
@@ -29,6 +33,16 @@ module.exports = new Namer({
         return path.join(...parts.slice(4, -1), basename);
       }
 
+      // For @internationalized, group by package name.
+      if (parts[1] === '@internationalized') {
+        return path.join(
+          parts[1].replace(/^@/, ''),
+          parts[2],
+          ...parts.slice(4, -1),
+          basename
+        );
+      }
+
       // For @namespace package files, urls will be /${namespace}/PageName.html
       return path.join(
         parts[1].replace(/^@/, ''),
@@ -40,6 +54,9 @@ module.exports = new Namer({
       let bundleGroup = bundleGraph.getBundleGroupsContainingBundle(bundle)[0];
       let bundleGroupBundles = bundleGraph.getBundlesInBundleGroup(bundleGroup);
       let mainBundle =  bundleGroupBundles.find(b => b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId));
+      if (!mainBundle) {
+        return null;
+      }
       let entry = mainBundle.getEntryAssets().find(a => a.id === bundleGroup.entryAssetId).filePath;
       return path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type;
     } else {

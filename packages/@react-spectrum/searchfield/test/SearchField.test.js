@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let testId = 'test-id';

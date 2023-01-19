@@ -10,23 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelection, Removable, StyleProps} from '@react-types/shared';
-import {ReactChild, ReactElement, ReactNode} from 'react';
+import {CollectionBase, ItemProps, Node} from '@react-types/shared';
+import {Key, RefObject} from 'react';
 
-export interface TagProps extends Removable<ReactChild, void> {
-  children?: ReactNode,
-  icon?: ReactElement,
-  isDisabled?: boolean,
-  validationState?: 'invalid' | 'valid'
+export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
+  /** Whether the TagGroup allows removal of tags. */
+  allowsRemoving?: boolean,
+  /** Called when the user removes a tag.  */
+  onRemove?: (key: Key) => void,
+  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  maxRows?: number
 }
 
-export interface TagGroupProps extends MultipleSelection {
-  children: ReactElement<TagProps> | ReactElement<TagProps>[],
-  isDisabled?: boolean,
-  isReadOnly?: boolean,
-  onRemove?: (items: any[]) => void,
-  validationState?: 'invalid' | 'valid'
+export interface TagProps<T> extends ItemProps<any> {
+  isFocused: boolean,
+  allowsRemoving?: boolean,
+  item: Node<T>,
+  onRemove?: (key: Key) => void,
+  tagRowRef: RefObject<HTMLElement>
 }
-
-export interface SpectrumTagProps extends TagProps, DOMProps, StyleProps {}
-export interface SpectrumTagGroupProps extends TagGroupProps, DOMProps, StyleProps {}

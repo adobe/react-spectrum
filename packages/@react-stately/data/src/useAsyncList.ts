@@ -90,7 +90,7 @@ interface Action<T, C> {
   filterText?: string
 }
 
-interface AsyncListData<T> extends ListData<T> {
+export interface AsyncListData<T> extends ListData<T> {
   /** Whether data is currently being loaded. */
   isLoading: boolean,
   /** If loading data failed, then this contains the error that occurred. */

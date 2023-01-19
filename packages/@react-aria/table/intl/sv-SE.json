@@ -1,6 +1,7 @@
 {
   "ascending": "stigande",
   "ascendingSort": "sorterat på kolumn {columnName} i stigande ordning",
+  "columnSize": "{value} pixlar",
   "descending": "fallande",
   "descendingSort": "sorterat på kolumn {columnName} i fallande ordning",
   "select": "Markera",

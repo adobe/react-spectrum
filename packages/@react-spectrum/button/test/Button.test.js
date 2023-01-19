@@ -12,11 +12,10 @@
 
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical

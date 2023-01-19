@@ -11,8 +11,11 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '../src';
@@ -25,7 +28,13 @@ let states = [
   {isDisabled: true},
   {isReadOnly: true},
   {hideStepper: true},
-  {validationState: ['valid', 'invalid']}
+  {validationState: ['valid', 'invalid']},
+  {contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )}
 ];
 
 let noLabelStates = [
@@ -39,7 +48,7 @@ let noLabelStates = [
     )}
 ];
 
-let combinations = generatePowerset(states);
+let combinations = generatePowerset(states, v => v.contextualHelp && (v.validationState || v.hideStepper || v.isReadOnly));
 
 let combinationsStyles: any[] = [...combinations];
 for (let i = 0; i < noLabelStates.length; i++) {
@@ -113,6 +122,17 @@ const Template: Story<SpectrumNumberFieldProps> = (args) => (
   </Grid>
 );
 
+const TemplateVertical: Story<SpectrumNumberFieldProps> = (args) => (
+  <Grid autoFlow="row" gap="size-300">
+    {combinations.map(c => {
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      if (!key) {
+        key = 'empty';
+      }
+      return <NumberField key={key} {...args} {...c} label={args['aria-label'] ? undefined : key} />;
+    })}
+  </Grid>
+);
 
 const TemplateSmall: Story<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
@@ -146,6 +166,14 @@ PropDefaultValue.args = {...PropDefaults.args, defaultValue: 10};
 export const PropValue = Template.bind({});
 PropValue.storyName = 'value';
 PropValue.args = {...PropDefaults.args, value: 10};
+
+export const PropValueMobileViewport = TemplateVertical.bind({});
+PropValueMobileViewport.storyName = 'value, mobile viewport';
+PropValueMobileViewport.args = {...PropDefaults.args, value: 10};
+PropValueMobileViewport.parameters = {
+  chromatic: {viewports: [320]},
+  chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['large'], disableAnimations: true}
+};
 
 export const PropAriaLabelled = Template.bind({});
 PropAriaLabelled.storyName = 'aria-label';

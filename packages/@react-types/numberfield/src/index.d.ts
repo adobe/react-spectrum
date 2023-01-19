@@ -19,6 +19,7 @@ import {
   RangeInputBase, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
+  TextInputDOMEvents,
   Validation,
   ValueBase
 } from '@react-types/shared';
@@ -31,7 +32,7 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
   decrementAriaLabel?: string,
   /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */

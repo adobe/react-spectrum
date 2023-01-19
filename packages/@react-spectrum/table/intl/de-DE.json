@@ -1,4 +1,8 @@
 {
+  "columnResizer": "Spaltenanpassung",
   "loading": "Laden...",
-  "loadingMore": "Mehr laden ..."
+  "loadingMore": "Mehr laden ...",
+  "resizeColumn": "Spaltengröße ändern",
+  "sortAscending": "Aufsteigend sortieren",
+  "sortDescending": "Absteigend sortieren"
 }

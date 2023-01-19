@@ -1,6 +1,7 @@
 {
   "ascending": "tõusev järjestus",
   "ascendingSort": "sorditud veeru järgi {columnName} tõusvas järjestuses",
+  "columnSize": "{value} pikslit",
   "descending": "laskuv järjestus",
   "descendingSort": "sorditud veeru järgi {columnName} laskuvas järjestuses",
   "select": "Vali",

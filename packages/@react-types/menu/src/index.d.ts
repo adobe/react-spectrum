@@ -14,8 +14,14 @@ import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, M
 import {Key, ReactElement} from 'react';
 import {OverlayTriggerProps} from '@react-types/overlays';
 
+export type MenuTriggerType = 'press' | 'longPress';
+
 export interface MenuTriggerProps extends OverlayTriggerProps {
-  // trigger?: 'press' | 'longPress',
+  /**
+   * How the menu is triggered.
+   * @default 'press'
+   */
+  trigger?: MenuTriggerType,
   /**
    * Alignment of the menu relative to the trigger.
    * @default 'start'
@@ -51,7 +57,9 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean,
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Handler that is called when the menu should close after selecting an item. */
+  onClose?: () => void
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}

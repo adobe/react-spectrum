@@ -24,6 +24,8 @@ module.exports = {
     '\\.(css|styl)$': 'identity-obj-proxy'
   },
 
+  resolver: '<rootDir>/lib/jestResolver.js',
+
   // Run tests from one or more projects
   projects: ['<rootDir>'],
 

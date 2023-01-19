@@ -1,9 +1,5 @@
 {
   "calendar": "Kalenteri",
-  "currentDate": "{date, date, full}",
-  "currentDateRange": "{start, date, long}–{end, date, long}",
-  "date": "Päivämäärä",
-  "dateRange": "Päivämääräalue",
   "day": "päivä",
   "dayPeriod": "vuorokaudenaika",
   "endDate": "Päättymispäivä",
@@ -12,8 +8,11 @@
   "minute": "minuutti",
   "month": "kuukausi",
   "second": "sekunti",
+  "selectedDateDescription": "Valittu päivämäärä: {date}",
+  "selectedRangeDescription": "Valittu aikaväli: {startDate} – {endDate}",
+  "selectedTimeDescription": "Valittu aika: {time}",
   "startDate": "Alkamispäivä",
-  "year": "vuosi",
+  "timeZoneName": "aikavyöhyke",
   "weekday": "viikonpäivä",
-  "timeZoneName": "aikavyöhyke"
+  "year": "vuosi"
 }

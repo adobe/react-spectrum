@@ -40,14 +40,17 @@ most of the builtin strings are for non-visible content to provide accessible la
 and passed in to components. This can be done with libraries such as [react-intl](https://formatjs.io/docs/react-intl).
 Internally, React Aria uses the same [intl-messageformat](https://formatjs.io/docs/intl-messageformat) library used by react-intl.
 
-React Aria also formats numbers and dates according to the current locale, and uses internationalized algorithms for collation,
-sorting, and text search. This is built into all of the components that need to perform these tasks out of the box, but you can
+React Aria also formats, parses, and manipulates dates and numbers according to the user's preferred locale, and uses internationalized algorithms
+for collation, sorting, and text search. This is built into all of the components that need to perform these tasks out of the box, but you can
 also use our internationalization hooks in your own components. These are implemented with the builtin browser
 [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) APIs under the hood, so there's no
 large libraries or locale data for users to download.
 
 See [useMessageFormatter](useMessageFormatter.html), [useDateFormatter](useDateFormatter.html), [useNumberFormatter](useNumberFormatter.html),
-and [useCollator](useCollator.html) for more information about using our internationalization hooks.
+and [useCollator](useCollator.html) for more information about using our internationalization hooks. The
+[Internationalized](../../internationalized/index.html) collection of libraries provides framework-agnostic utilities for representing
+and manipulating [dates and times](../../internationalized/date/index.html), and parsing and formatting
+[numbers](../../internationalized/number/index.html) across many locales, calendar systems, numbering systems, and more.
 
 ## Bi-directionality
 

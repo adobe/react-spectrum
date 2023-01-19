@@ -1,6 +1,7 @@
 {
   "ascending": "висхідний",
   "ascendingSort": "відсортовано за стовпцем {columnName} у висхідному порядку",
+  "columnSize": "{value} пікс.",
   "descending": "низхідний",
   "descendingSort": "відсортовано за стовпцем {columnName} у низхідному порядку",
   "select": "Вибрати",

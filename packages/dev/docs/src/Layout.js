@@ -17,6 +17,7 @@ import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
 import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
 import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
+import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
 import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
 import heroImageStately from 'url:../pages/assets/ReactStately_976x445_2x.png';
 import highlightCss from './syntax-highlight.css';
@@ -35,11 +36,13 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
   'react-aria': heroImageAria,
-  'react-stately': heroImageStately
+  'react-stately': heroImageStately,
+  'internationalized': heroImageInternationalized
 };
 
 const mdxComponents = {
@@ -99,7 +102,7 @@ function isBlogSection(section) {
 function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
-  let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
+  let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
     pageSection = sectionTitles[parts[0]];
@@ -107,7 +110,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
 
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
 
@@ -126,7 +129,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         highlightCss.spectrum)}>
       <head>
         <title>{title}</title>
-        <meta charset="utf-8" />
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -143,11 +146,11 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
-                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
-                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'light';
               }
 
@@ -173,8 +176,8 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
-        {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        {styles.map(s => <link key={s.url} rel="stylesheet" href={s.url} />)}
+        {scripts.map(s => <script key={s.url} type={s.type} src={s.url} defer />)}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -235,7 +238,6 @@ const CATEGORY_ORDER = [
 ];
 
 function Nav({currentPageName, pages}) {
-  let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let isBlog = isBlogSection(currentParts[0]);
   let blogIndex = currentParts[0] + '/index.html';
@@ -259,16 +261,16 @@ function Nav({currentPageName, pages}) {
 
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
-      return currentDir === pageDir && !isIndex.test(p.name);
+      return currentDir === pageDir && !INDEX_RE.test(p.name);
     }
 
     // Top-level index pages (react-spectrum/index.html)
-    if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
+    if (currentParts.length === 1 && pageParts.length > 1 && INDEX_RE.test(p.name)) {
       return true;
     }
 
     // Other top-level pages
-    return !isIndex.test(p.name) && pageParts.length === 1;
+    return !INDEX_RE.test(p.name) && pageParts.length === 1;
   });
 
   if (currentParts.length === 1) {
@@ -317,7 +319,15 @@ function Nav({currentPageName, pages}) {
   }
 
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
-  let currentPageIsIndex = isIndex.test(currentPageName);
+  let currentPageIsIndex = INDEX_RE.test(currentPageName);
+  let sectionIndex = './index.html';
+  let back = '../index.html';
+  if (isBlog) {
+    sectionIndex = '/index.html';
+  } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
+    sectionIndex = '../index.html';
+    back = '../../index.html';
+  }
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -337,11 +347,11 @@ function Nav({currentPageName, pages}) {
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
         {currentParts.length > 1 &&
-          <a href="../index.html" className={docStyles.backBtn}>
+          <a href={back} className={docStyles.backBtn}>
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn} id="nav-title-id">
+        <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -357,10 +367,10 @@ function Nav({currentPageName, pages}) {
         {categories.map(key => {
           const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <li className={sideNavStyles['spectrum-SideNav-item']}>
+            <li key={headingId} className={sideNavStyles['spectrum-SideNav-item']}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} />)}
               </ul>
             </li>
           );
@@ -417,7 +427,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
 export function Layout(props) {
   return (
     <BaseLayout {...props}>
-      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
         <VersionBadge version={props.currentPage.preRelease} size="large" />
         {props.children}
       </article>

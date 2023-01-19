@@ -15,31 +15,50 @@
 
 import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar} from './GregorianCalendar';
-import {Mutable} from '../utils';
+import {fromExtendedYear, getExtendedYear, GregorianCalendar} from './GregorianCalendar';
 
 const BUDDHIST_ERA_START = -543;
 
+/**
+ * The Buddhist calendar is the same as the Gregorian calendar, but counts years
+ * starting from the birth of Buddha in 543 BC (Gregorian). It supports only one
+ * era, identified as 'BE'.
+ */
 export class BuddhistCalendar extends GregorianCalendar {
   identifier = 'buddhist';
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-    date.year -= BUDDHIST_ERA_START;
-    return date as CalendarDate;
+    let gregorianDate = super.fromJulianDay(jd);
+    let year = getExtendedYear(gregorianDate.era, gregorianDate.year);
+    return new CalendarDate(
+      this,
+      year - BUDDHIST_ERA_START,
+      gregorianDate.month,
+      gregorianDate.day
+    );
   }
 
   toJulianDay(date: AnyCalendarDate) {
-    return super.toJulianDay(
-      new CalendarDate(
-        date.year + BUDDHIST_ERA_START,
-        date.month,
-        date.day
-      )
-    );
+    return super.toJulianDay(toGregorian(date));
   }
 
   getEras() {
     return ['BE'];
   }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    return super.getDaysInMonth(toGregorian(date));
+  }
+
+  balanceDate() {}
+}
+
+function toGregorian(date: AnyCalendarDate) {
+  let [era, year] = fromExtendedYear(date.year + BUDDHIST_ERA_START);
+  return new CalendarDate(
+    era,
+    year,
+    date.month,
+    date.day
+  );
 }

@@ -1,27 +1,35 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
 import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
+import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
-import {useMove} from '@react-aria/interactions';
 
-interface SliderThumbAria {
+export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
-  thumbProps: HTMLAttributes<HTMLElement>,
+  thumbProps: DOMAttributes,
 
   /** Props for the visually hidden range input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
 
   /** Props for the label element for this thumb (optional). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+
+  /** Whether this thumb is currently being dragged. */
+  isDragging: boolean,
+  /** Whether the thumb is currently focused. */
+  isFocused: boolean,
+  /** Whether the thumb is disabled. */
+  isDisabled: boolean
 }
 
-interface SliderThumbOptions extends AriaSliderThumbProps {
+export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
-  trackRef: RefObject<HTMLElement>,
+  trackRef: RefObject<Element>,
   /** A ref to the thumb input element. */
   inputRef: RefObject<HTMLInputElement>
 }
@@ -33,19 +41,20 @@ interface SliderThumbOptions extends AriaSliderThumbProps {
  * @param state Slider state, created via `useSliderState`.
  */
 export function useSliderThumb(
-  opts: SliderThumbOptions,
+  opts: AriaSliderThumbOptions,
   state: SliderState
 ): SliderThumbAria {
   let {
     index,
     isRequired,
-    isDisabled,
     validationState,
     trackRef,
-    inputRef
+    inputRef,
+    orientation = state.orientation
   } = opts;
 
-  let isVertical = opts.orientation === 'vertical';
+  let isDisabled = opts.isDisabled || state.isDisabled;
+  let isVertical = orientation === 'vertical';
 
   let {direction} = useLocale();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -77,22 +86,71 @@ export function useSliderThumb(
   stateRef.current = state;
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown(e) {
+      let {
+        getThumbMaxValue,
+        getThumbMinValue,
+        decrementThumb,
+        incrementThumb,
+        setThumbValue,
+        setThumbDragging,
+        pageSize
+      } = stateRef.current;
+      // these are the cases that useMove or useSlider don't handle
+      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
+        e.continuePropagation();
+        return;
+      }
+      // same handling as useMove, stopPropagation to prevent useSlider from handling the event as well.
+      e.preventDefault();
+      // remember to set this so that onChangeEnd is fired
+      setThumbDragging(index, true);
+      switch (e.key) {
+        case 'PageUp':
+          incrementThumb(index, pageSize);
+          break;
+        case 'PageDown':
+          decrementThumb(index, pageSize);
+          break;
+        case 'Home':
+          setThumbValue(index, getThumbMinValue(index));
+          break;
+        case 'End':
+          setThumbValue(index, getThumbMaxValue(index));
+          break;
+      }
+      setThumbDragging(index, false);
+    }
+  });
+
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
-      state.setThumbDragging(index, true);
+      stateRef.current.setThumbDragging(index, true);
     },
-    onMove({deltaX, deltaY, pointerType}) {
-      let size = isVertical ? trackRef.current.offsetHeight : trackRef.current.offsetWidth;
+    onMove({deltaX, deltaY, pointerType, shiftKey}) {
+      const {
+        getThumbPercent,
+        setThumbPercent,
+        decrementThumb,
+        incrementThumb,
+        step,
+        pageSize
+      } = stateRef.current;
+      let {width, height} = trackRef.current.getBoundingClientRect();
+      let size = isVertical ? height : width;
 
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPercent(index) * size;
+        currentPosition.current = getThumbPercent(index) * size;
       }
       if (pointerType === 'keyboard') {
-        // (invert left/right according to language direction) + (according to vertical)
-        let delta = ((reverseX ? -deltaX : deltaX) + (isVertical ? -deltaY : -deltaY)) * stateRef.current.step;
-        currentPosition.current += delta * size;
-        stateRef.current.setThumbValue(index, stateRef.current.getThumbValue(index) + delta);
+        if ((deltaX > 0 && reverseX) || (deltaX < 0 && !reverseX) || deltaY > 0) {
+          decrementThumb(index, shiftKey ? pageSize : step);
+        } else {
+          incrementThumb(index, shiftKey ? pageSize : step);
+        }
       } else {
         let delta = isVertical ? deltaY : deltaX;
         if (isVertical || reverseX) {
@@ -100,11 +158,11 @@ export function useSliderThumb(
         }
 
         currentPosition.current += delta;
-        stateRef.current.setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
+        setThumbPercent(index, clamp(currentPosition.current / size, 0, 1));
       }
     },
     onMoveEnd() {
-      state.setThumbDragging(index, false);
+      stateRef.current.setThumbDragging(index, false);
     }
   });
 
@@ -142,6 +200,31 @@ export function useSliderThumb(
     }
   };
 
+  let thumbPosition = state.getThumbPercent(index);
+  if (isVertical || direction === 'rtl') {
+    thumbPosition = 1 - thumbPosition;
+  }
+
+  let interactions = !isDisabled ? mergeProps(
+    keyboardProps,
+    moveProps,
+    {
+      onMouseDown: (e: React.MouseEvent) => {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
+        onDown();
+      },
+      onPointerDown: (e: React.PointerEvent) => {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
+        }
+        onDown(e.pointerId);
+      },
+      onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
+    }
+  ) : {};
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -155,33 +238,27 @@ export function useSliderThumb(
       step: state.step,
       value: value,
       disabled: isDisabled,
-      'aria-orientation': opts.orientation,
+      'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setThumbValue(index, parseFloat(e.target.value));
+        stateRef.current.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: !isDisabled ? mergeProps(
-      moveProps,
-      {
-        onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onDown();
-        },
-        onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onDown(e.pointerId);
-        },
-        onTouchStart: (e: React.TouchEvent<HTMLElement>) => {onDown(e.changedTouches[0].identifier);}
+    thumbProps: {
+      ...interactions,
+      style: {
+        position: 'absolute',
+        [isVertical ? 'top' : 'left']: `${thumbPosition * 100}%`,
+        transform: 'translate(-50%, -50%)',
+        touchAction: 'none'
       }
-    ) : {},
-    labelProps
+    },
+    labelProps,
+    isDragging: state.isThumbDragging(index),
+    isDisabled,
+    isFocused
   };
 }

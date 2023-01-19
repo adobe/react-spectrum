@@ -1,4 +1,8 @@
 {
+  "columnResizer": "Kolonnas izmēru mainītājs",
   "loading": "Notiek ielāde...",
-  "loadingMore": "Tiek ielādēts vēl..."
+  "loadingMore": "Tiek ielādēts vēl...",
+  "resizeColumn": "Mainīt kolonnas lielumu",
+  "sortAscending": "Kārtot augošā secībā",
+  "sortDescending": "Kārtot dilstošā secībā"
 }

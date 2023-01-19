@@ -19,7 +19,7 @@ import React from 'react';
 import {SpectrumAlertProps} from '@react-types/alert';
 import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 let ICONS = {
   error: AlertMedium,
@@ -40,9 +40,9 @@ export function Alert(props: SpectrumAlertProps) {
   let {styleProps} = useStyleProps(otherProps);
 
   // let AlertIcon = ICONS[variant];
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   if (!iconAlt) {
-    iconAlt = formatMessage(variant);
+    iconAlt = stringFormatter.format(variant);
   }
   let Icon = ICONS[variant];
 

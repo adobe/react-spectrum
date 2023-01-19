@@ -1,6 +1,7 @@
 {
   "ascending": "aufsteigend",
   "ascendingSort": "sortiert nach Spalte {columnName} in aufsteigender Reihenfolge",
+  "columnSize": "{value} Pixel",
   "descending": "absteigend",
   "descendingSort": "sortiert nach Spalte {columnName} in absteigender Reihenfolge",
   "select": "Auswählen",

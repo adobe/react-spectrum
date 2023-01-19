@@ -17,7 +17,7 @@
 
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
-interface InteractOutsideProps {
+export interface InteractOutsideProps {
   ref: RefObject<Element>,
   onInteractOutside?: (e: SyntheticEvent) => void,
   onInteractOutsideStart?: (e: SyntheticEvent) => void,
@@ -110,10 +110,15 @@ function isValidEvent(event, ref) {
     return false;
   }
 
-  // if the event target is no longer in the document
   if (event.target) {
+    // if the event target is no longer in the document, ignore
     const ownerDocument = event.target.ownerDocument;
     if (!ownerDocument || !ownerDocument.documentElement.contains(event.target)) {
+      return false;
+    }
+
+    // If the target is within a top layer element (e.g. toasts), ignore.
+    if (event.target.closest('[data-react-aria-top-layer]')) {
       return false;
     }
   }

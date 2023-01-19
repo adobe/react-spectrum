@@ -82,6 +82,22 @@ let withSection = [
   ]}
 ];
 
+let itemsWithFalsyId = [
+  {id: 1, name: 'Animals', children: [
+    {id: 0, name: 'id=0'},
+    {id: 2, name: 'Snake'}
+  ]},
+  {id: 3, name: 'People', children: [
+    {id: 4, name: 'Danni'},
+    {id: 5, name: 'Devon'},
+    {id: 6, name: 'Ross', children: [
+      {id: 7, name: 'Tests', children: [
+        {id: 8, name: 'blah'}
+      ]}
+    ]}
+  ]}
+];
+
 storiesOf('MenuTrigger', module)
   .add(
     'default menu (static)',
@@ -146,6 +162,18 @@ storiesOf('MenuTrigger', module)
         {item => (
           <Section key={item.name} items={item.children} aria-label={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'with falsy item keys',
+    () => render(
+      <Menu items={itemsWithFalsyId} onAction={action('onAction')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -461,12 +489,12 @@ storiesOf('MenuTrigger', module)
     )
   )
   .add(
-    'menu closes on scroll',
+    'menu should prevent scrolling',
     () => (
       <div style={{height: 100, display: 'flex'}}>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
           <div style={{height: 200}}>
-            <div>Scrolling here will close the Menu</div>
+            <div>Shouldn't be able to scroll here while Menu is open.</div>
             <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
               <ActionButton
                 onPress={action('press')}
@@ -486,7 +514,7 @@ storiesOf('MenuTrigger', module)
         </div>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1, background: 'grey'}}>
           <div style={{height: 200}}>
-            Scrolling here won't close the Menu
+            Also shouldn't be able to scroll here while Menu is open.
           </div>
         </div>
       </div>
@@ -497,7 +525,8 @@ storiesOf('MenuTrigger', module)
     () => (
       <>
         <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-          <input placeholder="Shift tab here" />
+          <label htmlFor="focus-before">Focus before</label>
+          <input id="focus-before" />
           <MenuTrigger onOpenChange={action('onOpenChange')}>
             <ActionButton
               onPress={action('press')}
@@ -513,7 +542,8 @@ storiesOf('MenuTrigger', module)
               )}
             </Menu>
           </MenuTrigger>
-          <input placeholder="Tab here" />
+          <label htmlFor="focus-after">Focus after</label>
+          <input id="focus-after" />
         </div>
       </>
     )
@@ -527,6 +557,10 @@ storiesOf('MenuTrigger', module)
         <Item key="3">Three</Item>
       </Menu>
     )
+  )
+  .add(
+    'MenuTrigger with trigger="longPress"',
+    () => render(defaultMenu, {trigger: 'longPress'})
   )
   .add('controlled isOpen',
     () => <ControlledOpeningMenuTrigger />
@@ -591,4 +625,3 @@ function ControlledOpeningMenuTrigger() {
     </div>
   );
 }
-

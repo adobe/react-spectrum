@@ -487,10 +487,12 @@ function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
 function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
   let labels = [
     {
+      heading: 'The Heading',
       checkboxLabel: 'I have read and accept',
       secondaryButtonLabel: 'Secondary',
       primaryButtonLabel: 'Primary'
     }, {
+      heading: 'Terms of Service',
       checkboxLabel: 'I have read and accept the terms of use and privacy policy',
       secondaryButtonLabel: 'Secondary and best button',
       primaryButtonLabel: 'Primary and worst'
@@ -505,7 +507,7 @@ function RenderWithThreeButtonsAndFooter({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Heading>The Heading</Heading>
+            <Heading>{labels[whichLabels].heading}</Heading>
             <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>

@@ -10,74 +10,78 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode} from 'react';
-import {DOMProps, Removable} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {AriaButtonProps} from '@react-types/button';
+import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {KeyboardEvent} from 'react';
+import type {TagGroupState} from '@react-stately/tag';
+import {TagProps} from '@react-types/tag';
+import {useGridListItem} from '@react-aria/gridlist';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-
-export interface AriaTagProps extends Removable<ReactNode, void>, DOMProps {
-  children?: ReactNode,
-  isDisabled?: boolean,
-  validationState?: 'invalid' | 'valid',
-  isSelected?: boolean,
-  role?: string
-}
 
 export interface TagAria {
-  tagProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>,
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+  labelProps: DOMAttributes,
+  tagProps: DOMAttributes,
+  tagRowProps: DOMAttributes,
+  clearButtonProps: AriaButtonProps
 }
 
-export function useTag(props: AriaTagProps): TagAria {
-  const {
-    isDisabled,
-    validationState,
-    isRemovable,
-    isSelected,
-    onRemove,
-    children,
-    role
+/**
+ * Provides the behavior and accessibility implementation for a tag component.
+ * @param props - Props to be applied to the tag.
+ * @param state - State for the tag group, as returned by `useTagGroupState`.
+ */
+export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
+  let {
+    isFocused,
+    allowsRemoving,
+    item,
+    tagRowRef
   } = props;
-  const formatMessage = useMessageFormatter(intlMessages);
-  const removeString = formatMessage('remove');
-  const tagId = useId();
-  const buttonId = useId();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let removeString = stringFormatter.format('remove');
+  let labelId = useId();
+  let buttonId = useId();
 
-  function onKeyDown(e: KeyboardEvent<HTMLElement>) {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      onRemove(children, e);
+  let {rowProps, gridCellProps} = useGridListItem({
+    node: item
+  }, state, tagRowRef);
+
+  // We want the group to handle keyboard navigation between tags.
+  delete rowProps.onKeyDownCapture;
+
+  let onRemove = chain(props.onRemove, state.onRemove);
+
+  let onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
+      onRemove(item.key);
       e.preventDefault();
     }
-  }
-  const pressProps = {
-    onPress: e => onRemove(children, e)
   };
 
+  isFocused = isFocused || state.selectionManager.focusedKey === item.key;
   let domProps = filterDOMProps(props);
   return {
-    tagProps: mergeProps(domProps, {
-      'aria-selected': !isDisabled && isSelected,
-      'aria-invalid': validationState === 'invalid' || undefined,
-      'aria-errormessage': props['aria-errormessage'],
-      onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
-      role: role === 'gridcell' ? 'row' : null,
-      tabIndex: isDisabled ? -1 : 0
-    }),
-    labelProps: {
-      id: tagId,
-      role
-    },
-    clearButtonProps: mergeProps(pressProps, {
+    clearButtonProps: {
       'aria-label': removeString,
-      'aria-labelledby': `${buttonId} ${tagId}`,
+      'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
-      title: removeString,
-      isDisabled,
-      role
+      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null
+    },
+    labelProps: {
+      id: labelId
+    },
+    tagRowProps: {
+      ...rowProps,
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
+      onKeyDown: allowsRemoving ? onKeyDown : null
+    },
+    tagProps: mergeProps(domProps, gridCellProps, {
+      'aria-errormessage': props['aria-errormessage'],
+      'aria-label': props['aria-label']
     })
   };
 }

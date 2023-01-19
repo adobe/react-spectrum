@@ -69,7 +69,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
-    contain: layoutInfo.allowOverflow ? 'size layout style' : 'size layout style paint'
+    contain: 'size layout style'
   };
 
   cache.set(layoutInfo, style);

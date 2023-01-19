@@ -93,16 +93,6 @@ the `id` of the labeling element instead.
 In order to internationalize a ColorField, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
-## Step values
-
-The `step` prop can be used to increment or decrement the current `value` using up or down arrow keys. These increments
-are calculated from the current `value` or zero if the `value` is empty. A `step` can be set to any positive decimal,
-defaulting to `1` if unspecified.
-
-```tsx example
-<ColorField label="Primary Color" step={16} />
-```
-
 ## Validation
 
 ColorField can display a validation state to communicate to the user whether the current value is valid or invalid.
@@ -166,6 +156,49 @@ left most edge of the ColorField and "end" refers to the right most edge. For ri
 
 ```tsx example
 <ColorField label="Primary Color" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/)
+
+Both a description and an error message can be supplied to a ColorField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(parseColor('#e73623'));
+  let isValid = React.useMemo(() => {
+    return value && value.red && value.red > value.green && value.red > value.blue;
+  }, [value]);
+
+  return (
+    <ColorField
+      validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
+      onChange={setValue}
+      label="Red colors"
+      description="Enter a red color."
+      errorMessage={value === null ? 'Empty input not allowed.' : 'Not a red color.'}
+    />
+  );
+}
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a ColorField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<ColorField
+  label="Accent Color"
+  defaultValue="#e73623"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is an accent color?</Heading>
+      <Content>An accent color is the primary foreground color for your theme, used across all components.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width

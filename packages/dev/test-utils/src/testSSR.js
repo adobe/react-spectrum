@@ -19,6 +19,13 @@ import ReactDOM from 'react-dom';
 import {SSRProvider} from '@react-aria/ssr';
 import util from 'util';
 
+let ReactDOMClient;
+try {
+  ReactDOMClient = require('react-dom/client');
+} catch (err) {
+  // ignore.
+}
+
 export async function testSSR(filename, source) {
   // Transform the code with babel so JSX becomes JS.
   source = babel.transformSync(source, {filename}).code;
@@ -57,7 +64,11 @@ export async function testSSR(filename, source) {
           document.body.innerHTML = `<div id="root">${body}</div>`;
           let container = document.querySelector('#root');
           let element = evaluate(source, filename);
-          ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);
+          if (ReactDOMClient) {
+            ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>);
+          } else {
+            ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);
+          }
         } catch (err) {
           errors.push(err.stack);
         }

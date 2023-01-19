@@ -10,77 +10,118 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnProps, TableCollection} from '@react-types/table';
+import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
+import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
-
+import {Node} from '@react-types/shared';
+import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
-  getDefaultWidth: (props) => string | number
+  columnLayout: TableColumnLayout<T>,
+  initialCollection: TableCollection<T>
 }
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: TableCollection<T>;
   lastCollection: TableCollection<T>;
-  columnWidths: Map<Key, number>;
+  columnWidths: Map<Key, number> = new Map();
   stickyColumnIndices: number[];
-  getDefaultWidth: (props) => string | number;
   wasLoading = false;
   isLoading = false;
+  lastPersistedKeys: Set<Key> = null;
+  persistedIndices: Map<Key, number[]> = new Map();
+  private disableSticky: boolean;
+  columnLayout: TableColumnLayout<T>;
+  controlledColumns: Map<Key, GridNode<unknown>>;
+  uncontrolledColumns: Map<Key, GridNode<unknown>>;
+  uncontrolledWidths: Map<Key, ColumnSize>;
+  resizingColumn: Key | null;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
-    this.getDefaultWidth = options.getDefaultWidth;
+    this.collection = options.initialCollection;
+    this.stickyColumnIndices = [];
+    this.disableSticky = this.checkChrome105();
+    this.columnLayout = options.columnLayout;
+    let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    this.controlledColumns = controlledColumns;
+    this.uncontrolledColumns = uncontrolledColumns;
+    this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
   }
 
-
-  buildCollection(): LayoutNode[] {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>): boolean {
     // If columns changed, clear layout cache.
-    if (
+    return super.shouldInvalidateEverything(invalidationContext) || (
       !this.lastCollection ||
       this.collection.columns.length !== this.lastCollection.columns.length ||
-      this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
-    ) {
-      // Invalidate everything in this layout pass. Will be reset in ListLayout on the next pass.
-      this.invalidateEverything = true;
-    }
+      this.collection.columns.some((c, i) =>
+        c.key !== this.lastCollection.columns[i].key ||
+        c.props.width !== this.lastCollection.columns[i].props.width ||
+        c.props.minWidth !== this.lastCollection.columns[i].props.minWidth ||
+        c.props.maxWidth !== this.lastCollection.columns[i].props.maxWidth
+      )
+    );
+  }
 
+  getResizerPosition(): Key {
+    return this.getLayoutInfo(this.resizingColumn)?.rect.maxX;
+  }
+
+  getColumnWidth(key: Key): number {
+    return this.columnLayout.getColumnWidth(key) ?? 0;
+  }
+
+  getColumnMinWidth(key: Key): number {
+    let column = this.collection.columns.find(col => col.key === key);
+    if (!column) {
+      return 0;
+    }
+    return this.columnLayout.getColumnMinWidth(key);
+  }
+
+  getColumnMaxWidth(key: Key): number {
+    let column = this.collection.columns.find(col => col.key === key);
+    if (!column) {
+      return 0;
+    }
+    return this.columnLayout.getColumnMaxWidth(key);
+  }
+
+  // outside, where this is called, should call props.onColumnResizeStart...
+  onColumnResizeStart(key: Key): void {
+    this.resizingColumn = key;
+  }
+
+  // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
+  onColumnResize(key: Key, width: number): Map<Key, ColumnSize> {
+    let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
+    let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
+
+    let map = new Map(Array.from(this.uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
+    map.set(key, width);
+    this.uncontrolledWidths = map;
+    // relayoutNow still uses setState, should happen at the same time the parent
+    // component's state is processed as a result of props.onColumnResize
+    if (this.uncontrolledWidths.size > 0) {
+      this.virtualizer.relayoutNow({sizeChanged: true});
+    }
+    return newSizes;
+  }
+
+  onColumnResizeEnd(): void {
+    this.resizingColumn = null;
+  }
+
+  buildCollection(): LayoutNode[] {
     // Track whether we were previously loading. This is used to adjust the animations of async loading vs inserts.
     let loadingState = this.collection.body.props.loadingState;
     this.wasLoading = this.isLoading;
     this.isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-
-    this.buildColumnWidths();
-    let header = this.buildHeader();
-    let body = this.buildBody(0);
-    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
-    this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
-    return [
-      header,
-      body
-    ];
-  }
-
-  buildColumnWidths() {
-    this.columnWidths = new Map();
     this.stickyColumnIndices = [];
 
-    // Pass 1: set widths for all explicitly defined columns.
-    let remainingColumns = new Set<GridNode<T>>();
-    let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
-      let props = column.props as ColumnProps<T>;
-      let width = props.width ?? this.getDefaultWidth(props);
-      if (width != null) {
-        let w = this.parseWidth(width);
-        this.columnWidths.set(column.key, w);
-        remainingSpace -= w;
-      } else {
-        remainingColumns.add(column);
-      }
-
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
       if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
@@ -88,36 +129,23 @@ export class TableLayout<T> extends ListLayout<T> {
       }
     }
 
-    // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
-    if (remainingColumns.size > 0) {
-      let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
+    let [controlledColumns, uncontrolledColumns] = this.columnLayout.splitColumnsIntoControlledAndUncontrolled(this.collection.columns);
+    this.controlledColumns = controlledColumns;
+    this.uncontrolledColumns = uncontrolledColumns;
+    let colWidths = this.columnLayout.recombineColumns(this.collection.columns, this.uncontrolledWidths, uncontrolledColumns, controlledColumns);
 
-      for (let column of remainingColumns) {
-        let props = column.props as ColumnProps<T>;
-        let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
-        let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
-        let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
+    this.columnWidths = this.columnLayout.buildColumnWidths(this.virtualizer.visibleRect.width, this.collection, colWidths);
 
-        this.columnWidths.set(column.key, width);
-        remainingSpace -= width;
-        if (width !== columnWidth) {
-          columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
-        }
-      }
-    }
-  }
+    let header = this.buildHeader();
+    let body = this.buildBody(0);
+    this.lastPersistedKeys = null;
 
-  parseWidth(width: number | string): number {
-    if (typeof width === 'string') {
-      let match = width.match(/^(\d+)%$/);
-      if (!match) {
-        throw new Error('Only percentages are supported as column widths');
-      }
-
-      return this.virtualizer.visibleRect.width * (parseInt(match[1], 10) / 100);
-    }
-
-    return width;
+    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
+    this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
+    return [
+      header,
+      body
+    ];
   }
 
   buildHeader(): LayoutNode {
@@ -142,11 +170,12 @@ export class TableLayout<T> extends ListLayout<T> {
 
     return {
       layoutInfo,
-      children
+      children,
+      validRect: layoutInfo.rect
     };
   }
 
-  buildHeaderRow(headerRow: GridNode<T>, x: number, y: number) {
+  buildHeaderRow(headerRow: GridNode<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(0, y, 0, 0);
     let row = new LayoutInfo('headerrow', headerRow.key, rect);
 
@@ -159,6 +188,9 @@ export class TableLayout<T> extends ListLayout<T> {
       height = Math.max(height, layoutNode.layoutInfo.rect.height);
       columns.push(layoutNode);
     }
+    for (let [i, layout] of columns.entries()) {
+      layout.layoutInfo.zIndex = columns.length - i + 1;
+    }
 
     this.setChildHeights(columns, height);
 
@@ -167,7 +199,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     return {
       layoutInfo: row,
-      children: columns
+      children: columns,
+      validRect: rect
     };
   }
 
@@ -183,12 +216,16 @@ export class TableLayout<T> extends ListLayout<T> {
     }
   }
 
-  getColumnWidth(node: GridNode<T>) {
+  // used to get the column widths when rendering to the DOM
+  getRenderedColumnWidth(node: GridNode<T>) {
     let colspan = node.colspan ?? 1;
+    let colIndex = node.colIndex ?? node.index;
     let width = 0;
-    for (let i = 0; i < colspan; i++) {
-      let column = this.collection.columns[node.index + i];
-      width += this.columnWidths.get(column.key);
+    for (let i = colIndex; i < colIndex + colspan; i++) {
+      let column = this.collection.columns[i];
+      if (column?.key != null) {
+        width += this.columnWidths.get(column.key);
+      }
     }
 
     return width;
@@ -204,10 +241,8 @@ export class TableLayout<T> extends ListLayout<T> {
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
       if (previousLayoutNode) {
-        let curNode = this.collection.getItem(node.key);
-        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
         height = previousLayoutNode.layoutInfo.rect.height;
-        isEstimated = curNode !== lastNode || width !== previousLayoutNode.layoutInfo.rect.width || previousLayoutNode.layoutInfo.estimatedSize;
+        isEstimated = node !== previousLayoutNode.node || width !== previousLayoutNode.layoutInfo.rect.width || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
         height = estimatedHeight;
         isEstimated = true;
@@ -218,16 +253,17 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
     return {
-      layoutInfo
+      layoutInfo,
+      validRect: layoutInfo.rect
     };
   }
 
@@ -236,32 +272,49 @@ export class TableLayout<T> extends ListLayout<T> {
     let layoutInfo = new LayoutInfo('rowgroup', 'body', rect);
 
     let startY = y;
+    let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
     for (let node of this.collection.body.childNodes) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
+
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
       let layoutNode = this.buildChild(node, 0, y);
       layoutNode.layoutInfo.parentKey = 'body';
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
+
+      if (y > this.validRect.maxY) {
+        // Estimate the remaining height for rows that we don't need to layout right now.
+        y += (this.collection.size - (skipped + children.length)) * rowHeight;
+        break;
+      }
     }
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
+      // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
+      let rect = new Rect(40,  Math.max(y, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
-      loader.isSticky = children.length === 0;
+      loader.isSticky = !this.disableSticky && children.length === 0;
       this.layoutInfos.set('loader', loader);
-      children.push({layoutInfo: loader});
+      children.push({layoutInfo: loader, validRect: loader.rect});
       y = loader.rect.maxY;
       width = Math.max(width, rect.width);
     } else if (children.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      let rect = new Rect(40, Math.max(y, 40), this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = 'body';
-      empty.isSticky = true;
+      empty.isSticky = !this.disableSticky;
       this.layoutInfos.set('empty', empty);
-      children.push({layoutInfo: empty});
+      children.push({layoutInfo: empty, validRect: empty.rect});
       y = empty.rect.maxY;
       width = Math.max(width, rect.width);
     }
@@ -273,7 +326,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
     return {
       layoutInfo,
-      children
+      children,
+      validRect: layoutInfo.rect.intersection(this.validRect)
     };
   }
 
@@ -300,40 +354,61 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     let height = 0;
     for (let child of node.childNodes) {
-      let layoutNode = this.buildChild(child, x, y);
-      x = layoutNode.layoutInfo.rect.maxX;
-      height = Math.max(height, layoutNode.layoutInfo.rect.height);
-      children.push(layoutNode);
+      if (x > this.validRect.maxX) {
+        // Adjust existing cached layoutInfo to ensure that it is out of view.
+        // This can happen due to column resizing.
+        let layoutNode = this.layoutNodes.get(child.key);
+        if (layoutNode) {
+          layoutNode.layoutInfo.rect.x = x;
+          x += layoutNode.layoutInfo.rect.width;
+        }
+      } else {
+        let layoutNode = this.buildChild(child, x, y);
+        x = layoutNode.layoutInfo.rect.maxX;
+        height = Math.max(height, layoutNode.layoutInfo.rect.height);
+        children.push(layoutNode);
+      }
     }
 
     this.setChildHeights(children, height);
 
-    rect.width = x;
+    rect.width = this.layoutInfos.get('header').rect.width;
     rect.height = height + 1; // +1 for bottom border
 
     return {
       layoutInfo,
-      children
+      children,
+      validRect: rect.intersection(this.validRect)
     };
   }
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getColumnWidth(node);
+    let width = this.getRenderedColumnWidth(node);
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
     return {
-      layoutInfo
+      layoutInfo,
+      validRect: rect
     };
   }
 
   getVisibleLayoutInfos(rect: Rect) {
+    // If layout hasn't yet been done for the requested rect, union the
+    // new rect with the existing valid rect, and recompute.
+    if (!this.validRect.containsRect(rect) && this.lastCollection) {
+      this.lastValidRect = this.validRect;
+      this.validRect = this.validRect.union(rect);
+      this.rootNodes = this.buildCollection();
+    }
+
     let res: LayoutInfo[] = [];
 
+    this.buildPersistedIndices();
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -358,9 +433,39 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
+
+        // Add persisted rows before the visible rows.
+        let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
+        let persistIndex = 0;
+        while (
+          persistedRowIndices &&
+          persistIndex < persistedRowIndices.length &&
+          persistedRowIndices[persistIndex] < firstVisibleRow
+        ) {
+          let idx = persistedRowIndices[persistIndex];
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
+          }
+          persistIndex++;
+        }
+
         for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
+          // Skip persisted rows that overlap with visible cells.
+          while (persistedRowIndices && persistIndex < persistedRowIndices.length && persistedRowIndices[persistIndex] < i) {
+            persistIndex++;
+          }
+
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
+        }
+
+        // Add persisted rows after the visible rows.
+        while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
+          let idx = persistedRowIndices[persistIndex++];
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
         }
         break;
       }
@@ -369,23 +474,32 @@ export class TableLayout<T> extends ListLayout<T> {
         let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
         let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
         let stickyIndex = 0;
+
+        // Add persisted/sticky cells before the visible cells.
+        let persistedCellIndices = this.persistedIndices.get(node.layoutInfo.key) || this.stickyColumnIndices;
+        while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
+          let idx = persistedCellIndices[stickyIndex];
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
+          stickyIndex++;
+        }
+
         for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
-          // Sticky columns and row headers are always in the DOM. Interleave these
-          // with the visible range so that they are in the right order.
-          if (stickyIndex < this.stickyColumnIndices.length) {
-            let idx = this.stickyColumnIndices[stickyIndex];
-            while (idx < i) {
-              res.push(node.children[idx].layoutInfo);
-              idx = this.stickyColumnIndices[stickyIndex++];
-            }
+          // Skip sticky cells that overlap with visible cells.
+          while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < i) {
+            stickyIndex++;
           }
 
           res.push(node.children[i].layoutInfo);
         }
 
-        while (stickyIndex < this.stickyColumnIndices.length) {
-          let idx = this.stickyColumnIndices[stickyIndex++];
-          res.push(node.children[idx].layoutInfo);
+        // Add any remaining sticky cells after the visible cells.
+        while (stickyIndex < persistedCellIndices.length) {
+          let idx = persistedCellIndices[stickyIndex++];
+          if (idx < node.children.length) {
+            res.push(node.children[idx].layoutInfo);
+          }
         }
         break;
       }
@@ -413,6 +527,46 @@ export class TableLayout<T> extends ListLayout<T> {
     return Math.max(0, Math.min(items.length - 1, low));
   }
 
+  buildPersistedIndices() {
+    if (this.virtualizer.persistedKeys === this.lastPersistedKeys) {
+      return;
+    }
+
+    this.lastPersistedKeys = this.virtualizer.persistedKeys;
+    this.persistedIndices.clear();
+
+    // Build a map of parentKey => indices of children to persist.
+    for (let key of this.virtualizer.persistedKeys) {
+      let layoutInfo = this.layoutInfos.get(key);
+
+      // Walk up ancestors so parents are also persisted if children are.
+      while (layoutInfo && layoutInfo.parentKey) {
+        let collectionNode = this.collection.getItem(layoutInfo.key);
+        let indices = this.persistedIndices.get(layoutInfo.parentKey);
+        if (!indices) {
+          // stickyColumnIndices are always persisted along with any cells from persistedKeys.
+          indices = collectionNode.type === 'cell' ? [...this.stickyColumnIndices] : [];
+          this.persistedIndices.set(layoutInfo.parentKey, indices);
+        }
+
+        let index = collectionNode.index;
+        if (layoutInfo.parentKey === 'body') {
+          index -= this.collection.headerRows.length;
+        }
+
+        if (!indices.includes(index)) {
+          indices.push(index);
+        }
+
+        layoutInfo = this.layoutInfos.get(layoutInfo.parentKey);
+      }
+    }
+
+    for (let indices of this.persistedIndices.values()) {
+      indices.sort((a, b) => a - b);
+    }
+  }
+
   getInitialLayoutInfo(layoutInfo: LayoutInfo) {
     let res = super.getInitialLayoutInfo(layoutInfo);
 
@@ -422,5 +576,23 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return res;
+  }
+
+  // Checks if Chrome version is 105 or greater
+  private checkChrome105() {
+    if (typeof window === 'undefined' || window.navigator == null) {
+      return false;
+    }
+
+    let isChrome105;
+    if (window.navigator['userAgentData']) {
+      isChrome105 = window.navigator['userAgentData']?.brands.some(b => b.brand === 'Chromium' && Number(b.version) === 105);
+    } else {
+      let regex = /Chrome\/(\d+)/;
+      let matches = regex.exec(window.navigator.userAgent);
+      isChrome105 = matches && matches.length >= 2 && Number(matches[1]) === 105;
+    }
+
+    return isChrome105;
   }
 }

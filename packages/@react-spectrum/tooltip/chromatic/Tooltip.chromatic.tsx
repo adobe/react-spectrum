@@ -9,48 +9,71 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {Meta, Story} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumTooltipProps} from '@react-types/tooltip';
 import {Tooltip} from '../';
 
-const meta: Meta<SpectrumTooltipProps> = {
+type TooltipStory = ComponentStoryObj<typeof Tooltip>;
+
+export default {
   title: 'Tooltip',
-  component: Tooltip
+  component: Tooltip,
+  args: {
+    isOpen: true,
+    children: 'Tooltip content'
+  }
+} as ComponentMeta<typeof Tooltip>;
+
+export const Default: TooltipStory = {};
+
+export const PlacementLeft: TooltipStory = {
+  args: {placement: 'left'}
 };
 
-export default meta;
+export const PlacementRight: TooltipStory = {
+  args: {placement: 'right'}
+};
 
+export const PlacementBottom: TooltipStory = {
+  args: {placement: 'bottom'}
+};
 
-const Template = (): Story<SpectrumTooltipProps> => (args) => (
-  <div style={{display: 'inline-block'}}>
-    <Tooltip
-      {...args}
-      isOpen>
-      Tooltip content
-    </Tooltip>
-  </div>
-);
+export const Info: TooltipStory = {
+  args: {variant: 'info'}
+};
 
+export const Positive: TooltipStory = {
+  args: {variant: 'positive'}
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const Negative: TooltipStory = {
+  args: {variant: 'negative'}
+};
 
-export const PlacementLeft = Template().bind({});
-PlacementLeft.args = {...Default.args, placement: 'left'};
+export const NeutralShowIcon: TooltipStory = {
+  args: {showIcon: true}
+};
 
-export const PlacementRight = Template().bind({});
-PlacementRight.args = {...Default.args, placement: 'right'};
+export const InfoShowIcon: TooltipStory = {
+  args: {
+    variant: 'info',
+    showIcon: true
+  }
+};
 
-export const PlacementBottom = Template().bind({});
-PlacementBottom.args = {...Default.args, placement: 'bottom'};
-
-export const Info = Template().bind({});
-Info.args = {...Default.args, variant: 'info'};
-
-export const Positive = Template().bind({});
-Positive.args = {...Default.args, variant: 'positive'};
-
-export const Negative = Template().bind({});
-Negative.args = {...Default.args, variant: 'negative'};
+export const LongContentInfoShowIcon: TooltipStory = {
+  args: {
+    variant: 'info',
+    showIcon: true,
+    children: (
+      <div>
+        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero
+        sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+        Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed,
+        commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros
+        ipsum rutrum orci, sagittis tempus lacus enim ac dui.
+      </div>
+    )
+  }
+};

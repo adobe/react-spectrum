@@ -23,6 +23,7 @@ const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{
 const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
 const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
 
+/** Parses an ISO 8601 time string. */
 export function parseTime(value: string): Time {
   let m = value.match(TIME_RE);
   if (!m) {
@@ -37,6 +38,7 @@ export function parseTime(value: string): Time {
   );
 }
 
+/** Parses an ISO 8601 date string, with no time components. */
 export function parseDate(value: string): CalendarDate {
   let m = value.match(DATE_RE);
   if (!m) {
@@ -53,6 +55,7 @@ export function parseDate(value: string): CalendarDate {
   return date as CalendarDate;
 }
 
+/** Parses an ISO 8601 date and time string, with no time zone. */
 export function parseDateTime(value: string): CalendarDateTime {
   let m = value.match(DATE_TIME_RE);
   if (!m) {
@@ -73,6 +76,12 @@ export function parseDateTime(value: string): CalendarDateTime {
   return date as CalendarDateTime;
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a time zone extension and optional UTC offset
+ * (e.g. "2021-11-07T00:45[America/Los_Angeles]" or "2021-11-07T00:45-07:00[America/Los_Angeles]").
+ * Ambiguous times due to daylight saving time transitions are resolved according to the `disambiguation`
+ * parameter.
+ */
 export function parseZonedDateTime(value: string, disambiguation?: Disambiguation): ZonedDateTime {
   let m = value.match(ZONED_DATE_TIME_RE);
   if (!m) {
@@ -113,6 +122,10 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
   return fromAbsolute(ms, date.timeZone);
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a UTC offset (e.g. "2021-11-07T07:45:00Z"
+ * or "2021-11-07T07:45:00-07:00"). The result is converted to the provided time zone.
+ */
 export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   let m = value.match(ABSOLUTE_RE);
   if (!m) {
@@ -140,6 +153,10 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   return toTimeZone(date as ZonedDateTime, timeZone);
 }
 
+/**
+ * Parses an ISO 8601 date and time string with a UTC offset (e.g. "2021-11-07T07:45:00Z"
+ * or "2021-11-07T07:45:00-07:00"). The result is converted to the user's local time zone.
+ */
 export function parseAbsoluteToLocal(value: string): ZonedDateTime {
   return parseAbsolute(value, getLocalTimeZone());
 }

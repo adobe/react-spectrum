@@ -18,6 +18,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import clsx from 'clsx';
+import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
@@ -30,9 +31,6 @@ import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
 
-const Context = React.createContext<ProviderContext | null>(null);
-Context.displayName = 'ProviderContext';
-
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
@@ -43,6 +41,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     theme = prevContext && prevContext.theme,
     defaultColorScheme
   } = props;
+  if (!theme) {
+    throw new Error('theme not found, the parent provider must have a theme provided');
+  }
   // Hooks must always be called.
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
@@ -139,8 +140,8 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
     styleProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
-    theme[colorScheme][themeKey],
-    theme[scale][scaleKey],
+    Object.values(theme[colorScheme]),
+    Object.values(theme[scale]),
     theme.global ? Object.values(theme.global) : null,
     {
       'react-spectrum-provider': shouldKeepSpectrumClassNames,
