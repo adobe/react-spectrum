@@ -19,6 +19,7 @@ export function setScrollPrevented(value: boolean) {
 }
 
 interface ScrollOpts {
+  /** The scroll parent of the target element.  */
   scrollView: HTMLElement
 }
 
@@ -92,13 +93,14 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
 }
 
 interface ScrollIntoViewportOpts {
+  /** The optional containing element of the target to be centered in the viewport. */
   containingElement?: Element
 }
 
 /**
- * Scrolls `scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `scrollView`.
+ * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional `opts.containingElement`
+ * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
+ * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoViewportOpts) {
   // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
