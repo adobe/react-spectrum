@@ -512,7 +512,7 @@ workflows:
       - docs-production:
           filters:
             branches:
-              only: main
+              only: support-esm-again
           requires:
             - install
       - docs-verdaccio:
