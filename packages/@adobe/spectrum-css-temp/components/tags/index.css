@@ -107,3 +107,7 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-Tags-fieldWrapper.spectrum-Tags-fieldWrapper {
+  width: auto;
+}
