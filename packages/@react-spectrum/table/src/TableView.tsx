@@ -739,7 +739,7 @@ function ResizableTableColumnHeader(props) {
     }
   };
   let allowsSorting = column.props?.allowsSorting;
-  let allowsResizing = column.props?.allowsResizing;
+  let allowsResizing = column.props?.allowsResizing && !column.hasChildNodes;
   let hasPriorityActions = allowsSorting || allowsResizing;
   let hasCustomActions = !!menu;
   let priorityActions = useMemo(() => {
