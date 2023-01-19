@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';

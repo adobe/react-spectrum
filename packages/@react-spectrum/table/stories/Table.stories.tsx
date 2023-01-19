@@ -744,7 +744,7 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
   let onSelectionChange = useCallback((keys) => {
     props.onSelectionChange(keys);
     list.setSelectedKeys(keys);
-  }, [props.onSelectionChange, list.setSelectedKeys]);
+  }, [props, list]);
 
   return (
     <TableView {...props} selectedKeys={list.selectedKeys} onSelectionChange={onSelectionChange}>
@@ -1414,6 +1414,11 @@ function TableWithBreadcrumbs(props) {
 }
 
 export const WithBreadcrumbNavigation: TableStory = {
+  args: {
+    // onAction is attached to everything by default now, but that changes the behavior of TableView
+    // our tests using this component expect the non-onAction behavior
+    onAction: undefined
+  },
   render: (args) => <TableWithBreadcrumbs {...args} />,
   storyName: 'table with breadcrumb navigation'
 };
