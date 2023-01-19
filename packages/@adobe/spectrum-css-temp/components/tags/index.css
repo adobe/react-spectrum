@@ -51,7 +51,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Tag-removeButton {
-    grid-area: remove;
+    grid-area: action;
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
     width: var(--spectrum-global-dimension-size-300);
   }
@@ -61,17 +61,17 @@ governing permissions and limitations under the License.
     text-overflow: ellipsis;
     display: grid;
     align-items: center;
-    grid-template-columns: auto auto 1fr auto;
-    grid-template-areas: "avatar icon content remove";
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "decoration content action";
   }
 
   .spectrum-Tag-icon {
-    grid-area: icon;
+    grid-area: decoration;
     margin-inline-end: var(--spectrum-global-dimension-size-100);
   }
 
   .spectrum-Tag-avatar {
-    grid-area: avatar;
+    grid-area: decoration;
     margin-inline-end: var(--spectrum-global-dimension-size-100);
   }
 
