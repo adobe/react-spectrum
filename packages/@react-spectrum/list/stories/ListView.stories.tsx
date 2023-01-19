@@ -35,7 +35,8 @@ const parameters = {
     density: 'regular',
     selectionMode: 'multiple',
     selectionStyle: 'checkbox',
-    overflowMode: 'truncate'
+    overflowMode: 'truncate',
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -63,6 +64,12 @@ const parameters = {
       control: {
         type: 'radio',
         options: ['truncate', 'wrap']
+      }
+    },
+    disabledBehavior: {
+      control: {
+        type: 'radio',
+        options: ['selection', 'all']
       }
     }
   }
@@ -298,7 +305,8 @@ storiesOf('ListView/Actions', module)
         </ActionMenu>
       </>
     ), args))
-  .add('Restore focus after item removal', (args = {}) => <FocusExample {...args} />);
+  .add('Restore focus after item removal (disabledBehavior: "selection")', (args) => <FocusExample {...args} />)
+  .add('Restore focus after item removal (disabledBehavior: "all")', (args) => <FocusExample {...args} disabledBehavior="all" />);
 
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
@@ -2149,7 +2157,7 @@ function DragBetweenListsOverride(props) {
   );
 }
 
-export const FocusExample = (args = {}) => {
+export const FocusExample = (args) => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},
