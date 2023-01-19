@@ -26,8 +26,6 @@ governing permissions and limitations under the License.
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
   display: inline-grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "icon content action";
   align-items: center;
   box-sizing: border-box;
   position: relative;
@@ -52,8 +50,8 @@ governing permissions and limitations under the License.
     pointer-events: none;
   }
 
-  .spectrum-Tag-action {
-    grid-area: action;
+  .spectrum-Tag-removeButton {
+    grid-area: remove;
     height: calc(var(--spectrum-tag-height) - (2 * var(--spectrum-tag-border-size)));
     width: var(--spectrum-global-dimension-size-300);
   }
@@ -61,12 +59,19 @@ governing permissions and limitations under the License.
   .spectrum-Tag-cell {
     overflow: hidden;
     text-overflow: ellipsis;
-    display: flex;
+    display: grid;
     align-items: center;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: "avatar icon content remove";
   }
 
   .spectrum-Tag-icon {
     grid-area: icon;
+    margin-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .spectrum-Tag-avatar {
+    grid-area: avatar;
     margin-inline-end: var(--spectrum-global-dimension-size-100);
   }
 
