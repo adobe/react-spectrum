@@ -416,7 +416,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </ImageContext.Provider>
           </MDXProvider>
           {toc.length ? <ToC toc={toc} /> : null}
-          {!pathToPage.includes('index.html') && <div id="edit-page" className={docStyles.editPageContainer} />}
+          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
       </div>
