@@ -305,8 +305,7 @@ storiesOf('ListView/Actions', module)
         </ActionMenu>
       </>
     ), args))
-  .add('Restore focus after item removal (disabledBehavior: "selection")', (args) => <FocusExample {...args} />)
-  .add('Restore focus after item removal (disabledBehavior: "all")', (args) => <FocusExample {...args} disabledBehavior="all" />);
+  .add('Restore focus after item removal (disabledBehavior: "selection")', (args) => <FocusExample {...args} />);
 
 storiesOf('ListView/Selection', module)
   .addParameters(parameters)
