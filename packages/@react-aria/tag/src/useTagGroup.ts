@@ -16,13 +16,20 @@ import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagKeyboardDelegate} from './TagKeyboardDelegate';
+import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
 export interface TagGroupAria {
   /** Props for the tag grouping element. */
-  tagGroupProps: DOMAttributes
+  tagGroupProps: DOMAttributes,
+  /** Props for the tag group's visible label (if any). */
+  labelProps: DOMAttributes,
+  /** Props for the tag group description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the tag group error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
@@ -44,6 +51,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let {direction} = useLocale();
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
   let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
 
   // Don't want the grid to be focusable or accessible via keyboard
   delete gridProps.role;
@@ -59,7 +67,11 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
-      ...focusWithinProps
-    })
+      ...focusWithinProps,
+      ...fieldProps
+    }),
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   };
 }

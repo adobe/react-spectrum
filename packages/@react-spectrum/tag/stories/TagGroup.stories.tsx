@@ -13,9 +13,11 @@
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import React, {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 
 let manyItems = [];
 for (let i = 0; i < 50; i++) {
@@ -53,7 +55,42 @@ export default {
         disable: true
       }
     },
-    maxRows: {type: 'number'}
+    maxRows: {
+      type: 'number'
+    },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    necessityIndicator: {
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
+    },
+    labelAlign: {
+      control: 'select',
+      options: ['start', 'end']
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    description: {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    },
+    showErrorIcon: {
+      control: 'boolean'
+    }
   },
   render: args => render(args)
 } as ComponentMeta<typeof TagGroup>;
@@ -162,3 +199,15 @@ export const WithActionAndMaxRows: TagGroupStory = {
   storyName: 'with action and maxRows'
 };
 
+export const WithLabelDescriptionContextualHelp: TagGroupStory = {
+  args: {
+    label: 'Some sample tags',
+    description: 'Here is a description about the tag group.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What are these tags?</Heading>
+        <Content>Here is more information about the tag group.</Content>
+      </ContextualHelp>
+    )},
+  storyName: 'with label, description, contextual help'
+};
