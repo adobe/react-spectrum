@@ -36,7 +36,7 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'bottom', express: providerValuesFromUrl.express === 'true'});
+  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, express: providerValuesFromUrl.express === 'true'});
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;
@@ -58,14 +58,6 @@ function ProviderFieldSetter({api}) {
     let newValue = e.target.value || undefined;
     setValues((old) => {
       let next = {...old, scale: newValue};
-      channel.emit('provider/updated', next);
-      return next;
-    });
-  };
-  let onToastPositionChange = (e) => {
-    let newValue = e.target.value;
-    setValues((old) => {
-      let next = {...old, toastPosition: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
@@ -93,7 +85,6 @@ function ProviderFieldSetter({api}) {
       'providerSwitcher-locale': values.locale || '',
       'providerSwitcher-theme': values.theme || '',
       'providerSwitcher-scale': values.scale || '',
-      'providerSwitcher-toastPosition': values.toastPosition || '',
       'providerSwitcher-express': String(values.express),
     });
   });
@@ -116,12 +107,6 @@ function ProviderFieldSetter({api}) {
         <label htmlFor="scale">Scale: </label>
         <select id="scale" name="scale" onChange={onScaleChange} value={values.scale}>
           {SCALES.map(scale => <option key={scale.label} value={scale.value}>{scale.label}</option>)}
-        </select>
-      </div>
-      <div style={{marginRight: '10px'}}>
-        <label htmlFor="toastposition">Toast Position: </label>
-        <select id="toastposition" name="toastposition" onChange={onToastPositionChange} value={values.toastPosition}>
-          {TOAST_POSITIONS.map(position => <option key={position.label} value={position.value}>{position.label}</option>)}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
