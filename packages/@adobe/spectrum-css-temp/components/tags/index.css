@@ -90,15 +90,20 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Tags-actionButton {
+.spectrum-Tags-actions {
   display: inline;
-  height: var(--spectrum-tag-height);
-  font-size: var(--spectrum-tag-text-size);
-  margin: var(--spectrum-tag-margin);
-  
-  > span {
-    padding-inline-start: var(--spectrum-tag-padding-x);
-    padding-inline-end: var(--spectrum-tag-padding-x);
+
+  .spectrum-Tags-actionButton {
+    display: inline;
+    height: var(--spectrum-tag-height);
+    font-size: var(--spectrum-tag-text-size);
+    margin: var(--spectrum-tag-margin);
+    
+    &.spectrum-Tags-actionButton {
+      > span {
+        padding-inline-start: var(--spectrum-tag-padding-x);
+        padding-inline-end: var(--spectrum-tag-padding-x);
+      }
+    }
   }
 }
-
