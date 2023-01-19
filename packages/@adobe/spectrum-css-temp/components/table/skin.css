@@ -334,18 +334,18 @@ tbody.spectrum-Table-body {
 }
 
 @media (forced-colors: active) {
-  .spectrum-Table {
+  .spectrum-Table.spectrum-Table {
     --spectrum-table-col-resize-indicator-background-color: Highlight;
     --spectrum-table-col-resize-nubbin-background-color: Highlight;
     --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
     --spectrum-table-body-resize-indicator-background-color: Highlight;
     --spectrum-table-divider-border-color: CanvasText;
-
-    .spectrum-Table-cell,
-    .spectrum-Table-headCell,
-    .spectrum-Table-headCellButton {
-      --spectrum-table-cell-border-color-key-focus: Highlight;
-    }
+    --spectrum-table-cell-border-color-key-focus: Highlight;
+    --spectrum-table-background-color: Canvas;
+    --spectrum-table-row-background-color-hover: Canvas;
+    --spectrum-table-row-background-color-down: Canvas;
+    --spectrum-selectlist-option-focus-indicator-color: Highlight;
+    --spectrum-table-cell-border-color: CanvasText;
 
     .spectrum-Table-colResizeIndicator {
       --spectrum-table-col-resize-indicator-background-color: Highlight;
@@ -361,13 +361,6 @@ tbody.spectrum-Table-body {
     }
 
     .spectrum-Table-row {
-      --spectrum-table-background-color: Canvas;
-      --spectrum-table-row-background-color-hover: Canvas;
-      --spectrum-table-row-background-color-down: Canvas;
-      --spectrum-selectlist-option-focus-indicator-color: Highlight;
-      &:after {
-        --spectrum-table-cell-border-color: CanvasText;
-      }
       &.is-next-selected,
       &.is-selected,
       &.spectrum-Table-row--firstRow.is-selected {
@@ -407,25 +400,12 @@ tbody.spectrum-Table-body {
       }
     }
 
-    /* Alternative to border on rows. Using box shadow since they don't take room unlike border which would cause wiggles
-     * in the highlight case and displace the sticky indicator. Also allows for a nicer bottom curved border to match the container,
-     * the bottom border curved corners were cut off when using borders.
-     */
-
-    /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row. Can't omit the bottom border for last row unlike listview
-     * due to how table rows always reserve 1px for the bottom border (results in a white gap on hover otherwise).
-     */
     &:after {
       forced-color-adjust: none;
     }
 
-    /* Box shadow for bottom border for non-selected row that is immediately above a selected row. */
     &.is-next-selected,
-    /* Box shadow for bottom, left, and right border for selected rows. */
     &.is-selected,
-    /* Box shadow for bottom, left, right, and top border for first row when selected. When the row isn't selected, it doesn't need
-     * a top border.
-     */
     &.spectrum-Table-row--firstRow.is-selected {
       &:after {
         forced-color-adjust: none;
