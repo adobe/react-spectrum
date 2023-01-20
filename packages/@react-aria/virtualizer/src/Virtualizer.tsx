@@ -127,8 +127,8 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
   let isFocusWithin = useRef(false);
+  let scrollRaf = useRef(null);
   useEffect(() => {
-    let raf;
     if (virtualizer.visibleRect.height === 0) {
       return;
     }
@@ -147,20 +147,27 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
         // Wait till virtualizer scrolls the focused key into view before checking if we need to scroll it into the viewport
         // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
         // syncing is a bit delayed compared to when scrollToItem is fired.
-        raf = requestAnimationFrame(() => {
+        if (scrollRaf.current) {
+          cancelAnimationFrame(scrollRaf.current);
+        }
+
+        scrollRaf.current = requestAnimationFrame(() => {
           scrollIntoViewport(document.activeElement, {containingElement: ref.current});
         });
       }
     }
 
     lastFocusedKey.current = focusedKey;
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
 
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
     return () => {
-      if (raf) {
-        cancelAnimationFrame(raf);
+      if (scrollRaf.current) {
+        cancelAnimationFrame(scrollRaf.current);
       }
     };
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
+  }, []);
 
   // Persist the focusedKey and prevent it from being removed from the DOM when scrolled out of view.
   virtualizer.persistedKeys = useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]);
