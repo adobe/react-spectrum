@@ -71,12 +71,12 @@ export function Video({src, ...otherProps}) {
   );
 }
 
-export function Track({src, ...otherProps}) {
+export function Track({src, srclang: srcLang, ...otherProps}) {
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
   let url = baseUrl + '/' + path.basename(src);
 
   return (
-    <track src={url} {...otherProps} />
+    <track src={url} {...otherProps} srcLang={srcLang} />
   );
 }

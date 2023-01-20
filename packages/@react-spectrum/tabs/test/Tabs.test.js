@@ -49,14 +49,18 @@ describe('Tabs', function () {
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
+    jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.useFakeTimers();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
     act(() => jest.runAllTimers());
   });
 
@@ -351,12 +355,25 @@ describe('Tabs', function () {
     let mockCalls = [
       function () {
         return {
-          right: 500
+          left: 0,
+          right: 100
         };
       },
       function () {
         return {
+          left: 100,
+          right: 400
+        };
+      },
+      function () {
+        return {
+          left: 400,
           right: 700
+        };
+      },
+      function () {
+        return {
+          right: 500
         };
       }
     ];
@@ -417,12 +434,25 @@ describe('Tabs', function () {
     let mockCalls = [
       function () {
         return {
-          right: 500
+          left: 0,
+          right: 200
         };
       },
       function () {
         return {
+          left: 200,
+          right: 300
+        };
+      },
+      function () {
+        return {
+          left: 300,
           right: 400
+        };
+      },
+      function () {
+        return {
+          right: 500
         };
       }
     ];
@@ -453,11 +483,27 @@ describe('Tabs', function () {
 
     spy.mockImplementationOnce(function () {
       return {
-        right: 500
+        left: 0,
+        right: 200
       };
     }).mockImplementationOnce(function () {
       return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
+        right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 400,
         right: 700
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
       };
     });
 
@@ -491,6 +537,32 @@ describe('Tabs', function () {
     expect(picker).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
 
+    spy.mockImplementationOnce(function () {
+      return {
+        left: 0,
+        right: 200
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
+        right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 400,
+        right: 700
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
+      };
+    });
+
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Tab Example" items={newItems} orientation="vertical">
@@ -521,11 +593,22 @@ describe('Tabs', function () {
 
     spy.mockImplementationOnce(function () {
       return {
-        right: 500
+        left: 0,
+        right: 200
       };
     }).mockImplementationOnce(function () {
       return {
+        left: 200,
+        right: 300
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        left: 300,
         right: 400
+      };
+    }).mockImplementationOnce(function () {
+      return {
+        right: 500
       };
     });
 
@@ -558,6 +641,7 @@ describe('Tabs', function () {
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
     expect(queryByRole('button')).toBeNull();
+
   });
 
   it('disabled tabs cannot be selected via collapse picker', function () {
@@ -565,12 +649,25 @@ describe('Tabs', function () {
     let mockCalls = [
       function () {
         return {
-          right: 500
+          left: 0,
+          right: 100
         };
       },
       function () {
         return {
+          left: 100,
+          right: 400
+        };
+      },
+      function () {
+        return {
+          left: 400,
           right: 700
+        };
+      },
+      function () {
+        return {
+          right: 500
         };
       }
     ];
