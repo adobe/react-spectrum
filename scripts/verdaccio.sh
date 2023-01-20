@@ -18,7 +18,6 @@ function cleanup {
   then
     lsof -ti tcp:4000 | xargs kill
     # Clean up generated dists if run locally
-    shopt -s globstar extglob
     rm -rf packages/**/dist
     rm -rf storage/ ~/.config/verdaccio/storage/ $output
     if [ "$commit_to_revert" != "HEAD" ];
@@ -84,7 +83,7 @@ then
   mv dist/production/docs $verdaccio_path
 
   # install packages in CRA test app
-  cd examples/rsp-cra-18
+  cd examples/rsp-cra-18-webpack-4
   yarn install
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
