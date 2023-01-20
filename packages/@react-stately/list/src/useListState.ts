@@ -61,13 +61,26 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
       const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
+      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
+        key => {
+          const itemNode = cachedCollection.current.getItem(key);
+          return itemNode.type === 'item' ? itemNode : null;
+        }
+      ).filter(node => node !== null);
       const itemNodes = [...collection.getKeys()].map(
         key => {
           const itemNode = collection.getItem(key);
           return itemNode.type === 'item' ? itemNode : null;
         }
       ).filter(node => node !== null);
-      let index = Math.min(startItem.index, itemNodes.length - 1);
+      const diff = cachedItemNodes.length - itemNodes.length;
+      let index = Math.min(
+        (
+          diff > 1 ?
+          Math.max(startItem.index - diff + 1, 0) :
+          startItem.index
+        ),
+        itemNodes.length - 1);
       let newNode:Node<T>;
       while (index >= 0) {
         if (!selectionManager.isDisabled(itemNodes[index].key)) {

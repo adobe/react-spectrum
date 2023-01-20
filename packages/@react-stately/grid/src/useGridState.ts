@@ -60,8 +60,16 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         node.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
         cachedCollection.current.getItem(node.parentKey) :
         node;
+      const cachedRows = cachedCollection.current.rows;
       const rows = collection.rows;
-      let index = Math.min(parentNode.index, rows.length - 1);
+      const diff = cachedRows.length - rows.length;
+      let index = Math.min(
+        (
+          diff > 1 ?
+          Math.max(parentNode.index - diff + 1, 0) :
+          parentNode.index
+        ),
+        rows.length - 1);
       let newRow:GridNode<T>;
       while (index >= 0) {
         if (!selectionManager.isDisabled(rows[index].key)) {
