@@ -119,7 +119,6 @@ export const OnRemove: TagGroupStory = {
 };
 
 export const Wrapping: TagGroupStory = {
-  args: {width: '100%'},
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>]
 };
 
@@ -136,15 +135,15 @@ export const LabelTruncation: TagGroupStory = {
 };
 
 export const MaxRows: TagGroupStory = {
-  args: {maxRows: 2, width: '100%'},
+  args: {maxRows: 2},
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'maxRows'
 };
 
 export const MaxRowsManyTags: TagGroupStory = {
-  args: {maxRows: 2, width: '100%'},
+  args: {maxRows: 2},
   render: (args) => (
-    <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
+    <TagGroup aria-label="Tag group with 50 tags" items={manyItems} {...args}>
       {(item: any) => (
         <Item key={item.key}>{`Tag ${item.key}`}</Item>
       )}
@@ -155,7 +154,7 @@ export const MaxRowsManyTags: TagGroupStory = {
 };
 
 export const MaxRowsOnRemove: TagGroupStory = {
-  args: {maxRows: 2, width: '100%'},
+  args: {maxRows: 2},
   render: (args) => <OnRemoveExample {...args} />,
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'maxRows + onRemove'
@@ -194,8 +193,7 @@ export const WithActionAndMaxRows: TagGroupStory = {
   args: {
     maxRows: 2,
     onAction: action('clear'),
-    actionLabel: 'Clear',
-    width: '100%'
+    actionLabel: 'Clear'
   },
   decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'with action and maxRows'
