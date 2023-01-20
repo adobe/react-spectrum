@@ -43,6 +43,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     children,
     actionLabel,
     onAction,
+    labelPosition,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -155,7 +156,15 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
         ref={domRef}
-        UNSAFE_className={classNames(styles, 'spectrum-Tags-fieldWrapper')}>
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Tags-fieldWrapper',
+            {
+              'spectrum-Tags-fieldWrapper--positionSide': labelPosition === 'side'
+            }
+          )
+        }>
         <div
           ref={containerRef}
           {...styleProps}

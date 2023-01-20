@@ -114,5 +114,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-fieldWrapper.spectrum-Tags-fieldWrapper {
-  width: auto;
+  width: unset;
+  &:not(.spectrum-Tags-fieldWrapper--positionSide) {
+    display: grid;
+  }
 }

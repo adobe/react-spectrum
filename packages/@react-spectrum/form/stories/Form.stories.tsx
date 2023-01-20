@@ -33,6 +33,7 @@ import {Switch} from '@react-spectrum/switch';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
+import {TagGroup} from '../../tag';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -219,8 +220,28 @@ storiesOf('Form', module)
   );
 
 function render(props: any = {}) {
+  let [items, setItems] = useState([
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'},
+    {id: 3, label: 'This tag'},
+    {id: 4, label: 'What tag?'},
+    {id: 5, label: 'This tag is cool too'},
+    {id: 6, label: 'Shy tag'}
+  ]);
+
+  let onRemove = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+    action('onRemove')(key);
+  };
   return (
     <Form {...props}>
+      <TagGroup label="tag" allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} maxRows={2}>
+        {(item: any) => (
+          <Item key={item.key} textValue={item.label}>
+            {item.label}
+          </Item>
+      )}
+      </TagGroup>
       <CheckboxGroup defaultValue={['dragons']} label="Pets">
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
