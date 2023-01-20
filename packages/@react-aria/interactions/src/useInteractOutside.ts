@@ -59,9 +59,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
         if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
           state.onInteractOutside(e);
         }
+        state.isPointerDown = false;
       };
 
       // changing these to capture phase fixed combobox
@@ -77,17 +77,17 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
           state.onInteractOutside(e);
         }
+        state.isPointerDown = false;
       };
 
       let onTouchEnd = (e) => {
         state.ignoreEmulatedMouseEvents = true;
         if (state.onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          state.isPointerDown = false;
           state.onInteractOutside(e);
         }
+        state.isPointerDown = false;
       };
 
       document.addEventListener('mousedown', onPointerDown, true);
