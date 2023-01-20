@@ -90,6 +90,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         setScrolling(true);
 
         if (onScrollStart) {
+          debugger
           onScrollStart();
         }
       }
@@ -102,12 +103,14 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.scrollEndTime = now + 300;
 
         clearTimeout(state.scrollTimeout);
+        debugger
         state.scrollTimeout = setTimeout(() => {
           state.isScrolling = false;
           setScrolling(false);
           state.scrollTimeout = null;
 
           if (onScrollEnd) {
+            debugger;
             onScrollEnd();
           }
         }, 300);

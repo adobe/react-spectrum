@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -438,6 +438,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     onVisibleRectChange(rect) {
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
+      debugger
     },
     transitionDuration
   });
@@ -457,6 +458,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
           ? layout.getColumnWidth(column.key)
           : 0
       });
+      debugger
     }
   }, state, domRef);
 
@@ -467,6 +469,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
       document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
+
     }
   }, [state.contentSize, headerRef, bodyRef]);
 
@@ -476,6 +479,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    debugger;
   }, [bodyRef, headerRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
@@ -552,7 +556,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
             contentSize={state.contentSize}
             onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
             onScrollStart={state.startScrolling}
-            onScrollEnd={state.endScrolling}
+            onScrollEnd={chain(state.endScrolling, () => setDelayScrolling(false))}
             onScroll={onScroll}>
             {state.visibleViews[1]}
             <div
