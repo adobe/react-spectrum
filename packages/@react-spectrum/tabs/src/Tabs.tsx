@@ -17,7 +17,16 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
-import React, {Key, MutableRefObject, ReactElement, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  Key,
+  MutableRefObject,
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -44,7 +53,8 @@ interface TabsContext<T> {
   },
   tabPanelProps: {
     'aria-labelledby': string
-  }
+  },
+  tabLineState: Array<DOMRect>
 }
 
 const TabContext = React.createContext<TabsContext<any>>(null);
@@ -67,6 +77,8 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
   let [collapsed, setCollapsed] = useState(false);
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
   const [tabListState, setTabListState] = useState<TabListState<T>>(null);
+  let [tabPositions, setTabPositions] = useState([]);
+  let prevTabPositions = useRef(tabPositions);
 
   useEffect(() => {
     if (tablistRef.current) {
@@ -83,15 +95,19 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
     if (wrapperRef.current && orientation !== 'vertical') {
       let tabsComponent = wrapperRef.current;
       let tabs = tablistRef.current.querySelectorAll('[role="tab"]');
-      let lastTab = tabs[tabs.length - 1];
+      let tabDimensions = [...tabs].map(tab => tab.getBoundingClientRect());
 
       let end = direction === 'rtl' ? 'left' : 'right';
       let farEdgeTabList = tabsComponent.getBoundingClientRect()[end];
-      let farEdgeLastTab = lastTab?.getBoundingClientRect()[end];
+      let farEdgeLastTab = tabDimensions[tabDimensions.length - 1][end];
       let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
       setCollapsed(shouldCollapse);
+      if (tabDimensions.length !== prevTabPositions.current.length || tabDimensions.some((box, index) => box?.left !== prevTabPositions.current[index]?.left && box?.right !== prevTabPositions.current[index]?.right)) {
+        setTabPositions(tabDimensions);
+        prevTabPositions.current = tabDimensions;
+      }
     }
-  }, [tablistRef, wrapperRef, direction, orientation, setCollapsed]);
+  }, [tablistRef, wrapperRef, direction, orientation, setCollapsed, prevTabPositions, setTabPositions]);
 
   useEffect(() => {
     checkShouldCollapse();
@@ -114,7 +130,8 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
         tabProps: {...props, orientation, density},
         tabState: {tabListState, setTabListState, selectedTab, collapsed},
         refs: {tablistRef, wrapperRef},
-        tabPanelProps
+        tabPanelProps,
+        tabLineState: tabPositions
       }}>
       <div
         {...filterDOMProps(otherProps)}
@@ -204,13 +221,14 @@ function TabLine(props: TabLineProps) {
 
   let {direction} = useLocale();
   let {scale} = useProvider();
+  let {tabLineState} = useContext(TabContext);
 
   let [style, setStyle] = useState({
     width: undefined,
     height: undefined
   });
 
-  useLayoutEffect(() => {
+  let onResize = useCallback(() => {
     if (selectedTab) {
       let styleObj = {transform: undefined, width: undefined, height: undefined};
       // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
@@ -226,8 +244,11 @@ function TabLine(props: TabLineProps) {
       }
       setStyle(styleObj);
     }
+  }, [direction, setStyle, selectedTab, orientation]);
 
-  }, [direction, setStyle, selectedTab, orientation, scale, selectedKey]);
+  useLayoutEffect(() => {
+    onResize();
+  }, [onResize, scale, selectedKey, tabLineState]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
@@ -262,6 +283,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>) {
   }
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
+
   const tabContent = (
     <div
       {...stylePropsFinal}
