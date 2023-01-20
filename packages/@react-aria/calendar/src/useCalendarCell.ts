@@ -292,11 +292,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // If in a overlay, scrollIntoViewport will only cause scrolling
       // up to the overlay scroll body to prevent overlay shifting
       if (getInteractionModality() !== 'pointer') {
-        // If this calendar is in a popover, we need to wait till it is fully positioned before attempting to
-        // scroll it into view, otherwise it won't be brought into view properly
-        raf = requestAnimationFrame(() => {
-          scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
-        });
+        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
     return () => {

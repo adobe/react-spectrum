@@ -13,7 +13,7 @@
 import {ariaHideOutside} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import {RefObject, useState} from 'react';
@@ -96,6 +96,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   // This requires a layout effect so that positioning has been committed to the DOM
   // by the time usePreventScroll measures the element.
   let [isPositioned, setPositioned] = useState(false);
+
   useLayoutEffect(() => {
     if (!isNonModal && placement) {
       setPositioned(true);
@@ -111,6 +112,14 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       return ariaHideOutside([popoverRef.current]);
     }
   }, [isNonModal, state.isOpen, popoverRef]);
+
+  useLayoutEffect(() => {
+    if (state.isOpen && !isPositioned) {
+      setDelayScrolling(true);
+    } else {
+      setDelayScrolling(false);
+    }
+  }, [state.isOpen, isPositioned]);
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),
