@@ -35,6 +35,7 @@ export function setDelayScrolling(value: boolean) {
     for (let cb of scrollCallbacks) {
       cb();
     }
+    scrollCallbacks.clear();
   }
   delayScrolling = value;
 }
