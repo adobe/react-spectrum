@@ -125,7 +125,6 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   }, [maxRows, setTagState, domRef, direction, state.collection.size]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
 
@@ -172,8 +171,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           <div
             ref={tagsRef}
             {...tagGroupProps}
-            className={classNames(styles, 'spectrum-Tags')}
-            role={state.collection.size ? 'grid' : null}>
+            className={classNames(styles, 'spectrum-Tags')}>
             {visibleTags.map(item => (
               <Tag
                 {...item.props}

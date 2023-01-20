@@ -54,7 +54,6 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
 
   // Don't want the grid to be focusable or accessible via keyboard
-  delete gridProps.role;
   delete gridProps.tabIndex;
 
   let [isFocusWithin, setFocusWithin] = useState(false);
@@ -64,6 +63,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let domProps = filterDOMProps(props);
   return {
     tagGroupProps: mergeProps(gridProps, domProps, {
+      role: state.collection.size ? 'group' : undefined,
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
