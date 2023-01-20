@@ -1669,6 +1669,46 @@ describe('TableView', function () {
         rows = tree.getAllByRole('row');
         expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
       });
+
+      it('should send focus to the appropriate column and row if both the current row and column are removed', function () {
+        let itemsLocal = items;
+        let columnsLocal = columns;
+        let renderJSX = (props, items = itemsLocal, columns = columnsLocal) => (
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let renderTable = (props, items = itemsLocal, columns = columnsLocal) => render(renderJSX(props, items, columns));
+
+        let tree = renderTable();
+        focusCell(tree, 'Baz 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1], itemsLocal[0]], columnsLocal.slice(0, 2)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Bar 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1]], columnsLocal.slice(0, 1)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Foo 2');
+
+        rerender(tree, renderJSX({}, [itemsLocal[0], itemsLocal[0]], columnsLocal));
+
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
+      });
     });
 
     describe('scrolling', function () {
