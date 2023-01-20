@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusScope} from '@react-aria/focus';
@@ -43,13 +43,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     children,
     actionLabel,
     onAction,
-    labelPosition,
-    ...otherProps
+    labelPosition
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef(null);
   let tagsRef = useRef(null);
-  let {styleProps} = useStyleProps(otherProps);
   let {direction} = useLocale();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
@@ -165,9 +163,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          ref={containerRef}
-          {...styleProps}
-          className={classNames(styles, 'spectrum-Tags-container', styleProps.className)}>
+          ref={containerRef}>
           <div
             ref={tagsRef}
             {...tagGroupProps}
