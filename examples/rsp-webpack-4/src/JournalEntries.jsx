@@ -1,7 +1,6 @@
 import {Flex, Divider} from '@adobe/react-spectrum'
-import Journal from './Journal'
 
-function JournalEntries(props : {list : Journal[]}){
+function JournalEntries(props){
 
     const element = props.list.map(item => (
         <li key={item.id}>
@@ -9,7 +8,7 @@ function JournalEntries(props : {list : Journal[]}){
             <p>Your day was: {item.rate} </p>
             <p>{item.description}</p>
         </li>
-        
+
     ))
 
     return (

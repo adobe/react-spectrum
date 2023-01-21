@@ -8,11 +8,11 @@ function App() {
   let [selected, setSelection] = useState(false);
 
   return (
-    <Provider theme={defaultTheme} 
+    <Provider theme={defaultTheme}
               colorScheme={selected ? "light" : "dark"}
               height="100%">
       <div className="content-padding">
-        <Lighting selected={selected} switch={setSelection}/>
+        <Lighting selected={selected} switch={setSelection} />
         <BodyContent />
       </div>
     </Provider>

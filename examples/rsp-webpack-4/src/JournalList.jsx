@@ -1,16 +1,8 @@
-import {Key} from 'react'
 import AddCircle from '@spectrum-icons/workflow/AddCircle';
 import {Flex, Text, Button, Form, TextArea, Picker, Item, Divider} from '@adobe/react-spectrum'
 import JournalEntries from './JournalEntries'
-import Journal from './Journal'
 
-function JournalList(props: {rating: Key;
-                            setRating: any;
-                            entryList: Journal[];
-                            options: {id: string, name: string}[];
-                            description: string;
-                            setDescription: any;
-                            handleSubmit: any}){
+function JournalList(props){
     return(
         <>
             <Form onSubmit={props.handleSubmit} maxWidth="size-6000">
@@ -21,7 +13,7 @@ function JournalList(props: {rating: Key;
                     >
                         {(item) => <Item key={item.id}>{item.name}</Item>}
                    </Picker>
-                    <TextArea width="size-5000" label="Description" 
+                    <TextArea width="size-5000" label="Description"
                                 value={props.description}
                                 onChange={props.setDescription}/>
                     <Button type="submit" marginTop="size-200" variant="primary" width="150px">

@@ -1,22 +1,20 @@
-import {useState, FormEvent, Key, useRef} from "react";
+import {useState, useRef} from "react";
 import {Item, TabList, TabPanels, Tabs} from '@adobe/react-spectrum'
 import TodoList from './TodoList';
 import JournalList from './JournalList';
-import ToDo from './ToDo'
-import Journal from './Journal'
 
 
 function BodyContent(){
 
   //states for the To-Do list
-  const [list, setList] = useState<ToDo[]>([]);
+  const [list, setList] = useState([]);
   const [value, setValue] = useState('');
-  const [completed, setCompleted] = useState<ToDo[]>([]);
+  const [completed, setCompleted] = useState([]);
   const count = useRef(0);
 
   //states for journal entries
-  const [rating, setRating] = useState<Key>('');
-  const [entryList, setEntryList] = useState<Journal[]>([]);
+  const [rating, setRating] = useState('');
+  const [entryList, setEntryList] = useState([]);
   const [description, setDescription] = useState('');
   const countJournals = useRef(0);
 
@@ -25,28 +23,28 @@ function BodyContent(){
     {id: "Okay", name: "Okay"},
     {id: "Good", name: "Good"},
     {id: "Great", name: "Great"}
-  ] 
+  ]
 
   //functions for the To-Do list
-  function handleSubmitToDo(e: FormEvent<HTMLInputElement>){
+  function handleSubmitToDo(e){
     e.preventDefault()
 
     if (value.length > 0){
         setList(prevListArray => {
             return [
-                ...prevListArray, 
+                ...prevListArray,
                 {id: count.current, task: value}]
         })
 
         count.current = count.current + 1;
-    }   
+    }
     setValue(""); //clears text field on submit
   }
 
-  function updateCompleted(complete : string){
+  function updateCompleted(complete){
     setCompleted(prevListArray => {
         return [
-            ...prevListArray, 
+            ...prevListArray,
             {id: prevListArray.length, task: complete}]
     });
   }
@@ -58,7 +56,7 @@ function BodyContent(){
   }
 
   //functions for journal entries
-  function handleSubmitJournals(e: FormEvent<HTMLInputElement>){
+  function handleSubmitJournals(e){
       e.preventDefault()
 
       countJournals.current = countJournals.current + 1; //used to determine key for each item in the entryList array
@@ -82,18 +80,18 @@ function BodyContent(){
       </TabList>
       <TabPanels>
         <Item key="TdL">
-          <TodoList list={list} 
-                    setList={setList} 
-                    handleSubmit={handleSubmitToDo} 
-                    value={value} 
-                    setValue={setValue} 
+          <TodoList list={list}
+                    setList={setList}
+                    handleSubmit={handleSubmitToDo}
+                    value={value}
+                    setValue={setValue}
                     completed={completed}
                     updateCompleted={updateCompleted}
                     clearCompleted={clearCompleted}/>
         </Item>
         <Item key="DJ">
-            <JournalList rating={rating} 
-                          setRating={setRating} 
+            <JournalList rating={rating}
+                          setRating={setRating}
                           entryList={entryList}
                           options={options}
                           description={description}

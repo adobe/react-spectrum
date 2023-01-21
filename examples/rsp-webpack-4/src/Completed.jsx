@@ -2,9 +2,8 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {AlertDialog, DialogTrigger, ActionButton} from '@adobe/react-spectrum'
 import {Checkbox} from '@adobe/react-spectrum'
 import {Flex} from '@adobe/react-spectrum'
-import ToDo from './ToDo'
 
-function Completed(props: {completed: ToDo[]; onDelete: any}){
+function Completed(props){
 
     const elements = props.completed.map(item => (
         <Checkbox isReadOnly isSelected key={item.id}>{item.task}</Checkbox>
