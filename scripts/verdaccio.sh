@@ -83,7 +83,18 @@ then
   mv dist/production/docs $verdaccio_path
 
   # install packages in CRA test app
-  cd examples/rsp-cra-18-webpack-4
+  cd examples/rsp-cra-18
+  yarn install
+
+  # Build CRA test app and move to dist folder. Store the size of the build in a text file.
+  yarn build | tee build-stats.txt
+  du -ka build/ | tee -a build-stats.txt
+  mkdir -p ../../$verdaccio_path/publish-stats
+  mv build-stats.txt ../../
+  mv build ../../$verdaccio_path
+
+  # install packages in webpack 4 test app
+  cd ../../examples/rsp-webpack-4
   yarn install
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
