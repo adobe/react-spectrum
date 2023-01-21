@@ -141,23 +141,23 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       // Wait till virtualizer scrolls the focused key into view before checking if we need to scroll it into the viewport
       // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
       // syncing is a bit delayed compared to when scrollToItem is fired.
-      if (focusedKeyRect.width > visibleRect.width || focusedKeyRect.height > visibleRect.height) {
-        if (
-          focusedKeyRect.x < visibleRect.x ||
-          focusedKeyRect.y < visibleRect.y
-        ) {
-          console.log('will need to scroll, target rect larger than visible rect case')
-          setDelayScrolling(true);
-        }
-      } else if (
-        focusedKeyRect.x < visibleRect.x ||
-        focusedKeyRect.maxX > visibleRect.maxX ||
-        focusedKeyRect.y < visibleRect.y ||
-        focusedKeyRect.maxY > visibleRect.maxY
-      ) {
-        console.log('will need to scroll, target smaller than visible rect case')
-        setDelayScrolling(true);
-      }
+      // if (focusedKeyRect.width > visibleRect.width || focusedKeyRect.height > visibleRect.height) {
+      //   if (
+      //     focusedKeyRect.x < visibleRect.x ||
+      //     focusedKeyRect.y < visibleRect.y
+      //   ) {
+      //     console.log('will need to scroll')
+      //     setDelayScrolling(true);
+      //   }
+      // } else if (
+      //   focusedKeyRect.x < visibleRect.x ||
+      //   focusedKeyRect.maxX > visibleRect.maxX ||
+      //   focusedKeyRect.y < visibleRect.y ||
+      //   focusedKeyRect.maxY > visibleRect.maxY
+      // ) {
+      //   console.log('will need to scroll')
+      //   setDelayScrolling(true);
+      // }
 
       if (scrollToItem) {
         scrollToItem(focusedKey);
@@ -167,7 +167,7 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       debugger;
 
       if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
-        scrollIntoViewport(document.activeElement, {containingElement: ref.current});
+        // scrollIntoViewport(document.activeElement, {containingElement: ref.current});
       }
     }
 

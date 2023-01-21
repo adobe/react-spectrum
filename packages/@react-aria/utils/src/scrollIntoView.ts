@@ -91,6 +91,7 @@ export function scrollIntoView(element: HTMLElement, opts: HTMLElement | ScrollO
   }
   scrollView.scrollLeft = x;
   scrollView.scrollTop = y;
+  debugger
 }
 
 /**
@@ -137,6 +138,7 @@ function scrollIntoViewportHelper(targetElement: Element, opts?: ScrollIntoViewp
   if (document.contains(targetElement)) {
       // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
     if (!isScrollPrevented) {
+      debugger
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
@@ -148,6 +150,7 @@ function scrollIntoViewportHelper(targetElement: Element, opts?: ScrollIntoViewp
         opts?.containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
         targetElement.scrollIntoView?.({block: 'nearest'});
       }
+      debugger
     } else {
       let root = document.scrollingElement || document.documentElement;
       let scrollParent = getScrollParent(targetElement);
