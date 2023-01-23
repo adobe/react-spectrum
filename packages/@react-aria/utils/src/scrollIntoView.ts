@@ -24,18 +24,16 @@ interface ScrollIntoViewportOpts {
 
 let isScrollPrevented = false;
 let delayScrolling = false;
-let scrollCallbacks = new Set<() => void>();
+let scrollCallback: () => void;
 
 export function setScrollPrevented(value: boolean) {
   isScrollPrevented = value;
 }
 
 export function setDelayScrolling(value: boolean) {
-  if (!value && delayScrolling) {
-    for (let cb of scrollCallbacks) {
-      cb();
-    }
-    scrollCallbacks.clear();
+  if (!value && delayScrolling && scrollCallback != null) {
+    scrollCallback();
+    scrollCallback = null;
   }
   delayScrolling = value;
 }
@@ -127,7 +125,7 @@ export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoView
   // If scrolling should be delayed (e.g. target exists in a overlay that hasn't finished sizing/positioning itself)
   // then we want to delay scrolling the target into view
   if (delayScrolling) {
-    scrollCallbacks.add(scrollFn);
+    scrollCallback = scrollFn;
   } else {
     scrollFn();
   }
