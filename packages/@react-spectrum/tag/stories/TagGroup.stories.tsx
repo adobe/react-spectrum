@@ -56,6 +56,16 @@ export default {
         disable: true
       }
     },
+    onAction: {
+      table: {
+        disable: true
+      }
+    },
+    items: {
+      table: {
+        disable: true
+      }
+    },
     maxRows: {
       type: 'number'
     },
