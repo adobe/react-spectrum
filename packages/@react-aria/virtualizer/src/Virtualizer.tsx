@@ -135,39 +135,16 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // Exception made if focus isn't within the virtualizer (e.g. opening a picker via click should scroll the selected item into view)
     let modality = getInteractionModality();
     if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
-      let focusedKeyRect = virtualizer.getView(focusedKey).layoutInfo.rect;
-      let visibleRect = virtualizer.visibleRect;
-      // If the focused key rect is partially/fully out of view, a ScrollView controlled scroll will need to happen to bring the node into view w/ respect to the virtualized container.
-      // Wait till virtualizer scrolls the focused key into view before checking if we need to scroll it into the viewport
-      // Specifically need to do this for the column headers since they aren't part of the scrollable table body and their position
-      // syncing is a bit delayed compared to when scrollToItem is fired.
-      // if (focusedKeyRect.width > visibleRect.width || focusedKeyRect.height > visibleRect.height) {
-      //   if (
-      //     focusedKeyRect.x < visibleRect.x ||
-      //     focusedKeyRect.y < visibleRect.y
-      //   ) {
-      //     console.log('will need to scroll')
-      //     setDelayScrolling(true);
-      //   }
-      // } else if (
-      //   focusedKeyRect.x < visibleRect.x ||
-      //   focusedKeyRect.maxX > visibleRect.maxX ||
-      //   focusedKeyRect.y < visibleRect.y ||
-      //   focusedKeyRect.maxY > visibleRect.maxY
-      // ) {
-      //   console.log('will need to scroll')
-      //   setDelayScrolling(true);
-      // }
-
       if (scrollToItem) {
+        // If user provides scrolltoitem, then it is their responsibility to call scrollIntoViewport if desired
+        // since we don't know if their scrollToItem may take some time to actually bring the active element into the virtualizer's visible rect.
         scrollToItem(focusedKey);
       } else {
         virtualizer.scrollToItem(focusedKey, {duration: 0});
-      }
-      debugger;
 
-      if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
-        // scrollIntoViewport(document.activeElement, {containingElement: ref.current});
+        if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
+          scrollIntoViewport(document.activeElement, {containingElement: ref.current});
+        }
       }
     }
 

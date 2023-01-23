@@ -108,9 +108,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
           state.scrollTimeout = null;
 
           if (onScrollEnd) {
-
             onScrollEnd();
-            // debugger
           }
         }, 300);
       }

@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, scrollIntoViewport, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -447,7 +447,35 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     scrollToItem(key) {
       let item = collection.getItem(key);
       let column = collection.columns[0];
-      state.virtualizer.scrollToItem(key, {
+      let virtualizer = state.virtualizer;
+
+      // If the key to be scrolled into view is a column header, we will need to delay our scrollIntoViewport call
+      // since header scroll position update is a bit delayed (updated in a useEffect). Calling scrollIntoViewport
+      // prematurely will cause the table to be centered in the viewport even if it was already in view.
+      let focusedKeyRect = virtualizer.getView(focusedKey)?.layoutInfo?.rect;
+      let visibleRect = virtualizer.visibleRect;
+      let modality = getInteractionModality();
+      if (focusedKeyRect && item?.type === 'column') {
+        // If column can't fit fully in the visible rect, then it will be scrolled into view if the top left (start) corner is
+        // out of view
+        if (focusedKeyRect.width > visibleRect.width || focusedKeyRect.height > visibleRect.height) {
+          if (
+            focusedKeyRect.x < visibleRect.x ||
+            focusedKeyRect.y < visibleRect.y
+          ) {
+            setDelayScrolling(true);
+          }
+        } else if (
+          focusedKeyRect.x < visibleRect.x ||
+          focusedKeyRect.maxX > visibleRect.maxX ||
+          focusedKeyRect.y < visibleRect.y ||
+          focusedKeyRect.maxY > visibleRect.maxY
+        ) {
+          setDelayScrolling(true);
+        }
+      }
+
+      virtualizer.scrollToItem(key, {
         duration: 0,
         // Prevent scrolling to the top when clicking on column headers.
         shouldScrollY: item?.type !== 'column',
@@ -457,6 +485,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
           ? layout.getColumnWidth(column.key)
           : 0
       });
+
+      if (modality === 'keyboard') {
+        // TODO: or we could not call scrollIntoViewport for type=== column here and just do it in the useEffect?
+        scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
+      }
     }
   }, state, domRef);
 
@@ -465,10 +498,8 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   // header scroll position
   useEffect(() => {
     if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
-      debugger
       document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
-      debugger
     }
   }, [state.contentSize, headerRef, bodyRef]);
 
@@ -477,8 +508,9 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
-    debugger
     headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    // Trigger queued scrollIntoViewport call if any exists (aka keyboard navigating between column headers)
+    setDelayScrolling(false);
   }, [bodyRef, headerRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
