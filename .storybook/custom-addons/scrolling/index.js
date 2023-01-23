@@ -50,14 +50,10 @@ function StoryWrapper({children, className, style}) {
   );
 }
 
-export const withScrollingSwitcher = makeDecorator({
-  name: 'withScrollingSwitcher',
-  parameterName: 'scrollingSwitcher',
-  wrapper: (getStory, context) => {
-    return (
-      <ScrollingDecorator>
-        {getStory(context)}
-      </ScrollingDecorator>
-    );
-  }
-});
+export const withScrollingSwitcher = (Story) => {
+  return (
+    <ScrollingDecorator>
+      <Story />
+    </ScrollingDecorator>
+  )
+}
