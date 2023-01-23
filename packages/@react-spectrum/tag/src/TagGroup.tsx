@@ -22,6 +22,7 @@ import {ListCollection} from '@react-stately/list';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
+import {useFormProps} from '@react-spectrum/form';
 import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -36,6 +37,7 @@ export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StylePro
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     allowsRemoving,
     onRemove,
