@@ -1409,7 +1409,7 @@ describe('SearchAutocomplete', function () {
 
   describe('mobile searchAutocomplete', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     });
 
     afterEach(() => {

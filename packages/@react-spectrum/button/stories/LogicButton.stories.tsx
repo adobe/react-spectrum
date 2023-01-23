@@ -11,36 +11,59 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {LogicButton} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Button/LogicButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'logic variant: and',
-    () => render({variant: 'and', label: 'and'})
-  )
-  .add(
-    'logic variant: or',
-    () => render({variant: 'or', label: 'or'})
-  );
+export type LogicButtonStory = ComponentStoryObj<typeof LogicButton>;
+
+export default {
+  title: 'Button/LogicButton',
+  component: LogicButton,
+  args: {
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend')
+  },
+  argTypes: {
+    onPress: {
+      table: {
+        disable: true
+      }
+    },
+    onPressStart: {
+      table: {
+        disable: true
+      }
+    },
+    onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    variant: {
+      control: 'select',
+      options: ['and', 'or']
+    }
+  }
+} as ComponentMeta<typeof LogicButton>;
+
+export const Default: LogicButtonStory = {
+  render: (args) => render(args)
+};
 
 function render(props: any = {}) {
   return (
     <div>
       <LogicButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         {...props}>
         Default
       </LogicButton>
       <LogicButton
         marginStart="10px"
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
         isDisabled
         {...props}>
         Disabled
