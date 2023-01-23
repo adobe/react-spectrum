@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, focusWithoutScrolling, mergeProps, scrollIntoViewport, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
 import {Collection} from '@react-types/shared';
+import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
@@ -104,7 +104,7 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
       contentSize={state.contentSize}
       onVisibleRectChange={onVisibleRectChange}
       onScrollStart={state.startScrolling}
-      onScrollEnd={chain(state.endScrolling, () => setDelayScrolling(false))}
+      onScrollEnd={state.endScrolling}
       sizeToFit={sizeToFit}
       scrollDirection={scrollDirection}>
       {state.visibleViews}

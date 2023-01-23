@@ -450,7 +450,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       let virtualizer = state.virtualizer;
 
       // If the key to be scrolled into view is a column header, we will need to delay our scrollIntoViewport call
-      // since header scroll position update is a bit delayed (updated in a useEffect). Calling scrollIntoViewport
+      // since header scroll position update is a bit delayed (updated in onScroll). Calling scrollIntoViewport
       // prematurely will cause the table to be centered in the viewport even if it was already in view.
       let focusedKeyRect = virtualizer.getView(focusedKey)?.layoutInfo?.rect;
       let visibleRect = virtualizer.visibleRect;
@@ -487,7 +487,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       });
 
       if (modality === 'keyboard') {
-        // TODO: or we could not call scrollIntoViewport for type=== column here and just do it in the useEffect?
         scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       }
     }
@@ -587,7 +586,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
             contentSize={state.contentSize}
             onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
             onScrollStart={state.startScrolling}
-            onScrollEnd={chain(state.endScrolling, () => setDelayScrolling(false))}
+            onScrollEnd={state.endScrolling}
             onScroll={onScroll}>
             {state.visibleViews[1]}
             <div
