@@ -60,7 +60,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
-  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, domRef);
+  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {

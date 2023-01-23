@@ -63,7 +63,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let domProps = filterDOMProps(props);
   return {
     tagGroupProps: mergeProps(gridProps, domProps, {
-      role: state.collection.size ? 'group' : undefined,
+      role: state.collection.size ? 'grid' : undefined,
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
