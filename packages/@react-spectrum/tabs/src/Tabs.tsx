@@ -102,7 +102,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
       let farEdgeLastTab = tabDimensions[tabDimensions.length - 1][end];
       let shouldCollapse = direction === 'rtl' ? farEdgeLastTab < farEdgeTabList : farEdgeTabList < farEdgeLastTab;
       setCollapsed(shouldCollapse);
-      if (tabDimensions.length !== prevTabPositions.current.length || tabDimensions.some((box, index) => box?.left !== prevTabPositions.current[index]?.left && box?.right !== prevTabPositions.current[index]?.right)) {
+      if (tabDimensions.length !== prevTabPositions.current.length || tabDimensions.some((box, index) => box?.left !== prevTabPositions.current[index]?.left || box?.right !== prevTabPositions.current[index]?.right)) {
         setTabPositions(tabDimensions);
         prevTabPositions.current = tabDimensions;
       }
