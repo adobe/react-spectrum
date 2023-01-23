@@ -41,7 +41,7 @@ function ScrollingDecorator(props) {
 function StoryWrapper({children, className, style}) {
   return (
     <div
-      className={ clsx('react-spectrum-story', className) }
+      className={clsx('react-spectrum-story', className)}
       style={style}
     >
       <span style={{position: 'absolute', top: 0, left: 0}}>{React.version}</span>

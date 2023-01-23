@@ -283,7 +283,6 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // Focus the button in the DOM when the state updates.
   useEffect(() => {
-    let raf;
     if (isFocused && ref.current) {
       focusWithoutScrolling(ref.current);
 
@@ -295,11 +294,6 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
-    return () => {
-      if (raf) {
-        cancelAnimationFrame(raf);
-      }
-    };
   }, [isFocused, ref]);
 
   let cellDateFormatter = useDateFormatter({
