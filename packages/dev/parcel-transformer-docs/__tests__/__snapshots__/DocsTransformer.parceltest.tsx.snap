@@ -58,9 +58,49 @@ Object {
     "AppReal": Object {
       "description": null,
       "id": "/test/src/index.tsx:App2",
-      "name": "App2",
+      "name": "AppReal",
       "props": null,
       "type": "component",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API identifiers writes export entry for identifiers 1`] = `
+Object {
+  "exports": Object {
+    "Column": Object {
+      "id": null,
+      "name": null,
+      "parameters": Array [
+        Object {
+          "description": null,
+          "name": "props",
+          "rest": false,
+          "type": "parameter",
+          "value": Object {
+            "properties": Object {
+              "id": Object {
+                "default": null,
+                "name": "id",
+                "optional": false,
+                "type": "property",
+                "value": Object {
+                  "type": "string",
+                },
+              },
+            },
+            "type": "object",
+          },
+        },
+      ],
+      "return": Object {
+        "description": null,
+        "type": "any",
+      },
+      "type": "function",
       "typeParameters": Array [],
     },
   },

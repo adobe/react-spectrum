@@ -197,4 +197,20 @@ describe('DocsTransformer - API', () => {
     }, 50000);
   });
 
+  describe('identifiers', () => {
+    it('writes export entry for identifiers', async () => {
+      await writeSourceFile('column', `
+    export interface SpectrumColumnProps<T> {id: string};
+    export let Column = (props: {id: string}) => null;
+    `);
+      await writeSourceFile('index', `
+    import {Column, SpectrumColumnProps} from './column';
+    const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+    export {SpectrumColumn as Column};
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
+
 });
