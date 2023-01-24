@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject, useState} from 'react';
 import {TagGroupProps} from '@react-types/tag';
@@ -32,7 +32,7 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps, Validation {
   /**
    * An optional keyboard delegate to handle arrow key navigation,
    * to override the default.
@@ -50,8 +50,8 @@ export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLa
 export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
-  let {gridProps} = useGridList({...props, keyboardDelegate}, state, ref);
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
+  let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
 
   // Don't want the grid to be focusable or accessible via keyboard
   delete gridProps.tabIndex;
@@ -63,7 +63,7 @@ export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState
   let domProps = filterDOMProps(props);
   return {
     tagGroupProps: mergeProps(gridProps, domProps, {
-      role: state.collection.size ? 'grid' : undefined,
+      role: state.collection.size ? 'grid' : null,
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',

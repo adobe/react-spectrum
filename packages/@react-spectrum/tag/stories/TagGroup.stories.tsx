@@ -215,7 +215,9 @@ export const WithLabelDescriptionContextualHelp: TagGroupStory = {
         <Heading>What are these tags?</Heading>
         <Content>Here is more information about the tag group.</Content>
       </ContextualHelp>
-    )},
+    )
+  },
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
   storyName: 'with label, description, contextual help'
 };
 
