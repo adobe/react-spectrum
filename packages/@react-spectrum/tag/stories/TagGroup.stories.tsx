@@ -221,6 +221,23 @@ export const WithLabelDescriptionContextualHelp: TagGroupStory = {
   storyName: 'with label, description, contextual help'
 };
 
+export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
+  args: {
+    onAction: action('clear'),
+    actionLabel: 'Clear',
+    label: 'Some sample tags',
+    description: 'Here is a description about the tag group.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What are these tags?</Heading>
+        <Content>Here is more information about the tag group.</Content>
+      </ContextualHelp>
+    )
+  },
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'with label, description, contextual help + action'
+};
+
 function OnRemoveExample(props) {
   let {withAvatar, ...otherProps} = props;
   let [items, setItems] = useState([
