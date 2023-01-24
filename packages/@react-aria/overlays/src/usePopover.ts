@@ -16,7 +16,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, setDelayScrolling, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import {RefObject, useState} from 'react';
+import {RefObject, useEffect, useState} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -120,6 +120,13 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       setDelayScrolling(false);
     }
   }, [state.isOpen, isPositioned]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      setDelayScrolling(false);
+    };
+  }, []);
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),
