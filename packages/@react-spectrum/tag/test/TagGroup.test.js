@@ -513,6 +513,7 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
+    expect(onClearSpy).toHaveBeenCalledWith();
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(tags[0]);
@@ -576,6 +577,7 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
+    expect(onClearSpy).toHaveBeenCalledWith();
 
     userEvent.tab({shift: true});
     expect(document.activeElement).toBe(buttons[0]);
@@ -587,6 +589,7 @@ describe('TagGroup', function () {
     fireEvent.mouseDown(document.activeElement, {key: 'Enter'});
     fireEvent.mouseUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
+    expect(onClearSpy).toHaveBeenCalledWith();
 
     offsetWidth.mockReset();
   });
