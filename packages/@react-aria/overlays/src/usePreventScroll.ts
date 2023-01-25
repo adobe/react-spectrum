@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, setScrollPrevented, useLayoutEffect} from '@react-aria/utils';
+import {chain, getScrollParent, isIOS, useLayoutEffect} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -53,9 +53,9 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
     preventScrollCount++;
     if (preventScrollCount === 1) {
       if (isIOS()) {
-        restore = chain(preventScrollMobileSafari(), updateScrollPrevented());
+        restore = preventScrollMobileSafari();
       } else {
-        restore = chain(preventScrollStandard(), updateScrollPrevented());
+        restore = preventScrollStandard();
       }
     }
 
@@ -243,13 +243,6 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
   target.addEventListener(event, handler, options);
   return () => {
     target.removeEventListener(event, handler, options);
-  };
-}
-
-function updateScrollPrevented() {
-  setScrollPrevented(true);
-  return () => {
-    setScrollPrevented(false);
   };
 }
 

@@ -22,13 +22,8 @@ interface ScrollIntoViewportOpts {
   containingElement?: Element
 }
 
-let isScrollPrevented = false;
 let delayScrolling = false;
 let scrollCallback: () => void;
-
-export function setScrollPrevented(value: boolean) {
-  isScrollPrevented = value;
-}
 
 export function setDelayScrolling(value: boolean) {
   if (!value && delayScrolling && scrollCallback != null) {
@@ -133,7 +128,9 @@ export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoView
 
 function scrollIntoViewportHelper(targetElement: Element, opts?: ScrollIntoViewportOpts) {
   if (document.contains(targetElement)) {
-      // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+    let root = document.scrollingElement || document.documentElement;
+    let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
+    // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
     if (!isScrollPrevented) {
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
 
@@ -147,7 +144,6 @@ function scrollIntoViewportHelper(targetElement: Element, opts?: ScrollIntoViewp
         targetElement.scrollIntoView?.({block: 'nearest'});
       }
     } else {
-      let root = document.scrollingElement || document.documentElement;
       let scrollParent = getScrollParent(targetElement);
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
       while (targetElement && scrollParent && targetElement !== root && scrollParent !== root) {

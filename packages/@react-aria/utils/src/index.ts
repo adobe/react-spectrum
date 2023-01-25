@@ -31,6 +31,6 @@ export {useDescription} from './useDescription';
 export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid} from './platform';
 export {useEvent} from './useEvent';
 export {useValueEffect} from './useValueEffect';
-export {setScrollPrevented, setDelayScrolling, scrollIntoView, scrollIntoViewport} from './scrollIntoView';
+export {setDelayScrolling, scrollIntoView, scrollIntoViewport} from './scrollIntoView';
 export {clamp, snapValueToStep} from '@react-stately/utils';
 export {isVirtualClick, isVirtualPointerEvent} from './isVirtualEvent';
