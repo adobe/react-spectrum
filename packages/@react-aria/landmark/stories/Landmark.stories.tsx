@@ -14,15 +14,14 @@ import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {createLandmarkController, useLandmark} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta, Story} from '@storybook/react';
-import React, {SyntheticEvent, useEffect, useRef} from 'react';
+import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
-import {useLandmark} from '../';
-
 
 interface StoryProps {}
 
@@ -314,6 +313,8 @@ function ApplicationExample() {
 }
 
 function IframeExample() {
+  let controller = useMemo(() => createLandmarkController(), []);
+  useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
     let window = iframe.contentWindow;
@@ -351,6 +352,7 @@ function IframeExample() {
     // Move focus to first or last landmark when we receive a message from the parent page.
     window.addEventListener('message', e => {
       if (e.data.type === 'landmark-navigation') {
+        // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
         document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
       }
     });
@@ -364,13 +366,13 @@ function IframeExample() {
         iframe.focus();
 
         // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
-        iframe.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+        controller.navigate(e.data.direction);
       }
     };
 
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, []);
+  }, [controller]);
 
   let ref = useRef(null);
   let {landmarkProps} = useLandmark({
