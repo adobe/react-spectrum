@@ -414,7 +414,6 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function TableSelectAllCell({column, state}) {
   let ref = useRef();
-  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
@@ -423,7 +422,7 @@ function TableSelectAllCell({column, state}) {
       {...columnHeaderProps}
       ref={ref}>
       {state.selectionManager.selectionMode === 'single'
-        ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        ? <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
         : <Checkbox {...checkboxProps} />
       }
     </th>
@@ -493,6 +492,10 @@ function Checkbox(props) {
 ```
 
 </details>
+
+
+// TODO add resizing mentions above and have a separate section detailing how to add it
+## Resizing Example
 
 ## Usage
 

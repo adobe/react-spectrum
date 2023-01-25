@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize, SpectrumTableProps} from '@react-types/table';
+import {Table as DocsTable} from './example-docs';
 import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
@@ -26,7 +27,7 @@ const meta: Meta<SpectrumTableProps<any>> = {
 export default meta;
 
 let columns = [
-  {name: 'Name', uid: 'name'},
+  {name: 'Naglwakenglkawnegklnakwlen glkawen glkawn gkaw neglkme', uid: 'name'},
   {name: 'Type', uid: 'type'},
   {name: 'Level', uid: 'level'}
 ];
@@ -48,12 +49,12 @@ let defaultRows = [
 
 const Template: Story<SpectrumTableProps<any>> = (args) => (
   <>
-    <label htmlFor="focusable-before">Focusable before</label>
-    <input id="focusable-before" />
+    {/* <label htmlFor="focusable-before">Focusable before</label>
+    <input id="focusable-before" /> */}
     <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
-          <Column key={column.uid}>
+          <Column allowsResizing key={column.uid}>
             {column.name}
           </Column>
         )}
@@ -66,8 +67,8 @@ const Template: Story<SpectrumTableProps<any>> = (args) => (
         )}
       </TableBody>
     </Table>
-    <label htmlFor="focus-after">Focusable after</label>
-    <input id="focus-after" />
+    {/* <label htmlFor="focus-after">Focusable after</label>
+    <input id="focus-after" /> */}
   </>
 );
 
@@ -100,6 +101,28 @@ const TemplateBackwardsCompat: Story<SpectrumTableProps<any>> = (args) => (
 
 export const ScrollTesting = Template.bind({});
 ScrollTesting.args = {};
+
+export const DocExample = {
+  args: {},
+  render: (args) => (
+    <DocsTable aria-label="Table with selection" selectionMode="multiple" {...args}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column allowsResizing key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  )
+};
 
 export const ActionTesting = Template.bind({});
 ActionTesting.args = {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')};
