@@ -38,6 +38,7 @@ class LandmarkManager {
   private landmarks: Array<Landmark> = [];
   private static instance: LandmarkManager;
   private isListening = false;
+  public refCount = 0;
 
   private constructor() {
     this.f6Handler = this.f6Handler.bind(this);
@@ -53,14 +54,20 @@ class LandmarkManager {
     return LandmarkManager.instance;
   }
 
-  private setup() {
+  public setupIfNeeded() {
+    if (this.isListening) {
+      return;
+    }
     document.addEventListener('keydown', this.f6Handler, {capture: true});
     document.addEventListener('focusin', this.focusinHandler, {capture: true});
     document.addEventListener('focusout', this.focusoutHandler, {capture: true});
     this.isListening = true;
   }
 
-  private teardown() {
+  public teardownIfNeeded() {
+    if (!this.isListening || this.landmarks.length > 0 || this.refCount > 0) {
+      return;
+    }
     document.removeEventListener('keydown', this.f6Handler, {capture: true});
     document.removeEventListener('focusin', this.focusinHandler, {capture: true});
     document.removeEventListener('focusout', this.focusoutHandler, {capture: true});
@@ -74,21 +81,19 @@ class LandmarkManager {
   /**
    * Return set of landmarks with a specific role.
    */
-  public getLandmarksByRole(role: AriaLandmarkRole) {
+  private getLandmarksByRole(role: AriaLandmarkRole) {
     return new Set(this.landmarks.filter(l => l.role === role));
   }
 
   /**
    * Return first landmark with a specific role.
    */
-  public getLandmarkByRole(role: AriaLandmarkRole) {
+  private getLandmarkByRole(role: AriaLandmarkRole) {
     return this.landmarks.find(l => l.role === role);
   }
 
   public addLandmark(newLandmark: Landmark) {
-    if (!this.isListening) {
-      this.setup();
-    }
+    this.setupIfNeeded();
     if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
     }
@@ -132,9 +137,7 @@ class LandmarkManager {
 
   public removeLandmark(ref: MutableRefObject<Element>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
-    if (this.landmarks.length === 0) {
-      this.teardown();
-    }
+    this.teardownIfNeeded();
   }
 
   /**
@@ -173,7 +176,7 @@ class LandmarkManager {
   private closestLandmark(element: Element) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
-    while (!landmarkMap.has(currentElement) && currentElement !== document.body) {
+    while (currentElement && !landmarkMap.has(currentElement) && currentElement !== document.body) {
       currentElement = currentElement.parentElement;
     }
     return landmarkMap.get(currentElement);
@@ -185,11 +188,7 @@ class LandmarkManager {
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
    */
-  public getNextLandmark(element: Element, {backward}: {backward?: boolean }) {
-    if (this.landmarks.length === 0) {
-      return undefined;
-    }
-
+  private getNextLandmark(element: Element, {backward}: {backward?: boolean }) {
     let currentLandmark = this.closestLandmark(element);
     let nextLandmarkIndex = backward ? this.landmarks.length - 1 : 0;
     if (currentLandmark) {
@@ -211,6 +210,10 @@ class LandmarkManager {
         }
 
         nextLandmarkIndex = 0;
+      }
+
+      if (nextLandmarkIndex < 0 || nextLandmarkIndex >= this.landmarks.length) {
+        return true;
       }
 
       return false;
@@ -241,49 +244,59 @@ class LandmarkManager {
    * If not, focus the landmark itself.
    * If no landmarks at all, or none with focusable elements, don't move focus.
    */
-  public f6Handler(e: KeyboardEvent) {
+  private f6Handler(e: KeyboardEvent) {
     if (e.key === 'F6') {
-      let backward = e.shiftKey;
-      let nextLandmark = this.getNextLandmark(e.target as Element, {backward});
-
-      // If no landmarks, return
-      if (!nextLandmark) {
-        return;
-      }
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      // If alt key pressed, focus main landmark
-      if (e.altKey) {
-        let main = this.getLandmarkByRole('main');
-        if (main && document.contains(main.ref.current)) {
-          this.focusLandmark(main.ref.current, 'forward');
-        }
-        return;
-      }
-
-      // If something was previously focused in the next landmark, then return focus to it
-      if (nextLandmark.lastFocused) {
-        let lastFocused = nextLandmark.lastFocused;
-        if (document.body.contains(lastFocused)) {
-          lastFocused.focus();
-          return;
-        }
-      }
-
-      // Otherwise, focus the landmark itself
-      if (document.contains(nextLandmark.ref.current)) {
-        this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
+      // If alt key pressed, focus main landmark, otherwise navigate forward or backward based on shift key.
+      let handled = e.altKey ? this.focusMain() : this.navigate(e.target as Element, e.shiftKey);
+      if (handled) {
+        e.preventDefault();
+        e.stopPropagation();
       }
     }
+  }
+
+  public focusMain() {
+    let main = this.getLandmarkByRole('main');
+    if (main && document.contains(main.ref.current)) {
+      this.focusLandmark(main.ref.current, 'forward');
+      return true;
+    }
+
+    return false;
+  }
+
+  public navigate(from: Element, backward: boolean) {
+    let nextLandmark = this.getNextLandmark(from, {
+      backward
+    });
+
+    if (!nextLandmark) {
+      return false;
+    }
+
+    // If something was previously focused in the next landmark, then return focus to it
+    if (nextLandmark.lastFocused) {
+      let lastFocused = nextLandmark.lastFocused;
+      if (document.body.contains(lastFocused)) {
+        lastFocused.focus();
+        return true;
+      }
+    }
+
+    // Otherwise, focus the landmark itself
+    if (document.contains(nextLandmark.ref.current)) {
+      this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
+      return true;
+    }
+
+    return false;
   }
 
   /**
    * Sets lastFocused for a landmark, if focus is moved within that landmark.
    * Lets the last focused landmark know it was blurred if something else is focused.
    */
-  public focusinHandler(e: FocusEvent) {
+  private focusinHandler(e: FocusEvent) {
     let currentLandmark = this.closestLandmark(e.target as Element);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as FocusableElement});
@@ -300,7 +313,7 @@ class LandmarkManager {
   /**
    * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
    */
-  public focusoutHandler(e: FocusEvent) {
+  private focusoutHandler(e: FocusEvent) {
     let previousFocusedElement = e.target as Element;
     let nextFocusedElement = e.relatedTarget;
     // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
@@ -312,6 +325,57 @@ class LandmarkManager {
       }
     }
   }
+}
+
+export interface LandmarkControllerOptions {
+  /**
+   * The element from which to start navigating.
+   * @default document.activeElement
+   */
+  from?: Element
+}
+
+/** A LandmarkController allows programmatic navigation of landmarks. */
+export interface LandmarkController {
+  /** Moves focus to the next landmark. */
+  focusNext(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the previous landmark. */
+  focusPrevious(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the main landmark. */
+  focusMain(): boolean,
+  /** Moves focus either forward or backward in the landmark sequence. */
+  navigate(direction: 'forward' | 'backward', opts?: LandmarkControllerOptions): boolean,
+  /**
+   * Disposes the landmark controller. When no landmarks are registered, and no
+   * controllers are active, the landmark keyboard listeners are removed from the page.
+   */
+  dispose(): void
+}
+
+/** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
+export function createLandmarkController(): LandmarkController {
+  let instance = LandmarkManager.getInstance();
+  instance.refCount++;
+  instance.setupIfNeeded();
+  return {
+    navigate(direction, opts) {
+      return instance.navigate(opts?.from || document.activeElement, direction === 'backward');
+    },
+    focusNext(opts) {
+      return instance.navigate(opts?.from || document.activeElement, false);
+    },
+    focusPrevious(opts) {
+      return instance.navigate(opts?.from || document.activeElement, true);
+    },
+    focusMain() {
+      return instance.focusMain();
+    },
+    dispose() {
+      instance.refCount--;
+      instance.teardownIfNeeded();
+      instance = null;
+    }
+  };
 }
 
 /**

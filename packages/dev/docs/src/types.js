@@ -427,7 +427,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -553,7 +553,7 @@ function ObjectType({properties, exact}) {
 
         let punc = optional ? '?: ' : ': ';
         return (
-          <div key={property.key} style={{paddingLeft: '1.5em'}}>
+          <div key={property.key ?? i} style={{paddingLeft: '1.5em'}}>
             {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
             {property.indexType && <span className="token punctuation">{': '}</span>}
