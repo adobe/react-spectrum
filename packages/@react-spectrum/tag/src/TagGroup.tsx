@@ -188,7 +188,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             {actionLabel && onAction &&
               <ActionButton
                 isQuiet
-                onPress={onAction}
+                onPress={() => onAction?.()}
                 UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
                 {actionLabel}
               </ActionButton>

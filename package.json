@@ -35,13 +35,14 @@
     "chromatic": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_PROJECT_TOKEN --build-script-name 'build:chromatic'",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
-    "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push",
+    "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push --no-verify-access",
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
-    "bumpVersions": "node scripts/bumpVersions.js"
+    "bumpVersions": "node scripts/bumpVersions.js",
+    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'"
   },
   "workspaces": [
     "packages/react-stately",

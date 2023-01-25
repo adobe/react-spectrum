@@ -259,6 +259,7 @@ jobs:
       - run:
           name: compare api
           command: |
+            yarn test:parcel
             mkdir -p dist
             yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
