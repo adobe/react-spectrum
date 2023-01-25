@@ -10,10 +10,25 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Checkbox {
   /* todo: fix in DNA */
   --spectrum-checkbox-emphasized-text-color-key-focus: var(--spectrum-checkbox-emphasized-text-color-hover);
-  --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: var(--spectrum-checkbox-emphasized-box-border-color-selected-hover);
+
+  --spectrum-checkbox-box-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-checkbox-box-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-checkbox-box-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+  --spectrum-checkbox-quiet-box-border-color-selected: var(--spectrum-alias-toggle-color-selected);
+  --spectrum-checkbox-quiet-box-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
+  --spectrum-checkbox-quiet-box-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+
+  --spectrum-checkbox-emphasized-box-background-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-checkbox-emphasized-box-background-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-checkbox-emphasized-box-background-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-checkbox-emphasized-box-background-color-selected-down: var(--spectrum-accent-color-1100);
+  --spectrum-checkbox-emphasized-box-border-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-checkbox-emphasized-box-border-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-checkbox-emphasized-box-border-color-selected-down: var(--spectrum-accent-color-1100);
 }
 
 .spectrum-Checkbox {
@@ -262,9 +277,6 @@ governing permissions and limitations under the License.
     --spectrum-alias-toggle-color-selected-hover: Highlight;
     --spectrum-alias-toggle-color-selected-key-focus: Highlight;
     --spectrum-alias-toggle-color-selected-down: Highlight;
-    --spectrum-accent-color-900: Highlight;
-    --spectrum-accent-color-1000: Highlight;
-    --spectrum-accent-color-1100: Highlight;
 
     --spectrum-checkbox-box-border-color-error: Highlight;
     --spectrum-checkbox-box-border-color-error-down: Highlight;
@@ -286,6 +298,15 @@ governing permissions and limitations under the License.
     --spectrum-checkbox-text-color-error: FieldText;
     --spectrum-checkbox-text-color-error-down: FieldText;
     --spectrum-checkbox-text-color-error-hover: FieldText;
+
+    --spectrum-checkbox-emphasized-box-background-color-selected: Highlight;
+    --spectrum-checkbox-emphasized-box-background-color-selected-hover: Highlight;
+    --spectrum-checkbox-emphasized-box-background-color-selected-key-focus: Highlight;
+    --spectrum-checkbox-emphasized-box-background-color-selected-down: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-hover: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-key-focus: Highlight;
+    --spectrum-checkbox-emphasized-box-border-color-selected-down: Highlight;
 
     &.spectrum-Checkbox--quiet,
     &.is-indeterminate {
