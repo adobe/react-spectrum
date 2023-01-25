@@ -512,6 +512,9 @@ svg.spectrum-Table-sortedIcon {
 @media (forced-colors: active) {
   .spectrum-Table-row {
     &:focus-ring {
+      /* Adds a full outline style to the focused row to better distinguish between
+      the selected, not selected, selected + focused and selected + not focused
+      states without using a background color on the row in forced-colors: active mode. */
       &:after {
         outline: var(--spectrum-table-row-sticky-focus-indicator-width) solid;
         outline-offset: calc(-1 * var(--spectrum-table-row-sticky-focus-indicator-width));
