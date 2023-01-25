@@ -51,7 +51,7 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
     rules: {
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
