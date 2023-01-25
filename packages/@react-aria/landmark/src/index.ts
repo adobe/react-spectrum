@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria} from './useLandmark';
-export {useLandmark} from './useLandmark';
+export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria, LandmarkController} from './useLandmark';
+export {useLandmark, createLandmarkController} from './useLandmark';

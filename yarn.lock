@@ -2672,7 +2672,7 @@
     "@parcel/transformer-react-refresh-wrap" "2.8.2"
     "@parcel/transformer-svg" "2.8.2"
 
-"@parcel/core@2.8.2":
+"@parcel/core@2.8.2", "@parcel/core@^2.8.1":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@parcel/core/-/core-2.8.2.tgz#9ee5a0b18337885dc0893958f9e4190cb599200a"
   integrity sha512-ZGuq6p+Lzx6fgufaVsuOBwgpU3hgskTvIDIMdIDi9gOZyhGPK7U2srXdX+VYUL5ZSGbX04/P6QlB9FMAXK+nEg==
@@ -2722,7 +2722,7 @@
   dependencies:
     detect-libc "^1.0.3"
 
-"@parcel/fs@2.8.2":
+"@parcel/fs@2.8.2", "@parcel/fs@^2.8.1":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@parcel/fs/-/fs-2.8.2.tgz#380b76962f908cafec1fda6d4bb6ccda450325ab"
   integrity sha512-aN8znbMndSqn1xwZEmMblzqmJsxcExv2jKLl/a9RUHAP7LaPYcPZIykDL3YwGCiKTCzjmRpXnNoyosjFFeBaHA==
