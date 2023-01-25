@@ -19,13 +19,13 @@ import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection} from '@react-stately/list';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
 import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroupState} from '@react-stately/tag';
 
 export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, SpectrumHelpTextProps {
@@ -183,32 +183,34 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             ))}
           </div>
           {showActions &&
-            <div
-              role="group"
-              id={actionsId}
-              aria-label={stringFormatter.format('actions')}
-              aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
-              className={classNames(styles, 'spectrum-Tags-actions')}>
-              {tagState.showCollapseButton &&
-                <ActionButton
-                  isQuiet
-                  onPress={handlePressCollapse}
-                  UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-                  {isCollapsed ?
-                    stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
-                    stringFormatter.format('hideButtonLabel')
-                  }
-                </ActionButton>
-              }
-              {actionLabel && onAction &&
-                <ActionButton
-                  isQuiet
-                  onPress={() => onAction?.()}
-                  UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
-                  {actionLabel}
-                </ActionButton>
-              }
-            </div>
+            <Provider isDisabled={false}>
+              <div
+                role="group"
+                id={actionsId}
+                aria-label={stringFormatter.format('actions')}
+                aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+                className={classNames(styles, 'spectrum-Tags-actions')}>
+                {tagState.showCollapseButton &&
+                  <ActionButton
+                    isQuiet
+                    onPress={handlePressCollapse}
+                    UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                    {isCollapsed ?
+                      stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
+                      stringFormatter.format('hideButtonLabel')
+                    }
+                  </ActionButton>
+                }
+                {actionLabel && onAction &&
+                  <ActionButton
+                    isQuiet
+                    onPress={() => onAction?.()}
+                    UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                    {actionLabel}
+                  </ActionButton>
+                }
+              </div>
+            </Provider>
           }
         </div>
       </Field>
