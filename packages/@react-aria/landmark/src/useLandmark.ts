@@ -31,7 +31,8 @@ export interface LandmarkAria {
 const LANDMARK_API_VERSION = 1;
 
 // Minimal API for LandmarkManager that must continue to work between versions.
-// Changes to this interface are considered breaking.
+// Changes to this interface are considered breaking. New methods/properties are
+// safe to add, but changes or removals are not allowed (same as public APIs).
 interface LandmarkManagerApi {
   version: number,
   createLandmarkController(): LandmarkController,
@@ -39,6 +40,9 @@ interface LandmarkManagerApi {
 }
 
 // Changes to this interface are considered breaking.
+// New properties MUST be optional so that registering a landmark
+// from an older version of useLandmark against a newer version of
+// LandmarkManager does not crash.
 interface Landmark {
   ref: MutableRefObject<Element>,
   role: AriaLandmarkRole,
@@ -46,6 +50,31 @@ interface Landmark {
   lastFocused?: FocusableElement,
   focus: (direction: 'forward' | 'backward') => void,
   blur: () => void
+}
+
+export interface LandmarkControllerOptions {
+  /**
+   * The element from which to start navigating.
+   * @default document.activeElement
+   */
+  from?: Element
+}
+
+/** A LandmarkController allows programmatic navigation of landmarks. */
+export interface LandmarkController {
+  /** Moves focus to the next landmark. */
+  focusNext(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the previous landmark. */
+  focusPrevious(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the main landmark. */
+  focusMain(): boolean,
+  /** Moves focus either forward or backward in the landmark sequence. */
+  navigate(direction: 'forward' | 'backward', opts?: LandmarkControllerOptions): boolean,
+  /**
+   * Disposes the landmark controller. When no landmarks are registered, and no
+   * controllers are active, the landmark keyboard listeners are removed from the page.
+   */
+  dispose(): void
 }
 
 // Symbol under which the singleton landmark manager instance is attached to the document.
@@ -70,6 +99,7 @@ function getLandmarkManager(): LandmarkManagerApi {
   return document[landmarkSymbol];
 }
 
+// Subscribes a React component to the current landmark manager instance.
 function useLandmarkManager(): LandmarkManagerApi {
   return useSyncExternalStore(subscribe, getLandmarkManager);
 }
@@ -394,31 +424,6 @@ class LandmarkManager implements LandmarkManagerApi {
 
     return () => this.removeLandmark(landmark.ref);
   }
-}
-
-export interface LandmarkControllerOptions {
-  /**
-   * The element from which to start navigating.
-   * @default document.activeElement
-   */
-  from?: Element
-}
-
-/** A LandmarkController allows programmatic navigation of landmarks. */
-export interface LandmarkController {
-  /** Moves focus to the next landmark. */
-  focusNext(opts?: LandmarkControllerOptions): boolean,
-  /** Moves focus to the previous landmark. */
-  focusPrevious(opts?: LandmarkControllerOptions): boolean,
-  /** Moves focus to the main landmark. */
-  focusMain(): boolean,
-  /** Moves focus either forward or backward in the landmark sequence. */
-  navigate(direction: 'forward' | 'backward', opts?: LandmarkControllerOptions): boolean,
-  /**
-   * Disposes the landmark controller. When no landmarks are registered, and no
-   * controllers are active, the landmark keyboard listeners are removed from the page.
-   */
-  dispose(): void
 }
 
 /** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
