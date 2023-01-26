@@ -16,6 +16,7 @@ import packageData from '@react-spectrum/icon/package.json';
 
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
+import {Icon} from '@react-spectrum/icon';
 ```
 
 ---
@@ -28,6 +29,7 @@ Custom icons can be used by wrapping them in an Icon component.
 
 <HeaderInfo
   packageData={packageData}
+  componentNames={['Icon']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/iconography/'}
   ]} />
@@ -35,8 +37,6 @@ Custom icons can be used by wrapping them in an Icon component.
 ## Example
 
 ```tsx example export=true
-import {Icon} from '@adobe/react-spectrum';
-
 function CustomIcon(props) {
   return(
     <Icon {...props}>
@@ -85,8 +85,6 @@ Icons support four Spectrum semantic colors: `negative`, `notice`, `positive`, a
 have their colors styled appropriately, but you can use the `color` prop to adjust the color of any standalone icons.
 
 ```tsx example
-import Alert from '@spectrum-icons/workflow/Alert';
-
 <Flex gap="size-100">
   <CustomIcon aria-label="Default Star" />
   <CustomIcon aria-label="Negative Star" color="negative" />
