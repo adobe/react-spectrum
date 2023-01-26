@@ -12,16 +12,25 @@
 
 // TODO: don't need this, replace with styles
 import {classNames} from '@react-spectrum/utils';
+import {DismissButton, Overlay, usePopover} from '@react-aria/overlays';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {Item} from '@react-stately/collections';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {useCallback, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import {useButton} from '@react-aria/button';
 import {useCheckbox} from '@react-aria/checkbox';
-import {useRef} from 'react';
+import {useMemo, useRef} from 'react';
+import {useMenu} from '@react-aria/menu';
+import {useMenuItem} from '@react-aria/menu';
+import {useMenuTrigger} from '@react-aria/menu';
+import {useMenuTriggerState} from '@react-stately/menu';
 import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
+import {useTreeState} from '@react-stately/tree';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+
 
 export function Table(props) {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
@@ -44,6 +53,8 @@ export function Table(props) {
       onRowAction: props.onAction,
       // Table itself is made scrollable instead of the body so that the
       // column header and row scroll positions are the same
+      // Not great still because the column headers are position sticky and thus throw off the scrolling items into view when going upwards
+      // Perhaps just put the table into a container that has overflow hidden?
       scrollRef: ref
     },
     state,
@@ -79,14 +90,14 @@ export function Table(props) {
   // TODO: not sure why we need the below, is it if width isn't provided?
   // Asked Rob, it is if the Table's width is changed by a resize event (e.g. width is a percentage of the page), doesn't apply for the
   // static width case
-  // Remove for final doc example cuz it is probably too
+  // Remove for final doc example cuz it is probably too complicated, TODO test it?
   useLayoutEffect(() => {
     if (bodyRef && bodyRef.current) {
       setTableWidth(bodyRef.current.clientWidth);
     }
   }, []);
   useResizeObserver({ref, onResize: () => setTableWidth(bodyRef.current.clientWidth)});
-  console.log('table width', tableWidth, widths)
+  // console.log('table width', tableWidth, widths)
 
   // TODO: move certain stylings into the components themselves
   return (
@@ -96,13 +107,13 @@ export function Table(props) {
       ref={ref}
       style={{
         borderCollapse: 'collapse',
-        // TODO: get rid of width and stuff in favor of style provided by user
+        // TODO: get rid of width and stuff in favor of style provided by user?
         width: '800px',
         height: '300px',
         // makes the table actually size itself, removing them makes it grow continuously on render
         display: 'block',
         position: 'relative',
-        // Make the table overflow so that columns are included in the scrolling. TableView makes the body scrollable
+        // Make the table overflow so that columns are included in the scrolling. TableView makes the body scrollable via
         overflow: 'auto'
       }}>
       <TableRowGroup
@@ -113,20 +124,16 @@ export function Table(props) {
           // aka 2000px applied on a column will only render as wide as the parent table width allows for
           // Also need it so it won't continually grow on render, this means I'll have to move the border rendering and row background
           // rendering into the cell/table header cell itself
-
           display: 'block',
           // Needs the sticky cuz the table itself is scrollable, not the body
           position: 'sticky',
           top: 0,
-          background: 'var(--spectrum-gray-100)'
+          background: 'var(--spectrum-gray-100)',
+          // make border extend to the full table contents width
+          width: 'fit-content'
         }}>
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow
-            // Need to override default table display styles
-            style={{
-              display: 'flex',
-              boxSizing: 'border-box'
-            }}
             key={headerRow.key}
             item={headerRow}
             state={state}>
@@ -141,18 +148,12 @@ export function Table(props) {
       </TableRowGroup>
       <TableRowGroup
         ref={bodyRef}
-        // TODO need this?
         style={{
-          display: 'block',
           maxHeight: '200px'
         }}
         type="tbody">
         {[...collection.body.childNodes].map(row => (
           <TableRow
-            // TODO: need this?
-            style={{
-              display: 'flex'
-            }}
             key={row.key}
             item={row}
             state={state}>
@@ -168,38 +169,47 @@ export function Table(props) {
   );
 }
 
+// done
 // Needs to be forward ref for bodyRef
-export const TableRowGroup = React.forwardRef((props, ref) => {
+const TableRowGroup = React.forwardRef((props, ref) => {
   let {type: Element, style, children} = props;
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element ref={ref} {...rowGroupProps} style={style}>
+    <Element
+      {...rowGroupProps}
+      style={{
+        display: 'block',
+        ...style
+      }}
+      ref={ref}>
       {children}
     </Element>
   );
 });
 
 
-function TableHeaderRow({item, state, children, style = {}}) {
+// done
+function TableHeaderRow({item, state, children}) {
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
-
   return (
-    <tr {...rowProps} ref={ref} style={style}>
+    // Override default tr display
+    <tr {...rowProps} ref={ref} style={{display: 'flex'}}>
       {children}
     </tr>
   );
 }
 
-function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
-  let ref = useRef(null);
+
+const Resizer = React.forwardRef((props, ref) => {
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef} = props;
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd,
-    tableState: state
+    triggerRef
   }, layoutState, ref);
 
   return (
@@ -213,7 +223,8 @@ function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeE
             height: '20px',
             border: '1px solid red',
             touchAction: 'none',
-            flex: '0 0 auto'
+            flex: '0 0 auto',
+            boxSizing: 'border-box'
           }}
           {...resizerProps}>
           <VisuallyHidden>
@@ -226,15 +237,112 @@ function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeE
       </FocusRing>
     </>
   );
-}
+});
 
+// TODO add menu if resize is allowed
+// TODO: fix keyboard navigation between columns.
+// right now arrow right will move from a column menu button to the resizer because the resizer is focusable and usegridCell will think it should be the next child to be focused
+// second issue is that I can't go from column to column via left arrow
 export function TableColumnHeader({column, state, widths, layoutState, onResizeStart, onResize, onResizeEnd}) {
-  let ref = useRef();
+  let ref = useRef(null);
+  let resizerRef = useRef(null);
+  let triggerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
+  // TODO test if sorting still works
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
 // TODO: figure out why the resizer is being focused, how is TableView omitting it from being one of the children that
 // useGridCell would try to focus
+
+  // TODO: ask if I should even accomadate sorting in this example
+  let allowsSorting = column.props?.allowsSorting;
+  let allowsResizing = column.props.allowsResizing;
+
+  const onMenuSelect = (key) => {
+    switch (key) {
+      case 'sort-asc':
+        state.sort(column.key, 'ascending');
+        break;
+      case 'sort-desc':
+        state.sort(column.key, 'descending');
+        break;
+      case 'resize':
+        layoutState.onColumnResizeStart(column.key);
+        if (resizerRef) {
+          setTimeout(() => resizerRef.current.focus(), 0);
+        }
+        break;
+    }
+  };
+
+  let items = useMemo(() => {
+    let options = [
+      allowsSorting ? {
+        label: 'Sort ascending',
+        id: 'sort-asc'
+      } : undefined,
+      allowsSorting ? {
+        label: 'Sort descending',
+        id: 'sort-desc'
+      } : undefined,
+      {
+        label: 'Resize column',
+        id: 'resize'
+      }
+    ];
+    return options;
+  }, [allowsSorting]);
+
+  let contents = allowsResizing ? (
+    <>
+      <MenuButton
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          border: 'none',
+          background: 'transparent',
+          flex: '1 1 auto',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis'
+        }}
+        label={column.rendered}
+        onAction={onMenuSelect}
+        items={items}
+        ref={triggerRef}>
+        {(item) => (
+          <Item>
+            {item.label}
+          </Item>
+        )}
+      </MenuButton>
+      {column.props.allowsSorting &&
+        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+          {arrowIcon}
+        </span>
+      }
+      <Resizer ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+    </>
+  ) :
+  (
+    <div
+      style={{
+        flex: '1 1 auto',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis'
+      }}>
+
+      {column.rendered}
+      {column.props.allowsSorting &&
+        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+          {arrowIcon}
+        </span>
+      }
+    </div>
+  );
+
+
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
@@ -243,7 +351,9 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
         textAlign: column.colspan > 1 ? 'center' : 'left',
         padding: '5px 10px',
         // TODO switch to box shadow?
-        outline: isFocusVisible ? '2px solid orange' : 'none',
+        // outline: isFocusVisible ? '2px solid orange' : 'none',
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
         cursor: 'default',
         // New stuff
         width: widths.get(column.key),
@@ -254,30 +364,14 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
       ref={ref}>
       {/* TODO: make resizer triggerable via keyboard, maybe make a menutrigger for hitting enter on the tablecolumn header */}
       <div style={{display: 'flex', position: 'relative'}}>
-        <div
-          style={{
-            flex: '1 1 auto',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
-          }}>
-          {column.rendered}
-          {column.props.allowsSorting &&
-            <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
-              {arrowIcon}
-            </span>
-          }
-        </div>
-        {
-          column.props.allowsResizing &&
-          <Resizer column={column} state={state} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
-        }
+        {contents}
       </div>
     </th>
   );
 }
 
-export function TableRow({item, children, state, style}) {
+// done
+export function TableRow({item, children, state}) {
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, isPressed} = useTableRow({
@@ -296,9 +390,13 @@ export function TableRow({item, children, state, style}) {
               ? 'var(--spectrum-alias-highlight-hover)'
               : 'none',
         color: isSelected ? 'white' : null,
-        // TODO: Switch to box shadow
-        outline: isFocusVisible ? '2px solid orange' : 'none',
-        ...style
+        // TODO: Switch to box shadow, new stuff
+        // outline: isFocusVisible ? '2px solid orange' : 'none',
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
+        display: 'flex',
+        // Make the row extend pass the table width so the background is consistent
+        width: 'fit-content'
       }}
       {...mergeProps(rowProps, focusProps)}
       ref={ref}>
@@ -307,22 +405,24 @@ export function TableRow({item, children, state, style}) {
   );
 }
 
+// done
 export function TableCell({cell, state, widths}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let column = cell.column;
-  // TODO: why is this isSelected a thing
-  // This is here since the table is now a fixed width with overflow, so it is relying on
-  let isSelected = state.selectionManager.isSelected(cell.parentKey);
 
   return (
     <td
       {...mergeProps(gridCellProps, focusProps)}
       style={{
         padding: '5px 10px',
-        outline: isFocusVisible ? '2px solid orange' : 'none',
         cursor: 'default',
+        // New stuff (modified replacement for boxShadow)
+        // outline: isFocusVisible ? '2px solid orange' : 'none',
+        outline: 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
+        // New stuff
         width: widths.get(column.key),
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -337,6 +437,7 @@ export function TableCell({cell, state, widths}) {
   );
 }
 
+// done
 function TableCheckboxCell({cell, state, widths}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
@@ -358,6 +459,7 @@ function TableCheckboxCell({cell, state, widths}) {
   );
 }
 
+// done
 function TableSelectAllCell({column, state, widths}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -367,7 +469,9 @@ function TableSelectAllCell({column, state, widths}) {
     <th
       {...columnHeaderProps}
       style={{
-        width: widths.get(column.key)
+        width: widths.get(column.key),
+        boxSizing: 'border-box',
+        margin: 'auto'
       }}
       ref={ref}>
       {state.selectionManager.selectionMode === 'single'
@@ -385,5 +489,114 @@ function Checkbox(props) {
   return <input style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}} {...inputProps} ref={ref} />;
 }
 
+const MenuButton = React.forwardRef((props, ref) => {
+  // Create state based on the incoming props
+  let state = useMenuTriggerState(props);
 
-// // TODO add menu button
+  // Get props for the button and menu elements
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+
+  return (
+    <>
+      <Button
+        {...menuTriggerProps}
+        buttonRef={ref}
+        style={{height: 30, fontSize: 14, ...props.style}}>
+        {props.label}
+      </Button>
+      {state.isOpen &&
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <Menu
+            {...props}
+            {...menuProps} />
+        </Popover>
+      }
+    </>
+  );
+});
+
+
+function Menu(props) {
+  // Create menu state based on the incoming props
+  let state = useTreeState(props);
+
+  // Get props for the menu element
+  let ref = React.useRef();
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        width: 150
+      }}>
+      {[...state.collection].map(item => (
+        item.type === 'section'
+          ? <MenuSection key={item.key} section={item} state={state} />
+          : <MenuItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function MenuItem({item, state}) {
+  // Get props for the menu item element
+  let ref = React.useRef();
+  let {menuItemProps, isFocused, isSelected, isDisabled} = useMenuItem({key: item.key}, state, ref);
+
+  return (
+    <li
+      {...menuItemProps}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'default',
+        display: 'flex',
+        justifyContent: 'space-between'
+      }}>
+      {item.rendered}
+      {isSelected && <span aria-hidden="true">✅</span>}
+    </li>
+  );
+}
+
+function Popover({children, state, ...props}) {
+  let ref = React.useRef();
+  let {popoverRef = ref, triggerRef} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef,
+    triggerRef
+  }, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'lightgray',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
