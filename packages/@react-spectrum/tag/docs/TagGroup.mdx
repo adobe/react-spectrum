@@ -22,6 +22,7 @@ import Airplane from '@spectrum-icons/workflow/Airplane';
 import Game from '@spectrum-icons/workflow/Game';
 import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
 import {Text} from '@react-spectrum/text';
+import {Avatar} from '@react-spectrum/avatar';
 ```
 
 ---
@@ -152,5 +153,98 @@ function Example() {
     <ShoppingCart />
     <Text>Shopping</Text>
   </Item>
+</TagGroup>
+```
+
+### With avatars
+
+```tsx example
+<TagGroup aria-label="TagGroup with icons example">
+  <Item>
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="Person 1 avatar" />
+    <Text>Person 1</Text>
+  </Item>
+  <Item>
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="Person 2 avatar" />
+    <Text>Person 2</Text>
+  </Item>
+  <Item>
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="Person 3 avatar" />
+    <Text>Person 3</Text>
+  </Item>
+  <Item>
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="Person 4 avatar" />
+    <Text>Person 4</Text>
+  </Item>
+</TagGroup>
+```
+
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/)
+
+Both a description and an error message can be supplied to a TagGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let defaultItems = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+
+  let [items, setItems] = React.useState(defaultItems);
+
+  let removeItem = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+  };
+
+  let isValid = items.length <= 8;
+
+  return (
+    <Flex width={500}>
+      <TagGroup
+        label="Adobe Products"
+        items={items}
+        allowsRemoving
+        onRemove={removeItem}
+        aria-label="TagGroup help text example"
+        validationState={isValid ? 'valid' : 'invalid'}
+        description="Please include tags for related Adobe products."
+        errorMessage="Must contain no more than 8 tags. Please remove some."
+        >
+        {item => <Item>{item.name}</Item>}
+      </TagGroup>
+    </Flex>
+  );
+}
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TagGroup.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TagGroup
+  label="Adobe Products"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What are tags?</Heading>
+      <Content>Tags allow users to categorize content.</Content>
+    </ContextualHelp>
+  }>
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
 </TagGroup>
 ```
