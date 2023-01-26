@@ -50,6 +50,8 @@
   --spectrum-listview-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
   --spectrum-listview-item-badge-text-color: var(--spectrum-global-color-static-white);
   --spectrum-listview-item-badge-background-color: var(--spectrum-global-color-blue-400);
+
+  --spectrum-listview-item-draghandle-border-color-key-focus: var(--spectrum-listview-item-border-color-key-focus);
 }
 
 .react-spectrum-ListView {
@@ -340,7 +342,7 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
 
       &:focus-ring {
-        box-shadow: inset 0 0 0 2px var(--spectrum-listview-item-border-color-key-focus);
+        box-shadow: inset 0 0 0 2px var(--spectrum-listview-item-draghandle-border-color-key-focus);
         outline: none;
 
         /* forced-color-adjust: none, so that box-shadow style will render */
@@ -704,7 +706,7 @@
     .react-spectrum-ListViewItem-draghandle-button {
       /* Use CanvasText, so that focus ring color on drag handle button matches
       focus ring color for other interactive elements within the listview item. */
-      --spectrum-listview-item-border-color-key-focus: CanvasText;
+      --spectrum-listview-item-draghandle-border-color-key-focus: CanvasText;
     }
   }
 
