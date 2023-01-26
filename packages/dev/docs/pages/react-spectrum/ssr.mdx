@@ -42,9 +42,51 @@ import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
 </SSRProvider>
 ```
 
+You may need to pass additional options to the `SSRProvider`, depending on your environment.
+
+### React 18 or later
+
+If you are using React 18 or later, you will need to specify `useId` mode and pass [React.useId](https://reactjs.org/docs/hooks-reference.html#useid) to the `SSRProvider`.
+
+```tsx
+import React from 'react'
+import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
+
+<SSRProvider mode="useId" useId={React.useId}>
+  <Provider theme={defaultTheme} locale={yourLocaleHere}>
+    <App />
+  </Provider>
+</SSRProvider>
+```
+
+### React 16 or 17 with strict mode enabled
+
+If you are using React 16 or 17 with [strict mode](https://reactjs.org/docs/strict-mode.html) enabled, you will need to specify `strictMode` prop.
+
+```tsx
+import React from 'react'
+import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
+
+<React.StrictMode>
+  <SSRProvider strictMode={process.env.NODE_ENV !== 'production'}>
+    <Provider theme={defaultTheme} locale={yourLocaleHere}>
+      <App />
+    </Provider>
+  </SSRProvider>
+</React.StrictMode>
+```
+
+### Multiple copies of react-aria on the same page
+
+If you are using React 18 or later and have multiple roots on the same page, you will need to specify the `identifierPrefix` option on [ReactDOMClient.createRoot](https://reactjs.org/docs/react-dom-client.html#createroot).
+
+If you are using React 16 or 17, only a single copy of React Spectrum can be on the page at a time.
+
+### Background
+
 Wrapping your application in an `SSRProvider` ensures that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects four things: id generation for accessibility, media queries, feature detection, and automatic locale selection.
 
-When using SSR, only a single copy of React Spectrum can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. When server side rendering, these ids need to be consistent so they match between the server and client, and this would not be possible with multiple copies of React Spectrum.
+Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. When server side rendering, these ids need to be consistent so they match between the server and client.
 
 Media queries and DOM feature detection cannot be performed on the server because they depend on specific browser parameters that aren’t sent as part of the request. In cases where these affect the rendering of a particular component, this check is delayed until just after hydration is completed. This ensures that the rendering is consistent between the server and hydrated DOM, but updated immediately after the page becomes interactive.
 

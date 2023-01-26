@@ -27,7 +27,7 @@ This page describes how to use React Aria with server side rendering, including 
 
 In React, SSR works by rendering the component to HTML on the server, and then **hydrating** the DOM tree with events and state on the client. This enables applications to both render complete HTML in advance for performance and SEO, but also support rich interactions on the client.
 
-In order to make components using React Aria work with SSR, you will need to wrap your application in an [SSRProvider](SSRProvider.html). This signals to all nested React Aria hooks that they are being rendered in an SSR context.
+In order to make components using React Aria work with SSR, you will need to wrap your application in an [SSRProvider](SSRProvider.html). This signals to all nested React Aria hooks that they are being rendered in an SSR context. Specifically, it affects React Aria’s automatic id generation.
 
 ```tsx
 import {SSRProvider} from '@react-aria/ssr';
@@ -37,14 +37,41 @@ import {SSRProvider} from '@react-aria/ssr';
 </SSRProvider>
 ```
 
-Wrapping your application in an `SSRProvider` helps ensure that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects React Aria’s automatic id generation, and you can also use this information to influence rendering in your own components.
+You may need to pass additional options to the `SSRProvider`, depending on your environment.
 
-## Automatic ID Generation
+### React 18 or later
 
-When using SSR, only a single copy of React Aria can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. These ids typically use a randomly generated seed plus an incrementing counter to ensure uniqueness even when multiple instances of React Aria are on the page. With SSR, we need to ensure that these ids are consistent between the server and client.  This means the counter resets on every request, and we use a consistent seed. Due to this, multiple copies of React Aria cannot be supported because the auto-generated ids would conflict.
+If you are using React 18 or later, you will need to specify `useId` mode and pass [React.useId](https://reactjs.org/docs/hooks-reference.html#useid) to the `SSRProvider`.
 
-If you use React Aria’s [useId](useId.html) hook in your own components, `SSRProvider` will ensure the ids are consistent when server rendered. No additional changes in each component are required to enable
-SSR support.
+```tsx
+import React from 'react'
+import {SSRProvider} from '@react-aria/ssr';
+
+<SSRProvider mode="useId" useId={React.useId}>
+  <App />
+</SSRProvider>
+```
+
+### React 16 or 17 with strict mode enabled
+
+If you are using React 16 or 17 with [strict mode](https://reactjs.org/docs/strict-mode.html) enabled, you will need to specify `strictMode` prop.
+
+```tsx
+import React from 'react'
+import {SSRProvider} from '@react-aria/ssr';
+
+<React.StrictMode>
+  <SSRProvider strictMode={process.env.NODE_ENV !== 'production'}>
+    <App />
+  </SSRProvider>
+</React.StrictMode>
+```
+
+### Multiple copies of react-aria on the same page
+
+If you are using React 18 or later and have multiple roots on the same page, you will need to specify the `identifierPrefix` option on [ReactDOMClient.createRoot](https://reactjs.org/docs/react-dom-client.html#createroot).
+
+If you are using React 16 or 17, only a single copy of React Aria can be on the page at a time.
 
 ## SSR specific rendering
 

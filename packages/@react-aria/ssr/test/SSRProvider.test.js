@@ -33,6 +33,59 @@ describe('SSRProvider', function () {
     expect(divs[1].id).toBe('react-aria-2');
   });
 
+  it('it should generate consistent unique ids in React strict mode', function () {
+    let tree = render(
+      <React.StrictMode>
+        <SSRProvider strictMode={process.env.NODE_ENV !== 'production'}>
+          <Test />
+          <Test />
+        </SSRProvider>
+      </React.StrictMode>
+    );
+
+    let divs = tree.getAllByTestId('test');
+    expect(divs[0].id).toBe('react-aria-2');
+    expect(divs[1].id).toBe('react-aria-4');
+  });
+
+  it('it should generate consistent unique ids in "useId" mode', function () {
+    const mockFn = jest.fn()
+      .mockReturnValueOnce('a')
+      .mockReturnValueOnce('b');
+
+    let tree = render(
+      <SSRProvider mode="useId" useId={mockFn}>
+        <Test />
+        <Test />
+      </SSRProvider>
+    );
+
+    let divs = tree.getAllByTestId('test');
+    expect(divs[0].id).toBe('a');
+    expect(divs[1].id).toBe('b');
+  });
+
+  it('it should generate consistent unique ids in "useId" mode in React strict mode', function () {
+    const mockFn = jest.fn()
+      .mockReturnValueOnce('a')
+      .mockReturnValueOnce('b')
+      .mockReturnValueOnce('c')
+      .mockReturnValueOnce('d');
+
+    let tree = render(
+      <React.StrictMode>
+        <SSRProvider mode="useId" useId={mockFn}>
+          <Test />
+          <Test />
+        </SSRProvider>
+      </React.StrictMode>
+    );
+
+    let divs = tree.getAllByTestId('test');
+    expect(divs[0].id).toBe('b');
+    expect(divs[1].id).toBe('d');
+  });
+
   it('it should generate consistent unique ids with nested SSR providers', function () {
     let tree = render(
       <SSRProvider>
