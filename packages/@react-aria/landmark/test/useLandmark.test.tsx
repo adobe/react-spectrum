@@ -15,11 +15,11 @@ import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
+import {createLandmarkController, useLandmark} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {useLandmark} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Main(props) {
@@ -1273,5 +1273,116 @@ describe('LandmarkManager', function () {
     fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
     fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
     expect(document.activeElement).toBe(main);
+  });
+
+  describe('LandmarkController', function () {
+    it('should ensure keyboard listeners are active', function () {
+      let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      let controller = createLandmarkController();
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      onLandmarkNavigation.mockReset();
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+    });
+
+    it('should navigate forward', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusNext();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      act(() => {controller.navigate('forward');});
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      controller.dispose();
+    });
+
+    it('should navigate backward', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusPrevious();});
+      expect(document.activeElement).toBe(tree.getByRole('navigation'));
+
+      act(() => {controller.navigate('backward');});
+      expect(document.activeElement).toBe(tree.getByRole('textbox'));
+
+      controller.dispose();
+    });
+
+    it('should focus main', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusMain();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      controller.dispose();
+    });
   });
 });

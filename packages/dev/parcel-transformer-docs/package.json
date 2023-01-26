@@ -12,5 +12,9 @@
     "@babel/types": "^7.9.0",
     "@parcel/plugin": "^2.8.2",
     "doctrine": "^3.0.0"
+  },
+  "devDependencies": {
+    "@parcel/fs": "^2.8.1",
+    "@parcel/core": "^2.8.1"
   }
 }
