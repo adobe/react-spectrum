@@ -84,8 +84,17 @@ To internationalize a TagGroup, all text content within the TagGroup should be l
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of TagGroup is automatically flipped.
 
 ## Labeling
-### Accessibility
-An `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+A visual label can be provided with the `label` prop. If a visual label isn't included, an `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+```tsx example
+<TagGroup label="Adobe Products">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</TagGroup>
+```
 
 ## Events
 
@@ -179,6 +188,23 @@ function Example() {
 </TagGroup>
 ```
 
+### Label position and alignment
+
+By default, the label is positioned above the TagGroup.
+The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can
+be used to align the label as "start" or "end".
+For left-to-right (LTR) languages, "start" refers to the left most edge of the TagGroup
+and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TagGroup label="Adobe Products" labelPosition="side" labelAlign="end">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</TagGroup>
+```
 
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/)
