@@ -22,17 +22,6 @@ interface ScrollIntoViewportOpts {
   containingElement?: Element
 }
 
-let delayScrolling = false;
-let scrollCallback: () => void;
-
-export function setDelayScrolling(value: boolean) {
-  if (!value && delayScrolling && scrollCallback != null) {
-    scrollCallback();
-    scrollCallback = null;
-  }
-  delayScrolling = value;
-}
-
 /**
  * Scrolls `opts.scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
@@ -116,17 +105,6 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoViewportOpts) {
-  let scrollFn = () => scrollIntoViewportHelper(targetElement, opts);
-  // If scrolling should be delayed (e.g. target exists in a overlay that hasn't finished sizing/positioning itself)
-  // then we want to delay scrolling the target into view
-  if (delayScrolling) {
-    scrollCallback = scrollFn;
-  } else {
-    scrollFn();
-  }
-}
-
-function scrollIntoViewportHelper(targetElement: Element, opts?: ScrollIntoViewportOpts) {
   if (document.contains(targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
