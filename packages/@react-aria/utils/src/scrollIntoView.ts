@@ -12,44 +12,21 @@
 
 import {getScrollParent} from './';
 
-interface ScrollOpts {
-  /** The scroll parent of the target element.  */
-  scrollView: HTMLElement
-}
-
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
   containingElement?: Element
 }
 
 /**
- * Scrolls `opts.scrollView` so that `element` is visible.
- * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
- * but doesn't affect parents above `opts.scrollView`.
- */
-export function scrollIntoView(element: HTMLElement, opts: ScrollOpts);
-/**
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
- * @deprecated - provide `scrollView` via opts instead.
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement);
-export function scrollIntoView(element: HTMLElement, opts: HTMLElement | ScrollOpts) {
-  let scrollView;
-  let targetElement;
-  if ('scrollView' in opts) {
-    scrollView = opts.scrollView;
-    targetElement = element;
-  } else {
-    scrollView = element;
-    targetElement = opts;
-  }
-
-  let offsetX = relativeOffset(scrollView, targetElement, 'left');
-  let offsetY = relativeOffset(scrollView, targetElement, 'top');
-  let width = targetElement.offsetWidth;
-  let height = targetElement.offsetHeight;
+export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+  let offsetX = relativeOffset(scrollView, element, 'left');
+  let offsetY = relativeOffset(scrollView, element, 'top');
+  let width = element.offsetWidth;
+  let height = element.offsetHeight;
   let x = scrollView.scrollLeft;
   let y = scrollView.scrollTop;
 
@@ -125,7 +102,7 @@ export function scrollIntoViewport(targetElement: Element, opts?: ScrollIntoView
       let scrollParent = getScrollParent(targetElement);
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
       while (targetElement && scrollParent && targetElement !== root && scrollParent !== root) {
-        scrollIntoView(targetElement as HTMLElement, {scrollView: scrollParent as HTMLElement});
+        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
         targetElement = scrollParent;
         scrollParent = getScrollParent(targetElement);
       }
