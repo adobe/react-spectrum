@@ -64,6 +64,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     getDefaultMinWidth,
     onColumnResizeStart: propsOnColumnResizeStart,
     onColumnResizeEnd: propsOnColumnResizeEnd,
+    onColumnResize: propsOnColumnResize,
     tableWidth = 0
   } = props;
 
@@ -101,9 +102,9 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
     map.set(key, width);
     setUncontrolledWidths(map);
-
+    propsOnColumnResize(newSizes);
     return newSizes;
-  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
+  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths, propsOnColumnResize]);
 
   let onColumnResizeEnd = useCallback((key: Key) => {
     setResizingColumn(null);
