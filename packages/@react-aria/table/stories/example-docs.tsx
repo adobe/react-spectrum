@@ -13,7 +13,6 @@
 // TODO: don't need this, replace with styles
 import {classNames} from '@react-spectrum/utils';
 import {DismissButton, Overlay, usePopover} from '@react-aria/overlays';
-import {getInteractionModality, useHover} from '@react-aria/interactions';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -21,6 +20,7 @@ import React, {useCallback, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useButton} from '@react-aria/button';
 import {useCheckbox} from '@react-aria/checkbox';
+import {useHover} from '@react-aria/interactions';
 import {useMemo, useRef} from 'react';
 import {useMenu} from '@react-aria/menu';
 import {useMenuItem} from '@react-aria/menu';
@@ -81,7 +81,10 @@ export function Table(props) {
   let layoutState = useTableColumnResizeState({
     getDefaultWidth,
     getDefaultMinWidth,
-    tableWidth
+    tableWidth,
+    onColumnResize: props.onColumnResize,
+    onColumnResizeEnd: props.onColumnResizeEnd,
+    onColumnResizeStart: props.onColumnResizeStart
   }, state);
   let {widths} = layoutState;
 
@@ -96,7 +99,6 @@ export function Table(props) {
     }
   }, []);
   useResizeObserver({ref, onResize: () => setTableWidth(bodyRef.current.clientWidth)});
-  // console.log('table width', tableWidth, widths)
 
   // TODO: move certain stylings into the components themselves
   return (
@@ -210,7 +212,7 @@ const Resizer = React.forwardRef((props, ref) => {
     onResizeEnd,
     triggerRef
   }, layoutState, ref);
-
+  // TODO: update the look of the resizer in general (get rid of FocusRing also, just use focusVisible)
   return (
     <>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
@@ -239,9 +241,7 @@ const Resizer = React.forwardRef((props, ref) => {
   );
 });
 
-// TODO: fix keyboard navigation between columns.
-// right now arrow right will move from a column menu button to the resizer because the resizer is focusable and usegridCell will think it should be the next child to be focused
-// second issue is that I can't go from column to column via left arrow
+
 export function TableColumnHeader({column, state, widths, layoutState, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef(null);
   let resizerRef = useRef(null);
@@ -250,10 +250,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
   let showResizer = isHovered || layoutState.resizingColumn === column.key;
-  // TODO test if sorting still works
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
-
-  // TODO: ask if I should even accomadate sorting in this example
   let allowsSorting = column.props?.allowsSorting;
   let allowsResizing = column.props.allowsResizing;
 
@@ -492,12 +489,13 @@ const MenuButton = React.forwardRef((props, ref) => {
   let state = useMenuTriggerState(props);
 
   // Get props for the button and menu elements
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
-
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press'}, state, ref);
+  // Continue propagation of keydown event so that useSelectableCollection can properly recieve the bubbled left/right arrowkey presses
+  let onKeyDown = (e) => e.continuePropagation();
   return (
     <>
       <Button
-        {...menuTriggerProps}
+        {...mergeProps(menuTriggerProps, {onKeyDown})}
         buttonRef={ref}
         style={{height: 30, fontSize: 14, ...props.style}}>
         {props.label}
