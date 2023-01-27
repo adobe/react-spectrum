@@ -13,6 +13,7 @@
 // TODO: don't need this, replace with styles
 import {classNames} from '@react-spectrum/utils';
 import {DismissButton, Overlay, usePopover} from '@react-aria/overlays';
+import {getInteractionModality, useHover} from '@react-aria/interactions';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -60,8 +61,6 @@ export function Table(props) {
     state,
     ref
   );
-
-  // TODO: look at the CSS for the resizing example, replace classnames with style
 
   // Table column resizing stuff
   let [tableWidth, setTableWidth] = useState(0);
@@ -202,7 +201,7 @@ function TableHeaderRow({item, state, children}) {
 
 
 const Resizer = React.forwardRef((props, ref) => {
-  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef} = props;
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef, showResizer} = props;
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
@@ -224,7 +223,8 @@ const Resizer = React.forwardRef((props, ref) => {
             border: '1px solid red',
             touchAction: 'none',
             flex: '0 0 auto',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            visibility: showResizer ? 'visible' : 'hidden'
           }}
           {...resizerProps}>
           <VisuallyHidden>
@@ -239,7 +239,6 @@ const Resizer = React.forwardRef((props, ref) => {
   );
 });
 
-// TODO add menu if resize is allowed
 // TODO: fix keyboard navigation between columns.
 // right now arrow right will move from a column menu button to the resizer because the resizer is focusable and usegridCell will think it should be the next child to be focused
 // second issue is that I can't go from column to column via left arrow
@@ -249,10 +248,10 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
   let triggerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
+  let showResizer = isHovered || layoutState.resizingColumn === column.key;
   // TODO test if sorting still works
   let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
-// TODO: figure out why the resizer is being focused, how is TableView omitting it from being one of the children that
-// useGridCell would try to focus
 
   // TODO: ask if I should even accomadate sorting in this example
   let allowsSorting = column.props?.allowsSorting;
@@ -321,7 +320,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
           {arrowIcon}
         </span>
       }
-      <Resizer ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+      <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
     </>
   ) :
   (
@@ -345,7 +344,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps)}
+      {...mergeProps(columnHeaderProps, focusProps, hoverProps)}
       colSpan={column.colspan}
       style={{
         textAlign: column.colspan > 1 ? 'center' : 'left',
@@ -362,7 +361,6 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
         boxSizing: 'border-box'
       }}
       ref={ref}>
-      {/* TODO: make resizer triggerable via keyboard, maybe make a menutrigger for hitting enter on the tablecolumn header */}
       <div style={{display: 'flex', position: 'relative'}}>
         {contents}
       </div>
