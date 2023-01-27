@@ -447,34 +447,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     let column = collection.columns[0];
     let virtualizer = state.virtualizer;
 
-    // If the key to be scrolled into view is a column header, we will need to make sure to sync its scroll position
-    // with the body's scroll position after virtualizer.scrollToItem is called so that calling scrollIntoViewport can
-    // properly decide if the column is outside the viewport or not. If we don't, then the column scroll position is handled
-    // in onScroll which is always after our scrollIntoViewport call here.
-    let focusedKeyRect = virtualizer.getView(focusedKey)?.layoutInfo?.rect;
-    let visibleRect = virtualizer.visibleRect;
     let modality = getInteractionModality();
-    let syncScrollPos;
-
-    if (focusedKeyRect && item?.type === 'column') {
-      // If column can't fit fully in the visible rect, then it will be scrolled into view if the top left (start) corner is
-      // out of view
-      if (focusedKeyRect.width > visibleRect.width || focusedKeyRect.height > visibleRect.height) {
-        if (
-          focusedKeyRect.x < visibleRect.x ||
-          focusedKeyRect.y < visibleRect.y
-        ) {
-          syncScrollPos = true;
-        }
-      } else if (
-        focusedKeyRect.x < visibleRect.x ||
-        focusedKeyRect.maxX > visibleRect.maxX ||
-        focusedKeyRect.y < visibleRect.y ||
-        focusedKeyRect.maxY > visibleRect.maxY
-      ) {
-        syncScrollPos = true;
-      }
-    }
 
     virtualizer.scrollToItem(key, {
       duration: 0,
@@ -487,14 +460,13 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
         : 0
     });
 
+    // Sync the scroll positions of the column headers and the body so scrollIntoViewport can
+    // properly decide if the column is outside the viewport or not
+    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
     if (modality === 'keyboard') {
-      if (syncScrollPos) {
-        // Sync the scroll positions of the column headers and the body early
-        headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
-      }
       scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
     }
-  }, [collection, domRef, bodyRef, headerRef, focusedKey, layout, state.virtualizer]);
+  }, [collection, domRef, bodyRef, headerRef, layout, state.virtualizer]);
 
   let {virtualizerProps} = useVirtualizer({
     focusedKey,

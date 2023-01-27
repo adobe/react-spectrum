@@ -130,9 +130,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
-    let positionPx = {maxHeight: position.maxHeight != null ? position.maxHeight + 'px' : undefined};
-    Object.keys(position.position).forEach(key => positionPx[key] = position.position[key] + 'px');
-    Object.assign((overlayRef.current as HTMLElement).style, positionPx);
+    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
+    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
