@@ -493,9 +493,144 @@ function Checkbox(props) {
 
 </details>
 
+## Resizable Columns
 
-// TODO add resizing mentions above and have a separate section detailing how to add it
-## Resizing Example
+```tsx example export=true render=false
+/*- begin highlight -*/
+import {useTableColumnResizeState} from '@react-stately/table';
+/*- end highlight -*/
+
+function ResizableColumnsTable(props) {
+  let {
+    selectionMode,
+    selectionBehavior,
+    /*- begin highlight -*/
+    onResizeStart,
+    onResize,
+    onResizeEnd
+    /*- end highlight -*/
+  } = props;
+  let state = useTableState({
+    ...props,
+    showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace'
+  });
+
+  let ref = useRef();
+  let {collection} = state;
+  let {gridProps} = useTable(
+    {
+      ...props,
+      /*- begin highlight -*/
+      scrollRef: ref
+      /*- end highlight -*/
+    }
+    state,
+    ref
+  );
+
+  /*- begin highlight -*/
+  let getDefaultWidth = useCallback((node) => {
+    // selection cell column should always take up a specific width, doesn't need to be resizable
+    if (node.props.isSelectionCell) {
+      return 20;
+    }
+    return;
+  }, []);
+
+  let getDefaultMinWidth = useCallback((node) => {
+     // selection cell column should always take up a specific width, doesn't need to be resizable
+    if (node.props.isSelectionCell) {
+      return 20;
+    }
+    return 75;
+  }, []);
+
+  let layoutState = useTableColumnResizeState({
+    getDefaultWidth,
+    getDefaultMinWidth,
+    // TODO: Match with the Table's width, is it too complicated to add the useResizeObserver code to measure the actual width?
+    tableWidth: 400
+  }, state);
+  let {widths} = layoutState;
+  /*- end highlight -*/
+  return (
+    <table
+      {...gridProps}
+      ref={ref}
+      style={{
+        borderCollapse: 'collapse',
+        /*- begin highlight -*/
+        width: '400px',
+        height: '200px',
+        display: 'block',
+        position: 'relative',
+        overflow: 'auto'
+        /*- end highlight -*/
+      }}>
+      <TableRowGroup
+        type="thead"
+        style={{
+          borderBottom: '2px solid var(--spectrum-global-color-gray-800)',
+          /*- begin highlight -*/
+          display: 'block',
+          position: 'sticky',
+          top: 0,
+          background: 'var(--spectrum-gray-100)',
+          width: 'fit-content'
+          /*- end highlight -*/
+        }}>
+        {collection.headerRows.map(headerRow => (
+          <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+            {[...headerRow.childNodes].map(column =>
+              column.props.isSelectionCell ? (
+                 <TableSelectAllCell
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  /*- begin highlight -*/
+                  widths={widths} />
+                  /*- end highlight -*/
+              ) : (
+                <TableColumnHeader
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  /*- begin highlight -*/
+                  widths={widths}
+                  layoutState={layoutState}
+                  onResizeStart={onResizeStart}
+                  onResize={onResize}
+                  onResizeEnd={onResizeEnd} />
+                  /*- end highlight -*/
+              )
+            )}
+          </TableHeaderRow>
+        ))}
+      </TableRowGroup>
+      <TableRowGroup
+        /*- begin highlight -*/
+        style={{
+          maxHeight: '200px'
+        }}
+        /*- end highlight -*/
+        type="tbody">
+        {[...collection.body.childNodes].map(row => (
+          <TableRow key={row.key} item={row} state={state}>
+            {[...row.childNodes].map(cell =>
+              cell.props.isSelectionCell
+                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} widths={widths} />
+                : <TableCell key={cell.key} cell={cell} state={state} widths={widths} />
+            )}
+          </TableRow>
+        ))}
+      </TableRowGroup>
+    </table>
+  );
+}
+```
+
+###
+
 
 ## Usage
 

@@ -32,26 +32,28 @@ import {useToggleState} from '@react-stately/toggle';
 import {useTreeState} from '@react-stately/tree';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-
 export function Table(props) {
-  let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
+  let {
+    selectionMode,
+    selectionBehavior,
+    onResizeStart,
+    onResize,
+    onResizeEnd
+    // TODO: omit from aria example, unneeded really?
+    // onColumnResizeStart,
+    // onColumnResize,
+    // onColumnResizeEnd
+  } = props;
   let state = useTableState({
     ...props,
-    showSelectionCheckboxes,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+    showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace'
   });
-  // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
-  let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';
-  if (shouldShowCheckboxes !== showSelectionCheckboxes) {
-    setShowSelectionCheckboxes(shouldShowCheckboxes);
-  }
+
   let ref = useRef(null);
-  let bodyRef = useRef(null);
   let {collection} = state;
   let {gridProps} = useTable(
     {
       ...props,
-      onRowAction: props.onAction,
       // Table itself is made scrollable instead of the body so that the
       // column header and row scroll positions are the same
       // Not great still because the column headers are position sticky and thus throw off the scrolling items into view when going upwards
@@ -61,9 +63,10 @@ export function Table(props) {
     state,
     ref
   );
-
   // Table column resizing stuff
-  let [tableWidth, setTableWidth] = useState(0);
+  let bodyRef = useRef(null);
+
+  // let [tableWidth, setTableWidth] = useState(0);
   let getDefaultWidth = useCallback((node) => {
     // selection cell column should always take up a specific width, doesn't need to be resizable
     if (node.props.isSelectionCell) {
@@ -81,10 +84,11 @@ export function Table(props) {
   let layoutState = useTableColumnResizeState({
     getDefaultWidth,
     getDefaultMinWidth,
-    tableWidth,
-    onColumnResize: props.onColumnResize,
-    onColumnResizeEnd: props.onColumnResizeEnd,
-    onColumnResizeStart: props.onColumnResizeStart
+    // TODO: sync this since we aren't including the resize obs
+    tableWidth: 800,
+    // onColumnResize,
+    // onColumnResizeEnd,
+    // onColumnResizeStart
   }, state);
   let {widths} = layoutState;
 
@@ -93,12 +97,12 @@ export function Table(props) {
   // Asked Rob, it is if the Table's width is changed by a resize event (e.g. width is a percentage of the page), doesn't apply for the
   // static width case
   // Remove for final doc example cuz it is probably too complicated, TODO test it?
-  useLayoutEffect(() => {
-    if (bodyRef && bodyRef.current) {
-      setTableWidth(bodyRef.current.clientWidth);
-    }
-  }, []);
-  useResizeObserver({ref, onResize: () => setTableWidth(bodyRef.current.clientWidth)});
+  // useLayoutEffect(() => {
+  //   if (bodyRef && bodyRef.current) {
+  //     setTableWidth(bodyRef.current.clientWidth);
+  //   }
+  // }, []);
+  // useResizeObserver({ref, onResize: () => setTableWidth(bodyRef.current.clientWidth)});
 
   // TODO: move certain stylings into the components themselves
   return (
@@ -142,7 +146,7 @@ export function Table(props) {
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} widths={widths} />
                 // TODO include the resize stuff? for controlled?
-                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layoutState={layoutState} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
+                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
             )}
           </TableHeaderRow>
         ))}

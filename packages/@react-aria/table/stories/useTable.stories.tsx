@@ -339,10 +339,8 @@ export const DocExample = {
       aria-label="Table with selection"
       selectionMode="multiple"
       onColumnResizeStart={action('onColumnResizeStart')}
-      onColumnResize={action('onColumnResize')}
       onColumnResizeEnd={action('onColumnResizeEnd')}
       onResizeStart={action('onResizeStart')}
-      onResize={action('onResize')}
       onResizeEnd={action('onResizeEnd')}
       {...args}>
       <TableHeader columns={columns}>
