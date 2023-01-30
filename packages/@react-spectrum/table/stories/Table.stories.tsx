@@ -917,7 +917,7 @@ function AsyncLoadingExample(props) {
   let list = useAsyncList<Item>({
     getKey: (item) => item.data.id,
     async load({signal, cursor}) {
-      let url = new URL('https://www.reddit.com/r/news.json');
+      let url = new URL('https://www.reddit.com/r/upliftingnews.json');
       if (cursor) {
         url.searchParams.append('after', cursor);
       }
@@ -1722,9 +1722,8 @@ let uncontrolledColumns: PokemonColumn[] = [
 ];
 
 export const ResizingControlledNoInitialWidths: TableStory = {
-  render: () => (
-    <ControllingResize width={900} columns={uncontrolledColumns} />
-  ),
+  render: (args) =>
+    <ControllingResize {...args} width={900} columns={uncontrolledColumns} />,
   storyName: 'allowsResizing, controlled, no widths',
   parameters: {description: {data: `
     You can use the buttons to save and restore the column widths. When restoring,
@@ -1741,8 +1740,8 @@ let columnsSomeFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledSomeInitialWidths: TableStory = {
-  render: () => (
-    <ControllingResize width={900} columns={columnsSomeFR} />
+  render: (args) => (
+    <ControllingResize {...args} width={900} columns={columnsSomeFR} />
   ),
   storyName: 'allowsResizing, controlled, some widths',
   parameters: {description: {data: `
@@ -1761,8 +1760,8 @@ let columnsFR: PokemonColumn[] = [
 ];
 
 export const ResizingControlledAllInitialWidths: TableStory = {
-  render: () => (
-    <ControllingResize width={900} columns={columnsFR} />
+  render: (args) => (
+    <ControllingResize {...args} width={900} columns={columnsFR} />
   ),
   storyName: 'allowsResizing, controlled, all widths',
   parameters: {description: {data: `
@@ -1780,8 +1779,8 @@ let columnsFRHideHeaders: PokemonColumn[] = [
 ];
 
 export const ResizingControlledHideHeader: TableStory = {
-  render: () => (
-    <ControllingResize width={900} columns={columnsFRHideHeaders} />
+  render: (args) => (
+    <ControllingResize {...args} width={900} columns={columnsFRHideHeaders} />
   ),
   storyName: 'allowsResizing, controlled, hideHeader',
   parameters: {description: {data: `
