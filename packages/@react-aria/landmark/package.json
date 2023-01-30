@@ -20,7 +20,8 @@
     "@react-aria/focus": "^3.10.1",
     "@react-aria/utils": "^3.14.2",
     "@react-types/shared": "^3.16.0",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.4.14",
+    "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"

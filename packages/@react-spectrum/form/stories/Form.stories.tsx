@@ -30,6 +30,7 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
@@ -264,6 +265,14 @@ function render(props: any = {}) {
           </ContextualHelp>
         )} />
       <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Cool Tag 2</Item>
+        <Item key="3">Cool Tag 3</Item>
+        <Item key="4">Cool Tag 4</Item>
+        <Item key="5">Cool Tag 5</Item>
+        <Item key="6">Cool Tag 6</Item>
+      </TagGroup>
     </Form>
   );
 }
@@ -326,6 +335,14 @@ function FormWithControls(props: any = {}) {
           <Item key="kangaroo">Kangaroo</Item>
           <Item key="snake">Snake</Item>
         </ComboBox>
+        <TagGroup label="Favorite tags">
+          <Item key="1">Cool Tag 1</Item>
+          <Item key="2">Cool Tag 2</Item>
+          <Item key="3">Cool Tag 3</Item>
+          <Item key="4">Cool Tag 4</Item>
+          <Item key="5">Cool Tag 5</Item>
+          <Item key="6">Cool Tag 6</Item>
+        </TagGroup>
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
@@ -563,6 +580,15 @@ function FormWithSubmit() {
           Dragons
         </Radio>
       </RadioGroup>
+
+      <TagGroup label="Favorite tags">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Cool Tag 2</Item>
+        <Item key="3">Cool Tag 3</Item>
+        <Item key="4">Cool Tag 4</Item>
+        <Item key="5">Cool Tag 5</Item>
+        <Item key="6">Cool Tag 6</Item>
+      </TagGroup>
 
       <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
       <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
