@@ -32,6 +32,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-aria/dnd": "^3.0.1",
     "@react-aria/ssr": "^3.0.0",
     "@swc/helpers": "^0.4.14",
     "resolve": "^1.17.0"
