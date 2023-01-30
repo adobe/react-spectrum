@@ -18,8 +18,8 @@ governing permissions and limitations under the License.
   --spectrum-table-col-resize-nubbin-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
   --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
   --spectrum-table-body-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
-  --spectrum-table-row-border-color-selected: xvar(--spectrum-legacy-color-blue-500, var(--spectrum-global-color-blue-500));
-  --spectrum-table-cell-border-color-selected: xvar(--spectrum-legacy-color-blue-500, var(--spectrum-global-color-blue-500));
+  --spectrum-table-row-border-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-table-cell-border-color-selected: var(--spectrum-global-color-blue-500);
   --spectrum-table-row-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
 }
 
