@@ -123,7 +123,6 @@ module.exports = {
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
     'eol-last': ERROR,
-    'arrow-body-style': [ERROR, 'as-needed'],
     'arrow-spacing': ERROR,
     'space-before-blocks': [ERROR, 'always'],
     'space-infix-ops': ERROR,
