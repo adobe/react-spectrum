@@ -33,7 +33,7 @@ keywords: [table, aria, grid]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox']}
+  componentNames={['useTable', 'useTableCell', 'useTableColumnHeader', 'useTableRow', 'useTableHeaderRow', 'useTableRowGroup', 'useTableSelectAllCheckbox', 'useTableSelectionCheckbox', 'useTableColumnResize']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
   ]} />
@@ -48,8 +48,11 @@ keywords: [table, aria, grid]
 <FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
 <FunctionAPI function={docs.exports.useTableSelectionCheckbox} links={docs.links} />
 <FunctionAPI function={docs.exports.useTableSelectAllCheckbox} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnResize} links={docs.links} />
 
 ## Features
+
+// TODO: talk about table column resizing
 
 A table can be built using the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table), [&lt;tr&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr),
 [&lt;td&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td), and other table specific HTML elements, but is very limited in functionality especially when it comes to user interactions.
@@ -487,7 +490,7 @@ function Checkbox(props) {
   let ref = React.useRef();
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
-  return <input {...inputProps} ref={ref} />;
+  return <input {...inputProps} ref={ref} style={props.style} />;
 }
 ```
 
@@ -537,7 +540,7 @@ function ResizableColumnsTable(props) {
   );
 
   /*- begin highlight -*/
-  let getDefaultWidth = useCallback((node) => {
+  let getDefaultWidth = React.useCallback((node) => {
     // selection cell column should always take up a specific width, doesn't need to be resizable
     if (node.props.isSelectionCell) {
       return 20;
@@ -545,7 +548,7 @@ function ResizableColumnsTable(props) {
     return;
   }, []);
 
-  let getDefaultMinWidth = useCallback((node) => {
+  let getDefaultMinWidth = React.useCallback((node) => {
      // selection cell column should always take up a specific width, doesn't need to be resizable
     if (node.props.isSelectionCell) {
       return 20;
@@ -677,7 +680,7 @@ function ResizableTableRowGroup({type: Element, style, children}) {
 ```
 
 ```tsx example export=true render=false
-function TableHeaderRow({item, state, children}) {
+function ResizableTableHeaderRow({item, state, children}) {
   let ref = useRef();
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
@@ -695,9 +698,12 @@ function TableHeaderRow({item, state, children}) {
 }
 ```
 
+// TODO import stuff from component library like Resizer and stuff, add highlighting
 ```tsx example export=true render=false
-function ResizableTableColumnHeader({column, state}) {
-let ref = useRef(null);
+import {useHover} from '@react-aria/interactions';
+
+function ResizableTableColumnHeader({column, state, widths, layoutState, onResizeStart, onResize, onResizeEnd}) {
+  let ref = useRef(null);
   let resizerRef = useRef(null);
   let triggerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
@@ -725,7 +731,7 @@ let ref = useRef(null);
     }
   };
 
-  let items = useMemo(() => {
+  let items = React.useMemo(() => {
     let options = [
       allowsSorting ? {
         label: 'Sort ascending',
@@ -820,6 +826,235 @@ let ref = useRef(null);
 }
 ```
 
+### Resizer
+
+TODO: move to different place? Closer to where it is actually being used
+
+```tsx example export=true render=false
+import {useTableColumnResize} from '@react-aria/table';
+
+const Resizer = React.forwardRef((props, ref) => {
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef, showResizer} = props;
+  let {resizerProps, inputProps} = useTableColumnResize({
+    column,
+    label: 'Resizer',
+    onResizeStart,
+    onResize,
+    onResizeEnd,
+    triggerRef
+  }, layoutState, ref);
+  // TODO: update the look of the resizer in general (get rid of FocusRing also, just use focusVisible)
+  return (
+    <div
+      role="presentation"
+      style={{
+        cursor: undefined,
+        width: '20px',
+        height: '20px',
+        border: '1px solid red',
+        touchAction: 'none',
+        flex: '0 0 auto',
+        boxSizing: 'border-box',
+        visibility: showResizer ? 'visible' : 'hidden'
+      }}
+      {...resizerProps}>
+      <VisuallyHidden>
+        <input
+          ref={ref}
+          type="range"
+          {...inputProps} />
+      </VisuallyHidden>
+    </div>
+  );
+});
+```
+
+
+### MenuButton
+
+The `MenuButton` is rendered
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useMenuTriggerState} from '@react-stately/menu';
+import {useMenuTrigger} from '@react-aria/menu';
+import {Item} from '@react-stately/collections';
+
+const MenuButton = React.forwardRef((props, ref) => {
+  // Create state based on the incoming props
+  let state = useMenuTriggerState(props);
+
+  // Get props for the button and menu elements
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press'}, state, ref);
+  // Continue propagation of keydown event so that the left/right arrow key presses properly bubble to the table (useSelectableCollection)
+  let onKeyDown = (e) => e.continuePropagation();
+  return (
+    <>
+      <Button
+        {...mergeProps(menuTriggerProps, {onKeyDown})}
+        buttonRef={ref}
+        style={{height: 30, fontSize: 14, ...props.style}}>
+        {props.label}
+      </Button>
+      {state.isOpen &&
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <Menu
+            {...props}
+            {...menuProps} />
+        </Popover>
+      }
+    </>
+  );
+});
+```
+
+</details>
+
+### Menu
+
+The `Menu` is used to display the various actions available to the column, rendered with a `Popover` when the user presses the column header.
+This is built using the [useMenu](useMenu.html) and [useTreeState](/react-stately/useTreeState.html) hooks.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useMenu} from '@react-aria/menu';
+import {useTreeState} from '@react-stately/tree';
+
+function Menu(props) {
+  // Create menu state based on the incoming props
+  let state = useTreeState(props);
+
+  // Get props for the menu element
+  let ref = React.useRef();
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        width: 150
+      }}>
+      {[...state.collection].map(item => (
+        item.type === 'section'
+          ? <MenuSection key={item.key} section={item} state={state} />
+          : <MenuItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+```
+
+</details>
+
+### MenuItem
+
+The `MenuItem` is used to render the items in the menu. This is built using the [useMenuItem](useMenu.html) hook.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useMenuItem} from '@react-aria/menu';
+
+function MenuItem({item, state}) {
+  // Get props for the menu item element
+  let ref = React.useRef();
+  let {menuItemProps, isFocused, isSelected, isDisabled} = useMenuItem({key: item.key}, state, ref);
+
+  return (
+    <li
+      {...menuItemProps}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'default',
+        display: 'flex',
+        justifyContent: 'space-between'
+      }}>
+      {item.rendered}
+      {isSelected && <span aria-hidden="true">✅</span>}
+    </li>
+  );
+}
+```
+
+</details>
+
+### Popover
+
+The `Popover` component is used to contain the menu.
+It can be shared between many other components, including [ComboBox](useComboBox.html),
+[Select](useSelect.html), and others.
+See [usePopover](usePopover.html) for more examples of popovers.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+
+function Popover({children, state, ...props}) {
+  let ref = React.useRef();
+  let {popoverRef = ref, triggerRef} = props;
+  let {popoverProps, underlayProps} = usePopover({
+    ...props,
+    popoverRef,
+    triggerRef
+  }, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'lightgray',
+          border: '1px solid gray'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the menu. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
+
+
 ### Resizable table body
 
 ```tsx example export=true render=false
@@ -861,6 +1096,7 @@ function ResizableTableCell({cell, state, widths}) {
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
+  let column = cell.column;
 
   return (
     <td
@@ -904,14 +1140,14 @@ function ResizableTableCheckboxCell({cell, state, widths}) {
         boxSizing: 'border-box'
       }}
       ref={ref}>
-      <Checkbox {...checkboxProps} />
+      <Checkbox {...checkboxProps} style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}} />
     </td>
   );
 }
 ```
 
 ```tsx example export=true render=false
-function ResizableTableSelectAllCell({column, state, width}) {
+function ResizableTableSelectAllCell({column, state, widths}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
@@ -927,220 +1163,45 @@ function ResizableTableSelectAllCell({column, state, width}) {
       ref={ref}>
       {state.selectionManager.selectionMode === 'single'
         ? <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
-        : <Checkbox {...checkboxProps} />
+        : <Checkbox {...checkboxProps} style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}} />
       }
     </th>
   );
 }
 ```
 
-TODO: collapse the below or not?
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function Checkbox(props) {
-  let ref = React.useRef();
-  let state = useToggleState(props);
-  let {inputProps} = useCheckbox(props, state, ref);
-  // TODO: highlight the below
-  return <input style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}} {...inputProps} ref={ref} />;
-}
+```tsx example
+<ResizableColumnsTable aria-label="Table with selection and resizable columns" selectionMode="multiple">
+  <TableHeader>
+    <Column allowsResizing>Name</Column>
+    <Column allowsResizing>Type</Column>
+    <Column allowsResizing>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="1">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row key="2">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    <Row key="3">
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row key="4">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</ResizableColumnsTable>
 ```
 
-### Resizer
-
-TODO: move to different place? Closer to where it is actually being used
-
-```tsx example export=true render=false
-const Resizer = React.forwardRef((props, ref) => {
-  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef, showResizer} = props;
-  let {resizerProps, inputProps} = useTableColumnResize({
-    column,
-    label: 'Resizer',
-    onResizeStart,
-    onResize,
-    onResizeEnd,
-    triggerRef
-  }, layoutState, ref);
-  // TODO: update the look of the resizer in general (get rid of FocusRing also, just use focusVisible)
-  return (
-    <>
-      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
-        <div
-          role="presentation"
-          style={{
-            cursor: undefined,
-            width: '20px',
-            height: '20px',
-            border: '1px solid red',
-            touchAction: 'none',
-            flex: '0 0 auto',
-            boxSizing: 'border-box',
-            visibility: showResizer ? 'visible' : 'hidden'
-          }}
-          {...resizerProps}>
-          <VisuallyHidden>
-            <input
-              ref={ref}
-              type="range"
-              {...inputProps} />
-          </VisuallyHidden>
-        </div>
-      </FocusRing>
-    </>
-  );
-});
-```
-
-### Column header menu
-
-MenuButton
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-const MenuButton = React.forwardRef((props, ref) => {
-  // Create state based on the incoming props
-  let state = useMenuTriggerState(props);
-
-  // Get props for the button and menu elements
-  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger: 'press'}, state, ref);
-  // Continue propagation of keydown event so that the left/right arrow key presses properly bubble to the table (useSelectableCollection)
-  let onKeyDown = (e) => e.continuePropagation();
-  return (
-    <>
-      <Button
-        {...mergeProps(menuTriggerProps, {onKeyDown})}
-        buttonRef={ref}
-        style={{height: 30, fontSize: 14, ...props.style}}>
-        {props.label}
-      </Button>
-      {state.isOpen &&
-        <Popover state={state} triggerRef={ref} placement="bottom start">
-          <Menu
-            {...props}
-            {...menuProps} />
-        </Popover>
-      }
-    </>
-  );
-});
-```
-
-Menu
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function Menu(props) {
-  // Create menu state based on the incoming props
-  let state = useTreeState(props);
-
-  // Get props for the menu element
-  let ref = React.useRef();
-  let {menuProps} = useMenu(props, state, ref);
-
-  return (
-    <ul
-      {...menuProps}
-      ref={ref}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-        width: 150
-      }}>
-      {[...state.collection].map(item => (
-        item.type === 'section'
-          ? <MenuSection key={item.key} section={item} state={state} />
-          : <MenuItem key={item.key} item={item} state={state} />
-      ))}
-    </ul>
-  );
-}
-```
-
-MenuItem
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function MenuItem({item, state}) {
-  // Get props for the menu item element
-  let ref = React.useRef();
-  let {menuItemProps, isFocused, isSelected, isDisabled} = useMenuItem({key: item.key}, state, ref);
-
-  return (
-    <li
-      {...menuItemProps}
-      ref={ref}
-      style={{
-        background: isFocused ? 'gray' : 'transparent',
-        color: isDisabled ? 'gray' : isFocused ? 'white' : 'black',
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'default',
-        display: 'flex',
-        justifyContent: 'space-between'
-      }}>
-      {item.rendered}
-      {isSelected && <span aria-hidden="true">✅</span>}
-    </li>
-  );
-}
-```
-
-Popover
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref, triggerRef} = props;
-  let {popoverProps, underlayProps} = usePopover({
-    ...props,
-    popoverRef,
-    triggerRef
-  }, state);
-
-  return (
-    <Overlay>
-      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
-      <div
-        {...popoverProps}
-        ref={popoverRef}
-        style={{
-          ...popoverProps.style,
-          background: 'lightgray',
-          border: '1px solid gray'
-        }}>
-        <DismissButton onDismiss={state.close} />
-        {children}
-        <DismissButton onDismiss={state.close} />
-      </div>
-    </Overlay>
-  );
-}
-```
-
-Button
-// TODO: add text snippets for these sections, add imports for all these things (useButton etc), add import 'from-component-library'
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function Button(props) {
-  let ref = props.buttonRef;
-  let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
-}
-```
 
 ## Usage
 
