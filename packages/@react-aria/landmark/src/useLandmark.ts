@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useSyncExternalStore} from 'use-sync-external-store/shim';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
@@ -25,36 +26,97 @@ export interface LandmarkAria {
   landmarkProps: DOMAttributes
 }
 
-type Landmark = {
+// Increment this version number whenever the
+// LandmarkManagerApi or Landmark interfaces change.
+const LANDMARK_API_VERSION = 1;
+
+// Minimal API for LandmarkManager that must continue to work between versions.
+// Changes to this interface are considered breaking. New methods/properties are
+// safe to add, but changes or removals are not allowed (same as public APIs).
+interface LandmarkManagerApi {
+  version: number,
+  createLandmarkController(): LandmarkController,
+  registerLandmark(landmark: Landmark): () => void
+}
+
+// Changes to this interface are considered breaking.
+// New properties MUST be optional so that registering a landmark
+// from an older version of useLandmark against a newer version of
+// LandmarkManager does not crash.
+interface Landmark {
   ref: MutableRefObject<Element>,
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: FocusableElement,
   focus: (direction: 'forward' | 'backward') => void,
   blur: () => void
-};
+}
 
-class LandmarkManager {
+export interface LandmarkControllerOptions {
+  /**
+   * The element from which to start navigating.
+   * @default document.activeElement
+   */
+  from?: Element
+}
+
+/** A LandmarkController allows programmatic navigation of landmarks. */
+export interface LandmarkController {
+  /** Moves focus to the next landmark. */
+  focusNext(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the previous landmark. */
+  focusPrevious(opts?: LandmarkControllerOptions): boolean,
+  /** Moves focus to the main landmark. */
+  focusMain(): boolean,
+  /** Moves focus either forward or backward in the landmark sequence. */
+  navigate(direction: 'forward' | 'backward', opts?: LandmarkControllerOptions): boolean,
+  /**
+   * Disposes the landmark controller. When no landmarks are registered, and no
+   * controllers are active, the landmark keyboard listeners are removed from the page.
+   */
+  dispose(): void
+}
+
+// Symbol under which the singleton landmark manager instance is attached to the document.
+const landmarkSymbol = Symbol.for('react-aria-landmark-manager');
+
+function subscribe(fn: () => void) {
+  document.addEventListener('react-aria-landmark-manager-change', fn);
+  return () => document.removeEventListener('react-aria-landmark-manager-change', fn);
+}
+
+function getLandmarkManager(): LandmarkManagerApi {
+  // Reuse an existing instance if it has the same or greater version.
+  let instance = document[landmarkSymbol];
+  if (instance && instance.version >= LANDMARK_API_VERSION) {
+    return instance;
+  }
+
+  // Otherwise, create a new instance and dispatch an event so anything using the existing
+  // instance updates and re-registers their landmarks with the new one.
+  document[landmarkSymbol] = new LandmarkManager();
+  document.dispatchEvent(new CustomEvent('react-aria-landmark-manager-change'));
+  return document[landmarkSymbol];
+}
+
+// Subscribes a React component to the current landmark manager instance.
+function useLandmarkManager(): LandmarkManagerApi {
+  return useSyncExternalStore(subscribe, getLandmarkManager);
+}
+
+class LandmarkManager implements LandmarkManagerApi {
   private landmarks: Array<Landmark> = [];
-  private static instance: LandmarkManager;
   private isListening = false;
-  public refCount = 0;
+  private refCount = 0;
+  public version = LANDMARK_API_VERSION;
 
-  private constructor() {
+  constructor() {
     this.f6Handler = this.f6Handler.bind(this);
     this.focusinHandler = this.focusinHandler.bind(this);
     this.focusoutHandler = this.focusoutHandler.bind(this);
   }
 
-  public static getInstance(): LandmarkManager {
-    if (!LandmarkManager.instance) {
-      LandmarkManager.instance = new LandmarkManager();
-    }
-
-    return LandmarkManager.instance;
-  }
-
-  public setupIfNeeded() {
+  private setupIfNeeded() {
     if (this.isListening) {
       return;
     }
@@ -64,7 +126,7 @@ class LandmarkManager {
     this.isListening = true;
   }
 
-  public teardownIfNeeded() {
+  private teardownIfNeeded() {
     if (!this.isListening || this.landmarks.length > 0 || this.refCount > 0) {
       return;
     }
@@ -92,7 +154,7 @@ class LandmarkManager {
     return this.landmarks.find(l => l.role === role);
   }
 
-  public addLandmark(newLandmark: Landmark) {
+  private addLandmark(newLandmark: Landmark) {
     this.setupIfNeeded();
     if (this.landmarks.find(landmark => landmark.ref === newLandmark.ref)) {
       return;
@@ -104,6 +166,7 @@ class LandmarkManager {
 
     if (this.landmarks.length === 0) {
       this.landmarks = [newLandmark];
+      this.checkLabels(newLandmark.role);
       return;
     }
 
@@ -125,9 +188,10 @@ class LandmarkManager {
     }
 
     this.landmarks.splice(start, 0, newLandmark);
+    this.checkLabels(newLandmark.role);
   }
 
-  public updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
+  private updateLandmark(landmark: Pick<Landmark, 'ref'> & Partial<Landmark>) {
     let index = this.landmarks.findIndex(l => l.ref === landmark.ref);
     if (index >= 0) {
       this.landmarks[index] = {...this.landmarks[index], ...landmark};
@@ -135,7 +199,7 @@ class LandmarkManager {
     }
   }
 
-  public removeLandmark(ref: MutableRefObject<Element>) {
+  private removeLandmark(ref: MutableRefObject<Element>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
     this.teardownIfNeeded();
   }
@@ -225,7 +289,7 @@ class LandmarkManager {
 
     // Skip over hidden landmarks.
     let i = nextLandmarkIndex;
-    while (this.landmarks[nextLandmarkIndex].ref.current.closest('[aria-hidden]')) {
+    while (this.landmarks[nextLandmarkIndex].ref.current.closest('[aria-hidden=true]')) {
       nextLandmarkIndex += backward ? -1 : 1;
       if (wrapIfNeeded()) {
         return undefined;
@@ -255,7 +319,7 @@ class LandmarkManager {
     }
   }
 
-  public focusMain() {
+  private focusMain() {
     let main = this.getLandmarkByRole('main');
     if (main && document.contains(main.ref.current)) {
       this.focusLandmark(main.ref.current, 'forward');
@@ -265,7 +329,7 @@ class LandmarkManager {
     return false;
   }
 
-  public navigate(from: Element, backward: boolean) {
+  private navigate(from: Element, backward: boolean) {
     let nextLandmark = this.getNextLandmark(from, {
       backward
     });
@@ -325,54 +389,75 @@ class LandmarkManager {
       }
     }
   }
-}
 
-export interface LandmarkControllerOptions {
-  /**
-   * The element from which to start navigating.
-   * @default document.activeElement
-   */
-  from?: Element
-}
+  public createLandmarkController(): LandmarkController {
+    let instance = this;
+    instance.refCount++;
+    instance.setupIfNeeded();
+    return {
+      navigate(direction, opts) {
+        return instance.navigate(opts?.from || document.activeElement, direction === 'backward');
+      },
+      focusNext(opts) {
+        return instance.navigate(opts?.from || document.activeElement, false);
+      },
+      focusPrevious(opts) {
+        return instance.navigate(opts?.from || document.activeElement, true);
+      },
+      focusMain() {
+        return instance.focusMain();
+      },
+      dispose() {
+        instance.refCount--;
+        instance.teardownIfNeeded();
+        instance = null;
+      }
+    };
+  }
 
-/** A LandmarkController allows programmatic navigation of landmarks. */
-export interface LandmarkController {
-  /** Moves focus to the next landmark. */
-  focusNext(opts?: LandmarkControllerOptions): boolean,
-  /** Moves focus to the previous landmark. */
-  focusPrevious(opts?: LandmarkControllerOptions): boolean,
-  /** Moves focus to the main landmark. */
-  focusMain(): boolean,
-  /** Moves focus either forward or backward in the landmark sequence. */
-  navigate(direction: 'forward' | 'backward', opts?: LandmarkControllerOptions): boolean,
-  /**
-   * Disposes the landmark controller. When no landmarks are registered, and no
-   * controllers are active, the landmark keyboard listeners are removed from the page.
-   */
-  dispose(): void
+  public registerLandmark(landmark: Landmark): () => void {
+    if (this.landmarks.find(l => l.ref === landmark.ref)) {
+      this.updateLandmark(landmark);
+    } else {
+      this.addLandmark(landmark);
+    }
+
+    return () => this.removeLandmark(landmark.ref);
+  }
 }
 
 /** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
 export function createLandmarkController(): LandmarkController {
-  let instance = LandmarkManager.getInstance();
-  instance.refCount++;
-  instance.setupIfNeeded();
+  // Get the current landmark manager and create a controller using it.
+  let instance = getLandmarkManager();
+  let controller = instance.createLandmarkController();
+
+  let unsubscribe = subscribe(() => {
+    // If the landmark manager changes, dispose the old
+    // controller and create a new one.
+    controller.dispose();
+    instance = getLandmarkManager();
+    controller = instance.createLandmarkController();
+  });
+
+  // Return a wrapper that proxies requests to the current controller instance.
   return {
     navigate(direction, opts) {
-      return instance.navigate(opts?.from || document.activeElement, direction === 'backward');
+      return controller.navigate(direction, opts);
     },
     focusNext(opts) {
-      return instance.navigate(opts?.from || document.activeElement, false);
+      return controller.focusNext(opts);
     },
     focusPrevious(opts) {
-      return instance.navigate(opts?.from || document.activeElement, true);
+      return controller.focusPrevious(opts);
     },
     focusMain() {
-      return instance.focusMain();
+      return controller.focusMain();
     },
     dispose() {
-      instance.refCount--;
-      instance.teardownIfNeeded();
+      controller.dispose();
+      unsubscribe();
+      controller = null;
       instance = null;
     }
   };
@@ -390,7 +475,7 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
     'aria-labelledby': ariaLabelledby,
     focus
   } = props;
-  let manager = LandmarkManager.getInstance();
+  let manager = useLandmarkManager();
   let label = ariaLabel || ariaLabelledby;
   let [isLandmarkFocused, setIsLandmarkFocused] = useState(false);
 
@@ -403,18 +488,8 @@ export function useLandmark(props: AriaLandmarkProps, ref: MutableRefObject<Focu
   }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    manager.addLandmark({ref, role, label, focus, blur});
-
-    return () => {
-      manager.removeLandmark(ref);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useLayoutEffect(() => {
-    manager.updateLandmark({ref, label, role, focus: focus || defaultFocus, blur});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [label, ref, role]);
+    return manager.registerLandmark({ref, label, role, focus: focus || defaultFocus, blur});
+  }, [manager, label, ref, role, focus, defaultFocus, blur]);
 
   useEffect(() => {
     if (isLandmarkFocused) {
