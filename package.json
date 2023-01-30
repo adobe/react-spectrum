@@ -41,7 +41,8 @@
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
-    "bumpVersions": "node scripts/bumpVersions.js"
+    "bumpVersions": "node scripts/bumpVersions.js",
+    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'"
   },
   "workspaces": [
     "packages/react-stately",
