@@ -15,6 +15,7 @@
 
 import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
 import {getLocalTimeZone} from './queries';
 import {Mutable} from './utils';
@@ -264,6 +265,7 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
   copy.year = calendarDate.year;
   copy.month = calendarDate.month;
   copy.day = calendarDate.day;
+  constrain(copy);
   return copy;
 }
 

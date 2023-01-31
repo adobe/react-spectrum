@@ -15,7 +15,7 @@ import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Content, View} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
-import Folder from '@spectrum-icons/workflow/Folder';
+import Folder from '@spectrum-icons/illustrations/Folder';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';

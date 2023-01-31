@@ -1,6 +1,7 @@
 {
   "ascending": "αύξουσα",
   "ascendingSort": "διαλογή ανά στήλη {columnName} σε αύξουσα σειρά",
+  "columnSize": "{value} pixel",
   "descending": "φθίνουσα",
   "descendingSort": "διαλογή ανά στήλη {columnName} σε φθίνουσα σειρά",
   "select": "Επιλογή",

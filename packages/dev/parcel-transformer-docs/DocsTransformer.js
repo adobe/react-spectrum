@@ -78,7 +78,11 @@ module.exports = new Transformer({
           for (let specifier of path.node.specifiers) {
             let binding = path.scope.getBinding(specifier.local.name);
             if (binding) {
-              exports[specifier.exported.name] = processExport(binding.path);
+              let value = processExport(binding.path);
+              if (value.name) {
+                value.name = specifier.exported.name;
+              }
+              exports[specifier.exported.name] = value;
               asset.symbols.set(specifier.exported.name, specifier.local.name);
             }
           }
@@ -115,6 +119,10 @@ module.exports = new Transformer({
         let docs = getJSDocs(path.parentPath);
         processExport(path.get('init'), node);
         addDocs(node, docs);
+        if (node.type === 'interface') {
+          node.id = `${asset.filePath}:${path.node.id.name}`;
+          node.name = path.node.id.name;
+        }
         return node;
       }
 
@@ -160,7 +168,37 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isClassMethod() || path.isTSDeclareMethod()) {
+      if (path.isObjectExpression()) {
+        let properties = {};
+        for (let propertyPath of path.get('properties')) {
+          let property = processExport(propertyPath);
+          if (property) {
+            properties[property.name] = property;
+          } else {
+            console.log('UNKNOWN PROPERTY', propertyPath.node);
+          }
+        }
+
+        return Object.assign(node, {
+          type: 'interface',
+          extends: [],
+          properties,
+          typeParameters: []
+        });
+      }
+
+      if (path.isObjectProperty()) {
+        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let docs = getJSDocs(path);
+        return Object.assign(node, addDocs({
+          type: 'property',
+          name,
+          value: processExport(path.get('value')),
+          optional: false
+        }, docs));
+      }
+
+      if (path.isClassMethod() || path.isTSDeclareMethod() || path.isObjectMethod()) {
         // not sure why isTSDeclareMethod isn't a recognized method, can't find documentation on it either, but it works and that's the type
         // it seems to be mostly abstract class methods that comes through as this?
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
@@ -293,6 +331,10 @@ module.exports = new Transformer({
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
           if (property) {
+            let prev = properties[property.name];
+            if (!property.description && prev?.description) {
+              property.description = prev.description;
+            }
             properties[property.name] = property;
           } else {
             console.log('UNKNOWN PROPERTY interface declaration', propertyPath.node);
@@ -329,13 +371,39 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTypeOperator()) {
+        return Object.assign(node, {
+          type: 'typeOperator',
+          operator: path.node.operator,
+          value: processExport(path.get('typeAnnotation'))
+        });
+      }
+
+      if (path.isTSThisType()) {
+        return Object.assign(node, {
+          type: 'this'
+        });
+      }
+
       if (path.isTSPropertySignature()) {
-        let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
+        let name;
+        if (t.isStringLiteral(path.node.key)) {
+          name = path.node.key.value;
+        } else if (t.isNumericLiteral(path.node.key)) {
+          name = String(path.node.key.value);
+        } else if (t.isIdentifier(path.node.key)) {
+          name = path.node.key.name;
+        } else {
+          console.log('Unknown key', path.node.key);
+          name = 'unknown';
+        }
+
         let docs = getJSDocs(path);
+        let value = processExport(path.get('typeAnnotation.typeAnnotation'));
         return Object.assign(node, addDocs({
           type: 'property',
           name,
-          value: processExport(path.get('typeAnnotation.typeAnnotation')),
+          value,
           optional: path.node.optional || false
         }, docs));
       }
@@ -394,6 +462,10 @@ module.exports = new Transformer({
         return bindings;
       }
 
+      if (path.isTSSymbolKeyword()) {
+        return Object.assign(node, {type: 'symbol'});
+      }
+
       if (path.isTSBooleanKeyword()) {
         return Object.assign(node, {type: 'boolean'});
       }
@@ -449,6 +521,29 @@ module.exports = new Transformer({
       }
 
       if (path.isTSLiteralType()) {
+        if (t.isTemplateLiteral(path.node.literal)) {
+          let expressions = path.get('literal.expressions').map(e => processExport(e));
+          let elements = [];
+          let i = 0;
+          for (let q of path.node.literal.quasis) {
+            if (q.value.raw) {
+              elements.push({
+                type: 'string',
+                value: q.value.raw
+              });
+            }
+
+            if (!q.tail) {
+              elements.push(expressions[i++]);
+            }
+          }
+
+          return Object.assign(node, {
+            type: 'template',
+            elements
+          });
+        }
+
         return Object.assign(node, {
           type: typeof path.node.literal.value,
           value: path.node.literal.value
@@ -501,6 +596,19 @@ module.exports = new Transformer({
           extendsType: processExport(path.get('extendsType')),
           trueType: processExport(path.get('trueType')),
           falseType: processExport(path.get('falseType'))
+        });
+      }
+
+      if (path.isTSModuleDeclaration()) {
+        // TODO: decide how we want to display something from a Global namespace
+        return node;
+      }
+
+      if (path.isTSIndexedAccessType()) {
+        return Object.assign(node, {
+          type: 'indexedAccess',
+          objectType: processExport(path.get('objectType')),
+          indexType: processExport(path.get('indexType'))
         });
       }
 

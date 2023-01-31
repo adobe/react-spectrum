@@ -12,10 +12,11 @@
 
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {Orientation} from '@react-types/shared';
+import {RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 const BUTTON_GROUP_ROLES = {
@@ -25,10 +26,10 @@ const BUTTON_GROUP_ROLES = {
 };
 
 export interface ActionGroupAria {
-  actionGroupProps: HTMLAttributes<HTMLElement>
+  actionGroupProps: DOMAttributes
 }
 
-export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
   let {
     isDisabled,
     orientation = 'horizontal' as Orientation

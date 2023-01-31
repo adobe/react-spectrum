@@ -12,6 +12,7 @@
 
 import {chain} from '@react-aria/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {Switch} from '../';
 
@@ -20,6 +21,9 @@ type SwitchStory = ComponentStoryObj<typeof Switch>;
 export default {
   title: 'Switch',
   component: Switch,
+  args: {
+    isEmphasized: false
+  },
   argTypes: {
     onChange: {
       action: 'change'
@@ -110,3 +114,23 @@ function ControlledSwitch(props) {
   let [checked, setChecked] = useState(false);
   return <Switch {...props} onChange={chain(setChecked, props.onChange)} isSelected={checked} />;
 }
+
+export const WHCMTest: SwitchStory = {
+  render: () => (
+    <Flex direction="column" gap="size-200">
+      <Flex gap="size-200">
+        <Switch>Option</Switch>
+        <Switch isDisabled>Option</Switch>
+      </Flex>
+      <Flex gap="size-200">
+        <Switch isSelected isEmphasized>Option</Switch>
+        <Switch isSelected isEmphasized isDisabled>Option</Switch>
+      </Flex>
+      <Flex gap="size-200">
+        <Switch isSelected>Option</Switch>
+        <Switch isSelected isDisabled>Option</Switch>
+      </Flex>
+    </Flex>
+  ),
+  name: 'WHCM test'
+};

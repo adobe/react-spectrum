@@ -1,11 +1,11 @@
 {
   "extends": "@parcel/config-default",
   "resolvers": ["@parcel/resolver-glob", "parcel-resolver-docs", "..."],
-  "bundler": "@parcel/bundler-experimental",
   "transformers": {
     "apiCheck:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
     "*.css": ["...", "parcel-transformer-css-env"],

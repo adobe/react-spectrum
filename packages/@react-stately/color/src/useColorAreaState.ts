@@ -53,9 +53,13 @@ export interface ColorAreaState {
 
   /** Returns the xChannel, yChannel and zChannel names based on the color value. */
   channels: {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel},
+  /** The step value of the xChannel, used when incrementing and decrementing. */
   xChannelStep: number,
+  /** The step value of the yChannel, used when incrementing and decrementing. */
   yChannelStep: number,
+  /** The page step value of the xChannel, used when incrementing and decrementing. */
   xChannelPageStep: number,
+  /** The page step value of the yChannel, used when incrementing and decrementing. */
   yChannelPageStep: number,
 
   /** Returns the color that should be displayed in the color area thumb instead of `value`. */

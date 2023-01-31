@@ -19,7 +19,7 @@ import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBas
 import {SliderThumb} from './SliderThumb';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
@@ -40,7 +40,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
     getValueLabel: getValueLabel ? ([start, end]) => getValueLabel({start, end}) : undefined
   };
 
-  let formatter = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
   return (
@@ -54,7 +54,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
               style={{width: `${state.getThumbPercent(0) * 100}%`}} />
             <SliderThumb
               index={0}
-              aria-label={formatter('minimum')}
+              aria-label={stringFormatter.format('minimum')}
               isDisabled={props.isDisabled}
               trackRef={trackRef}
               inputRef={inputRef}
@@ -67,7 +67,7 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
               }} />
             <SliderThumb
               index={1}
-              aria-label={formatter('maximum')}
+              aria-label={stringFormatter.format('maximum')}
               isDisabled={props.isDisabled}
               trackRef={trackRef}
               state={state} />

@@ -1,6 +1,7 @@
 {
   "ascending": "de subida",
   "ascendingSort": "ordenado por columna {columnName} en orden de subida",
+  "columnSize": "{value} píxeles",
   "descending": "de bajada",
   "descendingSort": "ordenado por columna {columnName} en orden de bajada",
   "select": "Seleccionar",

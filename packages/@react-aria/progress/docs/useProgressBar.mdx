@@ -68,7 +68,7 @@ to identify the element to screen readers.
 
 ## Example
 
-```tsx example
+```tsx example export=true
 import {useProgressBar} from '@react-aria/progress';
 
 function ProgressBar(props) {
@@ -102,34 +102,33 @@ function ProgressBar(props) {
           </span>
         }
       </div>
-      <div style={{height: 10, background: 'gray'}}>
+      <div style={{height: 10, background: 'lightgray'}}>
         <div style={{width: barWidth, height: 10, background: 'orange'}} />
       </div>
     </div>
   );
 }
 
-<ProgressBar label="Loading..." value={30} />
+<ProgressBar label="Loading…" value={80} />
 ```
 
-## Indeterminate
+## Circular example
 
-Progress bars can represent an indeterminate operation. They may also be used to represent
-progress visually as a circle rather than as a line. The following example shows an indeterminate
-progress bar visualized as a circular spinner using SVG.
+Progress bars may also be represented using a circular visualization rather than a line. This is often used to represent indeterminate
+operations, but may also be used for determinate progress indicators when space is limited. The following example shows a progress bar
+visualized as a circular spinner using SVG.
 
-```tsx example
-function Spinner() {
-  let {progressBarProps} = useProgressBar({
-    isIndeterminate: true,
-    'aria-label': 'Loading...'
-  });
+```tsx example export=true
+function ProgressCircle(props) {
+  let {isIndeterminate, value, minValue = 0, maxValue = 100} = props;
+  let {progressBarProps} = useProgressBar(props);
 
   let center = 16;
   let strokeWidth = 4;
   let r = 16 - strokeWidth;
   let c = 2 * r * Math.PI;
-  let offset = c - (1 / 4) * c;
+  let percentage = isIndeterminate ? 0.25 : (value - minValue) / (maxValue - minValue);
+  let offset = c - percentage * c;
 
   return (
     <svg
@@ -151,20 +150,75 @@ function Spinner() {
         cy={center}
         r={r}
         stroke="orange"
-        strokeDasharray={c}
-        strokeDashoffset={offset}>
-        <animateTransform
-          attributeName="transform"
-          type="rotate"
-          begin="0s"
-          dur="1s"
-          from="0 16 16"
-          to="360 16 16"
-          repeatCount="indefinite" />
+        strokeDasharray={`${c} ${c}`}
+        strokeDashoffset={offset}
+        transform="rotate(-90 16 16)">
+        {props.isIndeterminate &&
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            begin="0s"
+            dur="1s"
+            from="0 16 16"
+            to="360 16 16"
+            repeatCount="indefinite" />
+        }
       </circle>
     </svg>
   );
 }
+
+<ProgressCircle aria-label="Loading…" value={60} />
+```
+
+## Usage
+
+The following examples show how to use the `ProgressBar` and `ProgressCircle` components created in the above example.
+
+### Custom value scale
+
+By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<ProgressBar
+  label="Loading…"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<ProgressBar
+  label="Sending…"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<ProgressBar
+  label="Feeding…"
+  valueLabel="30 of 100 dogs"
+  value={30} />
+```
+
+### Indeterminate
+
+The `isIndeterminate` prop can be used to represent an interdeterminate operation. The `ProgressCircle` component created [above](#circular-example)
+implements an animation to indicate this visually.
+
+```tsx example
+<ProgressCircle
+  aria-label="Loading…"
+  isIndeterminate />
 ```
 
 ## Internationalization

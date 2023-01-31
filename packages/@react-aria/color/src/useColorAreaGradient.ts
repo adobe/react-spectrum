@@ -218,17 +218,21 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, isDi
       x = 1 - x;
     }
 
+    let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
+
     return {
       colorAreaStyleProps: {
         style: {
           position: 'relative',
           touchAction: 'none',
+          ...forcedColorAdjustNoneStyle,
           ...background.colorAreaStyles
         }
       },
       gradientStyleProps: {
         style: {
           touchAction: 'none',
+          ...forcedColorAdjustNoneStyle,
           ...background.gradientStyles
         }
       },
@@ -238,7 +242,8 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, isDi
           left: `${x * 100}%`,
           top: `${y * 100}%`,
           transform: 'translate(0%, 0%)',
-          touchAction: 'none'
+          touchAction: 'none',
+          ...forcedColorAdjustNoneStyle
         }
       }
     };

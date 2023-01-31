@@ -29,7 +29,7 @@ const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger',
   component: MenuTrigger,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false},
     // chromatic needs a bit more time than disableAnimations allows
     chromatic: {pauseAnimationAtEnd: true}
   },

@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Instrument redimensionare coloane",
   "loading": "Se încarcă...",
   "loadingMore": "Se încarcă mai multe...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Redimensionați coloana",
+  "sortAscending": "Sortați crescător",
+  "sortDescending": "Sortați descrescător"
 }

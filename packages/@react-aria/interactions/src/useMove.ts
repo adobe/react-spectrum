@@ -11,13 +11,13 @@
  */
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
-import {MoveEvents, PointerType} from '@react-types/shared';
-import React, {HTMLAttributes, useMemo, useRef} from 'react';
+import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
+import React, {useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 
-interface MoveResult {
+export interface MoveResult {
   /** Props to spread on the target element. */
-  moveProps: HTMLAttributes<HTMLElement>
+  moveProps: DOMAttributes
 }
 
 interface EventBase {
@@ -44,7 +44,7 @@ export function useMove(props: MoveEvents): MoveResult {
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let moveProps = useMemo(() => {
-    let moveProps: HTMLAttributes<HTMLElement> = {};
+    let moveProps: DOMAttributes = {};
 
     let start = () => {
       disableTextSelection();

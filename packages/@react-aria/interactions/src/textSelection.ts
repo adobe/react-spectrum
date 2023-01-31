@@ -31,9 +31,9 @@ type State = 'default' | 'disabled' | 'restoring';
 // rather than at the document level so we just need to apply/remove user-select: none for each pressed element individually
 let state: State = 'default';
 let savedUserSelect = '';
-let modifiedElementMap = new WeakMap<HTMLElement, string>();
+let modifiedElementMap = new WeakMap<Element, string>();
 
-export function disableTextSelection(target?: HTMLElement) {
+export function disableTextSelection(target?: Element) {
   if (isIOS()) {
     if (state === 'default') {
       savedUserSelect = document.documentElement.style.webkitUserSelect;
@@ -41,7 +41,7 @@ export function disableTextSelection(target?: HTMLElement) {
     }
 
     state = 'disabled';
-  } else if (target) {
+  } else if (target instanceof HTMLElement || target instanceof SVGElement) {
     // If not iOS, store the target's original user-select and change to user-select: none
     // Ignore state since it doesn't apply for non iOS
     modifiedElementMap.set(target, target.style.userSelect);
@@ -49,7 +49,7 @@ export function disableTextSelection(target?: HTMLElement) {
   }
 }
 
-export function restoreTextSelection(target?: HTMLElement) {
+export function restoreTextSelection(target?: Element) {
   if (isIOS()) {
     // If the state is already default, there's nothing to do.
     // If it is restoring, then there's no need to queue a second restore.
@@ -76,7 +76,7 @@ export function restoreTextSelection(target?: HTMLElement) {
         }
       });
     }, 300);
-  } else {
+  } else if (target instanceof HTMLElement || target instanceof SVGElement) {
     // If not iOS, restore the target's original user-select if any
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {

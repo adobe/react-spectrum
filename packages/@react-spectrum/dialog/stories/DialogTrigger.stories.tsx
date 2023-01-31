@@ -198,52 +198,52 @@ storiesOf('DialogTrigger', module)
     )
   )
   .add(
-    'placement="left"',
-    () => renderPopover({type: 'popover', placement: 'left'})
+    'placement="left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false})
   )
   .add(
-    'placement="left top"',
-    () => renderPopover({type: 'popover', placement: 'left top'})
+    'placement="left top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left top', shouldFlip: false})
   )
   .add(
-    'placement="left bottom"',
-    () => renderPopover({type: 'popover', placement: 'left bottom'})
+    'placement="left bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'left bottom', shouldFlip: false})
   )
   .add(
-    'placement="right"',
-    () => renderPopover({type: 'popover', placement: 'right'})
+    'placement="right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right', shouldFlip: false})
   )
   .add(
-    'placement="right top"',
-    () => renderPopover({type: 'popover', placement: 'right top'})
+    'placement="right top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right top', shouldFlip: false})
   )
   .add(
-    'placement="right bottom"',
-    () => renderPopover({type: 'popover', placement: 'right bottom'})
+    'placement="right bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'right bottom', shouldFlip: false})
   )
   .add(
-    'placement="bottom"',
-    () => renderPopover({type: 'popover', placement: 'bottom'})
+    'placement="bottom", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom', shouldFlip: false})
   )
   .add(
-    'placement="bottom left"',
-    () => renderPopover({type: 'popover', placement: 'bottom left'})
+    'placement="bottom left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom left', shouldFlip: false})
   )
   .add(
-    'placement="bottom right"',
-    () => renderPopover({type: 'popover', placement: 'bottom right'})
+    'placement="bottom right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'bottom right', shouldFlip: false})
   )
   .add(
-    'placement="top"',
-    () => renderPopover({type: 'popover', placement: 'top'})
+    'placement="top", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top', shouldFlip: false})
   )
   .add(
-    'placement="top left"',
-    () => renderPopover({type: 'popover', placement: 'top left'})
+    'placement="top left", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top left', shouldFlip: false})
   )
   .add(
-    'placement="top right"',
-    () => renderPopover({type: 'popover', placement: 'top right'})
+    'placement="top right", shouldFlip="false"',
+    () => renderPopover({type: 'popover', placement: 'top right', shouldFlip: false})
   )
   .add(
     'offset',

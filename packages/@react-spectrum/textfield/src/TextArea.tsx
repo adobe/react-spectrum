@@ -11,14 +11,14 @@
  */
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {RefObject, useCallback, useRef} from 'react';
+import React, {Ref, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   let {
     isDisabled = false,
@@ -31,19 +31,30 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
   let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
-
-  let inputRef = useRef<HTMLTextAreaElement>();
+  let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {
-    if (isQuiet) {
+    // Quiet textareas always grow based on their text content.
+    // Standard textareas also grow by default, unless an explicit height is set.
+    if ((isQuiet || !props.height) && inputRef.current) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
+      let prevOverflow = input.style.overflow;
+      // Firefox scroll position is lost when overflow: 'hidden' is applied so we skip applying it.
+      // The measure/applied height is also incorrect/reset if we turn on and off
+      // overflow: hidden in Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
+      let isFirefox = 'MozAppearance' in input.style;
+      if (!isFirefox) {
+        input.style.overflow = 'hidden';
+      }
       input.style.alignSelf = 'start';
       input.style.height = 'auto';
-      input.style.height = `${input.scrollHeight}px`;
+      // offsetHeight - clientHeight accounts for the border/padding.
+      input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
+      input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, inputRef]);
+  }, [isQuiet, inputRef, props.height]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {

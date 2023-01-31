@@ -11,8 +11,9 @@
  */
 
 import {AriaLinkProps} from '@react-types/link';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
@@ -28,7 +29,7 @@ export interface AriaLinkOptions extends AriaLinkProps {
 
 export interface LinkAria {
   /** Props for the link element. */
-  linkProps: HTMLAttributes<HTMLElement>,
+  linkProps: DOMAttributes,
   /** Whether the link is currently pressed. */
   isPressed: boolean
 }
@@ -38,7 +39,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>): LinkAria {
   let {
     elementType = 'a',
     onPress,
@@ -50,7 +51,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
     ...otherProps
   } = props;
 
-  let linkProps: HTMLAttributes<HTMLElement>;
+  let linkProps: DOMAttributes;
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',

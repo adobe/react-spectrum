@@ -16,15 +16,15 @@ import datepickerStyles from './styles.css';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
-import React, {ReactElement} from 'react';
-import {SpectrumTimePickerProps, TimeValue} from '@react-types/datepicker';
+import React, {ReactElement, useRef} from 'react';
+import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef} from './utils';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTimeField} from '@react-aria/datepicker';
 import {useTimeFieldState} from '@react-stately/datepicker';
 
-function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>, ref: FocusableRef<HTMLElement>) {
+function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {
     autoFocus,
@@ -41,7 +41,8 @@ function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>, ref: 
     locale
   });
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, domRef);
+  let inputRef = useRef(null);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField(props, state, inputRef);
 
   return (
     <Field
@@ -54,6 +55,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>, ref: 
       validationState={state.validationState}
       UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-TimeField-fieldWrapper')}>
       <Input
+        ref={inputRef}
         fieldProps={fieldProps}
         isDisabled={isDisabled}
         isQuiet={isQuiet}
@@ -78,5 +80,5 @@ function TimeField<T extends TimeValue>(props: SpectrumTimePickerProps<T>, ref: 
  * TimeFields allow users to enter and edit time values using a keyboard.
  * Each part of the time is displayed in an individually editable segment.
  */
-const _TimeField = React.forwardRef(TimeField) as <T extends TimeValue>(props: SpectrumTimePickerProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+const _TimeField = React.forwardRef(TimeField) as <T extends TimeValue>(props: SpectrumTimeFieldProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_TimeField as TimeField};

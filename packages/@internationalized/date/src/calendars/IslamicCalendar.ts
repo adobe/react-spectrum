@@ -78,7 +78,8 @@ export class IslamicCivilCalendar implements Calendar {
   }
 
   getYearsInEra(): number {
-    return 9999;
+    // 9999 gregorian
+    return 9665;
   }
 
   getEras() {

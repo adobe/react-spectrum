@@ -20,7 +20,6 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import comboboxStyles from './combobox.css';
-import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
@@ -29,7 +28,6 @@ import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
-import {Placement} from '@react-types/overlays';
 import {Popover} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -50,7 +48,7 @@ import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -79,7 +77,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     onLoadMore
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -112,16 +110,6 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     state
   );
 
-  let {overlayProps, placement, updatePosition} = useOverlayPosition({
-    targetRef: unwrappedButtonRef,
-    overlayRef: unwrappedPopoverRef,
-    scrollRef: listBoxRef,
-    placement: `${direction} end` as Placement,
-    shouldFlip: shouldFlip,
-    isOpen: state.isOpen,
-    onClose: state.close
-  });
-
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
@@ -141,19 +129,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  // Update position once the ListBox has rendered. This ensures that
-  // it flips properly when it doesn't fit in the available space.
-  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
-  useLayoutEffect(() => {
-    if (state.isOpen) {
-      requestAnimationFrame(() => {
-        updatePosition();
-      });
-    }
-  }, [state.isOpen, updatePosition]);
-
   let style = {
-    ...overlayProps.style,
     width: isQuiet ? null : menuWidth,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
@@ -176,14 +152,16 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           triggerRef={buttonRef} />
       </Field>
       <Popover
-        isOpen={state.isOpen}
+        state={state}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        placement={placement}
+        triggerRef={unwrappedButtonRef}
+        scrollRef={listBoxRef}
+        placement={`${direction} end`}
         hideArrow
         isNonModal
-        isDismissable={false}>
+        shouldFlip={shouldFlip}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
@@ -198,10 +176,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>
-              {loadingState === 'loading' ? formatMessage('loading') :  formatMessage('noResults')}
+              {loadingState === 'loading' ? stringFormatter.format('loading') :  stringFormatter.format('noResults')}
             </span>
           )} />
-        <DismissButton onDismiss={() => state.close()} />
       </Popover>
     </>
   );
@@ -234,13 +211,13 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     menuTrigger
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let timeout = useRef(null);
   let [showLoading, setShowLoading] = useState(false);
 
   let loadingCircle = (
     <ProgressCircle
-      aria-label={formatMessage('loading')}
+      aria-label={stringFormatter.format('loading')}
       size="S"
       isIndeterminate
       UNSAFE_className={classNames(
@@ -299,7 +276,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'spectrum-InputGroup--invalid': validationState === 'invalid',
+              'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
               'is-hovered': isHovered
             },
             className
@@ -332,7 +309,8 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
           // loading circle should only be displayed if menu is open, if menuTrigger is "manual", or first time load (to stop circle from showing up when user selects an option)
           // TODO: add special case for completionMode: complete as well
           isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
-          loadingIndicator={loadingState != null && loadingCircle} />
+          loadingIndicator={loadingState != null && loadingCircle}
+          disableFocusRing />
         <PressResponder preventFocusOnPress isPressed={isOpen}>
           <FieldButton
             {...triggerProps}

@@ -14,4 +14,6 @@
 
 export * from './events';
 export * from './testSSR';
-export * from './renderHook';
+export * from './renderOverride';
+export * from './StrictModeWrapper';
+export * from './mockImplementation';

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 
 export interface GridRowGroupAria {
   /** Props for the row group element. */
-  rowGroupProps: HTMLAttributes<HTMLElement>
+  rowGroupProps: DOMAttributes
 }
 
 /**

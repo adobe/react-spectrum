@@ -17,6 +17,7 @@ import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
 import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
 import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
+import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
 import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
 import heroImageStately from 'url:../pages/assets/ReactStately_976x445_2x.png';
 import highlightCss from './syntax-highlight.css';
@@ -40,7 +41,8 @@ const TLD = 'react-spectrum.adobe.com';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
   'react-aria': heroImageAria,
-  'react-stately': heroImageStately
+  'react-stately': heroImageStately,
+  'internationalized': heroImageInternationalized
 };
 
 const mdxComponents = {
@@ -127,7 +129,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         highlightCss.spectrum)}>
       <head>
         <title>{title}</title>
-        <meta charset="utf-8" />
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -144,11 +146,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
-                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
-                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
+                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}", "${highlightCss.dark}");
                 style.colorScheme = 'light';
               }
 
@@ -174,8 +176,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
-        {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        {styles.map(s => <link key={s.url} rel="stylesheet" href={s.url} />)}
+        {scripts.map(s => <script key={s.url} type={s.type} src={s.url} defer />)}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -321,7 +323,7 @@ function Nav({currentPageName, pages}) {
   let back = '../index.html';
   if (isBlog) {
     sectionIndex = '/index.html';
-  } else if (currentPageName.startsWith('internationalized/')) {
+  } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
     sectionIndex = '../index.html';
     back = '../../index.html';
   }
@@ -365,10 +367,10 @@ function Nav({currentPageName, pages}) {
         {categories.map(key => {
           const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <li className={sideNavStyles['spectrum-SideNav-item']}>
+            <li key={headingId} className={sideNavStyles['spectrum-SideNav-item']}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} />)}
               </ul>
             </li>
           );

@@ -11,8 +11,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {render, screen} from '@testing-library/react';
-import {renderHook} from '@react-spectrum/test-utils';
+import {render, renderHook, screen} from '@react-spectrum/test-utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from '../';
 

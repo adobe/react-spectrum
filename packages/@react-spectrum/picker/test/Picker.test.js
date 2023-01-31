@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -23,7 +23,6 @@ import React from 'react';
 import {states} from './data';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../../../@react-stately/virtualizer/src/Virtualizer';
 
@@ -36,8 +35,7 @@ describe('Picker', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(function () {
@@ -577,45 +575,6 @@ describe('Picker', function () {
 
       act(() => {document.activeElement.blur();});
       act(() => jest.runAllTimers());
-
-      expect(listbox).not.toBeInTheDocument();
-      expect(picker).toHaveAttribute('aria-expanded', 'false');
-      expect(picker).not.toHaveAttribute('aria-controls');
-      expect(onOpenChange).toBeCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
-
-      expect(document.activeElement).not.toBe(picker);
-    });
-
-    it('closes on scroll on a parent element', function () {
-      let onOpenChange = jest.fn();
-      let {getByRole, getByTestId, queryByRole} = render(
-        <Provider theme={theme}>
-          <div data-testid="scrollable">
-            <Picker label="Test" onOpenChange={onOpenChange}>
-              <Item>One</Item>
-              <Item>Two</Item>
-              <Item>Three</Item>
-            </Picker>
-          </div>
-        </Provider>
-      );
-
-      expect(queryByRole('listbox')).toBeNull();
-
-      let picker = getByRole('button');
-      triggerPress(picker);
-      act(() => jest.runAllTimers());
-
-      let listbox = getByRole('listbox');
-      expect(listbox).toBeVisible();
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
-      expect(picker).toHaveAttribute('aria-expanded', 'true');
-      expect(picker).toHaveAttribute('aria-controls', listbox.id);
-
-      let scrollable = getByTestId('scrollable');
-      fireEvent.scroll(scrollable);
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
@@ -624,8 +583,6 @@ describe('Picker', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
-      // run restore focus rAF
-      act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(picker);
     });
 

@@ -35,12 +35,7 @@ export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, Omit<I
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void,
-  /**
-   * Whether the menu should automatically flip direction when space is limited.
-   * @default true
-   */
-  shouldFlip?: boolean
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps, FocusableDOMProps {
@@ -66,6 +61,11 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
   /** Width of the menu. */
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */

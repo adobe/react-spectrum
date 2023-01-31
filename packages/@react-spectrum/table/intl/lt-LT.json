@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Stulpelio dydžio keitiklis",
   "loading": "Įkeliama...",
   "loadingMore": "Įkeliama daugiau...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Keisti stulpelio dydį",
+  "sortAscending": "Rikiuoti didėjimo tvarka",
+  "sortDescending": "Rikiuoti mažėjimo tvarka"
 }

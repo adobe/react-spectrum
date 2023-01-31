@@ -27,3 +27,5 @@ export {
   Row,
   Cell
 } from '@react-stately/table';
+
+export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';

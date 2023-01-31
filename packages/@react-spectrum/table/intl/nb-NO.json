@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Størrelsesendring av kolonne",
   "loading": "Laster inn ...",
   "loadingMore": "Laster inn flere ...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Endre størrelse på kolonne",
+  "sortAscending": "Sorter stigende",
+  "sortDescending": "Sorter synkende"
 }

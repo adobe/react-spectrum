@@ -20,15 +20,15 @@ import {MenuTrigger} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
 import React, {forwardRef, ReactElement} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionMenu');
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let buttonProps = filterDOMProps(props, {labelable: true});
   if (buttonProps['aria-label'] === undefined) {
-    buttonProps['aria-label'] = formatMessage('moreActions');
+    buttonProps['aria-label'] = stringFormatter.format('moreActions');
   }
 
   return (

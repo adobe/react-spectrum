@@ -35,8 +35,7 @@ export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefOb
     inputProps: {
       ...inputProps,
       role: 'switch',
-      checked: isSelected,
-      'aria-checked': isSelected
+      checked: isSelected
     }
   };
 }

@@ -27,6 +27,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
@@ -105,7 +106,7 @@ export interface SpectrumColorFieldProps extends SpectrumTextInputBase, AriaColo
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends ValueBase<string | Color> {
+export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChange'> {
   /** Whether the ColorWheel is disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the value changes, as the user drags. */
@@ -126,7 +127,7 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
   size?: DimensionValue
 }
 
-export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize'> {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -139,10 +140,12 @@ export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLa
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
-  showValueLabel?: boolean
+  showValueLabel?: boolean,
+  /** A ContextualHelp element to place next to the label. */
+  contextualHelp?: ReactNode
 }
 
-export interface ColorAreaProps extends ValueBase<string | Color> {
+export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
   /** Color channel for the horizontal axis. */
   xChannel?: ColorChannel,
   /** Color channel for the vertical axis. */

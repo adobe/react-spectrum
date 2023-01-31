@@ -1,7 +1,5 @@
-import {fireEvent, render, screen} from '@testing-library/react';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {fireEvent, installMouseEvent, installPointerEvent, render, renderHook, screen} from '@react-spectrum/test-utils';
 import * as React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
 import {useRef} from 'react';
 import {useSlider, useSliderThumb} from '../src';
 import {useSliderState} from '@react-stately/slider';
@@ -99,7 +97,7 @@ describe('useSliderThumb', () => {
   describe('interactions on thumbs, where track does not contain thumbs', () => {
     let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
@@ -259,14 +257,12 @@ describe('useSliderThumb', () => {
   });
 
   describe('interactions on thumbs, where track contains thumbs', () => {
-    let widthStub, heightStub;
+    let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
-      heightStub = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 100);
+      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
-      heightStub.mockReset();
     });
     installMouseEvent();
 

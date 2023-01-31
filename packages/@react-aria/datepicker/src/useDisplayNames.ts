@@ -12,7 +12,7 @@
 
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MessageDictionary} from '@internationalized/message';
+import {LocalizedStringDictionary} from '@internationalized/string';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
@@ -38,11 +38,11 @@ export function useDisplayNames(): DisplayNames {
 
 class DisplayNamesPolyfill implements DisplayNames {
   private locale: string;
-  private dictionary: MessageDictionary;
+  private dictionary: LocalizedStringDictionary<Field, string>;
 
   constructor(locale: string) {
     this.locale = locale;
-    this.dictionary = new MessageDictionary(intlMessages);
+    this.dictionary = new LocalizedStringDictionary<Field, string>(intlMessages);
   }
 
   of(field: Field): string {

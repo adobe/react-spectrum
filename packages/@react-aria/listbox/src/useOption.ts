@@ -10,35 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
+import {Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
-import {useSelectableItem} from '@react-aria/selection';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
-interface OptionAria {
+export interface OptionAria extends SelectableItemStates {
   /** Props for the option element. */
-  optionProps: HTMLAttributes<HTMLElement>,
+  optionProps: DOMAttributes,
 
   /** Props for the main text element inside the option. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: DOMAttributes,
 
   /** Props for the description text element inside the option, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: DOMAttributes,
 
   /** Whether the option is currently focused. */
-  isFocused: boolean,
-  /** Whether the option is currently selected. */
-  isSelected: boolean,
-  /** Whether the option is currently in a pressed state. */
-  isPressed: boolean,
-  /** Whether the option is disabled. */
-  isDisabled: boolean
+  isFocused: boolean
 }
 
-interface AriaOptionProps {
+export interface AriaOptionProps {
   /**
    * Whether the option is disabled.
    * @deprecated
@@ -88,7 +83,7 @@ interface AriaOptionProps {
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement>): OptionAria {
   let {
     key
   } = props;
@@ -126,15 +121,16 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, isPressed, hasAction, allowsSelection} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
     ref,
     shouldSelectOnPressUp,
-    allowsDifferentPressOrigin: shouldSelectOnPressUp,
+    allowsDifferentPressOrigin: shouldSelectOnPressUp && shouldFocusOnHover,
     isVirtualized,
     shouldUseVirtualFocus,
-    isDisabled
+    isDisabled,
+    onAction: data.onAction ? () => data.onAction(key) : undefined
   });
 
   let {hoverProps} = useHover({
@@ -162,6 +158,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isFocused,
     isSelected,
     isDisabled,
-    isPressed
+    isPressed,
+    allowsSelection,
+    hasAction
   };
 }

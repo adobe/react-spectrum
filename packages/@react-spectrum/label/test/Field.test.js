@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Field} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import {useField} from '@react-aria/label';
+import userEvent from '@testing-library/user-event';
 
 let defaultProps = {
   label: 'Field label'
@@ -35,6 +37,13 @@ let ExampleField = React.forwardRef((props = {}, ref) => {
   );
 });
 
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
 function renderField(props = {}) {
   return render(<ExampleField {...props} />);
 }
@@ -52,7 +61,35 @@ describe('Field', function () {
     let {getByRole} = renderField({ref});
     let field = getByRole('textbox').closest('div');
 
-    expect(ref.current).toBe(field.parentNode);
+    expect(ref.current).toBe(field);
+  });
+
+  it('supports contextualHelp', function () {
+    let {getByRole, getByText} = renderField({contextualHelp});
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Help');
+    expect(button).toHaveAttribute('id');
+    expect(button).toHaveAttribute('aria-labelledby');
+    expect(button.getAttribute('aria-labelledby').split(/\s+/)[0]).toBe(getByText('Field label').id);
+  });
+
+  it('does not render contextual help if there is no label', function () {
+    let {queryByRole} = renderField({label: null, 'aria-label': 'Test', contextualHelp});
+    expect(queryByRole('button')).toBeNull();
+
+    ({queryByRole} = renderField({label: null, 'aria-label': 'Test', contextualHelp, description: 'test'}));
+    expect(queryByRole('button')).toBeNull();
+  });
+
+  describe('labelPosition: side', function () {
+    it('supports a ref', function () {
+      let ref = React.createRef();
+      let {getByRole} = renderField({ref, labelPosition: 'side'});
+      let field = getByRole('textbox').closest('div');
+
+      expect(ref.current).toBe(field.parentNode);
+    });
   });
   describe('help text', function () {
     describe('description', function () {
@@ -124,6 +161,25 @@ describe('Field', function () {
 
         let input = getByRole('textbox');
         expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('does not lose focus when no visible label and validation state changes', function () {
+        let {getByRole, getByText, rerender} = renderField();
+
+        let input = getByRole('textbox');
+
+        userEvent.tab();
+        expect(document.activeElement).toBe(input);
+        userEvent.type(input, 'Test');
+        expect(document.activeElement).toBe(input);
+
+        rerender(<ExampleField validationState="invalid" errorMessage="Error message" />);
+
+        let errorMessage = getByText('Error message');
+        expect(errorMessage).toBeInTheDocument();
+
+        input = getByRole('textbox');
+        expect(document.activeElement).toBe(input);
       });
     });
   });

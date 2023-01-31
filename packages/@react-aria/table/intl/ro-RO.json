@@ -1,6 +1,7 @@
 {
   "ascending": "crescătoare",
   "ascendingSort": "sortate după coloana {columnName} în ordine crescătoare",
+  "columnSize": "{value} pixeli",
   "descending": "descrescătoare",
   "descendingSort": "sortate după coloana {columnName} în ordine descrescătoare",
   "select": "Selectare",

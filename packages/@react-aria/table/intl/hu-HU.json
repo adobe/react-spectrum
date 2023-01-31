@@ -1,6 +1,7 @@
 {
   "ascending": "növekvő",
   "ascendingSort": "rendezve a(z) {columnName} oszlop szerint, növekvő sorrendben",
+  "columnSize": "{value} képpont",
   "descending": "csökkenő",
   "descendingSort": "rendezve a(z) {columnName} oszlop szerint, csökkenő sorrendben",
   "select": "Kijelölés",

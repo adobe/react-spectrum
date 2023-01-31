@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Yeniden sütun boyutlandırıcı",
   "loading": "Yükleniyor...",
   "loadingMore": "Daha fazla yükleniyor...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Sütunu yeniden boyutlandır",
+  "sortAscending": "Artan Sıralama",
+  "sortDescending": "Azalan Sıralama"
 }

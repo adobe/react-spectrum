@@ -44,8 +44,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
   return {
     inputProps: {
       ...inputProps,
-      checked: isSelected,
-      'aria-checked': isIndeterminate ? 'mixed' : isSelected
+      checked: isSelected
     }
   };
 }

@@ -251,6 +251,30 @@ storiesOf('Tabs', module)
     }
   )
   .add(
+    'changing tab titles',
+    () => {
+      let [tab1Text, setTab1Text] = useState('Tab 1');
+      let [tab2Text, setTab2Text] = useState('Tab 2');
+
+      return (
+        <Flex minHeight={400} minWidth={400} direction="column">
+          <TextField label="Tab1 Title" value={tab1Text} onChange={setTab1Text} />
+          <TextField label="Tab2 Title" value={tab2Text} onChange={setTab2Text} />
+          <Tabs maxWidth={500}>
+            <TabList>
+              <Item>{tab1Text}</Item>
+              <Item>{tab2Text}</Item>
+            </TabList>
+            <TabPanels>
+              <Item>Tab 1 Content</Item>
+              <Item>Tab 2 Content</Item>
+            </TabPanels>
+          </Tabs>
+        </Flex>
+      );
+    }
+  )
+  .add(
     'changing selection programatically',
     () => (
       <ControlledSelection />
@@ -446,9 +470,11 @@ let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) =
   };
 
   let removeTab = () => {
-    let newTabs = [...tabs];
-    newTabs.pop();
-    setTabs(newTabs);
+    if (tabs.length > 1) {
+      let newTabs = [...tabs];
+      newTabs.pop();
+      setTabs(newTabs);
+    }
   };
 
   return (
@@ -555,7 +581,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
               </Item>
             )}
           </TabList>
-          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'}}>
             <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
               <Item key="add">
                 <Text>Add Tab</Text>

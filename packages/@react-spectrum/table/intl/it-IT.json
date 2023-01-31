@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Ridimensionamento colonne",
   "loading": "Caricamento...",
   "loadingMore": "Caricamento altri...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Ridimensiona colonna",
+  "sortAscending": "Ordinamento crescente",
+  "sortDescending": "Ordinamento decrescente"
 }

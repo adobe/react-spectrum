@@ -109,6 +109,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
           if (widths[item[0]][1] > this.minItemSize.width) {
             // subtract the delta from the width, if it's still greater than the min width
             // then we have finished, subtract the delta permanently from that width
+            // eslint-disable-next-line max-depth
             if (widths[item[0]][1] - delta > this.minItemSize.width) {
               widths[item[0]][1] -= delta;
               delta = 0;

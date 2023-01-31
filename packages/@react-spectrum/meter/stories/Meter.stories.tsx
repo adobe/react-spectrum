@@ -24,6 +24,9 @@ const formatOptions = {
 export default {
   title: 'Meter',
   component: Meter,
+  args: {
+    variant: 'positive'
+  },
   argTypes: {
     value: {
       control: {

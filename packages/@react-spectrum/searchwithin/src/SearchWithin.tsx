@@ -22,14 +22,14 @@ import {useFormProps} from '@react-spectrum/form';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(props);
   let {
     children,
@@ -38,7 +38,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     label
   } = props;
 
-  let defaultAriaLabel = formatMessage('search');
+  let defaultAriaLabel = stringFormatter.format('search');
   if (!label && !props['aria-label'] && !props['aria-labelledby']) {
     props['aria-label'] = defaultAriaLabel;
   }
@@ -128,7 +128,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         role="group"
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
-        <VisuallyHidden id={visuallyHiddenId}>{formatMessage('searchWithin')}</VisuallyHidden>
+        <VisuallyHidden id={visuallyHiddenId}>{stringFormatter.format('searchWithin')}</VisuallyHidden>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>

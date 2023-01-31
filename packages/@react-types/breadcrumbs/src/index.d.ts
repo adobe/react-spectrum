@@ -37,18 +37,16 @@ export interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
   elementType?: string
 }
 
-export interface BreadcrumbsProps<T> {
+export interface BreadcrumbsProps {}
+export interface AriaBreadcrumbsProps extends BreadcrumbsProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps, StyleProps {
   /** The breadcrumb items. */
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
   /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
-  onAction?: (key: Key) => void
-}
-
-export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
-
-export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
+  onAction?: (key: Key) => void,
   /**
    * Size of the Breadcrumbs including spacing and layout.
    * @default 'L'
@@ -63,5 +61,5 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
   /**
    * Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render.
    */
-   autoFocusCurrent?: boolean
+  autoFocusCurrent?: boolean
 }

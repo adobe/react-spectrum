@@ -13,7 +13,7 @@
 import {Overlay} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 
 function ExampleOverlay() {

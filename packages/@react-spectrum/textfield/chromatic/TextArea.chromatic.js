@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
 import Info from '@spectrum-icons/workflow/Info';
 import React from 'react';
@@ -81,6 +82,9 @@ storiesOf('TextArea', module)
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: 275})
   )
+  .add('custom height',
+    () => render({icon: <Info />, validationState: 'invalid', height: 350})
+  )
   .add(
     'value: 測試, icon: Info, labelPosition: side, validationState: valid',
     () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})
@@ -88,6 +92,33 @@ storiesOf('TextArea', module)
   .add(
     'value: اختبار, isRequired: false, necessityIndicator: label',
     () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
+  )
+  .add(
+    'contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )}, false)
+  )
+  .add(
+    'contextual help, labelAlign: end',
+    args => render({...args, labelAlign: 'end', contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )}, false)
+  )
+  .add(
+    'contextual help, labelPosition: side',
+    args => render({...args, labelPosition: 'side', contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )}, false)
   );
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter

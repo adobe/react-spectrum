@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FocusableRef} from '@react-types/shared';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
@@ -18,10 +19,10 @@ import helpStyles from './contextualhelp.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import React from 'react';
-import {SlotProvider} from '@react-spectrum/utils';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
@@ -31,7 +32,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     ...otherProps
   } = props;
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
 
@@ -40,26 +41,24 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
   };
 
-  let ariaLabel = otherProps['aria-label'];
-  if (!ariaLabel && !otherProps['aria-labelledby']) {
-    ariaLabel = formatMessage(variant);
-  }
+  let labelProps = useLabels(otherProps, stringFormatter.format(variant));
 
   return (
     <DialogTrigger {...otherProps} type="popover" placement={placement} hideArrow>
       <ActionButton
-        {...otherProps}
+        {...mergeProps(otherProps, labelProps, {isDisabled: false})}
         ref={ref}
-        UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-button']}
-        isQuiet
-        aria-label={ariaLabel}>
+        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', otherProps.UNSAFE_className)}
+        isQuiet>
         {icon}
       </ActionButton>
-      <SlotProvider slots={slots}>
-        <Dialog UNSAFE_className={helpStyles['react-spectrum-ContextualHelp-dialog']}>
-          {children}
-        </Dialog>
-      </SlotProvider>
+      <ClearSlots>
+        <SlotProvider slots={slots}>
+          <Dialog UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')}>
+            {children}
+          </Dialog>
+        </SlotProvider>
+      </ClearSlots>
     </DialogTrigger>
   );
 }

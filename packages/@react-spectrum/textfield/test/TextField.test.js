@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, typeText, waitFor} from '@react-spectrum/test-utils';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let testId = 'test-id';

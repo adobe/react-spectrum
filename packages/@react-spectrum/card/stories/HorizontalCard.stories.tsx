@@ -10,144 +10,150 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card} from '..';
+import {Card} from '../index';
+import {CardStory} from './Card.stories';
+import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
-import {
-  Default,
-  DefaultSquare,
-  DefaultTall,
-  LongContent,
-  LongDetail,
-  LongTitle,
-  NoDescription,
-  NoDescriptionSquare,
-  WithIllustration
-} from './Card.stories';
-import {getImage} from './utils';
+import {getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
+import {Horizontal} from '../chromatic/HorizontalCard.chromatic';
 import {Image} from '@react-spectrum/image';
-import {Meta, Story} from '@storybook/react';
 import React from 'react';
-import {SpectrumCardProps} from '@react-types/card';
 
-// see https://github.com/storybookjs/storybook/issues/8426#issuecomment-669021940
-const StoryFn = ({storyFn}) => storyFn();
-
-const meta: Meta<SpectrumCardProps> = {
+export default {
   title: 'Card/horizontal',
   component: Card,
-  decorators: [storyFn => <StoryFn storyFn={storyFn} />]
+  args: {
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    layout: {
+      table: {
+        disable: true
+      }
+    },
+    children: {
+      table: {
+        disable: true
+      }
+    }
+  }
+} as ComponentMeta<typeof Card>;
+
+export const CardGrid: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Horizontal.args, layout: 'grid'},
+  decorators: [(Story, context) => (
+    <CardGridDecorator
+      Story={Story}
+      context={context} />
+  )]
 };
 
-export default meta;
-
-
-const Template = (): Story<SpectrumCardProps> => (args) => (
-  <div style={{height: '90px'}}>
-    <Card {...args} />
-  </div>
-);
-
-export const Horizontal = Template().bind({});
-Horizontal.args = {...Default.args, orientation: 'horizontal'};
-
-export const HorizontalSquare = Template().bind({});
-HorizontalSquare.args = {...Horizontal.args, ...DefaultSquare.args};
-
-export const HorizontalTall = Template().bind({});
-HorizontalTall.args = {...Horizontal.args, ...DefaultTall.args};
-
-export const HorizontalNoDescription = Template().bind({});
-HorizontalNoDescription.args = {...Horizontal.args, ...NoDescription.args};
-
-export const HorizontalNoDescriptionSquare = Template().bind({});
-HorizontalNoDescriptionSquare.args = {...Horizontal.args, ...NoDescriptionSquare.args};
-
-export const HorizontalWithIllustration = Template().bind({});
-HorizontalWithIllustration.args = {...Horizontal.args, ...WithIllustration.args};
-
-export const HorizontalLongTitle = Template().bind({});
-HorizontalLongTitle.args = {...Horizontal.args, ...LongTitle.args};
-
-export const HorizontalLongDescription = Template().bind({});
-HorizontalLongDescription.args = {...Horizontal.args, ...LongContent.args};
-
-export const HorizontalLongDetail = Template().bind({});
-HorizontalLongDetail.args = {...Horizontal.args, ...LongDetail.args};
-
-export const CardGrid = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 360px)',
-      gridAutoRows: '104px'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <Card {...Horizontal.args} {...props} layout="grid" key={`${index}${url}`}>
-            <Image src={url} />
-            <Heading>Title {index}</Heading>
-            <Text slot="detail">PNG</Text>
-            <Content>Description</Content>
-          </Card>
-        );
-      })
-    }
-  </div>
-);
-
-
-export const CardFloat = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <div style={{float: 'left', margin: '10px'}}>
-            <Card {...Horizontal.args} {...props} key={`${index}${url}`}>
+const CardGridDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 360px)',
+        gridAutoRows: '104px'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <Story {...args} key={`${index}${url}`}>
               <Image src={url} />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
               <Content>Description</Content>
-            </Card>
-          </div>
-        );
-      })
-    }
-  </div>
-);
+            </Story>
+          );
+        })
+      }
+    </div>
+  );
+};
 
-export const CardGridTall = (props: SpectrumCardProps) => (
-  <div
-    style={{
-      width: '100%',
-      margin: '50px',
-      display: 'grid',
-      gap: '20px',
-      gridTemplateColumns: 'repeat(auto-fit, 360px)',
-      gridAutoRows: '150px'
-    }}>
-    {
-      (new Array(15).fill(0)).map((_, index) => {
-        let url = getImage(index);
-        return (
-          <Card {...Horizontal.args} {...props} layout="grid" key={`${index}${url}`}>
-            <Image src={url} />
-            <Heading>Title {index}</Heading>
-            <Text slot="detail">PNG</Text>
-            <Content>Description</Content>
-          </Card>
-        );
-      })
-    }
-  </div>
-);
+export const CardFloat: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Horizontal.args},
+  decorators: [(Story, context) => (
+    <CardFloatDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+const CardFloatDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
+              <Story {...args}>
+                <Image src={url} />
+                <Heading>Title {index}</Heading>
+                <Text slot="detail">PNG</Text>
+                <Content>Description</Content>
+              </Story>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
+};
+
+export const CardGridTall: CardStory = {
+  render: (args, context) => <Card {...args} {...context} />,
+  args: {...Horizontal.args, layout: 'grid'},
+  decorators: [(Story, context) => (
+    <CardGridTallDecorator
+      Story={Story}
+      context={context} />
+  )]
+};
+
+const CardGridTallDecorator = (props) => {
+  let {Story, context} = props;
+  let {args} = context;
+  return (
+    <div
+      style={{
+        width: '100%',
+        margin: '50px',
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, 360px)',
+        gridAutoRows: '150px'
+      }}>
+      {
+        (new Array(15).fill(0)).map((_, index) => {
+          let url = getImage(index);
+          return (
+            <Story {...args} key={`${index}${url}`}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+            </Story>
+          );
+        })
+      }
+    </div>
+  );
+};

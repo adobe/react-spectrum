@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  SlotProvider,
+  useFocusableRef,
+  useHasChild,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -22,11 +29,6 @@ import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-// todo: CSS hasn't caught up yet, map
-let VARIANT_MAPPING = {
-  negative: 'warning'
-};
-
 function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
@@ -34,7 +36,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     elementType: ElementType = 'button',
     children,
     variant,
-    isQuiet,
+    style = variant === 'accent' || variant === 'cta' ? 'fill' : 'outline',
+    staticColor,
     isDisabled,
     autoFocus,
     ...otherProps
@@ -43,10 +46,14 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
+  let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
+  let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
 
-  let buttonVariant = variant;
-  if (VARIANT_MAPPING[variant]) {
-    buttonVariant = VARIANT_MAPPING[variant];
+  if (variant === 'cta') {
+    variant = 'accent';
+  } else if (variant === 'overBackground') {
+    variant = 'primary';
+    staticColor = 'white';
   }
 
   return (
@@ -55,13 +62,15 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
+        data-variant={variant}
+        data-style={style}
+        data-static-color={staticColor || undefined}
         className={
           classNames(
             styles,
             'spectrum-Button',
-            `spectrum-Button--${buttonVariant}`,
             {
-              'spectrum-Button--quiet': isQuiet,
+              'spectrum-Button--iconOnly': hasIcon && !hasLabel,
               'is-disabled': isDisabled,
               'is-active': isPressed,
               'is-hovered': isHovered

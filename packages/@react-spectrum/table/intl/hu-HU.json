@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Oszlopátméretező",
   "loading": "Betöltés folyamatban…",
   "loadingMore": "Továbbiak betöltése folyamatban…",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Oszlop átméretezése",
+  "sortAscending": "Növekvő rendezés",
+  "sortDescending": "Csökkenő rendezés"
 }

@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading} from '@react-spectrum/text';
 import {Meta, Story} from '@storybook/react';
 import React from 'react';
 import {Slider} from '../';
@@ -59,3 +62,16 @@ FillOffset.args = {...Filled.args, defaultValue: 80, fillOffset: 50};
 
 export const TrackGradient = Template().bind({});
 TrackGradient.args = {...Default.args, isFilled: true, defaultValue: 30, trackGradient: ['white', 'rgba(177,141,32,1)']};
+
+let contextualHelp = (
+  <ContextualHelp>
+    <Heading>What is a segment?</Heading>
+    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+  </ContextualHelp>
+);
+
+export const _ContextualHelp = Template().bind({});
+_ContextualHelp.args = {label: 'Slider label', contextualHelp};
+
+export const ContextualHelpSideLabel = Template().bind({});
+ContextualHelpSideLabel.args = {label: 'Slider label', contextualHelp, labelPosition: 'side'};

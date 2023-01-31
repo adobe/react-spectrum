@@ -10,41 +10,68 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, Key, ReactNode, useState} from 'react';
+import {RefObject, useState} from 'react';
+import {TagGroupProps} from '@react-types/tag';
+import type {TagGroupState} from '@react-stately/tag';
+import {TagKeyboardDelegate} from './TagKeyboardDelegate';
+import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
+import {useGridList} from '@react-aria/gridlist';
+import {useLocale} from '@react-aria/i18n';
 
-interface AriaTagGroupProps extends DOMProps {
-  children: ReactNode,
-  disabledKeys?: Iterable<Key>,
-  isDisabled?: boolean,
-  isReadOnly?: boolean, // removes close button
-  validationState?: 'valid' | 'invalid'
+export interface TagGroupAria {
+  /** Props for the tag grouping element. */
+  tagGroupProps: DOMAttributes,
+  /** Props for the tag group's visible label (if any). */
+  labelProps: DOMAttributes,
+  /** Props for the tag group description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the tag group error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
-interface TagGroupAria {
-  tagGroupProps: HTMLAttributes<HTMLElement>
+export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps, Validation {
+  /**
+   * An optional keyboard delegate to handle arrow key navigation,
+   * to override the default.
+   */
+  keyboardDelegate?: TagKeyboardDelegate<T>
 }
 
-export function useTagGroup(props: AriaTagGroupProps, listState): TagGroupAria {
-  let {isDisabled} = props;
+/**
+ * Provides the behavior and accessibility implementation for a tag group component.
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request.
+ * @param props - Props to be applied to the tag group.
+ * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param ref - A ref to a DOM element for the tag group.
+ */
+export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: TagGroupState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+  let {direction} = useLocale();
+  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
+  let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
+
+  // Don't want the grid to be focusable or accessible via keyboard
+  delete gridProps.tabIndex;
+
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
-  let allKeys = [...listState.collection.getKeys()];
-  if (!allKeys.some(key => !listState.disabledKeys.has(key))) {
-    isDisabled = true;
-  }
   let domProps = filterDOMProps(props);
   return {
-    tagGroupProps: mergeProps(domProps, {
+    tagGroupProps: mergeProps(gridProps, domProps, {
+      role: state.collection.size ? 'grid' : null,
       'aria-atomic': false,
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
-      'aria-disabled': isDisabled === true,
-      ...focusWithinProps
-    } as HTMLAttributes<HTMLElement>)
+      ...focusWithinProps,
+      ...fieldProps
+    }),
+    labelProps,
+    descriptionProps,
+    errorMessageProps
   };
 }

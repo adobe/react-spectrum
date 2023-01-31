@@ -489,12 +489,12 @@ storiesOf('MenuTrigger', module)
     )
   )
   .add(
-    'menu closes on scroll',
+    'menu should prevent scrolling',
     () => (
       <div style={{height: 100, display: 'flex'}}>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
           <div style={{height: 200}}>
-            <div>Scrolling here will close the Menu</div>
+            <div>Shouldn't be able to scroll here while Menu is open.</div>
             <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen>
               <ActionButton
                 onPress={action('press')}
@@ -514,7 +514,7 @@ storiesOf('MenuTrigger', module)
         </div>
         <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1, background: 'grey'}}>
           <div style={{height: 200}}>
-            Scrolling here won't close the Menu
+            Also shouldn't be able to scroll here while Menu is open.
           </div>
         </div>
       </div>

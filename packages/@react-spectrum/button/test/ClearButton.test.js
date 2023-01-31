@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render, triggerPress} from '@react-spectrum/test-utils';
 import {ClearButton} from '../';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
 // Refinement of ClearButton to be done later

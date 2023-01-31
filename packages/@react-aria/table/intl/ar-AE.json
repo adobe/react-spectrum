@@ -1,6 +1,7 @@
 {
   "ascending": "تصاعدي",
   "ascendingSort": "ترتيب حسب العمود {columnName} بترتيب تصاعدي",
+  "columnSize": "{value} بالبكسل",
   "descending": "تنازلي",
   "descendingSort": "ترتيب حسب العمود {columnName} بترتيب تنازلي",
   "select": "تحديد",

@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
-import {installPointerEvent} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -42,6 +40,14 @@ function render(el) {
 }
 
 describe('DatePickerBase', function () {
+  beforeAll(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   describe('basics', function () {
     it.each`
       Name                   | Component            | numSegments

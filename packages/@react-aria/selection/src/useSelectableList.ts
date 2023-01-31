@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {Collection, DOMAttributes, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
-interface SelectableListOptions {
+export interface AriaSelectableListOptions {
   /**
    * An interface for reading and updating multiple selection state.
    */
@@ -77,17 +77,17 @@ interface SelectableListOptions {
   allowsTabNavigation?: boolean
 }
 
-interface SelectableListAria {
+export interface SelectableListAria {
   /**
    * Props for the option element.
    */
-  listProps: HTMLAttributes<HTMLElement>
+  listProps: DOMAttributes
 }
 
 /**
  * Handles interactions with a selectable list.
  */
-export function useSelectableList(props: SelectableListOptions): SelectableListAria {
+export function useSelectableList(props: AriaSelectableListOptions): SelectableListAria {
   let {
     selectionManager,
     collection,
@@ -98,7 +98,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection,
-    selectOnFocus = false,
+    selectOnFocus = selectionManager.selectionBehavior === 'replace',
     disallowTypeAhead,
     shouldUseVirtualFocus,
     allowsTabNavigation
@@ -107,7 +107,10 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
+  let disabledBehavior = selectionManager.disabledBehavior;
+  let delegate = useMemo(() => (
+    keyboardDelegate || new ListKeyboardDelegate(collection, disabledBehavior === 'selection' ? new Set() : disabledKeys, ref, collator)
+  ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({
     ref,

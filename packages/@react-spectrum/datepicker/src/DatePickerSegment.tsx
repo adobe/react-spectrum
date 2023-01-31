@@ -13,11 +13,9 @@
 import {classNames} from '@react-spectrum/utils';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerBase, DateValue} from '@react-types/datepicker';
-import {NumberParser} from '@internationalized/number';
-import React, {useMemo, useRef} from 'react';
+import React, {useRef} from 'react';
 import styles from './styles.css';
 import {useDateSegment} from '@react-aria/datepicker';
-import {useLocale} from '@react-aria/i18n';
 
 interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
   segment: DateSegment,
@@ -54,9 +52,6 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
 function EditableSegment({segment, state}: DatePickerSegmentProps) {
   let ref = useRef();
   let {segmentProps} = useDateSegment(segment, state, ref);
-  let {locale} = useLocale();
-  let parser = useMemo(() => new NumberParser(locale), [locale]);
-  let isNumeric = useMemo(() => parser.isValidPartialNumber(segment.text), [segment.text, parser]);
   return (
     <div
       {...segmentProps}
@@ -67,9 +62,10 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
       })}
       style={{
         ...segmentProps.style,
-        minWidth: !isNumeric ? null : String(segment.maxValue).length + 'ch'
+        minWidth: segment.maxValue != null ? String(segment.maxValue).length + 'ch' : null
       }}
       data-testid={segment.type}>
+      <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span>
       {segment.isPlaceholder ? '' : segment.text}
     </div>
   );

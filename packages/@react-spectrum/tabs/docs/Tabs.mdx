@@ -39,7 +39,8 @@ keywords: [tabs, collections]
   componentNames={['Item', 'TabList', 'TabPanels', 'Tabs']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tabs/'}
-  ]} />
+  ]}
+  since="3.11.0" />
 
 ## Example
 ```tsx example
@@ -174,7 +175,7 @@ function Example () {
             </Item>
           )}
         </TabList>
-        <div style={{display: 'flex', flex: '0 0 auto', borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-200)'}}>
+        <div style={{display: 'flex', flex: '0 0 auto', borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'}}>
           <ActionGroup disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
             <Item key="add">
               Add Tab

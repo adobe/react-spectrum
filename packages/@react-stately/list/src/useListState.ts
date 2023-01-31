@@ -56,6 +56,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
       selectionState.setFocusedKey(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, selectionState.focusedKey]);
 
   return {

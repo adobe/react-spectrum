@@ -17,6 +17,7 @@ import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Content} from '@react-spectrum/view';
+import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -28,13 +29,14 @@ import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import {LoadingState, SelectionMode} from '@react-types/shared';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 import {View} from '@react-spectrum/view';
 
@@ -96,7 +98,7 @@ function renderEmptyState() {
         <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
       </svg>
       <Heading>No results</Heading>
-      <Content>No results found</Content>
+      <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
     </IllustratedMessage>
   );
 }
@@ -482,6 +484,25 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'dynamic with nested columns with resizing',
+    () => (
+      <TableView aria-label="TableView with nested columns" selectionMode="multiple" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={nestedColumns}>
+          {column =>
+            <Column allowsResizing childColumns={column.children}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
     'focusable cells',
     () => (
       <Flex direction="column">
@@ -571,6 +592,115 @@ storiesOf('TableView', module)
           <Column align="center">Type</Column>
           <Column align="end">Size</Column>
           <Column>Description</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>very very very very very very long long long long long description</Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{marginInlineStart: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                100%
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="100%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="50%"
+                backgroundColor="gray-200">
+                50% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{margin: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{float: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                70% div
+              </View>
+            </Cell>
+            <Cell>
+              <View
+                UNSAFE_style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}
+                width="70%"
+                backgroundColor="gray-200">
+                very very very very very very long long long long long description
+              </View>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child</span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                span child
+              </span>
+            </Cell>
+            <Cell>
+              <span style={{backgroundColor: 'var(--spectrum-global-color-gray-200'}}>
+                very very very very very very long long long long long description
+              </span>
+            </Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    )
+  )
+  .add(
+    'should fill cell width allowsResizing',
+    () => (
+      <TableView aria-label="TableView with filled cells" selectionMode="multiple" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column allowsResizing>File Name</Column>
+          <Column align="center" allowsResizing>Type</Column>
+          <Column align="end" allowsResizing>Size</Column>
+          <Column allowsResizing>Description</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -870,6 +1000,12 @@ storiesOf('TableView', module)
     )
   )
   .add(
+    'Inline delete buttons',
+    () => (
+      <DeletableRowsTable />
+    )
+  )
+  .add(
     'hiding columns',
     () => (
       <HidingColumns />
@@ -935,16 +1071,7 @@ storiesOf('TableView', module)
   .add(
     'renderEmptyState',
     () => (
-      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState}>
-        <TableHeader columns={manyColunns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody>
-          {[]}
-        </TableBody>
-      </TableView>
+      <EmptyStateTable />
     )
   )
   .add(
@@ -1305,9 +1432,35 @@ storiesOf('TableView', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'allowsResizing, onColumnResizeStart action',
+    () => (
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeStart={action('onResizeStart')}>
+        <TableHeader>
+          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="2fr">Type</Column>
+          <Column allowsResizing defaultWidth="2fr">Size</Column>
+          <Column allowsResizing defaultWidth="1fr">Weight</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+            <Cell>1 LB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+            <Cell>20 LB</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+  ))
+  .add(
     'allowsResizing, onColumnResize action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResize={action('onColumnResize')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResize={action('onResize')}>
         <TableHeader>
           <Column allowsResizing defaultWidth="1fr">File Name</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>
@@ -1333,9 +1486,9 @@ storiesOf('TableView', module)
   .add(
     'allowsResizing, onColumnResizeEnd action',
     () => (
-      <TableView aria-label="TableView with resizable columns" width={800} height={200} onColumnResizeEnd={action('onColumnResizeEnd')}>
+      <TableView aria-label="TableView with resizable columns" width={800} height={200} onResizeEnd={action('onResizeEnd')}>
         <TableHeader>
-          <Column allowsResizing defaultWidth="1fr">File Name</Column>
+          <Column allowsResizing defaultWidth="1fr">File name for reference</Column>
           <Column allowsResizing defaultWidth="2fr">Type</Column>
           <Column allowsResizing defaultWidth="2fr">Size</Column>
           <Column allowsResizing defaultWidth="1fr">Weight</Column>
@@ -1361,7 +1514,88 @@ storiesOf('TableView', module)
     () => (
       <HidingColumnsAllowsResizing />
     )
+  )
+  .add(
+    'zoom resizing table',
+    () => (
+      <div style={{position: 'absolute', height: 'calc(100vh-32px)', width: 'calc(100vw - 32px)'}}>
+        <ZoomResizing />
+      </div>
+    ),
+    {description: {data: 'Using browser zoom should not trigger an infinite resizing loop. CMD+"+" to zoom in and CMD+"-" to zoom out.'}}
+  )
+  .add(
+    'allowsResizing, controlled, no widths',
+    () => (
+      <ControllingResize width={900} columns={uncontrolledColumns} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will notice that the entire table reverts, this is because no columns are controlled.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, some widths',
+    () => (
+      <ControllingResize width={900} columns={columnsSomeFR} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will see a quick flash because the entire table is re-rendered. This
+    mimics what would happen if an app reloaded the whole page and restored a saved
+    column width state. This is a "some widths" controlled story. It cannot restore
+    the widths of the columns that it does not manage. Height and weight are uncontrolled.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, all widths',
+    () => (
+      <ControllingResize width={900} columns={columnsFR} />
+    ),
+  {description: {data: `
+    You can use the buttons to save and restore the column widths. When restoring,
+    you will see a quick flash because the entire table is re-rendered. This
+    mimics what would happen if an app reloaded the whole page and restored a saved
+    column width state.
+    `}}
+  )
+  .add(
+    'allowsResizing, controlled, hideHeader',
+    () => (
+      <ControllingResize width={900} columns={columnsFRHideHeaders} />
+    ),
+  {description: {data: `
+    Hide headers columns should not be resizable.
+    `}}
   );
+
+let uncontrolledColumns: PokemonColumn[] = [
+  {name: 'Name', uid: 'name'},
+  {name: 'Type', uid: 'type'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level'}
+];
+
+let columnsFR: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsFRHideHeaders: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', hideHeader: true},
+  {name: 'Type', uid: 'type', width: 300,  hideHeader: true},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
+
+let columnsSomeFR: PokemonColumn[] = [
+  {name: 'Name', uid: 'name', width: '1fr'},
+  {name: 'Type', uid: 'type', width: '1fr'},
+  {name: 'Height', uid: 'height'},
+  {name: 'Weight', uid: 'weight'},
+  {name: 'Level', uid: 'level', width: '4fr'}
+];
 
 function AsyncLoadingExample(props) {
   const {isResizable} = props;
@@ -1651,7 +1885,6 @@ export function TableWithBreadcrumbs() {
   const [loadingState, setLoadingState] = useState<LoadingState>('idle' as 'idle');
   const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
   const [items, setItems] = useState(() => fs.filter(item => !item.parent));
-
   const changeFolder = (folder) => {
     setItems([]);
     setLoadingState('loading' as 'loading');
@@ -1707,5 +1940,104 @@ export function TableWithBreadcrumbs() {
       </TableView>
       <ActionButton onPress={() => setSelection(items.some(item => item.key === 'd') ? new Set(['d']) : new Set([]))}>Select D</ActionButton>
     </Flex>
+  );
+}
+
+export function DeletableRowsTable() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
+      {id: 2, firstName: 'Julia', lastName: 'Jones', birthday: 'February 10'}
+    ]
+  });
+
+  return (
+    <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableHeader>
+        <Column isRowHeader key="firstName">First Name</Column>
+        <Column isRowHeader key="lastName">Last Name</Column>
+        <Column key="birthday">Birthday</Column>
+        <Column key="actions" align="end">Actions</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item =>
+          (<Row>
+            {column =>
+              (<Cell>
+                {column === 'actions'
+                  ? <ActionButton onPress={() => list.remove(item.id)}>Delete</ActionButton>
+                  : item[column]
+                }
+              </Cell>)
+            }
+          </Row>)
+        }
+      </TableBody>
+    </TableView>
+  );
+}
+
+export function EmptyStateTable() {
+  let [show, setShow] = useState(false);
+  let [sortDescriptor, setSortDescriptor] = useState({});
+  return (
+    <Flex direction="column">
+      <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
+      <TableView aria-label="TableView with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+        <TableHeader columns={manyColunns}>
+          {column =>
+            <Column allowsResizing allowsSorting minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={show ? manyRows : []}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    </Flex>
+  );
+}
+
+function EmptyState() {
+  return (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No results</Heading>
+    </IllustratedMessage>
+  );
+}
+
+function ZoomResizing() {
+  const [child, setChild] = useState('loader');
+
+  return (
+    <div className="App" style={{height: '100vh'}}>
+      <RadioGroup
+        label="Child type"
+        orientation="horizontal"
+        value={child}
+        onChange={setChild}>
+        <Radio value="loader">Loading state</Radio>
+        <Radio value="empty">Empty state</Radio>
+      </RadioGroup>
+      <Flex height="100%">
+        <TableView
+          height="100%"
+          width="100%"
+          renderEmptyState={child === 'empty' ? () => <EmptyState /> : undefined}>
+          <TableHeader>
+            <Column>column</Column>
+          </TableHeader>
+          <TableBody
+            items={[]}
+            loadingState={child === 'loader' ? 'loading' : undefined}>
+            {(item) => <Row>{(column) => <Cell>{item[column]}</Cell>}</Row>}
+          </TableBody>
+        </TableView>
+      </Flex>
+    </div>
   );
 }

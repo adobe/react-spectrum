@@ -93,6 +93,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
     content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
     detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [titleProps, contentProps, height, isQuiet, orientation]);
 
   useLayoutEffect(() => {

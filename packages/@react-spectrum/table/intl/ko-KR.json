@@ -1,7 +1,8 @@
 {
+  "columnResizer": "열 크기 조정기",
   "loading": "로드 중",
   "loadingMore": "추가 로드 중",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "열 크기 조정",
+  "sortAscending": "오름차순 정렬",
+  "sortDescending": "내림차순 정렬"
 }

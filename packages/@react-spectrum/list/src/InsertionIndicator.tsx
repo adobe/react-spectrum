@@ -11,11 +11,11 @@ interface InsertionIndicatorProps {
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps) {
-  let {dropState, dropHooks} = useContext(ListViewContext);
+  let {dropState, dragAndDropHooks} = useContext(ListViewContext);
   const {target, isPresentationOnly} = props;
 
   let ref = useRef();
-  let {dropIndicatorProps} = dropHooks.useDropIndicator(props, dropState, ref);
+  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState.isDropTarget(target);
@@ -37,7 +37,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
               'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
             }
           )}>
-        {!isPresentationOnly && 
+        {!isPresentationOnly &&
           <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
         }
       </div>

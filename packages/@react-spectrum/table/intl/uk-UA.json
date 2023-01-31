@@ -1,7 +1,8 @@
 {
+  "columnResizer": "Засіб змінення розміру стовпця",
   "loading": "Завантаження…",
   "loadingMore": "Завантаження інших об’єктів...",
-  "sortAscending": "Sort Ascending",
-  "sortDescending": "Sort Descending",
-  "resizeColumn": "Resize column"
+  "resizeColumn": "Змінити розмір стовпця",
+  "sortAscending": "Сортувати за зростанням",
+  "sortDescending": "Сортувати за спаданням"
 }
