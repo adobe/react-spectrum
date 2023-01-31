@@ -14,7 +14,7 @@ function getElementCenter(element: Element) {
   };
 }
 
-async function performDrag(source: Element, target: Element, delta: Delta, type: DragPointerType = 'mouse', steps = 1, duration = 0) {
+async function performDragAndDrop(source: Element, target: Element, delta: Delta, type: DragPointerType = 'mouse', steps = 1, duration = 0) {
   let from = getElementCenter(source);
   let to = {x: 0, y: 0};
 
@@ -95,19 +95,19 @@ async function performDrag(source: Element, target: Element, delta: Delta, type:
 /**
  * Drag an element onto another element, or by a specific delta.
  * @example
- * drag(source).to(target).with('mouse');
- * drag(source).by({x: 100, y: 100}).with('touch');
+ * let dataTransfer = await drag(source).to(target).with('mouse');
+ * let dataTransfer = await drag(source).by({x: 100, y: 100}).with('touch');
  */
 export function drag(source: Element) {
   return {
     to: (target: Element) => ({
       with: async (type: DragPointerType) => {
-        return await performDrag(source, target, {x: 0, y: 0}, type);
+        return await performDragAndDrop(source, target, {x: 0, y: 0}, type);
       }
     }),
     by: ({x, y}: Delta) => ({
       with: async (type: DragPointerType) => {
-        return await performDrag(source, null, {x, y}, type);
+        return await performDragAndDrop(source, null, {x, y}, type);
       }
     })
   };
