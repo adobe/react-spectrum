@@ -18,18 +18,19 @@ async function performDragAndDrop(source: Element, target: Element, delta: Delta
   let from = getElementCenter(source);
   let to = {x: 0, y: 0};
 
-  if (target) {
+  if (delta && target) {
+    let targetCenter = getElementCenter(target);
+    to = {x: targetCenter.x + delta.x, y: targetCenter.y + delta.y};
+  } else if (target) {
     to = getElementCenter(target);
   } else if (delta) {
     to = {x: from.x + delta.x, y: from.y + delta.y};
   }
 
-
   let step = {
     x: (to.x - from.x) / steps,
     y: (to.y - from.y) / steps
   };
-
 
   let current = {
     clientX: from.x,
@@ -107,6 +108,30 @@ export function drag(source: Element) {
     by: ({x, y}: Delta) => ({
       with: async (type: DragPointerType) => {
         return await performDragAndDrop(source, null, {x, y}, type);
+      }
+    }),
+    above: (target: Element) => ({
+      with: async (type: DragPointerType) => {
+        let delta = {x: 0, y: -target.getBoundingClientRect().height / 2 - 1};
+        return await performDragAndDrop(source, target, delta, type);
+      }
+    }),
+    below: (target: Element) => ({
+      with: async (type: DragPointerType) => {
+        let delta = {x: 0, y: target.getBoundingClientRect().height / 2 + 1};
+        return await performDragAndDrop(source, target, delta, type);
+      }
+    }),
+    before: (target: Element) => ({
+      with: async (type: DragPointerType) => {
+        let delta = {x: 0, y: -target.getBoundingClientRect().height / 2 - 1};
+        return await performDragAndDrop(source, target, delta, type);
+      }
+    }),
+    after: (target: Element) => ({
+      with: async (type: DragPointerType) => {
+        let delta = {x: 0, y: target.getBoundingClientRect().height / 2 + 1};
+        return await performDragAndDrop(source, target, delta, type);
       }
     })
   };
