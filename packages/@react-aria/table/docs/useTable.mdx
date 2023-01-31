@@ -516,7 +516,7 @@ width equally initially. We'll pass the state returned by <TypeLink links={state
 to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. The `widths` from this state are provided to each table element so
 the table cells in the body match the columns at all times.
 
-The various style changes below are to make the table itself scrollable and to support table body/column widths greater than the 400px applied to the table itself.
+The various style changes below are to make the table itself scrollable and to support table body/column widths greater than the 300px applied to the table itself.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -575,7 +575,7 @@ function ResizableColumnsTable(props) {
   let layoutState = useTableColumnResizeState({
     getDefaultWidth,
     getDefaultMinWidth,
-    tableWidth: 400
+    tableWidth: 300
   }, state);
   let {widths} = layoutState;
   /*- end highlight -*/
@@ -586,7 +586,7 @@ function ResizableColumnsTable(props) {
       style={{
         borderCollapse: 'collapse',
         /*- begin highlight -*/
-        width: '400px',
+        width: '300px',
         height: '200px',
         display: 'block',
         position: 'relative',
@@ -871,7 +871,7 @@ As described above, we need to implement an element that the user can drag/inter
 hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](useSlider.html).
 Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can use the arrow keys to trigger the same
 resize events and use <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Similarly, touch screen readers can swipe up and down to
-resize the column and double tapping to trigger a virtual click exits resizing.
+resize the column and double tap to exit resizing.
 
 Note that we apply `visibility: hidden` to hide the resizer so that we reserve space for it in the column header at all times.
 
@@ -891,19 +891,22 @@ const Resizer = React.forwardRef((props, ref) => {
     onResizeEnd,
     triggerRef
   }, layoutState, ref);
-  // TODO: update the visual look of the resizer and have a focus style
+
   return (
     <div
       role="presentation"
       style={{
         cursor: undefined,
-        width: '20px',
-        height: '20px',
-        border: '1px solid red',
+        width: '6px',
+        height: 'auto',
+        border: '2px',
+        borderStyle: 'none solid',
+        borderColor: layoutState.resizingColumn === column.key ? 'blue' : 'grey',
         touchAction: 'none',
         flex: '0 0 auto',
         boxSizing: 'border-box',
-        visibility: showResizer ? 'visible' : 'hidden'
+        visibility: showResizer ? 'visible' : 'hidden',
+        marginLeft: '4px'
       }}
       {...resizerProps}>
       <VisuallyHidden>
