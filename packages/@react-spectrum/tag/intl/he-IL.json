@@ -1,3 +1,5 @@
 {
-  "actions": "פעולות"
+  "actions": "פעולות",
+  "hideButtonLabel": "הצג פחות",
+  "showAllButtonLabel": "הצג הכל ({tagCount})"
 }
