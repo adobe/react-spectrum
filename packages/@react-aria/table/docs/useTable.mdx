@@ -504,19 +504,19 @@ For resizable column support, two additional hooks need to be added to the table
 hook from `@react-stately/table` is responsible for initializing and tracking the widths of every column in your table, returning functions that you can use to
 update the column widths during a column resize operation. Note that this state is supplementary to the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} />.
 
-The second column resizing hook is <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. This hook handles the interactions for the a table column's resizer
+The second column resizing hook is <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. This hook handles the interactions for a table column's resizer
 element, allowing the user to drag the resizer or use the keyboard arrows to expand the column's width. Be sure to pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
-to this hook so the tracked widths can be updated appropriately. We'll walk through all the changes to the previous table implementation step by step below.
+to this hook so the tracked widths can be updated appropriately. We'll walk through all the required changes to the previous table implementation step by step below.
 
 ### Table
 
-As mentioned previously, we first need to call <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> to initialize and update the widths for our table's columns.
-By providing the hook with `getDefaultMinWidth` and `getDefaultWidth`, we can give our table selection checkbox column a pre-determined width while allowing the other columns divide up the remaining
-width equally initially. We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
+As mentioned previously, we first need to call <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> to initialize the widths for our table's columns.
+By providing the hook with `getDefaultMinWidth` and `getDefaultWidth`, we can give our table selection checkbox column a pre-determined width while allowing the remaining width to be divided up equally amongst the
+other columns. We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
 to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. The `widths` from this state are provided to each table element so
-the table cells in the body match the columns at all times.
+the table cells in the body match their parent column's widths at all times.
 
-The various style changes below are to make the table itself scrollable and to support table body/column widths greater than the 300px applied to the table itself.
+The various style changes below are to make the table itself scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -677,7 +677,7 @@ function ResizableColumnsTable(props) {
 
 ### Resizable table header
 
-The `TableRowGroup` and `TableHeaderRow` only require minor style changes to accommodate the the new `display` changes made in
+The `TableRowGroup` and `TableHeaderRow` only require minor style changes to accommodate the new `display` changes made in
 `ResizableColumnsTable`.
 
 <details>
@@ -730,10 +730,10 @@ function ResizableTableHeaderRow({item, state, children}) {
 The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
 the user can drag or focus to perform a resize operation. To avoid interfering with the existing grid keyboard navigation, we only display this resizer when
 the column is hovered or if the column itself is being resized. This however introduces another issue: how will keyboard, screen reader, and touch users begin a resize operation if the resizer
-is only visible on hover? We can't just have the user press on the column header since that action is reserved for sorting.
+is only visible on hover? We can't just have the user press on the column header since that action was previously reserved for sorting.
 
-To resolve this, we need to render a menu button as the column header if the column is resizable, allowing non-mouse users to trigger any available action on the column. For resizing, this would
-cause focus to shift to the resizer itself, displaying the resizer for touch screen users to drag and letting keyboard and screen readers resize the column via keyboard arrows and screenreader operations
+To resolve this, we need to render a menu button in the column header if the column is resizable, allowing non-mouse users to select from a list of available actions on the column. For resizing, selecting the corresponding option
+should cause focus to shift to the resizer itself, displaying the resizer for touch screen users to drag and letting keyboard and screen readers resize the column via keyboard arrows and screen reader operations
 accordingly.
 
 <details>
@@ -871,7 +871,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
 As described above, we need to implement an element that the user can drag/interact with to resize a column. Here we'll use the <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />
 hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](useSlider.html).
 Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can use the arrow keys to trigger the same
-resize events and use <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Similarly, touch screen readers can swipe up and down to
+resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Similarly, touch screen readers can swipe up and down to
 resize the column and double tap to exit resizing.
 
 Note that we apply `visibility: hidden` to hide the resizer so that we reserve space for it in the column header at all times.
@@ -926,7 +926,7 @@ const Resizer = React.forwardRef((props, ref) => {
 ### MenuButton
 
 The `MenuButton` is used in the `ResizableTableColumnHeader` to display a list of available actions available to a column. It is built using the [useMenuTrigger](useMenu.html)
-and [useTreeState](/react-stately/useTreeState.html) hooks, and can be shared with many other components. Note that you'll have to call `continuePropagation()` in `onKeyDown`
+and [useMenuTriggerState](/react-stately/useMenuTriggerState.html) hooks, and can be shared with many other components. Note that you'll have to call `continuePropagation()` in `onKeyDown`
 to properly bubble the `keydown` event up to `useSelectableCollection` for grid keyboard navigation.
 
 <details>
@@ -1118,7 +1118,7 @@ function Button(props) {
 ### Resizable table body
 
 Similar to `TableRowGroup` and `TableHeaderRow`, `TableRow` and `TableCell` only require minor style changes to
-accommodate the the new `display` changes made in the `ResizableColumnsTable`. The changes to `TableRow` are made to extend the
+accommodate the new `display` changes made in the `ResizableColumnsTable`. The changes to `TableRow` are made to extend the
 background of the row to the full width of its child cells. `TableCell` now receives its width from <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
 and handles text overflow.
 
