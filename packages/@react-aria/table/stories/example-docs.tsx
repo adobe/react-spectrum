@@ -15,8 +15,8 @@ import {classNames} from '@react-spectrum/utils';
 import {DismissButton, Overlay, usePopover} from '@react-aria/overlays';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
-import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useState} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useCallback} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useButton} from '@react-aria/button';
 import {useCheckbox} from '@react-aria/checkbox';
@@ -39,10 +39,6 @@ export function Table(props) {
     onResizeStart,
     onResize,
     onResizeEnd
-    // TODO: omit from aria example, unneeded really?
-    // onColumnResizeStart,
-    // onColumnResize,
-    // onColumnResizeEnd
   } = props;
   let state = useTableState({
     ...props,
@@ -85,10 +81,7 @@ export function Table(props) {
     getDefaultWidth,
     getDefaultMinWidth,
     // TODO: sync this since we aren't including the resize obs
-    tableWidth: 800,
-    // onColumnResize,
-    // onColumnResizeEnd,
-    // onColumnResizeStart
+    tableWidth: 800
   }, state);
   let {widths} = layoutState;
 
@@ -246,7 +239,8 @@ const Resizer = React.forwardRef((props, ref) => {
 });
 
 
-export function TableColumnHeader({column, state, widths, layoutState, onResizeStart, onResize, onResizeEnd}) {
+export function TableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
+  let {widths} = layoutState;
   let ref = useRef(null);
   let resizerRef = useRef(null);
   let triggerRef = useRef(null);
@@ -293,6 +287,12 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
     return options;
   }, [allowsSorting]);
 
+  let sortIcon = (
+    <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
+      {arrowIcon}
+    </span>
+  );
+
   let contents = allowsResizing ? (
     <>
       <MenuButton
@@ -316,11 +316,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
           </Item>
         )}
       </MenuButton>
-      {column.props.allowsSorting &&
-        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
-          {arrowIcon}
-        </span>
-      }
+      {column.props.allowsSorting && sortIcon}
       <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
     </>
   ) :
@@ -334,11 +330,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
       }}>
 
       {column.rendered}
-      {column.props.allowsSorting &&
-        <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
-          {arrowIcon}
-        </span>
-      }
+      {column.props.allowsSorting && sortIcon}
     </div>
   );
 

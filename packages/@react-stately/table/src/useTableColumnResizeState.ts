@@ -97,7 +97,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     map.set(key, width);
     setUncontrolledWidths(map);
     return newSizes;
-  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths, propsOnColumnResize]);
+  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
 
   let onColumnResizeEnd = useCallback(() => {
     setResizingColumn(null);
