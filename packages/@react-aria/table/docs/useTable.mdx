@@ -768,7 +768,8 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
       case 'resize':
         layoutState.onColumnResizeStart(column.key);
         if (resizerRef) {
-          setTimeout(() => resizerRef.current.focus(), 0);
+          // Brief delay before moving focus to resizer input for screenreaders/Safari
+          setTimeout(() => resizerRef.current?.focus(), 400);
         }
         break;
     }
