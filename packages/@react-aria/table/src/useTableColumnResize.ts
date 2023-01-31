@@ -49,6 +49,12 @@ export interface AriaTableColumnResizeProps<T> {
 
 export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
 
+/**
+ * Provides the behavior and accessibility implementation for a table column resizer element.
+ * @param props - Props for the resizer.
+ * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
+ * @param ref - The ref attached to the resizer's visually hidden input element.
+ */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
