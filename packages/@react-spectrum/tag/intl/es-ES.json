@@ -1,3 +1,5 @@
 {
-  "actions": "Acciones"
+  "actions": "Acciones",
+  "hideButtonLabel": "Mostrar menos",
+  "showAllButtonLabel": "Mostrar todo ({tagCount})"
 }

@@ -1385,4 +1385,73 @@ describe('LandmarkManager', function () {
       controller.dispose();
     });
   });
+
+  describe('singleton', function () {
+    it('should store the landmark manager on the document', function () {
+      // ensure a manager exists.
+      let controller = createLandmarkController();
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      expect(manager).toBeDefined();
+      expect(typeof manager.version).toBe('number');
+      expect(typeof manager.createLandmarkController).toBe('function');
+      expect(typeof manager.registerLandmark).toBe('function');
+      controller.dispose();
+    });
+
+    it('should replace the singleton with a new version', function () {
+      let tree = render(
+        <div>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      let controller = createLandmarkController();
+      let newController = {
+        navigate: jest.fn(),
+        focusNext: jest.fn(),
+        focusPrevious: jest.fn(),
+        focusMain: jest.fn(),
+        dispose: jest.fn()
+      };
+
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      let unregister = jest.fn();
+      let testLandmarkManager = {
+        version: manager.version + 1,
+        createLandmarkController: jest.fn().mockReturnValue(newController),
+        registerLandmark: jest.fn().mockReturnValue(unregister)
+      };
+
+      document[Symbol.for('react-aria-landmark-manager')] = testLandmarkManager;
+      act(() => {
+        document.dispatchEvent(new CustomEvent('react-aria-landmark-manager-change'));
+      });
+
+      expect(testLandmarkManager.registerLandmark).toHaveBeenCalledTimes(1);
+      expect(testLandmarkManager.createLandmarkController).toHaveBeenCalledTimes(1);
+
+      // Controller should now proxy to the new version.
+      controller.navigate('forward');
+      expect(newController.navigate).toHaveBeenCalledTimes(1);
+      expect(newController.navigate).toHaveBeenCalledWith('forward', undefined);
+
+      controller.focusNext();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusPrevious();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusMain();
+      expect(newController.focusMain).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      expect(newController.dispose).toHaveBeenCalledTimes(1);
+
+      // Component should now point to the new manager.
+      tree.unmount();
+      expect(unregister).toHaveBeenCalledTimes(1);
+    });
+  });
 });
