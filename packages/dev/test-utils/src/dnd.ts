@@ -85,7 +85,6 @@ async function performDragAndDrop(source: Element, target: Element, delta: Delta
   } else if (type === 'touch') {
     fireEvent.touchEnd(source, current);
   }
-  console.log('here');
 
   fireEvent(source, new DragEvent('dragend', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
   fireEvent(target, new DragEvent('drop', {dataTransfer, clientX: current.clientX, clientY: current.clientY}));
