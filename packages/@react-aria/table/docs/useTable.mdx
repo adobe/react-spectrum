@@ -1233,7 +1233,7 @@ function ResizableTableCheckboxCell({cell, state, widths}) {
       <Checkbox
         {...checkboxProps}
         /*- begin highlight -*/
-        style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}}
+        style={{marginTop: 'auto', marginBottom: 'auto'}}
         /*- end highlight -*/
       />
     </td>
@@ -1266,7 +1266,7 @@ function ResizableTableSelectAllCell({column, state, widths}) {
       {state.selectionManager.selectionMode === 'single'
         ? <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
         /*- begin highlight -*/
-        : <Checkbox {...checkboxProps} style={{height: 'fit-content', marginTop: 'auto', marginBottom: 'auto'}} />
+        : <Checkbox {...checkboxProps} style={{marginTop: 'auto', marginBottom: 'auto'}} />
         /*- end highlight -*/
       }
     </th>
