@@ -20,7 +20,7 @@ export interface TableColumnResizeStateProps<T> {
   /**
    * Current width of the table or table viewport that the columns
    * should be calculated against.
-   **/
+   */
   tableWidth: number,
   /** A function that is called to find the default width for a given column. */
   getDefaultWidth?: (node: GridNode<T>) => ColumnSize | null | undefined,
@@ -31,7 +31,7 @@ export interface TableColumnResizeState<T> {
   /**
    * Called to update the state that a resize event has occurred.
    * Returns the new widths for all columns based on the resized column.
-   **/
+   */
   onColumnResize: (key: Key, width: number) => Map<Key, ColumnSize>,
   /** Callback for when onColumnResize has started. */
   onColumnResizeStart: (key: Key) => void,
