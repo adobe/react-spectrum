@@ -41,8 +41,8 @@ export function getTimeZoneOffset(ms: number, timeZone: string) {
     return 0;
   }
 
-  // Fast path: for local timezone, use native Date.
-  if (timeZone === getLocalTimeZone()) {
+  // Fast path: for local timezone after 1970, use native Date.
+  if (ms > 0 && timeZone === getLocalTimeZone()) {
     return new Date(ms).getTimezoneOffset() * -60 * 1000;
   }
 

@@ -54,7 +54,9 @@ export interface TableColumnResizeState<T> {
 /**
  * Provides column width state management for a table component with column resizing support. Handles building
  * a map of column widths calculated from the table's width and any provided column width information from the collection.
- * In addition, it tracks the the currently resizing column and provides callback for updating the widths upon resize operations.
+ * In addition, it tracks the currently resizing column and provides callbacks for updating the widths upon resize operations.
+ * @param props - Props for the table.
+ * @param state - State for the table, as returned by `useTableState`.
  */
 export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState<T> {
   let {
