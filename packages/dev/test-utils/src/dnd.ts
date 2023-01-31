@@ -100,34 +100,40 @@ async function performDragAndDrop(source: Element, target: Element, delta: Delta
  */
 export function drag(source: Element) {
   return {
+    /** Drag an element onto the center of another element. */
     to: (target: Element) => ({
       with: async (type: DragPointerType) => {
         return await performDragAndDrop(source, target, {x: 0, y: 0}, type);
       }
     }),
+    /** Drag an element by a specific delta. */
     by: ({x, y}: Delta) => ({
       with: async (type: DragPointerType) => {
         return await performDragAndDrop(source, null, {x, y}, type);
       }
     }),
+    /** Drag an element just above another element. */
     above: (target: Element) => ({
       with: async (type: DragPointerType) => {
         let delta = {x: 0, y: -target.getBoundingClientRect().height / 2 - 1};
         return await performDragAndDrop(source, target, delta, type);
       }
     }),
+    /** Drag an element just below another element. */
     below: (target: Element) => ({
       with: async (type: DragPointerType) => {
         let delta = {x: 0, y: target.getBoundingClientRect().height / 2 + 1};
         return await performDragAndDrop(source, target, delta, type);
       }
     }),
+    /** Drag an element just to the left of another element. */
     before: (target: Element) => ({
       with: async (type: DragPointerType) => {
         let delta = {x: 0, y: -target.getBoundingClientRect().height / 2 - 1};
         return await performDragAndDrop(source, target, delta, type);
       }
     }),
+    /** Drag an element just to the right of another element. */
     after: (target: Element) => ({
       with: async (type: DragPointerType) => {
         let delta = {x: 0, y: target.getBoundingClientRect().height / 2 + 1};
