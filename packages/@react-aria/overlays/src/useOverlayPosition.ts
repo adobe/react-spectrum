@@ -115,20 +115,26 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    setPosition(
-      calculatePosition({
-        placement: translateRTL(placement, direction),
-        overlayNode: overlayRef.current,
-        targetNode: targetRef.current,
-        scrollNode: scrollRef.current,
-        padding: containerPadding,
-        shouldFlip,
-        boundaryElement,
-        offset,
-        crossOffset,
-        maxHeight
-      })
-    );
+    let position = calculatePosition({
+      placement: translateRTL(placement, direction),
+      overlayNode: overlayRef.current,
+      targetNode: targetRef.current,
+      scrollNode: scrollRef.current,
+      padding: containerPadding,
+      shouldFlip,
+      boundaryElement,
+      offset,
+      crossOffset,
+      maxHeight
+    });
+
+    // Modify overlay styles directly so positioning happens immediately without the need of a second render
+    // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
+    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
+    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
+
+    // Trigger a set state for a second render anyway for arrow positioning
+    setPosition(position);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 

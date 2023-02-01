@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -442,22 +442,35 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     transitionDuration
   });
 
+  let scrollToItem = useCallback((key) => {
+    let item = collection.getItem(key);
+    let column = collection.columns[0];
+    let virtualizer = state.virtualizer;
+
+    let modality = getInteractionModality();
+
+    virtualizer.scrollToItem(key, {
+      duration: 0,
+      // Prevent scrolling to the top when clicking on column headers.
+      shouldScrollY: item?.type !== 'column',
+      // Offset scroll position by width of selection cell
+      // (which is sticky and will overlap the cell we're scrolling to).
+      offsetX: column.props.isSelectionCell
+        ? layout.getColumnWidth(column.key)
+        : 0
+    });
+
+    // Sync the scroll positions of the column headers and the body so scrollIntoViewport can
+    // properly decide if the column is outside the viewport or not
+    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    if (modality === 'keyboard') {
+      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
+    }
+  }, [collection, domRef, bodyRef, headerRef, layout, state.virtualizer]);
+
   let {virtualizerProps} = useVirtualizer({
     focusedKey,
-    scrollToItem(key) {
-      let item = collection.getItem(key);
-      let column = collection.columns[0];
-      state.virtualizer.scrollToItem(key, {
-        duration: 0,
-        // Prevent scrolling to the top when clicking on column headers.
-        shouldScrollY: item?.type !== 'column',
-        // Offset scroll position by width of selection cell
-        // (which is sticky and will overlap the cell we're scrolling to).
-        offsetX: column.props.isSelectionCell
-          ? layout.getColumnWidth(column.key)
-          : 0
-      });
-    }
+    scrollToItem
   }, state, domRef);
 
   // this effect runs whenever the contentSize changes, it doesn't matter what the content size is
