@@ -23,7 +23,9 @@ import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TableColumnResizeAria {
+  /** Props for the visually hidden input element. */
   inputProps: DOMAttributes,
+  /** Props for the resizer element. */
   resizerProps: DOMAttributes
 }
 
