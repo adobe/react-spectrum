@@ -30,7 +30,7 @@ import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
 
-export function CRUDExample() {
+export function CRUDExample(props) {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -58,7 +58,7 @@ export function CRUDExample() {
         width={500}
         height={300}
         selectionMode="multiple"
-        isQuiet
+        {...props}
         selectedKeys={list.selectedKeys}
         onSelectionChange={list.setSelectedKeys}
         renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
