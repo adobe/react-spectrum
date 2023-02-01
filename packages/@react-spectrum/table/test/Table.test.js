@@ -17,9 +17,9 @@ import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
-import {DeletableRowsTable, EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -27,10 +27,18 @@ import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
+let {
+  InlineDeleteButtons: DeletableRowsTable,
+  EmptyStateStory: EmptyStateTable,
+  WithBreadcrumbNavigation: TableWithBreadcrumbs
+} = composeStories(stories);
+
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -1617,7 +1625,7 @@ describe('TableView', function () {
       });
 
       it('should send focus to the collection if the focused row is removed', function () {
-        let tree = render(<DeletableRowsTable />);
+        let tree = render(<DeletableRowsTable selectionMode="multiple" />);
 
         let rows = tree.getAllByRole('row');
         userEvent.tab();
@@ -2509,7 +2517,7 @@ describe('TableView', function () {
     });
 
     it('can announce deselect even when items are swapped out completely', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[2];
       triggerPress(row);
@@ -2523,7 +2531,7 @@ describe('TableView', function () {
     });
 
     it('will not announce deselect caused by breadcrumb navigation', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
@@ -2546,7 +2554,7 @@ describe('TableView', function () {
     });
 
     it('updates even if not focused', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
