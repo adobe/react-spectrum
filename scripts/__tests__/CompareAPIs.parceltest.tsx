@@ -96,6 +96,13 @@ describe('Compare API', () => {
     return await outputFS.copyFile(join(inputFS.cwd(), 'base', 'dist', 'api.json'), join(inputFS.cwd(), 'dist', 'base', 'api.json'));
   }
 
+  async function doCompare() {
+    await compare(inputFS.cwd(), outputFS);
+    let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+    result = result.replace(/(#* )(.*\/react-spectrum\/)(.*)/g, '$1$3');
+    return result;
+  }
+
   describe('components', () => {
     it('writes export entry for React component', async () => {
       await writeSourceFile('branch', 'index', `
@@ -118,9 +125,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
-
+      let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
 
@@ -174,8 +179,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
 
       expect(result).toMatchSnapshot();
     }, 50000);
@@ -193,8 +197,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
 
       expect(result).toMatchSnapshot();
     }, 50000);
@@ -212,8 +215,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
 
       expect(result).toMatchSnapshot();
     }, 50000);
@@ -231,8 +233,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
 
@@ -250,8 +251,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
 
@@ -267,8 +267,7 @@ describe('Compare API', () => {
 
       await runPublishedBuild();
 
-      await compare(inputFS.cwd(), outputFS);
-      let result = outputFS.readFileSync(join(inputFS.cwd(), 'dist', 'result.txt'), 'utf-8');
+      let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
   });

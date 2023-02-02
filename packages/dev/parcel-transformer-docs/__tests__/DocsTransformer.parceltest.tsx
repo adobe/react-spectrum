@@ -63,28 +63,6 @@ describe('DocsTransformer - API', () => {
     return inputFS.writeFile(`test/src/${name}.tsx`, contents, {});
   }
 
-  async function createPackage(pkg) {
-    let parts = pkg.split('/');
-    let scope;
-    let name;
-    if (parts[0].startsWith('@') && parts.length > 1) {
-      scope = parts[0];
-      name = parts[1];
-    } else {
-      name = parts[0];
-    }
-    if (scope) {
-      await inputFS.mkdirp(`test/${scope}`);
-    }
-    await inputFS.mkdirp(scope ? `test/${scope}/${name}` : `test/${name}`);
-    let pkgJson = {
-      name: pkg,
-      private: true,
-      version: '3.0.0'
-    };
-    return writeSourceFile('package.json', JSON.stringify(pkgJson), pkg);
-  }
-
   async function runBuild() {
     const parcel = getParcelInstance('test');
     await parcel.run();
