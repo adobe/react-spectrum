@@ -117,8 +117,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   }
 
   if (isVirtualized) {
-    let index = state.collection.getItem(key).index;
-    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : (index as number) + 1;
+    let index = Number(state.collection.getItem(key).index);
+    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 

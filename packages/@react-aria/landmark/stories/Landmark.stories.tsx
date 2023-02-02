@@ -350,7 +350,7 @@ function IframeExample() {
     // When the iframe is re-focused, restore focus back inside where it was before.
     window.addEventListener('focus', () => {
       if (prevFocusedElement) {
-        prevFocusedElement?.focus();
+        prevFocusedElement.focus();
         prevFocusedElement = null;
       }
     });

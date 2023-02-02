@@ -44,11 +44,11 @@ interface LandmarkManagerApi {
 // from an older version of useLandmark against a newer version of
 // LandmarkManager does not crash.
 interface Landmark {
-  ref: RefObject<Element>,
+  ref: RefObject<FocusableElement>,
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: FocusableElement,
-  focus?: (direction: 'forward' | 'backward') => void,
+  focus: (direction: 'forward' | 'backward') => void,
   blur: () => void
 }
 
@@ -136,7 +136,7 @@ class LandmarkManager implements LandmarkManagerApi {
     this.isListening = false;
   }
 
-  private focusLandmark(landmark: Element, direction: 'forward' | 'backward') {
+  private focusLandmark(landmark: FocusableElement, direction: 'forward' | 'backward') {
     this.landmarks.find(l => l.ref.current === landmark)?.focus?.(direction);
   }
 
@@ -240,10 +240,10 @@ class LandmarkManager implements LandmarkManagerApi {
   private closestLandmark(element: Element) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
-    while (currentElement && !landmarkMap.has(currentElement) && currentElement !== document.body && currentElement.parentElement) {
+    while (currentElement && !landmarkMap.has(currentElement as FocusableElement) && currentElement !== document.body && currentElement.parentElement) {
       currentElement = currentElement.parentElement;
     }
-    return landmarkMap.get(currentElement);
+    return landmarkMap.get(currentElement as FocusableElement);
   }
 
   /**
@@ -311,7 +311,7 @@ class LandmarkManager implements LandmarkManagerApi {
   private f6Handler(e: KeyboardEvent) {
     if (e.key === 'F6') {
       // If alt key pressed, focus main landmark, otherwise navigate forward or backward based on shift key.
-      let handled = e.altKey ? this.focusMain() : this.navigate(e.target as Element, e.shiftKey);
+      let handled = e.altKey ? this.focusMain() : this.navigate(e.target as FocusableElement, e.shiftKey);
       if (handled) {
         e.preventDefault();
         e.stopPropagation();
@@ -321,8 +321,8 @@ class LandmarkManager implements LandmarkManagerApi {
 
   private focusMain() {
     let main = this.getLandmarkByRole('main');
-    if (main && document.contains(main.ref.current)) {
-      this.focusLandmark(main.ref.current as HTMLElement, 'forward');
+    if (main && main.ref.current && document.contains(main.ref.current)) {
+      this.focusLandmark(main.ref.current, 'forward');
       return true;
     }
 
@@ -348,8 +348,8 @@ class LandmarkManager implements LandmarkManagerApi {
     }
 
     // Otherwise, focus the landmark itself
-    if (document.contains(nextLandmark.ref.current)) {
-      this.focusLandmark(nextLandmark.ref.current as HTMLElement, backward ? 'backward' : 'forward');
+    if (nextLandmark.ref.current && document.contains(nextLandmark.ref.current)) {
+      this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
       return true;
     }
 
@@ -361,11 +361,11 @@ class LandmarkManager implements LandmarkManagerApi {
    * Lets the last focused landmark know it was blurred if something else is focused.
    */
   private focusinHandler(e: FocusEvent) {
-    let currentLandmark = this.closestLandmark(e.target as Element);
+    let currentLandmark = this.closestLandmark(e.target as FocusableElement);
     if (currentLandmark && currentLandmark.ref.current !== e.target) {
       this.updateLandmark({ref: currentLandmark.ref, lastFocused: e.target as FocusableElement});
     }
-    let previousFocusedElement = e.relatedTarget as Element;
+    let previousFocusedElement = e.relatedTarget as FocusableElement;
     if (previousFocusedElement) {
       let closestPreviousLandmark = this.closestLandmark(previousFocusedElement);
       if (closestPreviousLandmark && closestPreviousLandmark.ref.current === previousFocusedElement) {
@@ -378,7 +378,7 @@ class LandmarkManager implements LandmarkManagerApi {
    * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
    */
   private focusoutHandler(e: FocusEvent) {
-    let previousFocusedElement = e.target as Element;
+    let previousFocusedElement = e.target as FocusableElement;
     let nextFocusedElement = e.relatedTarget;
     // the === document seems to be a jest thing for focus to go there on generic blur event such as landmark.blur();
     // browsers appear to send focus instead to document.body and the relatedTarget is null when that happens
@@ -396,31 +396,19 @@ class LandmarkManager implements LandmarkManagerApi {
     instance.setupIfNeeded();
     return {
       navigate(direction, opts) {
-        let element = opts?.from || document?.activeElement;
-        if (element && instance) {
-          return instance.navigate(element, direction === 'backward');
-        }
-        return false;
+        let element = opts?.from || document!.activeElement;
+        return instance!.navigate(element as Element, direction === 'backward');
       },
       focusNext(opts) {
-        let element = opts?.from || document?.activeElement;
-        if (element && instance) {
-          return instance.navigate(element, false);
-        }
-        return false;
+        let element = opts?.from || document!.activeElement;
+        return instance!.navigate(element as Element, false);
       },
       focusPrevious(opts) {
-        let element = opts?.from || document?.activeElement;
-        if (element && instance) {
-          return instance.navigate(element, true);
-        }
-        return false;
+        let element = opts?.from || document!.activeElement;
+        return instance!.navigate(element as Element, true);
       },
       focusMain() {
-        if (instance) {
-          return instance.focusMain();
-        }
-        return false;
+        return instance!.focusMain();
       },
       dispose() {
         if (instance) {
@@ -460,16 +448,16 @@ export function createLandmarkController(): LandmarkController {
   // Return a wrapper that proxies requests to the current controller instance.
   return {
     navigate(direction, opts) {
-      return controller?.navigate(direction, opts) ?? false;
+      return controller!.navigate(direction, opts);
     },
     focusNext(opts) {
-      return controller?.focusNext(opts) ?? false;
+      return controller!.focusNext(opts);
     },
     focusPrevious(opts) {
-      return controller?.focusPrevious(opts) ?? false;
+      return controller!.focusPrevious(opts);
     },
     focusMain() {
-      return controller?.focusMain() ?? false;
+      return controller!.focusMain();
     },
     dispose() {
       controller?.dispose();
