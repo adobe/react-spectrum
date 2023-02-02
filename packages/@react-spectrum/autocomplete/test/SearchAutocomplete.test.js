@@ -823,32 +823,20 @@ describe('SearchAutocomplete', function () {
       let searchAutocomplete = getByRole('combobox');
       typeText(searchAutocomplete, 'one');
 
-      act(() => {
-        jest.runAllTimers();
-      });
-
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
-        fireEvent.keyDown(searchAutocomplete, {key: 'Enter'});
-        fireEvent.keyUp(searchAutocomplete, {key: 'Enter'});
-      });
-
-      act(() => {
-        jest.runAllTimers();
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+      fireEvent.keyDown(searchAutocomplete, {key: 'Enter'});
+      fireEvent.keyUp(searchAutocomplete, {key: 'Enter'});
 
       expect(searchAutocomplete.value).toBe('One');
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'Esc'});
-        fireEvent.keyUp(searchAutocomplete, {key: 'Esc'});
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'Esc'});
+      fireEvent.keyUp(searchAutocomplete, {key: 'Esc'});
 
       expect(searchAutocomplete.value).toBe('');
       expect(onClear).toHaveBeenCalledTimes(1);
