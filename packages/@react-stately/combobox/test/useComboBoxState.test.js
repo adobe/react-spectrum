@@ -217,7 +217,7 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
 
       act(() => result.current.selectionManager.replaceSelection('1'));
-      expect(result.current.selectionManager.selectedKeys).toContain(new Set({}));
+      expect(result.current.selectionManager.selectedKeys.size).toEqual(0);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
   });
