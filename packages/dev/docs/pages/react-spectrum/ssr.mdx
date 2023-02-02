@@ -10,6 +10,8 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
 ---
 category: Concepts
 keywords: [ssr, server side rendering, spectrum, next.js, gatsby]
@@ -52,13 +54,75 @@ Finally, when using server side rendering, the `locale` prop should be set expli
 
 [Next.js](https://nextjs.org) is a framework for building websites and web applications with React. It supports both server side rendering as well as static rendering. In addition to using an `SSRProvider`, a small amount of configuration is required to get React Spectrum’s CSS working with Next.js.
 
-First, you’ll need to install an additional Next.js plugin:
+Add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
+
+```tsx
+module.exports = {
+  transpilePackages: [
+    "@adobe/react-spectrum",
+    "@react-spectrum/actiongroup",
+    "@react-spectrum/badge",
+    "@react-spectrum/breadcrumbs",
+    "@react-spectrum/button",
+    "@react-spectrum/buttongroup",
+    "@react-spectrum/calendar",
+    "@react-spectrum/checkbox",
+    "@react-spectrum/color",
+    "@react-spectrum/combobox",
+    "@react-spectrum/contextualhelp",
+    "@react-spectrum/datepicker",
+    "@react-spectrum/dialog",
+    "@react-spectrum/divider",
+    "@react-spectrum/dnd",
+    "@react-spectrum/form",
+    "@react-spectrum/icon",
+    "@react-spectrum/illustratedmessage",
+    "@react-spectrum/image",
+    "@react-spectrum/label",
+    "@react-spectrum/labeledvalue",
+    "@react-spectrum/layout",
+    "@react-spectrum/link",
+    "@react-spectrum/list",
+    "@react-spectrum/listbox",
+    "@react-spectrum/menu",
+    "@react-spectrum/meter",
+    "@react-spectrum/numberfield",
+    "@react-spectrum/overlays",
+    "@react-spectrum/picker",
+    "@react-spectrum/progress",
+    "@react-spectrum/provider",
+    "@react-spectrum/radio",
+    "@react-spectrum/slider",
+    "@react-spectrum/searchfield",
+    "@react-spectrum/statuslight",
+    "@react-spectrum/switch",
+    "@react-spectrum/table",
+    "@react-spectrum/tabs",
+    "@react-spectrum/text",
+    "@react-spectrum/textfield",
+    "@react-spectrum/theme-dark",
+    "@react-spectrum/theme-default",
+    "@react-spectrum/theme-light",
+    "@react-spectrum/tooltip",
+    "@react-spectrum/view",
+    "@react-spectrum/well",
+    "@spectrum-icons/illustrations",
+    "@spectrum-icons/ui",
+    "@spectrum-icons/workflow",
+  ]
+};
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> For Next.js 13.0.x and below</summary>
+
+You’ll need to install an additional Next.js plugin:
 
 ```
 yarn add next-transpile-modules
 ```
 
-With this installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
+With this installed, add the following to your `next.config.js` file.
 
 ```tsx
 const withTM = require("next-transpile-modules")([
@@ -116,6 +180,8 @@ module.exports = withTM({
   // Your Next.js configuration
 });
 ```
+
+</details>
 
 ## Gatsby
 

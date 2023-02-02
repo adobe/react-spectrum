@@ -219,6 +219,7 @@ governing permissions and limitations under the License.
     .spectrum-Field-contextualHelp {
       position: relative;
       top: var(--spectrum-global-dimension-size-40);
+      margin-top: var(--spectrum-global-dimension-size-65);
     }
   }
 

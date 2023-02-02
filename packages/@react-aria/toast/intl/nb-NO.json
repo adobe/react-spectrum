@@ -1,6 +1,4 @@
 {
   "close": "Lukk",
-  "info": "Info",
-  "negative": "Feil",
-  "positive": "Vellykket"
+  "notifications": "Varsler"
 }
