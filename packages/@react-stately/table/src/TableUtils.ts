@@ -118,30 +118,20 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
       max,
       flex,
       targetMainSize: null,
-      scaledFlexShrinkFactor: 0,
       violation: ''
     };
   });
   // 9.7.1
-  let totalHypothetical = flexItems.reduce((acc, col) => acc + col.hypotheticalMainSize, 0);
-  let isGrow = false;
-  if (totalHypothetical < availableWidth) {
-    isGrow = true;
-  }
+  // We don't make use of flex basis, it's always 0, so we are always in 'grow' mode.
   // 9.7.2
   flexItems.forEach(item => {
     if (item.frozen) {
       item.targetMainSize = item.hypotheticalMainSize;
       return;
     }
-    if (isGrow) {
-      if (item.baseSize > item.hypotheticalMainSize) {
-        item.targetMainSize = item.hypotheticalMainSize;
-      }
-    } else {
-      if (item.baseSize < item.hypotheticalMainSize) {
-        item.targetMainSize = item.hypotheticalMainSize;
-      }
+    if (item.baseSize > item.hypotheticalMainSize) {
+      item.frozen = true;
+      item.targetMainSize = item.hypotheticalMainSize;
     }
   });
 
@@ -187,32 +177,16 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     /**
      * If the remaining free space is zero
      * - Do nothing.
-     *
-     * If using the flex grow factor
+     * Else // remember, we're always in grow mode
      * - Find the ratio of the item’s flex grow factor to the
      * sum of the flex grow factors of all unfrozen items on
      * the line. Set the item’s target main size to its flex
      * base size plus a fraction of the remaining free space
      * proportional to the ratio.
-     *
-     * If using the flex shrink factor
-     * - For every unfrozen item on the line, multiply its flex
-     * shrink factor by its inner flex base size, and note
-     * this as its scaled flex shrink factor. Find the ratio
-     * of the item’s scaled flex shrink factor to the sum of
-     * the scaled flex shrink factors of all unfrozen items
-     * on the line. Set the item’s target main size to its
-     * flex base size minus a fraction of the absolute value
-     * of the remaining free space proportional to the ratio.
-     * Note this may result in a negative inner main size; it
-     * will be corrected in the next step.
-     *
-     * Otherwise
-     * - Do nothing.
      */
     if (remainingFreeSpace <= 0) {
       // do nothing
-    } else if (isGrow) {
+    } else {
       let total = flexItems.reduce((acc, item) => item.frozen ? acc : acc + item.flex, 0);
       flexItems.forEach((item) => {
         if (item.frozen) {
@@ -221,25 +195,6 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
         let ratio = item.flex / total;
         item.targetMainSize = item.baseSize + (ratio * remainingFreeSpace);
       });
-    } else if (!isGrow) {
-      flexItems.forEach((item) => {
-        item.scaledFlexShrinkFactor = 0;
-        if (!item.frozen) {
-          item.scaledFlexShrinkFactor = item.flex * item.baseSize;
-        }
-      });
-      let totalShrinkFactors = flexItems.reduce((acc, item) => acc + item.scaledFlexShrinkFactor, 0);
-      if (totalShrinkFactors > 0) {
-        flexItems.forEach(item => {
-          if (item.frozen) {
-            return;
-          }
-          let ratio = item.scaledFlexShrinkFactor / totalShrinkFactors;
-          item.targetMainSize = item.baseSize - Math.abs(ratio * remainingFreeSpace);
-        });
-      }
-    } else {
-      // do nothing
     }
 
     // 9.7.4.d

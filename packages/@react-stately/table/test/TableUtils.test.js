@@ -59,6 +59,19 @@ describe('TableUtils', () => {
       expect(widths).toStrictEqual([50, 285, 30, 50, 50, 50, 50, 50, 50, 50, 285]);
     });
 
+    it('real life case 4', () => {
+      let controlledWidths = new Map();
+      let tableWidth = 300;
+      let widths = calculateColumnSizes(
+        tableWidth,
+        [{key: 'name', width: 100}, {key: 'type', width: 150}, {key: 'weight', width: 200}, {key: 'level', width: '1fr'}],
+        controlledWidths,
+        () => '1fr',
+        () => 50
+      );
+      expect(widths).toStrictEqual([100, 150, 200, 50]);
+    });
+
     it('defaultWidths', () => {
       let tableWidth = 800;
       let widths = calculateColumnSizes(
