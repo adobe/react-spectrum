@@ -21,7 +21,14 @@ Object {
 exports[`DocsTransformer - API builtins writes export entry for static number 1`] = `
 Object {
   "exports": Object {
-    "a": Object {},
+    "a": Object {
+      "id": "/test/src/index.tsx:a",
+      "name": "a",
+      "type": "variable",
+      "typeAnnotation": Object {
+        "type": "number",
+      },
+    },
   },
   "links": Object {},
 }
@@ -30,7 +37,14 @@ Object {
 exports[`DocsTransformer - API builtins writes export entry for static string 1`] = `
 Object {
   "exports": Object {
-    "b": Object {},
+    "b": Object {
+      "id": "/test/src/index.tsx:b",
+      "name": "b",
+      "type": "variable",
+      "typeAnnotation": Object {
+        "type": "string",
+      },
+    },
   },
   "links": Object {},
 }
@@ -157,6 +171,44 @@ Object {
 }
 `;
 
+exports[`DocsTransformer - API interfaces follows local references 1`] = `
+Object {
+  "exports": Object {
+    "State": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": Object {
+        "foo": Object {
+          "default": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "id": "/test/src/index.tsx:Foo",
+            "type": "link",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {
+    "/test/src/index.tsx:Foo": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "type": "string",
+      },
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API interfaces writes export entry for interface 1`] = `
 Object {
   "exports": Object {
@@ -180,6 +232,76 @@ Object {
     },
   },
   "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API links css modules 1`] = `
+Object {
+  "exports": Object {
+    "theme": Object {
+      "id": "/test/src/index.tsx:theme",
+      "name": "theme",
+      "type": "variable",
+      "typeAnnotation": Object {
+        "id": "/test/src/theme.tsx:Theme",
+        "type": "link",
+      },
+    },
+  },
+  "links": Object {
+    "/test/src/theme.tsx:CSSModule": Object {
+      "description": null,
+      "id": "/test/src/theme.tsx:CSSModule",
+      "name": "CSSModule",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "properties": Object {
+          "className": Object {
+            "default": null,
+            "indexType": Object {
+              "type": "string",
+            },
+            "name": "className",
+            "type": "property",
+            "value": Object {
+              "type": "string",
+            },
+          },
+        },
+        "type": "object",
+      },
+    },
+    "/test/src/theme.tsx:Theme": Object {
+      "extends": Array [],
+      "id": "/test/src/theme.tsx:Theme",
+      "name": "Theme",
+      "properties": Object {
+        "global": Object {
+          "default": null,
+          "name": "global",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "id": "/test/src/theme.tsx:CSSModule",
+            "type": "link",
+          },
+        },
+        "light": Object {
+          "default": null,
+          "name": "light",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "id": "/test/src/theme.tsx:CSSModule",
+            "type": "link",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
 }
 `;
 

@@ -117,7 +117,22 @@ module.exports = new Transformer({
         }
 
         let docs = getJSDocs(path.parentPath);
-        processExport(path.get('init'), node);
+        let typeAnnotation;
+        try {
+          typeAnnotation = path.get('id.typeAnnotation.typeAnnotation');
+        } catch (e) {
+          // do nothing
+        }
+        if (typeAnnotation) {
+          return Object.assign(node, addDocs({
+            type: 'variable',
+            id: `${asset.filePath}:${path.node.id.name}`,
+            name: path.node.id.name,
+            typeAnnotation: processExport(typeAnnotation)
+          }, docs));
+        } else {
+          processExport(path.get('init'), node);
+        }
         addDocs(node, docs);
         if (node.type === 'interface') {
           node.id = `${asset.filePath}:${path.node.id.name}`;

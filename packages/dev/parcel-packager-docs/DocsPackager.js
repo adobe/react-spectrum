@@ -96,6 +96,7 @@ module.exports = new Packager({
 
         let hasParams = false;
         if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application && shouldMerge(t, k, keyStack)) {
+
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           t.typeParameters.forEach((p, i) => {
             let v = application[i] || p.default;
@@ -280,6 +281,7 @@ function mergeInterface(obj) {
   }
 
   let properties = {};
+  let extendsArray = [];
   if (obj.type === 'interface') {
     merge(properties, obj.properties);
 
@@ -289,18 +291,20 @@ function mergeInterface(obj) {
         console.log('ext should not be null', obj);
         continue;
       }
-      merge(properties, mergeInterface(ext).properties);
+      let extProperties = mergeInterface(ext).properties;
+      if (Object.keys(extProperties).length === 0) {
+        extendsArray.push(ext);
+      } else {
+        merge(properties, extProperties);
+      }
     }
   }
 
   return {
+    ...obj,
     type: 'interface',
-    id: obj.id,
-    name: obj.name,
     properties,
-    typeParameters: obj.typeParameters,
-    extends: [],
-    description: obj.description
+    extends: extendsArray
   };
 }
 

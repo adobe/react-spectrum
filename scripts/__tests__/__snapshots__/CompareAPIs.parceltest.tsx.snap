@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Compare API components can add a new interface that did not previously exist 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:Foo
++Foo {
++  bar: number
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components can extend other interfaces 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:SpectrumToastContainerProps
++SpectrumToastContainerProps {
++  bar: number
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components can extend other interfaces with no properties 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:SpectrumToastContainerProps
++SpectrumToastContainerProps extends RefObject {
++
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components can handle top level exported identifiers 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:theme
+-theme: number
++theme: Key
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components can remove a new interface that did not previously exist 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/base/src/index.tsx:Foo
+-Foo {
+-  bar: number
+-}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components compares non template to template version 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:TableColumnResizeState
+-TableColumnResizeState {
++TableColumnResizeState<T> {
+   getColumnMaxWidth: (Key) => number
+   getColumnMinWidth: (Key) => number
+   getColumnWidth: (Key) => number
+-  onColumnResize: (Key, number) => void
++  onColumnResize: (Key, number) => Map<Key, number>
+   onColumnResizeEnd: (Key) => void
+   onColumnResizeStart: (Key) => void
++  resizingColumn: Key | null
++  tableState: TableState<T>
+   widths: Map<Key, number>
+ }
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components writes export entry for React component 1`] = `
+"
+### Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch
+
+#### /Users/robsnow/GitProjects/tsdiff-work/react-spectrum/branch/src/index.tsx:App1
+ App1 {
+-  id: string
++  id: number
+ }
+
+-----------------------------------
+"
+`;

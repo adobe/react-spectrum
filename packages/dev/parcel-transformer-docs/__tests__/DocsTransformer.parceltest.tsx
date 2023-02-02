@@ -53,8 +53,36 @@ describe('DocsTransformer - API', () => {
     });
 
   // every test must supply at least the 'index' file, they can include more, but that must be the entry point
-  async function writeSourceFile(name, contents) {
+  async function writeSourceFile(name: string, contents:string, packageName?: string) {
+    if (packageName) {
+      return inputFS.writeFile(`test/${packageName}/${name}`, contents, {});
+    }
+    if (name.split('.').length > 1) {
+      return inputFS.writeFile(`test/src/${name}`, contents, {});
+    }
     return inputFS.writeFile(`test/src/${name}.tsx`, contents, {});
+  }
+
+  async function createPackage(pkg) {
+    let parts = pkg.split('/');
+    let scope;
+    let name;
+    if (parts[0].startsWith('@') && parts.length > 1) {
+      scope = parts[0];
+      name = parts[1];
+    } else {
+      name = parts[0];
+    }
+    if (scope) {
+      await inputFS.mkdirp(`test/${scope}`);
+    }
+    await inputFS.mkdirp(scope ? `test/${scope}/${name}` : `test/${name}`);
+    let pkgJson = {
+      name: pkg,
+      private: true,
+      version: '3.0.0'
+    };
+    return writeSourceFile('package.json', JSON.stringify(pkgJson), pkg);
   }
 
   async function runBuild() {
@@ -195,6 +223,17 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('follows local references', async () => {
+      await writeSourceFile('index', `
+    type Foo = string
+    export interface State {
+      foo: Foo
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('identifiers', () => {
@@ -213,4 +252,36 @@ describe('DocsTransformer - API', () => {
     }, 50000);
   });
 
+  describe('links', () => {
+    it('css modules', async () => {
+      await writeSourceFile('theme', `
+        export type CSSModule = {
+          [className: string]: string
+        };
+        export interface Theme {
+          global?: CSSModule,
+          light?: CSSModule
+        };
+      `);
+      await writeSourceFile('defaultTheme', `
+        import {Theme} from './theme';
+        let defaultTheme: Theme = {
+          global: 'global'
+        };
+        export default defaultTheme;
+      `);
+      await writeSourceFile('index', `
+        import defaultTheme from './defaultTheme';
+        import {Theme} from './theme';
+        export let theme: Theme = {
+          ...defaultTheme,
+          global: {
+            ...defaultTheme.global
+          }
+        };
+      `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
 });
