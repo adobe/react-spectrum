@@ -1144,7 +1144,7 @@ describe('LandmarkManager', function () {
     fireEvent.keyDown(document.activeElement!, {key: 'F6'});
     fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement!).toBe(nav);
+    expect(document.activeElement).toBe(nav);
 
     act(() => {
       (document.activeElement as HTMLElement).blur();
