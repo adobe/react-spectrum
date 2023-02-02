@@ -66,7 +66,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     autoComplete: 'off',
     onClear: () => {
       state.setInputValue('');
-      state.setSelectedKey(null);
+      state.selectionManager.setSelectedKeys(new Set());
       if (onClear) {
         onClear();
       }
