@@ -30,8 +30,8 @@ exports[`Compare API components can extend other interfaces with no properties 1
 "
 ### branch
 
-#### branch/src/index.tsx:SpectrumToastContainerProps
-+SpectrumToastContainerProps extends RefObject {
+#### branch/src/index.tsx:ComponentProps
++ComponentProps extends RefObject {
 +
 +}
 

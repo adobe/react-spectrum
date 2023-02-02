@@ -258,7 +258,7 @@ describe('Compare API', () => {
     it('can extend other interfaces with no properties', async () => {
       await writeSourceFile('branch', 'index', `
         import {RefObject} from 'react';
-        export interface SpectrumToastContainerProps extends RefObject {}
+        export interface ComponentProps extends RefObject {}
       `);
 
       await runBranchBuild();
