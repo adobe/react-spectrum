@@ -42,6 +42,20 @@ describe('TableUtils', () => {
     });
   });
 
+  describe('table column layout', () => {
+    it('should generate column widths with defaults if none are provided', () => {
+      let layout = new TableColumnLayout();
+      let collection = {columns: [{key: 'name', column: {props: {}}}, {key: 'type', column: {props: {}}}, {key: 'height', column: {props: {}}}, {key: 'weight', column: {props: {}}}, {key: 'level', column: {props: {}}}]};
+      let columns = layout.buildColumnWidths(
+        1000,
+        collection,
+        new Map([['name', undefined], ['type', undefined], ['height', undefined], ['weight', undefined], ['level', undefined]])
+      );
+
+      expect(columns).toStrictEqual(new Map([['name', 200], ['type', 200], ['height', 200], ['weight', 200], ['level', 200]]));
+    });
+  });
+
   describe('resizing', () => {
     it('can resize both controlled and uncontrolled columns', () => {
       let layout = new TableColumnLayout({
