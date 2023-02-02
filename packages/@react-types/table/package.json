@@ -9,6 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-spectrum/dnd": "^3.0.1",
     "@react-types/grid": "^3.1.5",
     "@react-types/shared": "^3.16.0"
   },

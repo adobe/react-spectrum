@@ -11,6 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {DragAndDropHooks} from '@react-spectrum/dnd';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -59,7 +60,11 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * Handler that is called after a user performs a column resize.
    * Can be used to store the widths of columns for another future session.
    */
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
+   */
+  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
 }
 
 export interface TableHeaderProps<T> {
