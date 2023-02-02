@@ -28,7 +28,7 @@ import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
 
-export function CRUDExample() {
+export function CRUDExample(props) {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -51,7 +51,7 @@ export function CRUDExample() {
           <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
         }
       </ActionGroup>
-      <TableView aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableView aria-label="People" width={500} height={300} selectionMode="multiple" {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column isRowHeader key="firstName">First Name</Column>
           <Column isRowHeader key="lastName">Last Name</Column>

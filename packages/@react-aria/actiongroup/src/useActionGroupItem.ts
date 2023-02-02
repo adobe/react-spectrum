@@ -25,7 +25,7 @@ export interface ActionGroupItemAria {
 }
 
 const BUTTON_ROLES = {
-  'none': null,
+  'none': undefined,
   'single': 'radio',
   'multiple': 'checkbox'
 };
