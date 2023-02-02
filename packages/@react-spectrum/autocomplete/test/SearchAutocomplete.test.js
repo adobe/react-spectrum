@@ -816,6 +816,43 @@ describe('SearchAutocomplete', function () {
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('should clear the selected item if searchfield is cleared', function () {
+      let {getByRole} = renderSearchAutocomplete();
+
+      let searchAutocomplete = getByRole('combobox');
+      typeText(searchAutocomplete, 'one');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(1);
+      expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
+
+      act(() => {
+        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+        fireEvent.keyDown(searchAutocomplete, {key: 'Enter'});
+        fireEvent.keyUp(searchAutocomplete, {key: 'Enter'});
+      });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(searchAutocomplete.value).toBe('One');
+
+      act(() => {
+        fireEvent.keyDown(searchAutocomplete, {key: 'Esc'});
+        fireEvent.keyUp(searchAutocomplete, {key: 'Esc'});
+      });
+
+      expect(searchAutocomplete.value).toBe('');
+      expect(onClear).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('blur', function () {
