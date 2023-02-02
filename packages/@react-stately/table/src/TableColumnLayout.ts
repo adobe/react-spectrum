@@ -34,8 +34,8 @@ export class TableColumnLayout<T> {
   columnMaxWidths: Map<Key, number> = new Map();
 
   constructor(options: TableColumnLayoutOptions<T>) {
-    this.getDefaultWidth = options.getDefaultWidth;
-    this.getDefaultMinWidth = options.getDefaultMinWidth;
+    this.getDefaultWidth = options?.getDefaultWidth ?? (() => '1fr');
+    this.getDefaultMinWidth = options?.getDefaultMinWidth ?? (() => 0);
   }
 
   /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
