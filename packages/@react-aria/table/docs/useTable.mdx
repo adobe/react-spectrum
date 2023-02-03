@@ -498,6 +498,313 @@ function Checkbox(props) {
 
 </details>
 
+## Usage
+
+### Dynamic collections
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
+In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
+only the rows dynamic.
+
+```tsx example export=true
+function ExampleTable(props) {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Type', key: 'type'},
+    {name: 'Date Modified', key: 'date'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Example dynamic collection table" {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Single selection
+
+By default, `useTableState` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `key` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name'},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+
+  return (
+    <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to `useTableState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+```
+
+### Selection behavior
+
+By default, `useTable` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+```tsx example
+<PokemonTable selectionMode="multiple" selectionBehavior="replace" />
+```
+
+### Row actions
+`useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
+When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+```tsx example
+<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
+  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
+</div>
+```
+
+### Sorting
+
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `sortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncSortTable() {
+  let list = useAsyncList({
+    async load({signal}) {
+      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Table aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableHeader>
+        <Column key="name" allowsSorting>Name</Column>
+        <Column key="height" allowsSorting>Height</Column>
+        <Column key="mass" allowsSorting>Mass</Column>
+        <Column key="birth_year" allowsSorting>Birth Year</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row key={item.name}>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Nested columns
+
+Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
+attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
+appears in each row of the table body.
+
+This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
+accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
+be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
+Only leaf columns may be marked as row headers.
+
+```tsx example
+<Table aria-label="Example table with nested columns">
+  <TableHeader>
+    <Column title="Name">
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+    </Column>
+    <Column title="Information">
+      <Column>Age</Column>
+      <Column>Birthday</Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Sam</Cell>
+      <Cell>Smith</Cell>
+      <Cell>36</Cell>
+      <Cell>May 3</Cell>
+    </Row>
+    <Row>
+      <Cell>Julia</Cell>
+      <Cell>Jones</Cell>
+      <Cell>24</Cell>
+      <Cell>February 10</Cell>
+    </Row>
+    <Row>
+      <Cell>Peter</Cell>
+      <Cell>Parker</Cell>
+      <Cell>28</Cell>
+      <Cell>September 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Bruce</Cell>
+      <Cell>Wayne</Cell>
+      <Cell>32</Cell>
+      <Cell>December 18</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Dynamic nested columns
+
+Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
+The following example is the same as the example above, but defined dynamically.
+
+```tsx example
+let columns = [
+  {name: 'Name', key: 'name', children: [
+    {name: 'First Name', key: 'first', isRowHeader: true},
+    {name: 'Last Name', key: 'last', isRowHeader: true}
+  ]},
+  {name: 'Information', key: 'info', children: [
+    {name: 'Age', key: 'age'},
+    {name: 'Birthday', key: 'birthday'}
+  ]}
+];
+
+let rows = [
+  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
+  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
+  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
+  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
+];
+
+<Table aria-label="Example table with dynamic nested columns">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        {columnKey => <Cell>{item[columnKey]}</Cell>}
+      </Row>
+    )}
+  </TableBody>
+</Table>
+```
+
+
 ## Resizable Columns
 
 For resizable column support, two additional hooks need to be added to the table implementation above. The <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
@@ -740,8 +1047,8 @@ accordingly.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-// Reuse the MenuButton from your component library. See below for details.
-import {MenuButton} from 'your-component-library';
+// Reuse the MenuTrigger from your component library. See below for details.
+import {MenuTrigger} from 'your-component-library';
 import {useHover} from '@react-aria/interactions';
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
@@ -769,7 +1076,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
         layoutState.onColumnResizeStart(column.key);
         if (resizerRef) {
           // Brief delay before moving focus to resizer input for screenreaders/Safari
-          setTimeout(() => resizerRef.current?.focus(), 400);
+          setTimeout(() => resizerRef.current?.focus(), 50);
         }
         break;
     }
@@ -801,7 +1108,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
 
   let contents = allowsResizing ? (
     <>
-      <MenuButton
+      <MenuTrigger
         style={{
           width: '100%',
           textAlign: 'left',
@@ -810,7 +1117,8 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
           flex: '1 1 auto',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
+          marginInlineStart: '-6px'
         }}
         label={column.rendered}
         onAction={onMenuSelect}
@@ -821,7 +1129,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
             {item.label}
           </Item>
         )}
-      </MenuButton>
+      </MenuTrigger>
       {column.props.allowsSorting && sortIcon}
       <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
     </>
@@ -902,7 +1210,7 @@ const Resizer = React.forwardRef((props, ref) => {
         height: 'auto',
         border: '2px',
         borderStyle: 'none solid',
-        borderColor: layoutState.resizingColumn === column.key ? 'blue' : 'grey',
+        borderColor: layoutState.resizingColumn === column.key ? 'orange' : 'grey',
         touchAction: 'none',
         flex: '0 0 auto',
         boxSizing: 'border-box',
@@ -923,9 +1231,9 @@ const Resizer = React.forwardRef((props, ref) => {
 
 </details>
 
-### MenuButton
+### MenuTrigger
 
-The `MenuButton` is used in the `ResizableTableColumnHeader` to display a list of available actions available to a column. It is built using the [useMenuTrigger](useMenu.html)
+The `MenuTrigger` is used in the `ResizableTableColumnHeader` to display a list of available actions available to a column. It is built using the [useMenuTrigger](useMenu.html)
 and [useMenuTriggerState](/react-stately/useMenuTriggerState.html) hooks, and can be shared with many other components. Note that you'll have to call `continuePropagation()` in `onKeyDown`
 to properly bubble the `keydown` event up to `useSelectableCollection` for grid keyboard navigation.
 
@@ -940,7 +1248,7 @@ import {Item} from '@react-stately/collections';
 // Reuse the Button, Menu, and Popover from your component library. See below for details.
 import {Button, Menu, Popover} from 'your-component-library';
 
-const MenuButton = React.forwardRef((props, ref) => {
+const MenuTrigger = React.forwardRef((props, ref) => {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 
@@ -1311,312 +1619,6 @@ also still supported.
     </Row>
   </TableBody>
 </ResizableColumnsTable>
-```
-
-## Usage
-
-### Dynamic collections
-
-So far, our examples have shown static collections, where the data is hard coded.
-Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
-In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
-only the rows dynamic.
-
-```tsx example export=true
-function ExampleTable(props) {
-  let columns = [
-    {name: 'Name', key: 'name'},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
-  ];
-
-  let rows = [
-    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-    {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-  ];
-
-  return (
-    <Table aria-label="Example dynamic collection table" {...props}>
-      <TableHeader columns={columns}>
-        {column => (
-          <Column>
-            {column.name}
-          </Column>
-        )}
-      </TableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-}
-```
-
-### Single selection
-
-By default, `useTableState` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
-Note that the value of the selected keys must match the `key` prop of the row.
-
-The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
-A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
-
-```tsx example
-// Using the example above
-<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} />
-```
-
-### Multiple selection
-
-Multiple selection can be enabled by setting `selectionMode` to `multiple`.
-
-```tsx example
-// Using the example above
-<ExampleTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
-```
-
-### Disallow empty selection
-
-Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
-In this mode, if a single row is selected and the user presses it, it will not be deselected.
-
-```tsx example
-// Using the example above
-<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
-```
-
-### Controlled selection
-
-To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
-be passed into the callback when the row is pressed, allowing you to update state accordingly.
-
-```tsx example export=true
-function PokemonTable(props) {
-  let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Level', uid: 'level'}
-  ];
-
-  let rows = [
-    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
-    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
-    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
-    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
-
-  return (
-    <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
-      <TableHeader columns={columns}>
-        {column => (
-          <Column key={column.uid}>
-            {column.name}
-          </Column>
-        )}
-      </TableHeader>
-      <TableBody items={rows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-}
-```
-
-### Disabled rows
-
-You can disable specific rows by providing an array of keys to `useTableState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
-Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
-
-```tsx example
-// Using the same table as above
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
-```
-
-### Selection behavior
-
-By default, `useTable` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
-
-When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
-
-```tsx example
-<PokemonTable selectionMode="multiple" selectionBehavior="replace" />
-```
-
-### Row actions
-`useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
-When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
-
-This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
-and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
-and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
-
-```tsx example
-<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
-  <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
-  <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
-</div>
-```
-
-### Sorting
-
-Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
-the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
-When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
-the `sortDescriptor` appropriately.
-
-This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
-See the docs for more information on how to perform server side sorting.
-
-```tsx example
-import {useAsyncList} from '@react-stately/data';
-
-function AsyncSortTable() {
-  let list = useAsyncList({
-    async load({signal}) {
-      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
-      let json = await res.json();
-      return {
-        items: json.results
-      };
-    },
-    async sort({items, sortDescriptor}) {
-      return {
-        items: items.sort((a, b) => {
-          let first = a[sortDescriptor.column];
-          let second = b[sortDescriptor.column];
-          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-          if (sortDescriptor.direction === 'descending') {
-            cmp *= -1;
-          }
-          return cmp;
-        })
-      };
-    }
-  });
-
-  return (
-    <Table aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-      <TableHeader>
-        <Column key="name" allowsSorting>Name</Column>
-        <Column key="height" allowsSorting>Height</Column>
-        <Column key="mass" allowsSorting>Mass</Column>
-        <Column key="birth_year" allowsSorting>Birth Year</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {item => (
-          <Row key={item.name}>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
-    </Table>
-  );
-}
-```
-
-### Nested columns
-
-Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
-attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
-appears in each row of the table body.
-
-This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
-accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
-be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
-Only leaf columns may be marked as row headers.
-
-```tsx example
-<Table aria-label="Example table with nested columns">
-  <TableHeader>
-    <Column title="Name">
-      <Column isRowHeader>First Name</Column>
-      <Column isRowHeader>Last Name</Column>
-    </Column>
-    <Column title="Information">
-      <Column>Age</Column>
-      <Column>Birthday</Column>
-    </Column>
-  </TableHeader>
-  <TableBody>
-    <Row>
-      <Cell>Sam</Cell>
-      <Cell>Smith</Cell>
-      <Cell>36</Cell>
-      <Cell>May 3</Cell>
-    </Row>
-    <Row>
-      <Cell>Julia</Cell>
-      <Cell>Jones</Cell>
-      <Cell>24</Cell>
-      <Cell>February 10</Cell>
-    </Row>
-    <Row>
-      <Cell>Peter</Cell>
-      <Cell>Parker</Cell>
-      <Cell>28</Cell>
-      <Cell>September 7</Cell>
-    </Row>
-    <Row>
-      <Cell>Bruce</Cell>
-      <Cell>Wayne</Cell>
-      <Cell>32</Cell>
-      <Cell>December 18</Cell>
-    </Row>
-  </TableBody>
-</Table>
-```
-
-### Dynamic nested columns
-
-Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
-The following example is the same as the example above, but defined dynamically.
-
-```tsx example
-let columns = [
-  {name: 'Name', key: 'name', children: [
-    {name: 'First Name', key: 'first', isRowHeader: true},
-    {name: 'Last Name', key: 'last', isRowHeader: true}
-  ]},
-  {name: 'Information', key: 'info', children: [
-    {name: 'Age', key: 'age'},
-    {name: 'Birthday', key: 'birthday'}
-  ]}
-];
-
-let rows = [
-  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
-  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
-  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
-  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
-];
-
-<Table aria-label="Example table with dynamic nested columns">
-  <TableHeader columns={columns}>
-    {column => (
-      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
-        {column.name}
-      </Column>
-    )}
-  </TableHeader>
-  <TableBody items={rows}>
-    {item => (
-      <Row>
-        {columnKey => <Cell>{item[columnKey]}</Cell>}
-      </Row>
-    )}
-  </TableBody>
-</Table>
 ```
 
 ## Internationalization
