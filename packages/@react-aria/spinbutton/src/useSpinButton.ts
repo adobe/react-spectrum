@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -56,17 +56,15 @@ export function useSpinButton(
     onIncrementToMax
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
-  const propsRef = useRef(props);
-  propsRef.current = props;
 
-  const clearAsync = () => clearTimeout(_async.current);
+  const clearAsync = useCallback(() => clearTimeout(_async.current), [_async]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => clearAsync();
   }, []);
 
-  let onKeyDown = (e) => {
+  let onKeyDown = useCallback((e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
       return;
     }
@@ -113,22 +111,24 @@ export function useSpinButton(
         }
         break;
     }
-  };
+  }, [isReadOnly, onIncrementPage, onIncrement, onDecrementPage, onDecrement, onDecrementToMin, onIncrementToMax]);
 
   let isFocused = useRef(false);
-  let onFocus = () => {
+  let onFocus = useCallback(() => {
     isFocused.current = true;
-  };
+  }, [isFocused]);
 
-  let onBlur = () => {
+  let onBlur = useCallback(() => {
     isFocused.current = false;
-  };
+  }, [isFocused]);
 
   // Replace Unicode hyphen-minus (U+002D) with minus sign (U+2212).
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  textValue = useMemo(
+    () => textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212')
+  , [textValue, stringFormatter, value]);
 
   useEffect(() => {
     if (isFocused.current) {
@@ -139,7 +139,7 @@ export function useSpinButton(
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      propsRef.current.onIncrement();
+      onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -157,7 +157,7 @@ export function useSpinButton(
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
       clearAsync();
-      propsRef.current.onDecrement();
+      onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -193,26 +193,26 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: () => {
+      onPressStart: useCallback(() => {
         onIncrementPressStart(400);
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
-      },
-      onPressEnd: () => {
+      }, [onIncrementPressStart, addGlobalListener, cancelContextMenu]),
+      onPressEnd: useCallback(() => {
         clearAsync();
         removeAllGlobalListeners();
-      },
+      }, [clearAsync, removeAllGlobalListeners]),
       onFocus,
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: () => {
+      onPressStart: useCallback(() => {
         onDecrementPressStart(400);
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
-      },
-      onPressEnd: () => {
+      }, [onIncrementPressStart, addGlobalListener, cancelContextMenu]),
+      onPressEnd: useCallback(() => {
         clearAsync();
         removeAllGlobalListeners();
-      },
+      }, [clearAsync, removeAllGlobalListeners]),
       onFocus,
       onBlur
     }

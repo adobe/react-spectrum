@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface NumberFieldState {
   /**
@@ -107,17 +107,21 @@ export function useNumberFieldState(
   let prevValue = useRef(numberValue);
   let prevLocale = useRef(locale);
   let prevFormatOptions = useRef(formatOptions);
-  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
-    setInputValue(format(numberValue));
-    prevValue.current = numberValue;
-    prevLocale.current = locale;
-    prevFormatOptions.current = formatOptions;
-  }
+  useEffect(() => {
+    if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
+      setInputValue(format(numberValue));
+      prevValue.current = numberValue;
+      prevLocale.current = locale;
+      prevFormatOptions.current = formatOptions;
+    }
+  });
 
   // Store last parsed value in a ref so it can be used by increment/decrement below
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
   let parsed = useRef(0);
-  parsed.current = parsedValue;
+  useEffect(() => {
+    parsed.current = parsedValue;
+  });
 
   let commit = () => {
     // Set to empty state if input value is empty

@@ -44,10 +44,11 @@ export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: Li
 
   let isFocused = props.key === state.selectionManager.focusedKey;
   let lastRender = useRef({isFocused, state});
-  lastRender.current = {isFocused, state};
+  useEffect(() => {
+    lastRender.current = {isFocused, state};
+  }, [isFocused, state]);
 
   // If the focused item is removed from the DOM, reset the focused key to null.
-  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
       if (lastRender.current.isFocused) {

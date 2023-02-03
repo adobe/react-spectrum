@@ -12,9 +12,9 @@
 
 import {Color, ColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
 
 export interface ColorFieldState {
   /**
@@ -86,10 +86,12 @@ export function useColorFieldState(
   };
 
   let prevValue = useRef(colorValue);
-  if (prevValue.current !== colorValue) {
-    setInputValue(colorValue ? colorValue.toString('hex') : '');
-    prevValue.current = colorValue;
-  }
+  useEffect(() => {
+    if (prevValue.current !== colorValue) {
+      setInputValue(colorValue ? colorValue.toString('hex') : '');
+      prevValue.current = colorValue;
+    }
+  });
 
 
   let parsedValue = useMemo(() => {
@@ -102,9 +104,11 @@ export function useColorFieldState(
     return color;
   }, [inputValue]);
   let parsed = useRef(null);
-  parsed.current = parsedValue;
+  useEffect(() => {
+    parsed.current = parsedValue;
+  });
 
-  let commit = () => {
+  let commit = useCallback(() => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       safelySetColorValue(null);
@@ -125,9 +129,9 @@ export function useColorFieldState(
       newColorValue = colorValue.toString('hex');
     }
     setInputValue(newColorValue);
-  };
+  }, [inputValue, safelySetColorValue, setInputValue, colorValue, parsed]);
 
-  let increment = () => {
+  let increment = useCallback(() => {
     let newValue = addColorValue(parsed.current, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
@@ -137,8 +141,8 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  };
-  let decrement = () => {
+  }, [safelySetColorValue, parsed, colorValue, setInputValue, step]);
+  let decrement = useCallback(() => {
     let newValue = addColorValue(parsed.current, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
@@ -148,9 +152,9 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  };
-  let incrementToMax = () => safelySetColorValue(MAX_COLOR);
-  let decrementToMin = () => safelySetColorValue(MIN_COLOR);
+  }, [safelySetColorValue, parsed, colorValue, setInputValue, step]);
+  let incrementToMax = useCallback(() => safelySetColorValue(MAX_COLOR), [safelySetColorValue]);
+  let decrementToMin = useCallback(() => safelySetColorValue(MIN_COLOR), [safelySetColorValue]);
 
   let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
 
