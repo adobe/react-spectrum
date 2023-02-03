@@ -93,6 +93,7 @@ export interface IColumn {
  */
 export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth, getDefaultMinWidth) {
   let initialUsedSpace = 0;
+  let hasNonFrozenItems = false;
   let flexItems = columns.map((column, index) => {
     let width = changedColumns.get(column.key) != null ? changedColumns.get(column.key) : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr';
     let frozen = false;
@@ -128,6 +129,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
       initialUsedSpace += targetMainSize;
     } else {
       initialUsedSpace += baseSize;
+      hasNonFrozenItems = true;
     }
     return {
       frozen,
@@ -141,10 +143,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     };
   });
 
-  let initialFreeSpace = availableWidth - initialUsedSpace;
-
-  let remainingFreeSpace = initialFreeSpace;
-  let hasNonFrozenItems = flexItems.some(item => !item.frozen);
+  let remainingFreeSpace = availableWidth - initialUsedSpace;
   // 9.7.4
   // 9.7.4.a
   while (hasNonFrozenItems) {
@@ -168,12 +167,8 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     });
 
     remainingFreeSpace = availableWidth - usedWidth;
-    if (flexFactors < 1) {
-      let tempRemainingFreeSpace = initialFreeSpace * flexFactors;
-      if (tempRemainingFreeSpace < remainingFreeSpace) {
-        remainingFreeSpace = tempRemainingFreeSpace;
-      }
-    }
+    // we only support integer FR's, and because of hasNonFrozenItems, we know that flexFactors > 0
+    // so no need to check for flexFactors < 1
     // 9.7.4.c
     /**
      * If the remaining free space is zero
