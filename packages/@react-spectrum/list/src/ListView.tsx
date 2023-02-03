@@ -11,7 +11,7 @@
  */
 
 import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
-import {AsyncLoadable, DOMRef, LoadingState, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, DOMRef, LoadingState, Node, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -25,13 +25,15 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
+import {ListViewSection} from './ListViewSection';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import {ReusableView} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider} from '@react-spectrum/provider';
-import {Virtualizer} from '@react-aria/virtualizer';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
@@ -205,6 +207,29 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
 
   let hasAnyChildren = useMemo(() => [...collection].some(item => item.hasChildNodes), [collection]);
 
+  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // The header is extracted from the children so it can receive ARIA labeling properties.
+  type View = ReusableView<Node<T>, unknown>;
+  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+    if (reusableView.viewType === 'section') {
+      return (
+        <ListViewSection
+          key={reusableView.key}
+          reusableView={reusableView}
+          header={children.find(c => c.viewType === 'header')}>
+          {renderChildren(children.filter(c => c.viewType === 'item'))}
+        </ListViewSection>
+      );
+    }
+
+    return (
+      <VirtualizerItem
+        key={reusableView.key}
+        reusableView={reusableView}
+        parent={parent} />
+    );
+  };
+
   return (
     <ListViewContext.Provider value={{state, dragState, dropState, dragAndDropHooks, onAction, isListDraggable, isListDroppable, layout, loadingState}}>
       <FocusScope>
@@ -218,6 +243,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
             onLoadMore={onLoadMore}
             ref={domRef}
             focusedKey={focusedKey}
+            renderWrapper={renderWrapper}
             scrollDirection="vertical"
             className={
               classNames(

@@ -11,5 +11,5 @@
  */
 
 export {ListView} from './ListView';
-export {Item} from '@react-stately/collections';
+export {Item, Section} from '@react-stately/collections';
 export type {SpectrumListViewProps} from './ListView';
