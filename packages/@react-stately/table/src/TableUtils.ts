@@ -92,7 +92,6 @@ export interface IColumn {
  * @param getDefaultMinWidth - A function that returns the default min width of a column by its index.
  */
 export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth, getDefaultMinWidth) {
-  let initialUsedSpace = 0;
   let hasNonFrozenItems = false;
   let flexItems = columns.map((column, index) => {
     let width = changedColumns.get(column.key) != null ? changedColumns.get(column.key) : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr';
@@ -125,10 +124,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     }
 
     // 9.7.3
-    if (frozen) {
-      initialUsedSpace += targetMainSize;
-    } else {
-      initialUsedSpace += baseSize;
+    if (!frozen) {
       hasNonFrozenItems = true;
     }
     return {
@@ -143,7 +139,6 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     };
   });
 
-  let remainingFreeSpace = availableWidth - initialUsedSpace;
   // 9.7.4
   // 9.7.4.a
   while (hasNonFrozenItems) {
@@ -166,7 +161,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
       }
     });
 
-    remainingFreeSpace = availableWidth - usedWidth;
+    let remainingFreeSpace = availableWidth - usedWidth;
     // we only support integer FR's, and because of hasNonFrozenItems, we know that flexFactors > 0
     // so no need to check for flexFactors < 1
     // 9.7.4.c
@@ -228,7 +223,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     flexItems.forEach(item => {
       if (totalViolation === 0 || Math.sign(totalViolation) === Math.sign(item.violation)) {
         item.frozen = true;
-      } else {
+      } else if (!item.frozen) {
         hasNonFrozenItems = true;
       }
     });
