@@ -92,11 +92,13 @@ export interface IColumn {
  * @param getDefaultMinWidth - A function that returns the default min width of a column by its index.
  */
 export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth, getDefaultMinWidth) {
+  let initialUsedSpace = 0;
   let flexItems = columns.map((column, index) => {
     let width = changedColumns.get(column.key) != null ? changedColumns.get(column.key) : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr';
     let frozen = false;
     let baseSize = 0;
     let flex = 0;
+    let targetMainSize = null;
     if (isStatic(width)) {
       baseSize = parseStaticWidth(width, availableWidth);
       frozen = true;
@@ -110,6 +112,23 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
     let min = getMinWidth(column.minWidth ?? getDefaultMinWidth?.(index) ?? 0, availableWidth);
     let max = getMaxWidth(column.maxWidth, availableWidth);
     let hypotheticalMainSize = Math.max(min, Math.min(baseSize, max));
+
+    // 9.7.1
+    // We don't make use of flex basis, it's always 0, so we are always in 'grow' mode.
+    // 9.7.2
+    if (frozen) {
+      targetMainSize = hypotheticalMainSize;
+    } else if (baseSize > hypotheticalMainSize) {
+      frozen = true;
+      targetMainSize = hypotheticalMainSize;
+    }
+
+    // 9.7.3
+    if (frozen) {
+      initialUsedSpace += targetMainSize;
+    } else {
+      initialUsedSpace += baseSize;
+    }
     return {
       frozen,
       baseSize,
@@ -117,36 +136,18 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
       min,
       max,
       flex,
-      targetMainSize: null,
-      violation: ''
+      targetMainSize,
+      violation: 0
     };
   });
-  // 9.7.1
-  // We don't make use of flex basis, it's always 0, so we are always in 'grow' mode.
-  // 9.7.2
-  flexItems.forEach(item => {
-    if (item.frozen) {
-      item.targetMainSize = item.hypotheticalMainSize;
-      return;
-    }
-    if (item.baseSize > item.hypotheticalMainSize) {
-      item.frozen = true;
-      item.targetMainSize = item.hypotheticalMainSize;
-    }
-  });
 
-  // 9.7.3
-  let initialFreeSpace = availableWidth - flexItems.reduce((acc, item) => {
-    if (item.frozen) {
-      return acc + item.targetMainSize;
-    }
-    return acc + item.baseSize;
-  }, 0);
+  let initialFreeSpace = availableWidth - initialUsedSpace;
 
   let remainingFreeSpace = initialFreeSpace;
+  let hasNonFrozenItems = flexItems.some(item => !item.frozen);
   // 9.7.4
   // 9.7.4.a
-  while (flexItems.some(item => !item.frozen)) {
+  while (hasNonFrozenItems) {
     // 9.7.4.b
     /**
      * Calculate the remaining free space as for initial free space,
@@ -155,18 +156,18 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
      * If the magnitude of this value is less than the magnitude of
      * the remaining free space, use this as the remaining free space.
      */
-    remainingFreeSpace = availableWidth - flexItems.reduce((acc, item) => {
+    let usedWidth = 0;
+    let flexFactors = 0;
+    flexItems.forEach(item => {
       if (item.frozen) {
-        return acc + item.targetMainSize;
+        usedWidth += item.targetMainSize;
+      } else {
+        usedWidth += item.baseSize;
+        flexFactors += item.flex;
       }
-      return acc + item.baseSize;
-    }, 0);
-    let flexFactors = flexItems.reduce((acc, item) => {
-      if (!item.frozen) {
-        return acc + item.flex;
-      }
-      return acc;
-    }, 0);
+    });
+
+    remainingFreeSpace = availableWidth - usedWidth;
     if (flexFactors < 1) {
       let tempRemainingFreeSpace = initialFreeSpace * flexFactors;
       if (tempRemainingFreeSpace < remainingFreeSpace) {
@@ -184,16 +185,12 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
      * base size plus a fraction of the remaining free space
      * proportional to the ratio.
      */
-    if (remainingFreeSpace <= 0) {
-      // do nothing
-    } else {
-      let total = flexItems.reduce((acc, item) => item.frozen ? acc : acc + item.flex, 0);
+    if (remainingFreeSpace > 0) {
       flexItems.forEach((item) => {
-        if (item.frozen) {
-          return;
+        if (!item.frozen) {
+          let ratio = item.flex / flexFactors;
+          item.targetMainSize = item.baseSize + (ratio * remainingFreeSpace);
         }
-        let ratio = item.flex / total;
-        item.targetMainSize = item.baseSize + (ratio * remainingFreeSpace);
       });
     }
 
@@ -208,18 +205,13 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
      */
     let totalViolation = 0;
     flexItems.forEach(item => {
-      item.violation = '';
+      item.violation = 0;
       if (!item.frozen) {
         let {min, max, targetMainSize} = item;
         item.targetMainSize = Math.max(min, Math.min(targetMainSize, max));
 
-        totalViolation += item.targetMainSize - targetMainSize;
-        // got smaller
-        if (item.targetMainSize < targetMainSize) {
-          item.violation = 'max';
-        } else if (item.targetMainSize > targetMainSize) {
-          item.violation = 'min';
-        }
+        item.violation = item.targetMainSize - targetMainSize;
+        totalViolation += item.violation;
       }
     });
 
@@ -237,29 +229,20 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
      * Negative
      * - Freeze all the items with max violations.
      */
-    if (totalViolation === 0) {
-      flexItems.forEach(item => {
+    hasNonFrozenItems = false;
+    flexItems.forEach(item => {
+      if (totalViolation === 0 || Math.sign(totalViolation) === Math.sign(item.violation)) {
         item.frozen = true;
-      });
-    } else if (totalViolation > 0) {
-      flexItems.forEach(item => {
-        if (item.violation === 'min') {
-          item.frozen = true;
-        }
-      });
-    } else {
-      flexItems.forEach(item => {
-        if (item.violation === 'max') {
-          item.frozen = true;
-        }
-      });
-    }
+      } else {
+        hasNonFrozenItems = true;
+      }
+    });
   }
 
-  return cascadeRounding(flexItems.map((item) => item.targetMainSize));
+  return cascadeRounding(flexItems);
 }
 
-function cascadeRounding(array: number[]): number[] {
+function cascadeRounding(flexItems): number[] {
   /*
   Given an array of floats that sum to an integer, this rounds the floats
   and returns an array of integers with the same sum.
@@ -268,7 +251,8 @@ function cascadeRounding(array: number[]): number[] {
   let fpTotal = 0;
   let intTotal = 0;
   let roundedArray = [];
-  array.forEach(function (float) {
+  flexItems.forEach(function (item) {
+    let float = item.targetMainSize;
     let integer = Math.round(float + fpTotal) - intTotal;
     fpTotal += float;
     intTotal += integer;
