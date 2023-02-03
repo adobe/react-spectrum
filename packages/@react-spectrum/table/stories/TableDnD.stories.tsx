@@ -15,10 +15,10 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
-import {ItemDropTarget} from '@react-types/shared';
+// import {ItemDropTarget} from '@react-types/shared';
 import React from 'react';
 import {useDragAndDrop} from '@react-spectrum/dnd';
-import {useListData} from '@react-stately/data';
+// import {useListData} from '@react-stately/data';
 
 export default {
   title: 'TableView/Drag and Drop',
@@ -157,84 +157,84 @@ function DragExample(props?) {
   );
 }
 
-function ReorderExample(props) {
-  let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
-  let list = useListData({
-    initialItems: props.items || items
-  });
+// function ReorderExample(props) {
+//   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
+//   let list = useListData({
+//     initialItems: props.items || items
+//   });
 
-  // Use a random drag type so the items can only be reordered within this table and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+//   // Use a random drag type so the items can only be reordered within this table and not dragged elsewhere.
+//   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
-  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
-    if (target.dropPosition === 'before') {
-      list.moveBefore(target.key, keys);
-    } else {
-      list.moveAfter(target.key, keys);
-    }
-  };
+//   let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+//     if (target.dropPosition === 'before') {
+//       list.moveBefore(target.key, keys);
+//     } else {
+//       list.moveAfter(target.key, keys);
+//     }
+//   };
 
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems(keys) {
-      return [...keys].map(key => {
-        key = JSON.stringify(key);
-        return {
-          [dragType]: key,
-          'text/plain': key
-        };
-      });
-    },
-    getAllowedDropOperations() {
-      getAllowedDropOperationsAction();
-      return ['move', 'cancel'];
-    },
-    onDragStart: onDragStart,
-    onDragEnd: onDragEnd,
-    async onDrop(e) {
-      onDrop(e);
-      if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-        let keys = [];
-        for (let item of e.items) {
-          if (item.kind === 'text') {
-            let key;
-            if (item.types.has(dragType)) {
-              key = JSON.parse(await item.getText(dragType));
-              keys.push(key);
-            } else if (item.types.has('text/plain')) {
-              // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
-              // Multiple drag items are contained in a single string so we need to split them out
-              key = await item.getText('text/plain');
-              keys = key.split('\n').map(val => val.replaceAll('"', ''));
-            }
-          }
-        }
-        onMove(keys, e.target);
-      }
-    },
-    getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition === 'on') {
-        return 'cancel';
-      }
+//   let {dragAndDropHooks} = useDragAndDrop({
+//     getItems(keys) {
+//       return [...keys].map(key => {
+//         key = JSON.stringify(key);
+//         return {
+//           [dragType]: key,
+//           'text/plain': key
+//         };
+//       });
+//     },
+//     getAllowedDropOperations() {
+//       getAllowedDropOperationsAction();
+//       return ['move', 'cancel'];
+//     },
+//     onDragStart: onDragStart,
+//     onDragEnd: onDragEnd,
+//     async onDrop(e) {
+//       onDrop(e);
+//       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
+//         let keys = [];
+//         for (let item of e.items) {
+//           if (item.kind === 'text') {
+//             let key;
+//             if (item.types.has(dragType)) {
+//               key = JSON.parse(await item.getText(dragType));
+//               keys.push(key);
+//             } else if (item.types.has('text/plain')) {
+//               // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+//               // Multiple drag items are contained in a single string so we need to split them out
+//               key = await item.getText('text/plain');
+//               keys = key.split('\n').map(val => val.replaceAll('"', ''));
+//             }
+//           }
+//         }
+//         onMove(keys, e.target);
+//       }
+//     },
+//     getDropOperation(target) {
+//       if (target.type === 'root' || target.dropPosition === 'on') {
+//         return 'cancel';
+//       }
 
-      return 'move';
-    }
-  });
+//       return 'move';
+//     }
+//   });
 
-  return (
-    <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={300} height={200} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
-      <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
-      </TableHeader>
-      <TableBody items={items}>
-        {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-        }
-      </TableBody>
-    </TableView>
-  );
-}
+//   return (
+//     <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={300} height={200} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+//       <TableHeader columns={columns}>
+//         {column => <Column>{column.name}</Column>}
+//       </TableHeader>
+//       <TableBody items={items}>
+//         {item =>
+//             (<Row key={item.foo}>
+//               {key => <Cell>{item[key]}</Cell>}
+//             </Row>)
+//         }
+//       </TableBody>
+//     </TableView>
+//   );
+// }
 
 export const DragOutOfTable: TableStory = {
   render: (args) => (
@@ -248,11 +248,11 @@ export const DragOutOfTable: TableStory = {
   storyName: 'Drag out of table'
 };
 
-export const DragWithinTable: TableStory = {
-  render: (args) => (
-    <Flex direction="row" wrap alignItems="center">
-      <ReorderExample tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
-    </Flex>
-  ),
-  storyName: 'Drag within table (Reorder)'
-};
+// export const DragWithinTable: TableStory = {
+//   render: (args) => (
+//     <Flex direction="row" wrap alignItems="center">
+//       <ReorderExample tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+//     </Flex>
+//   ),
+//   storyName: 'Drag within table (Reorder)'
+// };

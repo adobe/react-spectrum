@@ -482,7 +482,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           {() => {
             let item = state.collection.getItem(dragState.draggedKey);
             let itemCount = dragState.draggingKeys.size;
-            return <SpectrumDragPreview layout={layout} item={item} itemCount={itemCount} density={density} direction={direction}  />;
+            return <SpectrumDragPreview layout={layout} item={item} itemCount={itemCount} density={density} direction={direction} />;
           }}
         </DragPreview>
       }
@@ -1022,9 +1022,30 @@ function TableRowGroup({children, ...otherProps}) {
   );
 }
 
+function DragButton() {
+  let {dragButtonProps, dragButtonRef, isFocusVisibleWithin} = useTableRowContext();
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  return (
+    <div
+      {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
+      className={
+        classNames(
+          stylesOverrides,
+          'spectrum-Table-row-draghandle-button'
+        )
+      }
+      style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
+      ref={dragButtonRef}
+      draggable="true">
+      <ListGripper UNSAFE_className={classNames(stylesOverrides)} />
+    </div>
+  );
+}
+
 interface TableRowContextValue {
   dragButtonProps: React.HTMLAttributes<HTMLDivElement>,
-  dragButtonRef: React.MutableRefObject<undefined>
+  dragButtonRef: React.MutableRefObject<undefined>,
+  isFocusVisibleWithin: boolean
 }
 
 
@@ -1106,7 +1127,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
-    <TableRowContext.Provider value={{dragButtonProps, dragButtonRef}}>
+    <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
       {isTableDroppable &&
         <InsertionIndicator
           key={`${item.key}-before`}
@@ -1166,7 +1187,6 @@ function TableHeaderRow({item, children, style, ...props}) {
 function TableCheckboxCell({cell}) {
   let ref = useRef();
   let {state, isTableDraggable} = useTableContext();
-  let {dragButtonProps, dragButtonRef} = useTableRowContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -1194,22 +1214,7 @@ function TableCheckboxCell({cell}) {
             )
           )
         }>
-        {isTableDraggable &&
-          <div
-            {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
-            className={
-              classNames(
-                stylesOverrides,
-                'spectrum-Table-row-draghandle-button'
-              )
-            }
-            // TODO
-            // style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
-            ref={dragButtonRef}
-            draggable="true">
-            <ListGripper />
-          </div>
-        }
+        {isTableDraggable && <DragButton />}
         {state.selectionManager.selectionMode !== 'none' &&
           <Checkbox
             {...checkboxProps}
@@ -1224,7 +1229,6 @@ function TableCheckboxCell({cell}) {
 
 function TableCell({cell}) {
   let {state, isTableDraggable, shouldShowCheckboxes} = useTableContext();
-  let {dragButtonProps, dragButtonRef} = useTableRowContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -1261,22 +1265,7 @@ function TableCell({cell}) {
             )
           )
         }>
-        {shouldShowDragHandle &&
-          <div
-            {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
-            className={
-                classNames(
-                  stylesOverrides,
-                  'spectrum-Table-row-draghandle-button'
-                )
-              }
-              // TODO
-              // style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
-            ref={dragButtonRef}
-            draggable="true">
-            <ListGripper />
-          </div>
-        }
+        {shouldShowDragHandle && <DragButton />}
         <span
           className={
             classNames(

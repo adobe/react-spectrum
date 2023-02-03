@@ -26,17 +26,30 @@ interface DragPreviewProps<T> {
   direction: Direction
 }
 
-export function TableCellPreview({cell, layout, selectionCellWidth}) {
+interface TableCellPreviewProps {
+  cell: GridNode<any>,
+  layout: TableLayout<any>,
+  selectionCellWidth: number,
+  direction: Direction
+}
+
+export function TableCellPreview(props: TableCellPreviewProps) {
+  let {cell, layout, selectionCellWidth, direction} = props;
+  let {align} = cell.column.props;
   let {x: left, height, width} = layout.getLayoutInfo(cell.key).rect;
   if (cell.props.isSelectionCell) {
     return null;
   }
   // Move cell over since we aren't showing selection cell.
-  // TODO: Fix RTL
   left = left - selectionCellWidth;
+  let right: number;
+  if (direction === 'rtl') {
+    right = left;
+    left = undefined;
+  }
   return (
     <div
-      style={{left, height, width, position: 'absolute'}}
+      style={{left, right, height, width, position: 'absolute'}}
       className={
           classNames(
             styles,
@@ -45,9 +58,9 @@ export function TableCellPreview({cell, layout, selectionCellWidth}) {
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
-                // 'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
-                // 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                // 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+                'react-spectrum-Table-cell--alignStart': align === 'start',
+                'react-spectrum-Table-cell--alignCenter': align === 'center',
+                'react-spectrum-Table-cell--alignEnd': align === 'end'
               }
             )
           )
@@ -99,9 +112,16 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           )
         )
       }>
-      {cells.map((cell) => <TableCellPreview key={cell.key} cell={cell} layout={layout} selectionCellWidth={selectionCellWidth} />)}
+      {cells.map((cell) => (
+        <TableCellPreview
+          key={cell.key}
+          cell={cell}
+          layout={layout}
+          selectionCellWidth={selectionCellWidth}
+          direction={direction} />
+      ))}
       {isDraggingMultiple &&
-        <div style={{position: 'absolute', top: '0', right: '8px'}} className={classNames(stylesOverrides, 'react-spectrum-row-badge')}>{itemCount}</div>
+        <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
       }
     </div>
   );

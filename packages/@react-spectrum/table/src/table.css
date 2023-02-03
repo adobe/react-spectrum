@@ -51,6 +51,9 @@
 }
 
 .react-spectrum-Table-row-dragPreview {
+  --spectrum-table-row-badge-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-table-row-badge-background-color: var(--spectrum-global-color-blue-400);
+
   width: var(--spectrum-global-dimension-size-2400);
   border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
   border-radius: var(--spectrum-alias-border-radius-regular);
@@ -77,17 +80,30 @@
       background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
     }
   }
-}
 
-.react-spectrum-row-badge {
-  display: inline-block;
-  color: white;
-  background: var(--spectrum-global-color-blue-400);
-  padding: 0 8px;
-  border-radius: var(--spectrum-alias-border-radius-regular);
-  position: relative;
-  top: 50%;
-  transform: translateY(calc(50% - 2px));
+  .react-spectrum-Table-row-badge {
+    color: var(--spectrum-table-row-badge-text-color);
+    background: var(--spectrum-table-row-badge-background-color);
+    padding: 0 var(--spectrum-global-dimension-size-100);
+    border-radius: var(--spectrum-alias-border-radius-regular);
+    top: 50%;
+    transform: translateY(calc(50% - 2px));
+    position: absolute;
+    top: 0;
+    inset-inline-end: var(--spectrum-global-dimension-size-100);
+  }
+
+  .react-spectrum-Table-row-dragPreview--spacious {
+    .react-spectrum-Table-row-badge {
+      transform: translateY(calc(50% + 4px));
+    }
+  }
+
+  .react-spectrum-Table-row-dragPreview--compact {
+    .react-spectrum-Table-row-badge {
+      transform: translateY(calc(50% - 6px));
+    }
+  }
 }
 
 .react-spectrum-Table-body-dropTarget {
@@ -141,6 +157,11 @@
 
 .spectrum-Table-row-draghandle-button {
   position: absolute;
-  left: 3px;
-  padding: 3px;
+  inset-inline-start: var(--spectrum-global-dimension-size-40);
+  padding: var(--spectrum-global-dimension-size-40);
+
+  svg {
+    margin: auto 0;
+    display: block;
+  }
 }
