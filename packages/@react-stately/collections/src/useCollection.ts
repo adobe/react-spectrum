@@ -12,19 +12,14 @@
 
 import {Collection, CollectionBase, Node} from '@react-types/shared';
 import {CollectionBuilder} from './CollectionBuilder';
-import {useMemo, useRef} from 'react';
+import {useMemo} from 'react';
 
-type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>, prev: C | null) => C;
+type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>) => C;
 
 export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionBase<T>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-
-  let prev = useRef<C>(null);
-  return useMemo(() => {
-    let nodes = builder.build(props, context);
-    prev.current = factory(nodes, prev.current);
-    return prev.current;
-  // Don't invalidate when any prop changes, just the two we care about.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [builder, props.children, props.items, context, ...invalidators]);
+  let {children, items} = props;
+  let nodes = useMemo(() => builder.build({children, items}, context), [builder, children, items, context, ...invalidators]);
+  let collection = useMemo(() => factory(nodes), [nodes, factory]);
+  return collection;
 }

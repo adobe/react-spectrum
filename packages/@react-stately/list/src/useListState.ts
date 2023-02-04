@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionBase, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Key, useCallback, useEffect, useMemo} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
@@ -46,7 +46,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let factory = nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>);
+  let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
   let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
   let collection = useCollection(props, factory, context, [filter]);
