@@ -29,6 +29,49 @@ describe('TableUtils', () => {
       expect(widths).toStrictEqual([235, 235, 150, 150, 938]);
     });
 
+    it('real life case 3', () => {
+      let tableWidth = 1000;
+      let columns = [
+        {key: 'id', label: 'ID', maxWidth: '5%'},
+        {key: 'name', label: 'Name', allowsToggle: false, minWidth: '20%'},
+        {key: 'info', hideHeader: true, allowsToggle: false},
+        {key: 'hp', label: 'HP', align: 'right', maxWidth: '5%'},
+        {key: 'attack', label: 'Attack', align: 'right', maxWidth: '5%'},
+        {key: 'defense', label: 'Defense', align: 'right', maxWidth: '5%'},
+        {key: 'speed', label: 'Speed', align: 'right', maxWidth: '5%'},
+        {key: 'total', label: 'Total', align: 'right', maxWidth: '5%'},
+        {key: 'weight', label: 'Weight', align: 'right', maxWidth: '5%'},
+        {key: 'height', label: 'Height', align: 'right', maxWidth: '5%'},
+        {key: 'abilities', label: 'Abilities', minWidth: '20%'}
+      ];
+      let widths = calculateColumnSizes(
+        tableWidth,
+        columns,
+        new Map(),
+        (index) => {
+          if (columns[index].hideHeader) {
+            return 30;
+          }
+          return '1fr';
+        },
+        () => 25
+      );
+      expect(widths).toStrictEqual([50, 285, 30, 50, 50, 50, 50, 50, 50, 50, 285]);
+    });
+
+    it('real life case 4', () => {
+      let controlledWidths = new Map();
+      let tableWidth = 300;
+      let widths = calculateColumnSizes(
+        tableWidth,
+        [{key: 'name', width: 100}, {key: 'type', width: 150}, {key: 'weight', width: 200}, {key: 'level', width: '1fr'}],
+        controlledWidths,
+        () => '1fr',
+        () => 50
+      );
+      expect(widths).toStrictEqual([100, 150, 200, 50]);
+    });
+
     it('defaultWidths', () => {
       let tableWidth = 800;
       let widths = calculateColumnSizes(
@@ -38,7 +81,7 @@ describe('TableUtils', () => {
         () => 150,
         () => 50
       );
-      expect(widths).toStrictEqual([133, 133, 534]);
+      expect(widths).toStrictEqual([133, 134, 533]);
     });
   });
 
