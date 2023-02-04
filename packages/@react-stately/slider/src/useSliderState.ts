@@ -14,7 +14,7 @@ import {clamp, snapValueToStep} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
