@@ -14,7 +14,7 @@ import {clamp, snapValueToStep} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -192,9 +192,11 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
   const valuesRef = useRef<number[]>(null);
-  valuesRef.current = values;
   const isDraggingsRef = useRef<boolean[]>(null);
-  isDraggingsRef.current = isDraggings;
+  useEffect(() => {
+    valuesRef.current = values;
+    isDraggingsRef.current = isDraggings;
+  });
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 export function useControlledState<T>(
   value: T,
@@ -26,8 +26,9 @@ export function useControlledState<T>(
   if (wasControlled !== isControlled) {
     console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
   }
-
-  ref.current = isControlled;
+  useEffect(() => {
+    ref.current = isControlled;
+  });
 
   let setValue = useCallback((value, ...args) => {
     let onChangeCaller = (value, ...onChangeArgs) => {
@@ -65,10 +66,13 @@ export function useControlledState<T>(
     }
   }, [isControlled, onChange]);
 
-  // If a controlled component's value prop changes, we need to update stateRef
-  if (isControlled) {
-    stateRef.current = value;
-  } else {
+  useEffect(() => {
+    // If a controlled component's value prop changes, we need to update stateRef
+    if (isControlled) {
+      stateRef.current = value;
+    }
+  });
+  if (!isControlled) {
     value = stateValue;
   }
 

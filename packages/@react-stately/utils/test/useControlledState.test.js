@@ -99,12 +99,16 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
-    expect(renderSpy).toBeCalledTimes(1);
+    if (!process.env.STRICT_MODE) {
+      expect(renderSpy).toBeCalledTimes(1);
+    }
     actDOM(() =>
       userEvent.click(button)
     );
     getByTestId('6');
-    expect(renderSpy).toBeCalledTimes(2);
+    if (!process.env.STRICT_MODE) {
+      expect(renderSpy).toBeCalledTimes(2);
+    }
   });
 
   it('can handle controlled setValue behavior', () => {

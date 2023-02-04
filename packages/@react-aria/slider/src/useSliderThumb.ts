@@ -83,7 +83,9 @@ export function useSliderThumb(
   }, [isFocused, focusInput]);
 
   const stateRef = useRef<SliderState>(null);
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  });
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
