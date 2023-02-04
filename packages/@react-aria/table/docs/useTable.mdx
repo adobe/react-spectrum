@@ -813,13 +813,13 @@ update the column widths during a column resize operation. Note that this state 
 
 The second column resizing hook is <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. This hook handles the interactions for a table column's resizer
 element, allowing the user to drag the resizer or use the keyboard arrows to expand the column's width. Be sure to pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
-to this hook so the tracked widths can be updated appropriately. We'll walk through all the required changes to the previous table implementation step by step below.
+to this hook so the tracked widths can be updated appropriately. We'll walk through all the required changes to the previous table implementation step by step below. For simplicity's sake, we'll be
+omitting support for selection and sorting.
 
 ### Table
 
 As mentioned previously, we first need to call <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> to initialize the widths for our table's columns.
-By providing the hook with `getDefaultMinWidth` and `getDefaultWidth`, we can give our table selection checkbox column a pre-determined width while allowing the remaining width to be divided up equally amongst the
-other columns. We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
+We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
 to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. The `widths` from this state are provided to each table element so
 the table cells in the body match their parent column's widths at all times.
 
@@ -835,18 +835,13 @@ import {useTableColumnResizeState} from '@react-stately/table';
 
 function ResizableColumnsTable(props) {
   let {
-    selectionMode,
-    selectionBehavior,
     /*- begin highlight -*/
     onResizeStart,
     onResize,
     onResizeEnd
     /*- end highlight -*/
   } = props;
-  let state = useTableState({
-    ...props,
-    showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace'
-  });
+  let state = useTableState(props);
 
   let ref = useRef();
   let {collection} = state;
@@ -863,25 +858,8 @@ function ResizableColumnsTable(props) {
   );
 
   /*- begin highlight -*/
-  let getDefaultWidth = React.useCallback((node) => {
-    // selection cell column should always take up a specific width, doesn't need to be resizable
-    if (node.props.isSelectionCell) {
-      return 20;
-    }
-    return;
-  }, []);
-
-  let getDefaultMinWidth = React.useCallback((node) => {
-     // selection cell column should always take up a specific width, doesn't need to be resizable
-    if (node.props.isSelectionCell) {
-      return 20;
-    }
-    return 75;
-  }, []);
-
   let layoutState = useTableColumnResizeState({
-    getDefaultWidth,
-    getDefaultMinWidth,
+    // Matches the width of the table itself
     tableWidth: 300
   }, state);
   let {widths} = layoutState;
@@ -914,30 +892,19 @@ function ResizableColumnsTable(props) {
         }}>
         {collection.headerRows.map(headerRow => (
           <ResizableTableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...headerRow.childNodes].map(column =>
-              column.props.isSelectionCell ? (
-                <ResizableTableSelectAllCell
-                  key={column.key}
-                  column={column}
-                  state={state}
-                  /*- begin highlight -*/
-                  widths={widths}
-                  /*- end highlight -*/
-                />
-              ) : (
-                <ResizableTableColumnHeader
-                  key={column.key}
-                  column={column}
-                  state={state}
-                  /*- begin highlight -*/
-                  layoutState={layoutState}
-                  onResizeStart={onResizeStart}
-                  onResize={onResize}
-                  onResizeEnd={onResizeEnd}
-                  /*- end highlight -*/
-                />
-              )
-            )}
+            {[...headerRow.childNodes].map(column => (
+              <ResizableTableColumnHeader
+                key={column.key}
+                column={column}
+                state={state}
+                /*- begin highlight -*/
+                layoutState={layoutState}
+                onResizeStart={onResizeStart}
+                onResize={onResize}
+                onResizeEnd={onResizeEnd}
+                /*- end highlight -*/
+              />
+            ))}
           </ResizableTableHeaderRow>
         ))}
       </ResizableTableRowGroup>
@@ -950,27 +917,16 @@ function ResizableColumnsTable(props) {
         type="tbody">
         {[...collection.body.childNodes].map(row => (
           <ResizableTableRow key={row.key} item={row} state={state}>
-            {[...row.childNodes].map(cell =>
-              cell.props.isSelectionCell ? (
-                <ResizableTableCheckboxCell
-                  key={cell.key}
-                  cell={cell}
-                  state={state}
-                  /*- begin highlight -*/
-                  widths={widths}
-                  /*- end highlight -*/
-                />
-              ) : (
-                <ResizableTableCell
-                  key={cell.key}
-                  cell={cell}
-                  state={state}
-                  /*- begin highlight -*/
-                  widths={widths}
-                  /*- end highlight -*/
-                />
-              )
-            )}
+            {[...row.childNodes].map(cell => (
+              <ResizableTableCell
+                key={cell.key}
+                cell={cell}
+                state={state}
+                /*- begin highlight -*/
+                widths={widths}
+                /*- end highlight -*/
+              />
+            ))}
           </ResizableTableRow>
         ))}
       </ResizableTableRowGroup>
@@ -1037,7 +993,7 @@ function ResizableTableHeaderRow({item, state, children}) {
 The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
 the user can drag or focus to perform a resize operation. To avoid interfering with the existing grid keyboard navigation, we only display this resizer when
 the column is hovered or if the column itself is being resized. This however introduces another issue: how will keyboard, screen reader, and touch users begin a resize operation if the resizer
-is only visible on hover? We can't just have the user press on the column header since that action was previously reserved for sorting.
+is only visible on hover? We can't just have the user press on the column header since that action is reserved for sorting.
 
 To resolve this, we need to render a menu button in the column header if the column is resizable, allowing non-mouse users to select from a list of available actions on the column. For resizing, selecting the corresponding option
 should cause focus to shift to the resizer itself, displaying the resizer for touch screen users to drag and letting keyboard and screen readers resize the column via keyboard arrows and screen reader operations
@@ -1060,51 +1016,27 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
   let showResizer = isHovered || layoutState.resizingColumn === column.key;
-  let arrowIcon = state.sortDescriptor?.direction === 'ascending' ? '▲' : '▼';
-  let allowsSorting = column.props?.allowsSorting;
   let allowsResizing = column.props.allowsResizing;
 
-  const onMenuSelect = (key) => {
+  const onMenuSelect = React.useCallback((key) => {
     switch (key) {
-      case 'sort-asc':
-        state.sort(column.key, 'ascending');
-        break;
-      case 'sort-desc':
-        state.sort(column.key, 'descending');
-        break;
       case 'resize':
         layoutState.onColumnResizeStart(column.key);
-        if (resizerRef) {
-          // Brief delay before moving focus to resizer input for screenreaders/Safari
-          setTimeout(() => resizerRef.current?.focus(), 50);
-        }
+        // Brief delay before moving focus to resizer input for screenreaders/Safari
+        setTimeout(() => resizerRef.current?.focus(), 50);
         break;
     }
-  };
+  }, [layoutState, column.key]);
 
   let items = React.useMemo(() => {
     let options = [
-      allowsSorting ? {
-        label: 'Sort ascending',
-        id: 'sort-asc'
-      } : undefined,
-      allowsSorting ? {
-        label: 'Sort descending',
-        id: 'sort-desc'
-      } : undefined,
       {
         label: 'Resize column',
         id: 'resize'
       }
     ];
     return options;
-  }, [allowsSorting]);
-
-  let sortIcon = (
-    <span aria-hidden="true" style={{padding: '0 2px', visibility: state.sortDescriptor?.column === column.key ? 'visible' : 'hidden'}}>
-      {arrowIcon}
-    </span>
-  );
+  }, []);
 
   let contents = allowsResizing ? (
     <>
@@ -1130,7 +1062,6 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
           </Item>
         )}
       </MenuTrigger>
-      {column.props.allowsSorting && sortIcon}
       <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={triggerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
     </>
   ) :
@@ -1144,7 +1075,6 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
       }}>
 
       {column.rendered}
-      {column.props.allowsSorting && sortIcon}
     </div>
   );
 
@@ -1435,13 +1365,15 @@ and handles text overflow.
 
 ```tsx example export=true render=false
 function ResizableTableRow({item, children, state}) {
+  // Same as previous TableRow implementation
+  ///- begin collapse -///
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, isPressed} = useTableRow({
     node: item
   }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
-
+  ///- end collapse -///
   return (
     <tr
       style={{
@@ -1509,88 +1441,11 @@ function ResizableTableCell({cell, state, widths}) {
 
 </details>
 
-### Resizable checkbox
-
-The `TableCheckboxCell` and the `TableSelectAllCell` now have their widths dictated by the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
-and receive minor style changes to accommodate that.
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function ResizableTableCheckboxCell({cell, state, widths}) {
-  let ref = useRef();
-  let {gridCellProps} = useTableCell({node: cell}, state, ref);
-  let {checkboxProps} = useTableSelectionCheckbox({key: cell.parentKey}, state);
-  /*- begin highlight -*/
-  let column = cell.column;
-  /*- end highlight -*/
-
-  return (
-    <td
-      {...gridCellProps}
-      /*- begin highlight -*/
-      style={{
-        width: widths.get(column.key),
-        display: 'flex',
-        boxSizing: 'border-box'
-      }}
-      /*- end highlight -*/
-      ref={ref}>
-
-      <Checkbox
-        {...checkboxProps}
-        /*- begin highlight -*/
-        style={{marginTop: 'auto', marginBottom: 'auto'}}
-        /*- end highlight -*/
-      />
-    </td>
-  );
-}
-```
-
-</details>
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
-
-```tsx example export=true render=false
-function ResizableTableSelectAllCell({column, state, widths}) {
-  let ref = useRef();
-  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
-  let {checkboxProps} = useTableSelectAllCheckbox(state);
-
-  return (
-    <th
-      {...columnHeaderProps}
-      /*- begin highlight -*/
-      style={{
-        width: widths.get(column.key),
-        boxSizing: 'border-box',
-        margin: 'auto'
-      }}
-      /*- end highlight -*/
-      ref={ref}>
-      {state.selectionManager.selectionMode === 'single'
-        ? <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
-        /*- begin highlight -*/
-        : <Checkbox {...checkboxProps} style={{marginTop: 'auto', marginBottom: 'auto'}} />
-        /*- end highlight -*/
-      }
-    </th>
-  );
-}
-```
-
-</details>
-
-
 And with that, all necessary changes to the previous table implementation have been made and we now have a table that supports resizable columns!
-The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. Previous behaviors such as selection and sorting are
-also still supported.
+The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the styled example!
 
 ```tsx example
-<ResizableColumnsTable aria-label="Table with selection and resizable columns" selectionMode="multiple">
+<ResizableColumnsTable aria-label="Table with resizable columns">
   <TableHeader>
     <Column allowsResizing>Name</Column>
     <Column allowsResizing>Type</Column>
