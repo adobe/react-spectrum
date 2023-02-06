@@ -270,5 +270,58 @@ describe('Compare API', () => {
       let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
+
+    it('alphabetizes properties', async () => {
+      await writeSourceFile('branch', 'index', `
+        export interface Alphabetize {
+          foo: string,
+          bar: string
+        }
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index', '');
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
+
+    it('does not change parameter order', async () => {
+      await writeSourceFile('branch', 'index', `
+        export function fooConcat(foo: string, bar: string) {
+          return foo + bar;
+        }
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index', '');
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
+
+    it('does not change type parameter order', async () => {
+      await writeSourceFile('branch', 'index', `
+        export interface ComponentProps<T, C> {
+            foo: T,
+            bar: C
+        }
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index', '');
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
   });
 });

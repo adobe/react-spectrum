@@ -56,7 +56,14 @@ function findPackageName(filepath) {
  */
 export async function compare(mockRoot, mockFS) {
   if (mockFS) {
+    // reset all globals if in testing mode
     fs = mockFS;
+    allChanged = new Set();
+    dependantOnLinks = new Map();
+    depth = 0;
+
+    allLinks = new Map();
+    visited = new Set();
   }
   let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = argv['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
@@ -538,12 +545,12 @@ function rebuildInterfaces(json) {
       }
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
       }
       exports[key] = {[name]: compInterface};
     } else if (item.type === 'function') {
       let funcInterface = {};
-      Object.entries(item.parameters).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, param]) => {
+      Object.entries(item.parameters).forEach(([, param]) => {
         if (param.access === 'private') {
           return;
         }
@@ -556,7 +563,7 @@ function rebuildInterfaces(json) {
       let returnVal = processType(item.return);
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
       }
       exports[key] = {[name]: {...funcInterface, returnVal}};
     } else if (item.type === 'interface') {
@@ -580,7 +587,7 @@ function rebuildInterfaces(json) {
       });
       let name = item.name ?? key;
       if (item.typeParameters.length > 0) {
-        name = name + `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        name = name + `<${item.typeParameters.map(processType).join(', ')}>`;
       }
       if (item.extends?.length > 0) {
         name = name + ` extends ${item.extends.map(processType).join(', ')}`;

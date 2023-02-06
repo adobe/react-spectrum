@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Compare API components alphabetizes properties 1`] = `
+"
+### branch
+
+#### branch/src/index.tsx:Alphabetize
++Alphabetize {
++  bar: string
++  foo: string
++}
+
+-----------------------------------
+"
+`;
+
 exports[`Compare API components can add a new interface that did not previously exist 1`] = `
 "
 ### branch
@@ -82,6 +96,35 @@ exports[`Compare API components compares non template to template version 1`] = 
 +  tableState: TableState<T>
    widths: Map<Key, number>
  }
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components does not change parameter order 1`] = `
+"
+### branch
+
+#### branch/src/index.tsx:fooConcat
++fooConcat {
++  foo: string
++  bar: string
++  returnVal: undefined
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components does not change type parameter order 1`] = `
+"
+### branch
+
+#### branch/src/index.tsx:ComponentProps
++ComponentProps<T, C> {
++  bar: C
++  foo: T
++}
 
 -----------------------------------
 "
