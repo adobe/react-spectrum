@@ -204,9 +204,9 @@ describe('useControlledState tests', function () {
       ({value, defaultValue, onChange}) => useControlledState<string>(value, defaultValue, onChange),
       {
         initialProps: {
-          value: 'controlledValue' as string | undefined | null,
-          defaultValue: 'defaultValue' as string | undefined | null,
-          onChange: onChangeSpy as (val: string | undefined | null) => void
+          value: 'controlledValue' as string | undefined,
+          defaultValue: 'defaultValue' as string | undefined,
+          onChange: onChangeSpy as (val: string | undefined) => void
         }
       }
     );
