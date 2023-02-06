@@ -540,7 +540,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
               height: headerHeight,
               overflow: 'hidden',
               position: 'relative',
-              willChange: state.isScrolling ? 'scroll-position' : '',
+              willChange: state.isScrolling ? 'scroll-position' : undefined,
               transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
             }}
             ref={headerRef}>
