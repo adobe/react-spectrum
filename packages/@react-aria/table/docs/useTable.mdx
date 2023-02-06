@@ -831,13 +831,13 @@ import {useTableColumnResizeState} from '@react-stately/table';
 /*- end highlight -*/
 
 function ResizableColumnsTable(props) {
+  /*- begin highlight -*/
   let {
-    /*- begin highlight -*/
     onResizeStart,
     onResize,
     onResizeEnd
-    /*- end highlight -*/
   } = props;
+  /*- end highlight -*/
   let state = useTableState(props);
 
   let ref = useRef();
@@ -1111,7 +1111,7 @@ const Resizer = React.forwardRef((props, ref) => {
     <div
       role="presentation"
       style={{
-        cursor: undefined,
+        cursor: 'col-resize',
         width: '6px',
         height: 'auto',
         border: '2px',
@@ -1187,7 +1187,7 @@ const MenuTrigger = React.forwardRef((props, ref) => {
 ### Menu
 
 The `Menu` is used to display the various actions available to the column, rendered with a `Popover` when the user presses the column header.
-This is built using the [useMenu](useMenu.html) and [useTreeState](/react-stately/useTreeState.html) hooks.
+This is built using the [useMenu](useMenu.html) and [useTreeState](../react-stately/useTreeState.html) hooks.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
