@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionBase, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Key, useEffect, useMemo, useRef} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
@@ -51,17 +51,61 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   let collection = useCollection(props, factory, context, [filter]);
 
+  let selectionManager = useMemo(() =>
+    new SelectionManager(collection, selectionState)
+    , [collection, selectionState]
+  );
+
   // Reset focused key if that item is deleted from the collection.
+  const cachedCollection = useRef(null);
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(null);
+      const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
+      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
+        key => {
+          const itemNode = cachedCollection.current.getItem(key);
+          return itemNode.type === 'item' ? itemNode : null;
+        }
+      ).filter(node => node !== null);
+      const itemNodes = [...collection.getKeys()].map(
+        key => {
+          const itemNode = collection.getItem(key);
+          return itemNode.type === 'item' ? itemNode : null;
+        }
+      ).filter(node => node !== null);
+      const diff = cachedItemNodes.length - itemNodes.length;
+      let index = Math.min(
+        (
+          diff > 1 ?
+          Math.max(startItem.index - diff + 1, 0) :
+          startItem.index
+        ),
+        itemNodes.length - 1);
+      let newNode:Node<T>;
+      while (index >= 0) {
+        if (!selectionManager.isDisabled(itemNodes[index].key)) {
+          newNode = itemNodes[index];
+          break;
+        }
+        // Find next, not disabled item.
+        if (index < itemNodes.length - 1) {
+          index++;
+        // Otherwise, find previous, not disabled item.
+        } else {
+          if (index > startItem.index) {
+            index = startItem.index;
+          }
+          index--;
+        }
+      }
+      selectionState.setFocusedKey(newNode ? newNode.key : null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [collection, selectionState.focusedKey]);
+    cachedCollection.current = collection;
+  }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
 
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager
   };
 }
