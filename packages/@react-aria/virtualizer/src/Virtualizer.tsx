@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
@@ -121,7 +121,6 @@ interface VirtualizerOptions {
 export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions, state: VirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
   let {focusedKey, scrollToItem, shouldUseVirtualFocus} = props;
   let {virtualizer} = state;
-
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using Virtualizer since we don't have refs
   // to all of the item DOM nodes.
@@ -137,14 +136,20 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     let modality = getInteractionModality();
     if (focusedKey !== lastFocusedKey.current && (modality !== 'pointer' || !isFocusWithin.current)) {
       if (scrollToItem) {
+        // If user provides scrolltoitem, then it is their responsibility to call scrollIntoViewport if desired
+        // since we don't know if their scrollToItem may take some time to actually bring the active element into the virtualizer's visible rect.
         scrollToItem(focusedKey);
       } else {
         virtualizer.scrollToItem(focusedKey, {duration: 0});
+
+        if (modality === 'keyboard' && ref.current.contains(document.activeElement)) {
+          scrollIntoViewport(document.activeElement, {containingElement: ref.current});
+        }
       }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
 
   // Persist the focusedKey and prevent it from being removed from the DOM when scrolled out of view.
   virtualizer.persistedKeys = useMemo(() => focusedKey ? new Set([focusedKey]) : new Set(), [focusedKey]);

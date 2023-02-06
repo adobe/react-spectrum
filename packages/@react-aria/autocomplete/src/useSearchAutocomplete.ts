@@ -55,7 +55,8 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     inputRef,
     listBoxRef,
     keyboardDelegate,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    onClear
   } = props;
 
   let {inputProps, clearButtonProps} = useSearchField({
@@ -63,7 +64,12 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteProps<T>, 
     value: state.inputValue,
     onChange: state.setInputValue,
     autoComplete: 'off',
-    onClear: () => state.setInputValue(''),
+    onClear: () => {
+      state.setInputValue('');
+      if (onClear) {
+        onClear();
+      }
+    },
     onSubmit: (value) => {
       // Prevent submission from search field if menu item was selected
       if (state.selectionManager.focusedKey === null) {
