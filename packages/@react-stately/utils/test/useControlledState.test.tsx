@@ -49,7 +49,7 @@ describe('useControlledState tests', function () {
 
   it('using NaN will only trigger onChange once', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState(undefined, undefined, onChangeSpy));
+    let {result} = renderHook(() => useControlledState<number | undefined>(undefined, undefined, onChangeSpy));
     let [value, setValue] = result.current;
     expect(value).not.toBeDefined();
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -201,18 +201,19 @@ describe('useControlledState tests', function () {
     let onChangeSpy = jest.fn();
     let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {result, rerender} = renderHook(
-      ({value, defaultValue, onChange}) => useControlledState<string>(value, defaultValue, onChange),
+      ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {
         initialProps: {
-          value: 'controlledValue' as string | undefined,
-          defaultValue: 'defaultValue' as string | undefined,
-          onChange: onChangeSpy as (val: string | undefined) => void
+          value: 'controlledValue',
+          defaultValue: 'defaultValue',
+          onChange: onChangeSpy
         }
       }
     );
     let [value] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore this is an invalid case anyways
     rerender({value: undefined, defaultValue: 'defaultValue', onChange: onChangeSpy});
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from controlled to uncontrolled.');
   });
@@ -224,15 +225,16 @@ describe('useControlledState tests', function () {
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {
         initialProps: {
-          value: undefined as string | undefined | null,
-          defaultValue: 'defaultValue' as string | undefined | null,
-          onChange: onChangeSpy as (val: string | undefined | null) => void
+          value: undefined,
+          defaultValue: 'defaultValue',
+          onChange: onChangeSpy
         }
       }
     );
     let [value] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
+    // @ts-ignore this is an invalid case anyways
     rerender({value: 'controlledValue', defaultValue: 'defaultValue', onChange: onChangeSpy});
     expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
   });
