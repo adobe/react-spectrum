@@ -827,6 +827,9 @@ the table cells in the body match their parent column's widths at all times.
 
 The various style changes below are to make the table itself scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
 ```tsx example export=true render=false
 /*- begin highlight -*/
 import {useTableColumnResizeState} from '@react-stately/table';
@@ -937,10 +940,15 @@ function ResizableColumnsTable(props) {
 }
 ```
 
+</details>
+
 ### Resizable table header
 
 The `TableRowGroup` and `TableHeaderRow` only require minor style changes to accommodate the new `display` changes made in
 `ResizableColumnsTable`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 function ResizableTableRowGroup({type: Element, style, children}) {
@@ -959,6 +967,10 @@ function ResizableTableRowGroup({type: Element, style, children}) {
   );
 }
 ```
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 function ResizableTableHeaderRow({item, state, children}) {
@@ -979,14 +991,19 @@ function ResizableTableHeaderRow({item, state, children}) {
 }
 ```
 
+</details>
+
 The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
 the user can drag or focus to perform a resize operation. To avoid interfering with the existing grid keyboard navigation, we only display this resizer when
 the column is hovered or if the column itself is being resized. This however introduces another issue: how will keyboard, screen reader, and touch users begin a resize operation if the resizer
-is only visible on hover? We can't just have the user press on the column header since that action is reserved for sorting.
+is only visible on hover? We could have the user press on the column header to trigger a resize operation, but that action is often reserved for sorting and may feel unexpected to a user.
 
 To resolve this, we need to render a menu button in the column header if the column is resizable, allowing non-mouse users to select from a list of available actions on the column. For resizing, selecting the corresponding option
 should cause focus to shift to the resizer itself, displaying the resizer for touch screen users to drag and letting keyboard and screen readers resize the column via keyboard arrows and screen reader operations
 accordingly.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 // Reuse the MenuTrigger from your component library. See below for details.
@@ -1088,6 +1105,8 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
 }
 ```
 
+</details>
+
 ### Resizer
 
 As described above, we need to implement an element that the user can drag/interact with to resize a column. Here we'll use the <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />
@@ -1097,6 +1116,9 @@ resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or
 resize the column and double tap to exit resizing.
 
 Note that we apply `visibility: hidden` to hide the resizer so that we reserve space for it in the column header at all times.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
 import {useTableColumnResize} from '@react-aria/table';
@@ -1139,6 +1161,8 @@ const Resizer = React.forwardRef((props, ref) => {
   );
 });
 ```
+
+</details>
 
 ### MenuTrigger
 
@@ -1343,6 +1367,9 @@ accommodate the new `display` changes made in the `ResizableColumnsTable`. The c
 background of the row to the full width of its child cells. `TableCell` now receives its width from <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
 and handles text overflow.
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
 ```tsx example export=true render=false
 function ResizableTableRow({item, children, state}) {
   // Same as previous TableRow implementation
@@ -1380,6 +1407,11 @@ function ResizableTableRow({item, children, state}) {
 }
 ```
 
+</details>
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
 ```tsx example export=true render=false
 function ResizableTableCell({cell, state, widths}) {
   // Same as previous TableCell implementation
@@ -1416,6 +1448,8 @@ function ResizableTableCell({cell, state, widths}) {
   );
 }
 ```
+
+</details>
 
 And with that, all necessary changes to the previous table implementation have been made and we now have a table that supports resizable columns!
 The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the
