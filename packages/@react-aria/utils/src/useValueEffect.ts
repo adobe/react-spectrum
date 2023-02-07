@@ -42,7 +42,8 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
 
     // Always update valueRef when setting the state.
     // This is needed because the function is not regenerated with the new state value since
-    // they must be stable across renders. Instead, it gets carried in the ref.
+    // they must be stable across renders. Instead, it gets carried in the ref, but the setState
+    // is also needed in order to cause a rerender.
     setValue(newValue.value);
     valueRef.current = newValue.value;
   }, []);
