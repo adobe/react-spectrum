@@ -152,8 +152,12 @@ export function useColorFieldState(
     }
     safelySetColorValue(newValue);
   }, [safelySetColorValue, colorValue, setInputValue, step]);
-  let incrementToMax = useCallback(() => safelySetColorValue(MAX_COLOR), [safelySetColorValue]);
-  let decrementToMin = useCallback(() => safelySetColorValue(MIN_COLOR), [safelySetColorValue]);
+  let incrementToMax = useCallback(() => {
+    safelySetColorValue(MAX_COLOR);
+  }, [safelySetColorValue]);
+  let decrementToMin = useCallback(() => {
+    safelySetColorValue(MIN_COLOR);
+  }, [safelySetColorValue]);
 
   let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
 
