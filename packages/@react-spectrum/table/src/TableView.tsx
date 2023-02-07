@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, scrollIntoView, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -478,10 +478,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   // header scroll position
   useEffect(() => {
     if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
-      document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
+      scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
+      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
-  }, [state.contentSize, headerRef, bodyRef]);
+  }, [state.contentSize, headerRef, bodyRef, domRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
