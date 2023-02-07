@@ -1,4 +1,4 @@
-import {RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useRef} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
@@ -11,6 +11,7 @@ type useResizeObserverOptionsType<T> = {
 
 export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
+  let raf = useRef(null);
 
   useEffect(() => {
     let element = ref?.current;
@@ -25,30 +26,23 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
       };
     } else {
       const resizeObserverInstance = new window.ResizeObserver((entries) => {
-        if (!entries.length) {
-          return;
+        if (raf.current) {
+          window.cancelAnimationFrame(raf.current);
         }
-        let initialSize = element.getBoundingClientRect();
-
-        onResize();
-
-        let newSize = element.getBoundingClientRect();
-
-        if (
-          initialSize.width !== newSize.width ||
-          initialSize.height !== newSize.height
-        ) {
-          resizeObserverInstance.unobserve(element);
-
-          requestAnimationFrame(() => {
-            resizeObserverInstance.observe(element);
-          });
-        }
+        raf.current = window.requestAnimationFrame(() => {
+          if (!Array.isArray(entries) || !entries.length) {
+            return;
+          }
+          onResize();
+        });
       });
 
       resizeObserverInstance.observe(element);
 
       return () => {
+        if (raf.current) {
+          window.cancelAnimationFrame(raf.current);
+        }
         if (element) {
           resizeObserverInstance.unobserve(element);
         }
