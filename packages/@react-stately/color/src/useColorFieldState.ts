@@ -71,8 +71,30 @@ export function useColorFieldState(
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
-  let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
+  let [colorValue, _setColorValue] = useControlledState<Color | null>(initialValue, initialDefaultValue, onChange);
+  let [inputValue, _setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
+  let [parsedColor, setParsedColor] = useState<Color | null>(colorValue);
+
+  let prevValue = useRef(colorValue);
+  useEffect(() => {
+    if (prevValue.current !== colorValue) {
+      setInputValue(colorValue ? colorValue.toString('hex') : '');
+      prevValue.current = colorValue;
+    }
+  });
+  let setColorValue = (val) => {
+    _setColorValue(val);
+  };
+  let setInputValue = (val) => {
+    _setInputValue(val);
+    let color;
+    try {
+      color = parseColor(val.startsWith('#') ? val : `#${val}`);
+    } catch (err) {
+      color = null;
+    }
+    setParsedColor(color);
+  };
 
   let safelySetColorValue = (newColor: Color) => {
     if (!colorValue || !newColor) {
@@ -85,29 +107,6 @@ export function useColorFieldState(
     }
   };
 
-  let prevValue = useRef(colorValue);
-  useEffect(() => {
-    if (prevValue.current !== colorValue) {
-      setInputValue(colorValue ? colorValue.toString('hex') : '');
-      prevValue.current = colorValue;
-    }
-  });
-
-
-  let parsedValue = useMemo(() => {
-    let color;
-    try {
-      color = parseColor(inputValue.startsWith('#') ? inputValue : `#${inputValue}`);
-    } catch (err) {
-      color = null;
-    }
-    return color;
-  }, [inputValue]);
-  let parsed = useRef(null);
-  useEffect(() => {
-    parsed.current = parsedValue;
-  });
-
   let commit = useCallback(() => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
@@ -117,22 +116,22 @@ export function useColorFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (parsed.current == null) {
+    if (parsedColor == null) {
       setInputValue(colorValue ? colorValue.toString('hex') : '');
       return;
     }
 
-    safelySetColorValue(parsed.current);
+    safelySetColorValue(parsedColor);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     let newColorValue = '';
     if (colorValue) {
       newColorValue = colorValue.toString('hex');
     }
     setInputValue(newColorValue);
-  }, [inputValue, safelySetColorValue, setInputValue, colorValue, parsed]);
+  }, [inputValue, safelySetColorValue, setInputValue, colorValue, parsedColor]);
 
   let increment = useCallback(() => {
-    let newValue = addColorValue(parsed.current, step);
+    let newValue = addColorValue(parsedColor, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -141,9 +140,9 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, parsed, colorValue, setInputValue, step]);
+  }, [safelySetColorValue, parsedColor, colorValue, setInputValue, step]);
   let decrement = useCallback(() => {
-    let newValue = addColorValue(parsed.current, -step);
+    let newValue = addColorValue(parsedColor, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -152,7 +151,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, parsed, colorValue, setInputValue, step]);
+  }, [safelySetColorValue, parsedColor, colorValue, setInputValue, step]);
   let incrementToMax = useCallback(() => safelySetColorValue(MAX_COLOR), [safelySetColorValue]);
   let decrementToMin = useCallback(() => safelySetColorValue(MIN_COLOR), [safelySetColorValue]);
 
