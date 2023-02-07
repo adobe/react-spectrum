@@ -71,11 +71,12 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps},
+            avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
           }}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
           <ClearSlots>
-            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
           </ClearSlots>
         </SlotProvider>
       </div>

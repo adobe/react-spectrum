@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
@@ -379,8 +378,8 @@ describe('TableViewSizing', function () {
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('321px');
-          expect((row.childNodes[2] as HTMLElement).style.width).toBe('321px');
-          expect((row.childNodes[3] as HTMLElement).style.width).toBe('320px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('320px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('321px');
         }
       });
 
@@ -1368,6 +1367,33 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
     });
+
+    it('should prevent columns with child columns from being resizable', function () {
+      let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+      let tree = render(
+        <TableView aria-label="Table" selectionMode="multiple">
+          <TableHeader columns={nestedColumns}>
+            {column => <Column allowsResizing childColumns={column.children}>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={items}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </TableView>
+      );
+
+      let headers = tree.getAllByRole('columnheader');
+      for (let colheader of headers) {
+        if (parseInt(colheader.getAttribute('aria-colspan'), 10) > 1) {
+          expect(within(colheader).queryByRole('button')).toBeFalsy();
+        }
+      }
+      expect(warn).toHaveBeenCalledTimes(3);
+      warn.mockRestore();
+    });
   });
 
   describe('updating columns', function () {
@@ -1550,7 +1576,7 @@ describe('TableViewSizing', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('36px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('38px');
       let rowheader = within(rows[0]).getByRole('rowheader');
       expect(rowheader).toHaveTextContent('Foo 1');
       let actionCell = within(rows[0]).getAllByRole('gridcell');
@@ -1571,7 +1597,7 @@ describe('TableViewSizing', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column
-      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('44px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('46px');
     });
 
     it('renders table with headerless column and divider', function () {
@@ -1583,7 +1609,7 @@ describe('TableViewSizing', function () {
       let rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(1);
       // The width of headerless column with divider
-      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('37px');
+      expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('39px');
     });
 
     it('renders table with headerless column with tooltip', function () {
