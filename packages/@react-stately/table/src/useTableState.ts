@@ -61,11 +61,11 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
     selectionMode,
     columns: []
-  }), [showSelectionCheckboxes, selectionMode]);
+  }), [props.children, showSelectionCheckboxes, selectionMode]);
 
   let collection = useCollection<T, TableCollection<T>>(
     props,
-    useCallback((nodes) => new TableCollection(nodes, undefined, context), [context]),
+    useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
   let {disabledKeys, selectionManager} = useGridState({...props, collection, disabledBehavior: 'selection'});
