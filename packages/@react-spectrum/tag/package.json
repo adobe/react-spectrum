@@ -37,6 +37,8 @@
     "@react-aria/tag": "3.0.0-beta.1",
     "@react-aria/utils": "^3.14.2",
     "@react-spectrum/button": "^3.11.2",
+    "@react-spectrum/form": "^3.5.2",
+    "@react-spectrum/label": "^3.10.1",
     "@react-spectrum/text": "^3.3.4",
     "@react-spectrum/utils": "^3.8.1",
     "@react-stately/collections": "^3.5.1",

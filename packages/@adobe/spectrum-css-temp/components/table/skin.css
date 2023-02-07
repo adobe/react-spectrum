@@ -18,16 +18,27 @@ governing permissions and limitations under the License.
   --spectrum-table-col-resize-nubbin-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
   --spectrum-table-col-resize-nubbin-icon-color: var(--spectrum-global-color-static-white);
   --spectrum-table-body-resize-indicator-background-color: xvar(--spectrum-legacy-color-blue-400, var(--spectrum-global-color-blue-400));
+  --spectrum-table-row-border-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-table-cell-border-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-table-row-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
 }
 
 .spectrum-Table-headWrapper {
   border-inline-start-color: transparent;
   border-inline-end-color: transparent;
+
+  /* forced-color-adjust: none, so that border-inline-start-color and
+  border-inline-end-color remain transparent with forced-colors: active. */
+  forced-color-adjust: none;
 }
 
 .spectrum-Table-headCell {
   color: var(--spectrum-alias-text-color);
   background-color: var(--spectrum-alias-background-color-default);
+
+  /* forced-color-adjust: auto, so that cells and cell content within
+  .spectrum-Table-headWrapper render using force-colors: active */
+  forced-color-adjust: auto;
 
   &.is-sortable,
   &.is-resizable {
@@ -79,6 +90,9 @@ governing permissions and limitations under the License.
   &.is-focused {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+
+      /* forced-color-adjust: none, so that box-shadow style will render */
+      forced-color-adjust: none;
     }
   }
 }
@@ -150,7 +164,7 @@ tbody.spectrum-Table-body {
 
   &:focus-ring {
     &:before {
-      background: var(--spectrum-selectlist-option-focus-indicator-color);
+      background-color: var(--spectrum-table-row-focus-indicator-color);
     }
   }
 
@@ -177,12 +191,15 @@ tbody.spectrum-Table-body {
     inset-block-start: 0;
     z-index: 3;
     pointer-events: none;
+
+    /* forced-color-adjust: none, so that box-shadow style will render */
+    forced-color-adjust: none;
   }
 
   /* Box shadow for bottom border for non-selected row that is immediately above a selected row. */
   &.is-next-selected {
     &:after {
-      box-shadow: inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      box-shadow: inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
     }
   }
 
@@ -203,7 +220,7 @@ tbody.spectrum-Table-body {
 
     /* Box shadow for bottom, left, and right border for selected rows. */
     &:after {
-      box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+      box-shadow: inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
     }
   }
 
@@ -213,7 +230,7 @@ tbody.spectrum-Table-body {
    &.spectrum-Table-row--firstRow {
     &.is-selected {
       &:after {
-        box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500);
+        box-shadow: inset 1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset -1px 0 0 0 var(--spectrum-table-row-border-color-selected), inset 0 1px 0 0 var(--spectrum-table-row-border-color-selected), inset 0 -1px 0 0 var(--spectrum-table-row-border-color-selected);
       }
     }
   }
@@ -222,6 +239,9 @@ tbody.spectrum-Table-body {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-alias-border-color-focus);
       background-color: var(--spectrum-alias-highlight-selected);
+
+      /* forced-color-adjust: none, so that box-shadow style will render */
+      forced-color-adjust: none;
     }
   }
 }
@@ -315,11 +335,11 @@ tbody.spectrum-Table-body {
 }
 .spectrum-Table-colResizeNubbin {
   svg {
-    > g {
+    g[fill][stroke] {
       fill: var(--spectrum-table-col-resize-nubbin-background-color);
       stroke: var(--spectrum-table-col-resize-nubbin-background-color);
     }
-    > path {
+    path[fill][stroke] {
       fill: var(--spectrum-table-col-resize-nubbin-icon-color);
       stroke: var(--spectrum-table-col-resize-nubbin-icon-color);
     }
@@ -336,5 +356,30 @@ tbody.spectrum-Table-body {
     --spectrum-table-col-resize-nubbin-icon-color: HighlightText;
     --spectrum-table-body-resize-indicator-background-color: Highlight;
     --spectrum-table-divider-border-color: CanvasText;
+    --spectrum-table-cell-border-color-key-focus: Highlight;
+    --spectrum-table-background-color: Canvas;
+    --spectrum-table-row-background-color-hover: Canvas;
+    --spectrum-table-row-background-color-down: Canvas;
+    --spectrum-table-row-focus-indicator-color: Highlight;
+    --spectrum-table-cell-border-color: CanvasText;
+    --spectrum-table-row-border-color-selected: Highlight;
+    --spectrum-alias-border-color-focus: Highlight;
+  }
+
+  .spectrum-Table-row {
+    &:focus-ring {
+      &:after {
+        outline-color: var(--spectrum-table-row-focus-indicator-color);
+      }
+    }
+
+    &.is-drop-target {
+      /* Cells with .spectrum-Table-cellWrapper render on top of the
+      ::before element in the row, so we have to make its background-color
+      transparent in order to see the .is-drop-target style. */
+      .spectrum-Table-cellWrapper {
+        --spectrum-table-background-color: transparent;
+      }
+    }
   }
 }

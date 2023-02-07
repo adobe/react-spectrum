@@ -20,25 +20,6 @@ governing permissions and limitations under the License.
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-switch-label-line-height: 1.49;
-
-  --spectrum-switch-emphasized-handle-border-color: var(--spectrum-alias-toggle-color-default);
-  --spectrum-switch-emphasized-handle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
-  --spectrum-switch-emphasized-handle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
-  --spectrum-switch-quiet-track-color-selected: var(--spectrum-alias-toggle-color-selected);
-  --spectrum-switch-quiet-track-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
-  --spectrum-switch-quiet-track-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
-  --spectrum-switch-quiet-handle-border-color-selected: var(--spectrum-alias-toggle-color-selected);
-  --spectrum-switch-quiet-handle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
-  --spectrum-switch-quiet-handle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
-
-  --spectrum-switch-emphasized-track-color-selected: var(--spectrum-accent-color-900);
-  --spectrum-switch-emphasized-handle-border-color-selected: var(--spectrum-accent-color-900);
-  --spectrum-switch-emphasized-track-color-selected-hover: var(--spectrum-accent-color-1000);
-  --spectrum-switch-emphasized-handle-border-color-selected-hover: var(--spectrum-accent-color-1000);
-  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-accent-color-1000);
-  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
-  --spectrum-switch-emphasized-track-color-selected-down: var(--spectrum-accent-color-1100);
-  --spectrum-switch-emphasized-handle-border-color-selected-down: var(--spectrum-accent-color-1100);
 }
 
 .spectrum-ToggleSwitch {
