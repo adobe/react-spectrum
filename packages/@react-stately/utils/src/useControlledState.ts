@@ -12,11 +12,9 @@
 
 import {useCallback, useRef, useState} from 'react';
 
-export function useControlledState<T, C = T>(
-  value?: T,
-  defaultValue?: T,
-  onChange?: (value: C, ...args: any[]) => void
-): [T | undefined, (value: T, ...args: any[]) => void]  {
+export function useControlledState<T, C = T>(value: T, defaultValue: T | undefined, onChange?: (v: C) => void): [T, (value: T, ...args: any[]) => void];
+export function useControlledState<T, C = T>(value: T | undefined, defaultValue: T, onChange?: (v: C) => void): [T, (value: T, ...args: any[]) => void];
+export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C) => void): [T, (value: T, ...args: any[]) => void] {
   let [stateValue, setStateValue] = useState(value || defaultValue);
   let ref = useRef(value !== undefined);
   let wasControlled = ref.current;
@@ -29,11 +27,11 @@ export function useControlledState<T, C = T>(
 
   ref.current = isControlled;
 
-  let setValue = useCallback((value, ...args) => {
-    let onChangeCaller = (value, ...onChangeArgs) => {
+  let setValue = useCallback((value) => {
+    let onChangeCaller = (value) => {
       if (onChange) {
         if (!Object.is(stateRef.current, value)) {
-          onChange(value, ...onChangeArgs);
+          onChange(value);
         }
       }
       if (!isControlled) {
@@ -50,7 +48,7 @@ export function useControlledState<T, C = T>(
       // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
         let interceptedValue = value(isControlled ? stateRef.current : oldValue, ...functionArgs);
-        onChangeCaller(interceptedValue, ...args);
+        onChangeCaller(interceptedValue);
         if (!isControlled) {
           return interceptedValue;
         }
@@ -61,7 +59,7 @@ export function useControlledState<T, C = T>(
       if (!isControlled) {
         setStateValue(value);
       }
-      onChangeCaller(value, ...args);
+      onChangeCaller(value);
     }
   }, [isControlled, onChange]);
 
