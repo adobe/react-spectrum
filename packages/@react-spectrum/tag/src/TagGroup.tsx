@@ -28,7 +28,7 @@ import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, SpectrumHelpTextProps {
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -154,6 +154,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         labelProps={labelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
+        showErrorIcon
         ref={domRef}
         UNSAFE_className={
           classNames(

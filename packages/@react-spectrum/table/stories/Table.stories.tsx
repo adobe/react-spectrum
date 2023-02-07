@@ -733,7 +733,6 @@ export const CRUD: TableStory = {
   storyName: 'CRUD'
 };
 
-
 function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
   let list = useListData({
     initialItems: [
@@ -747,7 +746,11 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
   }, [props, list]);
 
   return (
-    <TableView {...props} selectedKeys={list.selectedKeys} onSelectionChange={onSelectionChange}>
+    <TableView
+      {...props}
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={onSelectionChange}
+      renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
       <TableHeader>
         <Column isRowHeader key="firstName">First Name</Column>
         <Column isRowHeader key="lastName">Last Name</Column>
