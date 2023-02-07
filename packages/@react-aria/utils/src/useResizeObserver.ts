@@ -29,6 +29,8 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
         if (raf.current) {
           window.cancelAnimationFrame(raf.current);
         }
+        // avoid Error - ResizeObserver loop limit exceeded
+        // it's ok to use a raf, ResizeObservers are already async and now we're just debouncing on frames
         raf.current = window.requestAnimationFrame(() => {
           if (!Array.isArray(entries) || !entries.length) {
             return;
