@@ -88,18 +88,26 @@ export function useNumberFieldState(
   } = props;
 
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
-  let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
+  let [inputValue, _setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
   let numberParser = useMemo(() => new NumberParser(locale, formatOptions), [locale, formatOptions]);
   let numberingSystem = useMemo(() => numberParser.getNumberingSystem(inputValue), [numberParser, inputValue]);
   let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
+  let [parsedValue, setParsedValue] = useState(numberValue);
+  let [forceSync, setForceSync] = useState(false);
 
   let clampStep = !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && isNaN(step)) {
     clampStep = 0.01;
   }
+
+  let setInputValue = useCallback((val: string) => {
+    _setInputValue(val);
+    let num = numberParser.parse(val);
+    setParsedValue(num);
+  }, [_setInputValue, numberParser, setParsedValue]);
 
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
@@ -108,22 +116,16 @@ export function useNumberFieldState(
   let prevLocale = useRef(locale);
   let prevFormatOptions = useRef(formatOptions);
   useEffect(() => {
-    if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
+    if (forceSync || !Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
       setInputValue(format(numberValue));
+      setForceSync(false);
       prevValue.current = numberValue;
       prevLocale.current = locale;
       prevFormatOptions.current = formatOptions;
     }
-  });
+  }, [forceSync, numberValue, locale, formatOptions, setInputValue, format]);
 
-  // Store last parsed value in a ref so it can be used by increment/decrement below
-  let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
-  let parsed = useRef(0);
-  useEffect(() => {
-    parsed.current = parsedValue;
-  });
-
-  let commit = () => {
+  let commit = useCallback(() => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
@@ -132,7 +134,7 @@ export function useNumberFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(parsed.current)) {
+    if (isNaN(parsedValue)) {
       setInputValue(format(numberValue));
       return;
     }
@@ -140,20 +142,27 @@ export function useNumberFieldState(
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
     if (isNaN(step)) {
-      clampedValue = clamp(parsed.current, minValue, maxValue);
+      clampedValue = clamp(parsedValue, minValue, maxValue);
     } else {
-      clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
+      clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
     }
 
     clampedValue = numberParser.parse(format(clampedValue));
+
     setNumberValue(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
-    setInputValue(format(value === undefined ? clampedValue : numberValue));
-  };
+    if (value !== undefined || clampedValue === numberValue) {
+      setForceSync(true);
+    }
+  }, [inputValue, setNumberValue, setInputValue, value, format, numberValue, parsedValue, step, minValue, maxValue, numberParser]);
 
-  let safeNextStep = (operation: '+' | '-', minMax: number) => {
-    let prev = parsed.current;
+  let spinRef = useRef(parsedValue);
+  useEffect(() => {
+    spinRef.current = parsedValue;
+  });
+  let safeNextStep = useCallback((operation: '+' | '-', minMax: number) => {
+    let prev = spinRef.current;
 
     if (isNaN(prev)) {
       // if the input is empty, start from the min/max value when incrementing/decrementing,
@@ -175,9 +184,9 @@ export function useNumberFieldState(
         clampStep
       );
     }
-  };
+  }, [minValue, maxValue, clampStep]);
 
-  let increment = () => {
+  let increment = useCallback(() => {
     let newValue = safeNextStep('+', minValue);
 
     // if we've arrived at the same value that was previously in the state, the
@@ -189,9 +198,9 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
-  };
+  }, [safeNextStep, setInputValue, minValue, format, numberValue, setNumberValue]);
 
-  let decrement = () => {
+  let decrement = useCallback(() => {
     let newValue = safeNextStep('-', maxValue);
 
     if (newValue === numberValue) {
@@ -199,19 +208,19 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
-  };
+  }, [safeNextStep, setInputValue, maxValue, format, numberValue, setNumberValue]);
 
-  let incrementToMax = () => {
+  let incrementToMax = useCallback(() => {
     if (maxValue != null) {
       setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
     }
-  };
+  }, [maxValue, setNumberValue, minValue, clampStep]);
 
-  let decrementToMin = () => {
+  let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(minValue);
     }
-  };
+  }, [minValue, setNumberValue]);
 
   let canIncrement = useMemo(() => (
     !isDisabled &&
@@ -247,7 +256,7 @@ export function useNumberFieldState(
     canDecrement,
     minValue,
     maxValue,
-    numberValue: parsedValue,
+    numberValue,
     setInputValue,
     inputValue,
     commit

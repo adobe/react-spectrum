@@ -278,6 +278,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(textField).toHaveAttribute('value', '5');
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);

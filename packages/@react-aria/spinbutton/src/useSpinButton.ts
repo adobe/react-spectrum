@@ -59,9 +59,10 @@ export function useSpinButton(
 
   const clearAsync = useCallback(() => clearTimeout(_async.current), [_async]);
 
-  // eslint-disable-next-line arrow-body-style
+  // only run on unmount
   useEffect(() => {
     return () => clearAsync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let onKeyDown = useCallback((e) => {
@@ -150,8 +151,7 @@ export function useSpinButton(
         initialStepDelay
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onIncrement, maxValue, value]
+    [onIncrement, maxValue, value, clearAsync, _async]
   );
 
   const onDecrementPressStart = useCallback(
@@ -168,13 +168,12 @@ export function useSpinButton(
         initialStepDelay
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onDecrement, minValue, value]
+    [onDecrement, minValue, value, clearAsync, _async]
   );
 
-  let cancelContextMenu = (e) => {
+  let cancelContextMenu = useCallback((e) => {
     e.preventDefault();
-  };
+  }, []);
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
@@ -208,7 +207,7 @@ export function useSpinButton(
       onPressStart: useCallback(() => {
         onDecrementPressStart(400);
         addGlobalListener(window, 'contextmenu', cancelContextMenu);
-      }, [onIncrementPressStart, addGlobalListener, cancelContextMenu]),
+      }, [onDecrementPressStart, addGlobalListener, cancelContextMenu]),
       onPressEnd: useCallback(() => {
         clearAsync();
         removeAllGlobalListeners();

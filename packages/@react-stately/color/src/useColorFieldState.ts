@@ -12,7 +12,7 @@
 
 import {Color, ColorFieldProps} from '@react-types/color';
 import {parseColor} from './Color';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 
@@ -71,21 +71,12 @@ export function useColorFieldState(
 
   let initialValue = useColor(value);
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, _setColorValue] = useControlledState<Color | null>(initialValue, initialDefaultValue, onChange);
+  let [colorValue, setColorValue] = useControlledState<Color | null>(initialValue, initialDefaultValue, onChange);
   let [inputValue, _setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
   let [parsedColor, setParsedColor] = useState<Color | null>(colorValue);
+  let [forceSync, setForceSync] = useState(false);
 
-  let prevValue = useRef(colorValue);
-  useEffect(() => {
-    if (prevValue.current !== colorValue) {
-      setInputValue(colorValue ? colorValue.toString('hex') : '');
-      prevValue.current = colorValue;
-    }
-  });
-  let setColorValue = (val) => {
-    _setColorValue(val);
-  };
-  let setInputValue = (val) => {
+  let setInputValue = useCallback((val) => {
     _setInputValue(val);
     let color;
     try {
@@ -94,18 +85,25 @@ export function useColorFieldState(
       color = null;
     }
     setParsedColor(color);
-  };
+  }, [_setInputValue, setParsedColor]);
 
-  let safelySetColorValue = (newColor: Color) => {
+  let prevValue = useRef(colorValue);
+  useEffect(() => {
+    if (forceSync || prevValue.current !== colorValue) {
+      setInputValue(colorValue ? colorValue.toString('hex') : '');
+      setForceSync(false);
+      prevValue.current = colorValue;
+    }
+  }, [forceSync, colorValue, setInputValue]);
+
+  let safelySetColorValue = useCallback((newColor: Color) => {
     if (!colorValue || !newColor) {
       setColorValue(newColor);
-      return;
-    }
-    if (newColor.toHexInt() !== colorValue.toHexInt()) {
+    } else if (newColor.toHexInt() !== colorValue.toHexInt()) {
       setColorValue(newColor);
-      return;
     }
-  };
+    return newColor;
+  }, [colorValue, setColorValue]);
 
   let commit = useCallback(() => {
     // Set to empty state if input value is empty
@@ -121,17 +119,19 @@ export function useColorFieldState(
       return;
     }
 
-    safelySetColorValue(parsedColor);
+    let newColor = safelySetColorValue(parsedColor);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
-    let newColorValue = '';
-    if (colorValue) {
-      newColorValue = colorValue.toString('hex');
+    if (value !== undefined || colorsAreEqual(newColor, colorValue)) {
+      setForceSync(true);
     }
-    setInputValue(newColorValue);
-  }, [inputValue, safelySetColorValue, setInputValue, colorValue, parsedColor]);
+  }, [inputValue, safelySetColorValue, setInputValue, value, colorValue, parsedColor]);
 
+  let spinRef = useRef(parsedColor);
+  useEffect(() => {
+    spinRef.current = parsedColor;
+  });
   let increment = useCallback(() => {
-    let newValue = addColorValue(parsedColor, step);
+    let newValue = addColorValue(spinRef.current, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -140,9 +140,9 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, parsedColor, colorValue, setInputValue, step]);
+  }, [safelySetColorValue, colorValue, setInputValue, step]);
   let decrement = useCallback(() => {
-    let newValue = addColorValue(parsedColor, -step);
+    let newValue = addColorValue(spinRef.current, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -151,7 +151,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
-  }, [safelySetColorValue, parsedColor, colorValue, setInputValue, step]);
+  }, [safelySetColorValue, colorValue, setInputValue, step]);
   let incrementToMax = useCallback(() => safelySetColorValue(MAX_COLOR), [safelySetColorValue]);
   let decrementToMin = useCallback(() => safelySetColorValue(MIN_COLOR), [safelySetColorValue]);
 
@@ -180,4 +180,13 @@ function addColorValue(color: Color, step: number) {
     newColor = parseColor(newColorString);
   }
   return newColor;
+}
+
+function colorsAreEqual(color1: Color, color2: Color) {
+  if (!color1 && !color2) {
+    return true;
+  } else if (!color1 || !color2) {
+    return false;
+  }
+  return color1.toHexInt() === color2.toHexInt();
 }
