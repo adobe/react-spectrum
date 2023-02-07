@@ -22,21 +22,11 @@ import {watchModals} from '../';
 
 describe('watchModals', () => {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-    jest.clearAllMocks();
-  });
-
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.runAllTimers();
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   let verify = async function (modal, queryByRole) {
@@ -196,7 +186,7 @@ describe('watchModals', () => {
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => <Item key={item.name}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
@@ -235,7 +225,7 @@ describe('watchModals', () => {
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => <Item key={item.name}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>

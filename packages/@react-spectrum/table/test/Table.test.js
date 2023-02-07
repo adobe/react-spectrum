@@ -17,9 +17,9 @@ import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
-import {DeletableRowsTable, EmptyStateTable, TableWithBreadcrumbs} from '../stories/Table.stories';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -27,10 +27,18 @@ import {Heading} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+
+let {
+  InlineDeleteButtons: DeletableRowsTable,
+  EmptyStateStory: EmptyStateTable,
+  WithBreadcrumbNavigation: TableWithBreadcrumbs
+} = composeStories(stories);
+
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -1616,8 +1624,8 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(before);
       });
 
-      it('should send focus to the collection if the focused row is removed', function () {
-        let tree = render(<DeletableRowsTable />);
+      it('should send focus to the appropriate key below if the focused row is removed', function () {
+        let tree = render(<DeletableRowsTable selectionMode="multiple" />);
 
         let rows = tree.getAllByRole('row');
         userEvent.tab();
@@ -1631,13 +1639,83 @@ describe('TableView', function () {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
 
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
+      });
+
+      it('should send focus to the appropriate key above if the focused last row is removed', function () {
+        let tree = render(<DeletableRowsTable selectionMode="multiple" />);
+
+        let rows = tree.getAllByRole('row');
+        userEvent.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
 
         rows = tree.getAllByRole('row');
-        expect(document.activeElement).toBe(rows[1]);
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
+      });
+
+      it('should send focus to the appropriate column and row if both the current row and column are removed', function () {
+        let itemsLocal = items;
+        let columnsLocal = columns;
+        let renderJSX = (props, items = itemsLocal, columns = columnsLocal) => (
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let renderTable = (props, items = itemsLocal, columns = columnsLocal) => render(renderJSX(props, items, columns));
+
+        let tree = renderTable();
+        focusCell(tree, 'Baz 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1], itemsLocal[0]], columnsLocal.slice(0, 2)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Bar 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1]], columnsLocal.slice(0, 1)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Foo 2');
+
+        rerender(tree, renderJSX({}, [itemsLocal[0], itemsLocal[0]], columnsLocal));
+
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
     });
 
@@ -2509,7 +2587,7 @@ describe('TableView', function () {
     });
 
     it('can announce deselect even when items are swapped out completely', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[2];
       triggerPress(row);
@@ -2523,7 +2601,7 @@ describe('TableView', function () {
     });
 
     it('will not announce deselect caused by breadcrumb navigation', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
@@ -2546,7 +2624,7 @@ describe('TableView', function () {
     });
 
     it('updates even if not focused', () => {
-      let tree = render(<TableWithBreadcrumbs />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let link = tree.getAllByRole('link')[1];
       triggerPress(link);
@@ -3429,17 +3507,28 @@ describe('TableView', function () {
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
-      let button = within(rows[2]).getByRole('button');
-      triggerPress(button);
+      userEvent.tab();
+      userEvent.tab();
+      expect(document.activeElement).toBe(rows[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       let menu = tree.getByRole('menu');
-      expect(document.activeElement).toBe(menu);
-
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
+      expect(document.activeElement).toBe(menuItems[0]);
 
-      triggerPress(menuItems[1]);
-      act(() => jest.runAllTimers());
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(menuItems[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
@@ -3450,14 +3539,15 @@ describe('TableView', function () {
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
-      expect(rows[2]).not.toBeInTheDocument();
+      expect(rows[1]).not.toBeInTheDocument();
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
 
-      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
-      expect(rowHeaders[0]).toHaveTextContent('Sam');
-      expect(document.activeElement).toBe(rows[1]);
+      expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Julia');
+
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
     });
 
     it('resets row indexes after deleting a row', function () {
@@ -3487,6 +3577,7 @@ describe('TableView', function () {
       triggerPress(deleteButton);
       expect(dialog).not.toBeInTheDocument();
 
+      act(() => jest.runAllTimers());
       act(() => jest.runAllTimers());
       expect(rows[1]).not.toBeInTheDocument();
 
@@ -3524,7 +3615,11 @@ describe('TableView', function () {
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(1);
+
+      // account for renderEmptyState
+      expect(rows).toHaveLength(2);
+      expect(rows[1].firstChild.getAttribute('aria-colspan')).toBe('5');
+      expect(rows[1].textContent).toBe('No results');
 
       expect(checkbox.checked).toBe(false);
 

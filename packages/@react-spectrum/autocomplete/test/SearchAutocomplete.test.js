@@ -32,13 +32,15 @@ let onInputChange = jest.fn();
 let outerBlur = jest.fn();
 let onFocus = jest.fn();
 let onBlur = jest.fn();
+let onClear = jest.fn();
 
 let defaultProps = {
   label: 'Test',
   onOpenChange,
   onInputChange,
   onFocus,
-  onBlur
+  onBlur,
+  onClear
 };
 
 const ExampleSearchAutocomplete = React.forwardRef((props = {}, ref) => (
@@ -1681,6 +1683,7 @@ describe('SearchAutocomplete', function () {
       expect(clearButton.tagName).toBe('DIV');
       expect(clearButton).not.toHaveAttribute('tabIndex');
       triggerPress(clearButton);
+      expect(onClear).toHaveBeenCalledTimes(1);
 
       act(() => {
         jest.runAllTimers();
