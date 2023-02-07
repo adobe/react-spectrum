@@ -21,6 +21,8 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
 import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import tailwindExample from 'url:./Table-tailwind.png';
 
 ---
 category: Collections
@@ -1409,7 +1411,8 @@ function ResizableTableCell({cell, state, widths}) {
 ```
 
 And with that, all necessary changes to the previous table implementation have been made and we now have a table that supports resizable columns!
-The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the styled example!
+The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the
+[styled example](#styled-examples)!
 
 ```tsx example
 <ResizableColumnsTable aria-label="Table with resizable columns">
@@ -1442,6 +1445,15 @@ The example below supports resizing via mouse, keyboard, touch, and screen reade
   </TableBody>
 </ResizableColumnsTable>
 ```
+
+### Styled examples
+
+<ExampleCard
+  url="https://codesandbox.io/s/objective-cherry-g837on?file=/src/Table.tsx"
+  preview={tailwindExample}
+  title="Tailwind CSS"
+  description="A table supporting resizable columns, selection, and sorting built with Tailwind and React Aria." />
+
 
 ## Internationalization
 
