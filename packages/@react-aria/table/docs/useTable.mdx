@@ -872,6 +872,9 @@ function ResizableColumnsTable(props) {
         /*- begin highlight -*/
         width: '300px',
         height: '200px',
+        // Override the table's default display with "block" so that our defined column widths
+        // are respected. Without this and other table element display overrides, the columns
+        // can grow/shrink beyond their applied "width"
         display: 'block',
         position: 'relative',
         overflow: 'auto'
