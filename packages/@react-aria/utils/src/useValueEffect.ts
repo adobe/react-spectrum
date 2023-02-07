@@ -24,42 +24,41 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
   let valueRef = useRef(value);
   let effect = useRef(null);
 
-  valueRef.current = value;
-
-  // Store the function in a ref so we can always access the current version
-  // which has the proper `value` in scope.
-  let nextRef = useRef(null);
-  nextRef.current = () => {
+  // Must be stable so that `queue` is stable.
+  let nextIter = useCallback(() => {
     // Run the generator to the next yield.
     let newValue = effect.current.next();
-
+    while (!newValue.done && valueRef.current === newValue.value) {
+      // If the value is the same as the current value,
+      // then continue to the next yield. Otherwise,
+      // set the value in state and wait for the next layout effect.
+      newValue = effect.current.next();
+    }
     // If the generator is done, reset the effect.
     if (newValue.done) {
       effect.current = null;
       return;
     }
 
-    // If the value is the same as the current value,
-    // then continue to the next yield. Otherwise,
-    // set the value in state and wait for the next layout effect.
-    if (value === newValue.value) {
-      nextRef.current();
-    } else {
-      setValue(newValue.value);
-    }
-  };
+    // Always update valueRef when setting the state.
+    // This is needed because the function is not regenerated with the new state value since
+    // they must be stable across renders. Instead, it gets carried in the ref.
+    setValue(newValue.value);
+    valueRef.current = newValue.value;
+  }, []);
 
   useLayoutEffect(() => {
     // If there is an effect currently running, continue to the next yield.
     if (effect.current) {
-      nextRef.current();
+      nextIter();
     }
   });
 
+  // queue must be a stable function, much like setState.
   let queue = useCallback(fn => {
     effect.current = fn(valueRef.current);
-    nextRef.current();
-  }, [effect, nextRef]);
+    nextIter();
+  }, [nextIter]);
 
   return [value, queue];
 }
