@@ -1325,8 +1325,12 @@ import {useButton} from '@react-aria/button';
 
 function Button(props) {
   let ref = props.buttonRef;
+  let { focusProps, isFocusVisible } = useFocusRing();
+  let outline = isFocusVisible
+    ? '2px solid orange'
+    : 'none';
   let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} style={{...props.style, outline: outline}}>{props.children}</button>;
 }
 ```
 
