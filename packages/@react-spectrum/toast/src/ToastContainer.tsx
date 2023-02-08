@@ -73,10 +73,9 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
   let ref = useRef();
-  toastProviders.add(ref);
 
-  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    toastProviders.add(ref);
     return () => {
       // When this toast provider unmounts, reset all animations so that
       // when the new toast provider renders, it is seamless.
