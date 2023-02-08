@@ -17,7 +17,7 @@ import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
-import React from 'react';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
@@ -254,32 +254,38 @@ describe('Provider', () => {
     it('only renders once for multiple resizes in the same range', function () {
       function Component(props) {
         let {matchedBreakpoints} = useBreakpoint();
-        let {onRender, ...otherProps} = props;
-        onRender(matchedBreakpoints[0]);
+        let {onBreakpointChange, ...otherProps} = props;
+        let prevBreakpoint = useRef();
+        useLayoutEffect(() => {
+          if (!Object.is(prevBreakpoint.current, matchedBreakpoints[0])) {
+            onBreakpointChange(matchedBreakpoints[0]);
+          }
+          prevBreakpoint.current = matchedBreakpoints[0];
+        }, [onBreakpointChange, matchedBreakpoints[0]]);
         return <button {...otherProps}>push me</button>;
       }
 
       matchMedia.useMediaQuery('(min-width: 768px)');
 
-      let onRender = jest.fn();
+      let onBreakpointChange = jest.fn();
       render(
         <Provider theme={theme}>
-          <Component onRender={onRender} />
+          <Component onBreakpointChange={onBreakpointChange} />
         </Provider>
       );
-      expect(onRender).toHaveBeenCalledTimes(1);
-      expect(onRender).toHaveBeenNthCalledWith(1, 'M');
+      expect(onBreakpointChange).toHaveBeenCalledTimes(1);
+      expect(onBreakpointChange).toHaveBeenNthCalledWith(1, 'M');
 
       matchMedia.useMediaQuery('(min-width: 1024px)');
       fireEvent(window, new Event('resize'));
 
-      expect(onRender).toHaveBeenCalledTimes(2);
-      expect(onRender).toHaveBeenNthCalledWith(2, 'L');
+      expect(onBreakpointChange).toHaveBeenCalledTimes(2);
+      expect(onBreakpointChange).toHaveBeenNthCalledWith(2, 'L');
 
       fireEvent(window, new Event('resize'));
 
       // shouldn't fire again for something in the same range as before
-      expect(onRender).toHaveBeenCalledTimes(2);
+      expect(onBreakpointChange).toHaveBeenCalledTimes(2);
     });
   });
 });
