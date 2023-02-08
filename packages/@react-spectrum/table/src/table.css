@@ -10,6 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+ .react-spectrum-Table {
+  --spectrum-table-droptarget-background-color: var(--spectrum-alias-highlight-selected);
+  --spectrum-table-dropindicator-border-color: var(--spectrum-dropindicator-border-color);
+  --spectrum-table-dropindicator-circle-border-color: var(--spectrum-dropindicator-circle-border-color);
+
+  --spectrum-table-dropindicator-circle-size: var(--spectrum-dropindicator-circle-size);
+  --spectrum-table-dropindicator-border-size: var(--spectrum-dropindicator-border-size);
+
+  --spectrum-table-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-table-item-badge-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-table-item-badge-background-color: var(--spectrum-global-color-blue-400);
+
+  --spectrum-table-item-draghandle-border-color-key-focus: var(--spectrum-table-item-border-color-key-focus);
+ }
+
 .react-spectrum-Table {
   user-select: none;
   display: flex;
@@ -114,39 +129,39 @@
 
 .react-spectrum-Table-InsertionIndicator {
   z-index: 3;
-  width: calc(100% - (2 * var(--spectrum-listview-dropindicator-circle-size)));
-  inset-inline-start: var(--spectrum-listview-dropindicator-circle-size);
+  width: calc(100% - (2 * var(--spectrum-table-dropindicator-circle-size)));
+  inset-inline-start: var(--spectrum-table-dropindicator-circle-size);
   position: absolute;
   outline: none;
 
   &.react-spectrum-Table-InsertionIndicator--dropTarget {
-    background: var(--spectrum-listview-dropindicator-border-color);
-    border-bottom: 2px solid var(--spectrum-listview-dropindicator-border-color);
+    background: var(--spectrum-table-dropindicator-border-color);
+    border-bottom: 2px solid var(--spectrum-table-dropindicator-border-color);
 
     /* forced-color-adjust: none, so that background color
     will render border for insertion indicator. */
     forced-color-adjust: none;
 
     &:before {
-      left: calc(var(--spectrum-listview-dropindicator-circle-size) * -1);
+      left: calc(var(--spectrum-table-dropindicator-circle-size) * -1);
     }
 
     &:after {
-      right: calc(var(--spectrum-listview-dropindicator-circle-size) * -1);
+      right: calc(var(--spectrum-table-dropindicator-circle-size) * -1);
     }
 
     &:before,
     &:after {
       content: '';
       position: absolute;
-      top: calc(var(--spectrum-listview-dropindicator-circle-size) * -1 / 2 + var(--spectrum-listview-dropindicator-border-size) / 2);
-      width: var(--spectrum-listview-dropindicator-circle-size);
-      height: var(--spectrum-listview-dropindicator-circle-size);
+      top: calc(var(--spectrum-table-dropindicator-circle-size) * -1 / 2 + var(--spectrum-table-dropindicator-border-size) / 2);
+      width: var(--spectrum-table-dropindicator-circle-size);
+      height: var(--spectrum-table-dropindicator-circle-size);
       border-radius: 50%;
-      border: var(--spectrum-listview-dropindicator-border-size) solid;
+      border: var(--spectrum-table-dropindicator-border-size) solid;
       box-sizing: border-box;
-      border-color: var(--spectrum-listview-dropindicator-circle-border-color);
-      background-color: var(--spectrum-listview-background-color);
+      border-color: var(--spectrum-table-dropindicator-circle-border-color);
+      background-color: var(--spectrum-table-background-color);
       z-index: 5;
 
       /* forced-color-adjust: none, so that box-shadow and background-color styles will render */

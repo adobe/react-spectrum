@@ -456,6 +456,11 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     propsOnResizeEnd?.(widths);
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
 
+  let focusedKey = state.selectionManager.focusedKey;
+  if (dropState?.target?.type === 'item') {
+    focusedKey = dropState.target.key;
+  }
+
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
@@ -485,7 +490,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         }
         layout={layout}
         collection={state.collection}
-        focusedKey={state.selectionManager.focusedKey}
+        focusedKey={focusedKey}
         renderView={renderView}
         renderWrapper={renderWrapper}
         onVisibleRectChange={onVisibleRectChange}
@@ -1179,8 +1184,9 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
-      {isTableDroppable &&
+      {isTableDroppable && state.collection.getKeyBefore(item.key) == null &&
         <InsertionIndicator
+          rowProps={props}
           key={`${item.key}-before`}
           target={{key: item.key, type: 'item', dropPosition: 'before'}} />
       }
@@ -1214,9 +1220,9 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
       </div>
       {isTableDroppable &&
         <InsertionIndicator
+          rowProps={props}
           key={`${item.key}-after`}
-          target={{key: item.key, type: 'item', dropPosition: 'after'}}
-          isPresentationOnly={state.collection.getKeyAfter(item.key) != null} />
+          target={{key: item.key, type: 'item', dropPosition: 'after'}} />
       }
     </TableRowContext.Provider>
   );

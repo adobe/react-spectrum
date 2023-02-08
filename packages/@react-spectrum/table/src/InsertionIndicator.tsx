@@ -7,12 +7,12 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {
   target: ItemDropTarget,
-  isPresentationOnly?: boolean
+  rowProps: any
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps) {
   let {dropState, dragAndDropHooks} = useTableContext();
-  const {target, isPresentationOnly} = props;
+  const {target, rowProps} = props;
 
   let ref = useRef();
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
@@ -23,11 +23,15 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
   if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
     return null;
   }
-  console.log('render');
 
+  let style = {
+    position: 'absolute',
+    top: rowProps.style.top,
+    width: rowProps.style.width
+  } as React.CSSProperties;
 
   return (
-    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+    <div style={style} role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
         aria-selected="false"
@@ -38,10 +42,8 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
             {
               'react-spectrum-Table-InsertionIndicator--dropTarget': isDropTarget
             }
-          )}>
-        {!isPresentationOnly &&
-          <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
-        }
+        )}>
+        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
   );
