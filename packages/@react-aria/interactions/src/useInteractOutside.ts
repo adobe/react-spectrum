@@ -33,23 +33,19 @@ export function useInteractOutside(props: InteractOutsideProps) {
   let {ref, onInteractOutside, isDisabled, onInteractOutsideStart} = props;
   let stateRef = useRef({
     isPointerDown: false,
-    ignoreEmulatedMouseEvents: false,
-    onInteractOutside,
-    onInteractOutsideStart
+    ignoreEmulatedMouseEvents: false
   });
-  let state = stateRef.current;
-  state.onInteractOutside = onInteractOutside;
-  state.onInteractOutsideStart = onInteractOutsideStart;
 
   useEffect(() => {
     if (isDisabled) {
       return;
     }
+    let state = stateRef.current;
 
     let onPointerDown = (e) => {
-      if (isValidEvent(e, ref) && state.onInteractOutside) {
-        if (state.onInteractOutsideStart) {
-          state.onInteractOutsideStart(e);
+      if (isValidEvent(e, ref) && onInteractOutside) {
+        if (onInteractOutsideStart) {
+          onInteractOutsideStart(e);
         }
         state.isPointerDown = true;
       }
@@ -58,8 +54,8 @@ export function useInteractOutside(props: InteractOutsideProps) {
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
-        if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          onInteractOutside(e);
         }
         state.isPointerDown = false;
       };
@@ -76,16 +72,16 @@ export function useInteractOutside(props: InteractOutsideProps) {
       let onMouseUp = (e) => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
-        } else if (state.isPointerDown && state.onInteractOutside && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          onInteractOutside(e);
         }
         state.isPointerDown = false;
       };
 
       let onTouchEnd = (e) => {
         state.ignoreEmulatedMouseEvents = true;
-        if (state.onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
-          state.onInteractOutside(e);
+        if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
+          onInteractOutside(e);
         }
         state.isPointerDown = false;
       };
@@ -102,7 +98,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         document.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [ref, state, isDisabled]);
+  }, [ref, isDisabled, onInteractOutsideStart, onInteractOutside]);
 }
 
 function isValidEvent(event, ref) {

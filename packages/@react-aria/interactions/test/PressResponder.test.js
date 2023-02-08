@@ -57,7 +57,11 @@ describe('PressResponder', function () {
       </PressResponder>
     );
 
-    expect(warn).toHaveBeenCalledTimes(1);
+    if (process.env.STRICT_MODE) {
+      expect(warn).toHaveBeenCalledTimes(2);
+    } else {
+      expect(warn).toHaveBeenCalledTimes(1);
+    }
     warn.mockRestore();
   });
 

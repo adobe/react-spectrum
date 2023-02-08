@@ -105,8 +105,6 @@ export function usePress(props: PressHookProps): PressResult {
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
   } = usePressResponderContext(props);
-  let propsRef = useRef<PressHookProps>(null);
-  propsRef.current = {onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled, shouldCancelOnPointerExit};
 
   let [isPressed, setPressed] = useState(false);
   let ref = useRef<PressState>({
@@ -125,7 +123,6 @@ export function usePress(props: PressHookProps): PressResult {
   let pressProps = useMemo(() => {
     let state = ref.current;
     let triggerPressStart = (originalEvent: EventBase, pointerType: PointerType) => {
-      let {onPressStart, onPressChange, isDisabled} = propsRef.current;
       if (isDisabled || state.didFirePressStart) {
         return;
       }
@@ -151,7 +148,6 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
-      let {onPressEnd, onPressChange, onPress, isDisabled} = propsRef.current;
       if (!state.didFirePressStart) {
         return;
       }
@@ -191,7 +187,6 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
-      let {onPressUp, isDisabled} = propsRef.current;
       if (isDisabled) {
         return;
       }
@@ -401,7 +396,7 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
+          if (shouldCancelOnPointerExit) {
             cancel(e);
           }
         }
@@ -491,7 +486,7 @@ export function usePress(props: PressHookProps): PressResult {
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
+          if (shouldCancelOnPointerExit) {
             cancel(e);
           }
         }
@@ -581,7 +576,7 @@ export function usePress(props: PressHookProps): PressResult {
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(e, state.pointerType, false);
-          if (propsRef.current.shouldCancelOnPointerExit) {
+          if (shouldCancelOnPointerExit) {
             cancel(e);
           }
         }
@@ -648,7 +643,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, allowTextSelectionOnPress]);
+  }, [addGlobalListener, isDisabled, preventFocusOnPress, removeAllGlobalListeners, allowTextSelectionOnPress, onPress, onPressChange, onPressStart, onPressEnd, onPressUp, isDisabled, shouldCancelOnPointerExit]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
   // eslint-disable-next-line arrow-body-style
