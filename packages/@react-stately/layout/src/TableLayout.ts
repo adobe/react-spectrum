@@ -11,11 +11,11 @@
  */
 
 import {ColumnSize, TableCollection} from '@react-types/table';
+import {DropTarget, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
-import {Node} from '@react-types/shared';
 import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
@@ -597,5 +597,52 @@ export class TableLayout<T> extends ListLayout<T> {
     }
 
     return isChrome105;
+  }
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
+    x += this.virtualizer.visibleRect.x;
+    y += this.virtualizer.visibleRect.y;
+
+    // Custom variation of this.virtualizer.keyAtPoint that ignores body
+    let key: Key;
+    let point = new Point(x, y);
+    let rectAtPoint = new Rect(point.x, point.y, 1, 1);
+    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.key !== 'body');
+
+    // Layout may return multiple layout infos in the case of
+    // persisted keys, so find the first one that actually intersects.
+    for (let layoutInfo of layoutInfos) {
+      if (layoutInfo.rect.intersects(rectAtPoint)) {
+        key = layoutInfo.key;
+      }
+    }
+    
+    if (key == null || this.collection.size === 0) {
+      return {type: 'root'};
+    }
+
+    let layoutInfo = this.getLayoutInfo(key);
+    let rect = layoutInfo.rect;
+    let target: DropTarget = {
+      type: 'item',
+      key: layoutInfo.key,
+      dropPosition: 'on'
+    };
+
+    // If dropping on the item isn't accepted, try the target before or after depending on the y position.
+    // Otherwise, if dropping on the item is accepted, still try the before/after positions if within 10px
+    // of the top or bottom of the item.
+    if (!isValidDropTarget(target)) {
+      if (y <= rect.y + rect.height / 2 && isValidDropTarget({...target, dropPosition: 'before'})) {
+        target.dropPosition = 'before';
+      } else if (isValidDropTarget({...target, dropPosition: 'after'})) {
+        target.dropPosition = 'after';
+      }
+    } else if (y <= rect.y + 10 && isValidDropTarget({...target, dropPosition: 'before'})) {
+      target.dropPosition = 'before';
+    } else if (y >= rect.maxY - 10 && isValidDropTarget({...target, dropPosition: 'after'})) {
+      target.dropPosition = 'after';
+    }
+
+    return target;
   }
 }
