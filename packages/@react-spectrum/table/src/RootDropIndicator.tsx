@@ -3,7 +3,7 @@ import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export default function RootDropIndicator() {
-  let {dropState, dragAndDropHooks} = useTableContext();
+  let {dropState, dragAndDropHooks, state} = useTableContext();
   let ref = useRef();
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({
     target: {type: 'root'}
@@ -19,7 +19,8 @@ export default function RootDropIndicator() {
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
-        aria-selected="false">
+        aria-selected="false"
+        aria-colspan={state.collection.columns.length}>
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
       </div>
     </div>
