@@ -147,11 +147,11 @@ function DragExample(props?) {
         {column => <Column>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
-        {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+        {item => (
+          <Row key={item.foo} textValue={item.foo}>
+            {key => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
       </TableBody>
     </TableView>
   );

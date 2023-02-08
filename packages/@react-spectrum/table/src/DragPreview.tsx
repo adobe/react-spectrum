@@ -30,18 +30,19 @@ interface TableCellPreviewProps {
   cell: GridNode<any>,
   layout: TableLayout<any>,
   selectionCellWidth: number,
+  dragButtonCellWidth: number,
   direction: Direction
 }
 
 export function TableCellPreview(props: TableCellPreviewProps) {
-  let {cell, layout, selectionCellWidth, direction} = props;
+  let {cell, layout, selectionCellWidth, dragButtonCellWidth, direction} = props;
   let {align} = cell.column.props;
   let {x: left, height, width} = layout.getLayoutInfo(cell.key).rect;
   if (cell.props.isSelectionCell) {
     return null;
   }
-  // Move cell over since we aren't showing selection cell.
-  left = left - selectionCellWidth;
+  // Move cell over since we aren't showing selection or drag cells in preview.
+  left = left - selectionCellWidth - dragButtonCellWidth;
   let right: number;
   if (direction === 'rtl') {
     right = left;
@@ -91,8 +92,10 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   let isDraggingMultiple = itemCount > 1;
 
   let cells = [...item.childNodes];
-  let selectionCellWidth = cells[0].props.isSelectionCell ? layout.getLayoutInfo(cells[0].key).rect.width : 0;
-  width = width - selectionCellWidth;
+  let dragButtonCellWidth = cells[0].props.isDragButtonCell ? layout.getLayoutInfo(cells[0].key).rect.width : 0;
+  let selectionCellWidth = cells[1].props.isSelectionCell ? layout.getLayoutInfo(cells[1].key).rect.width : 0;
+
+  width = width - selectionCellWidth - dragButtonCellWidth;
   // TODO: get correct width needed for badge
   // TODO: vertically center badge for spacious/compact
   // TODO: RTL support
@@ -118,6 +121,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           cell={cell}
           layout={layout}
           selectionCellWidth={selectionCellWidth}
+          dragButtonCellWidth={dragButtonCellWidth}
           direction={direction} />
       ))}
       {isDraggingMultiple &&

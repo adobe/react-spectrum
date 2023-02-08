@@ -93,6 +93,11 @@ const SELECTION_CELL_DEFAULT_WIDTH = {
   large: 48
 };
 
+const DRAG_BUTTON_CELL_DEFAULT_WIDTH = {
+  medium: 16,
+  large: 20
+};
+
 interface TableContextValue<T> {
   state: TableState<T>,
   dragState: DraggableCollectionState,
@@ -149,21 +154,25 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let {direction} = useLocale();
   let {scale} = useProvider();
 
-  const getDefaultWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider}}: GridNode<T>): ColumnSize | null | undefined => {
+  const getDefaultWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider, isDragButtonCell}}: GridNode<T>): ColumnSize | null | undefined => {
     if (hideHeader) {
       let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
       return showDivider ? width + 1 : width;
     } else if (isSelectionCell) {
       return SELECTION_CELL_DEFAULT_WIDTH[scale];
+    } else if (isDragButtonCell) {
+      return DRAG_BUTTON_CELL_DEFAULT_WIDTH[scale];
     }
   }, [scale]);
 
-  const getDefaultMinWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider}}: GridNode<T>): ColumnSize | null | undefined => {
+  const getDefaultMinWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider, isDragButtonCell}}: GridNode<T>): ColumnSize | null | undefined => {
     if (hideHeader) {
       let width = DEFAULT_HIDE_HEADER_CELL_WIDTH[scale];
       return showDivider ? width + 1 : width;
     } else if (isSelectionCell) {
       return SELECTION_CELL_DEFAULT_WIDTH[scale];
+    } else if (isDragButtonCell) {
+      return DRAG_BUTTON_CELL_DEFAULT_WIDTH[scale];
     }
     return 75;
   }, [scale]);
@@ -178,6 +187,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
+    showDragButtons: !!isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
@@ -353,6 +363,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           return <TableCheckboxCell cell={item} />;
         }
 
+        if (item.props.isDragButtonCell) {
+          return <TableDragCell cell={item} />;
+        }
+
         return <TableCell cell={item} />;
       }
       case 'placeholder':
@@ -366,6 +380,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       case 'column':
         if (item.props.isSelectionCell) {
           return <TableSelectAllCell column={item} />;
+        }
+
+        if (item.props.isDragButtonCell) {
+          return <TableDragHeaderCell column={item} />;
         }
 
         // TODO: consider this case, what if we have hidden headers and a empty table
@@ -529,7 +547,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
       shouldScrollY: item?.type !== 'column',
       // Offset scroll position by width of selection cell
       // (which is sticky and will overlap the cell we're scrolling to).
-      offsetX: column.props.isSelectionCell
+      offsetX: column.props.isSelectionCell || column.props.isDragButtonCell
         ? layout.getColumnWidth(column.key)
         : 0
     });
@@ -967,7 +985,7 @@ function ResizableTableColumnHeader(props) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef();
-  let {state} = useTableContext();
+  let {state, isTableDraggable} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -989,7 +1007,13 @@ function TableSelectAllCell({column}) {
             'spectrum-Table-checkboxCell',
             {
               'is-hovered': isHovered
-            }
+            },
+            classNames(
+              stylesOverrides,
+              {
+                'react-spectrum-Table-checkboxCell--isDraggable': !!isTableDraggable
+              }
+            )
           )
         }>
         {
@@ -1009,6 +1033,33 @@ function TableSelectAllCell({column}) {
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
       </div>
     </FocusRing>
+  );
+}
+
+function TableDragHeaderCell({column}) {
+  let ref = useRef();
+  let {state} = useTableContext();
+  let {columnHeaderProps} = useTableColumnHeader({
+    node: column,
+    isVirtualized: true
+  }, state, ref);
+  // TODO: How do we skip navigation to this cell?
+  // Maybe a focusMode: 'skip' or 'none'?
+
+  return (
+    <div
+      {...columnHeaderProps}
+      ref={ref}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-headCell',
+          classNames(
+            stylesOverrides,
+            'react-spectrum-dragButtonHeadCell'
+          )
+        )
+      } />
   );
 }
 
@@ -1184,6 +1235,41 @@ function TableHeaderRow({item, children, style, ...props}) {
   );
 }
 
+function TableDragCell({cell}) {
+  let ref = useRef();
+  let {state, isTableDraggable} = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let {gridCellProps} = useTableCell({
+    node: cell,
+    isVirtualized: true
+  }, state, ref);
+
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...gridCellProps}
+        ref={ref}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-cell',
+            {
+              'is-disabled': isDisabled
+            },
+            classNames(
+              stylesOverrides,
+              'react-spectrum-Table-cell',
+              'react-spectrum-Table-dragButtonCell'
+            )
+          )
+        }>
+        {isTableDraggable && <DragButton />}
+      </div>
+    </FocusRing>
+  );
+}
+
 function TableCheckboxCell({cell}) {
   let ref = useRef();
   let {state, isTableDraggable} = useTableContext();
@@ -1210,11 +1296,13 @@ function TableCheckboxCell({cell}) {
             },
             classNames(
               stylesOverrides,
-              'react-spectrum-Table-cell'
+              'react-spectrum-Table-cell',
+              {
+                'react-spectrum-Table-checkboxCell--isDraggable': !!isTableDraggable
+              }
             )
           )
         }>
-        {isTableDraggable && <DragButton />}
         {state.selectionManager.selectionMode !== 'none' &&
           <Checkbox
             {...checkboxProps}
@@ -1228,7 +1316,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let {state, isTableDraggable, shouldShowCheckboxes} = useTableContext();
+  let {state} = useTableContext();
   let ref = useRef();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.disabledKeys.has(cell.parentKey);
@@ -1236,9 +1324,6 @@ function TableCell({cell}) {
     node: cell,
     isVirtualized: true
   }, state, ref);
-
-  // Render a drag handle in the first cell of each row if the table is draggable, and there isn't a checkbox cell to render it in.
-  let shouldShowDragHandle = isTableDraggable && cell.index === 0 && !shouldShowCheckboxes;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -1265,7 +1350,6 @@ function TableCell({cell}) {
             )
           )
         }>
-        {shouldShowDragHandle && <DragButton />}
         <span
           className={
             classNames(

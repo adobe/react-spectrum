@@ -155,13 +155,22 @@
   }
 }
 
-.spectrum-Table-row-draghandle-button {
-  position: absolute;
-  inset-inline-start: var(--spectrum-global-dimension-size-40);
+.react-spectrum-Table-dragButtonCell {
   padding: var(--spectrum-global-dimension-size-40);
+}
 
+.spectrum-Table-row-draghandle-button {
   svg {
     margin: auto 0;
     display: block;
+    padding: var(--spectrum-global-dimension-size-40);
   }
+}
+
+.react-spectrum-dragButtonHeadCell {
+  visibility: hidden;
+}
+
+.react-spectrum-Table-checkboxCell--isDraggable {
+  padding-inline-start: var(--spectrum-global-dimension-size-65);
 }

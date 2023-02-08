@@ -14,10 +14,12 @@ import {GridNode} from '@react-types/grid';
 import {Key} from 'react';
 
 interface GridCollectionOptions {
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  showDragButtons?: boolean
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
+const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
 
 function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
   let columns: GridNode<T>[][] = [];
@@ -170,11 +172,11 @@ export class TableCollection<T> extends GridCollection<T> {
     let body: GridNode<T>;
     let columns = [];
 
-    // Add cell for selection checkboxes if needed.
-    if (opts?.showSelectionCheckboxes) {
+    // Add cell for drag buttons if needed.
+    if (opts?.showDragButtons) {
       let rowHeaderColumn: GridNode<T> = {
         type: 'column',
-        key: ROW_HEADER_COLUMN_KEY,
+        key: ROW_HEADER_COLUMN_KEY_DRAG,
         value: null,
         textValue: '',
         level: 0,
@@ -183,11 +185,31 @@ export class TableCollection<T> extends GridCollection<T> {
         rendered: null,
         childNodes: [],
         props: {
+          isDragButtonCell: true
+        }
+      };
+
+      columns = [rowHeaderColumn];
+    }
+
+    // Add cell for selection checkboxes if needed.
+    if (opts?.showSelectionCheckboxes) {
+      let rowHeaderColumn: GridNode<T> = {
+        type: 'column',
+        key: ROW_HEADER_COLUMN_KEY,
+        value: null,
+        textValue: '',
+        level: 0,
+        index: 1,
+        hasChildNodes: false,
+        rendered: null,
+        childNodes: [],
+        props: {
           isSelectionCell: true
         }
       };
 
-      columns.unshift(rowHeaderColumn);
+      columns = [...columns, rowHeaderColumn];
     }
 
     let rows = [];
@@ -239,7 +261,15 @@ export class TableCollection<T> extends GridCollection<T> {
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
-      this.rowHeaderColumnKeys.add(this.columns[opts?.showSelectionCheckboxes ? 1 : 0].key);
+      if (opts?.showSelectionCheckboxes) {
+        if (opts?.showDragButtons) {
+          this.rowHeaderColumnKeys.add(this.columns[2].key);
+        } else {
+          this.rowHeaderColumnKeys.add(this.columns[1].key);
+        }
+      } else {
+        this.rowHeaderColumnKeys.add(this.columns[0].key);
+      }
     }
   }
 
