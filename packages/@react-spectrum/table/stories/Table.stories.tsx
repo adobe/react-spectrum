@@ -15,7 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, Section, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
@@ -133,41 +133,61 @@ export const Static: TableStory = {
     <TableView {...args}>
       <TableHeader>
         <Column key="foo">Foo</Column>
-        <Column key="bar">Bar</Column>
-        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Section title="Section1">
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+        </Section>
+      </TableBody>
+    </TableView>
+  ),
+  storyName: 'static with sections'
+};
+
+export const Static2 = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
       </TableHeader>
       <TableBody>
         <Row>
           <Cell>One</Cell>
-          <Cell>Two</Cell>
-          <Cell>Three</Cell>
-        </Row>
-        <Row>
-          <Cell>One</Cell>
-          <Cell>Two</Cell>
-          <Cell>Three</Cell>
         </Row>
       </TableBody>
     </TableView>
   ),
-  storyName: 'static'
+  storyName: 'static no sections'
 };
 
 let columns = [
-  {name: 'Foo', key: 'foo'},
-  {name: 'Bar', key: 'bar'},
-  {name: 'Baz', key: 'baz'}
+  {name: 'Foo', key: 'foo'}
+  // {name: 'Bar', key: 'bar'},
+  // {name: 'Baz', key: 'baz'}
 ];
 
 let items = [
-  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'}
+  // {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  // {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  // {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  // {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  // {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  // {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  // {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+];
+
+let itemsWithSections = [
+  {id: 0, title: 'section1', children: [
+    {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'}
+  ]}
 ];
 
 export const Dynamic: TableStory = {
@@ -191,6 +211,33 @@ export const Dynamic: TableStory = {
     </TableView>
   ),
   storyName: 'dynamic'
+};
+
+export const DynamicSections: TableStory = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader columns={columns}>
+        {column => <Column>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={itemsWithSections}>
+        {item => (
+          <Section key={item.id} items={item.children} title={item.title}>
+            {item =>
+              (<Row key={item.foo}>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </Section>
+        )}
+      </TableBody>
+    </TableView>
+  ),
+  storyName: 'dynamic with sections'
 };
 
 let itemsWithFalsyId = [
@@ -1790,4 +1837,3 @@ export const ResizingControlledHideHeader: TableStory = {
     Hide headers columns should not be resizable.
   `}}
 };
-

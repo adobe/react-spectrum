@@ -207,6 +207,11 @@ export class TableCollection<T> extends GridCollection<T> {
             }
           }
           break;
+        case 'section':
+          // TODO: Add section to row? or maybe make another array to track sections?
+          rows.push(node);
+          console.log('section blah', node);
+          break;
         case 'item':
           rows.push(node);
           return; // do not go into childNodes
