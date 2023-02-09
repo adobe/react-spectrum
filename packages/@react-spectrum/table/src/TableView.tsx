@@ -852,7 +852,7 @@ function ResizableTableColumnHeader(props) {
         <Resizer
           ref={resizingRef}
           column={column}
-          showResizer={showResizer}
+          showResizer={true}
           onResizeStart={onResizeStart}
           onResize={onResize}
           onResizeEnd={onResizeEnd}

@@ -98,7 +98,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
+    console.log('in gridcell capture', e);
     if (!e.currentTarget.contains(e.target as Element) || state.isKeyboardNavigationDisabled) {
+      console.log('early returning in gridcell capture', !e.currentTarget.contains(e.target as Element),  state.isKeyboardNavigationDisabled)
       return;
     }
 
@@ -111,12 +113,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         let focusable = direction === 'rtl'
           ? walker.nextNode() as FocusableElement
           : walker.previousNode() as FocusableElement;
-
+        console.log('focusable left', focusable)
         // Don't focus the cell itself if focusMode is "child"
         if (focusMode === 'child' && focusable === ref.current) {
           focusable = null;
         }
-
+        console.log('focusable arrow left', focusable)
         if (focusable) {
           e.preventDefault();
           e.stopPropagation();
@@ -130,6 +132,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           // child, depending on the focus mode.
           let prev = keyboardDelegate.getKeyLeftOf(node.key);
           if (prev !== node.key) {
+            console.log('moving to next cell to the left')
             break;
           }
 
@@ -159,7 +162,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         if (focusMode === 'child' && focusable === ref.current) {
           focusable = null;
         }
-
+        console.log('focusable right', focusable)
         if (focusable) {
           e.preventDefault();
           e.stopPropagation();
@@ -168,6 +171,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         } else {
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
+            console.log('moving to next cell to the right')
             break;
           }
 

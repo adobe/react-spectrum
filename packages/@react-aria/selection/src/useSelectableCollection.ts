@@ -118,6 +118,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
     if (!ref.current.contains(e.target as Element)) {
+      console.log('early resturn')
       return;
     }
 
@@ -132,7 +133,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
       }
     };
-
+    console.log('made it to useSelectableCollection')
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {

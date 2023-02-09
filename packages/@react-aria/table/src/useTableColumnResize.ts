@@ -72,6 +72,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         // switch focus back to the column header on anything that ends edit mode
         focusSafely(triggerRef.current);
       }
+
+      // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.continuePropagation();
+      }
     }
   });
 
@@ -131,7 +136,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (pointerType === 'mouse') {
         endResize(item);
       }
-    }
+    },
+    disableLeftRightHandling: true
   });
 
   let min = Math.floor(state.getColumnMinWidth(item.key));
@@ -193,11 +199,21 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     }
   });
 
+  // let onKeyDownCapture = (e) => {
+  //   // Re-enable keyboard navigation when using ArrowRight/Left so useGrid's keydown listener is actually re-enabled on the table
+  //   // TODO: add prop to control this behavior?
+  //   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+  //     console.log('re-enabling keyboard nav ')
+  //     state.tableState.setKeyboardNavigationDisabled(false);
+  //   }
+  // };
+
   return {
     resizerProps: mergeProps(
       keyboardProps,
       moveProps,
-      pressProps
+      pressProps,
+      // {onKeyDownCapture}
     ),
     inputProps: mergeProps(
       {
@@ -206,11 +222,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
           // call instead during focus and blur
           startResize(item);
-          state.tableState.setKeyboardNavigationDisabled(true);
+          // state.tableState.setKeyboardNavigationDisabled(true);
         },
         onBlur: () => {
           endResize(item);
-          state.tableState.setKeyboardNavigationDisabled(false);
+          // state.tableState.setKeyboardNavigationDisabled(false);
         },
         onChange,
         disabled: isDisabled
