@@ -4,12 +4,13 @@
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "private": true,
-  "main": "dist/Alert.js",
-  "module": "dist/Alert.module.mjs",
+  "main": "dist/Alert.cjs",
+  "module": "dist/Alert.module.js",
+  "type": "module",
   "exports": {
     "types": "./dist/types.d.ts",
-    "import": "./dist/Alert.module.mjs",
-    "require": "./dist/Alert.js"
+    "import": "./dist/Alert.module.js",
+    "require": "./dist/Alert.cjs"
   },
   "types": "dist/Alert.d.ts",
   "source": "src/index.ts",

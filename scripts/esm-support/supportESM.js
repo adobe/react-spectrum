@@ -19,15 +19,19 @@ function fixPkgJsons() {
     if (json.exports) {
       delete json.exports;
     }
+    if (json.main && json.main.endsWith('.js') && json.name !== '@internationalized/string-compiler') {
+      json.main = json.main.replace(/\.js$/, '.cjs');
+    }
     let main = json.main;
-    if (json.module && json.module.endsWith('.js')) {
-      json.module = json.module.replace(/\.js$/, '.mjs');
+    if (json.module && json.module.endsWith('.mjs')) {
+      json.module = json.module.replace(/\.mjs$/, '.js');
     }
     let module = json.module;
     let newPackageJSON = {};
     for (let [field, value] of Object.entries(json)) {
       newPackageJSON[field] = value;
       if (field === 'module' && module) {
+        newPackageJSON.type = 'module';
         newPackageJSON.exports = {
           types: './dist/types.d.ts'
         };

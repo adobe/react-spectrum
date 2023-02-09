@@ -8,9 +8,13 @@
     "start": "webpack-dev-server --mode development --open",
     "test": "test"
   },
+  "private": true,
+  "workspaces": [
+    "../../packages/*/*"
+  ],
   "dependencies": {
-    "@adobe/react-spectrum": "^3.25.0",
-    "@spectrum-icons/workflow": "^4.1.0",
+    "@adobe/react-spectrum": "^3.24.1",
+    "@spectrum-icons/workflow": "^4.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

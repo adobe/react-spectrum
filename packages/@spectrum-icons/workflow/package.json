@@ -7,12 +7,20 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./*.d.ts",
+      "import": "./*.js",
+      "require": "./*.cjs"
+    }
+  },
   "scripts": {
-    "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx'",
-    "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.mjs' --config-file '../../../babel-esm.config.json'",
+    "build-cjs": "cross-env BUILD_ENV=production babel --root-mode upward src -d . --extensions '.ts,.tsx' --out-file-extension '.cjs'",
+    "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --config-file '../../../babel-esm.config.json'",
     "generate-types": "tsc --project ./tsconfig.types.json",
     "build-icons": "yarn build-cjs && yarn build-esm",
-    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.js -i '[]' && yarn generate-types"
+    "make-icons": "babel-node --extensions '.cjs,.js' --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
   },
   "dependencies": {
     "@adobe/react-spectrum-workflow": "2.3.3",
@@ -28,12 +36,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "exports": {
-    "./*": {
-      "types": "./*.d.ts",
-      "import": "./*.mjs",
-      "require": "./*.js"
-    }
   }
 }
