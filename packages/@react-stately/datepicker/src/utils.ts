@@ -12,7 +12,7 @@
 
 import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -131,11 +131,15 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
 export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
   let lastValue = useRef(v);
-  if (v) {
-    lastValue.current = v;
-  }
+  useEffect(() => {
+    if (v) {
+      lastValue.current = v;
+    }
+  }, [v]);
 
-  v = lastValue.current;
+  if (!v) {
+    v = lastValue.current;
+  }
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   granularity = granularity || (v && 'minute' in v ? 'minute' : 'day');
 

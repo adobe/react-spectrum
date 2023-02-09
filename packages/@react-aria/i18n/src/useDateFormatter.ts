@@ -13,6 +13,7 @@
 import {DateFormatter} from '@internationalized/date';
 import {useLocale} from './context';
 import {useMemo, useRef} from 'react';
+import {useLayoutEffect} from "@react-aria/utils";
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
   calendar?: string
@@ -24,16 +25,23 @@ export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
  * @param options - Formatting options.
  */
 export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {
+  let {locale} = useLocale();
+
   // Reuse last options object if it is shallowly equal, which allows the useMemo result to also be reused.
   let lastOptions = useRef(null);
-  if (options && lastOptions.current && isEqual(options, lastOptions.current)) {
-    options = lastOptions.current;
-  }
+  let lastFormattedDate = useRef(null);
+  let formattedDate = useMemo(() => {
+    if (options && lastOptions.current && isEqual(options, lastOptions.current)) {
+      return lastFormattedDate.current;
+    }
+    return new DateFormatter(locale, options);
+  }, [locale, options]);
+  useLayoutEffect(() => {
+    lastOptions.current = options;
+    lastFormattedDate.current = formattedDate;
+  });
 
-  lastOptions.current = options;
-
-  let {locale} = useLocale();
-  return useMemo(() => new DateFormatter(locale, options), [locale, options]);
+  return formattedDate;
 }
 
 function isEqual(a: DateFormatterOptions, b: DateFormatterOptions) {

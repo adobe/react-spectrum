@@ -24,4 +24,10 @@ export function useUpdateEffect(effect: EffectCallback, dependencies: any[]) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
+
+  // For strictmode, the above isn't sufficient for detecting 'initial mount', so we
+  // need to cleanup on unmount.
+  useEffect(() => () => {
+    isInitialMount.current = true;
+  }, []);
 }

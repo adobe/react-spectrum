@@ -11,7 +11,7 @@
  */
 
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect, useUpdateEffect} from '@react-aria/utils';
 
 export class SyntheticFocusEvent implements ReactFocusEvent {
   nativeEvent: FocusEvent;
@@ -64,13 +64,12 @@ export class SyntheticFocusEvent implements ReactFocusEvent {
 export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
   let stateRef = useRef({
     isFocused: false,
-    onBlur,
-    observer: null as MutationObserver
+    observer: null as MutationObserver,
+    target: null as Element,
+    listener: null as (e: FocusEvent) => void
   });
-  stateRef.current.onBlur = onBlur;
 
   // Clean up MutationObserver on unmount. See below.
-  // eslint-disable-next-line arrow-body-style
   useLayoutEffect(() => {
     const state = stateRef.current;
     return () => {
@@ -78,6 +77,12 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
         state.observer.disconnect();
         state.observer = null;
       }
+      if (state.target && state.listener) {
+        state.target.removeEventListener('focusout', state.listener);
+      }
+      state.target = null;
+      state.listener = null;
+      state.isFocused = false;
     };
   }, []);
 
@@ -101,7 +106,7 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
         if (target.disabled) {
           // For backward compatibility, dispatch a (fake) React synthetic event.
-          stateRef.current.onBlur?.(new SyntheticFocusEvent('blur', e));
+          onBlur?.(new SyntheticFocusEvent('blur', e));
         }
 
         // We no longer need the MutationObserver once the target is blurred.
@@ -111,10 +116,19 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
         }
       };
 
+      if (stateRef.current.target && stateRef.current.listener) {
+        stateRef.current.target.removeEventListener('focusout', stateRef.current.listener);
+      }
       target.addEventListener('focusout', onBlurHandler, {once: true});
+      stateRef.current.target = target;
+      stateRef.current.listener = onBlurHandler;
 
+      if (stateRef.current.observer) {
+        stateRef.current.observer.disconnect();
+        stateRef.current.observer = null;
+      }
       stateRef.current.observer = new MutationObserver(() => {
-        if (stateRef.current.isFocused && target.disabled) {
+        if (stateRef.current.isFocused && target.disabled && document.contains(target)) {
           stateRef.current.observer.disconnect();
           target.dispatchEvent(new FocusEvent('blur'));
           target.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
@@ -123,5 +137,5 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
-  }, []);
+  }, [blur]);
 }

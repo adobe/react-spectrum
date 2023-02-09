@@ -73,7 +73,7 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
 
   return {
     isFocused,
-    isFocusVisible: state.current.isFocused && isFocusVisibleState,
+    isFocusVisible: isFocusVisibleState,
     focusProps: within ? focusWithinProps : focusProps
   };
 }

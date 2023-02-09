@@ -30,7 +30,7 @@ import {
 import {CalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface CalendarStateOptions extends CalendarProps<DateValue> {
   /** The locale to display and edit the value according to. */
@@ -113,12 +113,14 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   // Reset focused date and visible range when calendar changes.
   let lastCalendarIdentifier = useRef(calendar.identifier);
-  if (calendar.identifier !== lastCalendarIdentifier.current) {
-    let newFocusedDate = toCalendar(focusedDate, calendar);
-    setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
-    setFocusedDate(newFocusedDate);
-    lastCalendarIdentifier.current = calendar.identifier;
-  }
+  useEffect(() => {
+    if (calendar.identifier !== lastCalendarIdentifier.current) {
+      let newFocusedDate = toCalendar(focusedDate, calendar);
+      setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
+      setFocusedDate(newFocusedDate);
+      lastCalendarIdentifier.current = calendar.identifier;
+    }
+  });
 
   if (isInvalid(focusedDate, minValue, maxValue)) {
     // If the focused date was moved to an invalid value, it can't be focused, so constrain it.

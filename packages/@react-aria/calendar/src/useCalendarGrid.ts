@@ -13,10 +13,11 @@
 import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {hookData, useVisibleRangeDescription} from './utils';
-import {KeyboardEvent, useMemo} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
+import {hookData, hookStore, useVisibleRangeDescription} from './utils';
+import {KeyboardEvent, useEffect, useMemo, useState} from 'react';
+import {mergeProps, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useSyncExternalStore} from "use-sync-external-store/shim";
 
 export interface AriaCalendarGridProps {
   /**
@@ -122,7 +123,8 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
 
   let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
 
-  let {ariaLabel, ariaLabelledBy} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy} = useSyncExternalStore(hookStore.subscribe(state), hookStore.getSnapshot(state)) ?? {};
+
   let labelProps = useLabels({
     'aria-label': [ariaLabel, visibleRangeDescription].filter(Boolean).join(', '),
     'aria-labelledby': ariaLabelledBy

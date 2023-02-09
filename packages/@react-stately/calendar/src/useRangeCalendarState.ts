@@ -18,7 +18,7 @@ import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface RangeCalendarStateOptions extends RangeCalendarProps<DateValue> {
   /** The locale to display and edit the value according to. */
@@ -92,10 +92,12 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
 
   // If the visible range changes, we need to update the available range.
   let lastVisibleRange = useRef(calendar.visibleRange);
-  if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.current.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.current.end)) {
-    updateAvailableRange(anchorDate);
-    lastVisibleRange.current = calendar.visibleRange;
-  }
+  useEffect(() => {
+    if (!isEqualDay(calendar.visibleRange.start, lastVisibleRange.current.start) || !isEqualDay(calendar.visibleRange.end, lastVisibleRange.current.end)) {
+      updateAvailableRange(anchorDate);
+      lastVisibleRange.current = calendar.visibleRange;
+    }
+  });
 
   let setAnchorDate = (date: CalendarDate) => {
     if (date) {
