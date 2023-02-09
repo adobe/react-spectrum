@@ -19,7 +19,6 @@ import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
-import {useSeparator} from '@react-aria/separator';
 
 interface ListBoxSectionProps<T> {
   reusableView: ReusableView<Node<T>, unknown>,
@@ -36,10 +35,6 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
     'aria-label': item['aria-label']
   });
 
-  let {separatorProps} = useSeparator({
-    elementType: 'li'
-  });
-
   let headerRef = useRef();
   useVirtualizerItem({
     reusableView: header,
@@ -54,7 +49,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
       <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
-            {...separatorProps}
+            role="presentation"
             className={classNames(
               styles,
               'spectrum-Menu-divider'
