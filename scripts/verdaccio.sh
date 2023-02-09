@@ -100,10 +100,10 @@ then
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt
-  du -ka build/ | tee -a build-stats.txt
+  du -ka dist/ | tee -a build-stats.txt
   mkdir -p ../../$verdaccio_path/publish-stats
   mv build-stats.txt ../../
-  mv build ../../$verdaccio_path
+  mv dist ../../$verdaccio_path
 
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
