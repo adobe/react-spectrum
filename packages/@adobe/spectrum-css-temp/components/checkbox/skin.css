@@ -293,6 +293,9 @@ governing permissions and limitations under the License.
     --spectrum-checkbox-emphasized-text-color-hover: FieldText;
     --spectrum-checkbox-emphasized-text-color-key-focus: FieldText;
     --spectrum-checkbox-focus-ring-color-key-focus: ButtonText;
+    --spectrum-checkbox-quiet-box-border-color-selected: Highlight;
+    --spectrum-checkbox-quiet-box-border-color-selected-down: Highlight;
+    --spectrum-checkbox-quiet-box-border-color-selected-hover: Highlight;
     --spectrum-checkbox-text-color: FieldText;
     --spectrum-checkbox-text-color-disabled: GrayText;
     --spectrum-checkbox-text-color-error: FieldText;
