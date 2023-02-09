@@ -96,6 +96,7 @@ then
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4
   yarn install
+  yarn jest
 
   # Build CRA test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt

@@ -28,6 +28,7 @@
     "webpack-dev-server": "3.1.8",
     "style-loader": "0.23.0",
     "css-loader": "1.0.0",
-    "babel-loader": "8.0.2"
+    "babel-loader": "8.0.2",
+    "jest": "^26"
   }
 }
