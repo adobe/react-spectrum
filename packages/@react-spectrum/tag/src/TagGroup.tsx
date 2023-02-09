@@ -81,7 +81,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         let currY = -Infinity;
         let rowCount = 0;
         let index = 0;
-        let tagWidths = [];
+        let tagWidths: number[] = [];
         // Count rows and show tags until we hit the maxRows.
         for (let tag of tags) {
           let {width, y} = tag.getBoundingClientRect();
@@ -100,15 +100,15 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+        buttonsWidth += parseInt(window.getComputedStyle(buttons[buttons.length - 1]).marginRight, 10) * 2;
         let end = direction === 'ltr' ? 'right' : 'left';
-        let containerEnd = currContainerRef.getBoundingClientRect()[end];
+        let containerEnd = currContainerRef.parentElement.getBoundingClientRect()[end];
         let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+        lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
         let availableWidth = containerEnd - lastTagEnd;
-        for (let tagWidth of tagWidths.reverse()) {
-          if (availableWidth >= buttonsWidth || index <= 1 || index >= state.collection.size) {
-            break;
-          }
-          availableWidth += tagWidth;
+
+        while (availableWidth < buttonsWidth && index > 1 && index < state.collection.size) {
+          availableWidth += tagWidths.pop();
           index--;
         }
         return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
