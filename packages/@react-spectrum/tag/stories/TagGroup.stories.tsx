@@ -12,10 +12,13 @@
 
 import {action} from '@storybook/addon-actions';
 import Audio from '@spectrum-icons/workflow/Audio';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import React, {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 
 let manyItems = [];
 for (let i = 0; i < 50; i++) {
@@ -53,7 +56,49 @@ export default {
         disable: true
       }
     },
-    maxRows: {type: 'number'}
+    onAction: {
+      table: {
+        disable: true
+      }
+    },
+    items: {
+      table: {
+        disable: true
+      }
+    },
+    maxRows: {
+      type: 'number'
+    },
+    contextualHelp: {
+      table: {
+        disable: true
+      }
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    necessityIndicator: {
+      control: 'select',
+      options: ['icon', 'label']
+    },
+    labelPosition: {
+      control: 'select',
+      options: ['top', 'side']
+    },
+    labelAlign: {
+      control: 'select',
+      options: ['start', 'end']
+    },
+    validationState: {
+      control: 'select',
+      options: [null, 'valid', 'invalid']
+    },
+    description: {
+      control: 'text'
+    },
+    errorMessage: {
+      control: 'text'
+    }
   },
   render: args => render(args)
 } as ComponentMeta<typeof TagGroup>;
@@ -106,7 +151,7 @@ export const MaxRows: TagGroupStory = {
 export const MaxRowsManyTags: TagGroupStory = {
   args: {maxRows: 2},
   render: (args) => (
-    <TagGroup width="100%" aria-label="Tag group with 50 tags" items={manyItems} {...args}>
+    <TagGroup aria-label="Tag group with 50 tags" items={manyItems} {...args}>
       {(item: any) => (
         <Item key={item.key}>{`Tag ${item.key}`}</Item>
       )}
@@ -123,29 +168,25 @@ export const MaxRowsOnRemove: TagGroupStory = {
   storyName: 'maxRows + onRemove'
 };
 
-function OnRemoveExample(props) {
-  let [items, setItems] = useState([
-    {id: 1, label: 'Cool Tag 1'},
-    {id: 2, label: 'Another cool tag'},
-    {id: 3, label: 'This tag'},
-    {id: 4, label: 'What tag?'},
-    {id: 5, label: 'This tag is cool too'},
-    {id: 6, label: 'Shy tag'}
-  ]);
-
-  let onRemove = (key) => {
-    setItems(prevItems => prevItems.filter((item) => key !== item.id));
-    action('onRemove')(key);
-  };
-
-  return (
-    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...props}>
+export const WithAvatar: TagGroupStory = {
+  args: {items: [{key: '1', label: 'Cool Person 1'}, {key: '2', label: 'Cool Person 2'}]},
+  render: (args) => (
+    <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
-        <Item>{item.label}</Item>
+        <Item key={item.key} textValue={item.label}>
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          <Text>{item.label}</Text>
+        </Item>
       )}
     </TagGroup>
-  );
-}
+  ),
+  storyName: 'with avatar'
+};
+
+export const WithAvatarOnRemove: TagGroupStory = {
+  render: (args) => <OnRemoveExample withAvatar {...args} />,
+  storyName: 'with avatar + onRemove'
+};
 
 export const WithAction: TagGroupStory = {
   args: {onAction: action('clear'), actionLabel: 'Clear'},
@@ -162,3 +203,62 @@ export const WithActionAndMaxRows: TagGroupStory = {
   storyName: 'with action and maxRows'
 };
 
+export const WithLabelDescriptionContextualHelp: TagGroupStory = {
+  args: {
+    label: 'Some sample tags',
+    description: 'Here is a description about the tag group.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What are these tags?</Heading>
+        <Content>Here is more information about the tag group.</Content>
+      </ContextualHelp>
+    )
+  },
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'with label, description, contextual help'
+};
+
+export const WithLabelDescriptionContextualHelpAndAction: TagGroupStory = {
+  args: {
+    onAction: action('clear'),
+    actionLabel: 'Clear',
+    label: 'Some sample tags',
+    description: 'Here is a description about the tag group.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What are these tags?</Heading>
+        <Content>Here is more information about the tag group.</Content>
+      </ContextualHelp>
+    )
+  },
+  decorators: [(Story) => <ResizableContainer>{<Story />}</ResizableContainer>],
+  storyName: 'with label, description, contextual help + action'
+};
+
+function OnRemoveExample(props) {
+  let {withAvatar, ...otherProps} = props;
+  let [items, setItems] = useState([
+    {id: 1, label: 'Cool Tag 1'},
+    {id: 2, label: 'Another cool tag'},
+    {id: 3, label: 'This tag'},
+    {id: 4, label: 'What tag?'},
+    {id: 5, label: 'This tag is cool too'},
+    {id: 6, label: 'Shy tag'}
+  ]);
+
+  let onRemove = (key) => {
+    setItems(prevItems => prevItems.filter((item) => key !== item.id));
+    action('onRemove')(key);
+  };
+
+  return (
+    <TagGroup allowsRemoving aria-label="Tag group with removable tags" items={items} onRemove={key => onRemove(key)} {...otherProps}>
+      {(item: any) => (
+        <Item key={item.key} textValue={item.label}>
+          {withAvatar && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
+          <Text>{item.label}</Text>
+        </Item>
+      )}
+    </TagGroup>
+  );
+}

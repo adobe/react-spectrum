@@ -13,7 +13,7 @@
 // We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
 // guarded by a check that it only runs on the client side.
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
+import React, {ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.
@@ -49,12 +49,13 @@ export interface SSRProviderProps {
  */
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
+  let counter = useCounter(cur === defaultContext);
   let value: SSRContextValue = useMemo(() => ({
     // If this is the first SSRProvider, start with an empty string prefix, otherwise
     // append and increment the counter.
-    prefix: cur === defaultContext ? '' : `${cur.prefix}-${++cur.current}`,
+    prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
     current: 0
-  }), [cur]);
+  }), [cur, counter]);
 
   return (
     <SSRContext.Provider value={value}>
@@ -69,6 +70,46 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
+let componentIds = new WeakMap();
+
+function useCounter(isDisabled = false) {
+  let ctx = useContext(SSRContext);
+  let ref = useRef<number | null>(null);
+  if (ref.current === null && !isDisabled) {
+    // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
+    // This means our id counter will be incremented twice instead of once. This is a problem because on the
+    // server, components are only rendered once and so ids generated on the server won't match the client.
+    // In React 18, useId was introduced to solve this, but it is not available in older versions. So to solve this
+    // we need to use some React internals to access the underlying Fiber instance, which is stable between renders.
+    // This is exposed as ReactCurrentOwner in development, which is all we need since StrictMode only runs in development.
+    // To ensure that we only increment the global counter once, we store the starting id for this component in
+    // a weak map associated with the Fiber. On the second render, we reset the global counter to this value.
+    // Since React runs the second render immediately after the first, this is safe.
+    // @ts-ignore
+    let currentOwner = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+    if (currentOwner) {
+      let prevComponentValue = componentIds.get(currentOwner);
+      if (prevComponentValue == null) {
+        // On the first render, and first call to useId, store the id and state in our weak map.
+        componentIds.set(currentOwner, {
+          id: ctx.current,
+          state: currentOwner.memoizedState
+        });
+      } else if (currentOwner.memoizedState !== prevComponentValue.state) {
+        // On the second render, the memoizedState gets reset by React.
+        // Reset the counter, and remove from the weak map so we don't
+        // do this for subsequent useId calls.
+        ctx.current = prevComponentValue.id;
+        componentIds.delete(currentOwner);
+      }
+    }
+
+    ref.current = ++ctx.current;
+  }
+
+  return ref.current;
+}
+
 /** @private */
 export function useSSRSafeId(defaultId?: string): string {
   let ctx = useContext(SSRContext);
@@ -79,8 +120,8 @@ export function useSSRSafeId(defaultId?: string): string {
     console.warn('When server rendering, you must wrap your application in an <SSRProvider> to ensure consistent ids are generated between the client and server.');
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => defaultId || `react-aria${ctx.prefix}-${++ctx.current}`, [defaultId]);
+  let counter = useCounter(!!defaultId);
+  return defaultId || `react-aria${ctx.prefix}-${counter}`;
 }
 
 /**

@@ -42,6 +42,7 @@
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
     "check-published-apis": "yarn build:api-published && yarn build:api-branch && yarn compare:apis",
     "bumpVersions": "node scripts/bumpVersions.js",
+    "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
     "supportESM": "node scripts/esm-support/supportESM.js",
     "buildESM": "yarn run wsrun prepublish"
   },
@@ -92,7 +93,7 @@
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "autoprefixer": "^9.6.0",
-    "axe-core": "^3.0.3",
+    "axe-core": "^4.6.3",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-macros": "^3.0.1",
     "babel-plugin-react-remove-properties": "^0.3.0",

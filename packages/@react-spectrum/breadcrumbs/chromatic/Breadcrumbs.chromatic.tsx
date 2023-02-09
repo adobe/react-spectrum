@@ -49,7 +49,6 @@ export const SizeM = Template().bind({});
 SizeM.args = {size: 'M'};
 
 export const Truncated = Template().bind({});
-Truncated.args = {truncated: true};
 Truncated.decorators = [(Story) => <div style={{width: '100px'}}><Story /></div>];
 
 export const ShowRoot = Template().bind({});

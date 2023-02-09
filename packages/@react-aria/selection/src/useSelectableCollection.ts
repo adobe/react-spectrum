@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, scrollIntoView, useEvent} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -360,9 +360,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
+        scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
-  }, [isVirtualized, scrollRef, manager.focusedKey]);
+  }, [isVirtualized, scrollRef, manager.focusedKey, ref]);
 
   let handlers = {
     onKeyDown,
