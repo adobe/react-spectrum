@@ -301,6 +301,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
 
     let headerRect = new Rect(0, y, width, rectHeight);
+    // TODO rename this to section header to differentiate it from tableview header?
     let header = new LayoutInfo('header', node.key + ':header', headerRect);
     header.estimatedSize = isEstimated;
     header.parentKey = node.key;
@@ -335,12 +336,16 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
     rect.height = y - startY;
 
-    return {
+    let layoutNode = {
       header,
       layoutInfo,
       children,
       validRect: layoutInfo.rect.intersection(this.validRect)
     };
+
+    console.log('section layout info', layoutNode);
+
+    return layoutNode;
   }
 
   buildItem(node: Node<T>, x: number, y: number): LayoutNode {

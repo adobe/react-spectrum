@@ -227,6 +227,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'header') {
+      // TODO add condition where this only render the table's top level header (aka check for header.parent = null)
+      // or rename the section header type to 'sectionHeader'
+      console.log('rendering header', reusableView);
       return (
         <TableHeader
           key={reusableView.key}
@@ -257,6 +260,27 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           item={reusableView.content}>
           {renderChildren(children)}
         </TableHeaderRow>
+      );
+    }
+
+    if (reusableView.viewType === 'section') {
+      // TODO: at the moment the layout info returned doesn't include the section header returned from listlayout
+      console.log('REUSUABLE SECTION, parent, reusable, children, style, ', parent, reusableView, children, style )
+      // TODO: that is ok, just need to figure out how to get the header as part of the children of the section
+      // Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
+      // confirm this
+      let header = children.find(c => c.viewType === 'header');
+      let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, parent && parent.layoutInfo);
+      let sectionStyle = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
+      return (
+        <>
+          <div style={headerStyle} key={header.key}>
+            {reusableView.content.rendered}
+          </div>
+          <div style={sectionStyle} key={reusableView.key}>
+            {renderChildren(children)}
+          </div>
+        </>
       );
     }
 

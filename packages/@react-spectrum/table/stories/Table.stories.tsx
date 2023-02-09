@@ -140,6 +140,11 @@ export const Static: TableStory = {
             <Cell>One</Cell>
           </Row>
         </Section>
+        <Section title="Section2">
+          <Row>
+            <Cell>two</Cell>
+          </Row>
+        </Section>
       </TableBody>
     </TableView>
   ),
@@ -187,6 +192,9 @@ let items = [
 let itemsWithSections = [
   {id: 0, title: 'section1', children: [
     {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'}
+  ]},
+  {id: 1, title: 'section2', children: [
+    {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
   ]}
 ];
 
@@ -213,6 +221,7 @@ export const Dynamic: TableStory = {
   storyName: 'dynamic'
 };
 
+// TODO: fix keyboard navigation so it skips sections entirely
 export const DynamicSections: TableStory = {
   args: {
     'aria-label': 'TableView with static contents',

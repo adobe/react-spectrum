@@ -21,6 +21,7 @@ function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disabl
 TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
 
   let {children, items} = props;
+  console.log('in table body')
   yield {
     type: 'body',
     hasChildNodes: true,
