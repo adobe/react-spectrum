@@ -11,10 +11,10 @@
  */
 
 import {AriaSliderProps} from '@react-types/slider';
-import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, mergeProps, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import React, {LabelHTMLAttributes, OutputHTMLAttributes, RefObject, useRef} from 'react';
 import {setInteractionModality, useMove} from '@react-aria/interactions';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
@@ -67,7 +67,7 @@ export function useSlider<T extends number | number[]>(
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
   const stateRef = useRef<SliderState>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     stateRef.current = state;
   });
   const reverseX = direction === 'rtl';
