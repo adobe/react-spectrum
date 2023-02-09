@@ -11,9 +11,9 @@
  */
 
 import {DateFormatter} from '@internationalized/date';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from './context';
 import {useMemo, useRef} from 'react';
-import {useLayoutEffect} from "@react-aria/utils";
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
   calendar?: string

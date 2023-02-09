@@ -25,47 +25,8 @@ interface HookData {
   selectedDateDescription: string
 }
 
-let hookData = new Map<CalendarState | RangeCalendarState, HookData>();
-let listeners = new Map();
+export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
 
-export const hookStore = {
-  update: (state: CalendarState | RangeCalendarState, data: HookData) => {
-    if (hookData.get(state) !== data) {
-      hookData.set(state, data);
-      hookData = new Map(hookData);
-      emitChange(state);
-    }
-  },
-  subscribe(state) {
-    return (listener) => {
-      let prevListeners = listeners.get(state);
-      if (prevListeners) {
-        listeners.set(state, [...prevListeners, listener]);
-      } else {
-        listeners.set(state, [listener]);
-      }
-      return () => {
-        listeners.set(state, listeners.get(state).filter(l => l !== listener));
-        if (listeners.get(state).length === 0) {
-          hookData.delete(state);
-        }
-      };
-    };
-  },
-  getSnapshot(state) {
-    return () => {
-      return hookData.get(state);
-    };
-  }
-};
-function emitChange(state) {
-  let stateListeners = listeners.get(state);
-  if (stateListeners) {
-    for (let listener of listeners.get(state)) {
-      listener();
-    }
-  }
-}
 export function getEraFormat(date: CalendarDate): 'short' | undefined {
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
 }

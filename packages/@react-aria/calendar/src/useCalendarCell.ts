@@ -17,17 +17,15 @@ import {
   focusWithoutScrolling,
   getScrollParent,
   scrollIntoViewport,
-  useDescription,
-  useLayoutEffect
+  useDescription
 } from '@react-aria/utils';
-import {getEraFormat, hookData, hookStore} from './utils';
+import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject, useEffect, useMemo, useRef, useState} from 'react';
+import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useSyncExternalStore} from "use-sync-external-store/shim";
 
 export interface AriaCalendarCellProps {
   /** The date that this cell represents. */
@@ -82,7 +80,7 @@ export interface CalendarCellAria {
  */
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
-  let {errorMessageId, selectedDateDescription} = useSyncExternalStore(hookStore.subscribe(state), hookStore.getSnapshot(state)) ?? {};
+  let {errorMessageId, selectedDateDescription} = hookData.get(state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let dateFormatter = useDateFormatter({
     weekday: 'long',

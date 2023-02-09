@@ -113,14 +113,15 @@ export function useCalendarState(props: CalendarStateOptions): CalendarState {
 
   // Reset focused date and visible range when calendar changes.
   let lastCalendarIdentifier = useRef(calendar.identifier);
+  let calIdentifier = calendar.identifier;
   useEffect(() => {
     if (calendar.identifier !== lastCalendarIdentifier.current) {
       let newFocusedDate = toCalendar(focusedDate, calendar);
       setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
       setFocusedDate(newFocusedDate);
-      lastCalendarIdentifier.current = calendar.identifier;
+      lastCalendarIdentifier.current = calIdentifier;
     }
-  });
+  }, [calendar, focusedDate, visibleDuration, locale, minValue, maxValue, setFocusedDate, calIdentifier]);
 
   if (isInvalid(focusedDate, minValue, maxValue)) {
     // If the focused date was moved to an invalid value, it can't be focused, so constrain it.

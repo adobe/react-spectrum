@@ -11,7 +11,7 @@
  */
 
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
-import {useId, useLayoutEffect, useUpdateEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export class SyntheticFocusEvent implements ReactFocusEvent {
   nativeEvent: FocusEvent;
@@ -137,5 +137,5 @@ export function useSyntheticBlurEvent(onBlur: (e: ReactFocusEvent) => void) {
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
-  }, [blur]);
+  }, [onBlur]);
 }

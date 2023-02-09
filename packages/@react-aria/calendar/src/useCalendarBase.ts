@@ -17,11 +17,11 @@ import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useLayoutEffect, useSlotId, useUpdateEffect} from '@react-aria/utils';
-import {hookStore, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
+import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMemo, useRef} from 'react';
+import {useRef} from 'react';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
@@ -62,18 +62,13 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
 
   let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
 
-  let ariaLabel = props['aria-label'];
-  let ariaLabelledBy = props['aria-labelledby'];
-  let data = useMemo(() => ({
-    ariaLabel,
-    ariaLabelledBy,
+  // Pass the label to the child grid elements.
+  hookData.set(state, {
+    ariaLabel: props['aria-label'],
+    ariaLabelledBy: props['aria-labelledby'],
     errorMessageId,
     selectedDateDescription
-  }), [ariaLabel, ariaLabelledBy, errorMessageId, selectedDateDescription]);
-  useLayoutEffect(() => {
-    // Pass the label to the child grid elements.
-    hookStore.update(state, data);
-  }, [data]);
+  });
 
   let nextFocused = useRef(false);
   let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();

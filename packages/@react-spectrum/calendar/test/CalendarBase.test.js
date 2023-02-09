@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
