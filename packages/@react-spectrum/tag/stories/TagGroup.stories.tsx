@@ -98,9 +98,6 @@ export default {
     },
     errorMessage: {
       control: 'text'
-    },
-    showErrorIcon: {
-      control: 'boolean'
     }
   },
   render: args => render(args)

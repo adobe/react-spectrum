@@ -378,8 +378,8 @@ describe('TableViewSizing', function () {
         for (let row of rows) {
           expect((row.childNodes[0] as HTMLElement).style.width).toBe('38px');
           expect((row.childNodes[1] as HTMLElement).style.width).toBe('321px');
-          expect((row.childNodes[2] as HTMLElement).style.width).toBe('321px');
-          expect((row.childNodes[3] as HTMLElement).style.width).toBe('320px');
+          expect((row.childNodes[2] as HTMLElement).style.width).toBe('320px');
+          expect((row.childNodes[3] as HTMLElement).style.width).toBe('321px');
         }
       });
 

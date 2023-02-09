@@ -91,7 +91,7 @@
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "autoprefixer": "^9.6.0",
-    "axe-core": "^3.0.3",
+    "axe-core": "^4.6.3",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-macros": "^3.0.1",
     "babel-plugin-react-remove-properties": "^0.3.0",
