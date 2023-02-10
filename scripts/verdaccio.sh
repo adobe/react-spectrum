@@ -98,12 +98,11 @@ then
   yarn install
   yarn jest
 
-  # Build CRA test app and move to dist folder. Store the size of the build in a text file.
+  # Build Webpack 4 test app and move to dist folder. Store the size of the build in a text file.
   yarn build | tee build-stats.txt
-  du -ka dist/ | tee -a build-stats.txt
-  mkdir -p ../../$verdaccio_path/publish-stats
-  mv build-stats.txt ../../
-  mv dist ../../$verdaccio_path
+  du -ka dist/ | tee -a webpack-4-build-stats.txt
+  mv webpack-4-build-stats.txt ../../$verdaccio_path/publish-stats
+  mv dist ../../$verdaccio_path/webpack-4
 
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
