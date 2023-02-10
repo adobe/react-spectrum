@@ -125,7 +125,6 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           <VisuallyHidden>
             <input
               ref={ref}
-              type="range"
               {...inputProps} />
           </VisuallyHidden>
         </div>
