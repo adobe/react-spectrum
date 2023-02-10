@@ -306,12 +306,26 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setFocusedState(isFocused);
   };
 
+  let selectionManagerProxy = useMemo(() => {
+    let proxy = new Proxy(selectionManager, {
+      get(target, prop, receiver) {
+        // If the menu is closed, don't update the selected key.
+        if (prop === 'replaceSelection' && !triggerState.isOpen) {
+          return () => {};
+        }
+        return Reflect.get(target, prop, receiver);
+      }
+    });
+
+    return proxy;
+  }, [selectionManager, triggerState.isOpen]);
+
   return {
     ...triggerState,
     toggle,
     open,
     close,
-    selectionManager,
+    selectionManager: selectionManagerProxy,
     selectedKey,
     setSelectedKey,
     disabledKeys,
