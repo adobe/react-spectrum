@@ -37,7 +37,7 @@ export const Default: BadgeStory = {
 };
 
 export const WithIcon: BadgeStory = {
-  args: {children: <><CheckmarkCircle /><Text>Licensed</Text></>, variant: 'positive'},
+  args: {children: <><CheckmarkCircle /><Text>Licensed</Text></>, variant: 'positive', 'aria-label': 'Done'},
   name: 'With icon'
 };
 
