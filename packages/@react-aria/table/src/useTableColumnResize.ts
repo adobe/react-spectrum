@@ -11,7 +11,7 @@
  */
 
 import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
@@ -38,7 +38,7 @@ export interface AriaTableColumnResizeProps<T> {
    * Ref to the trigger if resizing was started from a column header menu. If it's provided,
    * focus will be returned there when resizing is done.
    * */
-  triggerRef?: RefObject<HTMLDivElement>,
+  triggerRef?: RefObject<FocusableElement>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */
