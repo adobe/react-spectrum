@@ -145,6 +145,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     'aria-orientation': 'horizontal' as 'horizontal',
     'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
+    'type': 'range',
     min,
     max,
     value
