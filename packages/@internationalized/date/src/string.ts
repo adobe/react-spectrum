@@ -23,7 +23,9 @@ const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{
 const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
 const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
-    /^(?<negative>-)?P((?<years>-?\d*[.,]?\d+)Y)?((?<months>-?\d*[.,]?\d+)M)?((?<weeks>-?\d*[.,]?\d+)W)?((?<days>-?\d*[.,]?\d+)D)?(T((?<hours>-?\d*[.,]?\d+)H)?((?<minutes>-?\d*[.,]?\d+)M)?((?<seconds>-?\d*[.,]?\d+)S)?)?/;
+    /^(?<negative>-)?P((?<years>-?\d*)Y)?((?<months>-?\d*)M)?((?<weeks>-?\d*)W)?((?<days>-?\d*)D)?((?<time>T)((?<hours>-?\d*[.,]?\d{1,9})H)?((?<minutes>-?\d*[.,]?\d{1,9})M)?((?<seconds>-?\d*[.,]?\d{1,9})S)?)?$/;
+const requiredDurationTimeGroups = ['hours', 'minutes', 'seconds'];
+const requiredDurationGroups = ['years', 'months', 'weeks', 'days', ...requiredDurationTimeGroups];
 
 /** Parses an ISO 8601 time string. */
 export function parseTime(value: string): Time {
@@ -212,26 +214,55 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
 
   const parseDurationGroup = (
     group: string | undefined,
-    isNegative: boolean
+    isNegative: boolean,
+    min: number,
+    max: number
   ): number => {
     if (!group) {
       return 0;
     }
-    const sign = isNegative ? -1 : 1;
-    return sign * parseFloat(group.replace(',', '.'));
+    try {
+      const sign = isNegative ? -1 : 1;
+      return sign * parseNumber(group.replace(',', '.'), min, max);
+    } catch {
+      throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+    }
   };
 
   const isNegative = !!match.groups?.negative;
 
+  const hasRequiredGroups = requiredDurationGroups.some(group => match.groups?.[group]);
+
+  if (!hasRequiredGroups) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+  }
+
+  const durationStringIncludesTime = match.groups?.time;
+  
+  if (durationStringIncludesTime) {
+    const hasRequiredDurationTimeGroups = requiredDurationTimeGroups.some(group => match.groups?.[group]);
+    if (!hasRequiredDurationTimeGroups) {
+      throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
+    }
+  }
+
   const duration: Mutable<DateTimeDuration> = {
-    years: parseDurationGroup(match.groups?.years, isNegative),
-    months: parseDurationGroup(match.groups?.months, isNegative),
-    weeks: parseDurationGroup(match.groups?.weeks, isNegative),
-    days: parseDurationGroup(match.groups?.days, isNegative),
-    hours: parseDurationGroup(match.groups?.hours, isNegative),
-    minutes: parseDurationGroup(match.groups?.minutes, isNegative),
-    seconds: parseDurationGroup(match.groups?.seconds, isNegative)
+    years: parseDurationGroup(match.groups?.years, isNegative, 0, 9999),
+    months: parseDurationGroup(match.groups?.months, isNegative, 0, 12),
+    weeks: parseDurationGroup(match.groups?.weeks, isNegative, 0, Infinity),
+    days: parseDurationGroup(match.groups?.days, isNegative, 0, 31),
+    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, 23),
+    minutes: parseDurationGroup(match.groups?.minutes, isNegative, 0, 59),
+    seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
   };
+
+  if (((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  }
+
+  if (((duration.minutes % 1) !== 0) && duration.seconds) {
+    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  }
 
   return duration as Required<DateTimeDuration>;
 }

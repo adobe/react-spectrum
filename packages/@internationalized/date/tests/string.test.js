@@ -367,42 +367,81 @@ describe('string conversion', function () {
       });
     });
   
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds in decimals and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3.75Y6.6M6.5W4.2DT12.5H30.5M5.5S');
-      expect(duration).toStrictEqual({
-        years: 3.75,
-        months: 6.6,
-        weeks: 6.5,
-        days: 4.2,
-        hours: 12.5,
-        minutes: 30.5,
-        seconds: 5.5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds in decimals expressed by commas and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3,75Y6,75M6,5W4,2DT12,5H30,5M5,5S');
-      expect(duration).toStrictEqual({
-        years: 3.75,
-        months: 6.75,
-        weeks: 6.5,
-        days: 4.2,
-        hours: 12.5,
-        minutes: 30.5,
-        seconds: 5.5
-      });
-    });
-  
-    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds with negative values and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P3Y6M-6W4DT12H30M-5S');
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and fractional values for seconds expressed with a period and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12H30M5.5S');
       expect(duration).toStrictEqual({
         years: 3,
         months: 6,
-        weeks: -6,
+        weeks: 6,
         days: 4,
         hours: 12,
         minutes: 30,
-        seconds: -5
+        seconds: 5.5
+      });
+    });
+  
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and fractional values for seconds expressed with a comma and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12H30M5,5S');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12,
+        minutes: 30,
+        seconds: 5.5
+      });
+    });
+
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, and fractional values for minutes expressed with a period and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12H30.5M');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12,
+        minutes: 30.5,
+        seconds: 0
+      });
+    });
+
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, and fractional values for minutes expressed with a comma and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12H30,5M');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12,
+        minutes: 30.5,
+        seconds: 0
+      });
+    });
+
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, and fractional values for hours expressed with a period and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12.5H');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12.5,
+        minutes: 0,
+        seconds: 0
+      });
+    });
+
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, and fractional values for hours expressed with a comma and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('P3Y6M6W4DT12.5H');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12.5,
+        minutes: 0,
+        seconds: 0
       });
     });
   
@@ -433,7 +472,7 @@ describe('string conversion', function () {
     });
   
     it('parses an ISO 8601 duration string that contains years, months, weeks, and days and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P7Y8M14W6DT');
+      const duration = parseDuration('P7Y8M14W6D');
       expect(duration).toStrictEqual({
         years: 7,
         months: 8,
@@ -460,8 +499,65 @@ describe('string conversion', function () {
   
     it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
       expect(() => {
+        parseDuration('P18Y7MT');
+      }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT');
+      expect(() => {
+        parseDuration('P18Y7MT30H15S');
+      }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT30H15S');
+      expect(() => {
         parseDuration('7Y6D85');
       }).toThrow('Invalid ISO 8601 Duration string: 7Y6D85');
+      expect(() => {
+        parseDuration('P1Y1M1W1DT1H1M1.123456789123S');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1H1M1.123456789123S');
+      expect(() => {
+        parseDuration('P0.5Y');
+      }).toThrow('Invalid ISO 8601 Duration string: P0.5Y');
+      expect(() => {
+        parseDuration('P1Y0,5M');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y0,5M');
+      expect(() => {
+        parseDuration('P1Y1M0.5W');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M0.5W');
+      expect(() => {
+        parseDuration('P1Y1M1W0,5D');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W0,5D');
+      expect(() => {
+        parseDuration('P1Y1M1W1DT0.5H5S');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT0.5H5S - only the smallest unit can be fractional');
+      expect(() => {
+        parseDuration('P1Y1M1W1DT1.5H0,5M');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1.5H0,5M - only the smallest unit can be fractional');
+      expect(() => {
+        parseDuration('P1Y1M1W1DT1H0.5M0.5S');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1H0.5M0.5S - only the smallest unit can be fractional');
+      expect(() => {
+        parseDuration('P');
+      }).toThrow('Invalid ISO 8601 Duration string: P');
+      expect(() => {
+        parseDuration('PT');
+      }).toThrow('Invalid ISO 8601 Duration string: PT');
+      expect(() => {
+        parseDuration('-P');
+      }).toThrow('Invalid ISO 8601 Duration string: -P');
+      expect(() => {
+        parseDuration('-PT');
+      }).toThrow('Invalid ISO 8601 Duration string: -PT');
+      expect(() => {
+        parseDuration('+P');
+      }).toThrow('Invalid ISO 8601 Duration string: +P');
+      expect(() => {
+        parseDuration('+PT');
+      }).toThrow('Invalid ISO 8601 Duration string: +PT');
+      expect(() => {
+        parseDuration('P1Y1M1W1DT1H1M1.01Sjunk');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1H1M1.01Sjunk');
+      expect(() => {
+        parseDuration('P-1Y1M');
+      }).toThrow('Invalid ISO 8601 Duration string: P-1Y1M');
+      expect(() => {
+        parseDuration('P1Y-1M');
+      }).toThrow('Invalid ISO 8601 Duration string: P1Y-1M');
     });
   });
 });
