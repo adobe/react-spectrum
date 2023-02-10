@@ -55,6 +55,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useTagGroupState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
+  let [maxHeight, setMaxHeight] = useState(undefined);
   let keyboardDelegate = useMemo(() => (
     isCollapsed
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
@@ -120,8 +121,13 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Measure, and update to show the items until maxRows is reached.
         yield computeVisibleTagCount();
+
+        // Set a fixed height on the container
+        setMaxHeight(containerRef.current?.getBoundingClientRect().height);
       });
     }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxRows, setTagState, domRef, direction, state.collection.size]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
@@ -166,6 +172,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
+          style={maxRows != null && isCollapsed ? {maxHeight, overflow: 'hidden'} : {}}
           ref={containerRef}>
           <div
             ref={tagsRef}
