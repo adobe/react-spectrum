@@ -7,7 +7,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: 2023-02-13
 - RFC PR: (leave this empty, to be filled in later)
 - Authors: Devon Govett
 
@@ -29,7 +29,7 @@ We think there is room for a higher level component-based API that sits on top o
 
 ## Detailed Design
 
-At a high level, React Aria Components is a library of unstyled components implementing ARIA patterns. It is implemented as a thin layer on top of our existing React Aria hooks. The components provide a default DOM structure and styling API, and abstract away the glue code necessary to connect all of the necessary hooks together. The hooks will also continue to be maintained and documented as a first-class API in addition to the new component API.
+At a high level, React Aria Components is a library of unstyled components implementing ARIA patterns. It is implemented as a thin layer on top of our existing React Aria hooks. The components provide a default DOM structure and styling API, and abstract away the glue code necessary to connect the hooks together. The hooks will also continue to be maintained and documented as a first-class API in addition to the new component API.
 
 The components and hooks also work together, allowing them to be mixed and matched depending on the level of customization required. We would recommend that developers start with the component API by default, and only drop down to hooks when they need additional customization options. This strategy offers the best of both worlds, where simple things are easy, and complex things are possible.
 
@@ -241,7 +241,7 @@ Each component page should have several sections, similar to the documentation f
 * Features – a list of the main features of the component, grouped by category to allow easy skimming.
 * Anatomy – the anatomy diagram and description of the various parts of the component. For components that compose other child components, links to the documentation for those components would be useful, along with any conceptual documentation (e.g. collections, selection).
 * Prop table for all relevant components.
-* Styling – a description of how to style the component in various ways, including documentation of all of the available states and CSS selectors. Links to styled codesanbox examples with various tools like we have in our hook docs might be useful as well.
+* Styling – a description of how to style the component in various ways, including documentation of all of the available states and CSS selectors. Links to styled codesandbox examples with various tools like we have in our hook docs might be useful as well.
 * Reusable wrappers – an example of creating a reusable component with the styling implementation and all of the parts included.
 * Usage – the usage section copied from the hook documentation.
 * Advanced customization – if applicable, shows how to mix and match this component with the hooks and links to all of the relevant hook documentation for when more customization is needed.
@@ -274,30 +274,10 @@ There are many examples of other third party libraries that have successfully im
 
 ## Open Questions
 
-<!--
-    This section is optional, but is suggested for a first draft.
-
-    What parts of this proposal are you unclear about? What do you
-    need to know before you can finalize this RFC?
-
-    List the questions that you'd like reviewers to focus on. When
-    you've received the answers and updated the design to reflect them,
-    you can remove this section.
--->
-
 * In what package should we release the component API? Should it be part of the main `react-aria` monopackage, or a separate package like `react-aria-components` or `@react-aria/components`?
-
-## Frequently Asked Questions
-
-<!--
-    This section is optional but suggested.
-
-    Try to anticipate points of clarification that might be needed by
-    the people reviewing this RFC. Include those questions and answers
-    in this section.
--->
-
-TODO
+* What should we rename the `key` prop to? So far I've used `id` but is this confusing with DOM ids?
+* How do we enable existing React Spectrum and React Aria components to use the new collection API with support for wrapping items without breaking changes?
+* Which React Spectrum components should we use React Aria Components in, and how should we update existing components?
 
 ## Related Discussions
 
