@@ -23,9 +23,13 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
+  /** Props for the tag visible label (if any). */
   labelProps: DOMAttributes,
+  /** Props for the tag cell element. */
   tagProps: DOMAttributes,
+  /** Props for the tag row element. */
   tagRowProps: DOMAttributes,
+  /** Props for the tag clear button. */
   clearButtonProps: AriaButtonProps
 }
 

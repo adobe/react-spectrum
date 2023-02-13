@@ -28,7 +28,7 @@ import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -70,7 +70,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
         let currDomRef: HTMLDivElement | null = domRef.current;
-        let currContainerRef: HTMLDivElement | null = containerRef.current; 
+        let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
         if (!currDomRef || !currContainerRef || !currTagsRef) {
           return;
@@ -113,7 +113,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }
         return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
       };
-    
+
       setTagState(function *() {
         // Update to show all items.
         yield {visibleTagCount: state.collection.size, showCollapseButton: true};
