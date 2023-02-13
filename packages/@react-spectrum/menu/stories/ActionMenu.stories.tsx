@@ -173,9 +173,9 @@ export const WithTooltip = () => (
 
 export const Dynamic = () => {
   const items = [
-    {key: 'a', label: 'Cut'},
-    {key: 'a', label: 'Copy'},
-    {key: 'a', label: 'Paste'}
+    {key: 'cut', label: 'Cut'},
+    {key: 'copy', label: 'Copy'},
+    {key: 'paste', label: 'Paste'}
   ];
 
   return (
