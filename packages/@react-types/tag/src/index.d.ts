@@ -11,7 +11,7 @@
  */
 
 import {CollectionBase, ItemProps, Node} from '@react-types/shared';
-import {Key, RefObject} from 'react';
+import {Key} from 'react';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
@@ -30,7 +30,5 @@ export interface TagProps<T> extends ItemProps<any> {
   /** An object representing the tag. Contains all the relevant information that makes up the tag. */
   item: Node<T>,
   /** Handler that is called when the user triggers the tag's remove button. */
-  onRemove?: (key: Key) => void,
-  /** The ref of the tag row element. */
-  tagRowRef: RefObject<HTMLElement>
+  onRemove?: (key: Key) => void
 }
