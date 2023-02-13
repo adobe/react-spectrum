@@ -37,6 +37,7 @@ export interface TagAria {
  * Provides the behavior and accessibility implementation for a tag component.
  * @param props - Props to be applied to the tag.
  * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param ref - A ref to a DOM element for the tag.
  */
 export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {
