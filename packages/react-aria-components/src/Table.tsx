@@ -35,7 +35,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (!this.columnsDirty) {
       return;
     }
-    
+
     this.rowHeaderColumnKeys.clear();
     this.columns = [];
 
@@ -82,7 +82,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
       this.rowHeaderColumnKeys.add(this.columns[showSelectionCheckboxes ? 1 : 0].key);
-    }    
+    }
   }
 
   get columnCount() {
@@ -160,25 +160,29 @@ export function Table<T>(props) {
   });
 
   return (
-    <InternalTableContext.Provider value={state}>
-      <table {...gridProps} ref={ref} className={props.className ?? 'react-aria-Table'} style={props.style}>
-        <TableRowGroup
-          type="thead"
-          className={collection.head.props.className ?? 'react-aria-TableHeader'}
-          style={collection.head.props.style}>
-          {headerRows}
-        </TableRowGroup>
-        <TableRowGroup
-          type="tbody"
-          className={collection.body.props.className ?? 'react-aria-TableBody'}
-          style={collection.body.props.style}>
-          {bodyRows}
-        </TableRowGroup>
-        {portal}
-      </table>
-    </InternalTableContext.Provider>
+    <>
+      <InternalTableContext.Provider value={state}>
+        <table {...gridProps} ref={ref} className={props.className ?? 'react-aria-Table'} style={props.style}>
+          <TableRowGroup
+            type="thead"
+            className={collection.head.props.className ?? 'react-aria-TableHeader'}
+            style={collection.head.props.style}>
+            {headerRows}
+          </TableRowGroup>
+          <TableRowGroup
+            type="tbody"
+            className={collection.body.props.className ?? 'react-aria-TableBody'}
+            style={collection.body.props.style}>
+            {bodyRows}
+          </TableRowGroup>
+        </table>
+      </InternalTableContext.Provider>
+      {portal}
+    </>
   );
 }
+
+const TableHeaderContext = createContext(null);
 
 export function TableHeader(props) {
   let children = useCachedChildren({
@@ -186,13 +190,19 @@ export function TableHeader(props) {
     items: props.columns
   });
 
-  // @ts-ignore
-  return <node type="head" multiple={props}>{children}</node>;
+  return (
+    <TableHeaderContext.Provider value={props.children}>
+      {/* @ts-ignore */}
+      <node type="head" multiple={props}>{children}</node>
+    </TableHeaderContext.Provider>
+  );
 }
 
 export function Column(props) {
+  let render = useContext(TableHeaderContext);
+  let childColumns = typeof render === 'function' ? render : props.children;
   let children = useCachedChildren({
-    children: props.title || props.childColumns ? props.children : null,
+    children: (props.title || props.childColumns) ? childColumns : null,
     items: props.childColumns
   });
 
@@ -257,7 +267,7 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
 
   return (
     <tr {...rowProps} ref={ref}>
-      <Provider 
+      <Provider
         values={[
           [CheckboxContext, {
             slots: {

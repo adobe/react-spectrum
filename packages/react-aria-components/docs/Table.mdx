@@ -365,9 +365,9 @@ function MyTableHeader({columns, children}) {
   );
 }
 
-function MyRow({columns, children}) {
+function MyRow({id, columns, children}) {
   return (
-    <Row>
+    <Row id={id}>
       <Cell><MyCheckbox /></Cell>
       <Collection items={columns}>
         {children}
@@ -698,7 +698,10 @@ let rows = [
   <TableBody items={rows}>
     {item => (
       <Row>
-        {columnKey => <Cell>{item[columnKey]}</Cell>}
+        <Cell>{item.first}</Cell>
+        <Cell>{item.last}</Cell>
+        <Cell>{item.age}</Cell>
+        <Cell>{item.birthday}</Cell>
       </Row>
     )}
   </TableBody>
