@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
   }
 }
 @media (forced-colors: active) {
-  .spectrum-Dialog {
-    border: 1px solid transparent;
+  .spectrum-Dialog:not(.spectrum-Dialog--fullscreenTakeover) {
+    border: var(--spectrum-alias-border-size-thin) solid transparent;
   }
 }
