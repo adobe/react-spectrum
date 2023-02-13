@@ -107,7 +107,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
         let availableWidth = containerEnd - lastTagEnd;
 
-        while (availableWidth < buttonsWidth && index > 1) {
+        while (availableWidth < buttonsWidth && index > 1 && index < state.collection.size) {
           availableWidth += tagWidths.pop();
           index--;
         }
