@@ -54,8 +54,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useTagGroupState(props);
-  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
-  let [maxHeight, setMaxHeight] = useState(undefined);
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false, maxHeight: undefined});
   let keyboardDelegate = useMemo(() => (
     isCollapsed
       ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
@@ -108,26 +107,27 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         lastTagEnd += parseInt(window.getComputedStyle(tags[index - 1]).marginRight, 10);
         let availableWidth = containerEnd - lastTagEnd;
 
-        while (availableWidth < buttonsWidth && index > 1 && index < state.collection.size) {
+        while (availableWidth < buttonsWidth && index > 1) {
           availableWidth += tagWidths.pop();
           index--;
         }
-        return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
+        let tagStyle = window.getComputedStyle(tags[0]);
+        let maxHeight = (parseInt(tagStyle.height, 10) + parseInt(tagStyle.marginTop, 10) * 2) * maxRows;
+        return {
+          visibleTagCount: index,
+          showCollapseButton: index < state.collection.size,
+          maxHeight
+        };
       };
     
       setTagState(function *() {
         // Update to show all items.
-        yield {visibleTagCount: state.collection.size, showCollapseButton: true};
+        yield {visibleTagCount: state.collection.size, showCollapseButton: true, maxHeight: undefined};
 
         // Measure, and update to show the items until maxRows is reached.
         yield computeVisibleTagCount();
-
-        // Set a fixed height on the container
-        setMaxHeight(containerRef.current?.getBoundingClientRect().height);
       });
     }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxRows, setTagState, domRef, direction, state.collection.size]);
 
   useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
@@ -172,7 +172,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          style={maxRows != null && isCollapsed ? {maxHeight, overflow: 'hidden'} : {}}
+          style={maxRows != null && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
           ref={containerRef}>
           <div
             ref={tagsRef}
