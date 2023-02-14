@@ -30,7 +30,7 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
+ * Building this will run the docs builder using the docs-json pipeline in .parcelrc
  * This will generate json containing the visible (API/exposed) type definitions for each package
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
@@ -101,22 +101,34 @@ async function build() {
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
   let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
-  for (let p of packages) {
-    let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
-    if (!json.private && json.name !== '@adobe/react-spectrum') {
-      try {
-        // this npm view will fail if the package isn't on npm
-        // otherwise we want to check if there is any version that isn't a nightly
-        let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
-        if (results.some(version => !version.includes('nightly'))) {
-          pkg.dependencies[json.name] = 'latest';
-          console.log('added', json.name);
-        }
-      } catch (e) {
-        // continue
-      }
+  async function addDeps() {
+    let promises = [];
+    for (let p of packages) {
+      let promise = new Promise((resolve, reject) => {
+        fs.readFile(path.join(packagesDir, p), 'utf8').then(async (contents) => {
+          let json = JSON.parse(contents);
+          if (!json.private && json.name !== '@adobe/react-spectrum') {
+            try {
+              // this npm view will fail if the package isn't on npm
+              // otherwise we want to check if there is any version that isn't a nightly
+              let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
+              if (results.some(version => !version.includes('nightly'))) {
+                pkg.dependencies[json.name] = 'latest';
+                console.log('added', json.name);
+              }
+            } catch (e) {
+              // continue
+            }
+          }
+          resolve();
+        });
+      });
+      promises.push(promise);
     }
+    return Promise.all(promises);
   }
+
+  await addDeps();
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
   cleanPkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
@@ -159,9 +171,9 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
-      json.apiCheck = 'dist/api.json';
+      json['docs-json'] = 'dist/api.json';
       json.targets = {
-        apiCheck: {}
+        'docs-json': {}
       };
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }

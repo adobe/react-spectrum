@@ -31,7 +31,7 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
+ * Building this will run the docs builder using the docs-json pipeline in .parcelrc
  * This will generate json containing the visible (API/exposed) type definitions for each package
  * This is run against the current branch by copying the current branch into a temporary directory and building there
  */
@@ -129,9 +129,9 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
-      json.apiCheck = 'dist/api.json';
+      json['docs-json'] = 'dist/api.json';
       json.targets = {
-        apiCheck: {}
+        'docs-json': {}
       };
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
@@ -142,7 +142,7 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});

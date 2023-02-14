@@ -2,9 +2,9 @@
 
 exports[`Compare API components alphabetizes properties 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:Alphabetize
+#### branch/@test/parcel-test-app/src/index.tsx:Alphabetize
 +Alphabetize {
 +  bar: string
 +  foo: string
@@ -16,9 +16,9 @@ exports[`Compare API components alphabetizes properties 1`] = `
 
 exports[`Compare API components can add a new interface that did not previously exist 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:Foo
+#### branch/@test/parcel-test-app/src/index.tsx:Foo
 +Foo {
 +  bar: number
 +}
@@ -29,9 +29,9 @@ exports[`Compare API components can add a new interface that did not previously 
 
 exports[`Compare API components can extend other interfaces 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:SpectrumToastContainerProps
+#### branch/@test/parcel-test-app/src/index.tsx:SpectrumToastContainerProps
 +SpectrumToastContainerProps {
 +  bar: number
 +}
@@ -42,11 +42,10 @@ exports[`Compare API components can extend other interfaces 1`] = `
 
 exports[`Compare API components can extend other interfaces with no properties 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:ComponentProps
+#### branch/@test/parcel-test-app/src/index.tsx:ComponentProps
 +ComponentProps extends RefObject {
-+
 +}
 
 -----------------------------------
@@ -55,9 +54,9 @@ exports[`Compare API components can extend other interfaces with no properties 1
 
 exports[`Compare API components can handle top level exported identifiers 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:theme
+#### branch/@test/parcel-test-app/src/index.tsx:theme
 -theme: number
 +theme: Key
 
@@ -67,9 +66,9 @@ exports[`Compare API components can handle top level exported identifiers 1`] = 
 
 exports[`Compare API components can remove a new interface that did not previously exist 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### base/src/index.tsx:Foo
+#### base/@test/parcel-test-app/src/index.tsx:Foo
 -Foo {
 -  bar: number
 -}
@@ -80,9 +79,9 @@ exports[`Compare API components can remove a new interface that did not previous
 
 exports[`Compare API components compares non template to template version 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:TableColumnResizeState
+#### branch/@test/parcel-test-app/src/index.tsx:TableColumnResizeState
 -TableColumnResizeState {
 +TableColumnResizeState<T> {
    getColumnMaxWidth: (Key) => number
@@ -103,13 +102,13 @@ exports[`Compare API components compares non template to template version 1`] = 
 
 exports[`Compare API components does not change parameter order 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:fooConcat
+#### branch/@test/parcel-test-app/src/index.tsx:fooConcat
 +fooConcat {
 +  foo: string
 +  bar: string
-+  returnVal: undefined
++  returnVal: string
 +}
 
 -----------------------------------
@@ -118,9 +117,9 @@ exports[`Compare API components does not change parameter order 1`] = `
 
 exports[`Compare API components does not change type parameter order 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:ComponentProps
+#### branch/@test/parcel-test-app/src/index.tsx:ComponentProps
 +ComponentProps<T, C> {
 +  bar: C
 +  foo: T
@@ -130,15 +129,126 @@ exports[`Compare API components does not change type parameter order 1`] = `
 "
 `;
 
+exports[`Compare API components handles return values 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:Bar
++Bar {
++  props: {
++    val: number
++  }
++  returnVal: null
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API components handles return values that are functions 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:Bar
++Bar {
++  props: {
++    val: number
++  }
++  returnVal: () => void
++}
+
+-----------------------------------
+"
+`;
+
 exports[`Compare API components writes export entry for React component 1`] = `
 "
-### branch
+### dist/branch/@test/parcel-test-app
 
-#### branch/src/index.tsx:App1
+#### branch/@test/parcel-test-app/src/index.tsx:App1
  App1 {
 -  id: string
 +  id: number
  }
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API interface merging merges properties when extending 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:State
++State {
++  foo: Foo
++  isValid: boolean
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API interface merging merges properties when extending with generics and Omit 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
++SpectrumTagGroupProps<T> {
++  actionLabel?: string
++  errorMessage: string
++  isValid: boolean
++  node: T
++  onAction?: () => void
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API interface merging merges properties when extending with nested extends 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:State
++State {
++  foo: Foo
++  isValid: boolean
++  showErrorIcon: boolean
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API interface merging merges properties when extending with nested extends even for empty interfaces 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:State
++State {
++  foo: Foo
++  isValid: boolean
++}
+
+-----------------------------------
+"
+`;
+
+exports[`Compare API interface merging other packages merges properties when extending with generics from other modules 1`] = `
+"
+### dist/branch/@test/parcel-test-app
+
+#### branch/@test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
++SpectrumTagGroupProps<T> extends AriaTagGroupProps<T> {
++  actionLabel?: string
++  description?: ReactNode
++  errorMessage?: ReactNode
++  isDisabled?: boolean
++  isRequired?: boolean
++  onAction?: () => void
++  validationState?: ValidationState
++}
 
 -----------------------------------
 "

@@ -122,6 +122,42 @@ Object {
 }
 `;
 
+exports[`DocsTransformer - API interface merging merges properties when extending 1`] = `
+Object {
+  "exports": Object {
+    "State": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": Object {
+        "foo": Object {
+          "default": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "name": "Foo",
+            "type": "identifier",
+          },
+        },
+        "isValid": Object {
+          "default": null,
+          "name": "isValid",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
 exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
 Object {
   "exports": Object {
@@ -142,7 +178,7 @@ Object {
       ],
       "return": Object {
         "description": null,
-        "type": "any",
+        "type": "null",
       },
       "type": "function",
       "typeParameters": Array [],

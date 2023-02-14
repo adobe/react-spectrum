@@ -39,7 +39,7 @@ function findPackageName(filepath) {
   for (let i = parts.length - 2; i >= 0; i--) {
     let newPath = parts.slice(0, i).join(path.sep);
     if (fs.exists(path.join(newPath, 'package.json'))) {
-      return require(path.join(newPath, 'package.json')).name;
+      return JSON.parse(fs.readFileSync(path.join(newPath, 'package.json'))).name;
     }
   }
   throw new Error('Could not find package.json for ' + filepath);
@@ -54,7 +54,7 @@ function findPackageName(filepath) {
  * We build up strings of the diffs and make them easy to read in both a github comment
  * as well as the local console.
  */
-export async function compare(mockRoot, mockFS) {
+export async function compare(mockRoot, mockFS, {branchAPIs, publishedAPIs} = {}) {
   if (mockFS) {
     // reset all globals if in testing mode
     fs = mockFS;
@@ -68,20 +68,15 @@ export async function compare(mockRoot, mockFS) {
   let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = argv['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
   if (mockFS) {
-    branchDir = path.join(mockRoot, 'branch');
-    publishedDir = path.join(mockRoot, 'base');
+    branchDir = path.join(__dirname, '..', 'dist', 'branch');
+    publishedDir = path.join(__dirname, '..', 'dist', 'base');
   }
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
     console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
     return;
   }
 
-  let branchAPIs;
-  let publishedAPIs;
-  if (mockFS) {
-    branchAPIs = [path.join(mockRoot, 'branch/dist/api.json')];
-    publishedAPIs = [path.join(mockRoot, 'base/dist/api.json')];
-  } else {
+  if (!mockFS) {
     branchAPIs = fg.sync(`${branchDir}/**/api.json`);
     publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
   }
@@ -115,9 +110,6 @@ export async function compare(mockRoot, mockFS) {
       }
     }
     let pkgPath = path.join(branchApi, '..', '..', 'package.json');
-    if (mockFS) {
-      pkgPath = path.join(mockRoot, 'branch', 'package.json');
-    }
     let json = JSON.parse(fs.readFileSync(pkgPath), 'utf8');
     if (!found && !json.private) {
       pairs.push({pubApi: null, branchApi});
@@ -190,7 +182,7 @@ ${changes.join('\n')}
       console.log(message);
     });
   } else if (messages.length) {
-    await mockFS.writeFile(path.join(mockRoot, 'dist', 'result.txt'), messages.join('\n\n'), {});
+    await mockFS.writeFile(path.join(mockRoot, 'result.txt'), messages.join('\n\n'), {});
   }
 }
 
@@ -442,15 +434,16 @@ interface ${value.name}${value.extends ? ` extends ${value.extends.map(processTy
   // interface still needed if we have it at top level?
   if (value.type === 'object') {
     if (value.properties) {
-      return `${value.exact ? '{\\' : '{'}
+      depth += 2;
+      let result = `${value.exact ? '{\\' : '{'}
   ${Object.values(value.properties).map(property => {
-    depth += 2;
     let result = ' '.repeat(depth);
     result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
-    depth -= 2;
     return result;
   }).join('\n')}
-${value.exact ? '\\}' : '}'}`;
+${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
+      depth -= 2;
+      return result;
     }
     return '{}';
   }
@@ -614,7 +607,10 @@ function rebuildInterfaces(json) {
 }
 
 function formatProp([name, prop]) {
-  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
+  if (name === 'returnVal') {
+    return `${name}: ${prop}`;
+  }
+  return `${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
 }
 
 function formatInterfaces(interfaces) {
@@ -623,16 +619,20 @@ function formatInterfaces(interfaces) {
     let [name, val] = Object.entries(value)[0];
     let output = '';
     if (val.kind === 'type') {
-      let output = `${name} {\n`;
-      output += formatProp(name, val);
-      result[id] = `${output}\n}\n`;
+      output = `${name} {\n`;
+      depth += 2;
+      output += `${' '.repeat(depth)}${formatProp(name, val)}`;
+      depth -= 2;
+      result[id] = `${output}${' '.repeat(depth)}}\n`;
     } else if (val.kind === 'identifier') {
       output = val.value;
       result[id] = `${output}\n`;
     } else {
       output = `${name} {\n`;
-      output += Object.entries(val).map(formatProp).join('\n');
-      result[id] = `${output}\n}\n`;
+      depth += 2;
+      output += Object.entries(val).map(formatProp).map((prop) => `${' '.repeat(depth)}${prop}\n`).join('');
+      depth -= 2;
+      result[id] = `${output}${' '.repeat(depth)}}\n`;
     }
   });
   return result;

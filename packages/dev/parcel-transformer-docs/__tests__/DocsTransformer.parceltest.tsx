@@ -19,9 +19,9 @@ describe('DocsTransformer - API', () => {
       name: '@adobe/parcel-transformer-test-app',
       version: '0.0.2',
       private: true,
-      apiCheck: './dist/api.json',
+      'docs-json': './dist/api.json',
       targets: {
-        apiCheck: {
+        'docs-json': {
           source: './src/index.tsx'
         }
       },
@@ -44,7 +44,7 @@ describe('DocsTransformer - API', () => {
     new Parcel({
       config: join(rootPath, '.parcelrc'),
       entries: [workingDir],
-      targets: ['apiCheck'],
+      targets: ['docs-json'],
       inputFS,
       outputFS,
       workerFarm,
@@ -119,7 +119,7 @@ describe('DocsTransformer - API', () => {
       await writeSourceFile('index', `
     import React from 'react';
 
-    export function App1(props) {
+    export function App1(props): JSX.Element {
       return <div />;
     }
     `);
@@ -194,7 +194,7 @@ describe('DocsTransformer - API', () => {
     `);
       await writeSourceFile('index', `
     import {Foo} from './component';
-    export function Bar(props: Foo) {
+    export function Bar(props: Foo): null {
       return null;
     }
     `);
@@ -258,6 +258,21 @@ describe('DocsTransformer - API', () => {
           }
         };
       `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
+
+  describe('interface merging', () => {
+    it('merges properties when extending', async () => {
+      await writeSourceFile('index', `
+    interface Validation {
+      isValid: boolean;
+    }
+    export interface State extends Validation {
+      foo: Foo
+    }
+    `);
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
