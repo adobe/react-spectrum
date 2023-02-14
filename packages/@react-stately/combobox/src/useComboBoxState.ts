@@ -93,6 +93,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       ? collection
       : filterCollection(collection, inputValue, defaultFilter)
   ), [collection, inputValue, defaultFilter, props.items]);
+  let frozenCollection = useRef(filteredCollection);
 
   // Track what action is attempting to open the menu
   let menuOpenTrigger = useRef('focus' as MenuTriggerAction);
@@ -306,6 +307,27 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setFocusedState(isFocused);
   };
 
+  useEffect(() => {
+    // Track the last filtered collection while the menu is open so that we can freeze when the
+    // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
+    if (triggerState.isOpen) {
+      frozenCollection.current = filteredCollection;
+    }
+  }, [triggerState.isOpen, filteredCollection]);
+
+  let displayedCollection = useMemo(() => {
+    if (triggerState.isOpen) {
+      if (showAllItems) {
+        return originalCollection;
+      } else {
+        return filteredCollection;
+      }
+    } else {
+      return frozenCollection.current;
+    }
+  }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems]);
+
+
   return {
     ...triggerState,
     toggle,
@@ -318,7 +340,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     isFocused,
     setFocused,
     selectedItem,
-    collection: showAllItems ? originalCollection : filteredCollection,
+    collection: displayedCollection,
     inputValue,
     setInputValue,
     commit,
