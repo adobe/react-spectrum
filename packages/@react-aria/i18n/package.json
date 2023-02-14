@@ -5,6 +5,11 @@
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
   "real-main": "dist/real-main.js",
   "real-module": "dist/real-module.js",
   "types": "dist/types.d.ts",
@@ -27,8 +32,8 @@
     "./src/useMessageFormatter.ts": false
   },
   "scripts": {
-    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js && cp src/main.js dist",
-    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.cjs.js && cp src/module.js dist",
+    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js && cp src/module.js dist/module.js && cp dist/real-module.js dist/real-module.mjs && cp dist/real-module.js.map dist/real-module.mjs.map && cp dist/useMessageFormatter.module.js dist/useMessageFormatter.module.mjs",
+    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.js && cp src/main.js dist/main.js",
     "prepublishOnly": "yarn build:module && yarn build:cjs"
   },
   "files": [
