@@ -7,6 +7,11 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
   "source": "src/index.ts",
   "files": ["dist", "src"],
   "sideEffects": [
