@@ -12,10 +12,10 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent} from 'react';
+import {KeyboardEvent, RefObject} from 'react';
 import type {TagGroupState} from '@react-stately/tag';
 import {TagProps} from '@react-types/tag';
 import {useGridListItem} from '@react-aria/gridlist';
@@ -23,9 +23,13 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
 export interface TagAria {
+  /** Props for the tag visible label (if any). */
   labelProps: DOMAttributes,
+  /** Props for the tag cell element. */
   tagProps: DOMAttributes,
+  /** Props for the tag row element. */
   tagRowProps: DOMAttributes,
+  /** Props for the tag clear button. */
   clearButtonProps: AriaButtonProps
 }
 
@@ -33,13 +37,13 @@ export interface TagAria {
  * Provides the behavior and accessibility implementation for a tag component.
  * @param props - Props to be applied to the tag.
  * @param state - State for the tag group, as returned by `useTagGroupState`.
+ * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria {
+export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {
     isFocused,
     allowsRemoving,
-    item,
-    tagRowRef
+    item
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let removeString = stringFormatter.format('remove');
@@ -48,7 +52,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>): TagAria 
 
   let {rowProps, gridCellProps} = useGridListItem({
     node: item
-  }, state, tagRowRef);
+  }, state, ref);
 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
