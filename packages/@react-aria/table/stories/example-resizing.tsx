@@ -156,7 +156,6 @@ function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeE
           <VisuallyHidden>
             <input
               ref={ref}
-              type="range"
               {...inputProps} />
           </VisuallyHidden>
         </div>
