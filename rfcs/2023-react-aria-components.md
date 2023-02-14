@@ -183,8 +183,33 @@ function MyListBox(props) {
   let {listBoxProps} = useListBox(props, state, ref);
 
   // Render stuff
-  // ...
+  return (
+    <div {...listBoxProps}>
+      {/* ... */}
+    </div>
+  );
 }
+```
+
+Now you can use your custom `MyListBox` component within a `ComboBox` or `Select` from `react-aria-components`, just like the default `ListBox`:
+
+```jsx
+import {Button, ComboBox, Input, Item, Label, Popover} from 'react-aria-components';
+import {MyListBox} from './MyListBox';
+
+<ComboBox>
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    <Button>▼</Button>
+  </div>
+  <Popover>
+    <MyListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+    </MyListBox>
+  </Popover>
+</ComboBox>
 ```
 
 This also works the other way. If you need to customize `ComboBox` itself, but want to reuse the components it contains, you can do so by providing the necessary contexts.
@@ -215,6 +240,27 @@ function MyComboBox(props) {
     </Provider>
   );
 }
+```
+
+This enables you to reuse `ListBox`, `Popover`, and other elements from `react-aria-components` within your custom `MyComboBox` component:
+
+```jsx
+import {Button, Input, Item, Label, ListBox, Popover} from 'react-aria-components';
+import {MyComboBox} from './MyComboBox';
+
+<MyComboBox>
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    <Button>▼</Button>
+  </div>
+  <Popover>
+    <ListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+    </ListBox>
+  </Popover>
+</MyComboBox>
 ```
 
 This ability to mix and match hooks with components provides the best of both worlds: start out with the component-based API, and if you hit a point where you need to customize beyond what the higher level API allows, drop down to hooks just for that one part without rewriting the rest.
