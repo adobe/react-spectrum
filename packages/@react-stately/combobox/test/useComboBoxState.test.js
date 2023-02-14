@@ -227,6 +227,23 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      // Subsequent calls that would close the menu don't update the tracked lastCollection
+      act(() => {result.current.commit();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      act(() => {result.current.close();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      act(() => {result.current.revert();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
       act(() => {result.current.open();});
       expect(result.current.collection.size).toEqual(2);
     });
@@ -248,6 +265,22 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
       rerender(initialProps);
       expect(result.current.collection.size).toEqual(1);
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      // Subsequent calls that would close the menu don't update the tracked lastCollection
+      act(() => {result.current.commit();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      act(() => {result.current.close();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      act(() => {result.current.revert();});
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
 
       // When the combobox is opened again, the returned collection of items updates to reflect the items provided by the user

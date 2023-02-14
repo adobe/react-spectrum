@@ -151,8 +151,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   }, [triggerState, filteredCollection]);
 
   let closeMenu = useCallback(() => {
-    setLastCollection(filteredCollection);
-    triggerState.close();
+    if (triggerState.isOpen) {
+      setLastCollection(filteredCollection);
+      triggerState.close();
+    }
+
   }, [triggerState, filteredCollection]);
 
   let lastValue = useRef(inputValue);
