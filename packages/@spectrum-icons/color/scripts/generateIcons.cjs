@@ -22,16 +22,15 @@ function template(iconName) {
     iconRename = '_' + importName;
   }
   return (
-`import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow/dist/${importName}';
-import {Icon, IconPropsWithoutChildren} from '@react-spectrum/icon';
+`import {${iconName} as IconComponent} from '@adobe/react-spectrum-workflow-color/dist/${iconRename}.js';
+import {Icon} from '@react-spectrum/icon';
 import React from 'react';
 
-export default function ${iconRename}(props: IconPropsWithoutChildren) {
+export default function ${iconRename}(props) {
   return <Icon {...props}><IconComponent /></Icon>;
 }
 `
   );
 }
 
-generateIcons(path.dirname(require.resolve('@adobe/react-spectrum-workflow')), path.join(__dirname, '..', 'src'), exportNameRegex, template);
-
+generateIcons(path.dirname(require.resolve('@adobe/react-spectrum-workflow-color')), path.join(__dirname, '..', 'src'), exportNameRegex, template);
