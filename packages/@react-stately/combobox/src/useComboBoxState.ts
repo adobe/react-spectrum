@@ -155,7 +155,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       setLastCollection(filteredCollection);
       triggerState.close();
     }
-
   }, [triggerState, filteredCollection]);
 
   let lastValue = useRef(inputValue);
