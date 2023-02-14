@@ -209,7 +209,7 @@ describe('useComboBoxState tests', function () {
       expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
 
-    it('won\'t update the returned collection if the combobox is closed', function () {
+    it('won\'t update the returned collection if the combobox is closed (uncontrolled items)', function () {
       let filter = renderHook((props) => useFilter(props), {sensitivity: 'base'});
       let initialProps = {...defaultProps, items: null, defaultItems: [{key: '0', name: 'one'}, {key: '1', name: 'onomatopoeia'}], defaultInputValue: '', defaultFilter: filter.result.current.contains};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
@@ -227,6 +227,30 @@ describe('useComboBoxState tests', function () {
       expect(result.current.collection.size).toEqual(1);
       expect(result.current.inputValue).toBe('');
       expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+      act(() => {result.current.open();});
+      expect(result.current.collection.size).toEqual(2);
+    });
+
+    it('won\'t update the returned collection if the combobox is closed (controlled items)', function () {
+      let initialProps = {...defaultProps};
+      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+      expect(result.current.collection.size).toEqual(2);
+
+      act(() => {result.current.open();});
+      rerender({...initialProps, items: [{key: '1', name: 'onomatopoeia'}]});
+      // Returned collection reflects the items provided by the user since the combobox is open
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      act(() => {result.current.setFocused(false);});
+      // Returned collection reflects the old items provided by the user when the combobox is closed
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+      rerender(initialProps);
+      expect(result.current.collection.size).toEqual(1);
+      expect(result.current.collection.getItem('1').rendered).toBe('onomatopoeia');
+
+      // When the combobox is opened again, the returned collection of items updates to reflect the items provided by the user
       act(() => {result.current.open();});
       expect(result.current.collection.size).toEqual(2);
     });
