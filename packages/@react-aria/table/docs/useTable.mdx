@@ -989,32 +989,20 @@ should cause focus to shift to the resizer itself, displaying the resizer for to
 accordingly.
 
 ```tsx example export=true render=false
-import {useDescription} from '@react-aria/utils';
-import {useHover, usePress} from '@react-aria/interactions';
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
- let {widths} = layoutState;
+  let {widths} = layoutState;
   let ref = useRef(null);
   let resizerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
-  let showResizer = isHovered || layoutState.resizingColumn === column.key;
   let allowsResizing = column.props.allowsResizing;
-
-  let {pressProps} = usePress({
-    isDisabled: !allowsResizing,
-    onPress() {
-      layoutState.onColumnResizeStart(column.key);
-      // Brief delay before moving focus to resizer input for screenreaders/Safari
-      setTimeout(() => resizerRef.current?.focus(), 50);
-    }
-  });
-  let descriptionProps = useDescription('Press to start resizing the column.');
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps, hoverProps, pressProps, descriptionProps)}
+      {...mergeProps(columnHeaderProps, focusProps)}
       colSpan={column.colspan}
       style={{
         textAlign: column.colspan > 1 ? 'center' : 'left',
@@ -1029,17 +1017,22 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
       }}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
-        <div
+        <Button
           style={{
+            width: '100%',
+            textAlign: 'left',
+            border: 'none',
+            background: 'transparent',
             flex: '1 1 auto',
             overflow: 'hidden',
             whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            marginInlineStart: '-6px'
           }}>
           {column.rendered}
-        </div>
+        </Button>
         {allowsResizing &&
-          <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={ref} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+          <Resizer ref={resizerRef} triggerRef={ref} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
@@ -1061,15 +1054,17 @@ Note that we apply `visibility: hidden` to hide the resizer so that we reserve s
 import {useTableColumnResize} from '@react-aria/table';
 
 const Resizer = React.forwardRef((props, ref) => {
-  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef, showResizer} = props;
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef} = props;
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd,
-    triggerRef
+    triggerRef,
+    activateResizeManually: true
   }, layoutState, ref);
+  let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
@@ -1080,23 +1075,46 @@ const Resizer = React.forwardRef((props, ref) => {
         height: 'auto',
         border: '2px',
         borderStyle: 'none solid',
-        borderColor: layoutState.resizingColumn === column.key ? 'orange' : 'grey',
+        borderColor: layoutState.resizingColumn === column.key || isFocusVisible ? 'orange' : 'grey',
         touchAction: 'none',
         flex: '0 0 auto',
         boxSizing: 'border-box',
-        visibility: showResizer ? 'visible' : 'hidden',
         marginLeft: '4px'
       }}
       {...resizerProps}>
       <VisuallyHidden>
         <input
           ref={ref}
-          {...inputProps} />
+          {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
     </div>
   );
 });
 ```
+
+### Button
+
+The `Button` component is used in the above example to toggle the menu. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = useRef(null);
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let outline = isFocusVisible
+    ? '2px solid orange'
+    : 'none';
+  let {buttonProps} = useButton(props, ref);
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} style={{...props.style, outline: outline}}>{props.children}</button>;
+}
+```
+
+</details>
+
 
 ### Resizable table body
 

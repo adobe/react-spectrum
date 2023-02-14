@@ -46,7 +46,8 @@ export interface AriaTableColumnResizeProps<T> {
   /** Called for every resize event that results in new column sizes. */
   onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void
+  onResizeEnd?: (widths: Map<Key, number | string>) => void,
+  activateResizeManually?: boolean
 }
 
 export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
@@ -58,7 +59,7 @@ export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeSta
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, activateResizeManually} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
@@ -144,7 +145,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (pointerType === 'mouse') {
         endResize(item);
       }
-    }
+    },
+    disableLeftRightHandling: activateResizeManually && !editModeEnabled
   });
 
   let onKeyDown = useCallback((e) => {
