@@ -284,29 +284,48 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
+  let close = () => {
+    let itemText = collection.getItem(selectedKey)?.textValue ?? '';
+    if (allowsCustomValue && inputValue !== itemText) {
+      commitCustomValue();
+    } else {
+      commitSelection();
+    }
+    triggerState.close();
+  };
+
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
       if (menuTrigger === 'focus') {
         open(null, 'focus');
       }
     } else if (shouldCloseOnBlur) {
-      let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-      if (allowsCustomValue && inputValue !== itemText) {
-        commitCustomValue();
-      } else {
-        commitSelection();
-      }
+      close();
     }
 
     setFocusedState(isFocused);
   };
 
+  let selectionManagerProxy = useMemo(() => {
+    let proxy = new Proxy(selectionManager, {
+      get(target, prop, receiver) {
+        // If the menu is closed, don't update the selected key.
+        if (prop === 'replaceSelection' && !triggerState.isOpen) {
+          return () => {};
+        }
+        return Reflect.get(target, prop, receiver);
+      }
+    });
+
+    return proxy;
+  }, [selectionManager, triggerState.isOpen]);
+
   return {
     ...triggerState,
     toggle,
     open,
-    close: commit,
-    selectionManager,
+    close,
+    selectionManager: selectionManagerProxy,
     selectedKey,
     setSelectedKey,
     disabledKeys,

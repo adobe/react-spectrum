@@ -11,7 +11,7 @@
  */
 
 import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
@@ -23,7 +23,9 @@ import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TableColumnResizeAria {
+  /** Props for the visually hidden input element. */
   inputProps: DOMAttributes,
+  /** Props for the resizer element. */
   resizerProps: DOMAttributes
 }
 
@@ -36,7 +38,7 @@ export interface AriaTableColumnResizeProps<T> {
    * Ref to the trigger if resizing was started from a column header menu. If it's provided,
    * focus will be returned there when resizing is done.
    * */
-  triggerRef?: RefObject<HTMLDivElement>,
+  triggerRef?: RefObject<FocusableElement>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */
@@ -49,6 +51,12 @@ export interface AriaTableColumnResizeProps<T> {
 
 export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
 
+/**
+ * Provides the behavior and accessibility implementation for a table column resizer element.
+ * @param props - Props for the resizer.
+ * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
+ * @param ref - The ref attached to the resizer's visually hidden input element.
+ */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -87,7 +95,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       lastSize.current = state.onColumnResize(item.key, state.getColumnWidth(item.key));
     }
     if (isResizing.current) {
-      state.onColumnResizeEnd(item.key);
+      state.onColumnResizeEnd();
       onResizeEnd?.(lastSize.current);
     }
     isResizing.current = false;
@@ -137,6 +145,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     'aria-orientation': 'horizontal' as 'horizontal',
     'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
+    'type': 'range',
     min,
     max,
     value

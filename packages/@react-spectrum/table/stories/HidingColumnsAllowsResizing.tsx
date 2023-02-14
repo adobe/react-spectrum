@@ -33,7 +33,7 @@ let data = [
   {id: 6, planName: 'Plan 6: $800k, MRI', audienceType: 'Demo+strategic', netBudget: '$800,000', targetOTP: '22.5%', reach: '11.5%'}
 ];
 
-export function HidingColumnsAllowsResizing() {
+export function HidingColumnsAllowsResizing(props) {
   let [visibleColumns, setVisibleColumns] = React.useState(new Set(columns.map(c => c.key)));
   let toggleColumn = (key) => {
     let columns = new Set(visibleColumns);
@@ -53,7 +53,7 @@ export function HidingColumnsAllowsResizing() {
           <Checkbox key={c.key} isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
         )}
       </Form>
-      <TableView aria-label="Table with hideable columns" width={900} height={500} isQuiet selectionMode="single">
+      <TableView aria-label="Table with hideable columns" width={900} height={500} {...props}>
         <TableHeader columns={columns.filter(c => visibleColumns.has(c.key))}>
           {column => <Column allowsResizing={column.allowsResizing}>{column.title}</Column>}
         </TableHeader>

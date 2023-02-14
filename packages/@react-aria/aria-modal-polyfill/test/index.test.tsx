@@ -15,30 +15,18 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {watchModals} from '../';
 
 describe('watchModals', () => {
-  let matchMedia;
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
-  beforeEach(() => {
-    matchMedia = new MatchMediaMock();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.runAllTimers();
-    matchMedia.clear();
-    window.requestAnimationFrame.mockRestore();
+    act(() => {jest.runAllTimers();});
   });
 
   let verify = async function (modal, queryByRole) {
@@ -198,7 +186,7 @@ describe('watchModals', () => {
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => <Item key={item.name}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
@@ -227,7 +215,7 @@ describe('watchModals', () => {
       ]}
     ];
     // menu should be a tray
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
@@ -237,7 +225,7 @@ describe('watchModals', () => {
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => <Item key={item.name}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
