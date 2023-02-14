@@ -23,7 +23,7 @@ const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{
 const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::(\d{2}))?)?\[(.*?)\]$/;
 const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
-    /^(?<negative>-)?P((?<years>-?\d*)Y)?((?<months>-?\d*)M)?((?<weeks>-?\d*)W)?((?<days>-?\d*)D)?((?<time>T)((?<hours>-?\d*[.,]?\d{1,9})H)?((?<minutes>-?\d*[.,]?\d{1,9})M)?((?<seconds>-?\d*[.,]?\d{1,9})S)?)?$/;
+    /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
 const requiredDurationTimeGroups = ['hours', 'minutes', 'seconds'];
 const requiredDurationGroups = ['years', 'months', 'weeks', 'days', ...requiredDurationTimeGroups];
 

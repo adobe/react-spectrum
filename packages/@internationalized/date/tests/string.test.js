@@ -458,6 +458,19 @@ describe('string conversion', function () {
       });
     });
   
+    it('parses an ISO 8601 duration string that contains years, months, weeks, days, hours, minutes, and seconds with a preceding + sign and returns a DateTimeDuration object', function () {
+      const duration = parseDuration('+P3Y6M6W4DT12H30M5S');
+      expect(duration).toStrictEqual({
+        years: 3,
+        months: 6,
+        weeks: 6,
+        days: 4,
+        hours: 12,
+        minutes: 30,
+        seconds: 5
+      });
+    });
+
     it('parses an ISO 8601 duration string that contains hours, minutes, and seconds and returns a DateTimeDuration object', function () {
       const duration = parseDuration('PT20H35M15S');
       expect(duration).toStrictEqual({
@@ -498,6 +511,18 @@ describe('string conversion', function () {
     });
   
     it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
+      expect(() => {
+        parseDuration('+-P18Y7MT20H15S');
+      }).toThrow('Invalid ISO 8601 Duration string: +-P18Y7MT20H15S');
+      expect(() => {
+        parseDuration('-+P18Y7MT20H15S');
+      }).toThrow('Invalid ISO 8601 Duration string: -+P18Y7MT20H15S');
+      expect(() => {
+        parseDuration('--P18Y7MT20H15S');
+      }).toThrow('Invalid ISO 8601 Duration string: --P18Y7MT20H15S');
+      expect(() => {
+        parseDuration('++P18Y7MT20H15S');
+      }).toThrow('Invalid ISO 8601 Duration string: ++P18Y7MT20H15S');
       expect(() => {
         parseDuration('P18Y7MT');
       }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT');
