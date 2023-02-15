@@ -1,8 +1,16 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {getSliderThumbId, sliderIds} from './utils';
-import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {
+  ChangeEvent,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef
+} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useKeyboard, useMove} from '@react-aria/interactions';
@@ -83,7 +91,7 @@ export function useSliderThumb(
   }, [isFocused, focusInput]);
 
   const stateRef = useRef<SliderState>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     stateRef.current = state;
   });
   let reverseX = direction === 'rtl';
