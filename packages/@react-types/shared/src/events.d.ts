@@ -68,11 +68,11 @@ export interface KeyboardEvents {
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
-export interface FocusEvents {
+export interface FocusEvents<Target = Element> {
   /** Handler that is called when the element receives focus. */
-  onFocus?: (e: FocusEvent) => void,
+  onFocus?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element loses focus. */
-  onBlur?: (e: FocusEvent) => void,
+  onBlur?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element's focus status changes. */
   onFocusChange?: (isFocused: boolean) => void
 }
@@ -105,7 +105,7 @@ export interface PressEvents {
   onPressUp?: (e: PressEvent) => void
 }
 
-export interface FocusableProps extends FocusEvents, KeyboardEvents {
+export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }
