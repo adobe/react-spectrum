@@ -519,7 +519,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: fix-webpack-build
           requires:
             - install
       - deploy:
