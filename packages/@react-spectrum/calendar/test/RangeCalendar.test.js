@@ -113,7 +113,7 @@ describe('RangeCalendar', () => {
       expect(grid).not.toHaveAttribute('aria-activedescendant');
     });
 
-    it.only('should show selected dates across multiple months', () => {
+    it('should show selected dates across multiple months', () => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<RangeCalendar value={{start: new CalendarDate(2019, 6, 20), end: new CalendarDate(2019, 7, 10)}} />);
 
       let heading = getByRole('heading');
