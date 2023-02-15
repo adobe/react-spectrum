@@ -183,7 +183,8 @@
 }
 
 .react-spectrum-dragButtonHeadCell {
-  visibility: hidden;
+  padding: 0;
+  height: inherit;
 }
 
 .react-spectrum-Table-checkboxCell--isDraggable {

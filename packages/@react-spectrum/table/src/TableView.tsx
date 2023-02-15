@@ -1054,10 +1054,11 @@ function TableDragHeaderCell({column}) {
   // Maybe a focusMode: 'skip' or 'none'?
 
   return (
-    <div
-      {...columnHeaderProps}
-      ref={ref}
-      className={
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...columnHeaderProps}
+        ref={ref}
+        className={
         classNames(
           styles,
           'spectrum-Table-headCell',
@@ -1067,6 +1068,7 @@ function TableDragHeaderCell({column}) {
           )
         )
       } />
+    </FocusRing>
   );
 }
 
