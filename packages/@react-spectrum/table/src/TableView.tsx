@@ -142,12 +142,14 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let isTableDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isTableDraggable);
   let dropHooksProvided = useRef(isTableDroppable);
-  if (dragHooksProvided.current !== isTableDraggable) {
-    console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
-  if (dropHooksProvided.current !== isTableDroppable) {
-    console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-  }
+  useEffect(() => {
+    if (dragHooksProvided.current !== isTableDraggable) {
+      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+    if (dropHooksProvided.current !== isTableDroppable) {
+      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+  }, [isTableDraggable, isTableDroppable]);
   let {styleProps} = useStyleProps(props);
 
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');
@@ -187,7 +189,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   let state = useTableState({
     ...props,
     showSelectionCheckboxes,
-    showDragButtons: !!isTableDraggable,
+    showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
 
@@ -478,8 +480,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
               // TODO
-              // 'spectrum-Table--draggable': !!isTableDraggable,
-              // 'spectrum-Table--dropTarget': !!isRootDropTarget
+              // 'spectrum-Table--draggable': isTableDraggable,
+              // 'spectrum-Table--dropTarget': isRootDropTarget
             },
             classNames(
               stylesOverrides,
@@ -1016,7 +1018,7 @@ function TableSelectAllCell({column}) {
             classNames(
               stylesOverrides,
               {
-                'react-spectrum-Table-checkboxCell--isDraggable': !!isTableDraggable
+                'react-spectrum-Table-checkboxCell--isDraggable': isTableDraggable
               }
             )
           )
@@ -1304,7 +1306,7 @@ function TableCheckboxCell({cell}) {
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
-                'react-spectrum-Table-checkboxCell--isDraggable': !!isTableDraggable
+                'react-spectrum-Table-checkboxCell--isDraggable': isTableDraggable
               }
             )
           )

@@ -170,7 +170,7 @@ export class TableCollection<T> extends GridCollection<T> {
   constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
-    let columns = [];
+    let columns: GridNode<T>[] = [];
 
     // Add cell for drag buttons if needed.
     if (opts?.showDragButtons) {
@@ -189,7 +189,7 @@ export class TableCollection<T> extends GridCollection<T> {
         }
       };
 
-      columns = [rowHeaderColumn];
+      columns.unshift(rowHeaderColumn);
     }
 
     // Add cell for selection checkboxes if needed.
@@ -209,7 +209,7 @@ export class TableCollection<T> extends GridCollection<T> {
         }
       };
 
-      columns = [...columns, rowHeaderColumn];
+      columns.push(rowHeaderColumn);
     }
 
     let rows = [];

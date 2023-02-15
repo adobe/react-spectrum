@@ -92,7 +92,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   let isDraggingMultiple = itemCount > 1;
 
   let cells = [...item.childNodes];
-  let dragButtonCellWidth = cells[0].props.isDragButtonCell ? layout.getLayoutInfo(cells[0].key).rect.width : 0;
+  let dragButtonCellWidth = layout.getLayoutInfo(cells[0].key).rect.width;
   let selectionCellWidth = cells[1].props.isSelectionCell ? layout.getLayoutInfo(cells[1].key).rect.width : 0;
 
   width = width - selectionCellWidth - dragButtonCellWidth;

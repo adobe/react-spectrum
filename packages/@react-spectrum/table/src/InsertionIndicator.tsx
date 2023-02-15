@@ -24,14 +24,15 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
     return null;
   }
 
-  let style = {
-    position: 'absolute',
-    top: rowProps.style.top,
-    width: rowProps.style.width
-  } as React.CSSProperties;
-
   return (
-    <div style={style} role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+    <div
+      style={{
+        position: 'absolute',
+        top: rowProps.style.top,
+        width: rowProps.style.width
+      }}
+      role="row"
+      aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
         aria-selected="false"
