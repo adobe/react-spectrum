@@ -78,8 +78,7 @@ async function run() {
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
       });
     } catch (err) {
-
+      console.error(err)
     }
-
   }
 }
