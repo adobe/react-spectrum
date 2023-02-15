@@ -59,7 +59,7 @@ export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeSta
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, activateResizeManually} = props;
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
