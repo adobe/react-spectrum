@@ -27,17 +27,13 @@ interface EventBase {
   altKey: boolean
 }
 
-export interface MoveProps extends MoveEvents {
-  disableLeftRightHandling?: boolean
-}
-
 /**
  * Handles move interactions across mouse, touch, and keyboard, including dragging with
  * the mouse or touch, and using the arrow keys. Normalizes behavior across browsers and
  * platforms, and ignores emulated mouse events on touch devices.
  */
-export function useMove(props: MoveProps): MoveResult {
-  let {onMoveStart, onMove, onMoveEnd, disableLeftRightHandling} = props;
+export function useMove(props: MoveEvents): MoveResult {
+  let {onMoveStart, onMove, onMoveEnd} = props;
 
   let state = useRef<{
     didMove: boolean,
@@ -202,18 +198,14 @@ export function useMove(props: MoveProps): MoveResult {
         case 'Left':
         case 'ArrowLeft':
           e.preventDefault();
-          if (!disableLeftRightHandling) {
-            e.stopPropagation();
-            triggerKeyboardMove(e, -1, 0);
-          }
+          e.stopPropagation();
+          triggerKeyboardMove(e, -1, 0);
           break;
         case 'Right':
         case 'ArrowRight':
           e.preventDefault();
-          if (!disableLeftRightHandling) {
-            e.stopPropagation();
-            triggerKeyboardMove(e, 1, 0);
-          }
+          e.stopPropagation();
+          triggerKeyboardMove(e, 1, 0);
           break;
         case 'Up':
         case 'ArrowUp':
@@ -231,7 +223,7 @@ export function useMove(props: MoveProps): MoveResult {
     };
 
     return moveProps;
-  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener, disableLeftRightHandling]);
+  }, [state, onMoveStart, onMove, onMoveEnd, addGlobalListener, removeGlobalListener]);
 
   return {moveProps};
 }

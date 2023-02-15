@@ -145,8 +145,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (pointerType === 'mouse') {
         endResize(item);
       }
-    },
-    disableLeftRightHandling: activateResizeManually && !editModeEnabled
+    }
   });
 
   let onKeyDown = useCallback((e) => {
