@@ -144,3 +144,9 @@ governing permissions and limitations under the License.
     margin-left: calc(var(--spectrum-global-dimension-size-150) * -1);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Popover {
+    overflow: hidden;
+  }
+}
