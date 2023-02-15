@@ -95,7 +95,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
-  computeResizedColumns(key: Key, width: number): Map<Key, ColumnSize> {
+  updateResizedColumns(key: Key, width: number): Map<Key, ColumnSize> {
     let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
 

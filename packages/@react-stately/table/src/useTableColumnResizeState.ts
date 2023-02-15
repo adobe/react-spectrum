@@ -32,7 +32,7 @@ export interface TableColumnResizeState<T> {
    * Called to update the state that a resize event has occurred.
    * Returns the new widths for all columns based on the resized column.
    */
-  computeResizedColumns: (key: Key, width: number) => Map<Key, ColumnSize>,
+  updateResizedColumns: (key: Key, width: number) => Map<Key, ColumnSize>,
   /** Callback for when onColumnResize has started. */
   startResize: (key: Key) => void,
   /** Callback for when onColumnResize has ended. */
@@ -91,7 +91,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
     setResizingColumn(key);
   }, [setResizingColumn]);
 
-  let computeResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
+  let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, uncontrolledWidths, key, width);
 
@@ -111,7 +111,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   return useMemo(() => ({
     resizingColumn,
-    computeResizedColumns,
+    updateResizedColumns,
     startResize,
     endResize,
     getColumnWidth: (key: Key) =>
@@ -125,7 +125,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   }), [
     columnLayout,
     resizingColumn,
-    computeResizedColumns,
+    updateResizedColumns,
     startResize,
     endResize,
     columnWidths,

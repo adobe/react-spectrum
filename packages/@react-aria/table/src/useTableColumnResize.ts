@@ -77,7 +77,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let startResize = useCallback((item) => {
     if (!isResizing.current) {
-      lastSize.current = state.computeResizedColumns(item.key, state.getColumnWidth(item.key));
+      lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       state.startResize(item.key);
       onResizeStart?.(lastSize.current);
     }
@@ -85,14 +85,14 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [isResizing, onResizeStart, state]);
 
   let resize = useCallback((item, newWidth) => {
-    let sizes = state.computeResizedColumns(item.key, newWidth);
+    let sizes = state.updateResizedColumns(item.key, newWidth);
     onResize?.(sizes);
     lastSize.current = sizes;
   }, [onResize, state]);
 
   let endResize = useCallback((item) => {
     if (lastSize.current == null) {
-      lastSize.current = state.computeResizedColumns(item.key, state.getColumnWidth(item.key));
+      lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
     }
     if (isResizing.current) {
       state.endResize();
