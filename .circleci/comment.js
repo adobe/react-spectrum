@@ -63,28 +63,22 @@ async function run() {
   } else {
     pr = process.env.CIRCLE_PULL_REQUEST.split('/').pop();
   }
-
+  console.log('PR number to comment on', pr);
   if (pr != null) {
-    let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
-    await octokit.issues.createComment({
-      owner: 'adobe',
-      repo: 'react-spectrum',
-      issue_number: pr,
-      body: `Build successful! 🎉
+    try {
+      await octokit.issues.createComment({
+        owner: 'adobe',
+        repo: 'react-spectrum',
+        issue_number: pr,
+        body: `Build successful! 🎉
 
   * [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook/index.html)
   * [View the storybook-17](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-17/index.html)
   * [View the storybook-16](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-16/index.html)
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
-    });
-    if (diffs.length > 0) {
-      await octokit.issues.createComment({
-        owner: 'adobe',
-        repo: 'react-spectrum',
-        issue_number: pr,
-        body: `## API Changes
-${diffs}
-`});
+      });
+    } catch (err) {
+      console.error(err)
     }
   }
 }

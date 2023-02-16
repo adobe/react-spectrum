@@ -36,7 +36,6 @@ governing permissions and limitations under the License.
   flex-wrap: nowrap;
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
   border-radius: var(--spectrum-border-radius);
-  background: var(--spectrum-textfield-background-color);
 
   .spectrum-FieldButton {
     padding: var(--spectrum-combobox-fieldbutton-inset);
@@ -109,7 +108,6 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));
-  background: transparent;
 
   .spectrum-FieldButton {
     inline-size: auto;

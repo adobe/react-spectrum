@@ -33,6 +33,7 @@ export {useProgressBar} from '@react-aria/progress';
 export {useRadio, useRadioGroup} from '@react-aria/radio';
 export {useSearchField} from '@react-aria/searchfield';
 export {HiddenSelect, useHiddenSelect, useSelect} from '@react-aria/select';
+export {ListKeyboardDelegate} from '@react-aria/selection';
 export {useSeparator} from '@react-aria/separator';
 export {SSRProvider, useIsSSR} from '@react-aria/ssr';
 export {useSlider, useSliderThumb} from '@react-aria/slider';

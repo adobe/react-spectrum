@@ -15,11 +15,11 @@ import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
+import {createLandmarkController, useLandmark} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {useLandmark} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Main(props) {
@@ -1155,5 +1155,303 @@ describe('LandmarkManager', function () {
     fireEvent.keyUp(document.activeElement, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
     expect(document.activeElement).toBe(nav);
+  });
+
+  it('landmark navigation fires custom event when wrapping forward', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+
+    expect(document.activeElement).toBe(main);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'forward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('landmark navigation fires custom event when wrapping backward', function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'backward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('skips over aria-hidden landmarks', function () {
+    let tree = render(
+      <div>
+        <Main>
+          <div aria-hidden="true">
+            <Region aria-label="Region 1">
+              <Checkbox>Checkbox label 1</Checkbox>
+            </Region>
+          </div>
+
+          <TextField label="First Name" />
+
+          <Region aria-label="Region 2">
+            <Checkbox>Checkbox label 2</Checkbox>
+          </Region>
+
+          <TextField label="Last Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+    let region2 = tree.getAllByRole('region')[0];
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    expect(document.activeElement).toBe(main);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
+    expect(document.activeElement).toBe(main);
+  });
+
+  describe('LandmarkController', function () {
+    it('should ensure keyboard listeners are active', function () {
+      let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      let controller = createLandmarkController();
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      onLandmarkNavigation.mockReset();
+
+      fireEvent.keyDown(document.activeElement, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+    });
+
+    it('should navigate forward', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusNext();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      act(() => {controller.navigate('forward');});
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      controller.dispose();
+    });
+
+    it('should navigate backward', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusPrevious();});
+      expect(document.activeElement).toBe(tree.getByRole('navigation'));
+
+      act(() => {controller.navigate('backward');});
+      expect(document.activeElement).toBe(tree.getByRole('textbox'));
+
+      controller.dispose();
+    });
+
+    it('should focus main', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusMain();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      controller.dispose();
+    });
+  });
+
+  describe('singleton', function () {
+    it('should store the landmark manager on the document', function () {
+      // ensure a manager exists.
+      let controller = createLandmarkController();
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      expect(manager).toBeDefined();
+      expect(typeof manager.version).toBe('number');
+      expect(typeof manager.createLandmarkController).toBe('function');
+      expect(typeof manager.registerLandmark).toBe('function');
+      controller.dispose();
+    });
+
+    it('should replace the singleton with a new version', function () {
+      let tree = render(
+        <div>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      let controller = createLandmarkController();
+      let newController = {
+        navigate: jest.fn(),
+        focusNext: jest.fn(),
+        focusPrevious: jest.fn(),
+        focusMain: jest.fn(),
+        dispose: jest.fn()
+      };
+
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      let unregister = jest.fn();
+      let testLandmarkManager = {
+        version: manager.version + 1,
+        createLandmarkController: jest.fn().mockReturnValue(newController),
+        registerLandmark: jest.fn().mockReturnValue(unregister)
+      };
+
+      document[Symbol.for('react-aria-landmark-manager')] = testLandmarkManager;
+      act(() => {
+        document.dispatchEvent(new CustomEvent('react-aria-landmark-manager-change'));
+      });
+
+      expect(testLandmarkManager.registerLandmark).toHaveBeenCalledTimes(1);
+      expect(testLandmarkManager.createLandmarkController).toHaveBeenCalledTimes(1);
+
+      // Controller should now proxy to the new version.
+      controller.navigate('forward');
+      expect(newController.navigate).toHaveBeenCalledTimes(1);
+      expect(newController.navigate).toHaveBeenCalledWith('forward', undefined);
+
+      controller.focusNext();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusPrevious();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusMain();
+      expect(newController.focusMain).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      expect(newController.dispose).toHaveBeenCalledTimes(1);
+
+      // Component should now point to the new manager.
+      tree.unmount();
+      expect(unregister).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -188,7 +188,11 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return;
+          if (state.items.length === 0) {
+            index = 0;
+          } else {
+            return state;
+          }
         }
 
         return insert(state, index, ...values);
@@ -198,7 +202,11 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return;
+          if (state.items.length === 0) {
+            index = 0;
+          } else {
+            return state;
+          }
         }
 
         return insert(state, index + 1, ...values);

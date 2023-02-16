@@ -34,7 +34,8 @@ export interface LayoutNode {
   node?: Node<unknown>,
   layoutInfo: LayoutInfo,
   header?: LayoutInfo,
-  children?: LayoutNode[]
+  children?: LayoutNode[],
+  validRect: Rect
 }
 
 const DEFAULT_HEIGHT = 48;
@@ -70,6 +71,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   protected invalidateEverything: boolean;
   protected loaderHeight: number;
   protected placeholderHeight: number;
+  protected lastValidRect: Rect;
+  protected validRect: Rect;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -92,13 +95,37 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     this.lastWidth = 0;
     this.lastCollection = null;
     this.allowDisabledKeyFocus = options.allowDisabledKeyFocus;
+    this.lastValidRect = new Rect();
+    this.validRect = new Rect();
+    this.contentSize = new Size();
   }
 
   getLayoutInfo(key: Key) {
-    return this.layoutInfos.get(key);
+    let res = this.layoutInfos.get(key);
+
+    // If the layout info wasn't found, it might be outside the bounds of the area that we've
+    // computed layout for so far. This can happen when accessing a random key, e.g pressing Home/End.
+    // Compute the full layout and try again.
+    if (!res && this.validRect.area < this.contentSize.area && this.lastCollection) {
+      this.lastValidRect = this.validRect;
+      this.validRect = new Rect(0, 0, Infinity, Infinity);
+      this.rootNodes = this.buildCollection();
+      this.validRect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
+      res = this.layoutInfos.get(key);
+    }
+
+    return res;
   }
 
   getVisibleLayoutInfos(rect: Rect) {
+    // If layout hasn't yet been done for the requested rect, union the
+    // new rect with the existing valid rect, and recompute.
+    if (!this.validRect.containsRect(rect) && this.lastCollection) {
+      this.lastValidRect = this.validRect;
+      this.validRect = this.validRect.union(rect);
+      this.rootNodes = this.buildCollection();
+    }
+
     let res: LayoutInfo[] = [];
 
     let addNodes = (nodes: LayoutNode[]) => {
@@ -124,16 +151,27 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    this.invalidateEverything = invalidationContext.sizeChanged;
+    return invalidationContext.sizeChanged;
+  }
 
+  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     this.collection = this.virtualizer.collection;
+
+    // Reset valid rect if we will have to invalidate everything.
+    // Otherwise we can reuse cached layout infos outside the current visible rect.
+    this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
+    if (this.invalidateEverything) {
+      this.lastValidRect = this.validRect;
+      this.validRect = this.virtualizer.getVisibleRect();
+    }
+
     this.rootNodes = this.buildCollection();
 
     // Remove deleted layout nodes
-    if (this.lastCollection) {
+    if (this.lastCollection && this.collection !== this.lastCollection) {
       for (let key of this.lastCollection.getKeys()) {
         if (!this.collection.getItem(key)) {
           let layoutNode = this.layoutNodes.get(key);
@@ -148,15 +186,31 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
+    this.invalidateEverything = false;
   }
 
   buildCollection(): LayoutNode[] {
     let y = this.padding;
+    let skipped = 0;
     let nodes = [];
     for (let node of this.collection) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (node.type === 'item' && y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
+
+      if (node.type === 'item' && y > this.validRect.maxY) {
+        y += (this.collection.size - (nodes.length + skipped)) * rowHeight;
+        break;
+      }
     }
 
     if (this.isLoading) {
@@ -181,10 +235,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return nodes;
   }
 
-  buildChild(node: Node<T>, x: number, y: number): LayoutNode {
+  isValid(node: Node<T>, y: number) {
     let cached = this.layoutNodes.get(node.key);
-    if (!this.invalidateEverything && cached && cached.node === node && y === (cached.header || cached.layoutInfo).rect.y) {
-      return cached;
+    return (
+      !this.invalidateEverything &&
+      cached &&
+      cached.node === node &&
+      y === (cached.header || cached.layoutInfo).rect.y &&
+      cached.layoutInfo.rect.intersects(this.lastValidRect) &&
+      cached.validRect.containsRect(cached.layoutInfo.rect.intersection(this.validRect))
+    );
+  }
+
+  buildChild(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.isValid(node, y)) {
+      return this.layoutNodes.get(node.key);
     }
 
     let layoutNode = this.buildNode(node, x, y);
@@ -245,11 +310,27 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
+    let skipped = 0;
     let children = [];
     for (let child of node.childNodes) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
       let layoutNode = this.buildChild(child, x, y);
       y = layoutNode.layoutInfo.rect.maxY;
       children.push(layoutNode);
+
+      if (y > this.validRect.maxY) {
+        // Estimate the remaining height for rows that we don't need to layout right now.
+        y += ([...node.childNodes].length - (children.length + skipped)) * rowHeight;
+        break;
+      }
     }
 
     rect.height = y - startY;
@@ -257,7 +338,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return {
       header,
       layoutInfo,
-      children
+      children,
+      validRect: layoutInfo.rect.intersection(this.validRect)
     };
   }
 
@@ -273,10 +355,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       // or the content of the item changed.
       let previousLayoutNode = this.layoutNodes.get(node.key);
       if (previousLayoutNode) {
-        let curNode = this.collection.getItem(node.key);
-        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
         rectHeight = previousLayoutNode.layoutInfo.rect.height;
-        isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutNode.layoutInfo.estimatedSize;
+        isEstimated = width !== this.lastWidth || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
         rectHeight = this.estimatedRowHeight;
         isEstimated = true;
@@ -297,7 +377,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     layoutInfo.allowOverflow = true;
     layoutInfo.estimatedSize = isEstimated;
     return {
-      layoutInfo
+      layoutInfo,
+      validRect: layoutInfo.rect
     };
   }
 
@@ -333,8 +414,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
   updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
     let n = this.layoutNodes.get(key);
     if (n) {
-      // Invalidate by clearing node.
-      n.node = null;
+      // Invalidate by reseting validRect.
+      n.validRect = new Rect();
 
       // Replace layout info in LayoutNode
       if (n.header === oldLayoutInfo) {
@@ -349,7 +430,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.contentSize;
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(key: Key): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyBefore(key);
@@ -363,7 +444,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key): Key | null {
     let collection = this.collection;
 
     key = collection.getKeyAfter(key);
@@ -377,7 +458,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyPageAbove(key: Key) {
+  getKeyPageAbove(key: Key): Key | null {
     let layoutInfo = this.getLayoutInfo(key);
 
     if (layoutInfo) {
@@ -395,7 +476,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.getFirstKey();
   }
 
-  getKeyPageBelow(key: Key) {
+  getKeyPageBelow(key: Key): Key | null {
     let layoutInfo = this.getLayoutInfo(key != null ? key : this.getFirstKey());
 
     if (layoutInfo) {
@@ -413,7 +494,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return this.getLastKey();
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     let collection = this.collection;
     let key = collection.getFirstKey();
     while (key != null) {
@@ -426,7 +507,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let collection = this.collection;
     let key = collection.getLastKey();
     while (key != null) {
@@ -439,7 +520,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key): Key | null {
     if (!this.collator) {
       return null;
     }
@@ -476,7 +557,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     y += this.virtualizer.visibleRect.y;
 
     let key = this.virtualizer.keyAtPoint(new Point(x, y));
-    if (key == null) {
+    if (key == null || this.collection.size === 0) {
       return {type: 'root'};
     }
 

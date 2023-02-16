@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Bell from '@spectrum-icons/workflow/Bell';
+import {FocusExample} from '../stories/ListBox.stories';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -852,6 +853,66 @@ describe('ListBox', function () {
       // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
       // onLoadMore called twice from useLayoutEffect in React < 18
       expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+    });
+  });
+
+  describe('When focused item is removed', function () {
+    it('should move focus to the next item that is not disabled', () => {
+      let tree = render(<Provider theme={theme}><FocusExample /></Provider>);
+      act(() => jest.runAllTimers());
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      act(() => {options[2].focus();});
+      expect(options[2]).toHaveAttribute('aria-posinset', '3');
+      expect(options[2]).toHaveAttribute('aria-setsize', '6');
+      expect(document.activeElement).toBe(options[2]);
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      let removeButton = tree.getByRole('button');
+      expect(removeButton).toBeInTheDocument();
+      act(() => {removeButton.focus();});
+      expect(document.activeElement).toBe(removeButton);
+      triggerPress(removeButton);
+      act(() => jest.runAllTimers());
+      let confirmationDialog = tree.getByRole('alertdialog');
+      expect(document.activeElement).toBe(confirmationDialog);
+      let confirmationDialogButton = within(confirmationDialog).getByRole('button');
+      expect(confirmationDialogButton).toBeInTheDocument();
+      triggerPress(confirmationDialogButton);
+      act(() => jest.runAllTimers());
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(5);
+      act(() => jest.runAllTimers());
+      expect(confirmationDialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(options[2]);
+      expect(options[2]).toHaveAttribute('aria-posinset', '3');
+      expect(options[2]).toHaveAttribute('aria-setsize', '5');
+      act(() => {options[1].focus();});
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      act(() => {options[0].focus();});
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      act(() => {options[0].focus();});
+      removeButton = tree.getByRole('button');
+      expect(removeButton).toBeInTheDocument();
+      act(() => {removeButton.focus();});
+      expect(document.activeElement).toBe(removeButton);
+      triggerPress(removeButton);
+      act(() => jest.runAllTimers());
+      confirmationDialog = tree.getByRole('alertdialog');
+      expect(document.activeElement).toBe(confirmationDialog);
+      confirmationDialogButton = within(confirmationDialog).getByRole('button');
+      expect(confirmationDialogButton).toBeInTheDocument();
+      triggerPress(confirmationDialogButton);
+      act(() => jest.runAllTimers());
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(3);
+      act(() => jest.runAllTimers());
+      expect(confirmationDialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(options[0]);
+      expect(options[0]).toHaveAttribute('aria-posinset', '1');
+      expect(options[0]).toHaveAttribute('aria-setsize', '3');
     });
   });
 });

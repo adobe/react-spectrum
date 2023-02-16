@@ -48,7 +48,7 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 }
 
 /** @private */
-export function useListBoxLayout<T>(state: ListState<T>) {
+export function useListBoxLayout<T>(state: ListState<T>): ListLayout<T> {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>

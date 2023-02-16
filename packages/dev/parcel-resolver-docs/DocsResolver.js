@@ -48,5 +48,10 @@ module.exports = new Resolver({
         return resolved;
       }
     }
+
+    if (/^@(react-spectrum|react-aria)\/(.*?)\/docs\/(.*)$/.test(specifier)) {
+      let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
+      return {filePath: path.join(options.projectRoot, baseDir, specifier)};
+    }
   }
 });
