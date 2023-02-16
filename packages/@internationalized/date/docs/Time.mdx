@@ -81,15 +81,15 @@ Duration can often be expressed as an [ISO 8601](https://en.wikipedia.org/wiki/I
 ```tsx
 let durationString = 'PT20H35M15S'
 let duration = parseDuration(durationString)
-// => duration = {hours: 20, minutes: 35, seconds: 15}
+// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: 20, minutes: 35, seconds: 15}
 
 let durationString = '-PT20H35M15S'
 let duration = parseDuration(durationString)
-// => duration = {hours: -20, minutes: -35, seconds: -15}
+// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: -20, minutes: -35, seconds: -15}
 
-let durationString = 'PT20,5H35,5M15,75S'
+let durationString = 'PT20H35M15,75S'
 let duration = parseDuration(durationString)
-// => duration = {hours: 20.5, minutes: 35.5, seconds: 15.75}
+// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: 20, minutes: 35, seconds: 15.75}
 
 ```
 

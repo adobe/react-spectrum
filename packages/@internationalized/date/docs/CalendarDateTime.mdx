@@ -141,9 +141,9 @@ let durationString = '-P3Y6M6W4DT12H30M5S'
 let duration = parseDuration(durationString)
 // => duration = {years: -3, months: -6, weeks: -6, days: -4, hours: -12, minutes: -30, seconds: -5}
 
-let durationString = 'P3,25Y6,75M6,5W4,2DT12,2H30,5M5,5S'
+let durationString = 'P3Y6M6W4DT12H30M5.5S'
 let duration = parseDuration(durationString)
-// => duration = {years: 3.25, months: 6.75, weeks: 6.5, days: 4.2, hours: 12.2, minutes: 30.5, seconds: 5.5}
+// => duration = {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5.5}
 
 ```
 
