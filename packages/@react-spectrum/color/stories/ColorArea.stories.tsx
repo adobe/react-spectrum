@@ -20,7 +20,29 @@ import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',
-  component: ColorArea
+  component: ColorArea,
+  argTypes: {
+    xChannel: {
+      table: {
+        disable: true
+      }
+    },
+    yChannel: {
+      table: {
+        disable: true
+      }
+    },
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    onChangeEnd: {
+      table: {
+        disable: true
+      }
+    }
+  }
 };
 
 export default meta;

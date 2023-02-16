@@ -23,6 +23,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: row;
   align-items: stretch;
+  max-width: 500px; /* devon made this up */
 
   border-radius: var(--spectrum-toast-border-radius);
 
@@ -32,7 +33,6 @@ governing permissions and limitations under the License.
   padding-inline-start: var(--spectrum-toast-padding-left);
 
   font-size: var(--spectrum-toast-text-size);
-  font-weight: var(--spectrum-toast-text-font-weight);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -48,10 +48,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Toast-content {
   flex: 1 1 auto;
-  display: inline-block;
   box-sizing: border-box;
   padding-block-start: var(--spectrum-toast-content-padding-top);
-  padding-inline-end: var(--spectrum-toast-content-padding-right);
   padding-block-end: var(--spectrum-toast-content-padding-bottom);
   padding-inline-start: 0;
   text-align: start;
@@ -75,9 +73,12 @@ governing permissions and limitations under the License.
   flex: 1 1 auto;
   align-self: center;
 
-  .spectrum-Button {
-    margin-inline-end: var(--spectrum-toast-button-margin-right);
-  }
+  /* https://spectrum.adobe.com/page/toast/#Text-overflow */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  column-gap: var(--spectrum-toast-content-padding-right);
+  padding-inline-end: var(--spectrum-toast-content-padding-right);
 
   & + .spectrum-Toast-buttons {
     padding-inline-start: var(--spectrum-toast-padding-right);

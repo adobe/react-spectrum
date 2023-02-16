@@ -11,6 +11,11 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
+  --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(--spectrum-global-color-blue-400);
+  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+}
+
+.spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
   &.is-dragged {
@@ -18,22 +23,35 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
     .spectrum-IllustratedMessage-illustration {
-      color: var(--spectrum-global-color-blue-400);
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
     }
   }
 
   &:focus:not(.is-dragged) {
     border-color: var(--spectrum-dropzone-border-color);
     .spectrum-IllustratedMessage-illustration {
-      color: var(--spectrum-global-color-static-gray-500);
+      color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
     }
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
     &.is-dragged.focus-ring {
       .spectrum-IllustratedMessage-illustration {
-        color: var(--spectrum-global-color-blue-400);
+        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-selected);
       }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropzone {
+    --spectrum-dropzone-border-color: CanvasText;
+    --spectrum-dropzone-illustratedmessage-illustration-color-selected: Highlight;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+
+    &.is-dragged {
+      forced-color-adjust: none;
     }
   }
 }

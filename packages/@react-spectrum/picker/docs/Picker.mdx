@@ -373,7 +373,7 @@ function Example() {
       validationState={isValid ? 'valid' : 'invalid'}
       label="Favorite animal"
       description="Pick your favorite animal, you will be judged."
-      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh god it\'s a snake! Choose anything else.'}
+      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh no it\'s a snake! Choose anything else.'}
       items={options}
       selectedKey={animalId}
       onSelectionChange={selected => setAnimalId(selected)}>

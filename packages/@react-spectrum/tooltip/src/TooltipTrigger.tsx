@@ -31,8 +31,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   } = props;
 
-  let [trigger, tooltip] = React.Children.toArray(children);
-
+  let [trigger, tooltip] = React.Children.toArray(children) as [ReactElement, ReactElement];
   let state = useTooltipTriggerState(props);
 
   let tooltipTriggerRef = useRef<HTMLElement>();
@@ -68,7 +67,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           arrowProps,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.isOpen}>
+        <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>

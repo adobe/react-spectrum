@@ -27,6 +27,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-xlarge-nodeupdate:
+    docker:
+      - image: cimg/node:16.18.0
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
     executor: rsp-large
@@ -206,6 +214,20 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
+
+  test-esm:
+    executor: rsp-xlarge-nodeupdate
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: |
+            make build
+            yarn lerna run prepublishOnly
+            node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
+
   lint:
     executor: rsp
     steps:
@@ -259,6 +281,7 @@ jobs:
       - run:
           name: compare api
           command: |
+            yarn test:parcel
             mkdir -p dist
             yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
@@ -450,6 +473,9 @@ workflows:
       - test-17:
           requires:
             - install-17
+      - test-esm:
+          requires:
+            - install
       - lint:
           requires:
             - install
@@ -505,6 +531,7 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
+            - test-esm
             - storybook
             - storybook-16
             - storybook-17
@@ -518,6 +545,18 @@ workflows:
       - deploy-verdaccio:
           requires:
             - docs-verdaccio
+      - comment:
+          name: comment-pr
+          filters:
+            branches:
+              ignore: main
+          requires:
+            - ts-diff
+            - deploy
+      - comment:
+          name: comment-verdaccio
+          requires:
+            - deploy-verdaccio
 
   nightly:
     triggers:

@@ -57,7 +57,7 @@ const meta: Meta<SpectrumTableProps<object>> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // large delay with the layout since there are so many tables
-    chromatic: {delay: 2000}
+    chromatic: {delay: 4000}
   }
 };
 
