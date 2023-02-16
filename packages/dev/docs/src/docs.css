@@ -235,6 +235,7 @@ html, body {
 .sideNavItem > span {
   margin-left: 10px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .sideNavItem:focus {
