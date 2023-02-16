@@ -28,7 +28,7 @@ const meta: Meta<SpectrumTableProps<any>> = {
 export default meta;
 
 let columns = [
-  {name: 'Naglwakenglkawnegklnakwlen glkawen glkawn gkaw neglkme', uid: 'name'},
+  {name: 'Name', uid: 'name'},
   {name: 'Type', uid: 'type'},
   {name: 'Level', uid: 'level'}
 ];
@@ -55,7 +55,7 @@ const Template: Story<SpectrumTableProps<any>> = (args) => (
     <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
         {column => (
-          <Column allowsResizing key={column.uid}>
+          <Column key={column.uid}>
             {column.name}
           </Column>
         )}
