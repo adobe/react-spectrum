@@ -44,6 +44,7 @@
     "@react-spectrum/button": "^3.11.2",
     "@react-spectrum/checkbox": "^3.6.3",
     "@react-spectrum/dnd": "^3.0.1",
+    "@react-spectrum/layout": "^3.4.4",
     "@react-spectrum/menu": "^3.9.2",
     "@react-spectrum/progress": "^3.3.4",
     "@react-spectrum/tooltip": "^3.3.5",

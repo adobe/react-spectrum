@@ -11,6 +11,7 @@
  */
 import {classNames} from '@react-spectrum/utils';
 import {Direction} from '@react-types/shared';
+import {Flex} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import React from 'react';
 import {SpectrumTableProps} from '@react-types/table';
@@ -19,39 +20,25 @@ import stylesOverrides from './table.css';
 import type {TableLayout} from '@react-stately/layout';
 
 interface DragPreviewProps<T> {
-  item: GridNode<any>,
+  item:  any,
   itemCount: number,
   density: SpectrumTableProps<T>['density'],
   layout: TableLayout<T>,
   direction: Direction,
-  maxWidth: number
+  maxWidth: number,
+  rowHeaderColumnKeys: Set<React.Key>
 }
 
 interface TableCellPreviewProps {
-  cell: GridNode<any>,
-  layout: TableLayout<any>,
-  selectionCellWidth: number,
-  dragButtonCellWidth: number,
-  direction: Direction
+  cell: GridNode<any>
 }
 
 export function TableCellPreview(props: TableCellPreviewProps) {
-  let {cell, layout, selectionCellWidth, dragButtonCellWidth, direction} = props;
+  let {cell} = props;
   let {align} = cell.column.props;
-  let {x: left, height, width} = layout.getLayoutInfo(cell.key).rect;
-  if (cell.props.isSelectionCell) {
-    return null;
-  }
-  // Move cell over since we aren't showing selection or drag cells in preview.
-  left = left - selectionCellWidth - dragButtonCellWidth;
-  let right: number;
-  if (direction === 'rtl') {
-    right = left;
-    left = undefined;
-  }
+
   return (
     <div
-      style={{left, right, height, width, position: 'absolute'}}
       className={
           classNames(
             styles,
@@ -86,32 +73,18 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
     itemCount,
     density,
     layout,
-    direction,
-    maxWidth
+    maxWidth,
+    rowHeaderColumnKeys
   } = props;
-  let {height, width: columnWidth} = layout.getLayoutInfo(item.key).rect;
-
+  let {height} = layout.getLayoutInfo(item.key).rect;
   let isDraggingMultiple = itemCount > 1;
-
-  let cells = [...item.childNodes];
-  let dragButtonCellWidth = layout.getLayoutInfo(cells[0].key).rect.width;
-  let selectionCellWidth = cells[1].props.isSelectionCell ? layout.getLayoutInfo(cells[1].key).rect.width : 0;
-
-  // width = width - selectionCellWidth - dragButtonCellWidth;
-  // TODO: get correct width needed for badge
-  // TODO: vertically center badge for spacious/compact
-  // TODO: RTL support
-  let end = direction === 'rtl' ? 'left' : 'right';
-  let width = columnWidth;
-  if (columnWidth > maxWidth) {
-    width = maxWidth;
-  }
-  width = isDraggingMultiple ? width + 8 : width;
+  let cells = [...item.childNodes].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
 
   return (
-    <div
-      style={{height, width, overflow: 'hidden'}}
-      className={
+    <Flex
+      flex="0 0 auto"
+      UNSAFE_style={{height, maxWidth}}
+      UNSAFE_className={
         classNames(
           styles,
           'spectrum-Table-row',
@@ -126,16 +99,11 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
       {cells.map((cell) => (
         <TableCellPreview
           key={cell.key}
-          cell={cell}
-          layout={layout}
-          selectionCellWidth={selectionCellWidth}
-          dragButtonCellWidth={dragButtonCellWidth}
-          direction={direction} />
+          cell={cell} />
       ))}
-      {columnWidth > maxWidth && <span style={{position: 'absolute', bottom: 6, [end]: 10}}>...</span>}
       {isDraggingMultiple &&
         <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
       }
-    </div>
+    </Flex>
   );
 }

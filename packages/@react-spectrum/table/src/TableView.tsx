@@ -506,9 +506,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         <DragPreview ref={preview}>
           {() => {
             let item = state.collection.getItem(dragState.draggedKey);
+            let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
             let itemCount = dragState.draggingKeys.size;
             let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            return <SpectrumDragPreview layout={layout} item={item} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} />;
+            return <SpectrumDragPreview layout={layout} item={item} itemCount={itemCount} density={density} direction={direction} maxWidth={maxWidth} rowHeaderColumnKeys={rowHeaderColumnKeys} />;
           }}
         </DragPreview>
       }
