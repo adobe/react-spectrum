@@ -46,12 +46,7 @@ export interface AriaTableColumnResizeProps<T> {
   /** Called for every resize event that results in new column sizes. */
   onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
-  onResizeEnd?: (widths: Map<Key, number | string>) => void,
-  /**
-   * Whether keyboard column resizing should start when the resizer is focused. By default, resizing must be started
-   * manually via Enter.
-   **/
-  shouldResizeOnFocus?: boolean
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
 export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
@@ -63,7 +58,7 @@ export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeSta
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, shouldResizeOnFocus} = props;
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
   let isResizing = useRef(false);
@@ -79,7 +74,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           // switch focus back to the column header on anything that ends edit mode
           focusSafely(triggerRef.current);
         }
-      } else if (!shouldResizeOnFocus) {
+      } else {
         // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
         if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
           e.continuePropagation();
@@ -228,14 +223,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     inputProps: mergeProps(
       {
         id,
-        onFocus: () => {
-          if (shouldResizeOnFocus) {
-            // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
-            // call instead during focus and blur
-            startResize(item);
-            state.tableState.setKeyboardNavigationDisabled(true);
-          }
-        },
         onBlur: () => {
           endResize(item);
           state.tableState.setKeyboardNavigationDisabled(false);
