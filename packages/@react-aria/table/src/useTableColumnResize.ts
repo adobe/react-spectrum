@@ -47,7 +47,10 @@ export interface AriaTableColumnResizeProps<T> {
   onResize?: (widths: Map<Key, number | string>) => void,
   /** Called when resizing ends. */
   onResizeEnd?: (widths: Map<Key, number | string>) => void,
-  /** Whether column resizing should start when the resizer is focused. */
+  /**
+   * Whether keyboard column resizing should start when the resizer is focused. By default, resizing must be started
+   * manually via Enter.
+   **/
   shouldResizeOnFocus?: boolean
 }
 
@@ -76,7 +79,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           // switch focus back to the column header on anything that ends edit mode
           focusSafely(triggerRef.current);
         }
-      } else {
+      } else if (!shouldResizeOnFocus) {
         // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
         if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
           e.continuePropagation();
