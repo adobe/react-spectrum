@@ -85,7 +85,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
       previousFocused.current = false;
       state.setFocused(true);
     }
-  }, [props.isDisabled, nextDisabled, previousDisabled, state]);
+  }, [nextDisabled, previousDisabled, state]);
 
   let labelProps = useLabels({
     id: props['id'],
