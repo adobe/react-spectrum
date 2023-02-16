@@ -1051,8 +1051,7 @@ function TableDragHeaderCell({column}) {
     node: column,
     isVirtualized: true
   }, state, ref);
-  // TODO: How do we skip navigation to this cell?
-  // Maybe a focusMode: 'skip' or 'none'?
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -1068,7 +1067,9 @@ function TableDragHeaderCell({column}) {
             'react-spectrum-dragButtonHeadCell'
           )
         )
-      } />
+      }>
+        <VisuallyHidden>{stringFormatter.format('drag')}</VisuallyHidden>
+      </div>
     </FocusRing>
   );
 }
