@@ -16,7 +16,7 @@ import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately
 import {Key} from 'react';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {Node} from '@react-types/shared';
-import {TableColumnLayout} from '@react-stately/table';
+import {TableColumnLayout, TableState} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   columnLayout: TableColumnLayout<T>,
@@ -38,6 +38,7 @@ export class TableLayout<T> extends ListLayout<T> {
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
   resizingColumn: Key | null;
+  tableState: TableState<T>;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);

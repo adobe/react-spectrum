@@ -171,7 +171,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }),
     [getDefaultWidth, getDefaultMinWidth]
   );
-  let tableLayout = useMemo(() => new TableLayout({
+  let layout = useMemo(() => new TableLayout({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
       ? null
@@ -192,14 +192,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.overflowMode, scale, density, columnLayout]
   );
-  let layout = useMemo(() => {
-    let proxy = new Proxy(tableLayout, {
-      get(target, prop, receiver) {
-        return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
-      }
-    });
-    return proxy as TableLayout<T> & {tableState: TableState<T>};
-  }, [state, tableLayout]);
+  layout.tableState = state;
 
   let {gridProps} = useTable({
     ...props,
