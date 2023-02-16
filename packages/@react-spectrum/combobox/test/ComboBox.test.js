@@ -1532,9 +1532,14 @@ describe('ComboBox', function () {
         userEvent.click(combobox);
         jest.runAllTimers();
       });
+
       act(() => {
         fireEvent.change(combobox, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         combobox.blur();
         jest.runAllTimers();
       });

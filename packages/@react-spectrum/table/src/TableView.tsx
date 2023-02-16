@@ -732,7 +732,7 @@ function ResizableTableColumnHeader(props) {
         state.sort(column.key, 'descending');
         break;
       case 'resize':
-        layout.onColumnResizeStart(column.key);
+        layout.startResize(column.key);
         setIsInResizeMode(true);
         break;
     }
