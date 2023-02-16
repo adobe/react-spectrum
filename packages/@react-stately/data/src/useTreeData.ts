@@ -104,7 +104,7 @@ export interface TreeData<T extends object> {
    * @param toParentKey - The key of the new parent to insert into.
    * @param index - The index within the new parent to insert at.
    */
-  move(key: Key, toParentKey: Key, index: number): void,
+  move(key: Key, toParentKey: Key | null, index: number): void,
 
   /**
    * Updates an item in the tree.
@@ -308,7 +308,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     removeSelectedItems() {
       this.remove(...selectedKeys);
     },
-    move(key: Key, toParentKey: Key, index: number) {
+    move(key: Key, toParentKey: Key | null, index: number) {
       setItems(items => {
         let node = map.get(key);
         if (!node) {
@@ -322,6 +322,16 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           parentKey: toParentKey
         };
 
+        // If parentKey is null, insert into the root.
+        if (toParentKey == null) {
+          return [
+            ...items.slice(0, index),
+            movedNode,
+            ...items.slice(index)
+          ];
+        }
+
+        // Otherwise, update the parent node and its ancestors.
         return updateTree(items, toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,

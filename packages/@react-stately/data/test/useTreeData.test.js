@@ -567,6 +567,38 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
+  it('should move an item to the root', function () {
+    let {result} = renderHook(() =>
+      useTreeData({initialItems: initial, getChildren, getKey})
+    );
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.move('Stacy', null, 0);
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(2);
+    expect(result.current.items[0]).not.toBe(initialResult.items[0]);
+    expect(result.current.items[0].children).toHaveLength(0);
+    expect(result.current.items[0].value).toEqual({name: 'Stacy'});
+    expect(result.current.items[1]).not.toBe(initialResult.items[0]);
+    expect(result.current.items[1].children).toHaveLength(3);
+    expect(result.current.items[1].children[0]).toBe(
+      initialResult.items[0].children[0]
+    );
+    expect(result.current.items[1].children[1]).not.toBe(
+      initialResult.items[0].children[1]
+    );
+    expect(result.current.items[1].children[1].children).toHaveLength(1);
+    expect(result.current.items[1].children[1].children[0]).toEqual(
+      initialResult.items[0].children[1].children[1]
+    );
+    expect(result.current.items[1].children[2]).toBe(
+      initialResult.items[0].children[2]
+    );
+  });
+
   it('should move an item to a new index within its current parent', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
 
