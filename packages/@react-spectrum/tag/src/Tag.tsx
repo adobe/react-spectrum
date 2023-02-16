@@ -40,15 +40,14 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let tagRowRef = useRef();
+  let ref = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
     isFocused,
     allowsRemoving,
     item,
-    onRemove,
-    tagRowRef
-  }, state);
+    onRemove
+  }, state, ref);
 
   return (
     <div
@@ -64,7 +63,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         },
           styleProps.className
         )}
-      ref={tagRowRef}>
+      ref={ref}>
       <div
         className={classNames(styles, 'spectrum-Tag-cell')}
         {...tagProps}>
