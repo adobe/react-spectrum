@@ -23,7 +23,8 @@ interface DragPreviewProps<T> {
   itemCount: number,
   density: SpectrumTableProps<T>['density'],
   layout: TableLayout<T>,
-  direction: Direction
+  direction: Direction,
+  maxWidth: number
 }
 
 interface TableCellPreviewProps {
@@ -85,9 +86,10 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
     itemCount,
     density,
     layout,
-    direction
+    direction,
+    maxWidth
   } = props;
-  let {height, width} = layout.getLayoutInfo(item.key).rect;
+  let {height, width: columnWidth} = layout.getLayoutInfo(item.key).rect;
 
   let isDraggingMultiple = itemCount > 1;
 
@@ -95,14 +97,20 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   let dragButtonCellWidth = layout.getLayoutInfo(cells[0].key).rect.width;
   let selectionCellWidth = cells[1].props.isSelectionCell ? layout.getLayoutInfo(cells[1].key).rect.width : 0;
 
-  width = width - selectionCellWidth - dragButtonCellWidth;
+  // width = width - selectionCellWidth - dragButtonCellWidth;
   // TODO: get correct width needed for badge
   // TODO: vertically center badge for spacious/compact
   // TODO: RTL support
+  let end = direction === 'rtl' ? 'left' : 'right';
+  let width = columnWidth;
+  if (columnWidth > maxWidth) {
+    width = maxWidth;
+  }
   width = isDraggingMultiple ? width + 8 : width;
+
   return (
     <div
-      style={{height, width}}
+      style={{height, width, overflow: 'hidden'}}
       className={
         classNames(
           styles,
@@ -124,6 +132,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           dragButtonCellWidth={dragButtonCellWidth}
           direction={direction} />
       ))}
+      {columnWidth > maxWidth && <span style={{position: 'absolute', bottom: 6, [end]: 10}}>...</span>}
       {isDraggingMultiple &&
         <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
       }
