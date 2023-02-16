@@ -1258,9 +1258,7 @@ describe('TableViewSizing', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
-
+        expect(onResizeEnd).toHaveBeenCalledTimes(0);
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1307,11 +1305,7 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab();
-        expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        // TODO: should call with null or the currently calculated widths?
-        // might be hard to call with current values
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
-
+        expect(onResizeEnd).toHaveBeenCalledTimes(0);
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1359,9 +1353,7 @@ describe('TableViewSizing', function () {
         expect(document.activeElement).toBe(resizer);
 
         userEvent.tab({shift: true});
-        expect(onResizeEnd).toHaveBeenCalledTimes(1);
-        expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
-
+        expect(onResizeEnd).toHaveBeenCalledTimes(0);
         expect(document.activeElement).toBe(resizableHeader);
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -1656,6 +1648,7 @@ function resizeCol(tree, col, delta) {
   fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
   act(() => {jest.runAllTimers();});
   fireEvent.pointerMove(resizer, {pointerType: 'mouse', pointerId: 1, pageX: delta, pageY: 25});
+  act(() => {jest.runAllTimers();});
   fireEvent.pointerUp(resizer, {pointerType: 'mouse', pointerId: 1});
   act(() => {jest.runAllTimers();});
 }
