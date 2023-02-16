@@ -11,10 +11,10 @@
  */
 
 import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
+import {FocusEvent, FocusEventHandler, Key, RefObject, useEffect, useRef} from 'react';
 import {focusSafely} from '@react-aria/focus';
 import {isAndroid, isIOS, mergeProps} from '@react-aria/utils';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {Key, RefObject, useEffect, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 
@@ -154,11 +154,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {};
   if (!isDisabled) {
     let tabIndex: number;
-    let onFocus: Function;
+    let onFocus: FocusEventHandler<FocusableElement | Element>;
     let isMobile = isAndroid() || isIOS();
     if (!isMobile) {
       tabIndex = key === manager.focusedKey ? 0 : -1;
-      onFocus = (e:FocusEvent) => {
+      onFocus = (e:FocusEvent<FocusableElement | Element>) => {
         if (e.target === ref.current) {
           manager.setFocusedKey(key);
         }
