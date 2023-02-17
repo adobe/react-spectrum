@@ -41,7 +41,7 @@ export function Table(props) {
     ref
   );
 
-  let getDefaultMinWidth = useCallback((node) => {
+  let getDefaultMinWidth = useCallback(() => {
     return 40;
   }, []);
 
