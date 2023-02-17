@@ -816,7 +816,7 @@ update the column widths during a column resize operation. Note that this state 
 The second column resizing hook is <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. This hook handles the interactions for a table column's resizer
 element, allowing the user to drag the resizer or use the keyboard arrows to expand the column's width. Be sure to pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
 to this hook so the tracked widths can be updated appropriately. We'll walk through all the required changes to the previous table implementation step by step below. For simplicity's sake, we'll be
-omitting support for selection and sorting.
+omitting support for selection, sorting, and nested columns.
 
 ### Table
 
@@ -866,32 +866,15 @@ function ResizableColumnsTable(props) {
   return (
     <table
       {...gridProps}
-      ref={ref}
-      style={{
-        borderCollapse: 'collapse',
-        /*- begin highlight -*/
-        width: '300px',
-        height: '200px',
-        // Override the table's default display with "block" so that our defined column widths
-        // are respected. Without this and other table element display overrides, the columns
-        // can grow/shrink beyond their applied "width"
-        display: 'block',
-        position: 'relative',
-        overflow: 'auto'
-        /*- end highlight -*/
-      }}>
+      /*- begin highlight -*/
+      className="aria-table"
+      /*- end highlight -*/
+      ref={ref}>
       <ResizableTableRowGroup
-        type="thead"
-        style={{
-          borderBottom: '2px solid var(--spectrum-global-color-gray-800)',
-          /*- begin highlight -*/
-          display: 'block',
-          position: 'sticky',
-          top: 0,
-          background: 'var(--spectrum-gray-100)',
-          width: 'fit-content'
-          /*- end highlight -*/
-        }}>
+        /*- begin highlight -*/
+        className="aria-table-rowGroupHeader"
+        /*- end highlight -*/
+        type="thead">
         {collection.headerRows.map(headerRow => (
           <ResizableTableHeaderRow key={headerRow.key} item={headerRow} state={state}>
             {[...headerRow.childNodes].map(column => (
@@ -912,9 +895,7 @@ function ResizableColumnsTable(props) {
       </ResizableTableRowGroup>
       <ResizableTableRowGroup
         /*- begin highlight -*/
-        style={{
-          maxHeight: '200px'
-        }}
+        className="aria-table-rowGroupBody"
         /*- end highlight -*/
         type="tbody">
         {[...collection.body.childNodes].map(row => (
@@ -937,23 +918,53 @@ function ResizableColumnsTable(props) {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+/*
+ * Override the table's default display with "block" so that our defined column widths
+ * are respected. Without this and other table element display overrides, the columns
+ * can grow/shrink beyond their applied "width"
+*/
+.aria-table {
+  border-collapse: collapse;
+  width: 300px;
+  height: 200px;
+  display: block;
+  position: relative;
+  overflow: auto;
+}
+
+
+.aria-table-rowGroupHeader {
+  border-bottom: 2px solid var(--spectrum-global-color-gray-800);
+  position: sticky;
+  top: 0;
+  background: var(--spectrum-gray-100);
+  width: fit-content;
+}
+
+.aria-table-rowGroupBody {
+  max-height: 200px;
+}
+```
+</details>
+
 ### Resizable table header
 
 The `TableRowGroup` and `TableHeaderRow` only require minor style changes to accommodate the new `display` changes made in
 `ResizableColumnsTable`.
 
 ```tsx example export=true render=false
-function ResizableTableRowGroup({type: Element, style, children}) {
+function ResizableTableRowGroup({type: Element, className, children}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
     <Element
-      {...rowGroupProps}
-      style={{
-        /*- begin highlight -*/
-        display: 'block',
-        /*- end highlight -*/
-        ...style
-      }}>
+      /*- begin highlight -*/
+      className={`aria-table-rowGroup ${className}`}
+      /*- end highlight -*/
+      {...rowGroupProps}>
       {children}
     </Element>
   );
@@ -968,84 +979,117 @@ function ResizableTableHeaderRow({item, state, children}) {
   return (
     <tr
       {...rowProps}
-      ref={ref}
       /*- begin highlight -*/
-      style={{display: 'flex'}}
+      className="aria-table-row"
       /*- end highlight -*/
-    >
+      ref={ref}>
       {children}
     </tr>
   );
 }
 ```
 
-The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
-the user can drag or focus to perform a resize operation. To avoid interfering with the existing grid keyboard navigation, we only display this resizer when
-the column is hovered or if the column itself is being resized. This however introduces another issue: how will keyboard, screen reader, and touch users begin a resize operation if the resizer
-is only visible on hover? We could have the user press on the column header to trigger a resize operation, but that action is often reserved for sorting and may feel unexpected to a user.
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-To resolve this, we need to render a menu button in the column header if the column is resizable, allowing non-mouse users to select from a list of available actions on the column. For resizing, selecting the corresponding option
-should cause focus to shift to the resizer itself, displaying the resizer for touch screen users to drag and letting keyboard and screen readers resize the column via keyboard arrows and screen reader operations
-accordingly.
+```css
+.aria-table-rowGroup {
+  display: block;
+}
+
+.aria-table-row {
+  display: flex;
+}
+```
+</details>
+
+The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
+the user can drag or focus to perform a resize operation. Since the resizer will be a focusable element within the table header, we need to make the header title a focusable element as well so keyboard
+focus won't be immediately sent to the resizer as you navigate between the column headers. Finally, we apply the computed width of our column from <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
+to the header element.
 
 ```tsx example export=true render=false
-import {useDescription} from '@react-aria/utils';
-import {useHover, usePress} from '@react-aria/interactions';
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
- let {widths} = layoutState;
-  let ref = useRef(null);
-  let resizerRef = useRef(null);
-  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
-  let showResizer = isHovered || layoutState.resizingColumn === column.key;
+  let {widths} = layoutState;
   let allowsResizing = column.props.allowsResizing;
-
-  let {pressProps} = usePress({
-    isDisabled: !allowsResizing,
-    onPress() {
-      layoutState.onColumnResizeStart(column.key);
-      // Brief delay before moving focus to resizer input for screenreaders/Safari
-      setTimeout(() => resizerRef.current?.focus(), 50);
-    }
-  });
-  let descriptionProps = useDescription('Press to start resizing the column.');
+  let ref = useRef(null);
+  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps, hoverProps, pressProps, descriptionProps)}
-      colSpan={column.colspan}
-      style={{
-        textAlign: column.colspan > 1 ? 'center' : 'left',
-        padding: '5px 10px',
-        outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        cursor: 'default',
-        width: widths.get(column.key),
-        display: 'block',
-        flex: '0 0 auto',
-        boxSizing: 'border-box'
-      }}
+      {...columnHeaderProps}
+      className="aria-table-headerCell"
+      style={{width: widths.get(column.key)}}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
-        <div
-          style={{
-            flex: '1 1 auto',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
-          }}>
+        <Button className="aria-table-headerTitle">
           {column.rendered}
-        </div>
+        </Button>
         {allowsResizing &&
-          <Resizer showResizer={showResizer} ref={resizerRef} triggerRef={ref} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+          <Resizer column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-headerCell {
+  padding: 5px 10px;
+  outline: none;
+  cursor: default;
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  box-shadow: none;
+  text-align: left;
+}
+
+.aria-table-headerTitle {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-inline-start: -6px;
+  outline: none;
+}
+
+.aria-table-headerTitle.focus {
+  outline: 2px solid orange;
+}
+```
+</details>
+
+### Button
+
+The `Button` component is used in the above example to represent the table column header title. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = useRef(null);
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let {buttonProps} = useButton(props, ref);
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} className={`${props.className} ${isFocusVisible ? 'focus' : ''}`}>{props.children}</button>;
+}
+```
+
+</details>
 
 ### Resizer
 
@@ -1055,48 +1099,59 @@ Users can press and drag on the visible resizer to trigger the `onResize` callba
 resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Similarly, touch screen readers can swipe up and down to
 resize the column and double tap to exit resizing.
 
-Note that we apply `visibility: hidden` to hide the resizer so that we reserve space for it in the column header at all times.
-
 ```tsx example export=true render=false
 import {useTableColumnResize} from '@react-aria/table';
 
-const Resizer = React.forwardRef((props, ref) => {
-  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef, showResizer} = props;
+function Resizer(props) {
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
+  let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
     onResizeStart,
     onResize,
-    onResizeEnd,
-    triggerRef
+    onResizeEnd
   }, layoutState, ref);
+  let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
       role="presentation"
-      style={{
-        cursor: 'col-resize',
-        width: '6px',
-        height: 'auto',
-        border: '2px',
-        borderStyle: 'none solid',
-        borderColor: layoutState.resizingColumn === column.key ? 'orange' : 'grey',
-        touchAction: 'none',
-        flex: '0 0 auto',
-        boxSizing: 'border-box',
-        visibility: showResizer ? 'visible' : 'hidden',
-        marginLeft: '4px'
-      }}
+      className={`aria-table-resizer ${layoutState.resizingColumn === column.key || isFocusVisible ? 'focus' : ''}`}
       {...resizerProps}>
       <VisuallyHidden>
         <input
           ref={ref}
-          {...inputProps} />
+          {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
     </div>
   );
-});
+};
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-resizer {
+  cursor: col-resize;
+  width: 6px;
+  height: auto;
+  border: 2px;
+  border-style: none solid;
+  border-color: grey;
+  touch-action: none;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  margin-left: 4px;
+}
+
+.aria-table-resizer.focus {
+  border-color: orange;
+}
+```
+
+</details>
 
 ### Resizable table body
 
@@ -1107,7 +1162,7 @@ and handles text overflow.
 
 ```tsx example export=true render=false
 function ResizableTableRow({item, children, state}) {
-  // Same as previous TableRow implementation
+  // Same as previous TableRow implementation...
   ///- begin collapse -///
   let ref = useRef();
   let isSelected = state.selectionManager.isSelected(item.key);
@@ -1118,24 +1173,15 @@ function ResizableTableRow({item, children, state}) {
   ///- end collapse -///
   return (
     <tr
+      /*- begin highlight -*/
+      className={`aria-table-row ${isFocusVisible ? 'focus' : ''}`}
       style={{
-        background: isSelected
-          ? 'blueviolet'
-          : isPressed
-            ? 'var(--spectrum-global-color-gray-400)'
-            : item.index % 2
-              ? 'var(--spectrum-alias-highlight-hover)'
-              : 'none',
-        color: isSelected ? 'white' : null,
-        outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        /*- begin highlight -*/
-        display: 'flex',
-        width: 'fit-content'
-        /*- end highlight -*/
+        background: item.index % 2 ? 'var(--spectrum-alias-highlight-hover)' : 'none'
       }}
-      {...mergeProps(rowProps, focusProps)}
-      ref={ref}>
+      /*- end highlight -*/
+       {...mergeProps(rowProps, focusProps)}
+      ref={ref}
+   >
       {children}
     </tr>
   );
@@ -1144,40 +1190,66 @@ function ResizableTableRow({item, children, state}) {
 
 ```tsx example export=true render=false
 function ResizableTableCell({cell, state, widths}) {
-  // Same as previous TableCell implementation
+  /*- begin highlight -*/
+  let column = cell.column;
+  /*- end highlight -*/
+  // Same as previous TableCell implementation...
   ///- begin collapse -///
   let ref = useRef();
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   ///- end collapse -///
-  /*- begin highlight -*/
-  let column = cell.column;
-  /*- end highlight -*/
-
   return (
     <td
       {...mergeProps(gridCellProps, focusProps)}
+      /*- begin highlight -*/
+      className={`aria-table-cell ${isFocusVisible ? 'focus' : ''}`}
       style={{
-        padding: '5px 10px',
-        cursor: 'default',
-        outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        /*- begin highlight -*/
-        width: widths.get(column.key),
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        display: 'block',
-        flex: '0 0 auto',
-        boxSizing: 'border-box'
-        /*- end highlight -*/
+        width: widths.get(column.key)
       }}
+      /*- end highlight -*/
       ref={ref}>
       {cell.rendered}
     </td>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.aria-table-row {
+  display: flex;
+  width: fit-content;
+  box-shadow: none;
+  outline: none;
+  background: none;
+}
+
+.aria-table-row.focus {
+  box-shadow: inset 0 0 0 2px orange;
+}
+
+.aria-table-cell {
+  padding: 5px 10px;
+  outline: none;
+  cursor: default;
+  display: block;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  box-shadow: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.aria-table-cell.focus {
+  box-shadow: inset 0 0 0 2px orange;
+}
+```
+
+</details>
 
 And with that, all necessary changes to the previous table implementation have been made and we now have a table that supports resizable columns!
 The example below supports resizing via mouse, keyboard, touch, and screen reader interactions. To see an example with sorting and selection, see the
