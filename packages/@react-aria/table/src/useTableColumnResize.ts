@@ -82,8 +82,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
           }
         }
       } else if (!resizeOnFocus) {
-        // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
-        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+        // Continue propagation on ArrowRight/Left/Tab so event bubbles to useSelectableCollection
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Tab')) {
           e.continuePropagation();
         }
 
