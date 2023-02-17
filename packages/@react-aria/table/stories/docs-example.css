@@ -54,19 +54,25 @@
   }
 
   .aria-table-resizer {
-    cursor: col-resize;
     width: 6px;
+    background-color: grey;
+    cursor: col-resize;
     height: auto;
-    border: 2px;
-    border-style: none solid;
-    border-color: grey;
     touch-action: none;
     flex: 0 0 auto;
     box-sizing: border-box;
-    margin-left: 4px;
+    border: 2px;
+    border-style: none solid;
+    border-color: transparent;
+    background-clip: content-box;
 
     &.focus {
+      background-color: orange;
+    }
+
+    &.resizing {
       border-color: orange;
+      background: transparent;
     }
   }
 

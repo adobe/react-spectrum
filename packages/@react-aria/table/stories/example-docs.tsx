@@ -163,7 +163,7 @@ function Resizer(props) {
   return (
     <div
       role="presentation"
-      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': layoutState.resizingColumn === column.key || isFocusVisible})}
+      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': layoutState.resizingColumn === column.key})}
       {...resizerProps}>
       <VisuallyHidden>
         <input
