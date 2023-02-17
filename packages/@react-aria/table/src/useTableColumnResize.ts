@@ -86,6 +86,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         }
 
         if (e.key === 'Enter') {
+          startResize(item);
           state.tableState.setKeyboardNavigationDisabled(true);
         }
       }
@@ -199,6 +200,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
+
       if (e.pointerType === 'virtual' && state.resizingColumn != null) {
         endResize(item);
         if (triggerRef?.current) {
@@ -206,14 +208,25 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         }
         return;
       }
+
       focusInput();
+      if ((e.pointerType === 'mouse' || e.pointerType === 'virtual') && state.resizingColumn == null) {
+        startResize(item);
+      }
     },
     onPress: (e) => {
       if (e.pointerType === 'touch') {
         focusInput();
-      } else if (e.pointerType !== 'virtual' && e.pointerType !== 'keyboard') {
+        if (state.resizingColumn == null) {
+          startResize(item);
+        }
+      }
+
+      if (e.pointerType === 'mouse') {
         if (triggerRef?.current) {
           focusSafely(triggerRef.current);
+        } else {
+          endResize(item);
         }
       }
     }
