@@ -19,7 +19,6 @@ import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {Table} from './example';
-import {useAsyncList} from 'react-stately';
 
 const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'
@@ -283,56 +282,6 @@ function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, 
   );
 }
 
-function AsyncSortTable() {
-  let list = useAsyncList({
-    async load({signal}) {
-      let res = await fetch('https://swapi.py4e.com/api/people/?search', {
-        signal
-      });
-      let json = await res.json();
-      return {
-        items: json.results
-      };
-    },
-    async sort({items, sortDescriptor}) {
-      return {
-        items: items.sort((a, b) => {
-          let first = a[sortDescriptor.column];
-          let second = b[sortDescriptor.column];
-          let cmp = (parseInt(first, 10) || first) < (parseInt(second, 10) || second)
-            ? -1
-            : 1;
-          if (sortDescriptor.direction === 'descending') {
-            cmp *= -1;
-          }
-          return cmp;
-        })
-      };
-    }
-  });
-
-  return (
-    <DocsTable
-      aria-label="Example table with client side sorting"
-      sortDescriptor={list.sortDescriptor}
-      onSortChange={list.sort}>
-      <TableHeader>
-        <Column key="name" allowsSorting allowsResizing>Name</Column>
-        <Column key="height" allowsSorting allowsResizing>Height</Column>
-        <Column key="mass" allowsSorting allowsResizing>Mass</Column>
-        <Column key="birth_year" allowsSorting allowsResizing>Birth Year</Column>
-      </TableHeader>
-      <TableBody items={list.items}>
-        {(item: any) => (
-          <Row key={item.name}>
-            {(columnKey) => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
-    </DocsTable>
-  );
-}
-
 export const DocExample = {
   args: {},
   render: (args) => (
@@ -367,12 +316,5 @@ export const DocExampleControlled = {
   args: {columns: columnsFR},
   render: (args) => (
     <ControlledDocsTable {...args} />
-  )
-};
-
-export const DocExampleWithSorting = {
-  args: {},
-  render: () => (
-    <AsyncSortTable />
   )
 };
