@@ -16,7 +16,7 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {Key, RefObject, useMemo} from 'react';
+import {Key, RefObject, useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
@@ -72,6 +72,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     onRowAction,
     onCellAction
   } = props;
+  let {selectionManager: manager} = state;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -107,6 +108,31 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
+
+  let onFocus = useCallback((e) => {
+    if (manager.isFocused) {
+      // If a focus event bubbled through a portal, reset focus state.
+      if (!e.currentTarget.contains(e.target)) {
+        manager.setFocused(false);
+      }
+
+      return;
+    }
+
+    // Focus events can bubble through portals. Ignore these events.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
+    manager.setFocused(true);
+  }, [manager]);
+
+  // Continue to track collection focused state even if keyboard navigation is disabled
+  let navDisabledHandlers = useMemo(() => ({
+    onBlur: collectionProps.onBlur,
+    onFocus
+  }), [onFocus, collectionProps.onBlur]);
+
   let gridProps: DOMAttributes = mergeProps(
     domProps,
     {
@@ -114,7 +140,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.isKeyboardNavigationDisabled ? {} : collectionProps,
+    state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
     descriptionProps
   );
 

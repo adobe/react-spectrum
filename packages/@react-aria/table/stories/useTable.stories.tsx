@@ -14,10 +14,12 @@ import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize, SpectrumTableProps} from '@react-types/table';
+import {Table as DocsTable} from './example-docs';
 import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {Table} from './example';
+import {useAsyncList} from 'react-stately';
 
 const meta: Meta<SpectrumTableProps<any>> = {
   title: 'useTable'
@@ -243,4 +245,134 @@ export const TableWithSomeResizingFRsControlled = {
   mimics what would happen if an app reloaded the whole page and restored a saved
   column width state.
   `}}
+};
+
+function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+  let {columns, ...otherProps} = props;
+  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
+    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
+    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
+    _setWidths(newVals);
+  }, [columns]);
+
+  // Needed to get past column caching so new sizes actually are rendered
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
+  return (
+    <DocsTable
+      aria-label="Table with selection"
+      selectionMode="multiple"
+      onResize={setWidths}
+      {...otherProps}>
+      <TableHeader columns={cols}>
+        {column => (
+          <Column allowsResizing key={column.uid} width={widths.get(column.uid)}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  );
+}
+
+function AsyncSortTable() {
+  let list = useAsyncList({
+    async load({signal}) {
+      let res = await fetch('https://swapi.py4e.com/api/people/?search', {
+        signal
+      });
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first, 10) || first) < (parseInt(second, 10) || second)
+            ? -1
+            : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <DocsTable
+      aria-label="Example table with client side sorting"
+      sortDescriptor={list.sortDescriptor}
+      onSortChange={list.sort}>
+      <TableHeader>
+        <Column key="name" allowsSorting allowsResizing>Name</Column>
+        <Column key="height" allowsSorting allowsResizing>Height</Column>
+        <Column key="mass" allowsSorting allowsResizing>Mass</Column>
+        <Column key="birth_year" allowsSorting allowsResizing>Birth Year</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {(item: any) => (
+          <Row key={item.name}>
+            {(columnKey) => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  );
+}
+
+export const DocExample = {
+  args: {},
+  render: (args) => (
+    <DocsTable
+      aria-label="Table with selection"
+      selectionMode="multiple"
+      onColumnResizeStart={action('onColumnResizeStart')}
+      onColumnResizeEnd={action('onColumnResizeEnd')}
+      onResizeStart={action('onResizeStart')}
+      onResize={action('onResize')}
+      onResizeEnd={action('onResizeEnd')}
+      {...args}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column allowsResizing key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  )
+};
+
+export const DocExampleControlled = {
+  args: {columns: columnsFR},
+  render: (args) => (
+    <ControlledDocsTable {...args} />
+  )
+};
+
+export const DocExampleWithSorting = {
+  args: {},
+  render: () => (
+    <AsyncSortTable />
+  )
 };
