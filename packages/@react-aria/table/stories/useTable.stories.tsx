@@ -246,42 +246,6 @@ export const TableWithSomeResizingFRsControlled = {
   `}}
 };
 
-function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
-  let {columns, ...otherProps} = props;
-  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
-  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
-    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
-    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
-    _setWidths(newVals);
-  }, [columns]);
-
-  // Needed to get past column caching so new sizes actually are rendered
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
-  return (
-    <DocsTable
-      aria-label="Table with selection"
-      selectionMode="multiple"
-      onResize={setWidths}
-      {...otherProps}>
-      <TableHeader columns={cols}>
-        {column => (
-          <Column allowsResizing key={column.uid} width={widths.get(column.uid)}>
-            {column.name}
-          </Column>
-        )}
-      </TableHeader>
-      <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
-      </TableBody>
-    </DocsTable>
-  );
-}
-
 export const DocExample = {
   args: {},
   render: (args) => (
@@ -318,3 +282,39 @@ export const DocExampleControlled = {
     <ControlledDocsTable {...args} />
   )
 };
+
+function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+  let {columns, ...otherProps} = props;
+  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
+    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
+    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
+    _setWidths(newVals);
+  }, [columns]);
+
+  // Needed to get past column caching so new sizes actually are rendered
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
+  return (
+    <DocsTable
+      aria-label="Table with selection"
+      selectionMode="multiple"
+      onResize={setWidths}
+      {...otherProps}>
+      <TableHeader columns={cols}>
+        {column => (
+          <Column allowsResizing key={column.uid} width={widths.get(column.uid)}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  );
+}
