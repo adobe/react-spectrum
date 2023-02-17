@@ -1117,7 +1117,7 @@ function Resizer(props) {
   return (
     <div
       role="presentation"
-      className={`aria-table-resizer ${layoutState.resizingColumn === column.key || isFocusVisible ? 'focus' : ''}`}
+      className={`aria-table-resizer ${isFocusVisible ? 'focus' : ''} ${layoutState.resizingColumn === column.key ? 'resizing' : ''}`}
       {...resizerProps}>
       <VisuallyHidden>
         <input
@@ -1134,20 +1134,26 @@ function Resizer(props) {
 
 ```css
 .aria-table-resizer {
-  cursor: col-resize;
   width: 6px;
+  background-color: grey;
+  cursor: col-resize;
   height: auto;
-  border: 2px;
-  border-style: none solid;
-  border-color: grey;
   touch-action: none;
   flex: 0 0 auto;
   box-sizing: border-box;
-  margin-left: 4px;
+  border: 2px;
+  border-style: none solid;
+  border-color: transparent;
+  background-clip: content-box;
 }
 
 .aria-table-resizer.focus {
+  background-color: orange;
+}
+
+.aria-table-resizer.focus.resizing {
   border-color: orange;
+  background-color: transparent;
 }
 ```
 
