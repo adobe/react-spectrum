@@ -69,10 +69,15 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
       if (editModeEnabled) {
-        if (triggerRef?.current && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab')) {
+        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
           e.preventDefault();
-          // switch focus back to the column header on anything that ends edit mode
-          focusSafely(triggerRef.current);
+          if (triggerRef?.current) {
+            // switch focus back to the column header on anything that ends edit mode
+            focusSafely(triggerRef.current);
+          } else {
+            endResize(item);
+            state.tableState.setKeyboardNavigationDisabled(false);
+          }
         }
       } else {
         // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
