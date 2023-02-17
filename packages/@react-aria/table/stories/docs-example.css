@@ -72,7 +72,7 @@
 
     &.resizing {
       border-color: orange;
-      background: transparent;
+      background-color: transparent;
     }
   }
 

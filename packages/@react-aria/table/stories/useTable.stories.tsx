@@ -250,10 +250,7 @@ export const DocExample = {
   args: {},
   render: (args) => (
     <DocsTable
-      aria-label="Table with selection"
-      selectionMode="multiple"
-      onColumnResizeStart={action('onColumnResizeStart')}
-      onColumnResizeEnd={action('onColumnResizeEnd')}
+      aria-label="Table with always visible resizers"
       onResizeStart={action('onResizeStart')}
       onResize={action('onResize')}
       onResizeEnd={action('onResizeEnd')}
