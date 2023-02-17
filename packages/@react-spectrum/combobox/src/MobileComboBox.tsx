@@ -331,8 +331,10 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // VoiceOver on iOS reads "double tap to collapse" when focused on the input rather than
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
+  // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
   inputProps.role = 'searchbox';
   inputProps['aria-haspopup'] = 'listbox';
+  delete inputProps['aria-expanded'];
   delete inputProps.onTouchEnd;
 
   let clearButton = (
