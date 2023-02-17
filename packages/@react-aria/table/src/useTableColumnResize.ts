@@ -110,11 +110,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [onResize, state]);
 
   let endResize = useCallback((item) => {
-    if (lastSize.current == null) {
-      lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
-    }
-
     if (isResizing.current) {
+      if (lastSize.current == null) {
+        lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
+      }
+
       state.endResize();
       onResizeEnd?.(lastSize.current);
     }
@@ -210,7 +210,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
 
       // Sometimes onPress won't trigger for quick taps on mobile so we want to focus the input so blurring away
-      // can cancel resize mode for us. Also handles interaction where we are resizing
+      // can cancel resize mode for us.
       focusInput();
 
       // If resizer is always visible, mobile screenreader user can access the visually hidden resizer directly and thus we don't need
