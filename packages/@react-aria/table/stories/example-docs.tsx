@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import ariaStyles from './docs-example.css';
+import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {useButton} from 'react-aria';
@@ -49,24 +51,10 @@ export function Table(props) {
     <table
       {...gridProps}
       ref={ref}
-      style={{
-        borderCollapse: 'collapse',
-        width: '300px',
-        height: '200px',
-        display: 'block',
-        position: 'relative',
-        overflow: 'auto'
-      }}>
+      className={classNames(ariaStyles, 'aria-table')}>
       <ResizableTableRowGroup
         type="thead"
-        style={{
-          borderBottom: '2px solid var(--spectrum-global-color-gray-800)',
-          display: 'block',
-          position: 'sticky',
-          top: 0,
-          background: 'var(--spectrum-gray-100)',
-          width: 'fit-content'
-        }}>
+        className={classNames(ariaStyles, 'aria-table-rowGroupHeader')}>
         {collection.headerRows.map(headerRow => (
           <ResizableTableHeaderRow key={headerRow.key} item={headerRow} state={state}>
             {[...headerRow.childNodes].map(column => (
@@ -83,9 +71,7 @@ export function Table(props) {
         ))}
       </ResizableTableRowGroup>
       <ResizableTableRowGroup
-        style={{
-          maxHeight: '200px'
-        }}
+        className={classNames(ariaStyles, 'aria-table-rowGroupBody')}
         type="tbody">
         {[...collection.body.childNodes].map(row => (
           <ResizableTableRow key={row.key} item={row} state={state}>
@@ -103,15 +89,12 @@ export function Table(props) {
   );
 }
 
-function ResizableTableRowGroup({type: Element, style, children}) {
+function ResizableTableRowGroup({type: Element, children, className}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
     <Element
       {...rowGroupProps}
-      style={{
-        display: 'block',
-        ...style
-      }}>
+      className={classNames(ariaStyles, 'aria-table-rowGroup', className)}>
       {children}
     </Element>
   );
@@ -125,7 +108,7 @@ function ResizableTableHeaderRow({item, state, children}) {
     <tr
       {...rowProps}
       ref={ref}
-      style={{display: 'flex'}}>
+      className={classNames(ariaStyles, 'aria-table-row')}>
       {children}
     </tr>
   );
@@ -136,42 +119,23 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
   let ref = useRef(null);
   let resizerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
   let allowsResizing = column.props.allowsResizing;
 
   return (
     <th
-      {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colspan}
+      {...mergeProps(columnHeaderProps)}
+      className={classNames(ariaStyles, 'aria-table-headerCell')}
       style={{
-        textAlign: column.colspan > 1 ? 'center' : 'left',
-        padding: '5px 10px',
-        outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        cursor: 'default',
         width: widths.get(column.key),
-        display: 'block',
-        flex: '0 0 auto',
-        boxSizing: 'border-box'
       }}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
         <Button
-          style={{
-            width: '100%',
-            textAlign: 'left',
-            border: 'none',
-            background: 'transparent',
-            flex: '1 1 auto',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            marginInlineStart: '-6px'
-          }}>
+          className={classNames(ariaStyles, 'aria-table-headerTitle')}>
           {column.rendered}
         </Button>
         {allowsResizing &&
-          <Resizer ref={resizerRef} triggerRef={ref} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+          <Resizer ref={resizerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
@@ -181,40 +145,25 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
 function Button(props) {
   let ref = props.buttonRef;
   let {focusProps, isFocusVisible} = useFocusRing();
-  let outline = isFocusVisible
-    ? '2px solid orange'
-    : 'none';
   let {buttonProps} = useButton(props, ref);
-  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} style={{...props.style, outline: outline}}>{props.children}</button>;
+  return <button {...mergeProps(buttonProps, focusProps)} ref={ref} className={classNames(ariaStyles, props.className, {'focus': isFocusVisible})}>{props.children}</button>;
 }
 
 const Resizer = React.forwardRef((props: any, ref: RefObject<HTMLInputElement>) => {
-  let {column, layoutState, onResizeStart, onResize, onResizeEnd, triggerRef} = props;
+  let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
     onResizeStart,
     onResize,
-    onResizeEnd,
-    triggerRef
+    onResizeEnd
   }, layoutState, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
       role="presentation"
-      style={{
-        cursor: 'col-resize',
-        width: '6px',
-        height: 'auto',
-        border: '2px',
-        borderStyle: 'none solid',
-        borderColor: layoutState.resizingColumn === column.key || isFocusVisible ? 'orange' : 'grey',
-        touchAction: 'none',
-        flex: '0 0 auto',
-        boxSizing: 'border-box',
-        marginLeft: '4px'
-      }}
+      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': layoutState.resizingColumn === column.key || isFocusVisible})}
       {...resizerProps}>
       <VisuallyHidden>
         <input
@@ -235,6 +184,7 @@ function ResizableTableRow({item, children, state}) {
 
   return (
     <tr
+      className={classNames(ariaStyles, 'aria-table-row')}
       style={{
         // eslint-disable-next-line no-nested-ternary
         background: isSelected
@@ -248,8 +198,6 @@ function ResizableTableRow({item, children, state}) {
         color: isSelected ? 'white' : null,
         outline: 'none',
         boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        display: 'flex',
-        width: 'fit-content'
       }}
       {...mergeProps(rowProps, focusProps)}
       ref={ref}>
@@ -267,19 +215,8 @@ function ResizableTableCell({cell, state, widths}) {
   return (
     <td
       {...mergeProps(gridCellProps, focusProps)}
-      style={{
-        padding: '5px 10px',
-        cursor: 'default',
-        outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        width: widths.get(column.key),
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        display: 'block',
-        flex: '0 0 auto',
-        boxSizing: 'border-box'
-      }}
+      className={classNames(ariaStyles, 'aria-table-cell', {'focus': isFocusVisible})}
+      style={{width: widths.get(column.key)}}
       ref={ref}>
       {cell.rendered}
     </td>
