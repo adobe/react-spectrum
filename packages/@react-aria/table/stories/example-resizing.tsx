@@ -26,7 +26,7 @@ import {
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useRef} from 'react';
@@ -69,6 +69,7 @@ export function Table(props) {
     state,
     ref
   );
+  let layout = useMemo(() => ({...layoutState, tableState: state}), [layoutState, state]);
 
   useLayoutEffect(() => {
     if (bodyRef && bodyRef.current) {
@@ -85,7 +86,7 @@ export function Table(props) {
             {[...headerRow.childNodes].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} widths={widths} />
-                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layoutState={layoutState} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
+                : <TableColumnHeader key={column.key} column={column} state={state} widths={widths} layout={layout} onResizeStart={props.onResizeStart} onResize={props.onResize} onResizeEnd={props.onResizeEnd} />
             )}
           </TableHeaderRow>
         ))}
@@ -125,16 +126,15 @@ export function TableHeaderRow({item, state, children, className}) {
     </tr>
   );
 }
-function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
+function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
     onResizeStart,
     onResize,
-    onResizeEnd,
-    tableState: state
-  } as AriaTableColumnResizeProps<any>, layoutState, ref);
+    onResizeEnd
+  } as AriaTableColumnResizeProps<any>, layout, ref);
 
   return (
     <>
@@ -163,7 +163,7 @@ function Resizer({column, state, layoutState, onResizeStart, onResize, onResizeE
     </>
   );
 }
-export function TableColumnHeader({column, state, widths, layoutState, onResizeStart, onResize, onResizeEnd}) {
+export function TableColumnHeader({column, state, widths, layout, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef();
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -197,7 +197,7 @@ export function TableColumnHeader({column, state, widths, layoutState, onResizeS
         </div>
         {
           column.props.allowsResizing &&
-          <Resizer column={column} state={state} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+          <Resizer column={column} layout={layout} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
