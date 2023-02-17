@@ -13,13 +13,13 @@
 import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {TableColumnResizeState} from '@react-stately/table';
-import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
+import {useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TableColumnResizeAria {
@@ -65,6 +65,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let isResizing = useRef(false);
   let lastSize = useRef(null);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
+  let resizeOnFocus = !!triggerRef?.current;
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
@@ -72,7 +73,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (editModeEnabled) {
         if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
           e.preventDefault();
-          if (triggerRef?.current) {
+          if (resizeOnFocus) {
             // switch focus back to the column header on anything that ends edit mode
             focusSafely(triggerRef.current);
           } else {
@@ -80,9 +81,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
             state.tableState.setKeyboardNavigationDisabled(false);
           }
         }
-      } else if (!triggerRef?.current) {
-        // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
-        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      } else if (!resizeOnFocus) {
+        // Continue propagation on ArrowRight/Left/Tab so event bubbles to useSelectableCollection
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Tab')) {
           e.continuePropagation();
         }
 
@@ -148,7 +149,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     onMoveEnd(e) {
       let {pointerType} = e;
       columnResizeWidthRef.current = 0;
-      if (pointerType === 'mouse' || (pointerType === 'touch' && !triggerRef?.current)) {
+      if (pointerType === 'mouse' || (pointerType === 'touch' && !resizeOnFocus)) {
         endResize(item);
       }
     }
@@ -167,6 +168,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     max = Number.MAX_SAFE_INTEGER;
   }
   let value = Math.floor(state.getColumnWidth(item.key));
+  let modality = useInteractionModality();
+  let description = !resizeOnFocus && modality === 'keyboard' && !isResizing.current ? stringFormatter.format('resizerDescription') : undefined;
+  let descriptionProps = useDescription(description);
   let ariaProps = {
     'aria-label': props.label,
     'aria-orientation': 'horizontal' as 'horizontal',
@@ -175,7 +179,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     'type': 'range',
     min,
     max,
-    value
+    value,
+    ...descriptionProps
   };
 
   const focusInput = useCallback(() => {
@@ -203,7 +208,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
       if (e.pointerType === 'virtual' && state.resizingColumn != null) {
         endResize(item);
-        if (triggerRef?.current) {
+        if (resizeOnFocus) {
           focusSafely(triggerRef.current);
         }
         return;
@@ -220,7 +225,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
     },
     onPress: (e) => {
-      if (((e.pointerType === 'touch' && !triggerRef?.current) || e.pointerType === 'mouse') && state.resizingColumn != null) {
+      if (((e.pointerType === 'touch' && !resizeOnFocus) || e.pointerType === 'mouse') && state.resizingColumn != null) {
         endResize(item);
       }
     }
@@ -236,7 +241,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       {
         id,
         onFocus: () => {
-          if (triggerRef?.current) {
+          if (resizeOnFocus) {
             // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
             // call instead during focus and blur
             startResize(item);

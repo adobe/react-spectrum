@@ -13,7 +13,7 @@
 import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
@@ -41,9 +41,14 @@ export function Table(props) {
     ref
   );
 
+  let getDefaultMinWidth = useCallback(() => {
+    return 40;
+  }, []);
+
   let layoutState = useTableColumnResizeState({
     // Matches the width of the table itself
-    tableWidth: 300
+    tableWidth: 300,
+    getDefaultMinWidth
   }, state);
   let {widths} = layoutState;
 
