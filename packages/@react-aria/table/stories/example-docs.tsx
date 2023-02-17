@@ -13,7 +13,7 @@
 import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React from 'react';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
 import {useRef} from 'react';
@@ -117,7 +117,6 @@ function ResizableTableHeaderRow({item, state, children}) {
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
   let {widths} = layoutState;
   let ref = useRef(null);
-  let resizerRef = useRef(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let allowsResizing = column.props.allowsResizing;
 
@@ -126,7 +125,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
       {...mergeProps(columnHeaderProps)}
       className={classNames(ariaStyles, 'aria-table-headerCell')}
       style={{
-        width: widths.get(column.key),
+        width: widths.get(column.key)
       }}
       ref={ref}>
       <div style={{display: 'flex', position: 'relative'}}>
@@ -135,7 +134,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
           {column.rendered}
         </Button>
         {allowsResizing &&
-          <Resizer ref={resizerRef} column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
+          <Resizer column={column} layoutState={layoutState} onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd} />
         }
       </div>
     </th>
@@ -149,8 +148,9 @@ function Button(props) {
   return <button {...mergeProps(buttonProps, focusProps)} ref={ref} className={classNames(ariaStyles, props.className, {'focus': isFocusVisible})}>{props.children}</button>;
 }
 
-const Resizer = React.forwardRef((props: any, ref: RefObject<HTMLInputElement>) => {
+function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
+  let ref = useRef();
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
     label: 'Resizer',
@@ -163,7 +163,7 @@ const Resizer = React.forwardRef((props: any, ref: RefObject<HTMLInputElement>) 
   return (
     <div
       role="presentation"
-      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': layoutState.resizingColumn === column.key || isFocusVisible})}
+      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': layoutState.resizingColumn === column.key})}
       {...resizerProps}>
       <VisuallyHidden>
         <input
@@ -172,7 +172,7 @@ const Resizer = React.forwardRef((props: any, ref: RefObject<HTMLInputElement>) 
       </VisuallyHidden>
     </div>
   );
-});
+}
 
 function ResizableTableRow({item, children, state}) {
   let ref = useRef();
@@ -197,7 +197,7 @@ function ResizableTableRow({item, children, state}) {
               : 'none',
         color: isSelected ? 'white' : null,
         outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none'
       }}
       {...mergeProps(rowProps, focusProps)}
       ref={ref}>
