@@ -36,7 +36,8 @@ export interface AriaTableColumnResizeProps<T> {
   label: string,
   /**
    * Ref to the trigger if resizing was started from a column header menu. If it's provided,
-   * focus will be returned there when resizing is done.
+   * focus will be returned there when resizing is done. If it isn't provided, it is assumed that the resizer is
+   * visible at all time and keyboard resizing is started via pressing Enter on the resizer and not on focus.
    * */
   triggerRef?: RefObject<FocusableElement>,
   /** If resizing is disabled. */
@@ -79,7 +80,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
             state.tableState.setKeyboardNavigationDisabled(false);
           }
         }
-      } else {
+      } else if (!triggerRef?.current) {
         // Continue propagation on ArrowRight/Left so event bubbles to useSelectableCollection
         if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
           e.continuePropagation();
@@ -113,8 +114,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
     }
 
-    state.endResize();
     if (isResizing.current) {
+      state.endResize();
       onResizeEnd?.(lastSize.current);
     }
     isResizing.current = false;
@@ -147,7 +148,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     onMoveEnd(e) {
       let {pointerType} = e;
       columnResizeWidthRef.current = 0;
-      if (pointerType === 'mouse') {
+      if (pointerType === 'mouse' || (pointerType === 'touch' && !triggerRef?.current)) {
         endResize(item);
       }
     }
@@ -200,7 +201,6 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
-
       if (e.pointerType === 'virtual' && state.resizingColumn != null) {
         endResize(item);
         if (triggerRef?.current) {
@@ -209,25 +209,19 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         return;
       }
 
+      // Sometimes onPress won't trigger for quick taps on mobile so we want to focus the input so blurring away
+      // can cancel resize mode for us. Also handles interaction where we are resizing
       focusInput();
-      if ((e.pointerType === 'mouse' || e.pointerType === 'virtual') && state.resizingColumn == null) {
+
+      // If resizer is always visible, mobile screenreader user can access the visually hidden resizer directly and thus we don't need
+      // to handle a virtual click to start the resizer.
+      if (e.pointerType !== 'virtual') {
         startResize(item);
       }
     },
     onPress: (e) => {
-      if (e.pointerType === 'touch') {
-        focusInput();
-        if (state.resizingColumn == null) {
-          startResize(item);
-        }
-      }
-
-      if (e.pointerType === 'mouse') {
-        if (triggerRef?.current) {
-          focusSafely(triggerRef.current);
-        } else {
-          endResize(item);
-        }
+      if (((e.pointerType === 'touch' && !triggerRef?.current) || e.pointerType === 'mouse') && state.resizingColumn != null) {
+        endResize(item);
       }
     }
   });
@@ -241,6 +235,14 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     inputProps: mergeProps(
       {
         id,
+        onFocus: () => {
+          if (triggerRef?.current) {
+            // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
+            // call instead during focus and blur
+            startResize(item);
+            state.tableState.setKeyboardNavigationDisabled(true);
+          }
+        },
         onBlur: () => {
           endResize(item);
           state.tableState.setKeyboardNavigationDisabled(false);
