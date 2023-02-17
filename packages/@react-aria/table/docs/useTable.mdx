@@ -829,6 +829,7 @@ The various style changes below are to make the table itself scrollable when the
 
 ```tsx example export=true render=false
 /*- begin highlight -*/
+import {useCallback} from 'react';
 import {useTableColumnResizeState} from '@react-stately/table';
 /*- end highlight -*/
 
@@ -857,9 +858,15 @@ function ResizableColumnsTable(props) {
   );
 
   /*- begin highlight -*/
+  // Set the minimum width of the columns to 40px
+  let getDefaultMinWidth = useCallback(() => {
+    return 40;
+  }, []);
+
   let layoutState = useTableColumnResizeState({
     // Matches the width of the table itself
-    tableWidth: 300
+    tableWidth: 300,
+    getDefaultMinWidth
   }, state);
   let {widths} = layoutState;
   /*- end highlight -*/
