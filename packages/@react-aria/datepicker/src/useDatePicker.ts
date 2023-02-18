@@ -79,7 +79,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     onFocusWithin: props.onFocus,
     onFocusWithinChange: props.onFocusChange
   });
-
+  console.log('fieldProps', fieldProps)
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
       role: 'group',
@@ -112,7 +112,6 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       }
     },
     fieldProps: {
-      ...fieldProps,
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
