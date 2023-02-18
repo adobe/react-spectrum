@@ -11,8 +11,8 @@
  */
 import {CollectionBase, Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, RenderProps} from './utils';
-import React, {cloneElement, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
+import {DOMProps, RenderProps, useContextProps} from './utils';
+import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useMemo, useReducer, useRef} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 class BaseNode<T> {
@@ -39,7 +39,7 @@ class BaseNode<T> {
     if (child.parentNode) {
       child.parentNode.removeChild(child);
     }
-      
+
     if (this.firstChild == null) {
       this.firstChild = child;
     }
@@ -145,7 +145,7 @@ export class ElementNode<T> extends BaseNode<T> implements Node<T> {
 
   constructor(type: string, ownerDocument: BaseCollection<T>) {
     super(ownerDocument);
-    this.type = TYPE_MAP[type];
+    this.type = TYPE_MAP[type] || type;
     this.key = ++id; // TODO
     this.value = null;
     this.rendered = null;
@@ -214,7 +214,7 @@ export class ElementNode<T> extends BaseNode<T> implements Node<T> {
       this[key] = value;
     }
   }
-  
+
   setAttributeNS() {}
   removeAttribute() {}
 }
@@ -339,8 +339,12 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
-  let {children, items} = props;
+interface CachedChildrenOptions<T> extends CollectionProps<T> {
+  idScope?: Key
+}
+
+export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>) {
+  let {children, items, idScope} = props;
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
     if (items && typeof children === 'function') {
@@ -356,6 +360,10 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
             if (key == null) {
               throw new Error('Could not determine key for item');
             }
+            // eslint-disable-next-line max-depth
+            if (idScope) {
+              key = idScope + ':' + key;
+            }
             // TODO: only works if wrapped Item passes through id...
             rendered = cloneElement(rendered, {key, id: key});
           }
@@ -367,7 +375,7 @@ export function useCachedChildren<T extends object>(props: CollectionProps<T>) {
     } else {
       return children;
     }
-  }, [children, items, cache]);
+  }, [children, items, cache, idScope]);
 }
 
 interface CollectionResult<T> {
@@ -396,7 +404,7 @@ export function useCollection<T extends object>(props: CollectionProps<T>, Class
     if (isMounted.current) {
       queueUpdate();
     }
-  }), [Class]);  
+  }), [Class]);
   let portal = createPortal(children, collection as unknown as Element);
   return {portal, collection};
 }
@@ -448,7 +456,7 @@ export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   // https://github.com/facebook/react/issues/11347
   // https://github.com/facebook/react/blob/82c64e1a49239158c0daa7f0d603d2ad2ee667a9/packages/react-dom/src/shared/DOMProperty.js#L386
   // @ts-ignore
-  return useMemo(() => <node type="item" multiple={{...props, rendered: props.children}} />, [props]);
+  return useMemo(() => <item multiple={{...props, rendered: props.children}} />, [props]);
 }
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {}
@@ -457,9 +465,13 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
   let children = useCachedChildren(props);
 
   // @ts-ignore
-  return useMemo(() => <node type="section" multiple={{...props, rendered: props.title}}>{children}</node>, [props, children]);
+  return useMemo(() => <section multiple={{...props, rendered: props.title}}>{children}</section>, [props, children]);
 }
 
+export const CollectionContext = createContext<CachedChildrenOptions<unknown>>(null);
+
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
+  [props] = useContextProps(props, null, CollectionContext);
+  // @ts-ignore
   return useCachedChildren(props);
 }

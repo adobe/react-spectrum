@@ -1,37 +1,76 @@
-import {BaseCollection, ElementNode, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, ElementNode, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
-import {CellProps, ColumnProps, TableCollection as ITableCollection, RowProps} from '@react-types/table';
 import {CheckboxContext} from './Checkbox';
+import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
-import {mergeProps, useFocusRing, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
-import {Node} from '@react-types/shared';
-import {Provider, useRenderProps} from './utils';
-import React, {createContext, Key, useCallback, useContext, useMemo, useRef} from 'react';
+import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
+import {mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
+import {Provider, RenderProps, SlotProps, StyleProps, useRenderProps} from './utils';
+import React, {createContext, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {TableState, useTableState} from 'react-stately';
+
+// Special node that allows overriding nextKey, prevKey, and level (in buildHeaderRows).
+class ColumnNode<T> extends ElementNode<T> {
+  _nextKey: Key;
+  _prevKey: Key;
+  _level: number;
+
+  get nextKey() {
+    return this._nextKey ?? super.nextKey;
+  }
+
+  set nextKey(k) {
+    this._nextKey = k;
+  }
+
+  get prevKey() {
+    return this._prevKey ?? super.prevKey;
+  }
+
+  set prevKey(k) {
+    this._prevKey = k;
+  }
+
+  get level() {
+    return this._level ?? super.level;
+  }
+
+  set level(l) {
+    this._level = l;
+  }
+}
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: ElementNode<T> = new ElementNode('head', this);
-  body: ElementNode<T> = new ElementNode('body', this);
+  head: ElementNode<T> = new ElementNode('tableheader', this);
+  body: ElementNode<T> = new ElementNode('tablebody', this);
   columnsDirty = true;
+
+  createElement(type) {
+    if (type === 'column') {
+      return new ColumnNode(type, this);
+    }
+
+    return super.createElement(type);
+  }
 
   queueUpdate(node: ElementNode<T>) {
     this.columnsDirty ||= node.type === 'column';
 
-    if (node.type === 'head') {
+    if (node.type === 'tableheader') {
       this.head = node;
     }
 
-    if (node.type === 'body') {
+    if (node.type === 'tablebody') {
       this.body = node;
     }
 
     super.queueUpdate(node);
   }
 
-  updateColumns(showSelectionCheckboxes = false) {
+  updateColumns() {
     if (!this.columnsDirty) {
       return;
     }
@@ -45,19 +84,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
         case 'column':
           columnKeyMap.set(node.key, node);
           if (!node.hasChildNodes) {
-            this.columns.push({
-              type: node.type,
-              key: node.key,
-              parentKey: node.parentKey,
-              index: this.columns.length,
-              value: node.value,
-              rendered: node.rendered,
-              level: node.level,
-              hasChildNodes: node.hasChildNodes,
-              childNodes: node.childNodes,
-              textValue: node.textValue,
-              props: node.props
-            });
+            node.index = this.columns.length;
+            this.columns.push(node);
 
             if (node.props.isRowHeader) {
               this.rowHeaderColumnKeys.add(node.key);
@@ -79,9 +107,8 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
     this.columnsDirty = false;
 
-    // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
-      this.rowHeaderColumnKeys.add(this.columns[showSelectionCheckboxes ? 1 : 0].key);
+      throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
     }
   }
 
@@ -110,9 +137,23 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     return rows[rows.length - 1]?.key;
   }
 
+  getKeyAfter(key: Key) {
+    let node = this.getItem(key);
+    if (node?.type === 'column') {
+      return node.nextKey;
+    }
+
+    return super.getKeyAfter(key);
+  }
+
   getKeyBefore(key: Key) {
+    let node = this.getItem(key);
+    if (node?.type === 'column') {
+      return node.prevKey;
+    }
+
     key = super.getKeyBefore(key);
-    if (this.getItem(key)?.type === 'body') {
+    if (this.getItem(key)?.type === 'tablebody') {
       return null;
     }
 
@@ -122,14 +163,28 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
 const InternalTableContext = createContext<TableState<unknown>>(null);
 
-export function Table<T>(props) {
-  let {selectionMode, selectionBehavior} = props;
+export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior,
+  /** Handler that is called when a user performs an action on the row. */
+  onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void
+}
+
+/**
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
+ */
+export function Table<T extends object>(props: TableProps<T>) {
   let {portal, collection} = useCollection(props, TableCollection) as {portal: React.ReactPortal, collection: TableCollection<T>};
-  collection.updateColumns(selectionMode !== 'none');
+  collection.updateColumns();
   let state = useTableState({
     ...props,
-    showSelectionCheckboxes: selectionMode === 'multiple' && selectionBehavior !== 'replace',
-    collection
+    collection,
+    children: null
   });
 
   let ref = useRef();
@@ -159,6 +214,13 @@ export function Table<T>(props) {
     }, [])
   });
 
+  let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
+  let ctx = useMemo(() => ({
+    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
+    selectionMode,
+    disallowEmptySelection
+  }), [selectionBehavior, selectionMode, disallowEmptySelection]);
+
   return (
     <>
       <InternalTableContext.Provider value={state}>
@@ -177,28 +239,98 @@ export function Table<T>(props) {
           </TableRowGroup>
         </table>
       </InternalTableContext.Provider>
-      {portal}
+      <TableOptionsContext.Provider value={ctx}>
+        {portal}
+      </TableOptionsContext.Provider>
     </>
   );
 }
 
+export interface TableOptionsContextValue {
+  /** The type of selection that is allowed in the collection. */
+  selectionMode: SelectionMode,
+  /** The selection behavior for the collection. If selectionMode is `"none"`, this will be `null`. */
+  selectionBehavior: SelectionBehavior | null,
+  /** Whether the collection allows empty selection. */
+  disallowEmptySelection: boolean
+}
+
+const TableOptionsContext = createContext<TableOptionsContextValue>(null);
+
+/**
+ * Returns options from the parent `<Table>` component.
+ */
+export function useTableOptions(): TableOptionsContextValue {
+  return useContext(TableOptionsContext);
+}
+
 const TableHeaderContext = createContext(null);
 
-export function TableHeader(props) {
+export interface TableHeaderProps<T> {
+  /** A list of table columns. */
+  columns?: T[],
+  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
+  children?: ReactNode | ((item: T) => ReactElement)
+}
+
+/**
+ * A header within a `<Table>`, containing the table columns.
+ */
+export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   let children = useCachedChildren({
     children: props.children,
     items: props.columns
   });
 
   return (
-    <TableHeaderContext.Provider value={props.children}>
+    <TableHeaderContext.Provider value={props.columns ? props.children : null}>
       {/* @ts-ignore */}
-      <node type="head" multiple={props}>{children}</node>
+      <tableheader multiple={props}>{children}</tableheader>
     </TableHeaderContext.Provider>
   );
 }
 
-export function Column(props) {
+export interface ColumnRenderProps {
+  /**
+   * Whether the item is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the item is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the column allows sorting.
+   * @selector [aria-sort]
+   */
+  allowsSorting: boolean,
+  /**
+   * The current sort direction.
+   * @selector [aria-sort="ascending | descending"]
+   */
+  sortDirection: SortDirection | null
+}
+
+export interface ColumnProps<T> extends RenderProps<ColumnRenderProps> {
+  id?: Key,
+  /** Rendered contents of the column if `children` contains child columns. */
+  title?: ReactNode,
+  /** A list of child columns used when dynamically rendering nested child columns. */
+  childColumns?: T[],
+  /** Whether the column allows sorting. */
+  allowsSorting?: boolean,
+  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
+  isRowHeader?: boolean,
+  /** A string representation of the column's contents, used for accessibility announcements. */
+  textValue?: string
+}
+
+/**
+ * A column within a `<Table>`.
+ */
+export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   let render = useContext(TableHeaderContext);
   let childColumns = typeof render === 'function' ? render : props.children;
   let children = useCachedChildren({
@@ -207,35 +339,87 @@ export function Column(props) {
   });
 
   // @ts-ignore
-  return useMemo(() => <node type="column" multiple={{...props, rendered: props.title ?? props.children}}>{children}</node>, [props, children]);
+  return useMemo(() => <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>, [props, children]);
 }
 
-export function SelectionColumn(props) {
-  // @ts-ignore
-  return useMemo(() => <node type="column" multiple={{...props, isSelectionCell: true, rendered: props.children}} />, [props]);
-}
+export interface TableBodyProps<T> extends CollectionProps<T> {}
 
-export function TableBody(props) {
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
+export function TableBody<T extends object>(props: TableBodyProps<T>) {
   let children = useCachedChildren(props);
 
   // @ts-ignore
-  return <node type="body" multiple={props}>{children}</node>;
+  return <tablebody multiple={props}>{children}</tablebody>;
 }
 
-export function Row(props) {
+export interface RowRenderProps extends ItemRenderProps {}
+
+export interface RowProps<T> extends RenderProps<RowRenderProps> {
+  id?: Key,
+  columns?: Iterable<T>,
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** A string representation of the row's contents, used for features like typeahead. */
+  textValue?: string
+}
+
+/**
+ * A row within a `<Table>`.
+ */
+export function Row<T extends object>(props: RowProps<T>) {
   // TODO: function child based on columns??
   let children = useCachedChildren({
     children: props.children,
-    items: props.columns
+    items: props.columns,
+    idScope: props.id
   });
 
-  // @ts-ignore
-  return <node type="item" multiple={props}>{children}</node>;
+  let ctx = useMemo(() => ({idScope: props.id}), [props.id]);
+
+  return (
+    // @ts-ignore
+    <item multiple={props}>
+      <CollectionContext.Provider value={ctx}>
+        {children}
+      </CollectionContext.Provider>
+      {/* @ts-ignore */}
+    </item>
+  );
 }
 
-export function Cell(props) {
+export interface CellRenderProps {
+  /**
+   * Whether the cell is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the cell is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the cell is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean
+}
+
+export interface CellProps extends RenderProps<CellRenderProps> {
+  id?: Key,
+  /** The contents of the cell. */
+  children: ReactNode,
+  /** A string representation of the cell's contents, used for features like typeahead. */
+  textValue?: string
+}
+
+/**
+ * A cell within a table row.
+ */
+export function Cell(props: CellProps): JSX.Element {
   // @ts-ignore
-  return useMemo(() => <node type="cell" multiple={{...props, rendered: props.children}} />, [props]);
+  return useMemo(() => <cell multiple={{...props, rendered: props.children}} />, [props]);
 }
 
 function TableRowGroup({type: Element, className, style, children}) {
@@ -294,6 +478,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   let props: ColumnProps<unknown> = column.props;
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: column.rendered,
     defaultClassName: 'react-aria-Column',
     values: {
@@ -322,7 +507,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 function TableRow<T>({item}: {item: GridNode<T>}) {
   let ref = useRef();
   let state = useContext(InternalTableContext);
-  let {rowProps, isPressed} = useTableRow(
+  let {rowProps, ...states} = useTableRow(
     {
       node: item
     },
@@ -330,20 +515,27 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: !states.allowsSelection && !states.hasAction
+  });
 
   let {checkboxProps} = useTableSelectionCheckbox(
     {key: item.key},
     state
   );
 
-  let props: RowProps = item.props;
+  let props = item.props as RowProps<unknown>;
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     defaultClassName: 'react-aria-Row',
     values: {
+      ...states,
+      isHovered,
       isFocused,
       isFocusVisible,
-      isPressed
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
 
@@ -361,12 +553,13 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   return (
     <tr
-      {...mergeProps(rowProps, focusProps)}
+      {...mergeProps(rowProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
-      data-focused={isFocused || undefined}
+      data-hovered={isHovered || undefined}
+      data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}>
+      data-pressed={states.isPressed || undefined}>
       <Provider
         values={[
           [CheckboxContext, {
@@ -394,6 +587,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let props: CellProps = cell.props;
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     defaultClassName: 'react-aria-Cell',
     values: {
       isFocused,

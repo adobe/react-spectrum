@@ -41,7 +41,7 @@ export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, TableHeader, TableBody} from './Table';
+export {Table, Row, Cell, Column, TableHeader, TableBody, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanels, TabPanel, Tab, TabsContext} from './Tabs';
 export {Text, TextContext} from './Text';
 export {TextField, TextFieldContext} from './TextField';
@@ -77,6 +77,7 @@ export type {SelectProps, SelectValueProps, SelectValueRenderProps} from './Sele
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
+export type {TableProps, TableHeaderProps, TableBodyProps, ColumnProps, ColumnRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps} from './Table';
 export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelsProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';

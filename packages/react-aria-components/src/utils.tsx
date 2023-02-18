@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
@@ -71,7 +72,7 @@ export interface RenderProps<T> extends StyleRenderProps<T> {
   children?: ReactNode | ((values: T) => ReactNode)
 }
 
-interface RenderPropsHookOptions<T> extends RenderProps<T> {
+interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
   values: T,
   defaultChildren?: ReactNode,
   defaultClassName?: string
@@ -92,6 +93,7 @@ export function useRenderProps<T>({className, style, children, defaultClassName,
     children = defaultChildren;
   }
 
+  delete otherProps.id;
   return {
     ...filterDOMProps(otherProps),
     className: className ?? defaultClassName,
