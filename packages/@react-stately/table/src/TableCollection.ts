@@ -11,6 +11,7 @@
  */
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
+import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
 interface GridCollectionOptions {
@@ -165,14 +166,14 @@ export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: G
   });
 }
 
-export class TableCollection<T> extends GridCollection<T> {
+export class TableCollection<T> extends GridCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
   _size: number = 0;
 
-  constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
+  constructor(nodes: Iterable<GridNode<T>>, prev?: ITableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
     let columns = [];

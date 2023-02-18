@@ -17,9 +17,9 @@ import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat"><Checkbox /> Cat</Item>
-    <Item {...itemProps} id="dog"><Checkbox /> Dog</Item>
-    <Item {...itemProps} id="kangaroo"><Checkbox /> Kangaroo</Item>
+    <Item {...itemProps} id="cat"><Checkbox slot="selection" /> Cat</Item>
+    <Item {...itemProps} id="dog"><Checkbox slot="selection" /> Dog</Item>
+    <Item {...itemProps} id="kangaroo"><Checkbox slot="selection" /> Kangaroo</Item>
   </GridList>
 );
 
@@ -99,7 +99,7 @@ describe('GridList', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let row = getAllByRole('row')[0];
-    
+
     expect(row).not.toHaveAttribute('data-focus-visible');
     expect(row).not.toHaveClass('focus');
 
