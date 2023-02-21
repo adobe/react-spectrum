@@ -13,96 +13,21 @@
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {ComponentMeta} from '@storybook/react';
+import defaultConfig from './Table.stories';
 import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ItemDropTarget} from '@react-types/shared';
 import React from 'react';
+import {TableStory} from './Table.stories';
 import {Text} from '@react-spectrum/text';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 
 export default {
-  title: 'TableView/Drag and Drop',
-  component: TableView,
-  args: {
-    onAction: action('onAction'),
-    onResizeStart: action('onResizeStart'),
-    onResize: action('onResize'),
-    onResizeEnd: action('onResizeEnd'),
-    onSelectionChange: action('onSelectionChange'),
-    onSortChange: action('onSortChange')
-  },
-  argTypes: {
-    // intentionally added so that we can unset the default value
-    // there is no argType for function
-    // use the controls reset button to undo it
-    // https://storybook.js.org/docs/react/essentials/controls#annotation
-    onAction: {
-      control: 'select',
-      options: [undefined]
-    },
-    onResizeStart: {
-      table: {
-        disable: true
-      }
-    },
-    onResize: {
-      table: {
-        disable: true
-      }
-    },
-    onResizeEnd: {
-      table: {
-        disable: true
-      }
-    },
-    onSelectionChange: {
-      table: {
-        disable: true
-      }
-    },
-    onSortChange: {
-      table: {
-        disable: true
-      }
-    },
-    disabledKeys: {
-      table: {
-        disable: true
-      }
-    },
-    selectedKeys: {
-      table: {
-        disable: true
-      }
-    },
-    density: {
-      control: 'select',
-      options: ['compact', 'regular', 'spacious']
-    },
-    overflowMode: {
-      control: 'select',
-      options: ['wrap', 'truncate']
-    },
-    isQuiet: {
-      control: 'boolean'
-    },
-    selectionMode: {
-      control: 'select',
-      options: ['none', 'single', 'multiple']
-    },
-    selectionStyle: {
-      control: 'select',
-      options: ['checkbox', 'highlight']
-    },
-    disallowEmptySelection: {
-      control: 'boolean'
-    }
-  }
+  ...defaultConfig,
+  title: 'TableView/Drag and Drop'
 } as ComponentMeta<typeof TableView>;
-
-export type TableStory = ComponentStoryObj<typeof TableView>;
 
 export const DragOutOfTable: TableStory = {
   render: (args) => (
