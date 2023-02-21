@@ -72,7 +72,8 @@
     "@react-spectrum/view": "^3.4.1",
     "@react-spectrum/well": "^3.3.4",
     "@react-stately/collections": "^3.5.1",
-    "@react-stately/data": "^3.8.1"
+    "@react-stately/data": "^3.8.1",
+    "@react-types/shared": "^3.15.0"
   },
   "publishConfig": {
     "access": "public"
