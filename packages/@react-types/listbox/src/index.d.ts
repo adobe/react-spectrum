@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusEvents, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusEvents, FocusStrategy, MultipleSelection, SelectionBehavior, StyleProps} from '@react-types/shared';
+import {Key, ReactNode} from 'react';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
   /** Whether to auto focus the listbox or an option. */
@@ -19,7 +20,20 @@ export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, F
   shouldFocusWrap?: boolean
 }
 
-export interface AriaListBoxProps<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
+  /**
+   * An optional visual label for the listbox.
+   */
+  label?: ReactNode,
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void
+}
 
-export interface SpectrumListBoxProps<T> extends AriaListBoxProps<T>, AsyncLoadable, StyleProps {
+export interface SpectrumListBoxProps<T> extends AriaListBoxPropsBase<T>, AsyncLoadable, StyleProps {
 }
