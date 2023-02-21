@@ -192,7 +192,7 @@ Finally, the `CalendarCell` component renders an individual cell in a calendar. 
 import {useCalendarCell} from '@react-aria/calendar';
 
 function CalendarCell({state, date}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     cellProps,
     buttonProps,
@@ -279,7 +279,7 @@ The `Button` component is used in the above example to navigate between months. 
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }

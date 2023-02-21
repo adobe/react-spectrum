@@ -101,7 +101,7 @@ export function TimeField(props) {
     locale
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, fieldProps} = useTimeField(props, state, ref);
 
   return (
@@ -121,7 +121,7 @@ export function TimeField(props) {
 
 // Note: this component is the same as in the useDateField docs.
 function DateSegment({segment, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (

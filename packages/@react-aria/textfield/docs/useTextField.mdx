@@ -80,7 +80,7 @@ import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: AriaTextFieldProps) {
   let {label} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);
 
   return (
@@ -106,7 +106,7 @@ import {useTextField} from '@react-aria/textfield';
 
 function TextArea(props: AriaTextFieldProps) {
   let {label} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);
 
   return (

@@ -486,7 +486,7 @@ import {useToggleState} from '@react-stately/toggle';
 import {useCheckbox} from '@react-aria/checkbox';
 
 function Checkbox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
   return <input {...inputProps} ref={ref} />;

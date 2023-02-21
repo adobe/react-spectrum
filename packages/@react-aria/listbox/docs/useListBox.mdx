@@ -136,7 +136,7 @@ function ListBox<T extends object>(props: AriaListBoxProps<T>) {
   let state = useListState(props);
 
   // Get props for the listbox element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
@@ -166,7 +166,7 @@ function ListBox<T extends object>(props: AriaListBoxProps<T>) {
 
 function Option({item, state}) {
   // Get props for the option element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard
@@ -432,7 +432,7 @@ to apply the props, but you may want to use a more robust approach (e.g. context
 ///- begin collapse -///
 function ListBox(props) {
   let state = useListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
@@ -460,7 +460,7 @@ function ListBox(props) {
 }
 ///- end collapse -///
 function Option({item, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, labelProps, descriptionProps, isSelected} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 

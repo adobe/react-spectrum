@@ -374,7 +374,7 @@ The example below demonstrates how to create a draggable ListView and a droppabl
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {DragAndDropOptions, TextItem} from '@react-spectrum/dnd';
+import type {DragAndDropOptions, TextDropItem} from '@react-spectrum/dnd';
 import type {ListData} from '@adobe/react-spectrum';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@adobe/react-spectrum';
@@ -449,7 +449,7 @@ function DroppableListView(props: DndListViewProps) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
       );
 
       if (target.dropPosition === 'before') {
@@ -463,7 +463,7 @@ function DroppableListView(props: DndListViewProps) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
       );
       list.append(...processedItems);
     },
@@ -592,7 +592,7 @@ function DroppableListViewFolder(props: DndListViewProps) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
 
       if (target.dropPosition === 'before') {
@@ -606,7 +606,7 @@ function DroppableListViewFolder(props: DndListViewProps) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
       list.append(...processedItems);
     },
@@ -618,7 +618,7 @@ function DroppableListViewFolder(props: DndListViewProps) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
 
       let targetItem = list.getItem(target.key);
@@ -783,7 +783,7 @@ function BidirectionalDnDListView(props: DndListViewProps) {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
       );
       if (target.dropPosition === 'before') {
         list.insertBefore(target.key, ...processedItems);
@@ -808,7 +808,7 @@ function BidirectionalDnDListView(props: DndListViewProps) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items.map(async item => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
       );
       list.append(...processedItems);
     },
@@ -947,8 +947,8 @@ function DroppableListViewDefaultCopy(props: DndListViewProps) {
       /*- begin highlight -*/
       // Create random id to allow for multiple copies of the same item
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => (
-          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/
@@ -966,8 +966,8 @@ function DroppableListViewDefaultCopy(props: DndListViewProps) {
       /*- begin highlight -*/
       // Create random id to allow for multiple copies of the same item
       let processedItems = await Promise.all(
-        items.map(async (item: TextItem) => (
-          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/

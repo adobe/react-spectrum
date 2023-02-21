@@ -204,21 +204,23 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
-  let {popoverProps} = usePopover({
-    ...props,
-    popoverRef
-  }, state);
+interface PopoverProps extends AriaPopoverProps {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let {popoverProps} = usePopover(props, state);
 
   return (
     <Overlay>
       <div
         {...popoverProps}
-        ref={popoverRef}
+        ref={props.popoverRef as React.RefObject<HTMLDivElement>}
         style={{
           ...popoverProps.style,
           background: 'lightgray',
@@ -247,7 +249,7 @@ user types in the SearchAutocomplete. They can also be shared with other compone
 import {useListBox, useOption} from '@react-aria/listbox';
 
 function ListBox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxRef = ref, state} = props;
   let {listBoxProps} = useListBox(props, state, listBoxRef);
 
@@ -274,7 +276,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;
