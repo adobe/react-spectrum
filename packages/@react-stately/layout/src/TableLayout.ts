@@ -90,12 +90,12 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   // outside, where this is called, should call props.onColumnResizeStart...
-  onColumnResizeStart(key: Key): void {
+  startResize(key: Key): void {
     this.resizingColumn = key;
   }
 
   // only way to call props.onColumnResize with the new size outside of Layout is to send the result back
-  onColumnResize(key: Key, width: number): Map<Key, ColumnSize> {
+  updateResizedColumns(key: Key, width: number): Map<Key, ColumnSize> {
     let newControlled = new Map(Array.from(this.controlledColumns).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = this.columnLayout.resizeColumnWidth(this.virtualizer.visibleRect.width, this.collection, newControlled, this.uncontrolledWidths, key, width);
 
@@ -110,7 +110,7 @@ export class TableLayout<T> extends ListLayout<T> {
     return newSizes;
   }
 
-  onColumnResizeEnd(): void {
+  endResize(): void {
     this.resizingColumn = null;
   }
 
