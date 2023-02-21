@@ -60,7 +60,12 @@ function shortName(key, value) {
 }
 
 const meta: Meta = {
-  title: 'ColorField'
+  title: 'ColorField',
+  parameters: {
+    chromaticProvider: {
+      express: false
+    }
+  }
 };
 
 export default meta;

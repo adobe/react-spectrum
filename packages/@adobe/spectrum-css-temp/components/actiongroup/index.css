@@ -82,7 +82,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionGroup--compact {
-  --column-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
+  --column-gap: var(--spectrum-actiongroup-compact-button-gap);
   --row-gap: var(--spectrum-actiongroup-button-gap-reset);
 
   &.spectrum-ActionGroup--quiet {
@@ -143,7 +143,7 @@ governing permissions and limitations under the License.
 
     &.spectrum-ActionGroup--vertical {
       --column-gap: var(--spectrum-actiongroup-button-gap-reset);
-      --row-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
+      --row-gap: var(--spectrum-actiongroup-compact-button-gap);
 
       .spectrum-ActionGroup-item {
         border-radius: 0;

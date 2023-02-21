@@ -72,6 +72,8 @@ for (let pkg of packages) {
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
+    softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
+    softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
@@ -81,7 +83,7 @@ for (let pkg of packages) {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
     }
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
-    softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
+    softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
     softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 

@@ -82,6 +82,9 @@ storiesOf('TextArea', module)
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: 275})
   )
+  .add('custom height',
+    () => render({icon: <Info />, validationState: 'invalid', height: 350})
+  )
   .add(
     'value: 測試, icon: Info, labelPosition: side, validationState: valid',
     () => render({value: '測試', icon: <Info />, labelPosition: 'side', validationState: 'valid'})

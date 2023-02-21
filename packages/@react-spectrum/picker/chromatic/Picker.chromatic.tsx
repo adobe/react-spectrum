@@ -109,6 +109,19 @@ ValidationStateValid.args = {...Default.args, validationState: 'valid'};
 
 export const ComplexItems = ComplexItemsTemplate().bind({});
 ComplexItems.args = {...Default.args};
+ComplexItems.parameters = {
+  chromaticProvider: {
+    express: false
+  }
+};
+
+export const ComplexItemsExpress = ComplexItemsTemplate().bind({});
+ComplexItemsExpress.args = {...Default.args};
+ComplexItemsExpress.parameters = {
+  chromaticProvider: {
+    express: true
+  }
+};
 
 let contextualHelp = (
   <ContextualHelp>

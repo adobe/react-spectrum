@@ -69,11 +69,12 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
+              let props = options.includes('hidden') ? 'isHidden' : '';
               if (/function (.|\n)*}\s*$/.test(code)) {
                 let name = code.match(/function (.*?)\s*\(/)[1];
-                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}><${name} /></${provider}>, document.getElementById("${id}")));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}>$1</${provider}>, document.getElementById("${id}")));`);
               }
             }
 
@@ -109,7 +110,7 @@ module.exports = new Transformer({
               ];
             }
 
-            node.meta = 'example';
+            node.meta = options.includes('hidden') ? null : 'example';
 
             return [
               ...transformExample(node, preRelease, keepIndividualImports),
@@ -187,6 +188,7 @@ module.exports = new Transformer({
     let date = '';
     let author = '';
     let image = '';
+    let hidden = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -259,6 +261,7 @@ module.exports = new Transformer({
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          hidden = yamlData.hidden;
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -417,6 +420,7 @@ module.exports = new Transformer({
     asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.order = order;
+    asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
     asset.isBundleSplittable = false;
@@ -433,7 +437,11 @@ module.exports = new Transformer({
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+let RENDER_FNS = [];
 ${exampleCode.join('\n')}
+for (let render of RENDER_FNS) {
+  render();
+}
 export default {};
 `;
     }
@@ -468,8 +476,7 @@ export default {};
       specifier: 'client',
       specifierType: 'esm',
       needsStableName: false,
-      priority: 'parallel',
-      bundleBehavior: 'isolated'
+      priority: 'parallel'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.

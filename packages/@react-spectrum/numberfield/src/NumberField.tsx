@@ -164,7 +164,8 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           inputRef={inputRef}
           validationState={validationState}
           inputProps={inputProps}
-          isDisabled={isDisabled} />
+          isDisabled={isDisabled}
+          disableFocusRing />
         {showStepper &&
         <>
           <StepButton direction="up" isQuiet={isQuiet} {...incrementProps} />

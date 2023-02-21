@@ -11,7 +11,7 @@
  */
 
 import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
@@ -270,7 +270,7 @@ function blobToString(blob: Blob): Promise<string> {
   });
 }
 
-function createFileItem(file: File): FileItem {
+function createFileItem(file: File): FileDropItem {
   return {
     kind: 'file',
     type: file.type || GENERIC_TYPE,
@@ -280,7 +280,7 @@ function createFileItem(file: File): FileItem {
   };
 }
 
-function createDirectoryItem(entry: any): DirectoryItem {
+function createDirectoryItem(entry: any): DirectoryDropItem {
   return {
     kind: 'directory',
     name: entry.name,
@@ -288,7 +288,7 @@ function createDirectoryItem(entry: any): DirectoryItem {
   };
 }
 
-async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileItem | DirectoryItem> {
+async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileDropItem | DirectoryDropItem> {
   let reader = item.createReader();
 
   // We must call readEntries repeatedly because there may be a limit to the

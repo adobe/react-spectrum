@@ -225,8 +225,8 @@ function getDiff(pair) {
   if (argv.verbose) {
     console.log(`diffing ${name}`);
   }
-  let publishedApi = pair.pubApi === null ? {} : getAPI(pair.pubApi);
-  let branchApi = pair.branchApi === null ? {} : getAPI(pair.branchApi);
+  let publishedApi = pair.pubApi === null ? {exports:{}} : getAPI(pair.pubApi);
+  let branchApi = pair.branchApi === null ? {exports:{}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
   let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
@@ -353,7 +353,7 @@ function processType(value) {
   if (value.type === 'parameter') {
     return processType(value.value);
   }
-  if (value.type === 'link') {
+  if (value.type === 'link' && value.id) {
     let name = value.id.substr(value.id.lastIndexOf(':') + 1);
     if (dependantOnLinks.has(currentlyProcessing)) {
       let foo = dependantOnLinks.get(currentlyProcessing);

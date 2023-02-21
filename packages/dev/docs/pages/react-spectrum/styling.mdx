@@ -174,7 +174,13 @@ All of the properties supported by `View` are listed below. All style properties
 
 Style props that accept colors, such as backgrounds and borders, only accept Spectrum defined color values.
 In addition to ensuring consistency across products, Spectrum colors automatically adapt to color
-scheme changes, e.g. dark mode.
+scheme changes, e.g. dark mode. Learn more about color on the [Spectrum website](https://spectrum.adobe.com/page/color-fundamentals/).
+
+There are two versions of Spectrum colors available: v5, and v6. v6 offers an expanded color palette, and we
+recommend using it for new projects. However, v5 is still the default for backward compatibility. You can use v6 colors in custom
+components by setting the `colorVersion` prop on the [View](View.html) component to `6`. This controls the accepted values of other
+style props on the View, such as background and border colors. A color [migration guide](https://spectrum.adobe.com/static/misc/Colors_v6.0_Migration-Guide.xd)
+is also available on the Spectrum website to help you upgrade from v5 to v6.
 
 The list of Spectrum color values is visualized below. Use the picker to see how they change between the
 light and dark color schemes.
@@ -182,18 +188,28 @@ light and dark color schemes.
 ```tsx import
 function ColorViewer() {
   let [selectedKey, setSelectedKey] = useState();
+  let [colorVersion, setColorVersion] = useState('5');
+  let colors = colorVersion === '6'
+    ? dnaDocs.exports.ColorValueV6.id
+    : dnaDocs.exports.ColorValue.id;
 
   return (
     <Example colorScheme={selectedKey}>
-      <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-        <Item key="light">Light</Item>
-        <Item key="dark">Dark</Item>
-      </Picker>
+      <Flex gap="size-100">
+        <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+          <Item key="light">Light</Item>
+          <Item key="dark">Dark</Item>
+        </Picker>
+        <Picker label="Color Version" selectedKey={colorVersion} onSelectionChange={setColorVersion}>
+          <Item key="5">v5 (default)</Item>
+          <Item key="6">v6</Item>
+        </Picker>
+      </Flex>
       <ul style={{columnWidth: 160, listStyle: 'none', padding: 0}}>
-        {dnaDocs.links[dnaDocs.exports.ColorValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
+        {dnaDocs.links[colors].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
           <li key={v.value}>
             <Flex alignItems="center" marginBottom="size-25">
-              <View backgroundColor={v.value} width="size-250" height="size-250" marginEnd="size-100" flexShrink={0} />
+              <View colorVersion={+colorVersion} backgroundColor={v.value} width="size-250" height="size-250" marginEnd="size-100" flexShrink={0} />
               {v.value}
             </Flex>
           </li>

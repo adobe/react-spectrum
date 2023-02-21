@@ -40,6 +40,14 @@ function render(el) {
 }
 
 describe('DatePickerBase', function () {
+  beforeAll(() => {
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   describe('basics', function () {
     it.each`
       Name                   | Component            | numSegments

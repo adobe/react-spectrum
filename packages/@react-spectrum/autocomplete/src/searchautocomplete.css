@@ -23,6 +23,12 @@
   font-style: italic;
 }
 
+/* override .spectrum-InputGroup */
+.searchautocomplete.searchautocomplete {
+  border-radius: var(--spectrum-search-border-radius);
+  --spectrum-focus-ring-border-radius: var(--spectrum-search-border-radius);
+}
+
 .mobile-searchautocomplete {
   outline: none;
 }

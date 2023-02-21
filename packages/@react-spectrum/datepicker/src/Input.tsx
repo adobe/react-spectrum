@@ -14,10 +14,10 @@ import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
-import {FocusRing} from '@react-aria/focus';
-import {mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {useFocusRing} from '@react-aria/focus';
 
 function Input(props, ref) {
   let inputRef = useRef(null);
@@ -29,7 +29,8 @@ function Input(props, ref) {
     children,
     fieldProps,
     className,
-    style
+    style,
+    disableFocusRing
   } = props;
 
   // Reserve padding for the error icon when the width of the input is unconstrained.
@@ -77,6 +78,11 @@ function Input(props, ref) {
   // parent element.
   useEvent(useRef(typeof window !== 'undefined' ? window : null), 'resize', onResize);
 
+  let {focusProps, isFocusVisible, isFocused} = useFocusRing({
+    isTextInput: true,
+    within: true
+  });
+
   let isInvalid = validationState === 'invalid' && !isDisabled;
   let textfieldClass = classNames(
     textfieldStyles,
@@ -84,7 +90,8 @@ function Input(props, ref) {
     {
       'spectrum-Textfield--invalid': isInvalid,
       'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
-      'spectrum-Textfield--quiet': isQuiet
+      'spectrum-Textfield--quiet': isQuiet,
+      'focus-ring': isFocusVisible && !disableFocusRing
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
     className
@@ -95,7 +102,8 @@ function Input(props, ref) {
     'spectrum-Textfield-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': isInvalid
+      'is-invalid': isInvalid,
+      'is-focused': isFocused
     },
     reservePadding && classNames(datepickerStyles, 'react-spectrum-Datepicker-input'),
     inputClassName
@@ -114,14 +122,12 @@ function Input(props, ref) {
   }
 
   return (
-    <div role="presentation" {...fieldProps} className={textfieldClass} style={style}>
-      <FocusRing focusClass={classNames(textfieldStyles, 'is-focused')} focusRingClass={classNames(textfieldStyles, 'focus-ring')} isTextInput within>
-        <div role="presentation" className={inputClass}>
-          <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
-            {children}
-          </div>
+    <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
+      <div role="presentation" className={inputClass}>
+        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
+          {children}
         </div>
-      </FocusRing>
+      </div>
       {validationIcon}
     </div>
   );

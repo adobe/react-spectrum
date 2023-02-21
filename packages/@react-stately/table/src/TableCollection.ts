@@ -163,6 +163,7 @@ export class TableCollection<T> extends GridCollection<T> {
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
+  _size: number = 0;
 
   constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
@@ -234,6 +235,7 @@ export class TableCollection<T> extends GridCollection<T> {
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
     this.headerRows = headerRows;
+    this._size = [...body.childNodes].length;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
@@ -246,7 +248,7 @@ export class TableCollection<T> extends GridCollection<T> {
   }
 
   get size() {
-    return [...this.body.childNodes].length;
+    return this._size;
   }
 
   getKeys() {

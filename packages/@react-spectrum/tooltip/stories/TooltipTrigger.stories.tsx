@@ -37,45 +37,37 @@ type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
 const argTypes = {
   placement: {
     control: 'select',
-    defaultValue: 'bottom',
     options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
   },
   delay: {
     control: 'number',
-    defaultValue: 1500,
     min: 0,
     max: 50000,
     step: 500
   },
   offset: {
     control: 'number',
-    defaultValue: 0,
     min: -500,
     max: 500
   },
   crossOffset: {
     control: 'number',
-    defaultValue: 0,
     min: -500,
     max: 500
   },
   containerPadding: {
     control: 'number',
-    defaultValue: 0,
     min: -500,
     max: 500
   },
   isDisabled: {
-    control: 'boolean',
-    defaultValue: false
+    control: 'boolean'
   },
   shouldFlip: {
-    control: 'boolean',
-    defaultValue: true
+    control: 'boolean'
   },
   trigger: {
     control: 'radio',
-    defaultValue: undefined,
     options: [undefined, 'focus']
   },
   children: {

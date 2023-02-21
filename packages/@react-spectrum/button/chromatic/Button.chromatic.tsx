@@ -20,6 +20,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 
 let states = [
   {UNSAFE_className: classNames(styles, 'is-hovered'), 'data-hover': true},
@@ -124,9 +125,9 @@ function render(props: any = {}) {
         let button = <Button key={key} {...props} {...c}>{key}</Button>;
         if (props.variant === 'overBackground' || c.staticColor === 'white') {
           return (
-            <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+            <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
               {button}
-            </div>
+            </View>
           );
         }
         if (c.staticColor === 'black') {
