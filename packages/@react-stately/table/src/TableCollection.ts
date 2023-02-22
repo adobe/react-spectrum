@@ -209,8 +209,10 @@ export class TableCollection<T> extends GridCollection<T> {
           break;
         case 'section':
           // TODO: Add section to row? or maybe make another array to track sections?
+          // TODO may have to add the section to the rowHeaderColumnKeys so that we can label the row by the section?
+          // Or maybe we can do a look up instead in getRowLabelledBy that finds the parent section
           rows.push(node);
-          console.log('section blah', node);
+          // console.log('section blah', node);
           break;
         case 'item':
           rows.push(node);

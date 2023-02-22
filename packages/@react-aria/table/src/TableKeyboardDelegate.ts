@@ -32,18 +32,22 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     if (startItem.type === 'column') {
       let child = [...startItem.childNodes][0];
       if (child) {
+        console.log('below 1', child.key)
         return child.key;
       }
 
       let firstKey = this.getFirstKey();
       if (firstKey == null) {
+        console.log('below 2')
         return;
       }
 
       let firstItem = this.collection.getItem(firstKey);
+      console.log('below 3', [...firstItem.childNodes][startItem.index].key);
       return [...firstItem.childNodes][startItem.index].key;
     }
 
+    console.log('below 4', super.getKeyBelow(key));
     return super.getKeyBelow(key);
   }
 
@@ -66,16 +70,19 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
     if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
+      console.log('above 1', superKey);
       return superKey;
     }
 
     // If no item was found, and focus was on a cell, then focus the
     // corresponding column header.
     if (this.isCell(startItem)) {
+      console.log('above 2', this.collection.columns[startItem.index].key);
       return this.collection.columns[startItem.index].key;
     }
 
     // If focus was on a row, then focus the first column header.
+    console.log('above 3', this.collection.columns[0].key);
     return this.collection.columns[0].key;
   }
 

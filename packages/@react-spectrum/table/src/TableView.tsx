@@ -229,10 +229,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       );
     }
 
-    if (reusableView.viewType === 'header') {
+    if (reusableView.viewType === 'header' && reusableView.layoutInfo.parentKey == null) {
       // TODO add condition where this only render the table's top level header (aka check for header.parent = null)
       // or rename the section header type to 'sectionHeader'
-      console.log('rendering header', reusableView);
       return (
         <TableHeader
           key={reusableView.key}
@@ -267,21 +266,20 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-      // TODO: at the moment the layout info returned doesn't include the section header returned from listlayout
-      console.log('REUSUABLE SECTION, parent, reusable, children, style, ', parent, reusableView, children, style )
-      // TODO: that is ok, just need to figure out how to get the header as part of the children of the section
-      // Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
-      // confirm this
+      // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
       let header = children.find(c => c.viewType === 'header');
       let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, parent && parent.layoutInfo);
       let sectionStyle = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
+      // TODO: will need to associate the section label here with the row inside
       return (
         <>
-          <div style={headerStyle} key={header.key}>
+          {/* TODO: remove the data-id later */}
+          {/* TODO: make component + hook to generate id/role for the section title */}
+          <div style={headerStyle} key={header.key} data-id="section title" role="presentation">
             {reusableView.content.rendered}
           </div>
-          <div style={sectionStyle} key={reusableView.key}>
-            {renderChildren(children)}
+          <div style={sectionStyle} key={reusableView.key} data-id="section wrapper">
+            {renderChildren(children.filter(c => c.viewType !== 'header'))}
           </div>
         </>
       );
@@ -404,7 +402,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     setIsResizing(false);
     propsOnResizeEnd?.(widths);
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
-  console.log('table layout and state', layout, state)
+  // console.log('table layout and state', layout, state)
   return (
     <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer

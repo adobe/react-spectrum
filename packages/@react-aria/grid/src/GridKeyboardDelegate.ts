@@ -59,7 +59,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!pred || pred(item)) {
+      // TODO: refine this logic, maybe provide a pred to findNextKey from getKeyBelow?
+      if (item.type !== 'section' && (!pred || pred(item))) {
         return key;
       }
 
@@ -74,7 +75,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!pred || pred(item)) {
+      // TODO: refine this logic, maybe provide a pred to findNextKey from getKeyBelow?
+      if (item.type !== 'section' && (!pred || pred(item))) {
         return key;
       }
 

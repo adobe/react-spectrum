@@ -415,7 +415,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let res: LayoutInfo[] = [];
 
     this.buildPersistedIndices();
-    console.log('this.rootNodes', this.rootNodes)
+    // console.log('this.rootNodes', this.rootNodes)
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -449,7 +449,7 @@ export class TableLayout<T> extends ListLayout<T> {
         // taken by the section header
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
-        console.log('first visible, row, children, topleft', firstVisibleRow, node.children, rect.topLeft)
+        // console.log('first visible, row, children, topleft', firstVisibleRow, node.children, rect.topLeft)
 
         // TODO: might need to update handling for sections? Should we persist sections? At the moment I think
         // buildPersistedIndices will persist the section...
@@ -483,7 +483,7 @@ export class TableLayout<T> extends ListLayout<T> {
           }
           let layoutInfo = node.children[i].layoutInfo.copy();
 
-          console.log('pushing layoutinfo in body', node.children[i], node.children[i].layoutInfo)
+          // console.log('pushing layoutinfo in body', node.children[i], node.children[i].layoutInfo)
           // if (layoutInfo.type === 'section') {
           //   let sectionWithHeader = {...layoutInfo, header: node.children[i].header};
           //   res.push(sectionWithHeader);
@@ -545,7 +545,7 @@ export class TableLayout<T> extends ListLayout<T> {
       }
       case 'section': {
         // TODO: update this. What do we need to persist?
-        console.log('section visible layout, node, res ,rect', node, res, rect)
+        // console.log('section visible layout, node, res ,rect', node, res, rect)
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
 

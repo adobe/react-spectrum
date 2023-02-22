@@ -343,7 +343,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       validRect: layoutInfo.rect.intersection(this.validRect)
     };
 
-    console.log('section layout info', layoutNode);
+    // console.log('section layout info', layoutNode);
 
     return layoutNode;
   }
@@ -561,6 +561,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
+    // TODO: this is a bit problematic because this will return the section that contains the rows
+    // so we can never drop between the rows. Maybe if we detect that the key is a section we iterate over
+    // every layout in said section and find what key is at that point
     let key = this.virtualizer.keyAtPoint(new Point(x, y));
     if (key == null || this.collection.size === 0) {
       return {type: 'root'};

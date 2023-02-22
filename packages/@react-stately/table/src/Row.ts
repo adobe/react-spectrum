@@ -21,7 +21,7 @@ function Row(props: RowProps): ReactElement { // eslint-disable-line @typescript
 
 Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
   let {children, textValue} = props;
-  console.log('in row')
+  // console.log('in row')
   yield {
     type: 'item',
     props: props,

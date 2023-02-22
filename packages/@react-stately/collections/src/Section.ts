@@ -20,7 +20,7 @@ function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-li
 
 Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T>): Generator<PartialNode<T>> {
   let {children, title, items} = props;
-  console.log('in section')
+  // console.log('in section')
   yield {
     type: 'section',
     props: props,
