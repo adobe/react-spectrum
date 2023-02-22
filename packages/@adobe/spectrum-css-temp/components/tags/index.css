@@ -17,13 +17,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags {
-  display: contents;
-}
-
-.spectrum-Tags-container {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: var(--spectrum-tag-margin);
+  display: inline;
 }
 
 .spectrum-Tags-item {
@@ -36,6 +30,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   position: relative;
 
+  margin: var(--spectrum-tag-margin);
   padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
   block-size: var(--spectrum-tag-height);
   max-inline-size: 100%;
@@ -101,12 +96,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tags-actions {
-  display: contents;
+  display: inline;
 
   .spectrum-Tags-actionButton {
     display: inline;
     height: var(--spectrum-tag-height);
     font-size: var(--spectrum-tag-text-size);
+    margin: var(--spectrum-tag-margin);
     
     &.spectrum-Tags-actionButton {
       > span {
