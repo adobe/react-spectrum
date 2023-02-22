@@ -1052,6 +1052,32 @@ that contain ActionButtons in place of text content.",
 }
 `;
 
+exports[`DocsTransformer - API interface merging merges omit properties when extending 1`] = `
+Object {
+  "exports": Object {
+    "Baz": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:Baz",
+      "name": "Baz",
+      "properties": Object {
+        "foo": Object {
+          "default": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
 exports[`DocsTransformer - API interface merging merges properties when extending 1`] = `
 Object {
   "exports": Object {
@@ -1078,6 +1104,43 @@ Object {
           "type": "property",
           "value": Object {
             "type": "boolean",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges properties when extending 2 1`] = `
+Object {
+  "exports": Object {
+    "Baz": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:Baz",
+      "name": "Baz",
+      "properties": Object {
+        "coo": Object {
+          "default": null,
+          "name": "coo",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "id": "/test/src/index.tsx:F",
+            "name": "F",
+            "type": "identifier",
+          },
+        },
+        "foo": Object {
+          "default": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "string",
           },
         },
       },

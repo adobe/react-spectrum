@@ -337,6 +337,38 @@ describe('DocsTransformer - API', () => {
       expect(code).toMatchSnapshot();
     }, 50000);
 
+    it('merges properties when extending 2', async () => {
+      await writeSourceFile('index', `
+export interface Baz extends Foo<string> {}
+
+interface Foo<T> extends Coo {
+  foo: T
+}
+
+interface Coo<F = Element> {
+  coo: F
+}
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it.only('merges omit properties when extending', async () => {
+      await writeSourceFile('index', `
+export interface Baz extends Foo<string> {}
+
+interface Foo<T> extends Omit<Coo, 'coo'> {
+  foo: T
+}
+
+interface Coo<F = Element> {
+  coo: F
+}
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
     it('merges properties when extending with split exports', async () => {
       await writeSourceFile('index', `
     import {AriaTagGroupProps} from '@react-aria/tag';
