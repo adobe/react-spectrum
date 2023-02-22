@@ -167,6 +167,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
+          className={classNames(styles, 'spectrum-Tags-container')}
           ref={containerRef}>
           <div
             ref={tagsRef}
