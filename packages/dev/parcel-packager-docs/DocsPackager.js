@@ -86,6 +86,12 @@ module.exports = new Packager({
             };
           }
           let resAsset = bundleGraph.getResolvedAsset(dep, bundle);
+          if (!resAsset) {
+            return {
+              type: 'identifier',
+              name: t.local
+            };
+          }
           let res = bundleGraph.getSymbolResolution(resAsset, t.imported, bundle);
           let result = res ? processAsset(res.asset)[res.exportSymbol] : null;
           if (result) {
