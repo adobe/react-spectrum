@@ -337,33 +337,33 @@ describe('DocsTransformer - API', () => {
       expect(code).toMatchSnapshot();
     }, 50000);
 
-    it('merges properties when extending 2', async () => {
+    it('merges properties when extending and does not substitute generics when none are provided', async () => {
       await writeSourceFile('index', `
-export interface Baz extends Foo<string> {}
+      export interface Baz extends Foo<string> {}
 
-interface Foo<T> extends Coo {
-  foo: T
-}
+      interface Foo<T> extends Coo {
+        foo: T
+      }
 
-interface Coo<F = Element> {
-  coo: F
-}
+      interface Coo<F = Element> {
+        coo: F
+      }
     `);
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
 
-    it.only('merges omit properties when extending', async () => {
+    it('merges omit properties when extending', async () => {
       await writeSourceFile('index', `
-export interface Baz extends Foo<string> {}
+      export interface Baz extends Foo<string> {}
 
-interface Foo<T> extends Omit<Coo, 'coo'> {
-  foo: T
-}
+      interface Foo<T> extends Omit<Coo, 'coo'> {
+        foo: T
+      }
 
-interface Coo<F = Element> {
-  coo: F
-}
+      interface Coo<F = Element> {
+        coo: F
+      }
     `);
       let code = await runBuild();
       expect(code).toMatchSnapshot();

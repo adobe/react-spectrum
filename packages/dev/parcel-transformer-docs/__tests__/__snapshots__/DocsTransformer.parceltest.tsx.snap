@@ -1115,7 +1115,7 @@ Object {
 }
 `;
 
-exports[`DocsTransformer - API interface merging merges properties when extending 2 1`] = `
+exports[`DocsTransformer - API interface merging merges properties when extending and does not substitute generics when none are provided 1`] = `
 Object {
   "exports": Object {
     "Baz": Object {
