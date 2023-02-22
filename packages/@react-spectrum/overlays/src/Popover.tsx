@@ -16,7 +16,7 @@ import {DOMRef, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -28,7 +28,8 @@ interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'
 }
 
 interface PopoverWrapperProps extends PopoverProps {
-  isOpen?: boolean
+  isOpen?: boolean,
+  wrapperRef: MutableRefObject<HTMLDivElement>
 }
 
 /**
@@ -52,10 +53,11 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
+  let wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen}>
-      <PopoverWrapper ref={domRef} {...props}>
+    <Overlay {...otherProps} isOpen={state.isOpen} nodeRef={wrapperRef}>
+      <PopoverWrapper ref={domRef} {...props} wrapperRef={wrapperRef}>
         {children}
       </PopoverWrapper>
     </Overlay>
@@ -68,7 +70,8 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isOpen,
     hideArrow,
     isNonModal,
-    state
+    state,
+    wrapperRef
   } = props;
   let {styleProps} = useStyleProps(props);
 
@@ -78,8 +81,9 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     maxHeight: null
   }, state);
 
+  // Attach Transition's nodeRef to outer most wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
-    <>
+    <div ref={wrapperRef}>
       {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
       <div
         {...styleProps}
@@ -115,7 +119,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         )}
         <DismissButton onDismiss={state.close} />
       </div>
-    </>
+    </div>
   );
 });
 

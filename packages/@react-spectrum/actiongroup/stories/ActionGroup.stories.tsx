@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
 import Brush from '@spectrum-icons/workflow/Brush';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
@@ -29,18 +30,8 @@ import React from 'react';
 import Sampler from '@spectrum-icons/workflow/Sampler';
 import Select from '@spectrum-icons/workflow/Select';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
-import {storiesOf} from '@storybook/react';
-import TagBold from '@spectrum-icons/workflow/TagBold';
-import TagItalic from '@spectrum-icons/workflow/TagItalic';
-import TagUnderline from '@spectrum-icons/workflow/TagUnderline';
 import {Text} from '@react-spectrum/text';
-import TextAlignCenter from '@spectrum-icons/workflow/TextAlignCenter';
-import TextAlignJustify from '@spectrum-icons/workflow/TextAlignJustify';
-import TextAlignLeft from '@spectrum-icons/workflow/TextAlignLeft';
-import TextAlignRight from '@spectrum-icons/workflow/TextAlignRight';
 import TextIcon from '@spectrum-icons/workflow/Text';
-import TextStrikethrough from '@spectrum-icons/workflow/TextStrikethrough';
-import TextStyle from '@spectrum-icons/workflow/TextStyle';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import VectorDraw from '@spectrum-icons/workflow/VectorDraw';
 import {View} from '@react-spectrum/view';
@@ -48,11 +39,8 @@ import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
-const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
-const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
-const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}];
+
 const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
-const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
 let onSelectionChange = action('onSelectionChange');
 
 let iconMap = {
@@ -69,519 +57,247 @@ let iconMap = {
   'Keywords': BookIcon
 };
 
-storiesOf('ActionGroup', module)
-  .addParameters({providerSwitcher: {status: 'negative'}})
-  .add(
-    'default',
-    () => (
-      <Flex direction="column" gap="size-200" width="100%" margin="size-100">
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => (
-              <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-            ))
-          }
-        </ActionGroup>
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => {
-              let IconElement = iconMap[itemProps.children];
-              return (
-                <Item key={itemProps.name} textValue={itemProps.name}>
-                  <Text>{itemProps.children}</Text>
-                  <IconElement />
-                </Item>
-              );
-            })
-          }
-        </ActionGroup>
-        <ActionGroup onAction={action('onAction')}>
-          {
-            docItems.map((itemProps) => {
-              let IconElement = iconMap[itemProps.children];
-              return (
-                <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-                  <IconElement />
-                </Item>
-              );
-            })
-          }
-        </ActionGroup>
-      </Flex>
-    )
+export default {
+  title: 'ActionGroup',
+  component: ActionGroup,
+  args: {
+    onAction: action('onAction'),
+    onSelectionChange: s => onSelectionChange([...s])
+  },
+  argTypes: {
+    onAction: {
+      table: {
+        disable: true
+      }
+    },
+    onSelectionChange: {
+      table: {
+        disable: true
+      }
+    },
+    disabledKeys: {
+      table: {
+        disable: true
+      }
+    },
+    items: {
+      table: {
+        disable: true
+      }
+    },
+    summaryIcon: {
+      table: {
+        disable: true
+      }
+    },
+    selectionMode: {
+      control: 'select',
+      options: ['none', 'single', 'multiple']
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    density: {
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
+    },
+    isJustified: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    isEmphasized: {
+      control: 'boolean'
+    },
+    disallowEmptySelection: {
+      control: 'boolean'
+    },
+    orientation: {
+      control: 'select',
+      options: ['horizontal', 'vertical']
+    },
+    overflowMode: {
+      control: 'select',
+      options: ['wrap', 'collapse']
+    },
+    buttonLabelBehavior: {
+      control: 'select',
+      options: ['show', 'hide', 'collapse']
+    }
+  }
+} as ComponentMeta<typeof ActionGroup>;
+
+export type ActionGroupStory = ComponentStoryObj<typeof ActionGroup>;
+
+export const Default: ActionGroupStory = {
+  args: {items: viewItems},
+  render: (args) => render(args)
+};
+
+export const FalsyKeys: ActionGroupStory = {
+  render: (args) => (
+    <ActionGroup {...args}>
+      <Item key="add">Add</Item>
+      <Item key="">Delete</Item>
+      <Item key="edit">Edit</Item>
+    </ActionGroup>
   )
-  .add(
-    'with falsy item key',
-    () => (
-      <ActionGroup onAction={action('onAction')}>
-        <Item key="add">Add</Item>
-        <Item key="">Delete</Item>
-        <Item key="edit">Edit</Item>
-      </ActionGroup>
-    )
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'all keys disabled',
-    () => render({disabledKeys: ['1', '2']}, docItems)
-  )
-  .add(
-    'compact',
-    () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isJustified',
-    () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'compact, isJustified',
-    () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'compact, isQuiet',
-    () => render({density: 'compact', isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true, defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'compact, isEmphasized',
-    () => render({isEmphasized: true, density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'isQuiet, isEmphasized',
-    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1', '2'], disabledKeys: ['2']}, viewItems)
-  )
-  .add(
-    'staticColor=white',
-    () => (
-      <View backgroundColor="static-blue-700" padding="size-1000">
-        {render({staticColor: 'white', defaultSelectedKeys: ['1']}, viewItems)}
-      </View>
-    )
-  )
-  .add(
-    'staticColor=white, isQuiet',
-    () => (
-      <View backgroundColor="static-blue-700" padding="size-1000">
-        {render({staticColor: 'white', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
-      </View>
-    )
-  )
-  .add(
-    'staticColor=black',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        {render({staticColor: 'black', defaultSelectedKeys: ['1']}, viewItems)}
-      </View>
-    )
-  )
-  .add(
-    'staticColor=black, isQuiet',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        {render({staticColor: 'black', isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)}
-      </View>
-    )
-  )
-  .add(
-    'selectionMode: multiple',
-    () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: single, disallowEmptySelection',
-    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet',
-    () => render({isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized',
-    () => render({isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, compact',
-    () => render({isEmphasized: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet',
-    () => render({isEmphasized: true, isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  .add(
-    'selectionMode: multiple, isEmphasized, isQuiet, compact',
-    () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
-  )
-  // no selection mode none, it's covered in the default story visually
-  .add(
-    'vertical',
-    () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, isJustified',
-    () => render({isJustified: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
-  )
-  .add(
-    'vertical, compact',
-    () => render({density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isJustified, compact',
-    () => render({isJustified: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'vertical, isQuiet',
-    () => render({isQuiet: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, editItems)
-  )
-  .add(
-    'vertical, isQuiet, compact',
-    () => render({isQuiet: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
-  )
-  .add(
-    'disabledKeys',
-    () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
-  )
-  .add(
-    'dynamic default',
-    () => (
-      <ActionGroup onAction={action('onAction')} items={viewItems}>
-        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
-      </ActionGroup>
-    )
-  )
-  .add(
-    'dynamic single selection',
-    () => (
-      <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
-        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
-      </ActionGroup>
-    )
-  )
-  .add(
-    'with tooltips',
-    () => renderTooltips({})
-  )
-  .add(
-    'overflowMode: wrap',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        <ActionGroup overflowMode="wrap" onAction={action('onAction')}>
-          <Item>
-            <DrawIcon />
-            <Text>Edit</Text>
-          </Item>
-          <Item>
-            <CopyIcon />
-            <Text>Copy</Text>
-          </Item>
-          <Item>
-            <DeleteIcon />
-            <Text>Delete</Text>
-          </Item>
-          <Item>
-            <MoveIcon />
-            <Text>Move</Text>
-          </Item>
-          <Item>
-            <DuplicateIcon />
-            <Text>Duplicate</Text>
-          </Item>
-        </ActionGroup>
-      </div>
-    )
-  )
-  .add(
-    'overflowMode: collapse',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible()}
-        {renderCollapsible({density: 'compact'})}
-        {renderCollapsible({density: 'compact', isJustified: true})}
-        {renderCollapsible({isQuiet: true})}
-      </div>
-    )
-  )
-  .add(
-    'overflowMode: collapse, disabledKeys',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible({disabledKeys: ['edit', 'duplicate']})}
-        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate']})}
-        {renderCollapsible({density: 'compact', disabledKeys: ['edit', 'duplicate'], isJustified: true})}
-        {renderCollapsible({disabledKeys: ['edit', 'duplicate'], isQuiet: true})}
-      </div>
-    )
-  )
-  .add(
-    'buttonLabelBehavior: hide',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible({buttonLabelBehavior: 'hide'})}
-        {renderCollapsibleText({buttonLabelBehavior: 'hide'})}
-      </div>
-    )
-  )
-  .add(
-    'buttonLabelBehavior: collapse',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', width: 500, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible({buttonLabelBehavior: 'collapse'})}
-        {renderCollapsibleText({buttonLabelBehavior: 'collapse'})}
-      </div>
-    )
-  )
-  .add(
-    'overflowMode: collapse, selection',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsibleFormatting({density: 'compact', maxWidth: '50%', isEmphasized: true})}
-        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true})}
-      </div>
-    )
-  )
-  .add(
-    'overflowMode: collapse, summaryIcon',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsibleFormatting({density: 'compact', overflowMode: 'collapse', summaryIcon: <TextStyle />, isEmphasized: true})}
-        {renderCollapsibleAlignment({density: 'compact', overflowMode: 'collapse', isEmphasized: true})}
-      </div>
-    )
-  )
-  .add(
-    'overflowMode: collapse, single selection',
-    () => (
-      <div style={{padding: '10px', resize: 'horizontal', overflow: 'auto', display: 'flex', gap: 10, width: 300, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true})}
-        {renderCollapsibleAlignment({density: 'compact', maxWidth: '50%', isEmphasized: true, buttonLabelBehavior: 'show'})}
-        {renderCollapsibleAlignmentNoIcons({density: 'compact', maxWidth: '50%', isEmphasized: true, buttonLabelBehavior: 'show'})}
-      </div>
-    )
-  )
-  .add(
-    'orientation: vertical, overflowMode: collapse',
-    () => (
+};
+
+export const AllKeysDisabled: ActionGroupStory = {
+  ...Default,
+  args: {disabledKeys: ['1', '2', '3'], items: viewItems}
+};
+
+export const SomeKeysDisabled: ActionGroupStory = {
+  ...Default,
+  args: {disabledKeys: ['1', '2'], items: viewItems}
+};
+
+export const StaticColorWhite: ActionGroupStory = {
+  args: {staticColor: 'white', defaultSelectedKeys: ['1'], items: viewItems},
+  render: (args) => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      {render(args)}
+    </View>
+  ),
+  storyName: 'staticColor=white'
+};
+
+export const StaticColorBlack: ActionGroupStory = {
+  args: {staticColor: 'black', defaultSelectedKeys: ['1'], items: viewItems},
+  render: (args) => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      {render(args)}
+    </View>
+  ),
+  storyName: 'staticColor=black'
+};
+
+export const WithTooltips: ActionGroupStory = {
+  args: {items: viewItems},
+  render: (args) => renderTooltips(args)
+};
+
+export const Overflow: ActionGroupStory = {
+  args: {disabledKeys: ['1', '5']},
+  render: (args) => renderOverflow(args),
+  storyName: 'overflowMode'
+};
+
+export const SummaryIcon: ActionGroupStory = {
+  ...Overflow,
+  args: {disabledKeys: ['1', '5'], summaryIcon: <TextIcon />},
+  storyName: 'summary icon overflow'
+};
+
+export const VerticalOverflow: ActionGroupStory = {
+  render: (args) => (
+    <Flex direction="column">
+      <p>Note: this is currently unsupported by Spectrum. Container should scroll.</p>
       <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-        {renderCollapsible({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%', marginBottom: 0})}
+        {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%', ...args})}
       </div>
-    )
-  )
-  .add(
-    'orientation: vertical, overflowMode: collapse, selection',
-    () => (
-      <Flex direction="column">
-        <p>Note: this is currently unsupported by Spectrum. Container should scroll.</p>
-        <div style={{padding: '10px', resize: 'vertical', overflow: 'auto', width: 32, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
-          {renderTools({orientation: 'vertical', buttonLabelBehavior: 'hide', maxHeight: '100%'})}
-        </div>
-      </Flex>
-    )
-  );
+    </Flex>
+  ),
+  storyName: 'special vertical overflow case'
+};
 
 
-function render(props, items) {
+function render(props) {
   return (
     <Flex gap="size-300" margin="size-100" width="100%" direction="column">
-      {renderText(props, items)}
-      {renderBoth(props, items)}
-      {renderIcons(props, items)}
+      {renderText(props)}
+      {renderBoth(props)}
+      {renderIcons(props)}
     </Flex>
   );
 }
 
-function renderText(props, items: any = docItems) {
+function renderText(props) {
   return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => (
-          <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-        ))
-      }
+    <ActionGroup {...props}>
+      {(item: any) => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
     </ActionGroup>
   );
 }
 
-function renderBoth(props, items: any = docItems) {
+function renderBoth(props) {
   return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-              <Text>{itemProps.children}</Text>
+    <ActionGroup {...props}>
+      {(item: any) => {
+        let IconElement = iconMap[item.children];
+        return (
+          <Item key={item.name} textValue={item.name} aria-label={item.children}>
+            <Text>{item.children}</Text>
+            <IconElement />
+          </Item>
+        );
+      }}
+    </ActionGroup>
+  );
+}
+
+function renderIcons(props) {
+  return (
+    <ActionGroup {...props}>
+      {(item: any) => {
+        let IconElement = iconMap[item.children];
+        return (
+          <Item key={item.name} textValue={item.name} aria-label={item.children}>
+            <IconElement />
+          </Item>
+        );
+      }}
+    </ActionGroup>
+  );
+}
+
+function renderTooltips(props) {
+  return (
+    <ActionGroup {...props}>
+      {(item: any) => {
+        let IconElement = iconMap[item.children];
+        return (
+          <TooltipTrigger>
+            <Item key={item.name} textValue={item.children} aria-label={item.children}>
               <IconElement />
             </Item>
-          );
-        })
-      }
+            <Tooltip>{item.children}</Tooltip>
+          </TooltipTrigger>
+        );
+      }}
     </ActionGroup>
   );
 }
 
-function renderIcons(props, items: any = docItems) {
+function renderOverflow(props) {
   return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
-              <IconElement />
-            </Item>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
-
-function renderTooltips(props, items: any = docItems) {
-  return (
-    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
-      {
-        items.map((itemProps) => {
-          let IconElement = iconMap[itemProps.children];
-          return (
-            <TooltipTrigger>
-              <Item key={itemProps.name} textValue={itemProps.children} aria-label={itemProps.children}>
-                <IconElement />
-              </Item>
-              <Tooltip>{itemProps.children}</Tooltip>
-            </TooltipTrigger>
-          );
-        })
-      }
-    </ActionGroup>
-  );
-}
-
-function renderCollapsible(props = {}) {
-  return (
-    <ActionGroup overflowMode="collapse" onAction={action('onAction')} marginBottom="size-250" {...props}>
-      <Item key="edit">
-        <DrawIcon />
-        <Text>Edit</Text>
-      </Item>
-      <Item key="copy">
-        <CopyIcon />
-        <Text>Copy</Text>
-      </Item>
-      <Item key="delete">
-        <Text>Delete</Text>
-        <DeleteIcon />
-      </Item>
-      <Item key="move">
-        <MoveIcon />
-        <Text>Move</Text>
-      </Item>
-      <Item key="duplicate">
-        <DuplicateIcon />
-        <Text>Duplicate</Text>
-      </Item>
-    </ActionGroup>
-  );
-}
-
-function renderCollapsibleText(props = {}) {
-  return (
-    <ActionGroup overflowMode="collapse" onAction={action('onAction')} {...props} marginBottom="size-250">
-      <Item key="edit">Edit</Item>
-      <Item key="copy">Copy</Item>
-      <Item key="delete">Delete</Item>
-      <Item key="move">Move</Item>
-      <Item key="duplicate">Duplicate</Item>
-    </ActionGroup>
-  );
-}
-
-function renderCollapsibleFormatting(props = {}) {
-  return (
-    <ActionGroup
-      aria-label="Text style"
-      overflowMode="collapse"
-      selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      buttonLabelBehavior="hide"
-      {...props}>
-      <Item key="bold">
-        <TagBold />
-        <Text>Bold</Text>
-      </Item>
-      <Item key="italic">
-        <TagItalic />
-        <Text>Italic</Text>
-      </Item>
-      <Item key="underline">
-        <TagUnderline />
-        <Text>Underline</Text>
-      </Item>
-      <Item key="strike">
-        <TextStrikethrough />
-        <Text>Strikethrough</Text>
-      </Item>
-    </ActionGroup>
-  );
-}
-
-function renderCollapsibleAlignment(props = {}) {
-  return (
-    <ActionGroup
-      aria-label="Text alignment"
-      overflowMode="collapse"
-      selectionMode="single"
-      defaultSelectedKeys={['left']}
-      disallowEmptySelection
-      onSelectionChange={action('onSelectionChange')}
-      buttonLabelBehavior="hide"
-      {...props}>
-      <Item key="left">
-        <TextAlignLeft />
-        <Text>Align Left</Text>
-      </Item>
-      <Item key="center">
-        <TextAlignCenter />
-        <Text>Align Center</Text>
-      </Item>
-      <Item key="right">
-        <Text>Align Right</Text>
-        <TextAlignRight />
-      </Item>
-      <Item key="justify">
-        <TextAlignJustify />
-        <Text>Justify</Text>
-      </Item>
-    </ActionGroup>
-  );
-}
-
-function renderCollapsibleAlignmentNoIcons(props = {}) {
-  return (
-    <ActionGroup
-      aria-label="Text alignment"
-      overflowMode="collapse"
-      selectionMode="single"
-      defaultSelectedKeys={['left']}
-      disallowEmptySelection
-      onSelectionChange={action('onSelectionChange')}
-      {...props}>
-      <Item key="left">Align Left</Item>
-      <Item key="center">Align Center</Item>
-      <Item key="right">Align Right</Item>
-      <Item key="justify">Justify</Item>
-    </ActionGroup>
+    <div style={{padding: '10px', resize: 'both', overflow: 'auto', width: 250, backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+      <ActionGroup {...props} summaryIcon={<TextIcon />} maxHeight="100%">
+        <Item key="1">
+          <DrawIcon />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="2">
+          <CopyIcon />
+          <Text>Copy</Text>
+        </Item>
+        <Item key="3">
+          <DeleteIcon />
+          <Text>Delete</Text>
+        </Item>
+        <Item key="4">
+          <MoveIcon />
+          <Text>Move</Text>
+        </Item>
+        <Item key="5">
+          <DuplicateIcon />
+          <Text>Duplicate</Text>
+        </Item>
+      </ActionGroup>
+    </div>
   );
 }
 

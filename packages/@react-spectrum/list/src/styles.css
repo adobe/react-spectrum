@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
 */
 
-:root {
+.react-spectrum-ListView,
+.react-spectrum-ListViewItem {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
   --spectrum-listview-item-regular-padding-y: var(--spectrum-global-dimension-size-85);
   --spectrum-listview-item-spacious-padding-y: var(--spectrum-global-dimension-size-100);
@@ -23,11 +24,39 @@
   --spectrum-listview-item-title-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-listview-item-description-text-color: var(--spectrum-global-color-gray-700);
   --spectrum-listview-item-description-text-size: var(--spectrum-global-dimension-font-size-75);
+
+  --spectrum-listview-border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
+  --spectrum-listview-border-color-key-focus: var(--spectrum-table-cell-border-color-key-focus, var(--spectrum-alias-focus-color));
+  --spectrum-listview-background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  --spectrum-listview-item-background-color-hover: var(--spectrum-table-row-background-color-hover);
+  --spectrum-listview-item-background-color-down: var(--spectrum-table-row-background-color-down);
+  --spectrum-listview-item-background-color-selected: var(--spectrum-table-row-background-color-selected);
+  --spectrum-listview-item-background-color-selected-hover: var(--spectrum-table-row-background-color-selected);
+  --spectrum-listview-item-background-color-selected-key-focus: var(--spectrum-table-row-background-color-selected-key-focus);
+  --spectrum-listview-item-border-color: var(--spectrum-table-cell-border-color, var(--spectrum-alias-border-color-mid));
+  --spectrum-listview-item-border-color-selected: var(--spectrum-global-color-blue-500);
+  --spectrum-listview-item-border-color-key-focus: var(--spectrum-table-cell-border-color-key-focus, var(--spectrum-alias-focus-color));
+  --spectrum-listview-row-sticky-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
+  --spectrum-listview-quiet-background-color: var(--spectrum-alias-background-color-transparent);
+  --spectrum-listview-item-text-color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
+  --spectrum-listview-item-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-listview-droptarget-background-color: var(--spectrum-alias-highlight-selected);
+  --spectrum-listview-dropindicator-border-color: var(--spectrum-dropindicator-border-color);
+  --spectrum-listview-dropindicator-circle-border-color: var(--spectrum-dropindicator-circle-border-color);
+
+  --spectrum-listview-dropindicator-circle-size: var(--spectrum-dropindicator-circle-size);
+  --spectrum-listview-dropindicator-border-size: var(--spectrum-dropindicator-border-size);
+
+  --spectrum-listview-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
+  --spectrum-listview-item-badge-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-listview-item-badge-background-color: var(--spectrum-global-color-blue-400);
+
+  --spectrum-listview-item-draghandle-border-color-key-focus: var(--spectrum-listview-item-border-color-key-focus);
 }
 
 .react-spectrum-ListView {
   box-sizing: border-box;
-  border-color: var(--spectrum-table-border-color, var(--spectrum-alias-border-color-mid));
+  border-color: var(--spectrum-listview-border-color);
   border-style: solid;
   position: relative;
   border-width: var(--spectrum-listview-border-width);
@@ -38,7 +67,7 @@
   border-spacing: 0;
   transform: translate3d(0, 0, 0);
   padding: 0;
-  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  background-color: var(--spectrum-listview-background-color);
   outline: 0;
   user-select: none;
 
@@ -68,23 +97,30 @@
         inset-block-start: 0;
         z-index: 3;
         pointer-events: none;
+
+        /* forced-color-adjust: none, so that box-shadow style will render */
+        forced-color-adjust: none;
       }
 
       &.is-selected {
-        background-color: var(--spectrum-table-row-background-color-selected);
+        background-color: var(--spectrum-listview-item-background-color-selected);
         &.is-hovered,
         &.is-active {
-          background-color: var(--spectrum-table-row-background-color-selected-hover);
+          background-color: var(--spectrum-listview-item-background-color-selected-hover);
         }
 
         &:focus-ring {
-          background-color: var(--spectrum-table-row-background-color-selected-key-focus);
+          background-color: var(--spectrum-listview-item-background-color-selected-key-focus);
         }
 
         /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
         &:after {
           inset-block-start: -1px;
-          box-shadow: inset 1px 0 0 0 var(--spectrum-global-color-blue-500), inset -1px 0 0 0 var(--spectrum-global-color-blue-500), inset 0 -1px 0 0 var(--spectrum-global-color-blue-500), inset 0 1px 0 0 var(--spectrum-global-color-blue-500);
+          box-shadow:
+            inset 1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+            inset -1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+            inset 0 -1px 0 0 var(--spectrum-listview-item-border-color-selected),
+            inset 0 1px 0 0 var(--spectrum-listview-item-border-color-selected);
         }
       }
 
@@ -104,7 +140,7 @@
         /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
         &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
           &:after {
-            box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
+            box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
           }
         }
 
@@ -176,13 +212,16 @@
       inset-inline-start: 0;
       width: var(--spectrum-listview-row-sticky-focus-indicator-width);
       z-index: 4;
-      background: var(--spectrum-selectlist-option-focus-indicator-color);
+      background: var(--spectrum-listview-row-sticky-focus-indicator-color);
+
+      /* forced-color-adjust: none, so that background color will render for the sticky focus indicator. */
+      forced-color-adjust: none;
     }
   }
 }
 
 .react-spectrum-ListView.react-spectrum-ListView--quiet {
-  background-color: var(--spectrum-alias-background-color-transparent);
+  background-color: var(--spectrum-listview-quiet-background-color);
   border-width: 0;
   border-radius: 0;
 
@@ -232,39 +271,39 @@
   padding: var(--spectrum-listview-item-regular-padding-y) var(--spectrum-global-dimension-size-160);
   position: relative;
   /*background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));*/
-  color: var(--spectrum-table-cell-text-color, var(--spectrum-alias-text-color));
+  color: var(--spectrum-listview-item-text-color);
   outline: 0;
   min-height: var(--spectrum-global-dimension-size-500);
 
   &.is-hovered,
   &.is-focused {
-    background-color: var(--spectrum-table-row-background-color-hover);
+    background-color: var(--spectrum-listview-item-background-color-hover);
   }
 
   &:focus-ring {
-    background-color: var(--spectrum-table-row-background-color-hover);
+    background-color: var(--spectrum-listview-item-background-color-hover);
   }
 
   &.is-active {
-    background-color: var(--spectrum-table-row-background-color-down);
+    background-color: var(--spectrum-listview-item-background-color-down);
   }
 
   &.is-selected {
-    background-color: var(--spectrum-table-row-background-color-hover);
+    background-color: var(--spectrum-listview-item-background-color-hover);
 
     &.is-hovered,
     &.is-active {
-      background-color: var(--spectrum-table-row-background-color-hover);
+      background-color: var(--spectrum-listview-item-background-color-hover);
     }
 
     &:focus-ring {
-      background-color: var(--spectrum-table-row-background-color-selected-key-focus);
+      background-color: var(--spectrum-listview-item-background-color-selected-key-focus);
     }
   }
 
   &.is-disabled {
     &, .react-spectrum-ListViewItem-content, .react-spectrum-ListViewItem-description {
-      color: var(--spectrum-alias-text-color-disabled);
+      color: var(--spectrum-listview-item-text-color-disabled);
     }
   }
 
@@ -303,8 +342,11 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
 
       &:focus-ring {
-        box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
+        box-shadow: inset 0 0 0 2px var(--spectrum-listview-item-draghandle-border-color-key-focus);
         outline: none;
+
+        /* forced-color-adjust: none, so that box-shadow style will render */
+        forced-color-adjust: none;
       }
     }
   }
@@ -395,9 +437,12 @@
 
   &.react-spectrum-ListViewItem-dragPreview {
     width: var(--spectrum-global-dimension-size-2400);
-    border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
+    border: 1px solid var(--spectrum-listview-dropzone-border-color-selected-hover);
     border-radius: var(--spectrum-alias-border-radius-regular);
-    background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+    background-color: var(--spectrum-listview-background-color);
+
+    /* forced-color-adjust: none, so that background-color style will render */
+    forced-color-adjust: none;
 
     &.react-spectrum-ListViewItem-dragPreview--compact {
       padding-top: var(--spectrum-listview-item-compact-padding-y);
@@ -418,8 +463,8 @@
 
     .react-spectrum-ListViewItem-badge {
       grid-area: badge;
-      color: white;
-      background: var(--spectrum-global-color-blue-400);
+      color: var(--spectrum-listview-item-badge-text-color);
+      background: var(--spectrum-listview-item-badge-background-color);
       padding: 0 8px;
       border-radius: var(--spectrum-alias-border-radius-regular);
     }
@@ -436,9 +481,12 @@
         inset-inline-start: 4px;
         width: 100%;
         height: 100%;
-        border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
+        border: 1px solid var(--spectrum-listview-dropzone-border-color-selected-hover);
         border-radius: var(--spectrum-alias-border-radius-regular);
-        background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+        background-color: var(--spectrum-listview-background-color);
+
+        /* forced-color-adjust: none, so that box-shadow style will render */
+        forced-color-adjust: none;
       }
     }
 
@@ -515,22 +563,28 @@
 }
 
 .react-spectrum-ListViewItem--dropTarget {
-  background-color: var(--spectrum-alias-highlight-selected);
+  background-color: var(--spectrum-listview-droptarget-background-color);
   box-shadow:
-    inset 2px 0 0 0 var(--spectrum-table-cell-border-color-key-focus),
-    inset -2px 0 0 0 var(--spectrum-table-cell-border-color-key-focus),
-    inset 0 -3px 0 0 var(--spectrum-table-cell-border-color-key-focus),
-    inset 0 2px 0 0 var(--spectrum-table-cell-border-color-key-focus);
+    inset 2px 0 0 0 var(--spectrum-listview-item-border-color-key-focus),
+    inset -2px 0 0 0 var(--spectrum-listview-item-border-color-key-focus),
+    inset 0 -3px 0 0 var(--spectrum-listview-item-border-color-key-focus),
+    inset 0 2px 0 0 var(--spectrum-listview-item-border-color-key-focus);
+
+  /* forced-color-adjust: none, so that box-shadow style will render */
+  forced-color-adjust: none;
 }
 
 .react-spectrum-ListView.react-spectrum-ListView--dropTarget {
-  border-color: var(--spectrum-global-color-blue-500);
-  background-color: var(--spectrum-alias-highlight-selected);
-  box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+  border-color: var(--spectrum-listview-border-color-key-focus);
+  background-color: var(--spectrum-listview-droptarget-background-color);
+  box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
+
+  /* forced-color-adjust: none, so that box-shadow and background color styles will render */
+  forced-color-adjust: none;
 
   /* Add border to quiet ListView only when it is a drop target */
   &.react-spectrum-ListView--quiet {
-    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus), 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+    box-shadow: inset 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus), 0 0 0 1px var(--spectrum-listview-item-border-color-key-focus);
   }
 }
 
@@ -546,36 +600,43 @@
 }
 
 .react-spectrum-ListViewInsertionIndicator {
-  width: calc(100% - (2 * var(--spectrum-dropindicator-circle-size)));
-  inset-inline-start: var(--spectrum-dropindicator-circle-size);
+  width: calc(100% - (2 * var(--spectrum-listview-dropindicator-circle-size)));
+  inset-inline-start: var(--spectrum-listview-dropindicator-circle-size);
   position: absolute;
   outline: none;
 
   &.react-spectrum-ListViewInsertionIndicator--dropTarget {
-    background: var(--spectrum-dropindicator-border-color);
-    border-bottom: 2px solid var(--spectrum-dropindicator-border-color);
+    background: var(--spectrum-listview-dropindicator-border-color);
+    border-bottom: 2px solid var(--spectrum-listview-dropindicator-border-color);
+
+    /* forced-color-adjust: none, so that background color
+    will render border for insertion indicator. */
+    forced-color-adjust: none;
 
     &:before {
-      left: calc(var(--spectrum-dropindicator-circle-size) * -1);
+      left: calc(var(--spectrum-listview-dropindicator-circle-size) * -1);
     }
 
     &:after {
-      right: calc(var(--spectrum-dropindicator-circle-size) * -1);
+      right: calc(var(--spectrum-listview-dropindicator-circle-size) * -1);
     }
 
     &:before,
     &:after {
       content: '';
       position: absolute;
-      top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
-      width: var(--spectrum-dropindicator-circle-size);
-      height: var(--spectrum-dropindicator-circle-size);
+      top: calc(var(--spectrum-listview-dropindicator-circle-size) * -1 / 2 + var(--spectrum-listview-dropindicator-border-size) / 2);
+      width: var(--spectrum-listview-dropindicator-circle-size);
+      height: var(--spectrum-listview-dropindicator-circle-size);
       border-radius: 50%;
-      border: var(--spectrum-dropindicator-border-size) solid;
+      border: var(--spectrum-listview-dropindicator-border-size) solid;
       box-sizing: border-box;
-      border-color: var(--spectrum-dropindicator-circle-border-color);
-      background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+      border-color: var(--spectrum-listview-dropindicator-circle-border-color);
+      background-color: var(--spectrum-listview-background-color);
       z-index: 5;
+
+      /* forced-color-adjust: none, so that box-shadow and background-color styles will render */
+      forced-color-adjust: none;
     }
   }
 }
@@ -599,7 +660,54 @@
 
 .react-spectrum-ListView {
   &:focus-ring {
-    border-color: var(--spectrum-global-color-blue-500);
-    box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+    border-color: var(--spectrum-listview-border-color-key-focus);
+    box-shadow: inset 0 0 0 1px var(--spectrum-listview-border-color-key-focus);
   }
+}
+
+@media (forced-colors: active) {
+  .react-spectrum-ListView,
+  .react-spectrum-ListViewItem {
+    --spectrum-listview-background-color: Canvas;
+    --spectrum-listview-item-background-color: Canvas;
+    --spectrum-listview-item-background-color-selected: Canvas;
+    --spectrum-listview-border-color-key-focus: Highlight;
+    --spectrum-listview-item-border-color: CanvasText;
+    --spectrum-listview-item-border-color-selected: Highlight;
+    --spectrum-listview-item-border-color-key-focus: Highlight;
+    --spectrum-listview-row-sticky-focus-indicator-color: Highlight;
+    --spectrum-listview-droptarget-background-color: var(--spectrum-alias-global-color-transparent);
+    --spectrum-listview-dropindicator-border-color: Highlight;
+    --spectrum-listview-dropindicator-circle-border-color: Highlight;
+    --spectrum-listview-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-listview-item-badge-text-color: HighlightText;
+    --spectrum-listview-item-badge-background-color: Highlight;
+    --spectrum-listview-item-title-text-color: CanvasText;
+    --spectrum-listview-item-description-text-color: CanvasText;
+  }
+
+  .react-spectrum-ListView-row {
+    &:focus-ring {
+      .react-spectrum-ListViewItem {
+        /* Adds a full outline style to the focused listview item to better distinguish between
+        the selected, not selected, selected + focused and selected + not focused
+        states without using a background color on the row in forced-colors: active mode. */
+        &:after {
+          outline: var(--spectrum-listview-row-sticky-focus-indicator-width) solid var(--spectrum-listview-row-sticky-focus-indicator-color);
+          outline-offset: calc(-1 * var(--spectrum-listview-row-sticky-focus-indicator-width));
+          top: calc(-1 * var(--spectrum-listview-border-width));
+          height: calc(100% + var(--spectrum-listview-border-width));
+        }
+      }
+    }
+  }
+
+  .react-spectrum-ListViewItem-draghandle-container {
+    .react-spectrum-ListViewItem-draghandle-button {
+      /* Use CanvasText, so that focus ring color on drag handle button matches
+      focus ring color for other interactive elements within the listview item. */
+      --spectrum-listview-item-draghandle-border-color-key-focus: CanvasText;
+    }
+  }
+
 }

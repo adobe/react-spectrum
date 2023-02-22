@@ -18,7 +18,7 @@ const meta: Meta = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['medium'], disableAnimations: true},
     // large delay with the layout since there are so many tables
-    chromatic: {delay: 2000}
+    chromatic: {delay: 4000}
   }
 };
 

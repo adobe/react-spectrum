@@ -48,7 +48,8 @@ let actions = {
   onBlur: action('onBlur'),
   onFocus: action('onFocus'),
   onChange: action('onChange'),
-  onSubmit: action('onSubmit')
+  onSubmit: action('onSubmit'),
+  onClear: action('onClear')
 };
 
 function Default(props) {

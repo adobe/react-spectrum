@@ -10,93 +10,212 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {GridCollection, useGridState} from '@react-stately/grid';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, useMemo} from 'react';
-import {SpectrumTagGroupProps} from '@react-types/tag';
+import {ActionButton} from '@react-spectrum/button';
+import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
+import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {ListCollection} from '@react-stately/list';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
+import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
-import {TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
-import {useGrid} from '@react-aria/grid';
-import {useListState} from '@react-stately/list';
-import {useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useFormProps} from '@react-spectrum/form';
+import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useTagGroupState} from '@react-stately/tag';
 
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+  /** The label to display on the action button.  */
+  actionLabel?: string,
+  /** Handler that is called when the action button is pressed. */
+  onAction?: () => void
+}
 
 function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     allowsRemoving,
     onRemove,
-    ...otherProps
+    maxRows,
+    children,
+    actionLabel,
+    onAction,
+    labelPosition
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let containerRef = useRef(null);
+  let tagsRef = useRef(null);
   let {direction} = useLocale();
-  let listState = useListState(props);
-  let gridCollection = useMemo(() => new GridCollection({
-    columnCount: 1, // unused, but required for grid collections
-    items: [...listState.collection].map(item => {
-      let childNodes = [{
-        ...item,
-        index: 0,
-        type: 'cell'
-      }];
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
+  let state = useTagGroupState(props);
+  let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
+  let keyboardDelegate = useMemo(() => (
+    isCollapsed
+      ? new TagKeyboardDelegate(new ListCollection([...state.collection].slice(0, tagState.visibleTagCount)), direction)
+      : new TagKeyboardDelegate(new ListCollection([...state.collection]), direction)
+  ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
+  // Remove onAction from props so it doesn't make it into useGridList.
+  delete props.onAction;
+  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
+  let actionsId = useId();
 
-      return {
-        type: 'item',
-        childNodes
+  let updateVisibleTagCount = useCallback(() => {
+    if (maxRows > 0) {
+      let computeVisibleTagCount = () => {
+        // Refs can be null at runtime.
+        let currDomRef: HTMLDivElement | null = domRef.current;
+        let currContainerRef: HTMLDivElement | null = containerRef.current;
+        let currTagsRef: HTMLDivElement | null = tagsRef.current;
+        if (!currDomRef || !currContainerRef || !currTagsRef) {
+          return;
+        }
+
+        let tags = [...currTagsRef.children];
+        let buttons = [...currContainerRef.parentElement.querySelectorAll('button')];
+        let currY = -Infinity;
+        let rowCount = 0;
+        let index = 0;
+        let tagWidths = [];
+        // Count rows and show tags until we hit the maxRows.
+        for (let tag of tags) {
+          let {width, y} = tag.getBoundingClientRect();
+
+          if (y !== currY) {
+            currY = y;
+            rowCount++;
+          }
+
+          if (rowCount > maxRows) {
+            break;
+          }
+          tagWidths.push(width);
+          index++;
+        }
+
+        // Remove tags until there is space for the collapse button and action button (if present) on the last row.
+        let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+        let end = direction === 'ltr' ? 'right' : 'left';
+        let containerEnd = currContainerRef.getBoundingClientRect()[end];
+        let lastTagEnd = tags[index - 1]?.getBoundingClientRect()[end];
+        let availableWidth = containerEnd - lastTagEnd;
+        for (let tagWidth of tagWidths.reverse()) {
+          if (availableWidth >= buttonsWidth || index <= 1 || index >= state.collection.size) {
+            break;
+          }
+          availableWidth += tagWidth;
+          index--;
+        }
+        return {visibleTagCount: index, showCollapseButton: index < state.collection.size};
       };
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [listState.collection, allowsRemoving]);
-  let state = useGridState({
-    ...props,
-    collection: gridCollection,
-    focusMode: 'cell'
-  });
-  let keyboardDelegate = new TagKeyboardDelegate({
-    collection: state.collection,
-    disabledKeys: new Set(),
-    ref: domRef,
-    direction,
-    focusMode: 'cell'
-  });
-  let {gridProps} = useGrid({
-    ...props,
-    keyboardDelegate
-  }, state, domRef);
-  const {tagGroupProps} = useTagGroup(props);
 
-  // Don't want the grid to be focusable or accessible via keyboard
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, role, ...otherGridProps} = gridProps;
+      setTagState(function *() {
+        // Update to show all items.
+        yield {visibleTagCount: state.collection.size, showCollapseButton: true};
+
+        // Measure, and update to show the items until maxRows is reached.
+        yield computeVisibleTagCount();
+      });
+    }
+  }, [maxRows, setTagState, domRef, direction, state.collection.size]);
+
+  useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(updateVisibleTagCount, [children]);
+
+  useEffect(() => {
+    // Recalculate visible tags when fonts are loaded.
+    document.fonts?.ready.then(() => updateVisibleTagCount());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  let visibleTags = [...state.collection];
+  if (maxRows != null && isCollapsed) {
+    visibleTags = visibleTags.slice(0, tagState.visibleTagCount);
+  }
+
+  let handlePressCollapse = () => {
+    // Prevents button from losing focus if focusedKey got collapsed.
+    state.selectionManager.setFocusedKey(null);
+    setIsCollapsed(prevCollapsed => !prevCollapsed);
+  };
+
+  let showActions = tagState.showCollapseButton || (actionLabel && onAction);
+
   return (
-    <div
-      {...mergeProps(styleProps, tagGroupProps, otherGridProps)}
-      className={
-        classNames(
-          styles,
-          'spectrum-Tags',
-          styleProps.className
-        )
-      }
-      role={state.collection.size ? 'grid' : null}
-      ref={domRef}>
-      {[...gridCollection].map(item => (
-        <Tag
-          {...item.childNodes[0].props}
-          key={item.key}
-          item={item}
-          state={state}
-          allowsRemoving={allowsRemoving}
-          onRemove={onRemove}>
-          {item.childNodes[0].rendered}
-        </Tag>
-        ))}
-    </div>
+    <FocusScope>
+      <Field
+        {...props}
+        labelProps={labelProps}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        showErrorIcon
+        ref={domRef}
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Tags-fieldWrapper',
+            {
+              'spectrum-Tags-fieldWrapper--positionSide': labelPosition === 'side'
+            }
+          )
+        }>
+        <div
+          ref={containerRef}>
+          <div
+            ref={tagsRef}
+            {...tagGroupProps}
+            className={classNames(styles, 'spectrum-Tags')}>
+            {visibleTags.map(item => (
+              <Tag
+                {...item.props}
+                key={item.key}
+                item={item}
+                state={state}
+                allowsRemoving={allowsRemoving}
+                onRemove={onRemove}>
+                {item.rendered}
+              </Tag>
+            ))}
+          </div>
+          {showActions &&
+            <Provider isDisabled={false}>
+              <div
+                role="group"
+                id={actionsId}
+                aria-label={stringFormatter.format('actions')}
+                aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+                className={classNames(styles, 'spectrum-Tags-actions')}>
+                {tagState.showCollapseButton &&
+                  <ActionButton
+                    isQuiet
+                    onPress={handlePressCollapse}
+                    UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                    {isCollapsed ?
+                      stringFormatter.format('showAllButtonLabel', {tagCount: state.collection.size}) :
+                      stringFormatter.format('hideButtonLabel')
+                    }
+                  </ActionButton>
+                }
+                {actionLabel && onAction &&
+                  <ActionButton
+                    isQuiet
+                    onPress={() => onAction?.()}
+                    UNSAFE_className={classNames(styles, 'spectrum-Tags-actionButton')}>
+                    {actionLabel}
+                  </ActionButton>
+                }
+              </div>
+            </Provider>
+          }
+        </div>
+      </Field>
+    </FocusScope>
   );
 }
 

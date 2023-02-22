@@ -33,4 +33,11 @@ export class Size {
     return this.width === other.width
         && this.height === other.height;
   }
+
+  /**
+   * The total area of the Size.
+   */
+  get area() {
+    return this.width * this.height;
+  }
 }

@@ -33,6 +33,10 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
+// The number of active usePreventScroll calls. Used to determine whether to revert back to the original page style/scroll position
+let preventScrollCount = 0;
+let restore;
+
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
@@ -46,11 +50,21 @@ export function usePreventScroll(options: PreventScrollOptions = {}) {
       return;
     }
 
-    if (isIOS()) {
-      return preventScrollMobileSafari();
-    } else {
-      return preventScrollStandard();
+    preventScrollCount++;
+    if (preventScrollCount === 1) {
+      if (isIOS()) {
+        restore = preventScrollMobileSafari();
+      } else {
+        restore = preventScrollStandard();
+      }
     }
+
+    return () => {
+      preventScrollCount--;
+      if (preventScrollCount === 0) {
+        restore();
+      }
+    };
   }, [isDisabled]);
 }
 
@@ -183,6 +197,7 @@ function preventScrollMobileSafari() {
   // enable us to scroll the window to the top, which is required for the rest of this to work.
   let scrollX = window.pageXOffset;
   let scrollY = window.pageYOffset;
+
   let restoreStyles = chain(
     setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
     setStyle(document.documentElement, 'overflow', 'hidden'),
@@ -212,6 +227,7 @@ function preventScrollMobileSafari() {
 function setStyle(element: HTMLElement, style: string, value: string) {
   let cur = element.style[style];
   element.style[style] = value;
+
   return () => {
     element.style[style] = cur;
   };

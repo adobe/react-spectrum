@@ -76,7 +76,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
-      'aria-orientation': role === 'toolbar' ? orientation : null,
+      'aria-orientation': role === 'toolbar' ? orientation : undefined,
       'aria-disabled': isDisabled,
       onKeyDown
     }

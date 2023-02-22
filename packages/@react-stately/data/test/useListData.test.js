@@ -209,6 +209,64 @@ describe('useListData', function () {
     expect(result.current.items[4]).toEqual({name: 'Danni'});
   });
 
+  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+    let initialResult = result.current;
+    expect(initialResult.items).toBe(initial);
+    expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    expect(initialResult.filterText).toBe('test');
+
+    act(() => {
+      result.current.insertBefore('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).toBe(initialResult.items);
+    expect(result.current.selectedKeys).toBe(initialResult.selectedKeys);
+    expect(result.current.filterText).toBe(initialResult.filterText);
+  });
+
+  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+    let initialResult = result.current;
+    expect(initialResult.items).toBe(initial);
+    expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
+    expect(initialResult.filterText).toBe('test');
+
+    act(() => {
+      result.current.insertAfter('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).toBe(initialResult.items);
+    expect(result.current.selectedKeys).toBe(initialResult.selectedKeys);
+    expect(result.current.filterText).toBe(initialResult.filterText);
+  });
+
+  it('should insert items into a empty list regardless of the target key provided (insertBefore)', function () {
+    let {result} = renderHook(() => useListData({initialItems: [], getKey}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.insertBefore('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'Devon'});
+  });
+
+  it('should insert items into a empty list regardless of the target key provided (insertAfter)', function () {
+    let {result} = renderHook(() => useListData({initialItems: [], getKey}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.insertAfter('fakeKey', {name: 'Devon'});
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual({name: 'Devon'});
+  });
+
   it('should remove an item', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
     let initialResult = result.current;

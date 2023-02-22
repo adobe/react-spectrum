@@ -798,6 +798,15 @@ function BidirectionalDnDListView(props) {
         list.moveAfter(target.key, [...keys]);
       }
     },
+    onRootDrop: async (e) => {
+      let {
+        items
+      } = e;
+      let processedItems = await Promise.all(
+        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+      );
+      list.append(...processedItems);
+    },
     /*- begin highlight -*/
     onDragEnd: (e) => {
       let {

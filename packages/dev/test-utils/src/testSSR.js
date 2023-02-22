@@ -12,6 +12,7 @@
 
 // Can't `import` babel, have to require?
 const babel = require('@babel/core');
+import {act} from '@testing-library/react';
 import {evaluate} from './ssrUtils';
 import http from 'http';
 import React from 'react';
@@ -65,7 +66,7 @@ export async function testSSR(filename, source) {
           let container = document.querySelector('#root');
           let element = evaluate(source, filename);
           if (ReactDOMClient) {
-            ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>);
+            act(() => ReactDOMClient.hydrateRoot(container, <SSRProvider>{element}</SSRProvider>));
           } else {
             ReactDOM.hydrate(<SSRProvider>{element}</SSRProvider>, container);
           }
