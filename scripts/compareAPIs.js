@@ -159,11 +159,12 @@ export async function compare(mockRoot, mockFS, {branchAPIs, publishedAPIs} = {}
     let changedByDeps = followDependencies(simplifiedName);
     let affected = followInvertedDependencies(simplifiedName, invertedDeps);
     if (diff.length > 0) {
+      let changedBy = changedByDeps.filter(dep => linkDiffs.get(dep).length > 0);
       // combine export change messages
       changes.push(`
 #### ${mockFS ? simplifiedName : simplifiedName.split('packages/')[1]}
-${changedByDeps.length > 0 ? `changed by:
-- ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
+${changedBy.length > 0 ? `changed by:
+- ${changedBy.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
 it changed:
 - ${affected.join('\n - ')}
 ` : ''}
