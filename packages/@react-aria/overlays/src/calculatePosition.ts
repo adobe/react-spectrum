@@ -89,6 +89,8 @@ const AXIS_SIZE = {
   left: 'width'
 };
 
+const ARROW_WIDTH = 8;
+
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
@@ -203,14 +205,10 @@ function computePosition(
   // add the crossOffset from props
   position[crossAxis] += crossOffset;
 
-  // button bottom touching overlay bottom
-  let bottomsTouchPosition = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossSize];
-  // button top touching overlay top
-  let topsTouchPosition = childOffset[crossAxis];
-
-  // we can't assume which one is bigger because button could be bigger than overlay and vice versa
-  const minPosition = Math.min(bottomsTouchPosition, topsTouchPosition);
-  const maxPosition = Math.max(bottomsTouchPosition, topsTouchPosition);
+  // overlay top overlapping arrow with button bottom
+  const minPosition = childOffset[crossAxis] - overlaySize[crossSize] + ARROW_WIDTH;
+  // overlay bottom overlapping arrow with button top
+  const maxPosition = childOffset[crossAxis] + childOffset[crossSize] - ARROW_WIDTH;
 
   position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
@@ -340,7 +338,18 @@ export function calculatePositionInternal(
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
-  arrowPosition[crossAxis] = (childOffset[crossAxis] - position[crossAxis] + childOffset[crossSize] / 2);
+
+  const preferredArrowPosition = overlaySize[crossSize] / 2;
+
+  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (ARROW_WIDTH / 2);
+  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (ARROW_WIDTH / 2);
+
+  const arrowMinPosition = ARROW_WIDTH / 2;
+  const arrowMaxPosition = overlaySize[crossSize] - (ARROW_WIDTH / 2);
+
+  const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
+
+  arrowPosition[crossAxis] = clamp(arrowPositionOverlappingChild, arrowMinPosition, arrowMaxPosition);
 
   return {
     position,
