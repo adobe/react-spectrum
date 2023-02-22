@@ -16,7 +16,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import {RefObject, useState} from 'react';
+import {RefObject} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -92,18 +92,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     onClose: null
   });
 
-  // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
-  // This requires a layout effect so that positioning has been committed to the DOM
-  // by the time usePreventScroll measures the element.
-  let [isPositioned, setPositioned] = useState(false);
-  useLayoutEffect(() => {
-    if (!isNonModal && placement) {
-      setPositioned(true);
-    }
-  }, [isNonModal, placement]);
-
   usePreventScroll({
-    isDisabled: isNonModal || !isPositioned
+    isDisabled: isNonModal
   });
 
   useLayoutEffect(() => {

@@ -1,7 +1,7 @@
 import {configureActions} from '@storybook/addon-actions';
 import React from 'react';
-import {VerticalCenter} from './layout';
 import {withProviderSwitcher} from './custom-addons/provider';
+import {withScrollingSwitcher} from './custom-addons/scrolling';
 import {withStrictModeSwitcher} from './custom-addons/strictmode';
 
 // decorator order matters, the last one will be the outer most
@@ -25,11 +25,7 @@ export const parameters = {
 };
 
 export const decorators = [
-  Story => (
-    <VerticalCenter style={{alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
-      <Story />
-    </VerticalCenter>
-  ),
+  withScrollingSwitcher,
   withStrictModeSwitcher,
   withProviderSwitcher
 ];
