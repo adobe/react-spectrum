@@ -147,7 +147,7 @@ async function build() {
   await replace({
     files: path.join(dir, 'packages', '**', 'api.json'),
     from: new RegExp(dir, 'g'),
-    to: '/branch'
+    to: argv.output ? '/base' : '/branch'
   });
 
   // Copy the build back into dist, and delete the temp dir.
