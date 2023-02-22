@@ -873,6 +873,11 @@ describe('SearchAutocomplete', function () {
       act(() => {
         fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         searchAutocomplete.blur();
         jest.runAllTimers();
       });
