@@ -156,6 +156,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         errorMessageProps={errorMessageProps}
         showErrorIcon
         ref={domRef}
+        elementType="span"
         UNSAFE_className={
           classNames(
             styles,
