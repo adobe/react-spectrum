@@ -15,7 +15,6 @@ import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/tag/package.json';
 
 ```jsx import
-import {Flex} from '@react-spectrum/layout';
 import {Item, TagGroup} from '@react-spectrum/tag';
 import News from '@spectrum-icons/workflow/News';
 import Airplane from '@spectrum-icons/workflow/Airplane';
@@ -44,11 +43,10 @@ keywords: [TagGroup, status]
 ## Example
 ```tsx example
 <TagGroup aria-label="Static TagGroup items example">
-  <Item>Adobe Photoshop</Item>
-  <Item>Adobe InDesign</Item>
-  <Item>Adobe AfterEffects</Item>
-  <Item>Adobe Illustrator</Item>
-  <Item>Adobe Lightroom</Item>
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
 </TagGroup>
 ```
 
@@ -61,22 +59,15 @@ See [collections](../react-stately/collections.html#unique-keys) to learn more a
 
 ```tsx example
 const items = [
-  {id: 1, name: 'Adobe Photoshop'},
-  {id: 2, name: 'Adobe XD'},
-  {id: 3, name: 'Adobe InDesign'},
-  {id: 4, name: 'Adobe AfterEffects'},
-  {id: 5, name: 'Adobe Illustrator'},
-  {id: 6, name: 'Adobe Lightroom'},
-  {id: 7, name: 'Adobe Premiere Pro'},
-  {id: 8, name: 'Adobe Fresco'},
-  {id: 9, name: 'Adobe Dreamweaver'}
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
 ];
 
-<Flex width={500}>
-  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
-    {item => <Item>{item.name}</Item>}
-  </TagGroup>
-</Flex>
+<TagGroup items={items} aria-label="Dynamic TagGroup items example">
+  {item => <Item>{item.name}</Item>}
+</TagGroup>
 ```
 
 ### Internationalization
@@ -87,12 +78,11 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 A visual label can be provided with the `label` prop. If a visual label isn't included, an `aria-label` must be provided to the TagGroup for accessibility. If the TagGroup is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
 ```tsx example
-<TagGroup label="Adobe Products">
-  <Item>Adobe Photoshop</Item>
-  <Item>Adobe InDesign</Item>
-  <Item>Adobe AfterEffects</Item>
-  <Item>Adobe Illustrator</Item>
-  <Item>Adobe Lightroom</Item>
+<TagGroup label="Categories">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
 </TagGroup>
 ```
 
@@ -103,15 +93,10 @@ Removing tags can be enabled by providing the `allowsRemoving` prop to the TagGr
 ```tsx example
 function Example() {
   let defaultItems = [
-    {id: 1, name: 'Adobe Photoshop'},
-    {id: 2, name: 'Adobe XD'},
-    {id: 3, name: 'Adobe InDesign'},
-    {id: 4, name: 'Adobe AfterEffects'},
-    {id: 5, name: 'Adobe Illustrator'},
-    {id: 6, name: 'Adobe Lightroom'},
-    {id: 7, name: 'Adobe Premiere Pro'},
-    {id: 8, name: 'Adobe Fresco'},
-    {id: 9, name: 'Adobe Dreamweaver'}
+    {id: 1, name: 'News'},
+    {id: 2, name: 'Travel'},
+    {id: 3, name: 'Gaming'},
+    {id: 4, name: 'Shopping'}
   ];
 
   let [items, setItems] = React.useState(defaultItems);
@@ -121,11 +106,9 @@ function Example() {
   };
 
   return (
-    <Flex width={500}>
-      <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
-        {item => <Item>{item.name}</Item>}
-      </TagGroup>
-    </Flex>
+    <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
+      {item => <Item>{item.name}</Item>}
+    </TagGroup>
   );
 }
 ```
@@ -197,12 +180,11 @@ For left-to-right (LTR) languages, "start" refers to the left most edge of the T
 and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<TagGroup label="Adobe Products" labelPosition="side" labelAlign="end">
-  <Item>Adobe Photoshop</Item>
-  <Item>Adobe InDesign</Item>
-  <Item>Adobe AfterEffects</Item>
-  <Item>Adobe Illustrator</Item>
-  <Item>Adobe Lightroom</Item>
+<TagGroup label="Categories" labelPosition="side" labelAlign="end">
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
 </TagGroup>
 ```
 
@@ -214,15 +196,10 @@ Both a description and an error message can be supplied to a TagGroup. The descr
 ```tsx example
 function Example() {
   let defaultItems = [
-    {id: 1, name: 'Adobe Photoshop'},
-    {id: 2, name: 'Adobe XD'},
-    {id: 3, name: 'Adobe InDesign'},
-    {id: 4, name: 'Adobe AfterEffects'},
-    {id: 5, name: 'Adobe Illustrator'},
-    {id: 6, name: 'Adobe Lightroom'},
-    {id: 7, name: 'Adobe Premiere Pro'},
-    {id: 8, name: 'Adobe Fresco'},
-    {id: 9, name: 'Adobe Dreamweaver'}
+    {id: 1, name: 'News'},
+    {id: 2, name: 'Travel'},
+    {id: 3, name: 'Gaming'},
+    {id: 4, name: 'Shopping'}
   ];
 
   let [items, setItems] = React.useState(defaultItems);
@@ -234,20 +211,18 @@ function Example() {
   let isValid = items.length <= 8;
 
   return (
-    <Flex width={500}>
-      <TagGroup
-        label="Adobe Products"
-        items={items}
-        allowsRemoving
-        onRemove={removeItem}
-        aria-label="TagGroup help text example"
-        validationState={isValid ? 'valid' : 'invalid'}
-        description="Please include tags for related Adobe products."
-        errorMessage="Must contain no more than 8 tags. Please remove some."
-        >
-        {item => <Item>{item.name}</Item>}
-      </TagGroup>
-    </Flex>
+    <TagGroup
+      label="Categories"
+      items={items}
+      allowsRemoving
+      onRemove={removeItem}
+      aria-label="TagGroup help text example"
+      validationState={isValid ? 'valid' : 'invalid'}
+      description="Please include tags for related categories."
+      errorMessage="Must contain no more than 3 tags. Please remove some."
+      >
+      {item => <Item>{item.name}</Item>}
+    </TagGroup>
   );
 }
 ```
@@ -260,17 +235,16 @@ A [ContextualHelp](ContextualHelp.html) element may be placed next to the label 
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 
 <TagGroup
-  label="Adobe Products"
+  label="Categories"
   contextualHelp={
     <ContextualHelp>
       <Heading>What are tags?</Heading>
       <Content>Tags allow users to categorize content.</Content>
     </ContextualHelp>
   }>
-  <Item>Adobe Photoshop</Item>
-  <Item>Adobe InDesign</Item>
-  <Item>Adobe AfterEffects</Item>
-  <Item>Adobe Illustrator</Item>
-  <Item>Adobe Lightroom</Item>
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
 </TagGroup>
 ```
