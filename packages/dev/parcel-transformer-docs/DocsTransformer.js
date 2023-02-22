@@ -17,7 +17,6 @@ const t = require('@babel/types');
 const doctrine = require('doctrine');
 const v8 = require('v8');
 
-
 module.exports = new Transformer({
   async transform({asset, options}) {
     let nodeCache = new Map();
@@ -26,6 +25,7 @@ module.exports = new Transformer({
     }
 
     let code = await asset.getCode();
+
     let ast = parse(code, {
       filename: this.name,
       allowReturnOutsideFunction: true,
@@ -250,13 +250,24 @@ module.exports = new Transformer({
       }
 
       if (path.isFunction() || path.isTSDeclareFunction()) {
+        let parent;
+        let id = null;
+        let name = null;
+        if (!path.node.id) {
+          parent = path?.parentPath;
+          while (parent && !parent.node.id) {
+            parent = parent.parentPath;
+          }
+          id = `${asset.filePath}:${parent.node.id.name}`;
+          name = parent.node.id.name;
+        }
         if (isReactComponent(path)) {
           let props = path.node.params[0];
           let docs = getJSDocs(path);
           return Object.assign(node, {
             type: 'component',
-            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
-            name: path.node.id ? path.node.id.name : null,
+            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : id,
+            name: path.node.id ? path.node.id.name : name,
             props: props && props.typeAnnotation
               ? processExport(path.get('params.0.typeAnnotation.typeAnnotation'))
               : null,
@@ -269,8 +280,8 @@ module.exports = new Transformer({
           let docs = getJSDocs(path);
           return Object.assign(node, addDocs({
             type: 'function',
-            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
-            name: path.node.id ? path.node.id.name : null,
+            id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : id,
+            name: path.node.id ? path.node.id.name : name,
             parameters: path.get('params').map(processParameter),
             return: path.node.returnType
               ? processExport(path.get('returnType.typeAnnotation'))
@@ -308,7 +319,8 @@ module.exports = new Transformer({
 
         return Object.assign(node, {
           type: 'identifier',
-          name: left.name + '.' + path.node.right.name
+          name: left.name + '.' + path.node.right.name,
+          ...(!node.id ? {id: `${asset.filePath}:${left.name}.${path.node.right.name}`} : {})
         });
       }
 
@@ -316,7 +328,7 @@ module.exports = new Transformer({
         asset.addDependency({
           specifier: path.parent.source.value,
           specifierType: 'esm',
-          symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
+          symbols: new Map([[path.node.imported.name, {local: path.node.local.name, isWeak: false}]]),
           pipeline: 'docs-json'
         });
 
@@ -383,6 +395,13 @@ module.exports = new Transformer({
         return Object.assign(node, {
           type: 'object',
           properties
+        });
+      }
+
+      if (path.isTSInferType()) {
+        return Object.assign(node, {
+          type: 'infer',
+          value: processExport(path.get('typeParameter'))
         });
       }
 
@@ -470,7 +489,8 @@ module.exports = new Transformer({
         if (!binding) {
           return Object.assign(node, {
             type: 'identifier',
-            name: path.node.name
+            name: path.node.name,
+            ...(!node.id ? {id: `${asset.filePath}:${path.node.name}`} : {})
           });
         }
         let bindings = processExport(binding.path, node);
@@ -624,6 +644,18 @@ module.exports = new Transformer({
           type: 'indexedAccess',
           objectType: processExport(path.get('objectType')),
           indexType: processExport(path.get('indexType'))
+        });
+      }
+
+      if (path.isTSMappedType()) {
+        return Object.assign(node, {
+          type: 'mapped',
+          readonly: path.node.readonly,
+          typeParameter: {
+            ...processExport(path.get('typeParameter')),
+            isMappedType: true
+          },
+          typeAnnotation: processExport(path.get('typeAnnotation'))
         });
       }
 

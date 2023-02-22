@@ -1,5 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DocsTransformer - API builtins writes export entry for mapped types 1`] = `
+Object {
+  "exports": Object {
+    "Mutable": Object {
+      "id": "/test/src/index.tsx:Mutable",
+      "type": "link",
+    },
+  },
+  "links": Object {
+    "/test/src/index.tsx:Mutable": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:Mutable",
+      "name": "Mutable",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "readonly": "-",
+        "type": "mapped",
+        "typeAnnotation": Object {
+          "indexType": Object {
+            "id": "/test/src/index.tsx:P",
+            "name": "P",
+            "type": "identifier",
+          },
+          "objectType": Object {
+            "id": "/test/src/index.tsx:T",
+            "name": "T",
+            "type": "identifier",
+          },
+          "type": "indexedAccess",
+        },
+        "typeParameter": Object {
+          "constraint": Object {
+            "operator": "keyof",
+            "type": "typeOperator",
+            "value": Object {
+              "id": "/test/src/index.tsx:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          },
+          "default": null,
+          "isMappedType": true,
+          "name": "P",
+          "type": "typeParameter",
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API builtins writes export entry for referenced function 1`] = `
 Object {
   "exports": Object {
@@ -86,8 +145,8 @@ exports[`DocsTransformer - API identifiers writes export entry for identifiers 1
 Object {
   "exports": Object {
     "Column": Object {
-      "id": null,
-      "name": null,
+      "id": "/test/src/column.tsx:Column",
+      "name": "Column",
       "parameters": Array [
         Object {
           "description": null,
@@ -122,6 +181,877 @@ Object {
 }
 `;
 
+exports[`DocsTransformer - API identifiers writes export entry for identifiers real file 1`] = `
+Object {
+  "exports": Object {
+    "Column": Object {
+      "id": "/test/src/src.tsx:SpectrumColumn",
+      "name": "Column",
+      "type": "variable",
+      "typeAnnotation": Object {
+        "parameters": Array [
+          Object {
+            "name": "props",
+            "rest": false,
+            "type": "parameter",
+            "value": Object {
+              "base": Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+                "type": "link",
+              },
+              "type": "application",
+              "typeParameters": Array [
+                Object {
+                  "id": "/test/src/src.tsx:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+          },
+        ],
+        "return": Object {
+          "id": "/test/src/src.tsx:JSX.Element",
+          "name": "JSX.Element",
+          "type": "identifier",
+        },
+        "type": "function",
+        "typeParameters": Array [
+          Object {
+            "constraint": null,
+            "default": null,
+            "name": "T",
+            "type": "typeParameter",
+          },
+        ],
+      },
+    },
+    "SpectrumColumnProps": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+      "name": "SpectrumColumnProps",
+      "properties": Object {
+        "align": Object {
+          "default": "'start'",
+          "description": "The alignment of the column's contents relative to its allotted width.",
+          "name": "align",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "type": "string",
+                "value": "start",
+              },
+              Object {
+                "type": "string",
+                "value": "center",
+              },
+              Object {
+                "type": "string",
+                "value": "end",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "allowsResizing": Object {
+          "default": null,
+          "description": "Whether the column allows resizing.",
+          "name": "allowsResizing",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "allowsSorting": Object {
+          "default": null,
+          "description": "Whether the column allows sorting.",
+          "name": "allowsSorting",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "childColumns": Object {
+          "default": null,
+          "description": "A list of child columns used when dynamically rendering nested child columns.",
+          "name": "childColumns",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elementType": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "array",
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "Static child columns or content to render as the column header.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "name": "ReactNode",
+                "type": "identifier",
+              },
+              Object {
+                "base": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": Array [
+                  Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              Object {
+                "elementType": Object {
+                  "base": Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": Array [
+                    Object {
+                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "defaultWidth": Object {
+          "default": null,
+          "description": "The default width of the column.",
+          "name": "defaultWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "hideHeader": Object {
+          "default": null,
+          "description": "Whether the column should hide its header text. A tooltip with the column's header text
+will be displayed when the column header is focused instead. Note that this prop is specifically for columns
+that contain ActionButtons in place of text content.",
+          "name": "hideHeader",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "isRowHeader": Object {
+          "default": null,
+          "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
+          "name": "isRowHeader",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "maxWidth": Object {
+          "default": null,
+          "description": "The maximum width of the column.",
+          "name": "maxWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "minWidth": Object {
+          "default": null,
+          "description": "The minimum width of the column.",
+          "name": "minWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "showDivider": Object {
+          "default": null,
+          "description": "Whether the column should render a divider between it and the next column.",
+          "name": "showDivider",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "textValue": Object {
+          "default": null,
+          "description": "A string representation of the column's contents, used for accessibility announcements.",
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "title": Object {
+          "default": null,
+          "description": "Rendered contents of the column if \`children\` contains child columns.",
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "width": Object {
+          "default": null,
+          "description": "The width of the column.",
+          "name": "width",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+  },
+  "links": Object {
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": Object {
+      "description": "Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
+All numbers must be integers and greater than 0.
+FR units take up remaining, if any, space in the table.",
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+      "name": "ColumnDynamicSize",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "type": "number",
+          },
+          Object {
+            "type": "string",
+            "value": "fr",
+          },
+        ],
+        "type": "template",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+      "name": "ColumnElement",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "base": Object {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": Array [
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps",
+      "name": "ColumnProps",
+      "properties": Object {
+        "allowsResizing": Object {
+          "default": null,
+          "description": "Whether the column allows resizing.",
+          "name": "allowsResizing",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "allowsSorting": Object {
+          "default": null,
+          "description": "Whether the column allows sorting.",
+          "name": "allowsSorting",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "childColumns": Object {
+          "default": null,
+          "description": "A list of child columns used when dynamically rendering nested child columns.",
+          "name": "childColumns",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elementType": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "array",
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "Static child columns or content to render as the column header.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "name": "ReactNode",
+                "type": "identifier",
+              },
+              Object {
+                "base": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": Array [
+                  Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              Object {
+                "elementType": Object {
+                  "base": Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": Array [
+                    Object {
+                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "defaultWidth": Object {
+          "default": null,
+          "description": "The default width of the column.",
+          "name": "defaultWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "isRowHeader": Object {
+          "default": null,
+          "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
+          "name": "isRowHeader",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "maxWidth": Object {
+          "default": null,
+          "description": "The maximum width of the column.",
+          "name": "maxWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "minWidth": Object {
+          "default": null,
+          "description": "The minimum width of the column.",
+          "name": "minWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "textValue": Object {
+          "default": null,
+          "description": "A string representation of the column's contents, used for accessibility announcements.",
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "title": Object {
+          "default": null,
+          "description": "Rendered contents of the column if \`children\` contains child columns.",
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "width": Object {
+          "default": null,
+          "description": "The width of the column.",
+          "name": "width",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize": Object {
+      "description": "All possible sizes a column can be assigned.",
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+      "name": "ColumnSize",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+            "type": "link",
+          },
+          Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+            "type": "link",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": Object {
+      "description": "Widths that result in a constant pixel value for the same Table width.",
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+      "name": "ColumnStaticSize",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "type": "number",
+          },
+          Object {
+            "elements": Array [
+              Object {
+                "type": "number",
+              },
+            ],
+            "type": "template",
+          },
+          Object {
+            "elements": Array [
+              Object {
+                "type": "number",
+              },
+              Object {
+                "type": "string",
+                "value": "%",
+              },
+            ],
+            "type": "template",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+      "name": "SpectrumColumnProps",
+      "properties": Object {
+        "align": Object {
+          "default": "'start'",
+          "description": "The alignment of the column's contents relative to its allotted width.",
+          "name": "align",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "type": "string",
+                "value": "start",
+              },
+              Object {
+                "type": "string",
+                "value": "center",
+              },
+              Object {
+                "type": "string",
+                "value": "end",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "allowsResizing": Object {
+          "default": null,
+          "description": "Whether the column allows resizing.",
+          "name": "allowsResizing",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "allowsSorting": Object {
+          "default": null,
+          "description": "Whether the column allows sorting.",
+          "name": "allowsSorting",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "childColumns": Object {
+          "default": null,
+          "description": "A list of child columns used when dynamically rendering nested child columns.",
+          "name": "childColumns",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elementType": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "array",
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "Static child columns or content to render as the column header.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "name": "ReactNode",
+                "type": "identifier",
+              },
+              Object {
+                "base": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": Array [
+                  Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              Object {
+                "elementType": Object {
+                  "base": Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": Array [
+                    Object {
+                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "defaultWidth": Object {
+          "default": null,
+          "description": "The default width of the column.",
+          "name": "defaultWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "hideHeader": Object {
+          "default": null,
+          "description": "Whether the column should hide its header text. A tooltip with the column's header text
+will be displayed when the column header is focused instead. Note that this prop is specifically for columns
+that contain ActionButtons in place of text content.",
+          "name": "hideHeader",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "isRowHeader": Object {
+          "default": null,
+          "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
+          "name": "isRowHeader",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "maxWidth": Object {
+          "default": null,
+          "description": "The maximum width of the column.",
+          "name": "maxWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "minWidth": Object {
+          "default": null,
+          "description": "The minimum width of the column.",
+          "name": "minWidth",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "showDivider": Object {
+          "default": null,
+          "description": "Whether the column should render a divider between it and the next column.",
+          "name": "showDivider",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "textValue": Object {
+          "default": null,
+          "description": "A string representation of the column's contents, used for accessibility announcements.",
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "title": Object {
+          "default": null,
+          "description": "Rendered contents of the column if \`children\` contains child columns.",
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "width": Object {
+          "default": null,
+          "description": "The width of the column.",
+          "name": "width",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              Object {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API interface merging merges properties when extending 1`] = `
 Object {
   "exports": Object {
@@ -136,6 +1066,7 @@ Object {
           "optional": false,
           "type": "property",
           "value": Object {
+            "id": "/test/src/index.tsx:Foo",
             "name": "Foo",
             "type": "identifier",
           },
@@ -154,6 +1085,1389 @@ Object {
       "typeParameters": Array [],
     },
   },
+  "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges properties when extending with split exports 1`] = `
+Object {
+  "exports": Object {
+    "SpectrumTagGroupProps": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:SpectrumTagGroupProps",
+      "name": "SpectrumTagGroupProps",
+      "properties": Object {
+        "actionLabel": Object {
+          "default": null,
+          "name": "actionLabel",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "allowsRemoving": Object {
+          "default": null,
+          "description": "Whether the TagGroup allows removal of tags.",
+          "name": "allowsRemoving",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "aria-describedby": Object {
+          "default": null,
+          "description": "Identifies the element (or elements) that describes the object.",
+          "name": "aria-describedby",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "aria-details": Object {
+          "default": null,
+          "description": "Identifies the element (or elements) that provide a detailed, extended description for the object.",
+          "name": "aria-details",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "aria-label": Object {
+          "default": null,
+          "description": "Defines a string value that labels the current element.",
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "aria-labelledby": Object {
+          "default": null,
+          "description": "Identifies the element (or elements) that labels the current element.",
+          "name": "aria-labelledby",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "The contents of the collection.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/test/src/index.tsx:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "description": Object {
+          "default": null,
+          "description": "A description for the field. Provides a hint such as specific requirements for what to choose.",
+          "name": "description",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "errorMessage": Object {
+          "default": null,
+          "description": "An error message for the field.",
+          "name": "errorMessage",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "id": Object {
+          "default": null,
+          "description": "The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).",
+          "name": "id",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "isDisabled": Object {
+          "default": null,
+          "description": "Whether the description is displayed with lighter text.",
+          "name": "isDisabled",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "isRequired": Object {
+          "default": null,
+          "description": "Whether user input is required on the input before form submission.
+Often paired with the \`necessityIndicator\` prop to add a visual indicator to the input.",
+          "name": "isRequired",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "items": Object {
+          "default": null,
+          "description": "Item objects in the collection.",
+          "name": "items",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/test/src/index.tsx:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "keyboardDelegate": Object {
+          "default": null,
+          "description": "An optional keyboard delegate to handle arrow key navigation,
+to override the default.",
+          "name": "keyboardDelegate",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/test/src/index.tsx:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "maxRows": Object {
+          "default": null,
+          "description": "Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags.",
+          "name": "maxRows",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "number",
+          },
+        },
+        "onAction": Object {
+          "default": null,
+          "name": "onAction",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "onRemove": Object {
+          "default": null,
+          "description": "Called when the user removes a tag.",
+          "name": "onRemove",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "validationState": Object {
+          "default": null,
+          "description": "Whether the input should display its \\"valid\\" or \\"invalid\\" visual styling.",
+          "name": "validationState",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+            "type": "link",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+  },
+  "links": Object {
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
+      "name": "TagKeyboardDelegate",
+      "properties": Object {
+        "collection": Object {
+          "access": "private",
+          "default": null,
+          "name": "collection",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "constructor": Object {
+          "default": null,
+          "name": "constructor",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "collection",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "base": Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": Array [
+                    Object {
+                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+              },
+              Object {
+                "description": null,
+                "name": "direction",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+                  "type": "link",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "direction": Object {
+          "access": "private",
+          "default": null,
+          "name": "direction",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+            "type": "link",
+          },
+        },
+        "getFirstKey": Object {
+          "default": null,
+          "name": "getFirstKey",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyAbove": Object {
+          "default": null,
+          "name": "getKeyAbove",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "type": "any",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyBelow": Object {
+          "default": null,
+          "name": "getKeyBelow",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "type": "any",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyLeftOf": Object {
+          "default": null,
+          "name": "getKeyLeftOf",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyPageAbove": Object {
+          "default": null,
+          "name": "getKeyPageAbove",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "type": "any",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyPageBelow": Object {
+          "default": null,
+          "name": "getKeyPageBelow",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "type": "any",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyRightOf": Object {
+          "default": null,
+          "name": "getKeyRightOf",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getLastKey": Object {
+          "default": null,
+          "name": "getLastKey",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection": Object {
+      "description": "A generic interface to access a readonly sequential
+collection of unique keyed items.",
+      "extends": Array [
+        Object {
+          "base": Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+            "name": "Iterable",
+            "type": "identifier",
+          },
+          "type": "application",
+          "typeParameters": Array [
+            Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          ],
+        },
+      ],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+      "name": "Collection",
+      "properties": Object {
+        "at": Object {
+          "default": null,
+          "description": "Get an item by the index of its key.",
+          "name": "at",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "idx",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "type": "number",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getFirstKey": Object {
+          "default": null,
+          "description": "Get the first key in the collection.",
+          "name": "getFirstKey",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "description": null,
+              "elements": Array [
+                Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+                Object {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getItem": Object {
+          "default": null,
+          "description": "Get an item by its key.",
+          "name": "getItem",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyAfter": Object {
+          "default": null,
+          "description": "Get the key that comes after the given key in the collection.",
+          "name": "getKeyAfter",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "elements": Array [
+                Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+                Object {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeyBefore": Object {
+          "default": null,
+          "description": "Get the key that comes before the given key in the collection.",
+          "name": "getKeyBefore",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "description": null,
+              "elements": Array [
+                Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+                Object {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getKeys": Object {
+          "default": null,
+          "description": "Iterate over all keys in the collection.",
+          "name": "getKeys",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "base": Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+                "name": "Iterable",
+                "type": "identifier",
+              },
+              "description": null,
+              "type": "application",
+              "typeParameters": Array [
+                Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "getLastKey": Object {
+          "default": null,
+          "description": "Get the last key in the collection.",
+          "name": "getLastKey",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [],
+            "return": Object {
+              "description": null,
+              "elements": Array [
+                Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+                Object {
+                  "type": "null",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
+        "size": Object {
+          "default": null,
+          "description": "The number of items in the collection.",
+          "name": "size",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "number",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+      "name": "CollectionChildren",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+          Object {
+            "elementType": Object {
+              "base": Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "type": "link",
+              },
+              "type": "application",
+              "typeParameters": Array [
+                Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "array",
+          },
+          Object {
+            "parameters": Array [
+              Object {
+                "name": "item",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "base": Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "type": "link",
+              },
+              "type": "application",
+              "typeParameters": Array [
+                Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+      "name": "CollectionElement",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+      "name": "ItemElement",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "base": Object {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": Array [
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+      "name": "ItemProps",
+      "properties": Object {
+        "aria-label": Object {
+          "default": null,
+          "description": "An accessibility label for this item.",
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "childItems": Object {
+          "default": null,
+          "description": "A list of child item objects. Used for dynamic collections.",
+          "name": "childItems",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "Rendered contents of the item or child items.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "hasChildItems": Object {
+          "default": null,
+          "description": "Whether this item has children, even if not loaded yet.",
+          "name": "hasChildItems",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "boolean",
+          },
+        },
+        "textValue": Object {
+          "default": null,
+          "description": "A string representation of the item's contents, used for features like typeahead.",
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "title": Object {
+          "default": null,
+          "description": "Rendered contents of the item if \`children\` contains child items.",
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+      "name": "ItemRenderer",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "parameters": Array [
+          Object {
+            "name": "item",
+            "rest": false,
+            "type": "parameter",
+            "value": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          },
+        ],
+        "return": Object {
+          "base": Object {
+            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+            "type": "link",
+          },
+          "type": "application",
+          "typeParameters": Array [
+            Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          ],
+        },
+        "type": "function",
+        "typeParameters": Array [],
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+      "name": "SectionElement",
+      "type": "alias",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": Object {
+        "base": Object {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": Array [
+          Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps": Object {
+      "extends": Array [],
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+      "name": "SectionProps",
+      "properties": Object {
+        "aria-label": Object {
+          "default": null,
+          "description": "An accessibility label for the section.",
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+        "children": Object {
+          "default": null,
+          "description": "Static child items or a function to render children.",
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "elements": Array [
+              Object {
+                "base": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": Array [
+                  Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              Object {
+                "elementType": Object {
+                  "base": Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": Array [
+                    Object {
+                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+              Object {
+                "base": Object {
+                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": Array [
+                  Object {
+                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "items": Object {
+          "default": null,
+          "description": "Item objects in the section.",
+          "name": "items",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "base": Object {
+              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "title": Object {
+          "default": null,
+          "description": "Rendered contents of the section, e.g. a header.",
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": Object {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [
+        Object {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+      "name": "ValidationState",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "type": "string",
+            "value": "valid",
+          },
+          Object {
+            "type": "string",
+            "value": "invalid",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction": Object {
+      "description": null,
+      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+      "name": "Direction",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "elements": Array [
+          Object {
+            "type": "string",
+            "value": "ltr",
+          },
+          Object {
+            "type": "string",
+            "value": "rtl",
+          },
+        ],
+        "type": "union",
+      },
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API interfaces can infer properties 1`] = `
+Object {
+  "exports": Object {
+    "IntrinsicHTMLAttributes": Object {
+      "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
+      "type": "link",
+    },
+  },
+  "links": Object {
+    "/test/src/index.tsx:IntrinsicHTMLAttributes": Object {
+      "description": null,
+      "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
+      "name": "IntrinsicHTMLAttributes",
+      "type": "alias",
+      "typeParameters": Array [],
+      "value": Object {
+        "type": "mapped",
+        "typeAnnotation": Object {
+          "checkType": Object {
+            "indexType": Object {
+              "id": "/test/src/index.tsx:K",
+              "name": "K",
+              "type": "identifier",
+            },
+            "objectType": Object {
+              "id": "/test/src/index.tsx:ReactDOM",
+              "name": "ReactDOM",
+              "type": "identifier",
+            },
+            "type": "indexedAccess",
+          },
+          "extendsType": Object {
+            "base": Object {
+              "id": "/test/src/index.tsx:DOMFactory",
+              "name": "DOMFactory",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": Array [
+              Object {
+                "type": "infer",
+                "value": Object {
+                  "constraint": null,
+                  "default": null,
+                  "name": "T",
+                  "type": "typeParameter",
+                },
+              },
+              Object {
+                "type": "any",
+              },
+            ],
+          },
+          "falseType": Object {
+            "type": "never",
+          },
+          "trueType": Object {
+            "id": "/test/src/index.tsx:T",
+            "name": "T",
+            "type": "identifier",
+          },
+          "type": "conditional",
+        },
+        "typeParameter": Object {
+          "constraint": Object {
+            "operator": "keyof",
+            "type": "typeOperator",
+            "value": Object {
+              "id": "/test/src/index.tsx:ReactDOM",
+              "name": "ReactDOM",
+              "type": "identifier",
+            },
+          },
+          "default": null,
+          "isMappedType": true,
+          "name": "K",
+          "type": "typeParameter",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API interfaces can omit properties 1`] = `
+Object {
+  "exports": Object {
+    "State": Object {
+      "extends": Array [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": Object {
+        "b": Object {
+          "default": null,
+          "name": "b",
+          "optional": false,
+          "type": "property",
+          "value": Object {
+            "type": "string",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": Array [],
+    },
+  },
+  "links": Object {},
+}
+`;
+
+exports[`DocsTransformer - API interfaces can pick properties 1`] = `
+Object {
+  "exports": Object {},
   "links": Object {},
 }
 `;

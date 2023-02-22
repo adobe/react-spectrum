@@ -112,6 +112,16 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('writes export entry for mapped types', async () => {
+      await writeSourceFile('index', `
+      export type Mutable<T> = {
+        -readonly[P in keyof T]: T[P]
+      };
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('components', () => {
@@ -212,6 +222,39 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('can omit properties', async () => {
+      await writeSourceFile('index', `
+    interface Foo {
+      a: number
+      b: string
+    }
+    export interface State extends Omit<Foo, 'a'> {}
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('can infer properties', async () => {
+      await writeSourceFile('index', `
+    export type IntrinsicHTMLAttributes = {
+      [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+    };
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('can pick properties', async () => {
+      await writeSourceFile('index', `
+    type IntrinsicHTMLAttributes = {
+      [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+    };
+    type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('identifiers', () => {
@@ -224,6 +267,21 @@ describe('DocsTransformer - API', () => {
     import {Column, SpectrumColumnProps} from './column';
     const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
     export {SpectrumColumn as Column};
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('writes export entry for identifiers real file', async () => {
+      await writeSourceFile('src', `
+    import {Column} from '@react-stately/table';
+    import {SpectrumColumnProps} from '@react-types/table';
+    const SpectrumColumn: <T>(props: SpectrumColumnProps<T>) => JSX.Element = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+    export {SpectrumColumn as Column};
+    export type {SpectrumColumnProps} from '@react-types/table';
+    `);
+      await writeSourceFile('index', `
+    export * from './src';
     `);
       let code = await runBuild();
       expect(code).toMatchSnapshot();
@@ -271,6 +329,19 @@ describe('DocsTransformer - API', () => {
     }
     export interface State extends Validation {
       foo: Foo
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('merges properties when extending with split exports', async () => {
+      await writeSourceFile('index', `
+    import {AriaTagGroupProps} from '@react-aria/tag';
+    import {SpectrumHelpTextProps, Validation} from '@react-types/shared';
+    export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+      actionLabel?: string,
+      onAction?: () => void
     }
     `);
       let code = await runBuild();

@@ -159,6 +159,7 @@
     "recast": "^0.20",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
+    "replace-in-file": "^6.2.0",
     "rimraf": "^2.6.3",
     "sharp": "^0.31.2",
     "sinon": "^7.3.1",

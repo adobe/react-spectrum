@@ -2,86 +2,86 @@
 
 exports[`Compare API components alphabetizes properties 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:Alphabetize
+  ### @test/parcel-test-app/src/index.tsx:Alphabetize
+  
+#### @test/parcel-test-app/src/index.tsx:Alphabetize
 +Alphabetize {
 +  bar: string
 +  foo: string
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components can add a new interface that did not previously exist 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:Foo
+  ### @test/parcel-test-app/src/index.tsx:Foo
+  
+#### @test/parcel-test-app/src/index.tsx:Foo
 +Foo {
 +  bar: number
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components can extend other interfaces 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:SpectrumToastContainerProps
+  ### @test/parcel-test-app/src/index.tsx:SpectrumToastContainerProps
+  
+#### @test/parcel-test-app/src/index.tsx:SpectrumToastContainerProps
 +SpectrumToastContainerProps {
 +  bar: number
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components can extend other interfaces with no properties 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:ComponentProps
+  ### @test/parcel-test-app/src/index.tsx:ComponentProps
+  
+#### @test/parcel-test-app/src/index.tsx:ComponentProps
 +ComponentProps extends RefObject {
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components can handle top level exported identifiers 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:theme
+  ### @test/parcel-test-app/src/index.tsx:theme
+  
+#### @test/parcel-test-app/src/index.tsx:theme
 -theme: number
 +theme: Key
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components can remove a new interface that did not previously exist 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### base/@test/parcel-test-app/src/index.tsx:Foo
+  ### @test/parcel-test-app/src/index.tsx:Foo
+  
+#### @test/parcel-test-app/src/index.tsx:Foo
 -Foo {
 -  bar: number
 -}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components compares non template to template version 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:TableColumnResizeState
+  ### @test/parcel-test-app/src/index.tsx:TableColumnResizeState
+  
+#### @test/parcel-test-app/src/index.tsx:TableColumnResizeState
 -TableColumnResizeState {
 +TableColumnResizeState<T> {
    getColumnMaxWidth: (Key) => number
@@ -96,104 +96,154 @@ exports[`Compare API components compares non template to template version 1`] = 
    widths: Map<Key, number>
  }
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components does not change parameter order 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:fooConcat
+  ### @test/parcel-test-app/src/index.tsx:fooConcat
+  
+#### @test/parcel-test-app/src/index.tsx:fooConcat
 +fooConcat {
 +  foo: string
 +  bar: string
 +  returnVal: string
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components does not change type parameter order 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:ComponentProps
+  ### @test/parcel-test-app/src/index.tsx:ComponentProps
+  
+#### @test/parcel-test-app/src/index.tsx:ComponentProps
 +ComponentProps<T, C> {
 +  bar: C
 +  foo: T
 +}
 
------------------------------------
+  -----------------------------------
+  "
+`;
+
+exports[`Compare API components follows dependencies 1`] = `
 "
+  ### @test/parcel-test-app/src/index.tsx:AppOpts
+  
+#### @test/parcel-test-app/src/index.tsx:AppOpts
+ 
+ interface AppOpts {
+-id: string
++id: number
+ }
+it changed:
+- @test/parcel-test-app/src/index.tsx:App1
+
+
+  -----------------------------------
+  "
+`;
+
+exports[`Compare API components handles mapped types 1`] = `
+"
+  ### @test/parcel-test-app/src/index.tsx:Mutable
+  
+#### @test/parcel-test-app/src/index.tsx:Mutable
++Mutable {
++  M: undefined}
+
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components handles return values 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:Bar
+  ### @test/parcel-test-app/src/index.tsx:Bar
+  
+#### @test/parcel-test-app/src/index.tsx:Bar
 +Bar {
 +  props: {
-+    val: number
-+  }
++val: number
++}
 +  returnVal: null
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components handles return values that are functions 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:Bar
+  ### @test/parcel-test-app/src/index.tsx:Bar
+  
+#### @test/parcel-test-app/src/index.tsx:Bar
 +Bar {
 +  props: {
-+    val: number
-+  }
++val: number
++}
 +  returnVal: () => void
 +}
 
------------------------------------
+  -----------------------------------
+  "
+`;
+
+exports[`Compare API components indents interface properties correctly 1`] = `
 "
+  ### @test/parcel-test-app/src/index.tsx:DateSegment
+  
+#### @test/parcel-test-app/src/index.tsx:DateSegment
++DateSegment {
++  isEditable: boolean
++  isPlaceholder: boolean
++  maxValue?: number
++  minValue?: number
++  placeholder: string
++  text: string
++  type: SegmentType
++  value?: number
++}
+
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API components writes export entry for React component 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:App1
+  ### @test/parcel-test-app/src/index.tsx:App1
+  
+#### @test/parcel-test-app/src/index.tsx:App1
  App1 {
 -  id: string
 +  id: number
  }
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API interface merging merges properties when extending 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:State
+  ### @test/parcel-test-app/src/index.tsx:State
+  
+#### @test/parcel-test-app/src/index.tsx:State
 +State {
 +  foo: Foo
 +  isValid: boolean
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API interface merging merges properties when extending with generics and Omit 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+  ### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+  
+#### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
 +SpectrumTagGroupProps<T> {
 +  actionLabel?: string
 +  errorMessage: string
@@ -202,54 +252,259 @@ exports[`Compare API interface merging merges properties when extending with gen
 +  onAction?: () => void
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API interface merging merges properties when extending with nested extends 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:State
+  ### @test/parcel-test-app/src/index.tsx:State
+  
+#### @test/parcel-test-app/src/index.tsx:State
 +State {
 +  foo: Foo
 +  isValid: boolean
 +  showErrorIcon: boolean
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API interface merging merges properties when extending with nested extends even for empty interfaces 1`] = `
 "
-### dist/branch/@test/parcel-test-app
-
-#### branch/@test/parcel-test-app/src/index.tsx:State
+  ### @test/parcel-test-app/src/index.tsx:State
+  
+#### @test/parcel-test-app/src/index.tsx:State
 +State {
 +  foo: Foo
 +  isValid: boolean
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;
 
 exports[`Compare API interface merging other packages merges properties when extending with generics from other modules 1`] = `
 "
-### dist/branch/@test/parcel-test-app
+ packages/@react-types/shared/src/collections.d.ts:ItemProps
+  
+#### packages/@react-types/shared/src/collections.d.ts:ItemProps
+-
+-interface ItemProps {
+-children: ReactNode
+-title?: ReactNode
+-textValue?: string
+-aria-label?: string
+-childItems?: Iterable<T>
+-hasChildItems?: boolean
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
 
-#### branch/@test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
-+SpectrumTagGroupProps<T> extends AriaTagGroupProps<T> {
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:ItemElement
+  
+#### packages/@react-types/shared/src/collections.d.ts:ItemElement
+-type ItemElement = {
+-  ReactElement<ItemProps<T>>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:ItemRenderer
+  
+#### packages/@react-types/shared/src/collections.d.ts:ItemRenderer
+-type ItemRenderer = {
+-  (T) => ItemElement<T>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:SectionProps
+  
+#### packages/@react-types/shared/src/collections.d.ts:SectionProps
+-
+-interface SectionProps {
+-title?: ReactNode
+-aria-label?: string
+-children: ItemElement<T> | Array<ItemElement<T>> | ItemRenderer<T>
+-items?: Iterable<T>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:SectionElement
+  
+#### packages/@react-types/shared/src/collections.d.ts:SectionElement
+-type SectionElement = {
+-  ReactElement<SectionProps<T>>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:CollectionElement
+  
+#### packages/@react-types/shared/src/collections.d.ts:CollectionElement
+-type CollectionElement = {
+-  SectionElement<T> | ItemElement<T>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:CollectionChildren
+  
+#### packages/@react-types/shared/src/collections.d.ts:CollectionChildren
+-type CollectionChildren = {
+-  CollectionElement<T> | Array<CollectionElement<T>> | (T) => CollectionElement<T>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/collections.d.ts:Collection
+  
+#### packages/@react-types/shared/src/collections.d.ts:Collection
+-
+-interface Collection extends Iterable<T> {
+-size: number
+-getKeys: () => Iterable<Key>
+-getItem: (Key) => T
+-at: (number) => T
+-getKeyBefore: (Key) => Key | null
+-getKeyAfter: (Key) => Key | null
+-getFirstKey: () => Key | null
+-getLastKey: () => Key | null
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/locale.d.ts:Direction
+  
+#### packages/@react-types/shared/src/locale.d.ts:Direction
+-type Direction = {
+-  'ltr' | 'rtl'
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
+  
+#### packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
+-
+-interface TagKeyboardDelegate {
+-constructor: (Collection<T>, Direction) => void
+-getFirstKey: () => void
+-getLastKey: () => void
+-getKeyRightOf: (Key) => void
+-getKeyLeftOf: (Key) => void
+-getKeyBelow: (any) => void
+-getKeyAbove: (any) => void
+-getKeyPageAbove: (any) => void
+-getKeyPageBelow: (any) => void
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/inputs.d.ts:ValidationState
+  
+#### packages/@react-types/shared/src/inputs.d.ts:ValidationState
+-type ValidationState = {
+-  'valid' | 'invalid'
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+  ### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+  
+#### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+changed by:
+- packages/@react-types/shared/src/collections.d.ts:ItemProps
+ packages/@react-types/shared/src/collections.d.ts:ItemElement
+ packages/@react-types/shared/src/collections.d.ts:ItemRenderer
+ packages/@react-types/shared/src/collections.d.ts:SectionProps
+ packages/@react-types/shared/src/collections.d.ts:SectionElement
+ packages/@react-types/shared/src/collections.d.ts:CollectionElement
+ packages/@react-types/shared/src/collections.d.ts:CollectionChildren
+ packages/@react-types/shared/src/collections.d.ts:Collection
+ packages/@react-types/shared/src/locale.d.ts:Direction
+ packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate
+ packages/@react-types/shared/src/inputs.d.ts:ValidationState
+
++SpectrumTagGroupProps<T> {
 +  actionLabel?: string
++  allowsRemoving?: boolean
++  aria-describedby?: string
++  aria-details?: string
++  aria-label?: string
++  aria-labelledby?: string
++  children: CollectionChildren<T>
 +  description?: ReactNode
 +  errorMessage?: ReactNode
++  id?: string
 +  isDisabled?: boolean
 +  isRequired?: boolean
++  items?: Iterable<T>
++  keyboardDelegate?: TagKeyboardDelegate<T>
++  maxRows?: number
 +  onAction?: () => void
++  onRemove?: (Key) => void
 +  validationState?: ValidationState
 +}
 
------------------------------------
-"
+  -----------------------------------
+  "
 `;

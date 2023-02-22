@@ -18,11 +18,14 @@ let argv = yargs
   .option('branch-api-dir', {type: 'string'})
   .argv;
 
-let allChanged = new Set();
+let allChanged = new Map();
 
 // {'useSliderState' => [ 'SliderStateOptions', 'SliderState' ], ... }
 let dependantOnLinks = new Map();
+let currentlyProcessing = '';
 let depth = 0;
+let linksToDiff = new Map();
+let linkDiffs = new Map();
 
 let allLinks = new Map();
 let visited = new Set();
@@ -58,12 +61,14 @@ export async function compare(mockRoot, mockFS, {branchAPIs, publishedAPIs} = {}
   if (mockFS) {
     // reset all globals if in testing mode
     fs = mockFS;
-    allChanged = new Set();
+    allChanged = new Map();
     dependantOnLinks = new Map();
     depth = 0;
 
     allLinks = new Map();
     visited = new Set();
+    linksToDiff = new Map();
+    linkDiffs = new Map();
   }
   let branchDir = argv['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = argv['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
@@ -140,40 +145,37 @@ export async function compare(mockRoot, mockFS, {branchAPIs, publishedAPIs} = {}
   for (let [, diffs] of Object.entries(allDiffs)) {
     for (let {result: diff, simplifiedName} of diffs) {
       if (diff.length > 0) {
-        if (allChanged.has(simplifiedName)) {
-          console.log(simplifiedName, 'already in set');
-        } else {
-          allChanged.add(simplifiedName);
+        if (!allChanged.has(simplifiedName)) {
+          allChanged.set(simplifiedName, {result: diff, simplifiedName});
         }
       }
     }
   }
+
   let invertedDeps = invertDependencies();
   let messages = [];
-  for (let [name, diffs] of Object.entries(allDiffs)) {
+  for (let [name, {result: diff, simplifiedName}] of allChanged.entries()) {
     let changes = [];
-    for (let {result: diff, simplifiedName} of diffs) {
-      let changedByDeps = followDependencies(simplifiedName);
-      if (diff.length > 0) {
-        let affected = followInvertedDependencies(simplifiedName, invertedDeps);
-        // combine export change messages
-        changes.push(`
+    let changedByDeps = followDependencies(simplifiedName);
+    let affected = followInvertedDependencies(simplifiedName, invertedDeps);
+    if (diff.length > 0) {
+      // combine export change messages
+      changes.push(`
 #### ${mockFS ? simplifiedName : simplifiedName.split('packages/')[1]}
 ${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
+- ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.length > 0 ? diff : ''}${affected.length > 0 ? `
 it changed:
- - ${affected.join('\n - ')}
+- ${affected.join('\n - ')}
 ` : ''}
 `);
-      }
     }
     if (changes.length > 0) {
       // combine the package change messages
       messages.push(`
-### ${name.replace('/dist/api.json', '').replace(/^\//, '')}
-${changes.join('\n')}
------------------------------------
-`
+  ### ${name.replace('/dist/api.json', '').replace(/^\//, '')}
+  ${changes.join('\n')}
+  -----------------------------------
+  `
       );
     }
   }
@@ -191,6 +193,7 @@ ${changes.join('\n')}
 function followDependencies(iname) {
   let visited = new Set();
   let changedDeps = [];
+  let exportName = iname;
   function visit(iname) {
     if (visited.has(iname)) {
       return;
@@ -199,14 +202,14 @@ function followDependencies(iname) {
     let dependencies = dependantOnLinks.get(iname);
     if (dependencies && dependencies.length > 0) {
       for (let dep of dependencies) {
-        if (allChanged.has(dep)) {
+        if (linkDiffs.has(dep)) {
           changedDeps.push(dep);
         }
         visit(dep);
       }
     }
   }
-  visit(iname);
+  visit(exportName);
   return changedDeps;
 }
 
@@ -255,6 +258,38 @@ function getAPI(filePath) {
   return json;
 }
 
+function condenseDiff(codeDiff, baseText, mockFS) {
+  if (argv.verbose) {
+    console.log(util.inspect(codeDiff, {depth: null}));
+  }
+  let result = [];
+  let prevEnd = 1; // diff lines are 1 indexed
+  let lines = (baseText ?? '').split('\n');
+  codeDiff.hunks.forEach(hunk => {
+    if (hunk.oldStart > prevEnd) {
+      result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
+    }
+    if (argv.isCI || mockFS) {
+      result = [...result, ...hunk.lines];
+    } else {
+      result = [...result, ...hunk.lines.map(line => {
+        if (line.startsWith('+')) {
+          return chalk.whiteBright.bgGreen(line);
+        } else if (line.startsWith('-')) {
+          return chalk.whiteBright.bgRed(line);
+        }
+        return line;
+      })];
+    }
+    prevEnd = hunk.oldStart + hunk.oldLines;
+  });
+  let joinedResult = '';
+  if (codeDiff.hunks.length > 0) {
+    joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+  }
+  return {joinedResult: joinedResult.replace(/\n.*No newline at end of file/, ''), result};
+}
+
 // bulk of the logic, read the api files, rebuild the interfaces, diff those reconstructions
 function getDiff(pair, mockFS) {
   let name;
@@ -270,8 +305,8 @@ function getDiff(pair, mockFS) {
   if (argv.verbose) {
     console.log(`diffing ${name}`);
   }
-  let publishedApi = pair.pubApi === null ? {exports: {}} : getAPI(pair.pubApi);
-  let branchApi = pair.branchApi === null ? {exports: {}} : getAPI(pair.branchApi);
+  let publishedApi = pair.pubApi === null ? {exports: {}, links: {}} : getAPI(pair.pubApi);
+  let branchApi = pair.branchApi === null ? {exports: {}, links: {}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
   let formattedPublishedInterfaces = formatInterfaces(publishedInterfaces);
@@ -279,43 +314,33 @@ function getDiff(pair, mockFS) {
   let allExportNames = new Map([...Object.entries(publishedApi.exports).map(([key, val]) => [key, val.id]), ...Object.entries(branchApi.exports).map(([key, val]) => [key, val.id])]);
   let allInterfaces = [...new Set([...Object.keys(formattedPublishedInterfaces), ...Object.keys(formattedBranchInterfaces)])];
 
-
   let diffs = [];
+
+  let diffLinks = [...(linksToDiff.entries())];
+  let pairLinks = [...diffLinks.reduce((acc, [key, value]) => {
+    let pkg = key.replace(/(.*)(branch|base)\/(.*)/, '$3');
+    let isBranch = key.includes('/branch/');
+    if (acc.has(pkg)) {
+      acc.set(pkg, {[isBranch ? 'branch' : 'base']: value, ...acc.get(pkg)});
+    } else {
+      acc.set(pkg, {[isBranch ? 'branch' : 'base']: value});
+    }
+    return acc;
+  }, new Map()).entries()];
+  pairLinks.forEach(([key, value]) => {
+    let codeDiff = Diff.structuredPatch(key, key, value.base ?? '', value.branch ?? '', {newlineIsToken: true});
+    let {joinedResult, result} = condenseDiff(codeDiff, value.base, mockFS);
+    linkDiffs.set(key, joinedResult);
+    diffs.push({result: joinedResult, simplifiedName: key});
+  });
+
   allInterfaces.forEach((iname) => {
     if (argv.interface && argv.interface !== iname) {
       return;
     }
-    let simplifiedName = allExportNames.get(iname);
+    let simplifiedName = allExportNames.get(iname).replace(/(.*)(branch|base)\/(.*)/, '$3');
     let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[iname] ?? '', formattedBranchInterfaces[iname] ?? '', {newlineIsToken: true});
-    if (argv.verbose) {
-      console.log(util.inspect(codeDiff, {depth: null}));
-    }
-    let result = [];
-    let prevEnd = 1; // diff lines are 1 indexed
-    let lines = (formattedPublishedInterfaces[iname] ?? '').split('\n');
-    codeDiff.hunks.forEach(hunk => {
-      if (hunk.oldStart > prevEnd) {
-        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
-      }
-      if (argv.isCI || mockFS) {
-        result = [...result, ...hunk.lines];
-      } else {
-        result = [...result, ...hunk.lines.map(line => {
-          if (line.startsWith('+')) {
-            return chalk.whiteBright.bgGreen(line);
-          } else if (line.startsWith('-')) {
-            return chalk.whiteBright.bgRed(line);
-          }
-          return line;
-        })];
-      }
-      prevEnd = hunk.oldStart + hunk.oldLines;
-    });
-    let joinedResult = '';
-    if (codeDiff.hunks.length > 0) {
-      joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
-    }
-    joinedResult = joinedResult.replace(/\n.*No newline at end of file/, '');
+    let {joinedResult, result} = condenseDiff(codeDiff, formattedPublishedInterfaces[iname], mockFS);
 
     if (argv.isCI && result.length > 0) {
       joinedResult = `\`\`\`diff
@@ -343,7 +368,7 @@ function processType(value) {
 // "rendering" our types to a string instead of React components
 function _processType(value) {
   if (!value) {
-    console.trace('UNTYPED', value);
+    //console.trace('UNTYPED', value);
     return 'UNTYPED';
   }
 
@@ -402,6 +427,12 @@ function _processType(value) {
     }
     return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
   }
+  if (value.type === 'template') {
+    return `\`${value.elements.map(element => element.type === 'string' ? element.value : `\${${processType(element)}}`).join('')}\``;
+  }
+  if (value.type === 'infer') {
+    return `infer ${value.value}`;
+  }
   if (value.type === 'typeOperator') {
     return `${value.operator} ${processType(value.value)}`;
   }
@@ -416,39 +447,53 @@ function _processType(value) {
     if (!type) {
       console.log(value.id, type);
     }
+    if (!linksToDiff.has(value.id)) {
+      let result = processType(type);
+      linksToDiff.set(value.id, result);
+    }
+    let exportName = value.id.replace(/(.*)(branch|base)\/(.*)/, '$3');
+    if (dependantOnLinks.has(currentlyProcessing)) {
+      let allDeps = dependantOnLinks.get(currentlyProcessing);
+      if (!allDeps.includes(exportName)) {
+        allDeps.push(exportName);
+      }
+    } else {
+      dependantOnLinks.set(currentlyProcessing, [exportName]);
+    }
     return allLinks.get(value.id).name;
   }
   if (value.type === 'interface') {
     return `
-interface ${value.name}${value.extends ? ` extends ${value.extends.map(processType).join(', ')}` : ''} {
-  ${Object.values(value.properties).filter(property => property.access !== 'private' && property.access !== 'protected').map(property => {
-    depth += 2;
-    let result = ' '.repeat(depth);
-    result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
-    depth -= 2;
-    return result;
-  }).join('\n')}
+interface ${value.name}${value.extends.length > 0 ? ` extends ${value.extends.map(processType).join(', ')}` : ''} {
+${Object.values(value.properties).filter(property => property.access !== 'private' && property.access !== 'protected').map(property => {
+  let result = ' '.repeat(depth);
+  result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
+  return result;
+}).join('\n')}
 }
 `;
   }
   // interface still needed if we have it at top level?
   if (value.type === 'object') {
     if (value.properties) {
-      depth += 2;
       let result = `${value.exact ? '{\\' : '{'}
-  ${Object.values(value.properties).map(property => {
-    let result = ' '.repeat(depth);
-    result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
-    return result;
-  }).join('\n')}
+${Object.values(value.properties).map(property => {
+  let result = ' '.repeat(depth);
+  result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
+  return result;
+}).join('\n')}
 ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
-      depth -= 2;
       return result;
     }
     return '{}';
   }
   if (value.type === 'alias') {
-    return processType(value.value);
+    return `type ${value.name} = {
+  ${processType(value.value)}
+}`;
+  }
+  if (value.type === 'mapped') {
+    return `${value.readonly ? '-readonly' : ''}${processType(value.typeParameter)}: ${processType(value.typeAnnotation)}`;
   }
   if (value.type === 'array') {
     return `Array<${processType(value.elementType)}>`;
@@ -458,11 +503,15 @@ ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
   }
   if (value.type === 'typeParameter') {
     let typeParam = value.name;
-    if (value.constraint) {
-      typeParam = typeParam + ` extends ${processType(value.constraint)}`;
-    }
-    if (value.default) {
-      typeParam = typeParam + ` = ${processType(value.default)}`;
+    if (value.isMappedType) {
+      typeParam = `[${typeParam} ${processType(value.constraint)}]`;
+    } else {
+      if (value.constraint) {
+        typeParam = typeParam + ` extends ${processType(value.constraint)}`;
+      }
+      if (value.default) {
+        typeParam = typeParam + ` = ${processType(value.default)}`;
+      }
     }
     return typeParam;
   }
@@ -496,10 +545,14 @@ ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
 function rebuildInterfaces(json) {
   let exports = {};
   if (!json.exports) {
+    console.log(json)
     return exports;
   }
+  if (!json.links) {
+    console.log(json)
+  }
 
-  Object.keys(json.exports).forEach((key) => {
+  [...(json.exports ? Object.keys(json.exports) : {}), ...(json.links ? Object.keys(json.links) : {})].forEach((key) => {
     let item = json.exports[key];
     if (item?.type == null) {
       // todo what to do here??
@@ -509,6 +562,10 @@ function rebuildInterfaces(json) {
       // todo what to do here??
       return;
     }
+    if (!json.exports[key].id) {
+      return;
+    }
+    currentlyProcessing = key.includes(':') ? key.replace(/(.*)(branch|base)\/(.*)/, '$3') : json.exports[key].id.replace(/(.*)(branch|base)\/(.*)/, '$3');
     if (item.type === 'component') {
       let compInterface = {};
       if (item.props && item.props.properties) {

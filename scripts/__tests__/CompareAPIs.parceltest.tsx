@@ -138,7 +138,42 @@ describe('Compare API', () => {
       await writeSourceFile('base', 'index.tsx', `
       import React from 'react';
 
-      export function App1(props: {id: string}) {
+      export function App1(props: {id: string}): JSX.Element {
+        return <div />;
+      }
+      `);
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
+
+    it('follows dependencies', async () => {
+      await writeSourceFile('branch', 'index.tsx', `
+      import React from 'react';
+      interface AppOpts {
+        id: number;
+      }
+      interface AppProps {
+        opts: AppOpts;
+      }
+      export function App1(props: AppProps): JSX.Element {
+        return <div />;
+      }
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index.tsx', `
+      import React from 'react';
+      interface AppOpts {
+        id: string;
+      }
+      interface AppProps {
+        opts: AppOpts;
+      }
+      export function App1(props: AppProps): JSX.Element {
         return <div />;
       }
       `);
@@ -377,6 +412,55 @@ describe('Compare API', () => {
       let result = await doCompare();
       expect(result).toMatchSnapshot();
     }, 50000);
+
+    it('handles mapped types', async () => {
+      await writeSourceFile('branch', 'index.tsx', `
+      export type Mutable<T> = {
+        -readonly[P in keyof T]: T[P]
+      };
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index.tsx', '');
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
+
+    it('indents interface properties correctly', async () => {
+      await writeSourceFile('branch', 'index.tsx', `
+export interface DateSegment {
+  /** The type of segment. */
+  type: SegmentType,
+  /** The formatted text for the segment. */
+  text: string,
+  /** The numeric value for the segment, if applicable. */
+  value?: number,
+  /** The minimum numeric value for the segment, if applicable. */
+  minValue?: number,
+  /** The maximum numeric value for the segment, if applicable. */
+  maxValue?: number,
+  /** Whether the value is a placeholder. */
+  isPlaceholder: boolean,
+  /** A placeholder string for the segment. */
+  placeholder: string,
+  /** Whether the segment is editable. */
+  isEditable: boolean
+}
+      `);
+
+      await runBranchBuild();
+
+      await writeSourceFile('base', 'index.tsx', '');
+
+      await runPublishedBuild();
+
+      let result = await doCompare();
+      expect(result).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('interface merging', () => {
@@ -491,7 +575,7 @@ describe('Compare API', () => {
     // }
     // `, '@react-types-test', 'tag');
         await writeSourceFile('branch', 'index.tsx', `
-    import {AriaTagGroupProps} from '@react-types/tag';
+    import {AriaTagGroupProps} from '@react-aria/tag';
     import {SpectrumHelpTextProps, Validation} from '@react-types/shared';
     export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
       actionLabel?: string,

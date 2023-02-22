@@ -17,6 +17,7 @@ const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
 let yargs = require('yargs');
+const replace = require('replace-in-file');
 
 
 let argv = yargs
@@ -187,13 +188,18 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   // dev/docs/node_modules has some react spectrum components, we don't want those, and i couldn't figure out how to not build them
   // it probably means two different versions, so there may be a bug lurking here
   fs.removeSync(path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
+  await replace({
+    files: path.join(dir, 'packages', '**', 'api.json'),
+    from: new RegExp(dir, 'g'),
+    to: '/base'
+  });
   fs.copySync(path.join(dir, 'packages'), distDir);
   fs.removeSync(dir);
 }

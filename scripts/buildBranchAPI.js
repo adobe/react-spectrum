@@ -16,6 +16,7 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
+const replace = require('replace-in-file');
 let yargs = require('yargs');
 
 
@@ -143,6 +144,11 @@ async function build() {
   // Build the website
   console.log('building api files');
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
+  await replace({
+    files: path.join(dir, 'packages', '**', 'api.json'),
+    from: new RegExp(dir, 'g'),
+    to: '/branch'
+  });
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});

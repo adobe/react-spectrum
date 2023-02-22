@@ -77,9 +77,17 @@ module.exports = new Packager({
       let keyStack = [];
       return walk(obj, (t, k, recurse) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
-          let res = bundleGraph.getResolvedAsset(dep, bundle);
-          let result = res ? processAsset(res)[t.imported] : null;
+          // re-exporting in a named export may split the dependency, so we need to find the correct one
+          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier && d.symbols.hasExportSymbol(t.imported));
+          if (!dep) {
+            return {
+              type: 'identifier',
+              name: t.local
+            };
+          }
+          let resAsset = bundleGraph.getResolvedAsset(dep, bundle);
+          let res = bundleGraph.getSymbolResolution(resAsset, t.imported, bundle);
+          let result = res ? processAsset(res.asset)[res.exportSymbol] : null;
           if (result) {
             t = result;
           } else {
