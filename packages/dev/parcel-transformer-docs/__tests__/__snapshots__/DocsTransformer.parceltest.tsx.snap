@@ -196,7 +196,7 @@ Object {
             "type": "parameter",
             "value": Object {
               "base": Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+                "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
                 "type": "link",
               },
               "type": "application",
@@ -228,7 +228,7 @@ Object {
     },
     "SpectrumColumnProps": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+      "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
       "name": "SpectrumColumnProps",
       "properties": Object {
         "align": Object {
@@ -283,7 +283,7 @@ Object {
           "type": "property",
           "value": Object {
             "elementType": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -304,13 +304,13 @@ Object {
               },
               Object {
                 "base": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
                 "typeParameters": Array [
                   Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
@@ -319,13 +319,13 @@ Object {
               Object {
                 "elementType": Object {
                   "base": Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
                   "typeParameters": Array [
                     Object {
-                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
                     },
@@ -346,7 +346,7 @@ Object {
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -387,7 +387,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -406,7 +406,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -456,7 +456,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -479,11 +479,11 @@ that contain ActionButtons in place of text content.",
     },
   },
   "links": Object {
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": Object {
       "description": "Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
 All numbers must be integers and greater than 0.
 FR units take up remaining, if any, space in the table.",
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
       "name": "ColumnDynamicSize",
       "type": "alias",
       "typeParameters": Array [],
@@ -500,9 +500,9 @@ FR units take up remaining, if any, space in the table.",
         "type": "template",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnElement": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
       "name": "ColumnElement",
       "type": "alias",
       "typeParameters": Array [
@@ -522,13 +522,13 @@ FR units take up remaining, if any, space in the table.",
         "typeParameters": Array [
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps",
+              "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                "id": "/packages/@react-types/table/src/index.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -537,9 +537,9 @@ FR units take up remaining, if any, space in the table.",
         ],
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnProps": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnProps",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
       "name": "ColumnProps",
       "properties": Object {
         "allowsResizing": Object {
@@ -570,7 +570,7 @@ FR units take up remaining, if any, space in the table.",
           "type": "property",
           "value": Object {
             "elementType": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -591,13 +591,13 @@ FR units take up remaining, if any, space in the table.",
               },
               Object {
                 "base": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
                 "typeParameters": Array [
                   Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
@@ -606,13 +606,13 @@ FR units take up remaining, if any, space in the table.",
               Object {
                 "elementType": Object {
                   "base": Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
                   "typeParameters": Array [
                     Object {
-                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
                     },
@@ -633,7 +633,7 @@ FR units take up remaining, if any, space in the table.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -662,7 +662,7 @@ FR units take up remaining, if any, space in the table.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -681,7 +681,7 @@ FR units take up remaining, if any, space in the table.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -721,7 +721,7 @@ FR units take up remaining, if any, space in the table.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -742,29 +742,29 @@ FR units take up remaining, if any, space in the table.",
         },
       ],
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnSize": Object {
       "description": "All possible sizes a column can be assigned.",
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
       "name": "ColumnSize",
       "type": "alias",
       "typeParameters": Array [],
       "value": Object {
         "elements": Array [
           Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+            "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
             "type": "link",
           },
           Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+            "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
             "type": "link",
           },
         ],
         "type": "union",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": Object {
+    "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": Object {
       "description": "Widths that result in a constant pixel value for the same Table width.",
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
       "name": "ColumnStaticSize",
       "type": "alias",
       "typeParameters": Array [],
@@ -797,9 +797,9 @@ FR units take up remaining, if any, space in the table.",
         "type": "union",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps": Object {
+    "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+      "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
       "name": "SpectrumColumnProps",
       "properties": Object {
         "align": Object {
@@ -854,7 +854,7 @@ FR units take up remaining, if any, space in the table.",
           "type": "property",
           "value": Object {
             "elementType": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+              "id": "/packages/@react-types/table/src/index.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -875,13 +875,13 @@ FR units take up remaining, if any, space in the table.",
               },
               Object {
                 "base": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                   "type": "link",
                 },
                 "type": "application",
                 "typeParameters": Array [
                   Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                    "id": "/packages/@react-types/table/src/index.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
@@ -890,13 +890,13 @@ FR units take up remaining, if any, space in the table.",
               Object {
                 "elementType": Object {
                   "base": Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
                     "type": "link",
                   },
                   "type": "application",
                   "typeParameters": Array [
                     Object {
-                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:T",
+                      "id": "/packages/@react-types/table/src/index.d.ts:T",
                       "name": "T",
                       "type": "identifier",
                     },
@@ -917,7 +917,7 @@ FR units take up remaining, if any, space in the table.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -958,7 +958,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -977,7 +977,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
                 "type": "link",
               },
               Object {
@@ -1027,7 +1027,7 @@ that contain ActionButtons in place of text content.",
           "value": Object {
             "elements": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
                 "type": "link",
               },
               Object {
@@ -1164,7 +1164,7 @@ Object {
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
               "type": "link",
             },
             "type": "application",
@@ -1238,7 +1238,7 @@ Often paired with the \`necessityIndicator\` prop to add a visual indicator to t
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
@@ -1261,7 +1261,7 @@ to override the default.",
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
+              "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
               "type": "link",
             },
             "type": "application",
@@ -1333,7 +1333,7 @@ to override the default.",
           "optional": true,
           "type": "property",
           "value": Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+            "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
             "type": "link",
           },
         },
@@ -1350,9 +1350,9 @@ to override the default.",
     },
   },
   "links": Object {
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": Object {
+    "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
+      "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:TagKeyboardDelegate",
       "name": "TagKeyboardDelegate",
       "properties": Object {
         "collection": Object {
@@ -1363,13 +1363,13 @@ to override the default.",
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
+                "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -1389,13 +1389,13 @@ to override the default.",
                 "type": "parameter",
                 "value": Object {
                   "base": Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
                     "type": "link",
                   },
                   "type": "application",
                   "typeParameters": Array [
                     Object {
-                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
+                      "id": "/packages/@react-aria/tag/src/TagKeyboardDelegate.ts:T",
                       "name": "T",
                       "type": "identifier",
                     },
@@ -1408,7 +1408,7 @@ to override the default.",
                 "rest": false,
                 "type": "parameter",
                 "value": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+                  "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
                   "type": "link",
                 },
               },
@@ -1428,7 +1428,7 @@ to override the default.",
           "optional": false,
           "type": "property",
           "value": Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+            "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
             "type": "link",
           },
         },
@@ -1617,27 +1617,27 @@ to override the default.",
         },
       ],
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:Collection": Object {
       "description": "A generic interface to access a readonly sequential
 collection of unique keyed items.",
       "extends": Array [
         Object {
           "base": Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+            "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
             "name": "Iterable",
             "type": "identifier",
           },
           "type": "application",
           "typeParameters": Array [
             Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
           ],
         },
       ],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Collection",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:Collection",
       "name": "Collection",
       "properties": Object {
         "at": Object {
@@ -1659,7 +1659,7 @@ collection of unique keyed items.",
             ],
             "return": Object {
               "description": null,
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -1711,7 +1711,7 @@ collection of unique keyed items.",
             ],
             "return": Object {
               "description": null,
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -1798,7 +1798,7 @@ collection of unique keyed items.",
             "parameters": Array [],
             "return": Object {
               "base": Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
                 "name": "Iterable",
                 "type": "identifier",
               },
@@ -1860,9 +1860,9 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
       "name": "CollectionChildren",
       "type": "alias",
       "typeParameters": Array [
@@ -1877,13 +1877,13 @@ collection of unique keyed items.",
         "elements": Array [
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -1892,13 +1892,13 @@ collection of unique keyed items.",
           Object {
             "elementType": Object {
               "base": Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
                 "type": "link",
               },
               "type": "application",
               "typeParameters": Array [
                 Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
                 },
@@ -1913,7 +1913,7 @@ collection of unique keyed items.",
                 "rest": false,
                 "type": "parameter",
                 "value": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
                 },
@@ -1921,13 +1921,13 @@ collection of unique keyed items.",
             ],
             "return": Object {
               "base": Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
                 "type": "link",
               },
               "type": "application",
               "typeParameters": Array [
                 Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                   "name": "T",
                   "type": "identifier",
                 },
@@ -1940,9 +1940,9 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionElement": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
       "name": "CollectionElement",
       "type": "alias",
       "typeParameters": Array [
@@ -1957,13 +1957,13 @@ collection of unique keyed items.",
         "elements": Array [
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -1971,13 +1971,13 @@ collection of unique keyed items.",
           },
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -1987,9 +1987,9 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:ItemElement": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
       "name": "ItemElement",
       "type": "alias",
       "typeParameters": Array [
@@ -2009,13 +2009,13 @@ collection of unique keyed items.",
         "typeParameters": Array [
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -2024,9 +2024,9 @@ collection of unique keyed items.",
         ],
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:ItemProps": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
       "name": "ItemProps",
       "properties": Object {
         "aria-label": Object {
@@ -2047,14 +2047,14 @@ collection of unique keyed items.",
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -2114,9 +2114,9 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
       "name": "ItemRenderer",
       "type": "alias",
       "typeParameters": Array [
@@ -2134,7 +2134,7 @@ collection of unique keyed items.",
             "rest": false,
             "type": "parameter",
             "value": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -2142,13 +2142,13 @@ collection of unique keyed items.",
         ],
         "return": Object {
           "base": Object {
-            "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+            "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
             "type": "link",
           },
           "type": "application",
           "typeParameters": Array [
             Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
               "name": "T",
               "type": "identifier",
             },
@@ -2158,9 +2158,9 @@ collection of unique keyed items.",
         "typeParameters": Array [],
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:SectionElement": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
       "name": "SectionElement",
       "type": "alias",
       "typeParameters": Array [
@@ -2180,13 +2180,13 @@ collection of unique keyed items.",
         "typeParameters": Array [
           Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
               "type": "link",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -2195,9 +2195,9 @@ collection of unique keyed items.",
         ],
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps": Object {
+    "/packages/@react-types/shared/src/collections.d.ts:SectionProps": Object {
       "extends": Array [],
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+      "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
       "name": "SectionProps",
       "properties": Object {
         "aria-label": Object {
@@ -2220,13 +2220,13 @@ collection of unique keyed items.",
             "elements": Array [
               Object {
                 "base": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
                   "type": "link",
                 },
                 "type": "application",
                 "typeParameters": Array [
                   Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
@@ -2235,13 +2235,13 @@ collection of unique keyed items.",
               Object {
                 "elementType": Object {
                   "base": Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
                     "type": "link",
                   },
                   "type": "application",
                   "typeParameters": Array [
                     Object {
-                      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                      "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                       "name": "T",
                       "type": "identifier",
                     },
@@ -2251,13 +2251,13 @@ collection of unique keyed items.",
               },
               Object {
                 "base": Object {
-                  "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
                   "type": "link",
                 },
                 "type": "application",
                 "typeParameters": Array [
                   Object {
-                    "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                     "name": "T",
                     "type": "identifier",
                   },
@@ -2275,14 +2275,14 @@ collection of unique keyed items.",
           "type": "property",
           "value": Object {
             "base": Object {
-              "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
               "name": "Iterable",
               "type": "identifier",
             },
             "type": "application",
             "typeParameters": Array [
               Object {
-                "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/collections.d.ts:T",
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
                 "name": "T",
                 "type": "identifier",
               },
@@ -2311,9 +2311,9 @@ collection of unique keyed items.",
         },
       ],
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState": Object {
+    "/packages/@react-types/shared/src/inputs.d.ts:ValidationState": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+      "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
       "name": "ValidationState",
       "type": "alias",
       "typeParameters": Array [],
@@ -2331,9 +2331,9 @@ collection of unique keyed items.",
         "type": "union",
       },
     },
-    "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction": Object {
+    "/packages/@react-types/shared/src/locale.d.ts:Direction": Object {
       "description": null,
-      "id": "/Users/robsnow/GitProjects/tsdiff-work/react-spectrum/packages/@react-types/shared/src/locale.d.ts:Direction",
+      "id": "/packages/@react-types/shared/src/locale.d.ts:Direction",
       "name": "Direction",
       "type": "alias",
       "typeParameters": Array [],

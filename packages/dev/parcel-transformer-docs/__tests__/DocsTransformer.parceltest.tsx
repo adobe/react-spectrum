@@ -71,7 +71,9 @@ describe('DocsTransformer - API', () => {
     // i was unable to find a jest matcher that could handle Object keys that varied, finding matches for the value was easy
     // "/Users/username/parcel/packages/test/src/index.tsx:Foo" -> "/test/src/index.tsx:Foo"
     const code = JSON.parse(
-      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8').replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
+      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8')
+        .replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
+        .replace(/(")(\/.*)(\/packages\/.*?")/g, '$1$3')
     );
     return code;
   }
