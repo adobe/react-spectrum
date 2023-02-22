@@ -130,21 +130,17 @@ Adding or subtracting a duration that goes beyond the limits of a particular fie
 
 ### Parsing durations
 
-Duration can often be expressed as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string (e.g. 'P3Y6M4DT12H30M5S'). The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can parse [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration strings that are expressed with decimals (using commas or periods) as well as negative values.
+The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert a [ISO 8601 duration string](https://en.wikipedia.org/wiki/ISO_8601#Durations) into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The smallest time unit may include decimal values written with a comma or period, and negative values can be written by prefixing the entire string with a minus sign.
 
 ```tsx
-let durationString = 'P3Y6M6W4DT12H30M5S'
-let duration = parseDuration(durationString)
-// => duration = {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5}
+parseDuration('P3Y6M6W4DT12H30M5S');
+// => {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5}
 
-let durationString = '-P3Y6M6W4DT12H30M5S'
-let duration = parseDuration(durationString)
-// => duration = {years: -3, months: -6, weeks: -6, days: -4, hours: -12, minutes: -30, seconds: -5}
+parseDuration('-P3Y6M6W4DT12H30M5S');
+// => {years: -3, months: -6, weeks: -6, days: -4, hours: -12, minutes: -30, seconds: -5}
 
-let durationString = 'P3Y6M6W4DT12H30M5.5S'
-let duration = parseDuration(durationString)
-// => duration = {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5.5}
-
+parseDuration('P3Y6M6W4DT12H30M5.5S');
+// => {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5.5}
 ```
 
 ### Setting fields

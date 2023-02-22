@@ -76,23 +76,18 @@ Adding or subtracting a duration that goes beyond the limits of a particular fie
 
 ### Parsing durations
 
-Duration can often be expressed as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string (e.g. 'PT20H35M15S'). The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration string into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can parse [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration strings that are expressed with decimals (using commas or periods), in negative values, or with strings that only contain time values (hours, minutes, seconds).
+The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert a [ISO 8601 duration string](https://en.wikipedia.org/wiki/ISO_8601#Durations) into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The smallest time unit may include decimal values written with a comma or period, and negative values can be written by prefixing the entire string with a minus sign.
 
 ```tsx
-let durationString = 'PT20H35M15S'
-let duration = parseDuration(durationString)
-// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: 20, minutes: 35, seconds: 15}
+parseDuration('PT20H35M15S')
+// => {hours: 20, minutes: 35, seconds: 15}
 
-let durationString = '-PT20H35M15S'
-let duration = parseDuration(durationString)
-// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: -20, minutes: -35, seconds: -15}
+parseDuration('-PT20H35M15S')
+// =>  {hours: -20, minutes: -35, seconds: -15}
 
-let durationString = 'PT20H35M15,75S'
-let duration = parseDuration(durationString)
-// => duration = {years: 0, months: 0, weeks: 0, days: 0, hours: 20, minutes: 35, seconds: 15.75}
-
+parseDuration('PT20H35M15,75S')
+// => {hours: 20, minutes: 35, seconds: 15.75}
 ```
-
 
 ### Setting fields
 
