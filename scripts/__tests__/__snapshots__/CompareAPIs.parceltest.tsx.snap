@@ -153,7 +153,8 @@ exports[`Compare API components handles mapped types 1`] = `
   
 #### @test/parcel-test-app/src/index.tsx:Mutable
 +Mutable {
-+  M: undefined}
++  -readonly[P in keyof T]: T[P]
++}
 
   -----------------------------------
   "

@@ -493,7 +493,7 @@ ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
 }`;
   }
   if (value.type === 'mapped') {
-    return `${value.readonly ? '-readonly' : ''}${processType(value.typeParameter)}: ${processType(value.typeAnnotation)}`;
+    return `${value.readonly === '-' ? '-readonly' : ''}${processType(value.typeParameter)}: ${processType(value.typeAnnotation)}`;
   }
   if (value.type === 'array') {
     return `Array<${processType(value.elementType)}>`;
@@ -503,8 +503,8 @@ ${value.exact ? '\\}' : `${' '.repeat(depth)}}`}`;
   }
   if (value.type === 'typeParameter') {
     let typeParam = value.name;
-    if (value.isMappedType) {
-      typeParam = `[${typeParam} ${processType(value.constraint)}]`;
+    if (value.isMappedType && value.constraint) {
+      typeParam = `[${typeParam} in ${processType(value.constraint)}]`;
     } else {
       if (value.constraint) {
         typeParam = typeParam + ` extends ${processType(value.constraint)}`;
@@ -678,9 +678,9 @@ function formatInterfaces(interfaces) {
     if (val.kind === 'type') {
       output = `${name} {\n`;
       depth += 2;
-      output += `${' '.repeat(depth)}${formatProp(name, val)}`;
+      output += `${' '.repeat(depth)}${val.value}`;
       depth -= 2;
-      result[id] = `${output}${' '.repeat(depth)}}\n`;
+      result[id] = `${output}\n${' '.repeat(depth)}}\n`;
     } else if (val.kind === 'identifier') {
       output = val.value;
       result[id] = `${output}\n`;

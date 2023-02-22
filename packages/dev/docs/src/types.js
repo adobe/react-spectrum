@@ -134,6 +134,10 @@ export function Type({type}) {
       return <Keyof {...type} />;
     case 'template':
       return <TemplateLiteral {...type} />;
+    case 'infer':
+      return <Infer {...type} />;
+    case 'mapped':
+      return <Mapped {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -166,6 +170,25 @@ function Symbol() {
 
 function Keyof({keyof}) {
   return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
+}
+
+function Infer({value}) {
+  return <span><Keyword type="infer" />{' '}<Type type={value} /></span>;
+}
+
+function Mapped({readonly, typeParameter, typeAnnotation}) {
+  const startObject = <span className="token punctuation">{'{'}</span>;
+  const endObject = <span className="token punctuation">{'}'}</span>;
+  return (
+    <>
+      {startObject}
+      <div style={{paddingLeft: '1.5em'}}>
+        {readonly && <span className="token punctuation">-readonly</span>}
+        <Type type={typeParameter} />: <Type type={typeAnnotation} />
+      </div>
+      {endObject}
+    </>
+  );
 }
 
 function Keyword({type}) {
@@ -310,7 +333,22 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, constraint, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType, isMappedType}) {
+  if (isMappedType && constraint) {
+    return (
+      <>
+        <span className="token punctuation">{'['}</span>
+        <span className="token hljs-name">{name}</span>
+        <>
+          {' '}
+          <span className="token hljs-keyword">in</span>
+          {' '}
+          <Type type={constraint} />
+        </>
+        <span className="token punctuation">{']'}</span>
+      </>
+    );
+  }
   return (
     <>
       <span className="token hljs-name">{name}</span>
