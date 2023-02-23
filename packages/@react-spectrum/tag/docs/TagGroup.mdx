@@ -22,6 +22,7 @@ import Airplane from '@spectrum-icons/workflow/Airplane';
 import Game from '@spectrum-icons/workflow/Game';
 import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
 import {Text} from '@react-spectrum/text';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -88,6 +89,7 @@ An `aria-label` must be provided to the TagGroup for accessibility. If the TagGr
 
 ## Events
 
+### onRemove
 Removing tags can be enabled by providing the `allowsRemoving` prop to the TagGroup. TagGroup will pass the key of the removed item to the `onRemove` handler as shown below.
 
 ```tsx example
@@ -96,12 +98,7 @@ function Example() {
     {id: 1, name: 'Adobe Photoshop'},
     {id: 2, name: 'Adobe XD'},
     {id: 3, name: 'Adobe InDesign'},
-    {id: 4, name: 'Adobe AfterEffects'},
-    {id: 5, name: 'Adobe Illustrator'},
-    {id: 6, name: 'Adobe Lightroom'},
-    {id: 7, name: 'Adobe Premiere Pro'},
-    {id: 8, name: 'Adobe Fresco'},
-    {id: 9, name: 'Adobe Dreamweaver'}
+    {id: 4, name: 'Adobe AfterEffects'}
   ];
 
   let [items, setItems] = React.useState(defaultItems);
@@ -112,12 +109,37 @@ function Example() {
 
   return (
     <Flex width={500}>
-      <TagGroup items={items} allowsRemoving onRemove={removeItem} aria-label="Removable TagGroup example">
+      <TagGroup
+        items={items}
+        /*- begin highlight -*/
+        allowsRemoving
+        onRemove={removeItem}
+        /*- end highlight -*/
+        aria-label="Removable TagGroup example">
         {item => <Item>{item.name}</Item>}
       </TagGroup>
     </Flex>
   );
 }
+```
+
+### onAction
+
+TagGroup supports an `onAction` handler that, when used with the `actionLabel` prop, will add an action button at the end of the tags that can be used to perform a custom action.
+
+```tsx example
+<TagGroup
+  /*- begin highlight -*/
+  actionLabel="Clear"
+  onAction={() => alert('Clear action pressed.')}
+  /*- end highlight -*/
+  aria-label="TagGroup with action">
+  <Item>Adobe Photoshop</Item>
+  <Item>Adobe InDesign</Item>
+  <Item>Adobe AfterEffects</Item>
+  <Item>Adobe Illustrator</Item>
+  <Item>Adobe Lightroom</Item>
+</TagGroup>
 ```
 
 ## Props
@@ -153,4 +175,27 @@ function Example() {
     <Text>Shopping</Text>
   </Item>
 </TagGroup>
+```
+
+### Limit rows
+
+TagGroup supports a `maxRows` prop that will limit the number of rows initially shown. This will add an action button that can be pressed to show the remaining tags.
+
+```tsx example
+<View maxWidth="size-3400" minHeight="size-2400" padding="size-150" borderWidth="thin" borderColor="dark" borderRadius="medium">
+  <TagGroup
+    /*- begin highlight -*/
+    maxRows={3}
+    /*- end highlight -*/
+    aria-label="Static TagGroup items example with maxRows set">
+    <Item>Adobe Photoshop</Item>
+    <Item>Adobe InDesign</Item>
+    <Item>Adobe AfterEffects</Item>
+    <Item>Adobe Illustrator</Item>
+    <Item>Adobe Lightroom</Item>
+    <Item>Adobe Premiere Pro</Item>
+    <Item>Adobe Fresco</Item>
+    <Item>Adobe Dreamweaver</Item>
+  </TagGroup>
+</View>
 ```
