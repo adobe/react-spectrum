@@ -305,12 +305,16 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let header = new LayoutInfo('header', node.key + ':header', headerRect);
     header.estimatedSize = isEstimated;
     header.parentKey = node.key;
-    y += header.rect.height;
 
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
+    // TODO: offset the startY of the first row item in the section by the header's height. Moving this line here
+    // also makes the section layout info encompass the header and the child rows instead of assuming the header will be placed outside
+    // the actual section div
+    // Maybe make GridListLayout so this is only done for TableView/ListView? At the moment this will affect ListBox
+    y += header.rect.height;
     let skipped = 0;
     let children = [];
     for (let child of node.childNodes) {

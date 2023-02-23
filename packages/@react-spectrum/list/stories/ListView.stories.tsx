@@ -26,7 +26,7 @@ import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useEffect, useState} from 'react';
 import RemoveCircle from '@spectrum-icons/workflow/RemoveCircle';
 import {storiesOf} from '@storybook/react';
-import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 
 const parameters = {
@@ -174,12 +174,12 @@ storiesOf('ListView', module)
   ))
   .add('with sections', args => (
     <ListView width="250px" aria-label="default ListView" {...args}>
-      <Section key="test1" title="test1">
+      <Section key="section1" title="Section One">
         <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
         <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
         <Item textValue="Adobe XD">Adobe XD</Item>
       </Section>
-      <Section key="test2" title="test2">
+      <Section key="section2" title="Section Two">
         <Item textValue="1">1</Item>
         <Item textValue="2">2</Item>
         <Item textValue="3">3</Item>
@@ -547,19 +547,19 @@ storiesOf('ListView/Drag and Drop/Util Handlers', module)
         }} />
     ), {description: {data: 'The first list should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second list should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either list if accompanied by other valid drag items.'}}
   )
-  .add(
-    'sections complex',
-    args => (
-      <DnDSections
-        listViewProps={args}
-        firstListDnDOptions={{
-          onDragStart: action('dragStartList1')
-        }}
-        secondListDnDOptions={{
-          onDragStart: action('dragStartList2')
-        }} />
-    )
-  )
+  // .add(
+  //   'sections complex',
+  //   args => (
+  //     <DnDSections
+  //       listViewProps={args}
+  //       firstListDnDOptions={{
+  //         onDragStart: action('dragStartList1')
+  //       }}
+  //       secondListDnDOptions={{
+  //         onDragStart: action('dragStartList2')
+  //       }} />
+  //   )
+  // )
   .add(
     'using getDropOperations to determine default drop operation',
     args => (
@@ -2221,297 +2221,294 @@ function DragBetweenListsOverride(props) {
   );
 }
 
-let folderList1Section = [
-  {identifier: 'a', type: 'section', name: 'Section 1', childNodes: [
-    {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
-    {identifier: '2', type: 'file', name: 'Adobe XD'},
-    {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
-  ]},
-  {identifier: 'b', type: 'section', name: 'Section 2', childNodes: [
-    {identifier: '4', type: 'file', name: 'Adobe InDesign'},
-    {identifier: '5', type: 'folder', name: 'Utilities', childNodes: []},
-    {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
-  ]}
-];
+// let folderList1Section = [
+//   {identifier: 'a', type: 'section', name: 'Section 1', childNodes: [
+//     {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
+//     {identifier: '2', type: 'file', name: 'Adobe XD'},
+//     {identifier: '3', type: 'folder', name: 'Documents', childNodes: []}
+//   ]},
+//   {identifier: 'b', type: 'section', name: 'Section 2', childNodes: [
+//     {identifier: '4', type: 'file', name: 'Adobe InDesign'},
+//     {identifier: '5', type: 'folder', name: 'Utilities', childNodes: []},
+//     {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
+//   ]}
+// ];
 
-let folderList2Section = [
-  {identifier: 'c', type: 'section', name: 'Section 3', childNodes: [
-    {identifier: '7', type: 'folder', name: 'Pictures', childNodes: []},
-    {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-    {identifier: '9', type: 'folder', name: 'Apps', childNodes: []},
-    {identifier: '10', type: 'file', name: 'Adobe Illustrator'}
-  ]},
-  {identifier: 'd', type: 'section', name: 'Section 4', childNodes: [
-    {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
-    {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
-    {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
-  ]}
-];
+// let folderList2Section = [
+//   {identifier: 'c', type: 'section', name: 'Section 3', childNodes: [
+//     {identifier: '7', type: 'folder', name: 'Pictures', childNodes: []},
+//     {identifier: '8', type: 'file', name: 'Adobe Fresco'},
+//     {identifier: '9', type: 'folder', name: 'Apps', childNodes: []},
+//     {identifier: '10', type: 'file', name: 'Adobe Illustrator'}
+//   ]},
+//   {identifier: 'd', type: 'section', name: 'Section 4', childNodes: [
+//     {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
+//     {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
+//     {identifier: '13', type: 'unique_type', name: 'invalid drag item'}
+//   ]}
+// ];
 
 // TODO update the dnd portion to work with useTreeData
-function DnDSections(props) {
-  let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
-  let list1 = useTreeData({
-    initialItems: folderList1Section,
-    getKey: (item) => {
-      return item.identifier;
-    },
-    getChildren: (item) => {
-      return item?.childNodes;
-    }
-  });
+// function DnDSections(props) {
+//   let {listViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+//   let list1 = useTreeData({
+//     initialItems: folderList1Section,
+//     getKey: (item) => {
+//       return item.identifier;
+//     },
+//     getChildren: (item) => {
+//       return item?.childNodes;
+//     }
+//   });
 
-  let list2 = useTreeData({
-    initialItems: folderList2Section,
-    getKey: (item) => {
-      return item.identifier;
-    },
-    getChildren: (item) => {
-      return item?.childNodes;
-    }
-  });
-  let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  /**
-   * TODO: list of dnd bugs with sections:
-    1. Need to adapt the below handlers and stuff to work with sections/useTreeData
-    2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
-    some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
-    At the moment, I cannot drop after the last element in a section, the next drop indicator is in the next section before its first item.
-    3. Mouse drag and drop is borked, maybe because of sections being recognized as drop target? Looks to be that the section and header is considered
-    an item, ideally we'd disallow those. Maybe somethingin getAllowedDropOperation or something we should automatically detect in ListDropTargetDelegate/drop hooks
-  **/
+//   let list2 = useTreeData({
+//     initialItems: folderList2Section,
+//     getKey: (item) => {
+//       return item.identifier;
+//     },
+//     getChildren: (item) => {
+//       return item?.childNodes;
+//     }
+//   });
+//   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
+//   /**
+//     TODO: List of dnd bugs with sections.
+//     1. Need to adapt the below handlers and stuff to work with sections/useTreeData.
+//     2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
+//     some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
+//     At the moment, I cannot drop after the last element in a section, the next drop indicator is in the next section before its first item.
+//     3. Mouse drag and drop is borked, maybe because of sections being recognized as drop target? Looks to be that the section and header is considered
+//     an item, ideally we'd disallow those. Maybe somethingin getAllowedDropOperation or something we should automatically detect in ListDropTargetDelegate/drop hooks
+//   **/
 
-  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
-  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key);
-      return {
-        [`${item.value.type}`]: JSON.stringify(item),
-        'text/plain': JSON.stringify(item)
-      };
-    }),
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      action('onInsertList1')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+//   // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
+//   let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
+//     getItems: (keys) => [...keys].map(key => {
+//       let item = list1.getItem(key);
+//       return {
+//         [`${item.value.type}`]: JSON.stringify(item),
+//         'text/plain': JSON.stringify(item)
+//       };
+//     }),
+//     onInsert: async (e) => {
+//       let {
+//         items,
+//         target
+//       } = e;
+//       action('onInsertList1')(e);
+//       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
-      if (target.dropPosition === 'before') {
-        list1.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        list1.insertAfter(target.key, ...processedItems);
-      }
+//       if (target.dropPosition === 'before') {
+//         list1.insertBefore(target.key, ...processedItems);
+//       } else if (target.dropPosition === 'after') {
+//         list1.insertAfter(target.key, ...processedItems);
+//       }
 
-    },
-    onRootDrop: async (e) => {
-      action('onRootDropList1')(e);
-      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list1.append(...processedItems);
-    },
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
-      action('onItemDropList1')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(target.key);
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+//     },
+//     onRootDrop: async (e) => {
+//       action('onRootDropList1')(e);
+//       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+//       list1.append(...processedItems);
+//     },
+//     onItemDrop: async (e) => {
+//       let {
+//         items,
+//         target,
+//         isInternal,
+//         dropOperation
+//       } = e;
+//       action('onItemDropList1')(e);
+//       let processedItems = await itemProcessor(items, acceptedDragTypes);
+//       let targetItem = list1.getItem(target.key);
+//       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternal && dropOperation === 'move') {
-        // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
-        // TODO: dig into other libraries to see how they handle this
-        let keysToRemove = processedItems.map(item => item.identifier);
-        list1.remove(...keysToRemove);
-      }
-    },
-    acceptedDragTypes,
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
-      action('onDragEndList1')(e);
-      if (dropOperation === 'move' && !isInternal) {
-        list1.remove(...keys);
-      }
-    },
-    getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).value.childNodes,
-    ...firstListDnDOptions
-  });
+//       if (isInternal && dropOperation === 'move') {
+//         let keysToRemove = processedItems.map(item => item.identifier);
+//         list1.remove(...keysToRemove);
+//       }
+//     },
+//     acceptedDragTypes,
+//     onDragEnd: (e) => {
+//       let {
+//         dropOperation,
+//         isInternal,
+//         keys
+//       } = e;
+//       action('onDragEndList1')(e);
+//       if (dropOperation === 'move' && !isInternal) {
+//         list1.remove(...keys);
+//       }
+//     },
+//     getAllowedDropOperations: () => ['move', 'copy'],
+//     shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).value.childNodes,
+//     ...firstListDnDOptions
+//   });
 
-  // List 2 should allow reordering, on folder drops, and on root drops
-  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => {
-      let item = list2.getItem(key);
-      let dragItem = {};
-      let itemString = JSON.stringify(item);
-      dragItem[`${item.value.type}`] = itemString;
-      if (item.value.type !== 'unique_type') {
-        dragItem['text/plain'] = itemString;
-      }
+//   // List 2 should allow reordering, on folder drops, and on root drops
+//   let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
+//     getItems: (keys) => [...keys].map(key => {
+//       let item = list2.getItem(key);
+//       let dragItem = {};
+//       let itemString = JSON.stringify(item);
+//       dragItem[`${item.value.type}`] = itemString;
+//       if (item.value.type !== 'unique_type') {
+//         dragItem['text/plain'] = itemString;
+//       }
 
-      return dragItem;
-    }),
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      action('onInsertList2')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
+//       return dragItem;
+//     }),
+//     onInsert: async (e) => {
+//       let {
+//         items,
+//         target
+//       } = e;
+//       action('onInsertList2')(e);
+//       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
-      if (target.dropPosition === 'before') {
-        list2.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        list2.insertAfter(target.key, ...processedItems);
-      }
-    },
-    onReorder: async (e) => {
-      let {
-        keys,
-        target,
-        dropOperation
-      } = e;
-      action('onReorderList2')(e);
+//       if (target.dropPosition === 'before') {
+//         list2.insertBefore(target.key, ...processedItems);
+//       } else if (target.dropPosition === 'after') {
+//         list2.insertAfter(target.key, ...processedItems);
+//       }
+//     },
+//     onReorder: async (e) => {
+//       let {
+//         keys,
+//         target,
+//         dropOperation
+//       } = e;
+//       action('onReorderList2')(e);
 
-      let itemsToCopy = [];
-      if (dropOperation === 'copy') {
-        for (let key of keys) {
-          let item = {...list2.getItem(key)};
-          item.value.identifier = Math.random().toString(36).slice(2);
-          itemsToCopy.push(item);
-        }
-      }
+//       let itemsToCopy = [];
+//       if (dropOperation === 'copy') {
+//         for (let key of keys) {
+//           let item = {...list2.getItem(key)};
+//           item.value.identifier = Math.random().toString(36).slice(2);
+//           itemsToCopy.push(item);
+//         }
+//       }
 
-      if (target.dropPosition === 'before') {
-        if (dropOperation === 'move') {
-          // TODO: update with useTreeData move
-          // list2.moveBefore(target.key, [...keys]);
-        } else if (dropOperation === 'copy') {
-          list2.insertBefore(target.key, ...itemsToCopy);
-        }
-      } else if (target.dropPosition === 'after') {
-        if (dropOperation === 'move') {
-           // TODO: update with useTreeData move
-          // list2.moveAfter(target.key, [...keys]);
-        } else if (dropOperation === 'copy') {
-          list2.insertAfter(target.key, ...itemsToCopy);
-        }
-      }
-    },
-    onRootDrop: async (e) => {
-      action('onRootDropList2')(e);
-      let processedItems = await itemProcessor(e.items, acceptedDragTypes);
-      list2.prepend(...processedItems);
-    },
-    onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
-      action('onItemDropList2')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(target.key);
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+//       if (target.dropPosition === 'before') {
+//         if (dropOperation === 'move') {
+//           // TODO: update with useTreeData move
+//           // list2.moveBefore(target.key, [...keys]);
+//         } else if (dropOperation === 'copy') {
+//           list2.insertBefore(target.key, ...itemsToCopy);
+//         }
+//       } else if (target.dropPosition === 'after') {
+//         if (dropOperation === 'move') {
+//            // TODO: update with useTreeData move
+//           // list2.moveAfter(target.key, [...keys]);
+//         } else if (dropOperation === 'copy') {
+//           list2.insertAfter(target.key, ...itemsToCopy);
+//         }
+//       }
+//     },
+//     onRootDrop: async (e) => {
+//       action('onRootDropList2')(e);
+//       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
+//       list2.prepend(...processedItems);
+//     },
+//     onItemDrop: async (e) => {
+//       let {
+//         items,
+//         target,
+//         isInternal,
+//         dropOperation
+//       } = e;
+//       action('onItemDropList2')(e);
+//       let processedItems = await itemProcessor(items, acceptedDragTypes);
+//       let targetItem = list2.getItem(target.key);
+//       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
-        list2.remove(...keysToRemove);
-      }
-    },
-    acceptedDragTypes,
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        isInternal,
-        keys
-      } = e;
-      action('onDragEndList2')(e);
-      if (dropOperation === 'move' && !isInternal) {
-        let keysToRemove = [...keys].filter(key => list2.getItem(key).value.type !== 'unique_type');
-        list2.remove(...keysToRemove);
-      }
-    },
-    getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => {
-      // TODO: figure this out so that it disallows drops on header and section
-      // Perhaps useDroppableCollection and useDroppableCOllectionState should handle this? Maybe the drop delegate should
-      // not assign the type as a item for those nodes
-      console.log('target in should accept', target, list2.getItem(target.key));
-      let item = list2.getItem(target.key);
-      return !!item && !(item.value.type === 'section' && target.dropPosition === 'on') && !!list2.getItem(target.key).value.childNodes
-    },
-    ...secondListDnDOptions
-  });
+//       if (isInternal && dropOperation === 'move') {
+//         let keysToRemove = processedItems.map(item => item.identifier);
+//         list2.remove(...keysToRemove);
+//       }
+//     },
+//     acceptedDragTypes,
+//     onDragEnd: (e) => {
+//       let {
+//         dropOperation,
+//         isInternal,
+//         keys
+//       } = e;
+//       action('onDragEndList2')(e);
+//       if (dropOperation === 'move' && !isInternal) {
+//         let keysToRemove = [...keys].filter(key => list2.getItem(key).value.type !== 'unique_type');
+//         list2.remove(...keysToRemove);
+//       }
+//     },
+//     getAllowedDropOperations: () => ['move', 'copy'],
+//     shouldAcceptItemDrop: (target) => {
+//       // TODO: figure this out so that it disallows drops on header and section
+//       // Perhaps useDroppableCollection and useDroppableCOllectionState should handle this? Maybe the drop delegate should
+//       // not assign the type as a item for those nodes
+//       let item = list2.getItem(target.key);
+//       return !!item && !(item.value.type === 'section' && target.dropPosition === 'on') && !!list2.getItem(target.key).value.childNodes
+//     },
+//     ...secondListDnDOptions
+//   });
 
 
-  return (
-    <Flex wrap gap="size-300">
-      <ListView
-        aria-label="First ListView in drag between list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={list1.items}
-        {...listViewProps}
-        dragAndDropHooks={dragAndDropHooksList1}>
-        {(item: any) => {
-          return (
-            <Section key={item.value.identifier} items={item.children} title={item.value.name}>
-              {(item: any) => (
-                <Item textValue={item.value.name} key={item.value.identifier}>
-                  <Text>{item.value.name}</Text>
-                  {item.value.type === 'folder' &&
-                    <>
-                      <Folder />
-                      <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
-                    </>
-                  }
-                </Item>
-              )}
-            </Section>
-          );
-        }}
-      </ListView>
-      <ListView
-        aria-label="Second ListView in drag between list example"
-        selectionMode="multiple"
-        width="size-3600"
-        height="size-3600"
-        items={list2.items}
-        {...listViewProps}
-        dragAndDropHooks={dragAndDropHooksList2}
-        {...props}>
-        {(item: any) => {
-          return (
-            <Section key={item.value.identifier} items={item.children} title={item.value.name}>
-              {(item: any) => (
-                <Item textValue={item.value.name} key={item.value.identifier}>
-                  <Text>{item.value.name}</Text>
-                  {item.value.type === 'folder' &&
-                    <>
-                      <Folder />
-                      <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
-                    </>
-                  }
-                </Item>
-              )}
-            </Section>
-          );
-        }}
-      </ListView>
-    </Flex>
-  );
-}
+//   return (
+//     <Flex wrap gap="size-300">
+//       <ListView
+//         aria-label="First ListView in drag between list example"
+//         selectionMode="multiple"
+//         width="size-3600"
+//         height="size-3600"
+//         items={list1.items}
+//         {...listViewProps}
+//         dragAndDropHooks={dragAndDropHooksList1}>
+//         {(item: any) => {
+//           return (
+//             <Section key={item.value.identifier} items={item.children} title={item.value.name}>
+//               {(item: any) => (
+//                 <Item textValue={item.value.name} key={item.value.identifier}>
+//                   <Text>{item.value.name}</Text>
+//                   {item.value.type === 'folder' &&
+//                     <>
+//                       <Folder />
+//                       <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
+//                     </>
+//                   }
+//                 </Item>
+//               )}
+//             </Section>
+//           );
+//         }}
+//       </ListView>
+//       <ListView
+//         aria-label="Second ListView in drag between list example"
+//         selectionMode="multiple"
+//         width="size-3600"
+//         height="size-3600"
+//         items={list2.items}
+//         {...listViewProps}
+//         dragAndDropHooks={dragAndDropHooksList2}
+//         {...props}>
+//         {(item: any) => {
+//           return (
+//             <Section key={item.value.identifier} items={item.children} title={item.value.name}>
+//               {(item: any) => (
+//                 <Item textValue={item.value.name} key={item.value.identifier}>
+//                   <Text>{item.value.name}</Text>
+//                   {item.value.type === 'folder' &&
+//                     <>
+//                       <Folder />
+//                       <Text slot="description">{`contains ${item.value.childNodes?.length} dropped item(s)`}</Text>
+//                     </>
+//                   }
+//                 </Item>
+//               )}
+//             </Section>
+//           );
+//         }}
+//       </ListView>
+//     </Flex>
+//   );
+// }
 export const FocusExample = (args) => {
   const items = [
     {id: 1, name: 'Adobe Photoshop'},

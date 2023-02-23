@@ -212,7 +212,6 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'section') {
-      console.log('REUSUABLE SECTION, parent, reusable, children, style, ', parent, reusableView, children)
       return (
         <ListViewSection
           key={reusableView.key}

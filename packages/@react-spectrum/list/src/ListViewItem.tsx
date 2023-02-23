@@ -150,8 +150,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
-  let isFirstRow = item.prevKey == null;
-  let isLastRow = item.nextKey == null;
+  let isFirstRow = item.prevKey == null || item.prevKey === item.parentKey;
+  let isLastRow = item.nextKey == null || state.collection.getItem(item.nextKey)?.type === 'section';
   // Figure out if the ListView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected and we can get rid of the bottom border if it isn't selected to avoid border overlap
   // with bottom border
@@ -207,7 +207,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
+              // TODO: will have to apply this style to the first listview row in a section
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
+              // TODO: will have to apply this style to the last listview row in a section
               'react-spectrum-ListViewItem--lastRow': isLastRow,
               'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
               'react-spectrum-ListViewItem--hasDescription': hasDescription

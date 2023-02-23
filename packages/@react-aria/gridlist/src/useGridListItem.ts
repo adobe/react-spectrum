@@ -181,7 +181,9 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = node.index + 1;
+    let parentSection = state.collection.getItem(node.parentKey);
+    let offset = parentSection ? parentSection.index + 1 : 0;
+    rowProps['aria-rowindex'] = node.index + 1 + offset;
   }
 
   let gridCellProps = {

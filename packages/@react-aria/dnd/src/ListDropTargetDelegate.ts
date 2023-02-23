@@ -14,7 +14,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     if (this.collection.size === 0) {
       return {type: 'root'};
     }
-    console.log('gawegnkwaejgn')
+
     let rect = this.ref.current.getBoundingClientRect();
     x += rect.x;
     y += rect.y;
@@ -41,7 +41,6 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
       } else if (y > rect.bottom) {
         low = mid + 1;
       } else {
-        console.log('item in drop target delegate')
         let target: DropTarget = {
           type: 'item',
           key: item.key,

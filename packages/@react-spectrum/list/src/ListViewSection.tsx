@@ -14,14 +14,12 @@ import {classNames} from '@react-spectrum/utils';
 import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import {ListViewContext} from './ListView';
 import {Node} from '@react-types/shared';
-import React, {Fragment, ReactNode, useContext, useRef} from 'react';
+import React, {ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 // TODO: replace with styles specific to ListView
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-// TODO: replace with hook for ListView section (provided the props/attributes are actually different)
-import {useListBoxSection} from '@react-aria/listbox';
+import {useGridListSection} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
-import {useSeparator} from '@react-aria/separator';
 
 // TODO: think about what this needs for ListView
 // might just be the same
@@ -33,62 +31,43 @@ interface ListViewSectionProps<T> {
 
 /** @private */
 export function ListViewSection<T>(props: ListViewSectionProps<T>) {
-  let {children, reusableView, header} = props;
-  let item = reusableView.content;
-  // TODO replace with ListView equivalent, will need to see what exactly we need
-  let {headingProps, groupProps} = useListBoxSection({
-    heading: item.rendered,
-    'aria-label': item['aria-label']
-  });
+  let {children, reusableView: sectionView, header} = props;
+  let {state} = useContext(ListViewContext);
+  let {direction} = useLocale();
+  let item = sectionView.content;
+  let {gridSectionProps, gridRowProps, gridRowHeaderProps} = useGridListSection({node: item, isVirtualized: true}, state);
 
-  let {separatorProps} = useSeparator({
-    elementType: 'li'
-  });
-
-  let headerRef = useRef();
+  let headerRowRef = useRef();
   useVirtualizerItem({
     reusableView: header,
-    ref: headerRef
+    ref: headerRowRef
   });
 
-  let {direction} = useLocale();
-  let {state} = useContext(ListViewContext);
-
   return (
-    <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
-        {item.key !== state.collection.getFirstKey() &&
-          <div
-            {...separatorProps}
-            className={classNames(
-              styles,
-              'spectrum-Menu-divider'
-            )} />
-        }
-        {item.rendered &&
-          <div
-            {...headingProps}
-            className={
-              classNames(
-                styles,
-                'spectrum-Menu-sectionHeading'
-              )
-            }>
-            {item.rendered}
-          </div>
-        }
-      </div>
+    <>
       <div
-        {...groupProps}
-        style={layoutInfoToStyle(reusableView.layoutInfo, direction)}
+        {...gridSectionProps}
+        style={layoutInfoToStyle(sectionView.layoutInfo, direction)}
         className={
           classNames(
             styles,
+            // TODO: update styling
             'spectrum-Menu'
           )
         }>
+        <div
+          role="presentation"
+          ref={headerRowRef}
+          style={layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo)}>
+          <div
+            {...gridRowProps}>
+            <span {...gridRowHeaderProps}>
+              {item.rendered}
+            </span>
+          </div>
+        </div>
         {children}
       </div>
-    </Fragment>
+    </>
   );
 }

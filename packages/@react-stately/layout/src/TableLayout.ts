@@ -481,7 +481,7 @@ export class TableLayout<T> extends ListLayout<T> {
           while (persistedRowIndices && persistIndex < persistedRowIndices.length && persistedRowIndices[persistIndex] < i) {
             persistIndex++;
           }
-          let layoutInfo = node.children[i].layoutInfo.copy();
+          // let layoutInfo = node.children[i].layoutInfo.copy();
 
           // console.log('pushing layoutinfo in body', node.children[i], node.children[i].layoutInfo)
           // if (layoutInfo.type === 'section') {
