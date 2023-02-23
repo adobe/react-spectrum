@@ -45,6 +45,7 @@ interface Offset {
 }
 
 interface PositionOpts {
+  arrowCrossSize: number,
   placement: Placement,
   targetNode: Element,
   overlayNode: Element,
@@ -88,8 +89,6 @@ const AXIS_SIZE = {
   top: 'height',
   left: 'width'
 };
-
-const ARROW_WIDTH = 8;
 
 const PARSED_PLACEMENT_CACHE = {};
 
@@ -184,7 +183,8 @@ function computePosition(
   offset: number,
   crossOffset: number,
   containerOffsetWithBoundary: Offset,
-  isContainerPositioned: boolean
+  isContainerPositioned: boolean,
+  arrowCrossSize: number
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
@@ -206,9 +206,9 @@ function computePosition(
   position[crossAxis] += crossOffset;
 
   // overlay top overlapping arrow with button bottom
-  const minPosition = childOffset[crossAxis] - overlaySize[crossSize] + ARROW_WIDTH;
+  const minPosition = childOffset[crossAxis] - overlaySize[crossSize] + arrowCrossSize;
   // overlay bottom overlapping arrow with button top
-  const maxPosition = childOffset[crossAxis] + childOffset[crossSize] - ARROW_WIDTH;
+  const maxPosition = childOffset[crossAxis] + childOffset[crossSize] - arrowCrossSize;
 
   position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
@@ -279,11 +279,12 @@ export function calculatePositionInternal(
   offset: number,
   crossOffset: number,
   isContainerPositioned: boolean,
-  userSetMaxHeight?: number
+  userSetMaxHeight: number | undefined,
+  arrowCrossSize: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
-  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowCrossSize);
   let normalizedOffset = offset;
   let space = getAvailableSpace(
     boundaryDimensions,
@@ -297,7 +298,7 @@ export function calculatePositionInternal(
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
   if (flip && scrollSize[size] > space) {
     let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowCrossSize);
     let flippedSpace = getAvailableSpace(
       boundaryDimensions,
       containerOffsetWithBoundary,
@@ -333,7 +334,7 @@ export function calculatePositionInternal(
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
+  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowCrossSize);
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
@@ -341,11 +342,11 @@ export function calculatePositionInternal(
 
   const preferredArrowPosition = overlaySize[crossSize] / 2;
 
-  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (ARROW_WIDTH / 2);
-  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (ARROW_WIDTH / 2);
+  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (arrowCrossSize / 2);
+  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (arrowCrossSize / 2);
 
-  const arrowMinPosition = ARROW_WIDTH / 2;
-  const arrowMaxPosition = overlaySize[crossSize] - (ARROW_WIDTH / 2);
+  const arrowMinPosition = arrowCrossSize / 2;
+  const arrowMaxPosition = overlaySize[crossSize] - (arrowCrossSize / 2);
 
   const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
 
@@ -374,7 +375,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     boundaryElement,
     offset,
     crossOffset,
-    maxHeight
+    maxHeight,
+    arrowCrossSize
   } = opts;
 
   let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
@@ -411,7 +413,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     isContainerPositioned,
-    maxHeight
+    maxHeight,
+    arrowCrossSize
   );
 }
 
