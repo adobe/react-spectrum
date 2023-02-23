@@ -1191,7 +1191,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
 
   return (
     <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
-      {isTableDroppable && state.collection.getKeyBefore(item.key) == null &&
+      {isTableDroppable && isFirstRow &&
         <InsertionIndicator
           rowProps={props}
           key={`${item.key}-before`}

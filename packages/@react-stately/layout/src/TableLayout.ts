@@ -602,6 +602,9 @@ export class TableLayout<T> extends ListLayout<T> {
     x += this.virtualizer.visibleRect.x;
     y += this.virtualizer.visibleRect.y;
 
+    // Offset for height of header row
+    y -= this.virtualizer.layout.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height;
+
     // Custom variation of this.virtualizer.keyAtPoint that ignores body
     let key: Key;
     let point = new Point(x, y);
