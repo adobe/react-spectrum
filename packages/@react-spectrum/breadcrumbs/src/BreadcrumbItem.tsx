@@ -29,7 +29,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   } = props;
 
   let {direction} = useLocale();
-  let ref = useRef();
+  let ref = useRef(null);
   let {itemProps} = useBreadcrumbItem({
     ...props,
     elementType: typeof children === 'string' ? 'span' : 'a'

@@ -53,7 +53,13 @@ async function run() {
 
   if (pr != null) {
     let commentId = await findDifferComment(pr);
-    let diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
+    let diffs;
+    try {
+      diffs = fs.readFileSync('/tmp/dist/ts-diff.txt');
+    } catch (e) {
+      console.log('No TS Diff output to run on.')
+      return;
+    }
     if (diffs.length > 0) {
       if (commentId != null) {
         // delete existing comment

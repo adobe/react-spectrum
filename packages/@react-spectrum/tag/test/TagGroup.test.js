@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -54,8 +54,11 @@ describe('TagGroup', function () {
     act(() => {
       jest.runAllTimers();
     });
-    onRemoveSpy.mockClear();
-    onClearSpy.mockClear();
+    jest.clearAllMocks();
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
   });
 
   it('provides context for Tag component', function () {
@@ -287,7 +290,7 @@ describe('TagGroup', function () {
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tags[1]);
-    
+
     fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tags[0]);
@@ -373,7 +376,7 @@ describe('TagGroup', function () {
       let removeItem = (key) => {
         setItems(prevItems => prevItems.filter((item) => key !== item.id));
       };
-    
+
       return (
         <Provider theme={theme}>
           <TagGroup items={items} aria-label="tag group" allowsRemoving onRemove={chain(removeItem, onRemoveSpy)} {...props}>
@@ -382,7 +385,7 @@ describe('TagGroup', function () {
         </Provider>
       );
     }
-      
+
     let {getAllByRole} = render(
       <TagGroupWithDelete {...props} />
     );
@@ -439,7 +442,7 @@ describe('TagGroup', function () {
     tags = getAllByRole('gridcell');
     expect(tags.length).toBe(3);
     expect(button).toHaveTextContent('Show all (7)');
-    
+
     offsetWidth.mockReset();
   });
 
@@ -464,11 +467,24 @@ describe('TagGroup', function () {
 
     let buttons = queryAllByRole('button');
     expect(buttons.length).toBe(0);
-    
+
     offsetWidth.mockReset();
   });
 
   it('can keyboard navigate to a custom action', function () {
+    let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
+    let mockCalls = [
+      function () {
+        return {
+          left: 0,
+          right: 0,
+          width: 0,
+          y: 0
+        };
+      }
+    ];
+
+    mockImplementation(target, mockCalls, true);
     let {getAllByRole, getByRole} = render(
       <Provider theme={theme}>
         <TagGroup
@@ -487,7 +503,7 @@ describe('TagGroup', function () {
     let action = getByRole('button');
     expect(tags.length).toBe(4);
     expect(action).toHaveTextContent('Clear');
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
 
@@ -548,7 +564,7 @@ describe('TagGroup', function () {
     expect(buttons.length).toBe(2);
     expect(buttons[0]).toHaveTextContent('Show all (7)');
     expect(buttons[1]).toHaveTextContent('Clear');
-    
+
     userEvent.tab();
     expect(document.activeElement).toBe(tags[0]);
 
@@ -557,7 +573,7 @@ describe('TagGroup', function () {
 
     userEvent.tab();
     expect(document.activeElement).toBe(buttons[1]);
-    
+
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
@@ -574,7 +590,7 @@ describe('TagGroup', function () {
     fireEvent.mouseUp(document.activeElement, {key: 'Enter'});
     expect(onClearSpy).toHaveBeenCalledTimes(1);
     expect(onClearSpy).toHaveBeenCalledWith();
-    
+
     offsetWidth.mockReset();
   });
 
