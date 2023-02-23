@@ -10,65 +10,66 @@ import React, {useRef, useState} from 'react';
 import {Text, VisuallyHidden} from '@adobe/react-spectrum';
 import {ThemeProvider} from './ThemeSwitcher';
 
-export default function DocSearch() {
-  const client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
-  const searchIndex = client.initIndex('react-spectrum');
-  const searchOptions = {
-    distinct: 1,
-    attributesToRetrieve: [
-      'hierarchy.lvl0',
-      'hierarchy.lvl1',
-      'hierarchy.lvl2',
-      'hierarchy.lvl3',
-      'hierarchy.lvl4',
-      'hierarchy.lvl5',
-      'hierarchy.lvl6',
-      'content',
-      'type',
-      'url'
-    ],
-    attributesToSnippet: [
-      'hierarchy.lvl1:10',
-      'hierarchy.lvl2:10',
-      'hierarchy.lvl3:10',
-      'hierarchy.lvl4:10',
-      'hierarchy.lvl5:10',
-      'hierarchy.lvl6:10',
-      'content:10'
-    ],
-    snippetEllipsisText: '…',
-    highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
-    highlightPostTag: '</mark>',
-    hitsPerPage: 20
-  };
+let client = algoliasearch('1V1Q59JVTR', '44a7e2e7508ff185f25ac64c0a675f98');
+let searchIndex = client.initIndex('react-spectrum');
 
-  const sectionTitles = {
-    'react-aria': 'React Aria',
-    'react-spectrum': 'React Spectrum',
-    'react-stately': 'React Stately',
-    'internationalized': 'Internationalized',
-    'blog': 'Blog',
-    'architecture': 'Architecture',
-    'contribute': 'Contribute',
-    'releases': 'Releases',
-    'support': 'Support'
-  };
+const searchOptions = {
+  distinct: 1,
+  attributesToRetrieve: [
+    'hierarchy.lvl0',
+    'hierarchy.lvl1',
+    'hierarchy.lvl2',
+    'hierarchy.lvl3',
+    'hierarchy.lvl4',
+    'hierarchy.lvl5',
+    'hierarchy.lvl6',
+    'content',
+    'type',
+    'url'
+  ],
+  attributesToSnippet: [
+    'hierarchy.lvl1:10',
+    'hierarchy.lvl2:10',
+    'hierarchy.lvl3:10',
+    'hierarchy.lvl4:10',
+    'hierarchy.lvl5:10',
+    'hierarchy.lvl6:10',
+    'content:10'
+  ],
+  snippetEllipsisText: '…',
+  highlightPreTag: `<mark class="${docsStyle.docSearchBoxMark}">`,
+  highlightPostTag: '</mark>',
+  hitsPerPage: 20
+};
 
-  function sectionTitlePredicate(hit) {
-    let sectionTitle;
-    for (const [path, title] of Object.entries(sectionTitles)) {
-      let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
-      if (hit.url.match(regexp)) {
-        sectionTitle = title;
-        break;
-      }
+const sectionTitles = {
+  'react-aria': 'React Aria',
+  'react-spectrum': 'React Spectrum',
+  'react-stately': 'React Stately',
+  'internationalized': 'Internationalized',
+  'blog': 'Blog',
+  'architecture': 'Architecture',
+  'contribute': 'Contribute',
+  'releases': 'Releases',
+  'support': 'Support'
+};
+
+function sectionTitlePredicate(hit) {
+  let sectionTitle;
+  for (const [path, title] of Object.entries(sectionTitles)) {
+    let regexp = new RegExp('^.+//.+/' + path + '[/.].+$', 'i');
+    if (hit.url.match(regexp)) {
+      sectionTitle = title;
+      break;
     }
-    if (!sectionTitle) {
-      sectionTitle = 'Documentation';
-    }
-    return sectionTitle;
   }
+  if (!sectionTitle) {
+    sectionTitle = 'Documentation';
+  }
+  return sectionTitle;
+}
 
+export default function DocSearch() {
   const [searchValue, setSearchValue] = useState('');
   const [loadingState, setLoadingState] = useState(null);
   const [predictions, setPredictions] = useState(null);
@@ -198,7 +199,7 @@ export default function DocSearch() {
       setLoadingState(null);
       return;
     }
-    setLoadingState('loading');
+    setLoadingState('filtering');
     searchIndex
       .search(
         query,
@@ -216,14 +217,11 @@ export default function DocSearch() {
   };
 
   const searchAutocompleteRef = useRef();
-  const logoFragment = document.createElement('div');
-  logoFragment.className = docsStyle.docSearchFooter;
-  const logoRoot = createRoot(logoFragment);
-  logoRoot.render(AlgoliaSearchLogo);
 
   let onOpenChange = (isOpen) => {
     if (isOpen) {
       requestAnimationFrame(() => {
+        // TODO: this could be broken if there is more than one listbox on the page...
         const listbox = document.querySelector('[role="listbox"]');
         if (listbox &&
           listbox.nextElementSibling &&
@@ -243,7 +241,6 @@ export default function DocSearch() {
           ref={searchAutocompleteRef}
           aria-label="Search"
           UNSAFE_className={docsStyle.docSearchBox}
-          id="algolia-doc-search"
           loadingState={loadingState}
           value={searchValue}
           onInputChange={onInputChange}
@@ -277,6 +274,11 @@ const AlgoliaSearchLogo = (
     </a>
   </div>
 );
+
+const logoFragment = document.createElement('div');
+logoFragment.className = docsStyle.docSearchFooter;
+const logoRoot = createRoot(logoFragment);
+logoRoot.render(AlgoliaSearchLogo);
 
 function groupBy(values, predicate = (value) => value) {
   return values.reduce((accumulator, item) => {

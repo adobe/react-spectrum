@@ -227,7 +227,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
 
   return (
     <div
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      {...mergeProps(hoverProps, focusProps, buttonProps)}
       aria-haspopup="dialog"
       ref={ref}
       style={{...style, outline: 'none'}}
@@ -270,6 +270,10 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
                 'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
                 'spectrum-Search--valid': validationState === 'valid' && !isDisabled
               }
+            ),
+            classNames(
+              styles,
+              'spectrum-InputGroup-field'
             )
           )
         }>
