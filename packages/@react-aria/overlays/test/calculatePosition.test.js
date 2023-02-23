@@ -99,7 +99,7 @@ const overlaySize = {
 const PROVIDER_OFFSET = 50;
 
 describe('calculatePosition', function () {
-  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0) {
+  function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0, arrowCrossSize = 8) {
     const placementAxis = placement.split(' ')[0];
 
     // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
@@ -154,7 +154,8 @@ describe('calculatePosition', function () {
         shouldFlip: flip,
         boundaryElement: boundariesElem,
         offset,
-        crossOffset
+        crossOffset,
+        arrowCrossSize
       });
       expect(result).toEqual(expectedPosition);
       document.documentElement.removeChild(parentElement);
