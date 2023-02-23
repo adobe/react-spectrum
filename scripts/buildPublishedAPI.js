@@ -146,18 +146,18 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'), {dereference: true});
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {dereference: true});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');

@@ -96,20 +96,20 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {dereference: true});
   // need dev from latest on branch since it will generate the API for diffing, and in older commits it may not be able to do this or
   // does it in a different format
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
 
   // Only copy babel patch over
-  let patches = fs.readdirSync(path.join(srcDir, 'patches'));
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'), {dereference: true});
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {dereference: true});
 
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
@@ -139,8 +139,8 @@ async function build() {
   }
 
   // Install dependencies from npm
-  await run('yarn', {cwd: dir, stdio: 'inherit'});
   fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
+  await run('yarn', {cwd: dir, stdio: 'inherit'});
   // Build the website
   console.log('building api files');
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
