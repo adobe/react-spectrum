@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 export {useTagGroupState} from './useTagGroupState';
 
 export type {TagGroupState} from './useTagGroupState';
