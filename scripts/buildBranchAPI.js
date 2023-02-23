@@ -140,7 +140,7 @@ async function build() {
 
   // Install dependencies from npm
   await run('yarn', {cwd: dir, stdio: 'inherit'});
-
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
   // Build the website
   console.log('building api files');
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'docs-json'], {cwd: dir, stdio: 'inherit'});
