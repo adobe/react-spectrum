@@ -12,7 +12,6 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '..';
-import {chain} from '@react-aria/utils';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig from './Table.stories';
 import {DIRECTORY_DRAG_TYPE, useDragAndDrop} from '@react-spectrum/dnd';
@@ -329,30 +328,6 @@ function ItemDropExampleUtilHandlers(props) {
     </TableView>
   );
 }
-
-let itemList1 = [
-  {id: '1', type: 'item', name: 'Item One'},
-  {id: '2', type: 'item', name: 'Item Two'},
-  {id: '3', type: 'item', name: 'Item Three'},
-  {id: '4', type: 'item', name: 'Item Four'},
-  {id: '5', type: 'item', name: 'Item Five'},
-  {id: '6', type: 'item', name: 'Item Six'}
-];
-
-let itemList2 = [
-  {id: '7', type: 'item', name: 'Item Seven'},
-  {id: '8', type: 'item', name: 'Item Eight'},
-  {id: '9', type: 'item', name: 'Item Nine'},
-  {id: '10', type: 'item', name: 'Item Ten'},
-  {id: '11', type: 'item', name: 'Item Eleven'},
-  {id: '12', type: 'item', name: 'Item Twelve'}
-];
-
-let itemColumns = [
-  {name: 'ID', key: 'id'},
-  {name: 'Type', key: 'type'},
-  {name: 'Name', key: 'name'}
-];
 
 function RootDropExampleUtilHandlers(props) {
   let {tableViewProps, firstListDnDOptions, secondListDnDOptions} = props;
