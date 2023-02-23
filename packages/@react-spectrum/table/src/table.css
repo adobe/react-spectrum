@@ -69,18 +69,17 @@
   --spectrum-table-row-badge-text-color: var(--spectrum-global-color-static-white);
   --spectrum-table-row-badge-background-color: var(--spectrum-global-color-blue-400);
 
-  max-width: var(--spectrum-global-dimension-size-2400);
+  width: var(--spectrum-global-dimension-size-2400);
   border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
   border-radius: var(--spectrum-alias-border-radius-regular);
   background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
-  overflow: hidden;
 
   &::after {
     box-shadow: none;
   }
 
   &.react-spectrum-Table-row-dragPreview--multiple {
-  position: relative;
+    position: relative;
 
     &:after {
       content: '';
@@ -94,6 +93,9 @@
       border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
       border-radius: var(--spectrum-alias-border-radius-regular);
       background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+
+      /* forced-color-adjust: none, so that box-shadow style will render */
+      forced-color-adjust: none;
     }
   }
 

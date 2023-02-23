@@ -82,7 +82,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
 
   return (
     <Flex
-      flex="0 0 auto"
+      justifyContent="space-between"
       UNSAFE_style={{height, maxWidth}}
       UNSAFE_className={
         classNames(
@@ -96,11 +96,13 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           )
         )
       }>
-      {cells.map((cell) => (
-        <TableCellPreview
-          key={cell.key}
-          cell={cell} />
-      ))}
+      <div>
+        {cells.map((cell) => (
+          <TableCellPreview
+            key={cell.key}
+            cell={cell} />
+        ))}
+      </div>
       {isDraggingMultiple &&
         <div className={classNames(stylesOverrides, 'react-spectrum-Table-row-badge')}>{itemCount}</div>
       }
