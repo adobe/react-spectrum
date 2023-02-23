@@ -1,0 +1,76 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: TBD
+date: 2023-02-23
+---
+
+# February 23, 2023 Release
+TBD
+
+## Enhancements
+- Add support for Node ESM - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4038)
+- Add `parseDuration` functionality to `@internationalized/date` - [@adobesamr](https://github.com/adobesamr) - [PR](https://github.com/adobe/react-spectrum/pull/3766)
+- Remove `findDOMNode` usages to support strict mode - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3865)
+- Support TS strict mode in `ActionGroup` and `Breadcrumbs` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3929)
+- Fix `useId` hydration error in strict mode - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3980)
+
+## Fixes
+- Update `onBlur` return type to `undefined` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3801)
+- Fix `LiveAnnouncer` styles causing page shift - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3807)
+- `DialogTrigger` now uses screen width to determine mobile state - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3921)
+- Improve cleanup of animation frames in `FocusScope` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3908)
+- Fix `useComboBoxState` selection on close - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/3912)
+- Resolve `useInteractOutside` false positive error  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3935)
+- Update `Tabs` to ensure styled tab line resizes - [@tywayne](https://github.com/tywayne) - [PR](https://github.com/adobe/react-spectrum/pull/3688)
+- Add fallback value for `HiddenSelect`  - [@omacranger](https://github.com/omacranger) - [PR](https://github.com/adobe/react-spectrum/pull/3928)
+- Support Windows High Contrast in TableView & ListView - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3827)
+- Fix offset bug for old dates in `getTimeZoneOffset` - [@tomfa](https://github.com/tomfa) - [PR](https://github.com/adobe/react-spectrum/pull/3960)
+- Address `TableView` focus ring clipping - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3934)
+- Fully scroll collection elements into view when keyboard navigating - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3899)
+- Handle focus in `useGrid` when a focused item is removed  - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3885)
+- Fix Checkbox in WHCM - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4030)
+- Prevent flicker when closing `ComboBox` via blur - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4060)
+- Better definition for `ComboBox` focus event types - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/4039)
+- Remove unneeded `aria-expanded` in mobile `ComboBox` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4079)
+- Remove duplicate id in `useDatePicker` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4085)
+- Fix various type issues found in docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4090)
+## Docs
+- Change `ComboBox` example to be more inclusive - [@cgood92](https://github.com/cgood92) - [PR](https://github.com/adobe/react-spectrum/pull/3866)
+- Add prose for quiet links and when they can be used - [@jnurthen](https://github.com/jnurthen) - [PR](https://github.com/adobe/react-spectrum/pull/3989)
+- Add description for `onSubmit`  in `SearchAutocomplete` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3993)
+- Add docs for custom icons - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3942)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+- Add `useTagGroupState` and fix focus issues - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3798)
+- Avatar support in `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3937)
+- Add `maxRows` support to `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3759)
+- Add Field support to `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3938)
+- Support custom action in `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3893)
+- Toast alpha 🍞 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3868)
+- Support landmark navigation and toasts across iFrames - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3892)
+- Add LandmarkController API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3939)
+- Align column headers correctly when using resizing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3907)
+- Remove `onColumnResize/Start/End` from `useTableColumnResizeState` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3971)
+- Update `SearchAutocomplete` to call `onClear` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4000)
+- Support constrained flex in column sizing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3879)
+- Center the table in the viewport if resizer is out of view - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4018)
+
+
+## Released packages
+```
+ 
+```
