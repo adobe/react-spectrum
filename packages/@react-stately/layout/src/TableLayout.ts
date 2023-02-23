@@ -606,7 +606,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let key: Key;
     let point = new Point(x, y);
     let rectAtPoint = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.key !== 'body');
+    let layoutInfos = this.virtualizer.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');
 
     // Layout may return multiple layout infos in the case of
     // persisted keys, so find the first one that actually intersects.

@@ -28,7 +28,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
     <div
       style={{
         position: 'absolute',
-        top: rowProps.style.top,
+        top: rowProps.style.top + (target.dropPosition === 'after' ? rowProps.style.height : 0),
         width: rowProps.style.width
       }}
       role="row"
