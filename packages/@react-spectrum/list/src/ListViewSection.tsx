@@ -12,24 +12,20 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
+import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
-// TODO: replace with styles specific to ListView
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useGridListSection} from '@react-aria/gridlist';
 import {useLocale} from '@react-aria/i18n';
 
-// TODO: think about what this needs for ListView
-// might just be the same
 interface ListViewSectionProps<T> {
   reusableView: ReusableView<Node<T>, unknown>,
   header: ReusableView<Node<T>, unknown>,
   children?: ReactNode
 }
 
-/** @private */
 export function ListViewSection<T>(props: ListViewSectionProps<T>) {
   let {children, reusableView: sectionView, header} = props;
   let {state} = useContext(ListViewContext);
@@ -50,9 +46,11 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
         style={layoutInfoToStyle(sectionView.layoutInfo, direction)}
         className={
           classNames(
-            styles,
-            // TODO: update styling
-            'spectrum-Menu'
+            listStyles,
+            'react-spectrum-ListViewSection',
+            {
+              'react-spectrum-ListViewSection--firstRow': item.index === 0
+            }
           )
         }>
         <div
@@ -60,7 +58,13 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
           ref={headerRowRef}
           style={layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo)}>
           <div
-            {...gridRowProps}>
+            {...gridRowProps}
+            className={
+              classNames(
+                listStyles,
+                'react-spectrum-ListViewSection-header'
+              )
+            }>
             <span {...gridRowHeaderProps}>
               {item.rendered}
             </span>
