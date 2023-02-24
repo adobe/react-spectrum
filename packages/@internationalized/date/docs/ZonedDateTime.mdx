@@ -185,6 +185,21 @@ let date = parseZonedDateTime('2020-03-07T02:00-08:00[America/Los_Angeles]');
 date.add({days: 1}); // 2020-03-08T03:00-07:00[America/Los_Angeles]
 ```
 
+### Parsing durations
+
+The <TypeLink links={docs.links} type={docs.exports.parseDuration} /> function can be used to convert a [ISO 8601 duration string](https://en.wikipedia.org/wiki/ISO_8601#Durations) into a <TypeLink links={docs.links} type={docs.exports.DateTimeDuration} /> object. The smallest time unit may include decimal values written with a comma or period, and negative values can be written by prefixing the entire string with a minus sign.
+
+```tsx
+parseDuration('P3Y6M6W4DT12H30M5S');
+// => {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5}
+
+parseDuration('-P3Y6M6W4DT12H30M5S');
+// => {years: -3, months: -6, weeks: -6, days: -4, hours: -12, minutes: -30, seconds: -5}
+
+parseDuration('P3Y6M6W4DT12H30M5.5S');
+// => {years: 3, months: 6, weeks: 6, days: 4, hours: 12, minutes: 30, seconds: 5.5}
+```
+
 ### Setting fields
 
 `ZonedDateTime` objects are immutable, which means their properties cannot be set directly. Instead, use the `set` method, and pass the fields to be modified. This will return a new `ZonedDateTime` with the updated values.

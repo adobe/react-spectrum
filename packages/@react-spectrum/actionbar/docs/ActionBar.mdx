@@ -27,9 +27,8 @@ import {TableView, TableHeader, TableBody, Row, Column, Cell} from '@react-spect
 ```
 
 ---
-category: Toolbars
+category: Collections
 keywords: [actionbar, selection, actions, collections, toolbar]
-after_version: 3.1.0
 ---
 
 # ActionBar
@@ -38,7 +37,7 @@ after_version: 3.1.0
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ActionBar, ActionBarContainer, Item']}
+  componentNames={['ActionBar', 'ActionBarContainer']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/action-bar/'}
   ]} />
@@ -46,28 +45,20 @@ after_version: 3.1.0
 ## Example
 ```tsx example
 function Example() {
-  let items = [
-    {key: 0, name: 'Adobe Photoshop'},
-    {key: 1, name: 'Adobe Illustrator'},
-    {key: 2, name: 'Adobe XD'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={items} aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        {(item) => (
-          <Item>
-            {item.name}
-          </Item>
-        )}
+      <ListView aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <Item key="photoshop">Adobe Photoshop</Item>
+        <Item key="illustrator">Adobe Illustrator</Item>
+        <Item key="xd">Adobe XD</Item>
       </ListView>
       <ActionBar
         isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
-        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
-        onClearSelection={() => setSelectedKeys(new Set([]))}>
+        selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action...`)}
+        onClearSelection={() => setSelectedKeys(new Set())}>
         <Item key="edit">
           <Edit />
           <Text>Edit</Text>
@@ -93,7 +84,7 @@ function Example() {
 
 An ActionBar is a companion component intended to facilitate bulk actions on selected items within a collection component. It consists of an ActionGroup, a clear button, and a count of selected items. It accepts a list of <TypeLink links={docs.links} type={docs.exports.Item} />
 elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported as seen below. See the [collection components](../react-stately/collections.html)
-docs for more details about this API. These `Item` elements are used to populate the ActionBar's ActionGroup and thus follows the [same content guidelines](./ActionGroup.html#content) when it comes to customization and labeling.
+docs for more details about this API. These `Item` elements are used to populate the buttons in the ActionBar, and follows the [ActionGroup content guidelines](./ActionGroup.html#content) for customization and labeling.
 
 ```tsx example
 function Example() {
@@ -103,28 +94,20 @@ function Example() {
     {key: 'delete', label: 'Delete'}
   ];
 
-  let listItems = [
-    {key: 0, name: 'Adobe Photoshop'},
-    {key: 1, name: 'Adobe Illustrator'},
-    {key: 2, name: 'Adobe XD'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
-      <ListView items={listItems} aria-label="ListView with action bar, dynamic collection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        {(item) => (
-          <Item>
-            {item.name}
-          </Item>
-        )}
+      <ListView aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <Item key="photoshop">Adobe Photoshop</Item>
+        <Item key="illustrator">Adobe Illustrator</Item>
+        <Item key="xd">Adobe XD</Item>
       </ListView>
       <ActionBar
         items={barItems}
-        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
-        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
-        onClearSelection={() => setSelectedKeys(new Set([]))}
+        selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action...`)}
+        onClearSelection={() => setSelectedKeys(new Set())}
         isEmphasized>
         {item => (
           <Item key={item.key}>
@@ -148,43 +131,28 @@ automatically. For languages that are read right-to-left (e.g. Hebrew and Arabic
 
 ## Events
 Use the `onClearSelection` prop as a callback to handle when the clear button in the ActionBar is pressed. Additionally, the `onAction` prop can be used as a callback for when the user
-presses any of the buttons in the ActionBar's ActionGroup. The `key` from the pressed button will be passed into the callback.
+presses any of the buttons in the ActionBar. The `key` from the pressed `<Item>` will be passed to the callback.
 
 The following example clears row selection within the TableView when the clear button is pressed and alerts the user as to what
-action is being taken on the selected rows when the ActionButtons are pressed.
+action is being taken on the selected rows when the buttons are pressed.
 
 ```tsx example
 function ActionBarActions(props) {
-  // Same bar items, table columns, and table rows as example above...
-  ///- begin collapse -///
-  let columns = [
-    {name: 'Name', uid: 'name'},
-    {name: 'Type', uid: 'type'},
-    {name: 'Level', uid: 'level'}
-  ];
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
   let rows = [
     {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
     {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
     {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
 
-  ];
-  let barItems = [
-    {key: 'edit', label: 'Edit'},
-    {key: 'copy', label: 'Copy'},
-    {key: 'delete', label: 'Delete'}
-  ];
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
-  ///- end collapse -///
   return (
     <ActionBarContainer height="size-5000">
-      <TableView aria-label="Table with action bar and controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} height="size-3000">
-        <TableHeader columns={columns}>
-          {column => (
-            <Column key={column.uid} align={column.uid === 'level' ? 'end' : 'start'}>
-              {column.name}
-            </Column>
-          )}
+      <TableView aria-label="Table with action bar and controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <TableHeader>
+          <Column key="name">Name</Column>
+          <Column key="type">Type</Column>
+          <Column key="level" align="end">Level</Column>
         </TableHeader>
         <TableBody items={rows}>
           {item => (
@@ -195,20 +163,22 @@ function ActionBarActions(props) {
         </TableBody>
       </TableView>
       <ActionBar
-        items={barItems}
         isEmphasized
-        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
         /*- begin highlight -*/
         onClearSelection={() => {
           setSelectedKeys(new Set());
         }}
-        onAction={key => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
+        onAction={key => alert(`Performing ${key} action...`)}
         /*- end highlight -*/>
-        {item => (
-          <Item key={item.key}>
-            {item.label}
-          </Item>
-        )}
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
       </ActionBar>
     </ActionBarContainer>
   );
@@ -231,30 +201,22 @@ with the rest of the UI, directing a user’s focus to elsewhere in a view.
 
 ```tsx example
 function Example({isEmphasized}) {
-  let items = [
-    {key: 0, name: 'Adobe Photoshop'},
-    {key: 1, name: 'Adobe Illustrator'},
-    {key: 2, name: 'Adobe XD'}
-  ];
-
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([0]));
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} width="size-5000">
-      <ListView items={items} aria-label={`ListView with${isEmphasized ? ' emphasized' : ''} action bar`} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-        {(item) => (
-          <Item>
-            {item.name}
-          </Item>
-        )}
+      <ListView aria-label="ListView with action bar" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+        <Item key="photoshop">Adobe Photoshop</Item>
+        <Item key="illustrator">Adobe Illustrator</Item>
+        <Item key="xd">Adobe XD</Item>
       </ListView>
       <ActionBar
         /*- begin highlight -*/
         isEmphasized={isEmphasized}
         /*- end highlight -*/
-        selectedItemCount={selectedKeys === 'all' ? items.length : selectedKeys.size}
-        onAction={(key) => alert(`Performing ${key} action on ${selectedKeys.size} rows.`)}
-        onClearSelection={() => setSelectedKeys(new Set([]))}>
+        selectedItemCount={selectedKeys === 'all' ? 'all' : selectedKeys.size}
+        onAction={(key) => alert(`Performing ${key} action...`)}
+        onClearSelection={() => setSelectedKeys(new Set())}>
         <Item key="edit">
           <Edit />
           <Text>Edit</Text>
@@ -272,7 +234,7 @@ function Example({isEmphasized}) {
   );
 }
 
-<Flex direction="row" gap="size-200">
+<Flex direction="row" gap="size-200" wrap>
   <Example />
   <Example isEmphasized />
 </Flex>
