@@ -28,7 +28,30 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
+  .addParameters({
+    providerSwitcher: {status: 'notice'},
+    args: {
+      crossOffset: 50,
+      placement: 'top'
+    },
+    argTypes: {
+      crossOffset: {
+        control: {
+          type: 'number',
+          defaultValue: 50
+        }
+      },
+      placement: {
+        type: 'select',
+        defaultValue: 'top',
+        options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
+      },
+      buttonText: {
+        control: 'text',
+        defaultValue: 'Trigger'
+      }
+    }
+  })
   .add(
     'default',
     () => render({})
@@ -362,6 +385,9 @@ storiesOf('DialogTrigger', module)
   .add(
     'adjustable dialog',
     () => <AdjustableDialog />
+  ).add(
+    'crossoffset controls',
+    (args) => renderPopover({type: 'popover', ...args})
   );
 
 function render({width = 'auto', ...props}) {
@@ -405,10 +431,12 @@ function renderTriggerNotCentered(props) {
 }
 
 function renderPopover({width = 'auto', ...props}, withMargin = true) {
+  let {buttonText, ...otherProps} = props;
+
   return (
     <div style={{display: 'flex', width, margin: withMargin && '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
+        <ActionButton>{buttonText}</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
