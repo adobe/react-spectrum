@@ -12,7 +12,7 @@
 
 import {useCallback, useMemo} from 'react';
 // Shim to support React 17 and below.
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */

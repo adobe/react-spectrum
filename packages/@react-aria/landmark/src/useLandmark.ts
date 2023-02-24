@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 

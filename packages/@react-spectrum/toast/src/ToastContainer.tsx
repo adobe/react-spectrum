@@ -15,7 +15,7 @@ import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
 
