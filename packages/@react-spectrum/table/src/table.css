@@ -111,7 +111,7 @@
   }
 }
 
-.react-spectrum-Table-body-dropTarget {
+.react-spectrum-Table-body--dropTarget {
   border-color: var(--spectrum-global-color-blue-500);
   background-color: var(--spectrum-alias-highlight-selected);
   box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
@@ -179,4 +179,20 @@
 
 .react-spectrum-Table-checkboxCell--isDraggable {
   padding-inline-start: var(--spectrum-global-dimension-size-65);
+}
+
+.react-spectrum-Table-row--dropTarget {
+  border: 1px var(--spectrum-table-dropindicator-border-color);
+  box-shadow: inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
+    inset -2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
+    inset 0 -3px 0 0 var(--spectrum-table-dropindicator-border-color),
+    inset 0 2px 0 0 var(--spectrum-table-dropindicator-border-color);
+
+  /** Needed to style spectrum-Table-cellWrapper */
+  > * {
+    background-color: var(--spectrum-table-droptarget-background-color) !important;
+  }
+
+  /* forced-color-adjust: none, so that box-shadow style will render */
+  forced-color-adjust: none;
 }

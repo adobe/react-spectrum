@@ -479,9 +479,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
               'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
               'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
-              // TODO
-              // 'spectrum-Table--draggable': isTableDraggable,
-              // 'spectrum-Table--dropTarget': isRootDropTarget
             },
             classNames(
               stylesOverrides,
@@ -660,7 +657,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 classNames(
                   stylesOverrides,
                   {
-                    'react-spectrum-Table-body-dropTarget': !!isRootDropTarget
+                    'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
                   }
                 )
               )
@@ -1218,9 +1215,12 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
               'is-disabled': isDisabled,
               'spectrum-Table-row--firstRow': isFirstRow,
               'spectrum-Table-row--lastRow': isLastRow,
-              'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom,
-              'spectrum-Table-row--dropTarget': !!isDropTarget
-            }
+              'spectrum-Table-row--isFlushBottom': isFlushWithContainerBottom
+            },
+            classNames(
+              stylesOverrides,
+              {'react-spectrum-Table-row--dropTarget': isDropTarget}
+            )
           )
         }>
         {children}
