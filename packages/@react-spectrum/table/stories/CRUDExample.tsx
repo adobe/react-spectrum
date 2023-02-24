@@ -22,8 +22,10 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import More from '@spectrum-icons/workflow/More';
+import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {useListData} from '@react-stately/data';
@@ -51,7 +53,15 @@ export function CRUDExample(props) {
           <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
         }
       </ActionGroup>
-      <TableView aria-label="People" width={500} height={300} selectionMode="multiple" {...props} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <TableView
+        aria-label="People"
+        width={500}
+        height={300}
+        selectionMode="multiple"
+        {...props}
+        selectedKeys={list.selectedKeys}
+        onSelectionChange={list.setSelectedKeys}
+        renderEmptyState={list.items.length === 0 ? () => <EmptyState /> : undefined}>
         <TableHeader>
           <Column isRowHeader key="firstName">First Name</Column>
           <Column isRowHeader key="lastName">Last Name</Column>
@@ -95,7 +105,11 @@ export function CRUDExample(props) {
             title="Delete"
             variant="destructive"
             primaryActionLabel="Delete"
-            onPrimaryAction={() => list.remove(dialog.item.id)}>
+            onPrimaryAction={() => {
+              // Add delay so that dialog closes and restores focus
+              // to the TableView before removing the row.
+              setTimeout(() => list.remove(dialog.item.id), list.items.length === 1 ? 0 : 60);
+            }}>
             Are you sure you want to delete {dialog.item.firstName} {dialog.item.lastName}?
           </AlertDialog>
         }
@@ -138,5 +152,14 @@ function EditDialog({item, onConfirm}) {
         <Button variant="cta" onPress={() => {dialog.dismiss(); onConfirm(state);}}>{!item ? 'Create' : 'Save'}</Button>
       </ButtonGroup>
     </Dialog>
+  );
+}
+
+function EmptyState() {
+  return (
+    <IllustratedMessage>
+      <NoSearchResults />
+      <Heading>No results</Heading>
+    </IllustratedMessage>
   );
 }

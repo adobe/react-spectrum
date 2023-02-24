@@ -11,7 +11,7 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, mergeProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
+import {chain, mergeProps, scrollIntoView, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -233,6 +233,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.overflowMode, scale, density, columnLayout]
   );
+
+  // Use a proxy so that a new object is created for each render so that alternate instances aren't affected by mutation.
+  // This can be thought of as equivalent to `{…tableLayout, tableState: state}`, but works with classes as well.
   let layout = useMemo(() => {
     let proxy = new Proxy(tableLayout, {
       get(target, prop, receiver) {
@@ -577,10 +580,11 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
   // header scroll position
   useEffect(() => {
     if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
-      document.activeElement?.scrollIntoView?.({block: 'nearest', inline: 'nearest'});
+      scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
+      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
-  }, [state.contentSize, headerRef, bodyRef]);
+  }, [state.contentSize, headerRef, bodyRef, domRef]);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = state.virtualizer.visibleRect;
@@ -639,7 +643,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
               height: headerHeight,
               overflow: 'hidden',
               position: 'relative',
-              willChange: state.isScrolling ? 'scroll-position' : '',
+              willChange: state.isScrolling ? 'scroll-position' : undefined,
               transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
             }}
             ref={headerRef}>
@@ -839,7 +843,7 @@ function ResizableTableColumnHeader(props) {
         state.sort(column.key, 'descending');
         break;
       case 'resize':
-        layout.onColumnResizeStart(column.key);
+        layout.startResize(column.key);
         setIsInResizeMode(true);
         break;
     }

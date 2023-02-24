@@ -1,0 +1,276 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections.
+date: 2023-02-23
+---
+
+# February 23, 2023 Release
+
+
+In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases. New beta versions with documentation have been released for [ActionBar](https://react-spectrum.adobe.com/react-spectrum/ActionBar.html), [Avatar](https://react-spectrum.adobe.com/react-spectrum/Avatar.html), [TableView column resizing](https://react-spectrum.adobe.com/react-spectrum/TableView.html#column-resizing), and [TagGroup](https://react-spectrum.adobe.com/react-spectrum/TagGroup.html). The TagGroup beta includes new goodies such as labels, help text, contextual help, max rows, and actions. The new Toast 🍞 component is in it’s first alpha and includes both [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/Toast.html) and [React Aria](https://react-spectrum.adobe.com/react-aria/useToast.html) documentation. 🥳
+
+The release also contains improvements to focus management when a focused item is removed from a collection component such as TableView and ListView. Collection components will now also automatically scroll into view when navigating with a keyboard.
+
+Finally, we have also been continuing to work on support for React strict mode. Thank you to all our contributors for their help with the latest update! 🤩
+
+
+## Enhancements
+- Add support for Node ESM - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4038)
+- Add `parseDuration` functionality to `@internationalized/date` - [@adobesamr](https://github.com/adobesamr) - [PR](https://github.com/adobe/react-spectrum/pull/3766)
+- Remove `findDOMNode` usages to support strict mode - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3865)
+- Support TS strict mode in `ActionGroup` and `Breadcrumbs` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3929)
+- Fix FocusScope strict mode issues - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3878)
+- Fix `useId` hydration error in strict mode - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3980)
+
+## Fixes
+- Update `onBlur` return type to `undefined` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3801)
+- Fix `LiveAnnouncer` styles causing page shift - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3807)
+- `DialogTrigger` now uses screen width to determine mobile state - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3921)
+- Improve cleanup of animation frames in `FocusScope` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3908)
+- Fix `useComboBoxState` selection on close - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/3912)
+- Resolve `useInteractOutside` false positive error  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3935)
+- Update `Tabs` to ensure styled tab line resizes - [@tywayne](https://github.com/tywayne) - [PR](https://github.com/adobe/react-spectrum/pull/3688)
+- Add fallback value for `HiddenSelect`  - [@omacranger](https://github.com/omacranger) - [PR](https://github.com/adobe/react-spectrum/pull/3928)
+- Support Windows High Contrast in `TableView` & `ListView` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3827)
+- Fix offset bug for old dates in `getTimeZoneOffset` - [@tomfa](https://github.com/tomfa) - [PR](https://github.com/adobe/react-spectrum/pull/3960)
+- Address `TableView` focus ring clipping - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3934)
+- Fully scroll collection elements into view when keyboard navigating - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3899)
+- Handle focus in `useGrid` when a focused item is removed  - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3885)
+- Fix `Checkbox` in WHCM - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4030)
+- Prevent flicker when closing `ComboBox` via blur - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4060)
+- Better definition for `ComboBox` focus event types - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/4039)
+- Remove unneeded `aria-expanded` in mobile `ComboBox` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4079)
+- Remove duplicate id in `useDatePicker` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4085)
+- Fix various type issues found in docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4090)
+## Docs
+- Change `ComboBox` example to be more inclusive - [@cgood92](https://github.com/cgood92) - [PR](https://github.com/adobe/react-spectrum/pull/3866)
+- Add prose for quiet `Link` and when it can be used - [@jnurthen](https://github.com/jnurthen) - [PR](https://github.com/adobe/react-spectrum/pull/3989)
+- Add description for `onSubmit`  in `SearchAutocomplete` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3993)
+- Add docs for custom icons - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3942)
+- Update `ActionBar` docs - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2777)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+- Add `useTagGroupState` and fix focus issues - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3798)
+- Avatar support in `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3937)
+- Add `maxRows` support to `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3759)
+- Add Field support to `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3938)
+- Support custom action in `TagGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3893)
+- Toast alpha 🍞 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3868)
+- Support landmark navigation and toasts across iframes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3892)
+- Add LandmarkController API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3939)
+- Align column headers correctly when using resizing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3907)
+- Remove `onColumnResize/Start/End` from `useTableColumnResizeState` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3971)
+- Improve column resize performance - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3890)
+- Update `SearchAutocomplete` to call `onClear` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4000)
+- Support constrained flex in column sizing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3879)
+- Center the table in the viewport if resizer is out of view - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4018)
+
+
+## Released packages
+```
+- @adobe/react-spectrum@3.25.0
+- @internationalized/date@3.1.0
+- @internationalized/message@3.1.0
+- @internationalized/number@3.2.0
+- @internationalized/string-compiler@3.1.0
+- @internationalized/string@3.1.0
+- @react-aria/accordion@3.0.0-alpha.15
+- @react-aria/actiongroup@3.5.0
+- @react-aria/aria-modal-polyfill@3.7.0
+- @react-aria/autocomplete@3.0.0-alpha.14
+- @react-aria/breadcrumbs@3.5.0
+- @react-aria/button@3.7.0
+- @react-aria/calendar@3.1.0
+- @react-aria/checkbox@3.8.0
+- @react-aria/color@3.0.0-beta.19
+- @react-aria/combobox@3.5.0
+- @react-aria/datepicker@3.3.0
+- @react-aria/dialog@3.5.0
+- @react-aria/dnd@3.1.0
+- @react-aria/focus@3.11.0
+- @react-aria/grid@3.6.0
+- @react-aria/gridlist@3.2.0
+- @react-aria/i18n@3.7.0
+- @react-aria/interactions@3.14.0
+- @react-aria/label@3.5.0
+- @react-aria/landmark@3.0.0-alpha.6
+- @react-aria/link@3.4.0
+- @react-aria/listbox@3.8.0
+- @react-aria/live-announcer@3.2.0
+- @react-aria/menu@3.8.0
+- @react-aria/meter@3.4.0
+- @react-aria/numberfield@3.4.0
+- @react-aria/overlays@3.13.0
+- @react-aria/progress@3.4.0
+- @react-aria/radio@3.5.0
+- @react-aria/searchfield@3.5.0
+- @react-aria/select@3.9.0
+- @react-aria/selection@3.13.0
+- @react-aria/separator@3.3.0
+- @react-aria/slider@3.3.0
+- @react-aria/spinbutton@3.3.0
+- @react-aria/ssr@3.5.0
+- @react-aria/switch@3.4.0
+- @react-aria/table@3.8.0
+- @react-aria/tabs@3.4.0
+- @react-aria/tag@3.0.0-beta.2
+- @react-aria/textfield@3.9.0
+- @react-aria/toast@3.0.0-alpha.0
+- @react-aria/toggle@3.5.0
+- @react-aria/tooltip@3.4.0
+- @react-aria/utils@3.15.0
+- @react-aria/virtualizer@3.7.0
+- @react-aria/visually-hidden@3.7.0
+- @react-spectrum/accordion@3.0.0-alpha.17
+- @react-spectrum/actionbar@3.0.0-beta.0
+- @react-spectrum/actiongroup@3.8.0
+- @react-spectrum/autocomplete@3.0.0-alpha.15
+- @react-spectrum/avatar@3.0.0-beta.0
+- @react-spectrum/badge@3.1.0
+- @react-spectrum/breadcrumbs@3.7.0
+- @react-spectrum/button@3.12.0
+- @react-spectrum/buttongroup@3.6.0
+- @react-spectrum/calendar@3.2.0
+- @react-spectrum/card@3.0.0-alpha.16
+- @react-spectrum/checkbox@3.7.0
+- @react-spectrum/color@3.0.0-beta.20
+- @react-spectrum/combobox@3.8.0
+- @react-spectrum/contextualhelp@3.5.0
+- @react-spectrum/datepicker@3.4.0
+- @react-spectrum/dialog@3.7.0
+- @react-spectrum/divider@3.5.0
+- @react-spectrum/dnd@3.1.0
+- @react-spectrum/form@3.6.0
+- @react-spectrum/icon@3.7.0
+- @react-spectrum/illustratedmessage@3.4.0
+- @react-spectrum/image@3.4.0
+- @react-spectrum/label@3.11.0
+- @react-spectrum/labeledvalue@3.1.0
+- @react-spectrum/layout@3.5.0
+- @react-spectrum/link@3.5.0
+- @react-spectrum/list@3.3.0
+- @react-spectrum/listbox@3.9.0
+- @react-spectrum/menu@3.10.0
+- @react-spectrum/meter@3.4.0
+- @react-spectrum/numberfield@3.6.0
+- @react-spectrum/overlays@5.0.0
+- @react-spectrum/picker@3.10.0
+- @react-spectrum/progress@3.4.0
+- @react-spectrum/provider@3.7.0
+- @react-spectrum/radio@3.5.0
+- @react-spectrum/searchfield@3.7.0
+- @react-spectrum/slider@3.5.0
+- @react-spectrum/statuslight@3.5.0
+- @react-spectrum/switch@3.4.0
+- @react-spectrum/table@3.7.0
+- @react-spectrum/tabs@3.5.0
+- @react-spectrum/tag@3.0.0-beta.3
+- @react-spectrum/text@3.4.0
+- @react-spectrum/textfield@3.10.0
+- @react-spectrum/theme-dark@3.5.0
+- @react-spectrum/theme-default@3.5.0
+- @react-spectrum/theme-express@3.0.0-alpha.2
+- @react-spectrum/theme-light@3.4.0
+- @react-spectrum/toast@3.0.0-alpha.0
+- @react-spectrum/tooltip@3.4.0
+- @react-spectrum/utils@3.9.0
+- @react-spectrum/view@3.5.0
+- @react-spectrum/well@3.4.0
+- @react-stately/calendar@3.1.0
+- @react-stately/checkbox@3.4.0
+- @react-stately/collections@3.6.0
+- @react-stately/color@3.3.0
+- @react-stately/combobox@3.4.0
+- @react-stately/data@3.9.0
+- @react-stately/datepicker@3.3.0
+- @react-stately/dnd@3.1.0
+- @react-stately/grid@3.5.0
+- @react-stately/layout@3.11.0
+- @react-stately/list@3.7.0
+- @react-stately/menu@3.5.0
+- @react-stately/numberfield@3.4.0
+- @react-stately/overlays@3.5.0
+- @react-stately/radio@3.7.0
+- @react-stately/searchfield@3.4.0
+- @react-stately/select@3.4.0
+- @react-stately/selection@3.12.0
+- @react-stately/slider@3.3.0
+- @react-stately/table@3.8.0
+- @react-stately/tabs@3.3.0
+- @react-stately/tag@3.0.0-beta.0
+- @react-stately/toast@3.0.0-alpha.0
+- @react-stately/toggle@3.5.0
+- @react-stately/tooltip@3.3.0
+- @react-stately/tree@3.5.0
+- @react-stately/utils@3.6.0
+- @react-stately/virtualizer@3.5.0
+- @react-types/accordion@3.0.0-alpha.12
+- @react-types/actionbar@3.0.0-beta.0
+- @react-types/actiongroup@3.4.0
+- @react-types/autocomplete@3.0.0-alpha.12
+- @react-types/avatar@3.0.0-beta.0
+- @react-types/badge@3.1.0
+- @react-types/breadcrumbs@3.5.0
+- @react-types/button@3.7.1
+- @react-types/buttongroup@3.3.0
+- @react-types/calendar@3.1.0
+- @react-types/card@3.0.0-alpha.13
+- @react-types/checkbox@3.4.2
+- @react-types/color@3.0.0-beta.15
+- @react-types/combobox@3.6.0
+- @react-types/contextualhelp@3.2.0
+- @react-types/datepicker@3.2.0
+- @react-types/dialog@3.5.0
+- @react-types/divider@3.3.0
+- @react-types/form@3.4.2
+- @react-types/grid@3.1.6
+- @react-types/illustratedmessage@3.3.0
+- @react-types/image@3.3.0
+- @react-types/label@3.7.2
+- @react-types/layout@3.3.6
+- @react-types/link@3.4.0
+- @react-types/list@3.2.0
+- @react-types/listbox@3.4.0
+- @react-types/menu@3.8.0
+- @react-types/meter@3.3.0
+- @react-types/numberfield@3.4.0
+- @react-types/overlays@3.7.0
+- @react-types/progress@3.3.0
+- @react-types/provider@3.6.0
+- @react-types/radio@3.4.0
+- @react-types/searchfield@3.4.0
+- @react-types/select@3.7.0
+- @react-types/shared@3.17.0
+- @react-types/slider@3.4.0
+- @react-types/statuslight@3.3.0
+- @react-types/switch@3.3.0
+- @react-types/table@3.5.0
+- @react-types/tabs@3.2.0
+- @react-types/tag@3.0.0-beta.2
+- @react-types/text@3.3.0
+- @react-types/textfield@3.7.0
+- @react-types/tooltip@3.3.0
+- @react-types/view@3.4.0
+- @react-types/well@3.3.0
+- @spectrum-icons/color@3.5.0
+- @spectrum-icons/express@3.0.0-alpha.4
+- @spectrum-icons/illustrations@3.6.0
+- @spectrum-icons/ui@3.5.0
+- @spectrum-icons/workflow@4.1.0
+- react-aria@3.23.0
+- react-stately@3.21.0
+```

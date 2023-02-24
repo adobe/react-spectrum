@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   transpilePackages: [
     "@adobe/react-spectrum",
     "@react-spectrum/actiongroup",
