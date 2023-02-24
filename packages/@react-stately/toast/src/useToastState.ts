@@ -79,7 +79,7 @@ export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
 export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
   let subscribe = useCallback(fn => queue.subscribe(fn), [queue]);
   let getSnapshot = useCallback(() => queue.visibleToasts, [queue]);
-  let visibleToasts = useSyncExternalStore(subscribe, getSnapshot);
+  let visibleToasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   return {
     visibleToasts,

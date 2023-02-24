@@ -60,7 +60,7 @@ function getActiveToastContainer() {
 }
 
 function useActiveToastContainer() {
-  return useSyncExternalStore(subscribe, getActiveToastContainer);
+  return useSyncExternalStore(subscribe, getActiveToastContainer, getActiveToastContainer);
 }
 
 /**
