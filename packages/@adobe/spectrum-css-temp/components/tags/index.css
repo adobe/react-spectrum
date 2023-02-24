@@ -20,6 +20,12 @@ governing permissions and limitations under the License.
   display: inline;
 }
 
+.spectrum-Tags-container {
+  /* Aligns tags with label. */
+  margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+  margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+}
+
 .spectrum-Tags-item {
   @inherit: %spectrum-FocusRing;
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
