@@ -314,7 +314,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           style={style}
           hasActions={onAction}
           isTableDroppable={isTableDroppable}
-          isTableDraggable={isTableDraggable}>
+          isTableDraggable={isTableDraggable}
+          isRootDropTarget={isRootDropTarget}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -1114,7 +1115,7 @@ export function useTableRowContext() {
   return useContext(TableRowContext);
 }
 
-function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, ...otherProps}) {
+function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, isRootDropTarget, ...otherProps}) {
   let ref = useRef();
   let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
@@ -1219,7 +1220,8 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
             },
             classNames(
               stylesOverrides,
-              {'react-spectrum-Table-row--dropTarget': isDropTarget}
+              {'react-spectrum-Table-row--dropTarget': isDropTarget},
+              {'react-spectrum-Table-row--rootDropTarget': isRootDropTarget}
             )
           )
         }>
