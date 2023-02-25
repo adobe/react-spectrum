@@ -40,15 +40,14 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let tagRowRef = useRef();
+  let ref = useRef();
   let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
     ...props,
     isFocused,
     allowsRemoving,
     item,
-    onRemove,
-    tagRowRef
-  }, state);
+    onRemove
+  }, state, ref);
 
   return (
     <div
@@ -64,18 +63,19 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
         },
           styleProps.className
         )}
-      ref={tagRowRef}>
+      ref={ref}>
       <div
         className={classNames(styles, 'spectrum-Tag-cell')}
         {...tagProps}>
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content'), ...labelProps},
+            avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
           }}>
           {typeof children === 'string' ? <Text>{children}</Text> : children}
           <ClearSlots>
-            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+            {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
           </ClearSlots>
         </SlotProvider>
       </div>

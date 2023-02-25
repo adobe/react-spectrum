@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTagGroupState';
+export {useTagGroupState} from './useTagGroupState';
+
+export type {TagGroupState} from './useTagGroupState';
+export type {TagGroupProps} from '@react-types/tag';

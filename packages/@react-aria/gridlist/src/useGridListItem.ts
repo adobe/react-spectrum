@@ -13,9 +13,9 @@
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
+import {getScrollParent, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -92,17 +92,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -117,16 +120,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }

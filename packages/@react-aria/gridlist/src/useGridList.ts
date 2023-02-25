@@ -81,7 +81,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
   });
 
-  let id = useId();
+  let id = useId(props.id);
   listMap.set(state, {id, onAction});
 
   let descriptionProps = useHighlightSelectionDescription({
