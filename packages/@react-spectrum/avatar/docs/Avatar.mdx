@@ -22,7 +22,6 @@ import {Flex} from '@react-spectrum/layout';
 ---
 category: Content
 keywords: [avatar]
-after_version: 3.0.0
 ---
 
 # Avatar
@@ -42,9 +41,11 @@ after_version: 3.0.0
 
 ## Content
 
-The Avatar component is a thumbnail representation of an entity, such as a user or an organization.
+The Avatar component is a thumbnail representation of an entity, such as a user or an organization. They accept a `src` attribute defining the image URL, and an `alt` attribute for an accessible description.
 
-**Note: Avatars must have an `alt` attribute.** If the avatar is considered decorative and should not be announced by screen readers, then set `alt=""` to suppress the warning.
+### Accessibility
+
+By default, avatars are decorative and have an empty `alt` attribute. Standalone avatars with no surrounding context must have a custom `alt` prop defined for accessibility.
 
 ### Internationalization
 
@@ -64,17 +65,14 @@ To internationalize an Avatar, a localized string should be passed to the `alt` 
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/avatar/#Size)
+
+Sizes can either be one of the predefined avatar size variables, or a custom size in pixels.
+
 ```tsx example
 <Flex gap="size-100" wrap>
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-50" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-75" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-100" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-200" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-300" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-400" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-500" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-600" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size="avatar-size-700" />
-  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size={100} />
+  {[50, 75, 100, 200, 300, 400, 500, 600, 700].map(size => (
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" size={`avatar-size-${size}`} />
+  ))}
+  <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="avatar with custom size" size={50} />
 </Flex>
 ```
