@@ -529,6 +529,7 @@ governing permissions and limitations under the License.
     }
   }
 }
+
 @media (forced-colors: active) {
   .spectrum-Dialog:not(.spectrum-Dialog--fullscreenTakeover) {
     border-radius: var(--spectrum-dialog-border-radius);

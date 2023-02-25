@@ -143,3 +143,10 @@ only screen and (max-device-height: 350px) {
     transform: none;
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Modal:not(.spectrum-Modal--fullscreenTakeover) {
+    border-style: solid;
+    border-width: var(--spectrum-alias-border-size-thin);
+  }
+}

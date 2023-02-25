@@ -13,3 +13,9 @@ governing permissions and limitations under the License.
 .spectrum-Modal {
   background: var(--spectrum-dialog-background-color);
 }
+
+@media (forced-colors: active) {
+  .spectrum-Modal:not(.spectrum-Modal--fullscreenTakeover) {
+    border-color: transparent;
+  }
+}

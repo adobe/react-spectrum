@@ -94,3 +94,10 @@
     border-radius: var(--spectrum-tray-border-radius);
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-Tray {
+    border-width: var(--spectrum-alias-border-size-thin);
+    border-style: solid solid none;
+  }
+}

@@ -145,8 +145,15 @@ governing permissions and limitations under the License.
   }
 }
 
+
 @media (forced-colors: active) {
   .spectrum-Popover {
-    overflow: hidden;
+    /* With a popover that contains a menu,
+    the menu scrolls. Add overflow: hidden,
+    so the menu's scrollbar doesn't overflow the
+    the popover's border-radius in the corners. */
+    &:has(> [class*='spectrum-Menu-popover']) {
+      overflow: hidden;
+    }
   }
 }
