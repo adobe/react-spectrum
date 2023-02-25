@@ -347,8 +347,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       validRect: layoutInfo.rect.intersection(this.validRect)
     };
 
-    // console.log('section layout info', layoutNode);
-
     return layoutNode;
   }
 
@@ -379,6 +377,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     if (typeof this.indentationForItem === 'function') {
       x += this.indentationForItem(this.collection, node.key) || 0;
     }
+
+    // TODO: adds padding between the end of a section and items after it
+    // if (node.parentKey == null && this.collection.getItem(node.prevKey)?.parentKey != null) {
+    //   // TODO: this is a static value which is unfortunate. Try making this in the styles?
+    //   y += 16;
+    // }
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);

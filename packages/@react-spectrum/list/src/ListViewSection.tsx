@@ -32,12 +32,15 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
   let {direction} = useLocale();
   let item = sectionView.content;
   let {gridSectionProps, gridRowProps, gridRowHeaderProps} = useGridListSection({node: item, isVirtualized: true}, state);
-
   let headerRowRef = useRef();
+
   useVirtualizerItem({
     reusableView: header,
     ref: headerRowRef
   });
+
+  // TODO: try to make the section add its 16px padding to its bottom. Will need to do something with useVirtualizerItem though
+  // since we need to adjust the layout height after measuring the space that the rows take within
 
   return (
     <>

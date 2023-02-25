@@ -71,6 +71,15 @@ const parameters = {
         type: 'radio',
         options: ['selection', 'all']
       }
+    },
+    loadingState: {
+      control: {
+        type: 'select',
+        options: ['loading', 'loadingMore', 'idle']
+      }
+    },
+    height: {
+      control: 'number'
     }
   }
 };
@@ -184,6 +193,19 @@ storiesOf('ListView', module)
         <Item textValue="2">2</Item>
         <Item textValue="3">3</Item>
       </Section>
+    </ListView>
+  ))
+  .add('with sections and non section items', args => (
+    <ListView width="250px" aria-label="default ListView" {...args}>
+      <Item textValue="Foo">Foo</Item>
+      <Item textValue="Bar">Bar</Item>
+      <Section key="section1" title="Section One">
+        <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
+        <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
+        <Item textValue="Adobe XD">Adobe XD</Item>
+      </Section>
+      <Item textValue="Yah">Yah</Item>
+      <Item textValue="Nah">Nah</Item>
     </ListView>
   ))
   .add('dynamic items', args => (
