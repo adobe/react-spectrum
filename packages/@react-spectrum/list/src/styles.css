@@ -57,19 +57,23 @@
 }
 
 .react-spectrum-ListView {
-  box-sizing: border-box;
+  /* TODO: we will still need the ListView container border if the items don't fill the listview/loading? */
+  /* What should it look like if we have one fully loaded section and isLoading is true? Do we put the spinner in the first section? Put it outside  */
+  /*  What if the sections don't fill up the total height of the list?   */
+  border: none;
+  /* box-sizing: border-box;
   border-color: var(--spectrum-listview-border-color);
-  border-style: solid;
+  border-style: solid; */
   position: relative;
-  border-width: var(--spectrum-listview-border-width);
-  border-radius: var(--spectrum-listview-border-radius);
+  /* border-width: var(--spectrum-listview-border-width);
+  border-radius: var(--spectrum-listview-border-radius); */
   overflow: auto;
   vertical-align: var(--spectrum-table-cell-vertical-alignment);
-  border-collapse: separate;
-  border-spacing: 0;
+  /* border-collapse: separate;
+  border-spacing: 0; */
   transform: translate3d(0, 0, 0);
   padding: 0;
-  background-color: var(--spectrum-listview-background-color);
+  /* background-color: var(--spectrum-listview-background-color); */
   outline: 0;
   user-select: none;
 
@@ -89,6 +93,7 @@
     }
 
     .react-spectrum-ListViewItem {
+      background-color: var(--spectrum-listview-background-color);
       /* common pseudoelement for box shadows */
       &:after {
         content: '';
@@ -100,10 +105,35 @@
         inset-block-start: 0;
         z-index: 3;
         pointer-events: none;
+        box-shadow:
+          inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+          inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
+          inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
 
         /* forced-color-adjust: none, so that box-shadow style will render */
         forced-color-adjust: none;
       }
+
+      &.react-spectrum-ListViewItem--firstRow:not(.is-selected) {
+        &:after {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-start-end-radius: var(--spectrum-listview-item-border-radius);
+          box-shadow:
+            inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+            inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
+            inset 0 -1px 0 0 var(--spectrum-listview-item-border-color),
+            inset 0 1px 0 0 var(--spectrum-listview-item-border-color);
+        }
+      }
+
+      /* &.react-spectrum-ListViewItem--lastRow:not(.is-selected) {
+        &:after {
+          box-shadow:
+            inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+            inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
+            inset 0 -1px 0 0 var(--spectrum-listview-item-border-color),
+        }
+      } */
 
       &.is-selected {
         background-color: var(--spectrum-listview-item-background-color-selected);
@@ -140,28 +170,32 @@
     &:not(.react-spectrum-ListView--quiet) {
       .react-spectrum-ListViewSection.react-spectrum-ListViewSection {
         .react-spectrum-ListViewItem {
-          &.react-spectrum-ListViewItem--firstRow:not(.is-selected) {
+          /* &.react-spectrum-ListViewItem--firstRow:not(.is-selected) {
             &:after {
               border-start-start-radius: var(--spectrum-listview-item-border-radius);
               border-start-end-radius: var(--spectrum-listview-item-border-radius);
               box-shadow:
+                inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+                inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
                 inset 0 -1px 0 0 var(--spectrum-listview-item-border-color),
                 inset 0 1px 0 0 var(--spectrum-listview-item-border-color);
             }
-          }
+          } */
 
-          &.react-spectrum-ListViewItem--lastRow:not(.react-spectrum-ListViewItem--isFlushBottom) {
+          &.react-spectrum-ListViewItem--lastRow {
             &:after {
               border-end-start-radius: var(--spectrum-listview-item-border-radius);
               border-end-end-radius: var(--spectrum-listview-item-border-radius);
             }
 
-            &:not(.is-selected) {
+            /* &:not(.is-selected) {
               &:after {
                 box-shadow:
+                  inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+                  inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
                   inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
               }
-            }
+            } */
           }
         }
       }
@@ -169,11 +203,14 @@
       .react-spectrum-ListViewItem {
         /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row (grey border bottom). */
         /* Also omit bottom border for last row if the total content height of the ListView is equal or greater than the height of the container. This avoids overlapping bottom borders. */
-        &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
+        /* &:not(.is-selected):not(.is-next-selected):not(.react-spectrum-ListViewItem--isFlushBottom) {
           &:after {
-            box-shadow: inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
+            box-shadow:
+              inset 1px 0 0 0 var(--spectrum-listview-item-border-color),
+              inset -1px 0 0 0 var(--spectrum-listview-item-border-color),
+              inset 0 -1px 0 0 var(--spectrum-listview-item-border-color);
           }
-        }
+        } */
 
         &.react-spectrum-ListViewItem--firstRow.is-selected {
           &:after {
@@ -547,13 +584,13 @@
   /* give first and last items border-radius to match listview container */
 
   .react-spectrum-ListViewItem--firstRow.react-spectrum-ListViewItem {
-    border-start-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-start-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-start-start-radius: var(--spectrum-listview-item-border-radius);
+    border-start-end-radius: var(--spectrum-listview-item-border-radius);
   }
 
   .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem {
-    border-end-start-radius: var(--spectrum-listview-item-start-end-border-radius);
-    border-end-end-radius: var(--spectrum-listview-item-start-end-border-radius);
+    border-end-start-radius: var(--spectrum-listview-item-border-radius);
+    border-end-end-radius: var(--spectrum-listview-item-border-radius);
   }
 
   &.react-spectrum-ListView--isVerticalScrollbarVisible {
