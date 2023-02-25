@@ -441,6 +441,9 @@ governing permissions and limitations under the License.
     border-top-right-radius: var(--spectrum-dialog-border-radius);
     overflow-y: auto;
 
+    /* Account for border-size so that the scrolling grid does not overflow the Dialog. */
+    margin-bottom: calc(2 * var(--spectrum-popover-border-size));
+
     grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
     grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(--spectrum-dialog-padding-y);
     grid-template-areas:
