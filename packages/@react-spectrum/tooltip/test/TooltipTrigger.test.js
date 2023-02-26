@@ -619,6 +619,141 @@ describe('TooltipTrigger', function () {
     });
   });
 
+  describe('custom close delay', () => {
+    it('closes with a custom close delay less than the default', () => {
+      let delay = 350;
+      let closeDelay = 100;
+
+      let { getByRole, queryByRole, getByLabelText } = render(
+        <Provider theme={theme}>
+          <TooltipTrigger
+            onOpenChange={onOpenChange}
+            closeDelay={closeDelay}
+            delay={delay}
+          >
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run through open timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(delay));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseLeave(button);
+      fireEvent.mouseMove(button);
+
+      // run half way through close timer to make sure it has not closed
+      act(() => jest.advanceTimersByTime(closeDelay / 2));
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tooltip).toBeVisible();
+
+      // run the rest of the way through the timer and confirm that it has closed
+      // Note that closeDelay is less than the default close time of 500ms
+      act(() => jest.advanceTimersByTime(closeDelay / 2));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+
+      act(() => jest.advanceTimersByTime(CLOSE_TIME));
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('closes with a custom close delay more than the default', () => {
+      let delay = 350;
+      let closeDelay = 650;
+
+      let { getByRole, queryByRole, getByLabelText } = render(
+        <Provider theme={theme}>
+          <TooltipTrigger
+            onOpenChange={onOpenChange}
+            closeDelay={closeDelay}
+            delay={delay}
+          >
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run through open timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(delay));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseLeave(button);
+
+      // run the timer to the default close time to make sure it hasn't closed
+      act(() => jest.advanceTimersByTime(500));
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
+      expect(tooltip).toBeVisible();
+
+      // run the rest of the way through the timer and confirm that it has closed
+      // Note that closeDelay is more than the default close time of 500ms
+      act(() => jest.advanceTimersByTime(closeDelay / 2));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+
+      act(() => jest.advanceTimersByTime(closeDelay));
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('closes immediately with a close delay less than or equal to zero', () => {
+      let delay = 350;
+      let closeDelay = -50;
+
+      let { getByRole, queryByRole, getByLabelText } = render(
+        <Provider theme={theme}>
+          <TooltipTrigger
+            onOpenChange={onOpenChange}
+            closeDelay={closeDelay}
+            delay={delay}
+          >
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run through open timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(delay));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseLeave(button);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(tooltip).not.toBeInTheDocument();
+    });
+  });
 
   describe('multiple tooltips', () => {
     it('can only show one tooltip at a time', () => {
