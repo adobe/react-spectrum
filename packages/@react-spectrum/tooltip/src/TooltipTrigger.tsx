@@ -42,6 +42,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   }, state, tooltipTriggerRef);
 
+  let arrowTotalCrossPadding = 8;
+
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: tooltipTriggerRef,
@@ -51,7 +53,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     isOpen: state.isOpen,
     shouldFlip: props.shouldFlip,
     containerPadding: props.containerPadding,
-    arrowCrossSize: 8
+    arrowCrossSize: 8 + arrowTotalCrossPadding
   });
 
   return (
