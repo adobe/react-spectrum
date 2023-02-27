@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, Node as RSNode} from '@react-types/shared';
-import type {ListState} from '@react-stately/list';
+import {DOMAttributes} from '@react-types/shared';
+import {GridNode} from '@react-types/grid';
+import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
-export interface AriaGridListSectionOptions {
-  /** An object representing the list section. Contains all the relevant information that makes up the list section. */
-  node: RSNode<unknown>,
-  /** Whether the list section is contained in a virtual scroller. */
-  isVirtualized?: boolean
+export interface AriaTableSectionProps {
+  /** An object representing the table section. Contains all the relevant information that makes up the section. */
+  node: GridNode<unknown>,
+  /** Whether the cell is contained in a virtual scroller. */
+  isVirtualized?: boolean,
 }
 
-export interface GridListSectionAria {
+export interface TableSectionAria {
   /** Props for the list section's wrapping element. */
   gridSectionProps: DOMAttributes,
   /** Props for the list row element representing the section header. */
@@ -31,21 +32,22 @@ export interface GridListSectionAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a section in a grid list.
+ * Provides the behavior and accessibility implementation for a section in a table.
  * @param props - Props for the section.
- * @param state - State of the parent list, as returned by `useListState`.
+ * @param state - State of the table, as returned by `useTableState`.
  */
-export function useGridListSection<T>(props: AriaGridListSectionOptions, state: ListState<T>): GridListSectionAria {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useTableSection<T>(props: AriaTableSectionProps, state: TableState<T>): TableSectionAria {
   let {node, isVirtualized} = props;
+  // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
+  // prob map from section key to id?
   let headerId = useId();
   let rowIndex;
 
   if (isVirtualized) {
-    let prevItem = state.collection.getItem(node.prevKey);
-    rowIndex = prevItem ? prevItem.index + node.index + 2 : 1;
+    rowIndex = node.index + 1;
   }
 
-  // TODO: for some reason VO announces section 2 for section 1's first row when using control + option + arrow keys to navigate...
   return {
     gridSectionProps: {
       role: 'rowgroup',
@@ -58,6 +60,7 @@ export function useGridListSection<T>(props: AriaGridListSectionOptions, state: 
     gridRowHeaderProps: {
       id: headerId,
       role: 'rowheader',
+      'aria-colspan': state.collection.columnCount,
       'aria-label': node.textValue || undefined
     }
   };

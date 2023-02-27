@@ -122,8 +122,7 @@ export default {
 
 export type TableStory = ComponentStoryObj<typeof TableView>;
 
-
-export const Static: TableStory = {
+export const StaticWithSections: TableStory = {
   args: {
     'aria-label': 'TableView with static contents',
     width: 300,
@@ -151,7 +150,41 @@ export const Static: TableStory = {
   storyName: 'static with sections'
 };
 
-export const Static2 = {
+export const StaticWithMixed: TableStory = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>A</Cell>
+        </Row>
+        <Section title="Section1">
+          <Row>
+            <Cell>One</Cell>
+          </Row>
+        </Section>
+        <Section title="Section2">
+          <Row>
+            <Cell>two</Cell>
+          </Row>
+        </Section>
+        <Row>
+          <Cell>B</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  storyName: 'static with sections and non section rows'
+};
+
+export const Static = {
   args: {
     'aria-label': 'TableView with static contents',
     width: 300,

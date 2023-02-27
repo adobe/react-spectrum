@@ -51,6 +51,7 @@ import {
   useTableHeaderRow,
   useTableRow,
   useTableRowGroup,
+  useTableSection,
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
@@ -266,22 +267,18 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-      // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
+        // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
       let header = children.find(c => c.viewType === 'header');
-      let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, parent && parent.layoutInfo);
-      let sectionStyle = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
-      // TODO: will need to associate the section label here with the row inside
+      let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
       return (
-        <>
-          {/* TODO: remove the data-id later */}
-          {/* TODO: make component + hook to generate id/role for the section title */}
-          <div style={headerStyle} key={header.key} data-id="section title" role="presentation">
-            {reusableView.content.rendered}
-          </div>
-          <div style={sectionStyle} key={reusableView.key} data-id="section wrapper">
-            {renderChildren(children.filter(c => c.viewType !== 'header'))}
-          </div>
-        </>
+        <TableSection
+          reusableView={reusableView}
+          key={reusableView.key}
+          style={style}
+          header={header}
+          headerStyle={headerStyle}>
+          {renderChildren(children.filter(c => c.viewType !== 'header'))}
+        </TableSection>
       );
     }
 
@@ -1133,6 +1130,24 @@ function TableCell({cell}) {
         </span>
       </div>
     </FocusRing>
+  );
+}
+
+function TableSection({children, style, header, headerStyle, key, reusableView}) {
+  let {state} = useTableContext();
+  let {gridSectionProps, gridRowProps, gridRowHeaderProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
+  // TODO: add useVirtualizer item to the header div (add wrapper for it?) Will probably need it so the header div adjusts itself accordingly
+
+
+  return (
+    <div style={style} key={key} {...gridSectionProps}>
+      <div style={headerStyle} key={header.key} {...gridRowProps}>
+        <span {...gridRowHeaderProps}>
+          {reusableView.content.rendered}
+        </span>
+      </div>
+      {children}
+    </div>
   );
 }
 

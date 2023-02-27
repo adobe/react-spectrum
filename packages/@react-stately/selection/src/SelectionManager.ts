@@ -284,6 +284,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     // Find a parent item to select
+    // TODO: figure out why sections in table breaks with selection
     while (item.type !== 'item' && item.parentKey != null) {
       item = this.collection.getItem(item.parentKey);
     }
