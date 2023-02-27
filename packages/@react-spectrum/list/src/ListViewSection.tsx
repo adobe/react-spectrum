@@ -41,6 +41,12 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
 
   // TODO: try to make the section add its 16px padding to its bottom. Will need to do something with useVirtualizerItem though
   // since we need to adjust the layout height after measuring the space that the rows take within
+  // Alternatively, add something like "footer"/"divider" to the section layout info and make it a virtualizer item just like the header
+  // This would only be added if there is a next key after the section
+  // Another alternative is to handle adding the padding to the top of the section/row instead:
+  // If it is a section, padding to the top should be added if it isn't the first row (add this via header)
+  // If it is a row, padding to the top should be added if the preceeding key is a row that belongs to a section and the current row doesn't have a section
+  // Would need to add some stuff to thelayoutNode of a item like the header for sections
 
   return (
     <>
