@@ -624,13 +624,9 @@ describe('TooltipTrigger', function () {
       let delay = 350;
       let closeDelay = 100;
 
-      let { getByRole, queryByRole, getByLabelText } = render(
+      let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger
-            onOpenChange={onOpenChange}
-            closeDelay={closeDelay}
-            delay={delay}
-          >
+          <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -673,13 +669,9 @@ describe('TooltipTrigger', function () {
       let delay = 350;
       let closeDelay = 650;
 
-      let { getByRole, queryByRole, getByLabelText } = render(
+      let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger
-            onOpenChange={onOpenChange}
-            closeDelay={closeDelay}
-            delay={delay}
-          >
+          <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -721,13 +713,9 @@ describe('TooltipTrigger', function () {
       let delay = 350;
       let closeDelay = -50;
 
-      let { getByRole, queryByRole, getByLabelText } = render(
+      let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger
-            onOpenChange={onOpenChange}
-            closeDelay={closeDelay}
-            delay={delay}
-          >
+          <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -751,6 +739,8 @@ describe('TooltipTrigger', function () {
 
       fireEvent.mouseLeave(button);
       expect(onOpenChange).toHaveBeenCalledWith(false);
+
+      act(() => jest.advanceTimersByTime(CLOSE_TIME));
       expect(tooltip).not.toBeInTheDocument();
     });
   });
