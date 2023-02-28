@@ -1187,7 +1187,10 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     focusProps,
     hoverProps,
     pressProps,
-    draggableItem?.dragProps
+    draggableItem?.dragProps,
+    // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
+    // allowing for single swipe navigation between row drop indicator
+    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
