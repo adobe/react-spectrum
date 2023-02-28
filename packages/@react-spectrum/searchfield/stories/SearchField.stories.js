@@ -11,7 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
@@ -20,127 +23,109 @@ import {storiesOf} from '@storybook/react';
 const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 
 storiesOf('SearchField', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
+  .addParameters({
+    providerSwitcher: {status: 'positive'},
+    args: {
+      label: 'Search',
+      isQuiet: false,
+      isDisabled: false,
+      isReadOnly: false,
+      isRequired: false,
+      necessityIndicator: 'icon',
+      labelPosition: 'top',
+      labelAlign: 'start',
+      validationState: null
+    },
+    argTypes: {
+      labelPosition: {
+        control: {
+          type: 'radio',
+          options: ['top', 'side']
+        }
+      },
+      necessityIndicator: {
+        control: {
+          type: 'radio',
+          options: ['icon', 'label']
+        }
+      },
+      labelAlign: {
+        control: {
+          type: 'radio',
+          options: ['start', 'end']
+        }
+      },
+      validationState: {
+        control: {
+          type: 'radio',
+          options: [null, 'valid', 'invalid']
+        }
+      }
+    }
+  })
   .add(
     'Default',
-    () => renderSearchLandmark(render()),
+    args => renderSearchLandmark(render(args)),
     {info}
   )
   .add(
     'defaultValue (uncontrolled)',
-    () => renderSearchLandmark(render({defaultValue: 'React'})),
+    args => renderSearchLandmark(render({...args, defaultValue: 'React'})),
     {info}
   )
   .add(
     'value (controlled)',
-    () => renderSearchLandmark(render({value: 'React'})),
+    args => renderSearchLandmark(render({...args, value: 'React'})),
     {info}
-  )
-  .add(
-    'isQuiet: true',
-    () => renderSearchLandmark(render({isQuiet: true})),
-    {info}
-  )
-  .add(
-    'isDisabled: true',
-    () => renderSearchLandmark(render({defaultValue: 'React', isDisabled: true})),
-    {info}
-  )
-  .add(
-    'isQuiet, isDisabled',
-    () => renderSearchLandmark(render({defaultValue: 'React', isQuiet: true, isDisabled: true})),
-    {info}
-  )
-  .add(
-    'isReadOnly',
-    () => renderSearchLandmark(render({defaultValue: 'React', isReadOnly: true})),
-    {info}
-  )
-  .add(
-    'isRequired: true',
-    () => render({isRequired: true})
-  )
-  .add(
-    'isRequired: true, necessityIndicator: label',
-    () => render({isRequired: true, necessityIndicator: 'label'})
-  )
-  .add(
-    'isRequired: false, necessityIndicator: label',
-    () => render({isRequired: false, necessityIndicator: 'label'})
   )
   .add(
     'icon: refresh',
-    () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />})),
+    args => renderSearchLandmark(render({...args, defaultValue: 'React', icon: <Refresh />})),
     {info}
   )
   .add(
     'icon: null',
-    () => renderSearchLandmark(render({defaultValue: 'React', icon: null})),
-    {info}
-  )
-  .add(
-    'isQuiet, icon: refresh',
-    () => renderSearchLandmark(render({defaultValue: 'React', icon: <Refresh />, isQuiet: true})),
-    {info}
-  )
-  .add(
-    'isQuiet, icon: null',
-    () => renderSearchLandmark(render({defaultValue: 'React', icon: null, isQuiet: true})),
-    {info}
-  )
-  .add(
-    'validationState=invalid',
-    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'invalid'})),
-    {info}
-  )
-  .add(
-    'validationState=valid',
-    () => renderSearchLandmark(render({defaultValue: 'React', validationState: 'valid'})),
+    args => renderSearchLandmark(render({...args, defaultValue: 'React', icon: null})),
     {info}
   )
   .add(
     'onClear',
-    () => renderSearchLandmark(render({onClear: action('clear')})),
+    args => renderSearchLandmark(render({...args, onClear: action('clear')})),
     {info}
   )
   .add(
     'autoFocus',
-    () => renderSearchLandmark(render({autoFocus: true})),
+    args => renderSearchLandmark(render({...args, autoFocus: true})),
     {info}
   )
   .add(
-    'labelAlign: end',
-    () => render({labelAlign: 'end'})
-  )
-  .add(
-    'labelPosition: side',
-    () => render({labelPosition: 'side'})
-  )
-  .add(
     'no visible label',
-    () => render({label: null, 'aria-label': 'Street address'})
+    args => render({...args, label: null, 'aria-label': 'Street address'})
   )
   .add('with description',
-    () => render({description: 'Enter a search term.'})
+    args => render({...args, description: 'Enter a search term.'})
   )
   .add('with error message',
-    () => render({errorMessage: 'Remove special characters.', validationState: 'invalid'})
+    args => render({...args, errorMessage: 'Remove special characters.', validationState: 'invalid'})
+  )
+  .add(
+    'contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   )
   .add('custom width',
-    () => render({width: 300})
-  )
-  .add('custom width, quiet',
-    () => render({width: 300, isQuiet: true})
-  )
-  .add('custom width, labelPosition: side',
-    () => render({width: 300, labelPosition: 'side'})
+    args => render({...args, width: 300})
   )
   .add('custom width and narrow container',
-    () => (
+    args => (
       <Flex direction="column" width="30px">
-        {render({defaultValue: 'React', validationState: 'valid'})}
-        {render({defaultValue: 'React', width: 30})}
-        {render({defaultValue: 'React', width: 30, validationState: 'valid'})}
+        {render({...args, defaultValue: 'React', validationState: 'valid'})}
+        {render({...args, defaultValue: 'React', width: 30})}
+        {render({...args, defaultValue: 'React', width: 30, validationState: 'valid'})}
       </Flex>
     )
   );

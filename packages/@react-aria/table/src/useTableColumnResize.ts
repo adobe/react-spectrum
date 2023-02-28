@@ -10,43 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, RefObject, useCallback, useRef} from 'react';
-import {DOMAttributes} from '@react-types/shared';
+import {ChangeEvent, Key, RefObject, useCallback, useRef} from 'react';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {TableColumnResizeState, TableState} from '@react-stately/table';
+import {TableColumnResizeState} from '@react-stately/table';
 import {useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface TableColumnResizeAria {
+  /** Props for the visually hidden input element. */
   inputProps: DOMAttributes,
+  /** Props for the resizer element. */
   resizerProps: DOMAttributes
 }
 
 export interface AriaTableColumnResizeProps<T> {
+  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
   column: GridNode<T>,
+  /** Aria label for the hidden input. Gets read when resizing. */
   label: string,
-  triggerRef: RefObject<HTMLDivElement>,
-  isDisabled?: boolean
+  /**
+   * Ref to the trigger if resizing was started from a column header menu. If it's provided,
+   * focus will be returned there when resizing is done.
+   * */
+  triggerRef?: RefObject<FocusableElement>,
+  /** If resizing is disabled. */
+  isDisabled?: boolean,
+  /** Called when resizing starts. */
+  onResizeStart?: (widths: Map<Key, number | string>) => void,
+  /** Called for every resize event that results in new column sizes. */
+  onResize?: (widths: Map<Key, number | string>) => void,
+  /** Called when resizing ends. */
+  onResizeEnd?: (widths: Map<Key, number | string>) => void
 }
 
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableState<T>, columnState: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
-  let {column: item, triggerRef, isDisabled} = props;
-  const stateRef = useRef<TableColumnResizeState<T>>(null);
-  // keep track of what the cursor on the body is so it can be restored back to that when done resizing
-  const cursor = useRef<string | null>(null);
-  stateRef.current = columnState;
+export interface AriaTableColumnResizeState<T> extends Omit<TableColumnResizeState<T>, 'widths'> {}
+
+/**
+ * Provides the behavior and accessibility implementation for a table column resizer element.
+ * @param props - Props for the resizer.
+ * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
+ * @param ref - The ref attached to the resizer's visually hidden input element.
+ */
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: AriaTableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+  let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
   let id = useId();
+  let isResizing = useRef(false);
+  let lastSize = useRef(null);
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
-      if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+      if (triggerRef?.current && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab')) {
         e.preventDefault();
         // switch focus back to the column header on anything that ends edit mode
         focusSafely(triggerRef.current);
@@ -54,49 +75,77 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     }
   });
 
+  let startResize = useCallback((item) => {
+    if (!isResizing.current) {
+      lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
+      state.startResize(item.key);
+      onResizeStart?.(lastSize.current);
+    }
+    isResizing.current = true;
+  }, [isResizing, onResizeStart, state]);
+
+  let resize = useCallback((item, newWidth) => {
+    let sizes = state.updateResizedColumns(item.key, newWidth);
+    onResize?.(sizes);
+    lastSize.current = sizes;
+  }, [onResize, state]);
+
+  let endResize = useCallback((item) => {
+    if (lastSize.current == null) {
+      lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
+    }
+    if (isResizing.current) {
+      state.endResize();
+      onResizeEnd?.(lastSize.current);
+    }
+    isResizing.current = false;
+    lastSize.current = null;
+  }, [isResizing, onResizeEnd, state]);
+
   const columnResizeWidthRef = useRef<number>(0);
   const {moveProps} = useMove({
     onMoveStart() {
-      columnResizeWidthRef.current = stateRef.current.getColumnWidth(item.key);
-      cursor.current = document.body.style.cursor;
+      columnResizeWidthRef.current = state.getColumnWidth(item.key);
+      startResize(item);
     },
-    onMove({deltaX, pointerType}) {
+    onMove(e) {
+      let {deltaX, deltaY, pointerType} = e;
       if (direction === 'rtl') {
         deltaX *= -1;
       }
+      if (pointerType === 'keyboard') {
+        if (deltaY !== 0 && deltaX === 0) {
+          deltaX = deltaY * -1;
+        }
+        deltaX *= 10;
+      }
       // if moving up/down only, no need to resize
       if (deltaX !== 0) {
-        if (pointerType === 'keyboard') {
-          deltaX *= 10;
-        }
         columnResizeWidthRef.current += deltaX;
-        stateRef.current.onColumnResize(item, columnResizeWidthRef.current);
-        if (stateRef.current.getColumnMinWidth(item.key) >= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', direction === 'rtl' ? 'w-resize' : 'e-resize');
-        } else if (stateRef.current.getColumnMaxWidth(item.key) <= stateRef.current.getColumnWidth(item.key)) {
-          document.body.style.setProperty('cursor', direction === 'rtl' ? 'e-resize' : 'w-resize');
-        } else {
-          document.body.style.setProperty('cursor', 'col-resize');
-        }
+        resize(item, columnResizeWidthRef.current);
       }
     },
-    onMoveEnd() {
+    onMoveEnd(e) {
+      let {pointerType} = e;
       columnResizeWidthRef.current = 0;
-      document.body.style.cursor = cursor.current;
+      if (pointerType === 'mouse') {
+        endResize(item);
+      }
     }
   });
-  let min = Math.floor(stateRef.current.getColumnMinWidth(item.key));
-  let max = Math.floor(stateRef.current.getColumnMaxWidth(item.key));
+
+  let min = Math.floor(state.getColumnMinWidth(item.key));
+  let max = Math.floor(state.getColumnMaxWidth(item.key));
   if (max === Infinity) {
     max = Number.MAX_SAFE_INTEGER;
   }
-  let value = Math.floor(stateRef.current.getColumnWidth(item.key));
-
+  let value = Math.floor(state.getColumnWidth(item.key));
   let ariaProps = {
     'aria-label': props.label,
     'aria-orientation': 'horizontal' as 'horizontal',
-    'aria-labelledby': `${id} ${getColumnHeaderId(state, item.key)}`,
+    'aria-labelledby': `${id} ${getColumnHeaderId(state.tableState, item.key)}`,
     'aria-valuetext': stringFormatter.format('columnSize', {value}),
+    'type': 'range',
     min,
     max,
     value
@@ -109,7 +158,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [ref]);
 
   let onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let currentWidth = stateRef.current.getColumnWidth(item.key);
+    let currentWidth = state.getColumnWidth(item.key);
     let nextValue = parseFloat(e.target.value);
 
     if (nextValue > currentWidth) {
@@ -117,7 +166,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     } else {
       nextValue = currentWidth - 10;
     }
-    stateRef.current.onColumnResize(item, nextValue);
+    resize(item, nextValue);
   };
 
   let {pressProps} = usePress({
@@ -125,9 +174,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
       }
-      if (e.pointerType === 'virtual' && columnState.currentlyResizingColumn != null) {
-        stateRef.current.onColumnResizeEnd(item);
-        focusSafely(triggerRef.current);
+      if (e.pointerType === 'virtual' && state.resizingColumn != null) {
+        endResize(item);
+        if (triggerRef?.current) {
+          focusSafely(triggerRef.current);
+        }
         return;
       }
       focusInput();
@@ -136,7 +187,9 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       if (e.pointerType === 'touch') {
         focusInput();
       } else if (e.pointerType !== 'virtual') {
-        focusSafely(triggerRef.current);
+        if (triggerRef?.current) {
+          focusSafely(triggerRef.current);
+        }
       }
     }
   });
@@ -153,12 +206,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
         onFocus: () => {
           // useMove calls onMoveStart for every keypress, but we want resize start to only be called when we start resize mode
           // call instead during focus and blur
-          stateRef.current.onColumnResizeStart(item);
-          state.setKeyboardNavigationDisabled(true);
+          startResize(item);
+          state.tableState.setKeyboardNavigationDisabled(true);
         },
         onBlur: () => {
-          stateRef.current.onColumnResizeEnd(item);
-          state.setKeyboardNavigationDisabled(false);
+          endResize(item);
+          state.tableState.setKeyboardNavigationDisabled(false);
         },
         onChange,
         disabled: isDisabled

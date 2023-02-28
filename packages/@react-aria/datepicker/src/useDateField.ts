@@ -13,11 +13,11 @@
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription} from '@react-aria/utils';
+import {FocusEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -64,9 +64,16 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
   });
 
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    ...props,
+    onBlurWithin: (e: FocusEvent) => {
       state.confirmPlaceholder();
-    }
+
+      if (props.onBlur) {
+        props.onBlur(e);
+      }
+    },
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -126,7 +133,18 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldProps<T>, 
         focusManager.focusFirst();
       }
     },
-    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps),
+    fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
+      onKeyDown(e: KeyboardEvent) {
+        if (props.onKeyDown) {
+          props.onKeyDown(e);
+        }
+      },
+      onKeyUp(e: KeyboardEvent) {
+        if (props.onKeyUp) {
+          props.onKeyUp(e);
+        }
+      }
+    }),
     descriptionProps,
     errorMessageProps
   };

@@ -212,3 +212,22 @@ function Example() {
   <ColorSlider defaultValue="#7f0000" channel="red" width="size-3600" maxWidth="100%" />
 </Flex>
 ```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a ColorSlider.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<ColorSlider
+  label="Accent Color"
+  channel="hue"
+  defaultValue="hsl(120, 100%, 50%)"
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is an accent color?</Heading>
+      <Content>An accent color is the primary foreground color for your theme, used across all components.</Content>
+    </ContextualHelp>
+  } />
+```

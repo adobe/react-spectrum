@@ -16,18 +16,21 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin} from '@react-spectrum/searchwithin';
 import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {Well} from '@react-spectrum/well';
@@ -251,16 +254,25 @@ function render(props: any = {}) {
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
       <SearchField label="Search" />
-      <SearchWithin label="Search cities">
-        <SearchField />
-        <Picker label="State" items={states}>
-          {item => <Item key={item.abbr}>{item.name}</Item>}
-        </Picker>
-      </SearchWithin>
       <Switch>Low power mode</Switch>
       <TextArea label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
-      <TextField label="City" />
+      <TextField
+        label="City"
+        contextualHelp={(
+          <ContextualHelp>
+            <Heading>What is a segment?</Heading>
+            <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+          </ContextualHelp>
+        )} />
       <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Cool Tag 2</Item>
+        <Item key="3">Cool Tag 3</Item>
+        <Item key="4">Cool Tag 4</Item>
+        <Item key="5">Cool Tag 5</Item>
+        <Item key="6">Cool Tag 6</Item>
+      </TagGroup>
     </Form>
   );
 }
@@ -277,7 +289,6 @@ function FormWithControls(props: any = {}) {
   let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
   let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
   let [preventDefault, setPreventDefault] = useState(true);
-  let [favoriteColor3, setFavoriteColor3] = useState('green' as Key);
 
   return (
     <Flex>
@@ -318,23 +329,20 @@ function FormWithControls(props: any = {}) {
         </Picker>
         <TextArea name="comments-controlled" label="Comments" value={howIFeel} onChange={setHowIFeel} />
         <TextArea name="comments-uncontrolled" label="Comments" defaultValue="hello" />
-        <SearchWithin label="Search">
-          <SearchField />
-          <Picker name="favorite-color3" label="Favorite color searchwithin" selectedKey={favoriteColor3} onSelectionChange={setFavoriteColor3}>
-            <Item key="red">Red</Item>
-            <Item key="orange">Orange</Item>
-            <Item key="yellow">Yellow</Item>
-            <Item key="green">Green</Item>
-            <Item key="blue">Blue</Item>
-            <Item key="purple">Purple</Item>
-          </Picker>
-        </SearchWithin>
         <ComboBox label="Favorite Animal" name="favorite-animal">
           <Item key="red panda">Red Panda</Item>
           <Item key="aardvark">Aardvark</Item>
           <Item key="kangaroo">Kangaroo</Item>
           <Item key="snake">Snake</Item>
         </ComboBox>
+        <TagGroup label="Favorite tags">
+          <Item key="1">Cool Tag 1</Item>
+          <Item key="2">Cool Tag 2</Item>
+          <Item key="3">Cool Tag 3</Item>
+          <Item key="4">Cool Tag 4</Item>
+          <Item key="5">Cool Tag 5</Item>
+          <Item key="6">Cool Tag 6</Item>
+        </TagGroup>
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
@@ -422,18 +430,6 @@ function FormWithControls(props: any = {}) {
           <label>
             Comments default
             <textarea defaultValue="hello" />
-          </label>
-          <label>
-            Favorite Color searchwithin
-            <input type="text" />
-            <select onChange={e => setFavoriteColor3(e.target.value)}>
-              <option value="red" selected={favoriteColor3 === 'red'}>Red</option>
-              <option value="orange" selected={favoriteColor3 === 'orange'}>Orange</option>
-              <option value="yellow" selected={favoriteColor3 === 'yellow'}>Yellow</option>
-              <option value="green" selected={favoriteColor3 === 'green'}>Green</option>
-              <option value="blue" selected={favoriteColor3 === 'blue'}>Blue</option>
-              <option value="purple" selected={favoriteColor3 === 'purple'}>Purple</option>
-            </select>
           </label>
           <ButtonGroup>
             <Button variant="secondary" type="reset">Reset</Button>
@@ -584,6 +580,15 @@ function FormWithSubmit() {
           Dragons
         </Radio>
       </RadioGroup>
+
+      <TagGroup label="Favorite tags">
+        <Item key="1">Cool Tag 1</Item>
+        <Item key="2">Cool Tag 2</Item>
+        <Item key="3">Cool Tag 3</Item>
+        <Item key="4">Cool Tag 4</Item>
+        <Item key="5">Cool Tag 5</Item>
+        <Item key="6">Cool Tag 6</Item>
+      </TagGroup>
 
       <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
       <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>

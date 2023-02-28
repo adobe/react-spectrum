@@ -18,8 +18,7 @@ import {useDrag, useDrop} from '../';
 
 export function Draggable(props) {
   let preview = useRef(null);
-  let {dragProps, dragButtonProps, isDragging} = useDrag({
-    hasDragButton: true,
+  let {dragProps, isDragging} = useDrag({
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -29,14 +28,12 @@ export function Draggable(props) {
     ...props
   });
 
-  let ref = React.useRef();
-  let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
-
   return (
     <>
       <div
-        ref={ref}
-        {...mergeProps(dragProps, buttonProps)}
+        {...dragProps}
+        role="button"
+        tabIndex={0}
         data-dragging={isDragging}>
         {props.children || 'Drag me'}
       </div>

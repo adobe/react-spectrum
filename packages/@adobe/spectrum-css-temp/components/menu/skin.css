@@ -17,6 +17,7 @@ governing permissions and limitations under the License.
 
 
 .spectrum-Menu {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
   background-color: var(--spectrum-selectlist-background-color);
 }
 
@@ -89,8 +90,8 @@ governing permissions and limitations under the License.
     --spectrum-selectlist-option-text-color: ButtonText;
     --spectrum-selectlist-option-text-color-disabled: GrayText;
     --spectrum-selectlist-option-text-color-hover: HighlightText;
-    --spectrum-selectlist-option-text-color-key-focus: HighlightText;    
-    --spectrum-alias-border-color-focus: Highlight; 
+    --spectrum-selectlist-option-text-color-key-focus: HighlightText;
+    --spectrum-alias-border-color-focus: Highlight;
     /* Overriding menu descriptions which were hardcoded to gray-700 */
     .spectrum-Menu-description {
       color: var(--spectrum-selectlist-option-text-color);
@@ -99,7 +100,7 @@ governing permissions and limitations under the License.
     &:focus,
     &.is-highlighted,
     &.is-open,
-    &:focus-ring, 
+    &:focus-ring,
     &.is-focused {
       &.is-selected {
         .spectrum-Menu-checkmark {

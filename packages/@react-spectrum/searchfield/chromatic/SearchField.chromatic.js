@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
@@ -52,6 +55,15 @@ storiesOf('SearchField', module)
   )
   .add('custom width',
     () => render({defaultValue: 'React', width: 275})
+  )
+  .add(
+    'contextual help',
+    args => render({...args, contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+      </ContextualHelp>
+    )})
   );
 
 function renderSearchLandmark(child) {

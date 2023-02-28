@@ -76,7 +76,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'spectrum-InputGroup--invalid': state.validationState === 'invalid',
+      'spectrum-InputGroup--invalid': state.validationState === 'invalid' && !isDisabled,
       'is-disabled': isDisabled,
       'is-hovered': isHovered,
       'is-focused': isFocused,
@@ -89,7 +89,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     'spectrum-InputGroup-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': state.validationState === 'invalid'
+      'is-invalid': state.validationState === 'invalid' && !isDisabled
     }
   );
 
@@ -129,7 +129,8 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
           isQuiet={isQuiet}
           validationState={state.validationState}
           className={classNames(styles, 'spectrum-InputGroup-field')}
-          inputClassName={fieldClassName}>
+          inputClassName={fieldClassName}
+          disableFocusRing>
           <DatePickerField
             {...fieldProps}
             data-testid="date-field"

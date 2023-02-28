@@ -1,4 +1,5 @@
 const Octokit = require('@octokit/rest');
+const fs = require('fs');
 
 const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_TOKEN}`
@@ -47,8 +48,10 @@ async function run() {
           repo: 'react-spectrum',
           commit_sha: process.env.CIRCLE_SHA1,
           body: `Verdaccio builds:
-      [Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
-      [Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
+      [CRA Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/build/index.html)
+      [NextJS Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next/index.html)
+      [CRA Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
+      [NextJS App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/next-build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
       [Size diff since last release](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/size-diff.txt)
       [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)`
@@ -60,18 +63,22 @@ async function run() {
   } else {
     pr = process.env.CIRCLE_PULL_REQUEST.split('/').pop();
   }
-
+  console.log('PR number to comment on', pr);
   if (pr != null) {
-    await octokit.issues.createComment({
-      owner: 'adobe',
-      repo: 'react-spectrum',
-      issue_number: pr,
-      body: `Build successful! 🎉
+    try {
+      await octokit.issues.createComment({
+        owner: 'adobe',
+        repo: 'react-spectrum',
+        issue_number: pr,
+        body: `Build successful! 🎉
 
   * [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook/index.html)
   * [View the storybook-17](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-17/index.html)
   * [View the storybook-16](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-16/index.html)
   * [View the documentation](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)`
-    });
+      });
+    } catch (err) {
+      console.error(err)
+    }
   }
 }

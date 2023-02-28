@@ -17,7 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
-const parcelCss = require('@parcel/css');
+const lightningcss = require('lightningcss');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -49,6 +49,8 @@ module.exports = new Transformer({
             return [];
           }
 
+          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
+
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
@@ -68,11 +70,12 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+              let props = options.includes('hidden') ? 'isHidden' : '';
+              if (/^(\s|\/\/.*)*function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/^(\s|\/\/.*)*function (.*?)\s*\(/)[2];
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}><${name} /></${provider}>, document.getElementById("${id}")));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.render(<${provider} ${props}>$1</${provider}>, document.getElementById("${id}")));`);
               }
             }
 
@@ -82,9 +85,13 @@ module.exports = new Transformer({
 
             exampleCode.push(code);
 
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
+            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
+
             if (options.includes('render=false')) {
               node.meta = null;
-              return transformExample(node, preRelease);
+              return transformExample(node, preRelease, keepIndividualImports);
             }
 
             if (meta === 'snippet') {
@@ -104,13 +111,10 @@ module.exports = new Transformer({
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
-            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
-            node.meta = 'example';
+            node.meta = options.includes('hidden') ? null : 'example';
 
             return [
-              ...transformExample(node, preRelease),
+              ...transformExample(node, preRelease, keepIndividualImports),
               {
                 type: 'mdxJsxFlowElement',
                 name: 'div',
@@ -126,14 +130,20 @@ module.exports = new Transformer({
           }
 
           if (node.lang === 'css') {
-            let transformed = parcelCss.transform({
+            if (node.meta && node.meta.includes('render=false')) {
+              return responsiveCode(node);
+            }
+
+            let transformed = lightningcss.transform({
               filename: asset.filePath,
               code: Buffer.from(node.value),
+              minify: true,
               drafts: {
                 nesting: true
               },
               targets: {
-                chrome: 95 << 16
+                chrome: 95 << 16,
+                safari: 15 << 16
               }
             });
             let css = transformed.code.toString();
@@ -180,7 +190,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return transformExample(node, preRelease);
+          return transformExample(node, preRelease, keepIndividualImports);
         }
 
         return [node];
@@ -197,6 +207,7 @@ module.exports = new Transformer({
     let date = '';
     let author = '';
     let image = '';
+    let hidden = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -269,6 +280,7 @@ module.exports = new Transformer({
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          hidden = yamlData.hidden;
           type = yamlData.type || '';
           if (yamlData.image) {
             image = asset.addDependency({
@@ -316,6 +328,81 @@ module.exports = new Transformer({
             node.data = {};
           }
           let highlighted = treeSitter.highlightHast(node.value, language);
+
+          // Add <mark> elements wrapping highlighted regions, marked by comments in the code.
+          if (node.value.includes('- begin highlight -')) {
+            let highlightParent = null;
+            let highlightedNodes = [];
+            flatMap(highlighted, (node, index, parent) => {
+              if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
+                // Handle JSX-style comments, e.g. {/* foo */}
+                let prev = parent.children[index - 1];
+                if (prev?.children?.[0]?.value === '{') {
+                  prev.children = [];
+                  prev = parent.children[index - 2];
+                }
+
+                // Remove extra newline before comment.
+                if (prev?.type === 'text') {
+                  prev.value = prev.value.replace(/\n( *)$/, '\n');
+                }
+
+                highlightParent = parent;
+                highlightedNodes = [];
+                return [];
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
+                highlightParent = null;
+                let res = [{
+                  type: 'element',
+                  tagName: 'mark',
+                  children: highlightedNodes
+                }];
+
+                // Remove closing brace from JSX-style starting comments, e.g. {/* foo */}
+                if (highlightedNodes[0]?.children?.[0]?.value === '}') {
+                  highlightedNodes.shift();
+                }
+
+                // Remove extra newline after starting comment, but keep indentation.
+                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                  let node = highlightedNodes[0];
+                  node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
+                }
+
+                // Remove opening brace from JSX-style ending comments.
+                let last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.children?.[0]?.value === '{') {
+                  highlightedNodes.pop();
+                }
+
+                // Remove extra newline before ending comment.
+                last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.type === 'text' && /^\s+$/.test(last?.value)) {
+                  highlightedNodes.pop();
+                }
+
+                // Remove closing brace from JSX-style ending comments.
+                let next = parent.children?.[index + 1];
+                if (next?.children?.[0]?.value === '}') {
+                  parent.children[index + 1] = {type: 'text', value: ''};
+                  next = parent.children?.[index + 2];
+                }
+
+                // Remove extra newline after ending comment.
+                if (next?.type === 'text') {
+                  next.value = next.value.replace(/^ *\n/, '');
+                }
+
+                return res;
+              } else if (highlightParent && parent === highlightParent) {
+                highlightedNodes.push(node);
+                return [];
+              }
+
+              return [node];
+            });
+          }
+
           node.data.hChildren = [highlighted];
         });
         return tree;
@@ -353,6 +440,7 @@ module.exports = new Transformer({
     asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.order = order;
+    asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
     asset.meta.type = type;
@@ -370,7 +458,11 @@ module.exports = new Transformer({
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+let RENDER_FNS = [];
 ${exampleCode.join('\n')}
+for (let render of RENDER_FNS) {
+  render();
+}
 export default {};
 `;
     }
@@ -405,8 +497,7 @@ export default {};
       specifier: 'client',
       specifierType: 'esm',
       needsStableName: false,
-      priority: 'parallel',
-      bundleBehavior: 'isolated'
+      priority: 'parallel'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
@@ -436,7 +527,7 @@ export default {};
   }
 });
 
-function transformExample(node, preRelease) {
+function transformExample(node, preRelease, keepIndividualImports) {
   if (node.lang !== 'tsx') {
     return responsiveCode(node);
   }
@@ -469,7 +560,7 @@ function transformExample(node, preRelease) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
           let lib = path.node.source.value.split('/')[0];
           if (!specifiers[lib]) {
             specifiers[lib] = [];
@@ -558,7 +649,7 @@ function formatCode(node, code, printWidth = 80, force = false) {
     return node.value;
   }
 
-  let res = dprint.format('example.jsx', node.value, {
+  let res = dprint.format('example.' + node.lang, node.value, {
     quoteStyle: 'preferSingle',
     'jsx.quoteStyle': 'preferDouble',
     trailingCommas: 'never',

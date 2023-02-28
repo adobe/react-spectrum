@@ -11,6 +11,7 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
+import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {RefObject, SyntheticEvent, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
@@ -124,6 +125,13 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
     onBlurWithin: (e) => {
+      // If focus is moving into a child focus scope (e.g. menu inside a dialog),
+      // do not close the outer overlay. At this point, the active scope should
+      // still be the outer overlay, since blur events run before focus.
+      if (e.relatedTarget && isElementInChildOfActiveScope(e.relatedTarget)) {
+        return;
+      }
+
       if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
         onClose();
       }

@@ -10,39 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTime, today, ZonedDateTime} from '@internationalized/date';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import type {DOMProps, DOMRef, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {filterDOMProps} from '@react-aria/utils';
-import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {RefObject} from 'react';
+import React, {ReactNode} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
-import {useStyleProps} from '@react-spectrum/utils';
 
-interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, AriaLabelingProps {}
+// NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
+
+export interface LabeledValueBaseProps extends DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, DOMProps {
+  /** The content to display as the label. */
+  label: ReactNode
+}
 
 type NumberValue = number | RangeValue<number>;
 interface NumberProps<T extends NumberValue> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: Intl.NumberFormatOptions
 }
 
-type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
+export type DateTime = Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time;
 type RangeDateTime = RangeValue<DateTime>;
 type DateTimeValue = DateTime | RangeDateTime;
 interface DateProps<T extends DateTimeValue> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: Intl.DateTimeFormatOptions
 }
 
 interface StringProps<T extends string> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   formatOptions?: never
 }
 
 interface StringListProps<T extends string[]> {
+  /** The value to display. */
   value: T,
+  /** Formatting options for the value. */
   // @ts-ignore
   formatOptions?: Intl.ListFormatOptions
 }
@@ -57,63 +69,43 @@ type LabeledValueProps<T> =
 type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
-function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: RefObject<HTMLDivElement>) {
+function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
   let {
     value,
-    formatOptions,
-    labelPosition,
-    labelAlign,
-    label,
-    ...otherProps
+    formatOptions
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let labelWrapperClass = classNames(
-    labelStyles,
-    'spectrum-Field',
-    {
-      'spectrum-Field--positionTop': labelPosition === 'top',
-      'spectrum-Field--positionSide': labelPosition === 'side'
-    }
-  );
+  let domRef = useDOMRef(ref);
+
+  let children;
+  if (Array.isArray(value)) {
+    // @ts-ignore
+    children = <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />;
+  }
+
+  if (typeof value === 'object' && 'start' in value && typeof value.start === 'number' && typeof value.end === 'number') {
+    children = <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />;
+  }
+
+  if (typeof value === 'object' && 'start' in value && typeof value.start !== 'number' && typeof value.end !== 'number') {
+    children = <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
+  }
+
+  if (typeof value === 'number') {
+    children = <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />;
+  }
+
+  if (typeof value === 'object' && ('calendar' in value || 'hour' in value) || (value instanceof Date)) {
+    children = <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />;
+  }
+
+  if (typeof value === 'string') {
+    children = value;
+  }
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...styleProps}
-      className={classNames(labelStyles, 'spectrum-LabeledValue', {[labelWrapperClass]: label}, styleProps.className)}
-      ref={ref}>
-      {props.label &&
-        <Label
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          elementType="span">
-          {props.label}
-        </Label>}
-      <div
-        className={classNames(labelStyles, 'spectrum-Field-wrapper')}>
-        <div
-          className={classNames(labelStyles, 'spectrum-Field-field')}>
-          {Array.isArray(value) &&
-            // @ts-ignore
-            <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />}
-
-          {typeof value === 'object' && 'start' in value && typeof value.start === 'number' && typeof value.end === 'number' &&
-            <FormattedNumber value={value as NumberValue} formatOptions={formatOptions as Intl.NumberFormatOptions}  />}
-
-          {typeof value === 'object' && 'start' in value && typeof value.start !== 'number' && typeof value.end !== 'number' &&
-            <FormattedDate value={value as DateTimeValue} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-
-          {typeof value === 'number' &&
-            <FormattedNumber value={value} formatOptions={formatOptions as Intl.NumberFormatOptions} />}
-
-          {(typeof value === 'object' && ('calendar' in value || 'hour' in value) || (value instanceof Date))  &&
-            <FormattedDate value={value} formatOptions={formatOptions as Intl.DateTimeFormatOptions} />}
-
-          {typeof value === 'string' &&
-            value}
-        </div>
-      </div>
-    </div>
+    <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={domRef} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
+      <span>{children}</span>
+    </Field>
   );
 }
 
@@ -192,5 +184,8 @@ function convertValue(value: Time) {
   return toCalendarDateTime(date, value);
 }
 
+/**
+ * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
+ */
 let _LabeledValue = React.forwardRef(LabeledValue);
 export {_LabeledValue as LabeledValue};

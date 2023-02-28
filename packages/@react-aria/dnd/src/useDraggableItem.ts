@@ -11,6 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys} from './utils';
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, Key} from 'react';
 // @ts-ignore
@@ -38,7 +39,9 @@ export interface DraggableItemProps {
 }
 
 export interface DraggableItemResult {
+  /** Props for the draggable item. */
   dragProps: HTMLAttributes<HTMLElement>,
+  /** Props for the explicit drag button affordance, if any. */
   dragButtonProps: AriaButtonProps
 }
 
@@ -57,6 +60,9 @@ const MESSAGES = {
   }
 };
 
+/**
+ * Handles drag interactions for an item within a draggable collection.
+ */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isDisabled = state.selectionManager.isDisabled(props.key);
@@ -69,12 +75,17 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     hasDragButton: props.hasDragButton,
     onDragStart(e) {
       state.startDrag(props.key, e);
+      // Track draggingKeys for useDroppableCollection's default onDrop handler and useDroppableCollectionState's default getDropOperation
+      setDraggingKeys(state.draggingKeys);
     },
     onDragMove(e) {
       state.moveDrag(e);
     },
     onDragEnd(e) {
-      state.endDrag(e);
+      let {dropOperation} = e;
+      let isInternal = dropOperation === 'cancel' ? false : isInternalDropOperation();
+      state.endDrag({...e, keys: state.draggingKeys, isInternal});
+      clearGlobalDnDState();
     }
   });
 
@@ -86,7 +97,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
 
   // Override description to include selected item count.
   let modality = useDragModality();
-  if (!props.hasDragButton) {
+  if (!props.hasDragButton && state.selectionManager.selectionMode !== 'none') {
     let msg = MESSAGES[modality][isSelected ? 'selected' : 'notSelected'];
     if (props.hasAction && modality === 'keyboard') {
       msg += 'Alt';
@@ -97,6 +108,10 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     } else {
       description = stringFormatter.format(msg);
     }
+
+    // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
+    // and NVDA/JAWS are always in forms mode within collection components.
+    delete dragProps.onClick;
   } else {
     if (isSelected) {
       dragButtonLabel = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});

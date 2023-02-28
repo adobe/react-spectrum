@@ -1,26 +1,37 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 import {AriaDatePickerProps, AriaDateRangePickerProps, useDateField, useDatePicker, useDateRangePicker, useLocale} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateInputContext} from './DateField';
+import {DatePickerState, DateRangePickerState, useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DateValue} from '@react-types/datepicker';
 import {DialogContext} from './Dialog';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import {Provider, useSlot} from './utils';
-import React, {ReactNode, useRef} from 'react';
-import {useDateFieldState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import {TextContext} from './Text';
 
-interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label'> {
-  children: ReactNode
-}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DatePickerState>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage'>, RenderProps<DateRangePickerState>, SlotProps {}
 
-interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label'> {
-  children: ReactNode
-}
+export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
+export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
 
-export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
+function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DatePickerContext);
   let state = useDatePickerState(props);
   let groupRef = useRef();
   let [labelRef, label] = useSlot();
@@ -30,7 +41,9 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
     fieldProps,
     buttonProps,
     dialogProps,
-    calendarProps
+    calendarProps,
+    descriptionProps,
+    errorMessageProps
   } = useDatePicker({...props, label}, state, groupRef);
 
   let {locale} = useLocale();
@@ -43,6 +56,12 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
   let fieldRef = useRef();
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-DatePicker'
+  });
+
   return (
     <Provider
       values={[
@@ -52,14 +71,29 @@ export function DatePicker<T extends DateValue>(props: DatePickerProps<T>) {
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [PopoverContext, {state, triggerRef: groupRef, placement: 'bottom start'}],
-        [DialogContext, dialogProps]
+        [DialogContext, dialogProps],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }]
       ]}>
-      {props.children}
+      <div {...renderProps} ref={ref} slot={props.slot}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
 
-export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>) {
+/**
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+const _DatePicker = forwardRef(DatePicker);
+export {_DatePicker as DatePicker};
+
+function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let state = useDateRangePickerState(props);
   let groupRef = useRef();
   let [labelRef, label] = useSlot();
@@ -70,7 +104,9 @@ export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps
     endFieldProps,
     buttonProps,
     dialogProps,
-    calendarProps
+    calendarProps,
+    descriptionProps,
+    errorMessageProps
   } = useDateRangePicker({...props, label}, state, groupRef);
 
   let {locale} = useLocale();
@@ -91,6 +127,12 @@ export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps
 
   let endFieldRef = useRef();
   let {fieldProps: endDateFieldProps} = useDateField({...startFieldProps, label}, endFieldState, endFieldRef);
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: state,
+    defaultClassName: 'react-aria-DateRangePicker'
+  });
 
   return (
     <Provider
@@ -114,9 +156,24 @@ export function DateRangePicker<T extends DateValue>(props: DateRangePickerProps
               ref: endFieldRef
             }
           }
+        }],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
         }]
       ]}>
-      {props.children}
+      <div {...renderProps} ref={ref} slot={props.slot}>
+        {props.children}
+      </div>
     </Provider>
   );
 }
+
+/**
+ * A date range picker combines two DateFields and a RangeCalendar popover to allow
+ * users to enter or select a date and time range.
+ */
+const _DateRangePicker = forwardRef(DateRangePicker);
+export {_DateRangePicker as DateRangePicker};

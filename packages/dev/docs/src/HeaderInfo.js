@@ -42,16 +42,22 @@ export function HeaderInfo(props) {
   let {
     packageData,
     componentNames,
-    sourceData = []
+    sourceData = [],
+    since = ''
   } = props;
 
   let preRelease = packageData.version.match(/(alpha)|(beta)|(rc)/);
   let importName = packageData.name;
   let version = packageData.version;
+
   if (!preRelease) {
     let scope = importName.split('/')[0];
     if (monopackages[scope]) {
       ({importName, version} = monopackages[scope]);
+    }
+
+    if (since) {
+      version = since;
     }
   }
 
@@ -64,7 +70,7 @@ export function HeaderInfo(props) {
             <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
+            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease || !since ? 'version' : 'added'}</th>
             <td className={typographyStyles['spectrum-Body4']}>{version}</td>
           </tr>
           {componentNames &&
@@ -79,7 +85,7 @@ export function HeaderInfo(props) {
       </table>
       <Flex wrap gap="size-200">
         {sourceData.map((source) => (
-          <ResourceCard type={source.type} url={source.url} />
+          <ResourceCard key={source.url} type={source.type} url={source.url} />
         ))}
         <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />

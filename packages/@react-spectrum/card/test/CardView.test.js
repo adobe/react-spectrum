@@ -1036,8 +1036,8 @@ describe('CardView', function () {
       let cards = tree.getAllByRole('gridcell');
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
       expect(cards[1].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
-      expect(within(cards[1]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
+      expect(within(cards[1]).getByRole('checkbox').checked).toBeTruthy();
     });
 
     it('CardView should support disabledKeys', function () {
@@ -1051,7 +1051,7 @@ describe('CardView', function () {
       expect(document.activeElement).not.toBe(cards[0]);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', 'true');
       expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
-      expect(within(cards[0]).getByRole('checkbox')).not.toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
@@ -1072,8 +1072,8 @@ describe('CardView', function () {
 
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[0]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Title 3']));
@@ -1081,8 +1081,8 @@ describe('CardView', function () {
 
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
     });
 
     it('CardView should support single selection', function () {
@@ -1096,23 +1096,23 @@ describe('CardView', function () {
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 3']));
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'true');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
       triggerPress(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
       expect(cards[2].parentNode).toHaveAttribute('aria-selected', 'false');
-      expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
-      expect(within(cards[2]).getByRole('checkbox')).toHaveAttribute('aria-checked', 'false');
+      expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
+      expect(within(cards[2]).getByRole('checkbox').checked).toBeFalsy();
     });
 
     it('CardView should support no selection', function () {

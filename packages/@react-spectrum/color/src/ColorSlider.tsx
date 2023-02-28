@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorThumb} from './ColorThumb';
-import {Flex} from '@react-spectrum/layout';
 import {FocusableRef} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
@@ -80,17 +79,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
     onFocusChange: setIsFocused
   });
 
-  let alignLabel;
-  if (vertical) {
-    alignLabel = 'center';
-  } else if (label != null && showValueLabel) {
-    alignLabel = 'space-between';
-  } else if (label != null) {
-    alignLabel = 'flex-start';
-  } else if (showValueLabel) {
-    alignLabel = 'flex-end';
-  }
-
   return (
     <div
       ref={domRef}
@@ -103,10 +91,24 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
         }
       )}>
       {label &&
-        <Flex direction="row" justifyContent={alignLabel}>
+        <div className={classNames(styles, 'spectrum-ColorSlider-labelContainer')}>
           <Label {...labelProps}>{label}</Label>
-          {showValueLabel && <Label elementType="span"><output {...outputProps}>{state.value.formatChannelValue(channel, locale)}</output></Label>}
-        </Flex>
+          {props.contextualHelp &&
+            <SlotProvider
+              slots={{
+                actionButton: {
+                  UNSAFE_className: classNames(styles, 'spectrum-ColorSlider-contextualHelp')
+                }
+              }}>
+              {props.contextualHelp}
+            </SlotProvider>
+          }
+          {showValueLabel && (
+            <Label elementType="span" UNSAFE_className={classNames(styles, 'spectrum-ColorSlider-valueLabel')}>
+              <output {...outputProps}>{state.value.formatChannelValue(channel, locale)}</output>
+            </Label>
+          )}
+        </div>
       }
       <div
         {...trackProps}

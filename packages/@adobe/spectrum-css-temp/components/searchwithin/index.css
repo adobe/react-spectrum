@@ -25,6 +25,10 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-searchwithin-width);
   display: inline-flex;
   position: relative;
+
+  .spectrum-SearchWithin-picker { 
+    width: auto;
+  }
 }
 
 .spectrum-SearchWithin-picker {
@@ -32,7 +36,7 @@ governing permissions and limitations under the License.
   min-inline-size: var(--spectrum-global-dimension-size-1000);
   flex-shrink: 1;
 
-  > button {
+  button {
     contain: unset;
     border-end-start-radius: var(--spectrum-searchwithin-border-radius);
     border-start-start-radius: var(--spectrum-searchwithin-border-radius);
@@ -51,7 +55,7 @@ governing permissions and limitations under the License.
     z-index: 1; /* shows entire focus ring */
   }
 
-  > input {
+  input {
     border-end-end-radius: var(--spectrum-searchwithin-border-radius);
     border-start-end-radius: var(--spectrum-searchwithin-border-radius);
     flex: 1;

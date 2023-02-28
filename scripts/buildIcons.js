@@ -23,7 +23,8 @@ const PACKAGES = {
   color: path.dirname(
     require.resolve('@adobe/react-spectrum-workflow-color/dist/')
   ),
-  illustrations: path.join(getIconPackageFolder('illustrations'), 'src')
+  illustrations: path.join(getIconPackageFolder('illustrations'), 'src'),
+  express: path.join(path.dirname(require.resolve('@adobe/spectrum-css-ccx-workflow-icons')), '18')
 };
 
 (async function () {
@@ -32,7 +33,7 @@ const PACKAGES = {
   for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
     let distFolder = getIconPackageFolder(pkg);
     for (let srcFile of await glob([
-      path.join(srcFolder, '*.{js,tsx}').replace(/\\/g, '/')
+      path.join(srcFolder, '*.{js,tsx,svg}').replace(/\\/g, '/')
     ])) {
       let filename = path.basename(srcFile);
       if (filename === 'index.js' || filename === 'util.js') {

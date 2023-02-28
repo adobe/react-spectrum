@@ -22,10 +22,10 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
   let {children, title, items} = props;
   yield {
     type: 'section',
+    props: props,
     hasChildNodes: true,
     rendered: title,
     'aria-label': props['aria-label'],
-    props,
     *childNodes() {
       if (typeof children === 'function') {
         if (!items) {

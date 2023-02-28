@@ -1,26 +1,39 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-import {AriaMenuProps, MenuTriggerProps} from '@react-types/menu';
+
+import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
 import {ButtonContext} from './Button';
+import {CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
-import {Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
-const MenuContext = createContext<WithRef<Omit<AriaMenuProps<unknown>, 'children'>, HTMLDivElement>>(null);
+export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
 
-interface MenuTriggerProps2 extends MenuTriggerProps {
+export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
 }
 
-export function MenuTrigger(props: MenuTriggerProps2) {
+export function MenuTrigger(props: MenuTriggerProps) {
   let state = useMenuTriggerState(props);
 
   let ref = useRef();
@@ -41,14 +54,15 @@ export function MenuTrigger(props: MenuTriggerProps2) {
   );
 }
 
-interface MenuProps<T> extends AriaMenuProps<T>, StyleProps {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
   let {portal, collection} = useCollection(props);
   let state = useTreeState({
     ...props,
-    collection
+    collection,
+    children: null
   });
   let {menuProps} = useMenu(props, state, ref);
 
@@ -71,10 +85,12 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   return (
     <>
       <div
+        {...filterDOMProps(props)}
         {...menuProps}
         ref={ref}
+        slot={props.slot}
         style={props.style}
-        className={props.className}>
+        className={props.className ?? 'react-aria-Menu'}>
         <Provider
           values={[
             [InternalMenuContext, state],
@@ -88,6 +104,9 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   );
 }
 
+/**
+ * A menu displays a list of actions or options that a user can choose.
+ */
 const _Menu = forwardRef(Menu);
 export {_Menu as Menu};
 
@@ -95,7 +114,7 @@ interface MenuSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
+function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
   let {headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -114,8 +133,9 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
 
   return (
     <section 
+      {...filterDOMProps(otherProps)}
       {...groupProps}
-      className={className || section.props?.className}
+      className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
       {section.rendered &&
         <header {...headingProps}>
@@ -127,7 +147,7 @@ function MenuSection<T>({section, className, style}: MenuSectionProps<T>) {
   );
 }
 
-export interface MenuItemStates extends ItemStates {
+export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item is currently selected.
    * @selector [aria-checked=true]
@@ -135,23 +155,27 @@ export interface MenuItemStates extends ItemStates {
    isSelected: boolean
 }
 
-interface MenuItemProps<T> extends RenderProps<ItemStates> {
+interface MenuItemProps<T> {
   item: Node<T>
 }
 
-function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
+function MenuItem<T>({item}: MenuItemProps<T>) {
   let state = useContext(InternalMenuContext);
   let ref = useRef();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
+  let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: className || item.props.className,
-    style: style || item.props.style,
-    children: children || item.rendered,
+    ...props,
+    children: item.rendered,
+    defaultClassName: 'react-aria-Item',
     values: {
       ...states,
-      isFocusVisible: focusVisible
+      isHovered: states.isFocused,
+      isFocusVisible: focusVisible,
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
 
@@ -160,6 +184,7 @@ function MenuItem<T>({item, children, className, style}: MenuItemProps<T>) {
       {...menuItemProps}
       {...renderProps}
       ref={ref}
+      data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={focusVisible || undefined}
       data-pressed={states.isPressed || undefined}>

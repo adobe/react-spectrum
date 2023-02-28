@@ -30,7 +30,7 @@ import {TextField} from '@react-spectrum/textfield';
 // Dialogs are really only meant to have one visible at a time, so we must make individual stories for each one
 // might be good to eventually make the stories display-able without the trigger that imposes this restriction
 storiesOf('Dialog', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
   .add(
     'default',
     () => render({})
@@ -159,7 +159,7 @@ storiesOf('Dialog', module)
 
 
 storiesOf('Dialog/Alert', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: false}})
   .add(
     'destructive',
     () => renderAlert({
@@ -268,6 +268,71 @@ storiesOf('Dialog/Alert', module)
       secondaryActionLabel: 'Secondary button',
       autoFocusButton: 'cancel'
     })
+  );
+
+storiesOf('Dialog/Express', module)
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true, express: true}})
+  .add(
+    'destructive',
+    () => renderAlert({
+      variant: 'destructive',
+      title: 'Warning Destructive',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'confirmation',
+    () => renderAlert({
+      variant: 'confirmation',
+      title: 'Confirmation Required',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'information',
+    () => renderAlert({
+      variant: 'information',
+      title: 'Informative Alert',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'error',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'warning',
+    () => renderAlert({
+      variant: 'warning',
+      title: 'This is a warning',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel'
+    })
+  )
+  .add(
+    'tray',
+    () => renderTriggerProps({type: 'tray'}), {
+      chromatic: {viewports: [320, 1200]}
+    }
+  )
+  .add(
+    'popover',
+    () => renderTriggerProps({type: 'popover'}), {
+      chromatic: {viewports: [320, 1200]}
+    }
   );
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {

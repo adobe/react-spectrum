@@ -30,17 +30,15 @@ describe('Switch', function () {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
-    expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
     userEvent.click(checkbox);
-    expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
     userEvent.click(checkbox);
-    expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
     // would test space key, but then it's just testing the browser, no need
@@ -48,12 +46,13 @@ describe('Switch', function () {
 
   it.each`
     Name                     | Component    | props
-    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true}}
-    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true}}
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, value: 'newsletter'}}
+    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true, value: 'newsletter'}}
   `('$Name can be default checked', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('newsletter');
     expect(checkbox.checked).toBeTruthy();
 
     userEvent.click(checkbox);

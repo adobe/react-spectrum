@@ -7,7 +7,7 @@ rulesDirPlugin.RULES_DIR = './bin';
 module.exports = {
   plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-rsp-rules'],
   extends: ['eslint:recommended'],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       'legacyDecorators': true
@@ -51,7 +51,7 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
     rules: {
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
@@ -123,7 +123,6 @@ module.exports = {
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
     'eol-last': ERROR,
-    'arrow-body-style': [ERROR, 'as-needed'],
     'arrow-spacing': ERROR,
     'space-before-blocks': [ERROR, 'always'],
     'space-infix-ops': ERROR,
@@ -149,7 +148,7 @@ module.exports = {
     'react/no-did-update-set-state': ERROR,
     'react/no-multi-comp': OFF,
     'react/no-set-state': OFF,
-    'react/no-unknown-property': ERROR,
+    'react/no-unknown-property': [ERROR, {ignore: ['prefix']}],
     'react/react-in-jsx-scope': ERROR,
     'react/require-extension': OFF,
     'react/jsx-equals-spacing': ERROR,

@@ -27,7 +27,8 @@ keywords: [theme, locale, application, colorstop]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Provider', 'useProvider']} />
+  componentNames={['Provider', 'useProvider']}
+  since="3.0.0" />
 
 ## Example
 
@@ -39,7 +40,7 @@ import {Button} from '@react-spectrum/button';
 function App() {
   return (
     <Provider theme={theme}>
-      <Button variant="cta">
+      <Button variant="accent">
         Hello React Spectrum!
       </Button>
     </Provider>
@@ -137,7 +138,7 @@ function Register() {
             <Item key="indigo">Indigo</Item>
             <Item key="chartreuse">Chartreuse</Item>
           </Picker>
-          <Button variant="primary" isQuiet={false}>Submit</Button>
+          <Button variant="primary">Submit</Button>
         </Provider>
       </Provider>
     </Flex>

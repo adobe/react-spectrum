@@ -23,14 +23,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Calendar-date {
-  --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-global-color-blue-400);
-  --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-global-color-blue-500);
-  --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-global-color-blue-600);
-  --spectrum-calendar-day-background-color-cap-invalid-selected: var(--spectrum-global-color-red-500);
-  --spectrum-calendar-day-background-color-cap-invalid-selected-hover: var(--spectrum-global-color-red-600);
-  --spectrum-calendar-day-background-color-cap-invalid-selected-down: var(--spectrum-global-color-red-700);
+  --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-accent-background-color-default);
+  --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-accent-background-color-hover);
+  --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-accent-background-color-down);
+  --spectrum-calendar-day-background-color-cap-invalid-selected: var(--spectrum-negative-background-color-default);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-hover: var(--spectrum-negative-background-color-hover);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-down: var(--spectrum-negative-background-color-down);
   --spectrum-calendar-day-background-color-selected-hover: var(--spectrum-alias-highlight-selected);
-  --spectrum-calendar-day-background-color-invalid-selected: rgba(215, 55, 63, 0.15);
+  --spectrum-calendar-day-background-color-invalid-selected: var(--spectrum-alias-highlight-invalid);
+  --spectrum-calendar-day-text-color-disabled: var(--spectrum-alias-text-color-disabled);
   --spectrum-calendar-day-text-color-cap-selected: white;
   --spectrum-calendar-day-text-color-cap-selected-hover: white;
   --spectrum-calendar-day-today-background-color: var(--spectrum-global-color-gray-300);
@@ -168,7 +169,7 @@ governing permissions and limitations under the License.
     --spectrum-calendar-day-background-color-hover: ButtonFace;
     --spectrum-calendar-day-background-color-invalid-selected: Highlight;
     --spectrum-calendar-day-background-color-selected-hover: Highlight;
-    --spectrum-calendar-day-background-color-selected: Highlight;  
+    --spectrum-calendar-day-background-color-selected: Highlight;
     --spectrum-calendar-day-border-color-key-focus: ButtonText;
     --spectrum-calendar-day-text-color-cap-selected: HighlightText;
     --spectrum-calendar-day-text-color-cap-selected-hover: HighlightText;
@@ -188,7 +189,7 @@ governing permissions and limitations under the License.
         background: Highlight;
         color: HighlightText;
       }
-  
+
       &.is-selected {
         background: Highlight;
         color: HighlightText;

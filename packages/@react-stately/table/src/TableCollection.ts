@@ -11,6 +11,7 @@
  */
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
+import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from 'react';
 
 interface GridCollectionOptions {
@@ -19,7 +20,11 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
+export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
+  if (columnNodes.length === 0) {
+    return [];
+  }
+
   let columns: GridNode<T>[][] = [];
   let seen = new Map();
   for (let column of columnNodes) {
@@ -28,6 +33,9 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
 
     while (parentKey) {
       let parent: GridNode<T> = keyMap.get(parentKey);
+      if (!parent) {
+        break;
+      }
 
       // If we've already seen this parent, than it is shared
       // with a previous column. If the current column is taller
@@ -47,6 +55,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
 
         // Adjust shifted indices
         for (let i = col.length; i < column.length; i++) {
+          // eslint-disable-next-line max-depth
           if (column[i] && seen.has(column[i])) {
             seen.get(column[i]).index = i;
           }
@@ -90,6 +99,7 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
             textValue: null
           };
 
+          // eslint-disable-next-line max-depth
           if (row.length > 0) {
             row[row.length - 1].nextKey = placeholder.key;
             placeholder.prevKey = row[row.length - 1].key;
@@ -156,13 +166,14 @@ function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode
   });
 }
 
-export class TableCollection<T> extends GridCollection<T> {
+export class TableCollection<T> extends GridCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>;
+  _size: number = 0;
 
-  constructor(nodes: Iterable<GridNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
+  constructor(nodes: Iterable<GridNode<T>>, prev?: ITableCollection<T>, opts?: GridCollectionOptions) {
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
     let columns = [];
@@ -232,6 +243,7 @@ export class TableCollection<T> extends GridCollection<T> {
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
     this.headerRows = headerRows;
+    this._size = [...body.childNodes].length;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
@@ -244,7 +256,7 @@ export class TableCollection<T> extends GridCollection<T> {
   }
 
   get size() {
-    return [...this.body.childNodes].length;
+    return this._size;
   }
 
   getKeys() {

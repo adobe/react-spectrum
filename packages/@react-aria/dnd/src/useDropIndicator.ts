@@ -22,15 +22,25 @@ import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
+  /** The drop target that the drop indicator represents. */
   target: DropTarget
 }
 
 export interface DropIndicatorAria {
+  /** Props for the drop indicator element. */
   dropIndicatorProps: HTMLAttributes<HTMLElement>,
+  /** Whether the drop indicator is currently the active drop target. */
   isDropTarget: boolean,
+  /**
+   * Whether the drop indicator is hidden, both visually and from assistive technology.
+   * Use this to determine whether to omit the element from the DOM entirely.
+   */
   isHidden: boolean
 }
 
+/**
+ * Handles drop interactions for a target within a droppable collection.
+ */
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
   let {target} = props;
   let {collection} = state;

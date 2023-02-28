@@ -1,4 +1,16 @@
-import {Button, Calendar, CalendarCell, CalendarGrid, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, Popover, RangeCalendar, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Text, TimeField, Tooltip, TooltipArrow, TooltipTrigger} from 'react-aria-components';
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -346,9 +358,10 @@ SliderCSS.argTypes = {
 };
 
 export const TooltipExample = () => (
-  <TooltipTrigger offset={5}>
+  <TooltipTrigger>
     <Button>Tooltip trigger</Button>
     <Tooltip
+      offset={5}
       style={{
         background: 'Canvas',
         color: 'CanvasText',
@@ -356,11 +369,11 @@ export const TooltipExample = () => (
         padding: 5,
         borderRadius: 4
       }}>
-      <TooltipArrow style={{transform: 'translateX(-50%)'}}>
+      <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
           <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
-      </TooltipArrow>
+      </OverlayArrow>
       I am a tooltip
     </Tooltip>
   </TooltipTrigger>
@@ -440,6 +453,67 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
+export const TabsExample = () => (
+  <Tabs>
+    <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
+      <CustomTab id="FoR">Founding of Rome</CustomTab>
+      <CustomTab id="MaR">Monarchy and Republic</CustomTab>
+      <CustomTab id="Emp">Empire</CustomTab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+);
+
+export const TableExample = () => (
+  <Table
+    aria-label="Example static collection table"
+    style={{height: '210px', maxWidth: '400px'}}
+    selectionMode="multiple">
+    <TableHeader>
+      <Column><MyCheckbox /></Column>
+      <Column>Name</Column>
+      <Column>Type</Column>
+      <Column>Date Modified</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+      </Row>
+      <Row>
+        <Cell><MyCheckbox /></Cell>
+        <Cell>log.txt</Cell>
+        <Cell>Text Document</Cell>
+        <Cell>1/18/2016</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 function MyItem(props) {
   return (
     <Item
@@ -467,5 +541,32 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
+  );
+}
+
+function CustomTab(props) {
+  return (
+    <Tab 
+      {...props} 
+      style={({isSelected}) => ({
+        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
+      })} />
+  );
+}
+
+function MyCheckbox(props) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate, isSelected}) => (<>
+        <div style={{border: '2px solid gray', width: 16, height: 16}}>
+          <svg viewBox="0 0 18 18" width={14} height={14} fill="none" stroke="white">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" strokeWidth={3} strokeDasharray={22} strokeDashoffset={isSelected ? 44 : 66} />
+            }
+          </svg>
+        </div>
+      </>)}
+    </Checkbox>
   );
 }

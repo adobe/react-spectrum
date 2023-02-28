@@ -336,4 +336,40 @@ describe('CheckboxGroup', () => {
 
     expect(spy).toHaveBeenCalledWith(`${prop} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
   });
+
+  it('should support help text description', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <CheckboxGroup label="Favorite Pet" description="Help text">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+      </Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-describedby');
+
+    let description = document.getElementById(group.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('Help text');
+  });
+
+  it('should support error message', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <CheckboxGroup label="Favorite Pet" errorMessage="Error message" validationState="invalid">
+          <Checkbox value="dogs">Dogs</Checkbox>
+          <Checkbox value="cats">Cats</Checkbox>
+          <Checkbox value="dragons">Dragons</Checkbox>
+        </CheckboxGroup>
+      </Provider>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-describedby');
+
+    let description = document.getElementById(group.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('Error message');
+  });
 });

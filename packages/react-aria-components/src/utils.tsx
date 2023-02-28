@@ -1,5 +1,18 @@
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, RefCallback, useCallback, useContext, useEffect, useRef, useState} from 'react';
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 export const slotCallbackSymbol = Symbol('callback');
 
@@ -8,22 +21,25 @@ interface SlottedValue<T> {
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-type ProviderValue<T> = [React.Context<T>, SlottedValue<T> | T];
-type ProviderValues<A, B, C, D, E, F, G> =
+export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E>;
+
+type ProviderValue<T> = [React.Context<T>, T];
+type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>];
 
-interface ProviderProps<A, B, C, D, E, F, G> {
-  values: ProviderValues<A, B, C, D, E, F, G>,
+interface ProviderProps<A, B, C, D, E, F, G, H> {
+  values: ProviderValues<A, B, C, D, E, F, G, H>,
   children: React.ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G>({values, children}: ProviderProps<A, B, C, D, E, F, G>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -33,26 +49,36 @@ export function Provider<A, B, C, D, E, F, G>({values, children}: ProviderProps<
 }
 
 export interface StyleProps {
+  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. */
   className?: string,
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. */
   style?: CSSProperties
 }
 
 export interface DOMProps extends StyleProps {
+  /** The children of the component. */
   children?: ReactNode
 }
 
-export interface RenderProps<T> {
+export interface StyleRenderProps<T> {
+  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: string | ((values: T) => string),
-  style?: CSSProperties | ((values: T) => CSSProperties),
+  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/Element/style) for the element. A function may be provided to compute the style based on component state. */
+  style?: CSSProperties | ((values: T) => CSSProperties)
+}
+
+export interface RenderProps<T> extends StyleRenderProps<T> {
+  /** The children of the component. A function may be provided to alter the children based on component state. */
   children?: ReactNode | ((values: T) => ReactNode)
 }
 
-interface RenderPropsHookOptions<T> extends RenderProps<T> {
+interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
   values: T,
-  defaultChildren?: ReactNode
+  defaultChildren?: ReactNode,
+  defaultClassName?: string
 }
 
-export function useRenderProps<T>({className, style, children, defaultChildren, values}: RenderPropsHookOptions<T>) {
+export function useRenderProps<T>({className, style, children, defaultClassName, defaultChildren, values, ...otherProps}: RenderPropsHookOptions<T>) {
   if (typeof className === 'function') {
     className = className(values);
   }
@@ -67,8 +93,10 @@ export function useRenderProps<T>({className, style, children, defaultChildren, 
     children = defaultChildren;
   }
 
+  delete otherProps.id;
   return {
-    className,
+    ...filterDOMProps(otherProps),
+    className: className ?? defaultClassName,
     style,
     children
   };
@@ -76,10 +104,11 @@ export function useRenderProps<T>({className, style, children, defaultChildren, 
 
 export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};
 export interface SlotProps {
+  /** A slot name for the component. Slots allow the component to receive props from a parent component. */
   slot?: string
 }
 
-export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<WithRef<SlottedValue<U> | U, E>>): [T, React.RefObject<E>] {
+export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
   if ('slots' in ctx) {
     if (!props.slot) {
@@ -87,7 +116,7 @@ export function useContextProps<T, U, E extends Element>(props: T & SlotProps, r
     }
     if (!ctx.slots[props.slot]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(contextProps.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
     ctx = ctx.slots[props.slot];
   }
@@ -126,4 +155,69 @@ export function useSlot(): [RefCallback<Element>, boolean] {
   }, []);
 
   return [ref, hasSlot];
+}
+
+export function useEnterAnimation(ref: RefObject<HTMLElement>, isReady: boolean = true) {
+  let [isEntering, setEntering] = useState(true);
+  useAnimation(ref, isEntering && isReady, useCallback(() => setEntering(false), []));
+  return isEntering && isReady;
+}
+
+export function useExitAnimation(ref: RefObject<HTMLElement>, isOpen: boolean) {
+  // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
+  // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
+  let [isExiting, setExiting] = useState(false);
+  let exitState = useRef('idle');
+
+  // If isOpen becomes false, set isExiting to true.
+  if (!isOpen && ref.current && exitState.current === 'idle') {
+    isExiting = true;
+    setExiting(true);
+    exitState.current = 'exiting';
+  }
+
+  // If we exited, and the element has been removed, reset exit state to idle.
+  if (!ref.current && exitState.current === 'exited') {
+    exitState.current = 'idle';
+  }
+
+  useAnimation(
+    ref,
+    isExiting,
+    useCallback(() => {
+      exitState.current = 'exited';
+      setExiting(false);
+    }, [])
+  );
+
+  return isExiting;
+}
+
+function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () => void) {
+  let prevAnimation = useRef(null);
+  if (isActive && ref.current) {
+    prevAnimation.current = window.getComputedStyle(ref.current).animation;
+  }
+
+  useLayoutEffect(() => {
+    if (isActive && ref.current) {
+      // Make sure there's actually an animation, and it wasn't there before we triggered the update.
+      let computedStyle = window.getComputedStyle(ref.current);
+      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+        let onAnimationEnd = (e: AnimationEvent) => {
+          if (e.target === ref.current) {
+            onEnd();
+          }
+        };
+
+        let element = ref.current;
+        element.addEventListener('animationend', onAnimationEnd, {once: true});
+        return () => {
+          element.removeEventListener('animationend', onAnimationEnd);
+        };
+      } else {
+        onEnd();
+      }
+    }
+  }, [ref, isActive, onEnd]);
 }

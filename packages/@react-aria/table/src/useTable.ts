@@ -48,14 +48,15 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layout]);
   let id = useId(props.id);
   gridIds.set(state, id);
 
@@ -106,6 +107,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);
 
   let descriptionProps = useDescription(sortDescription);

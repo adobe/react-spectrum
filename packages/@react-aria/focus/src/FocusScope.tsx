@@ -61,8 +61,8 @@ export interface FocusManager {
 
 type ScopeRef = RefObject<Element[]>;
 interface IFocusContext {
-  scopeRef: ScopeRef,
-  focusManager: FocusManager
+  focusManager: FocusManager,
+  parentNode: TreeNode | null
 }
 
 const FocusContext = React.createContext<IFocusContext>(null);
@@ -84,13 +84,33 @@ export function FocusScope(props: FocusScopeProps) {
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<Element[]>([]);
-  let ctx = useContext(FocusContext);
+  let {parentNode} = useContext(FocusContext) || {};
 
-  // The parent scope is based on the JSX tree, using context.
-  // However, if a new scope mounts outside the active scope (e.g. DialogContainer launched from a menu),
-  // we want the parent scope to be the active scope instead.
-  let ctxParent = ctx?.scopeRef ?? null;
-  let parentScope = useMemo(() => activeScope && focusScopeTree.getTreeNode(activeScope) && !isAncestorScope(activeScope, ctxParent) ? activeScope : ctxParent, [ctxParent]);
+  // Create a tree node here so we can add children to it even before it is added to the tree.
+  let node = useMemo(() => new TreeNode({scopeRef}), [scopeRef]);
+
+  useLayoutEffect(() => {
+    // If a new scope mounts outside the active scope, (e.g. DialogContainer launched from a menu),
+    // use the active scope as the parent instead of the parent from context. Layout effects run bottom
+    // up, so if the parent is not yet added to the tree, don't do this. Only the outer-most FocusScope
+    // that is being added should get the activeScope as its parent.
+    let parent = parentNode || focusScopeTree.root;
+    if (focusScopeTree.getTreeNode(parent.scopeRef) && activeScope && !isAncestorScope(activeScope, parent.scopeRef)) {
+      let activeNode = focusScopeTree.getTreeNode(activeScope);
+      if (activeNode) {
+        parent = activeNode;
+      }
+    }
+
+    // Add the node to the parent, and to the tree.
+    parent.addChild(node);
+    focusScopeTree.addNode(node);
+  }, [node, parentNode]);
+
+  useLayoutEffect(() => {
+    let node = focusScopeTree.getTreeNode(scopeRef);
+    node.contain = contain;
+  }, [contain]);
 
   useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -102,16 +122,7 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-  }, [children, parentScope]);
-
-  // add to the focus scope tree in render order because useEffects/useLayoutEffects run children first whereas render runs parent first
-  // which matters when constructing a tree
-  if (focusScopeTree.getTreeNode(parentScope) && !focusScopeTree.getTreeNode(scopeRef)) {
-    focusScopeTree.addTreeNode(scopeRef, parentScope);
-  }
-
-  let node = focusScopeTree.getTreeNode(scopeRef);
-  node.contain = contain;
+  }, [children]);
 
   useActiveScopeTracker(scopeRef, restoreFocus, contain);
   useFocusContainment(scopeRef, contain);
@@ -119,8 +130,26 @@ export function FocusScope(props: FocusScopeProps) {
   useAutoFocus(scopeRef, autoFocus);
 
   // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (scopeRef) {
+      let activeElement = document.activeElement;
+      let scope = null;
+      // In strict mode, active scope is incorrectly updated since cleanup will run even though scope hasn't unmounted.
+      // To fix this, we need to update the actual activeScope here
+      if (isElementInScope(activeElement, scopeRef.current)) {
+        // Since useLayoutEffect runs for children first, we need to traverse the focusScope tree and find the bottom most scope that
+        // contains the active element and set that as the activeScope
+        for (let node of focusScopeTree.traverse()) {
+          if (isElementInScope(activeElement, node.scopeRef.current)) {
+            scope = node;
+          }
+        }
+
+        if (scope === focusScopeTree.getTreeNode(scopeRef)) {
+          activeScope = scope.scopeRef;
+        }
+      }
+
       return () => {
         // Scope may have been re-parented.
         let parentScope = focusScopeTree.getTreeNode(scopeRef).parent.scopeRef;
@@ -137,12 +166,16 @@ export function FocusScope(props: FocusScopeProps) {
         focusScopeTree.removeTreeNode(scopeRef);
       };
     }
-  }, [scopeRef, parentScope]);
+  }, [scopeRef]);
 
-  let focusManager = createFocusManagerForScope(scopeRef);
+  let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
+  let value = useMemo(() => ({
+    focusManager,
+    parentNode: node
+  }), [node, focusManager]);
 
   return (
-    <FocusContext.Provider value={{scopeRef, focusManager}}>
+    <FocusContext.Provider value={value}>
       <span data-focus-scope-start hidden ref={startRef} />
       {children}
       <span data-focus-scope-end hidden ref={endRef} />
@@ -320,6 +353,9 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain: boolean) {
 
     let onBlur = (e) => {
       // Firefox doesn't shift focus back to the Dialog properly without this
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
         if (shouldContainFocus(scopeRef) && !isElementInChildScope(document.activeElement, scopeRef)) {
@@ -365,6 +401,11 @@ function isElementInScope(element: Element, scope: Element[]) {
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
+  // If the element is within a top layer element (e.g. toasts), always allow moving focus there.
+  if (element instanceof Element && element.closest('[data-react-aria-top-layer]')) {
+    return true;
+  }
+
   // node.contains in isElementInScope covers child scopes that are also DOM children,
   // but does not cover child scopes in portals.
   for (let {scopeRef: s} of focusScopeTree.traverse(focusScopeTree.getTreeNode(scope))) {
@@ -374,6 +415,11 @@ function isElementInChildScope(element: Element, scope: ScopeRef = null) {
   }
 
   return false;
+}
+
+/** @private */
+export function isElementInChildOfActiveScope(element: Element) {
+  return isElementInChildScope(element, activeScope);
 }
 
 function isAncestorScope(ancestor: ScopeRef, scope: ScopeRef) {
@@ -470,7 +516,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
     scope = scope.parent;
   }
 
-  return true;
+  return scope?.scopeRef === scopeRef;
 }
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, contain: boolean) {
@@ -499,6 +545,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
       document.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
@@ -578,6 +625,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         restoreFocus
         && nodeToRestore
         && (
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           isElementInScope(document.activeElement, scopeRef.current)
           || (document.activeElement === document.body && shouldRestoreFocus(scopeRef))
         )
@@ -746,7 +794,7 @@ function last(walker: TreeWalker) {
 
 
 class Tree {
-  private root: TreeNode;
+  root: TreeNode;
   private fastMap = new Map<ScopeRef, TreeNode>();
 
   constructor() {
@@ -773,6 +821,10 @@ class Tree {
     }
   }
 
+  addNode(node: TreeNode) {
+    this.fastMap.set(node.scopeRef, node);
+  }
+
   removeTreeNode(scopeRef: ScopeRef) {
     // never remove the root
     if (scopeRef === null) {
@@ -795,9 +847,10 @@ class Tree {
     }
     let children = node.children;
     parentNode.removeChild(node);
-    if (children.length > 0) {
+    if (children.size > 0) {
       children.forEach(child => parentNode.addChild(child));
     }
+
     this.fastMap.delete(node.scopeRef);
   }
 
@@ -806,7 +859,7 @@ class Tree {
     if (node.scopeRef != null) {
       yield node;
     }
-    if (node.children.length > 0) {
+    if (node.children.size > 0) {
       for (let child of node.children) {
         yield* this.traverse(child);
       }
@@ -826,18 +879,18 @@ class TreeNode {
   public scopeRef: ScopeRef;
   public nodeToRestore: FocusableElement;
   public parent: TreeNode;
-  public children: TreeNode[] = [];
+  public children: Set<TreeNode> = new Set();
   public contain = false;
 
   constructor(props: {scopeRef: ScopeRef}) {
     this.scopeRef = props.scopeRef;
   }
   addChild(node: TreeNode) {
-    this.children.push(node);
+    this.children.add(node);
     node.parent = this;
   }
   removeChild(node: TreeNode) {
-    this.children.splice(this.children.indexOf(node), 1);
+    this.children.delete(node);
     node.parent = undefined;
   }
 }

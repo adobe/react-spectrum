@@ -826,13 +826,13 @@ export class Virtualizer<T extends object, V, W> {
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
     for (let view of this._children) {
-      if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
+      if (view.layoutInfo?.parentKey != null && !viewsByParentKey.has(view.layoutInfo.parentKey)) {
         viewsByParentKey.set(view.layoutInfo.parentKey, []);
       }
 
-      viewsByParentKey.get(view.layoutInfo.parentKey).push(view);
-      if (!viewsByParentKey.has(view.layoutInfo.key)) {
-        viewsByParentKey.set(view.layoutInfo.key, []);
+      viewsByParentKey.get(view.layoutInfo?.parentKey)?.push(view);
+      if (!viewsByParentKey.has(view.layoutInfo?.key)) {
+        viewsByParentKey.set(view.layoutInfo?.key, []);
       }
     }
 
@@ -865,7 +865,7 @@ export class Virtualizer<T extends object, V, W> {
     // Apply layout infos to visible views
     for (let view of this._visibleViews.values()) {
       let cur = view.layoutInfo;
-      if (cur) {
+      if (cur?.key != null) {
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
@@ -877,9 +877,11 @@ export class Virtualizer<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
-        let layoutInfo = this.layout.getLayoutInfo(cur.key);
-        if (this._applyLayoutInfo(view, layoutInfo)) {
-          updated = true;
+        if (cur?.key != null) {
+          let layoutInfo = this.layout.getLayoutInfo(cur.key);
+          if (this._applyLayoutInfo(view, layoutInfo)) {
+            updated = true;
+          }
         }
       }
 

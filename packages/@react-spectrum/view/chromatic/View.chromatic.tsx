@@ -73,3 +73,12 @@ export const OneOfEachPropGroup: ViewStory = {
     </div>
   )]
 };
+
+export const ColorV6: ViewStory = {
+  args: {
+    colorVersion: 6,
+    backgroundColor: 'blue-200',
+    height: 'single-line-height',
+    width: 'single-line-width'
+  }
+};

@@ -28,6 +28,7 @@ let alphabetizedIcons = alphabet
   }, {});
 
 storiesOf('Icons/Workflow', module)
+  .addParameters({chromaticProvider: { express: false}})
   .add(
     'icon: Add with sizes',
     () => renderIconSizes(Add, {'aria-label': 'Add'})

@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render as render_, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
 import {CalendarDate} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 function render(el) {
   if (el.type === Provider) {
@@ -216,6 +217,87 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-disabled', 'true');
       }
+    });
+  });
+
+  describe('events', function () {
+    let onBlurSpy = jest.fn();
+    let onFocusChangeSpy = jest.fn();
+    let onFocusSpy = jest.fn();
+    let onKeyDownSpy = jest.fn();
+    let onKeyUpSpy = jest.fn();
+
+    afterEach(() => {
+      onBlurSpy.mockClear();
+      onFocusChangeSpy.mockClear();
+      onFocusSpy.mockClear();
+      onKeyDownSpy.mockClear();
+      onKeyUpSpy.mockClear();
+    });
+
+    it('should focus field and switching segments via tab does not change focus', function () {
+      let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let segments = getAllByRole('spinbutton');
+
+      expect(onBlurSpy).not.toHaveBeenCalled();
+      expect(onFocusChangeSpy).not.toHaveBeenCalled();
+      expect(onFocusSpy).not.toHaveBeenCalled();
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+
+      expect(onBlurSpy).not.toHaveBeenCalled();
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusSpy).toHaveBeenCalledTimes(1);
+
+      userEvent.tab();
+      expect(segments[1]).toHaveFocus();
+      expect(onBlurSpy).not.toHaveBeenCalled();
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call blur when focus leaves', function () {
+      let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let segments = getAllByRole('spinbutton');
+
+      expect(onBlurSpy).not.toHaveBeenCalled();
+      expect(onFocusChangeSpy).not.toHaveBeenCalled();
+      expect(onFocusSpy).not.toHaveBeenCalled();
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+
+      userEvent.tab();
+      expect(segments[1]).toHaveFocus();
+
+      userEvent.tab();
+      expect(segments[2]).toHaveFocus();
+      expect(onBlurSpy).toHaveBeenCalledTimes(0);
+
+      userEvent.tab();
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onFocusSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger right arrow key event for segment navigation', function () {
+      let {getAllByRole} = render(<DateField label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
+      let segments = getAllByRole('spinbutton');
+
+      expect(onKeyDownSpy).not.toHaveBeenCalled();
+      expect(onKeyUpSpy).not.toHaveBeenCalled();
+
+      userEvent.tab();
+      expect(segments[0]).toHaveFocus();
+      expect(onKeyDownSpy).not.toHaveBeenCalled();
+      expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+      expect(segments[1]).toHaveFocus();
+      expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
+      expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

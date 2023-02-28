@@ -41,7 +41,8 @@ keywords: [dialog container, dialog, modal]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['DialogContainer', 'Dialog']} />
+  componentNames={['DialogContainer', 'Dialog']}
+  since="3.4.0" />
 
 ## Example
 
@@ -137,7 +138,7 @@ function EditDialog() {
       </Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
-        <Button variant="cta" onPress={dialog.dismiss}>Save</Button>
+        <Button variant="accent" onPress={dialog.dismiss}>Save</Button>
       </ButtonGroup>
     </Dialog>
   );
@@ -225,7 +226,7 @@ function EditDialog() {
       </Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={dialog.dismiss}>Cancel</Button>
-        <Button variant="cta" onPress={dialog.dismiss}>Save</Button>
+        <Button variant="accent" onPress={dialog.dismiss}>Save</Button>
       </ButtonGroup>
     </Dialog>
   );

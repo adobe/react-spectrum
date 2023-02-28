@@ -11,6 +11,7 @@
  */
 
 export {ActionGroup} from '@react-spectrum/actiongroup';
+export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -26,6 +27,7 @@ export {Icon} from '@react-spectrum/icon';
 export {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 export {Image} from '@react-spectrum/image';
 export {Flex, Grid, fitContent, minmax, repeat} from '@react-spectrum/layout';
+export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {ListView} from '@react-spectrum/list';
@@ -55,8 +57,10 @@ export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {VisuallyHidden} from '@react-aria/visually-hidden';
 export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
 export {SSRProvider} from '@react-aria/ssr';
+export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
 
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
+export type {SpectrumBadgeProps} from '@react-spectrum/badge';
 export type {SpectrumBreadcrumbsProps} from '@react-spectrum/breadcrumbs';
 export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButtonProps, SpectrumToggleButtonProps} from '@react-spectrum/button';
 export type {SpectrumButtonGroupProps} from '@react-spectrum/buttongroup';
@@ -68,10 +72,11 @@ export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogConta
 export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-spectrum/datepicker';
 export type {SpectrumDividerProps} from '@react-spectrum/divider';
 export type {SpectrumFormProps} from '@react-spectrum/form';
-export type {IconProps} from '@react-spectrum/icon';
+export type {IconProps, IllustrationProps} from '@react-spectrum/icon';
 export type {SpectrumIllustratedMessageProps} from '@react-spectrum/illustratedmessage';
 export type {SpectrumImageProps} from '@react-spectrum/image';
 export type {DimensionValue, FlexProps, GridProps} from '@react-spectrum/layout';
+export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
 export type {SpectrumLinkProps} from '@react-spectrum/link';
 export type {SpectrumListBoxProps} from '@react-spectrum/listbox';
 export type {SpectrumListViewProps} from '@react-spectrum/list';
@@ -97,3 +102,4 @@ export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, T
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
+export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';

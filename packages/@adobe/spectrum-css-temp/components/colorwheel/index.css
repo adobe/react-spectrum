@@ -27,7 +27,8 @@
   pointer-events: none;
 }
 
-.spectrum-ColorWheel {
+/* Use two class selectors as a workaround for the issue: https://github.com/adobe/react-spectrum/issues/1605 */
+.spectrum-ColorWheel.spectrum-ColorWheel {
   position: relative;
   display: block;
   width: var(--spectrum-colorwheel-width);

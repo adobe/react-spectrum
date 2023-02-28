@@ -20,7 +20,7 @@ export function Tabs(props) {
   let {tabListProps} = useTabList(props, state, ref);
   return (
     <div style={{height: '150px'}}>
-      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey', maxWidth: '400px', overflow: 'auto'}}>
+      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey', borderLeft: '10px solid grey', borderRight: '20px solid grey', maxWidth: '400px', overflow: 'auto'}}>
         {[...state.collection].map((item) => (
           <Tab key={item.key} item={item} state={state} />
         ))}

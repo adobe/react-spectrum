@@ -12,14 +12,16 @@
 
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ComboBox} from '@react-spectrum/combobox';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Meta, Story} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {SearchWithin} from '@react-spectrum/searchwithin';
 import {SpectrumFormProps} from '@react-types/form';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 
@@ -59,14 +61,16 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
       <Radio value="dragons">Dragons</Radio>
     </RadioGroup>
     <SearchField label="Search" />
-    <SearchWithin label="Search">
-      <SearchField placeholder="Search" />
-      <Picker label="State" placeholder="Select a state" items={flatOptions}>
-        {item => <Item key={item.id}>{item.name}</Item>}
-      </Picker>
-    </SearchWithin>
     <TextArea label="Comments" placeholder="How do you feel?" />
-    <TextField label="City" placeholder="San Francisco" />
+    <TextField
+      label="City"
+      placeholder="San Francisco"
+      contextualHelp={(
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        </ContextualHelp>
+      )} />
   </Form>
 );
 

@@ -12,7 +12,7 @@
 
 import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
-import {checkboxGroupNames} from './utils';
+import {checkboxGroupDescriptionIds, checkboxGroupErrorMessageIds, checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {RefObject} from 'react';
 import {useToggleState} from '@react-stately/toggle';
@@ -41,12 +41,21 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
-  let {inputProps} = useCheckbox({
+  let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || checkboxGroupNames.get(state)
   }, toggleState, inputRef);
 
-  return {inputProps};
+  return {
+    ...res,
+    inputProps: {
+      ...res.inputProps,
+      'aria-describedby': [
+        state.validationState === 'invalid' ? checkboxGroupErrorMessageIds.get(state) : null,
+        checkboxGroupDescriptionIds.get(state)
+      ].filter(Boolean).join(' ') || undefined
+    }
+  };
 }

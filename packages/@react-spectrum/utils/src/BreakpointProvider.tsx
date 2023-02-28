@@ -78,6 +78,7 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
     return () => {
       window.removeEventListener('resize', onResize);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supportsMatchMedia]);
 
   // If in SSR, the media query should never match. Once the page hydrates,

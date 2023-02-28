@@ -15,42 +15,47 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Badge--neutral {
-  background-color: var(--spectrum-label-colored-gray-background-color);
+  background-color: var(--spectrum-semantic-neutral-color-background);
 }
 
 .spectrum-Badge--negative {
-  background-color: var(--spectrum-label-colored-red-background-color);
+  background-color: var(--spectrum-semantic-negative-color-background);
 }
 
 .spectrum-Badge--yellow {
   color: var(--spectrum-global-color-static-black);
-  background-color: var(--spectrum-global-color-static-yellow-600);
+  background-color: var(--spectrum-yellow-background-color-default);
 }
 
 .spectrum-Badge--seafoam  {
-  background-color: var(--spectrum-global-color-static-seafoam-700);
+  color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-seafoam-background-color-default);
 }
 
 .spectrum-Badge--positive {
-  background-color: var(--spectrum-global-color-static-green-700);
+  background-color: var(--spectrum-semantic-positive-color-background);
 }
 
 .spectrum-Badge--info  {
-  background-color: var(--spectrum-label-colored-blue-background-color);
+  background-color: var(--spectrum-semantic-informative-color-background);
 }
 
 .spectrum-Badge--fuchsia  {
-  background-color: var(--spectrum-global-color-static-fuchsia-600);
+  color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-fuchsia-background-color-default);
 }
 
 .spectrum-Badge--indigo  {
-  background-color: var(--spectrum-global-color-static-indigo-600);
+  color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-indigo-background-color-default);
 }
 
 .spectrum-Badge--magenta  {
-  background-color: var(--spectrum-global-color-static-magenta-600);
+  color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-magenta-background-color-default);
 }
 
 .spectrum-Badge--purple  {
-  background-color: var(--spectrum-global-color-static-purple-600);
+  color: var(--spectrum-gray-50);
+  background-color: var(--spectrum-purple-background-color-default);
 }

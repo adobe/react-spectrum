@@ -14,7 +14,7 @@ import {Grid} from '@react-spectrum/layout';
 import {GridNode} from '@react-types/grid';
 import listStyles from './styles.css';
 import React from 'react';
-import {SpectrumListViewProps} from '@react-types/list';
+import type {SpectrumListViewProps} from './ListView';
 import {Text} from '@react-spectrum/text';
 
 interface DragPreviewProps<T> {

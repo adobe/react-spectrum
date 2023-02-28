@@ -586,48 +586,6 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
     });
 
-    it('closes on scroll on a parent element', function () {
-      let onOpenChange = jest.fn();
-      let {getByRole, getByTestId, queryByRole} = render(
-        <Provider theme={theme}>
-          <div data-testid="scrollable">
-            <Picker label="Test" onOpenChange={onOpenChange}>
-              <Item>One</Item>
-              <Item>Two</Item>
-              <Item>Three</Item>
-            </Picker>
-          </div>
-        </Provider>
-      );
-
-      expect(queryByRole('listbox')).toBeNull();
-
-      let picker = getByRole('button');
-      triggerPress(picker);
-      act(() => jest.runAllTimers());
-
-      let listbox = getByRole('listbox');
-      expect(listbox).toBeVisible();
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onOpenChange).toHaveBeenCalledWith(true);
-      expect(picker).toHaveAttribute('aria-expanded', 'true');
-      expect(picker).toHaveAttribute('aria-controls', listbox.id);
-
-      let scrollable = getByTestId('scrollable');
-      fireEvent.scroll(scrollable);
-      act(() => jest.runAllTimers());
-
-      expect(listbox).not.toBeInTheDocument();
-      expect(picker).toHaveAttribute('aria-expanded', 'false');
-      expect(picker).not.toHaveAttribute('aria-controls');
-      expect(onOpenChange).toBeCalledTimes(2);
-      expect(onOpenChange).toHaveBeenCalledWith(false);
-
-      // run restore focus rAF
-      act(() => jest.runAllTimers());
-      expect(document.activeElement).toBe(picker);
-    });
-
     it('tabs to the next element after the trigger and closes the menu', function () {
       let onOpenChange = jest.fn();
       let {getByRole, getByTestId} = render(

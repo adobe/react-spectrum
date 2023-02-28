@@ -14,7 +14,7 @@
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
 import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
 import React from 'react';
@@ -148,14 +148,14 @@ describe('Provider', () => {
     let {getByRole} = render(
       <Provider theme={theme} isDisabled>
         <Provider isQuiet>
-          <Button onPress={onPressSpy}>Hello!</Button>
+          <ActionButton onPress={onPressSpy}>Hello!</ActionButton>
         </Provider>
       </Provider>
     );
     let button = getByRole('button');
     triggerPress(button);
     expect(onPressSpy).not.toHaveBeenCalled();
-    expect(button.classList.contains('spectrum-Button--quiet')).toBeTruthy();
+    expect(button.classList.contains('spectrum-ActionButton--quiet')).toBeTruthy();
     onPressSpy.mockClear();
   });
 

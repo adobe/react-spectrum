@@ -34,7 +34,7 @@ type MappedDateValue<T> =
   never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
+interface DateFieldBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */

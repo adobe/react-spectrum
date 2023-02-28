@@ -57,7 +57,7 @@ const meta: Meta<SpectrumTableProps<object>> = {
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
     // large delay with the layout since there are so many tables
-    chromatic: {delay: 2000}
+    chromatic: {delay: 4000}
   }
 };
 
@@ -122,7 +122,7 @@ const Template = (): Story => ({columns, items, ...args}) => (
       }
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TableView {...args} {...c} width="100%" height="100%" key={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
+          <TableView {...args} {...c} width="100%" height="100%" key={key} aria-label={key} selectedKeys={['Foo 3', 'Foo 1']} disabledKeys={['Foo 2', 'Foo 4']}>
             <TableHeader columns={columns}>
               {(column: any) => (
                 <Column key={column.key} width={column.width} showDivider={column.showDivider} align={column.align} hideHeader={column.hideHeader} childColumns={column.children}>

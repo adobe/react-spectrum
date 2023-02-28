@@ -1,13 +1,25 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {AriaSliderProps, mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {AriaSliderThumbProps} from '@react-types/slider';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes, Orientation} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
-import {Provider, RenderProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-interface SliderProps extends AriaSliderProps, RenderProps<SliderState> {
+export interface SliderProps extends AriaSliderProps, RenderProps<SliderState>, SlotProps {
   /**
    * The display format of the value label.
    */
@@ -21,6 +33,7 @@ interface SliderContextValue {
   trackRef: RefObject<HTMLDivElement>
 }
 
+export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElement>>(null);
 const InternalSliderContext = createContext<SliderContextValue>(null);
 
 export interface SliderRenderProps {
@@ -37,6 +50,7 @@ export interface SliderRenderProps {
 }
 
 function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
@@ -50,7 +64,8 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
 
   let renderProps = useRenderProps({
     ...props,
-    values: state
+    values: state,
+    defaultClassName: 'react-aria-Slider'
   });
 
   return (
@@ -63,16 +78,20 @@ function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
         {...groupProps}
         {...renderProps}
         ref={ref}
+        slot={props.slot}
         data-orientation={state.orientation}
         data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
 }
 
+/**
+ * A slider allows a user to select one or more values within a range.
+ */
 const _Slider = forwardRef(Slider);
 export {_Slider as Slider};
 
-interface SliderOutputProps extends RenderProps<SliderState> {}
+export interface SliderOutputProps extends RenderProps<SliderState> {}
 
 function SliderOutput({children, style, className}: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   let {state, outputProps} = useContext(InternalSliderContext);
@@ -81,30 +100,36 @@ function SliderOutput({children, style, className}: SliderOutputProps, ref: Forw
     style,
     children,
     defaultChildren: state.getThumbValueLabel(0),
+    defaultClassName: 'react-aria-SliderOutput',
     values: state
   });
 
   return <output {...outputProps} {...renderProps} ref={ref} />;
 }
 
+/**
+ * A slider output displays the current value of a slider as text.
+ */
 const _SliderOutput = forwardRef(SliderOutput);
 export {_SliderOutput as SliderOutput};
 
-interface SliderTrackProps extends RenderProps<SliderState> {}
+export interface SliderTrackProps extends RenderProps<SliderState> {}
 
-function SliderTrack({children, style, className}: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackProps, trackRef} = useContext(InternalSliderContext);
   let domRef = mergeRefs(ref, trackRef);
   let renderProps = useRenderProps({
-    className,
-    style,
-    children,
+    ...props,
+    defaultClassName: 'react-aria-SliderTrack',
     values: state
   });
 
   return <div {...trackProps} {...renderProps} ref={domRef} />;
 }
 
+/**
+ * A slider track is a container for one or more slider thumbs.
+ */
 const _SliderTrack = forwardRef(SliderTrack);
 export {_SliderTrack as SliderTrack};
 
@@ -133,7 +158,7 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends AriaSliderThumbProps, RenderProps<SliderThumbRenderProps> {}
 
 function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, trackRef} = useContext(InternalSliderContext);
@@ -150,9 +175,8 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   let {focusProps, isFocusVisible} = useFocusRing();
 
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
-    children: props.children,
+    ...props,
+    defaultClassName: 'react-aria-SliderThumb',
     values: {state, isDragging, isFocused, isFocusVisible, isDisabled}
   });
 
@@ -179,5 +203,8 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
   );
 }
 
+/**
+ * A slider thumb represents an individual value that the user can adjust within a slider track.
+ */
 const _SliderThumb = forwardRef(SliderThumb);
 export {_SliderThumb as SliderThumb};

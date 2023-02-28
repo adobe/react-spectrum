@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export type {DraggableCollectionOptions, DraggableCollectionState} from './useDraggableCollectionState';
+export type {DraggableCollectionStateOptions, DraggableCollectionState} from './useDraggableCollectionState';
 export type {DroppableCollectionStateOptions, DroppableCollectionState} from './useDroppableCollectionState';
 export {useDraggableCollectionState} from './useDraggableCollectionState';
 export {useDroppableCollectionState} from './useDroppableCollectionState';

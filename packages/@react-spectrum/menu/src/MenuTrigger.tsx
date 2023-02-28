@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
-import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {FocusScope} from '@react-aria/focus';
+import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
@@ -25,7 +23,6 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
-  let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
@@ -59,16 +56,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   }
 
   let isMobile = useIsMobileDevice();
-  let {overlayProps: positionProps, placement} = useOverlayPosition({
-    targetRef: menuTriggerRef,
-    overlayRef: unwrapDOMRef(menuPopoverRef),
-    scrollRef: menuRef,
-    placement: initialPlacement,
-    shouldFlip: shouldFlip,
-    isOpen: state.isOpen && !isMobile,
-    onClose: state.close
-  });
-
   let menuContext = {
     ...menuProps,
     ref: menuRef,
@@ -82,35 +69,24 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
-  // Only contain focus while the menu is open. There is a fade out transition during which we may try to move focus.
-  // If we contain, then focus will be pulled back into the menu.
-  let contents = (
-    <FocusScope restoreFocus contain={isMobile && state.isOpen}>
-      <DismissButton onDismiss={state.close} />
-      {menu}
-      <DismissButton onDismiss={state.close} />
-    </FocusScope>
-  );
-
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close}>
-        {contents}
+      <Tray state={state}>
+        {menu}
       </Tray>
     );
   } else {
     overlay = (
       <Popover
-        isOpen={state.isOpen}
-        UNSAFE_style={positionProps.style}
-        ref={menuPopoverRef}
-        placement={placement}
+        state={state}
+        triggerRef={menuTriggerRef}
+        scrollRef={menuRef}
+        placement={initialPlacement}
         hideArrow
-        onClose={state.close}
-        shouldCloseOnBlur>
-        {contents}
+        shouldFlip={shouldFlip}>
+        {menu}
       </Popover>
     );
   }

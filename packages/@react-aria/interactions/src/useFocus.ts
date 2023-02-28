@@ -75,7 +75,7 @@ export function useFocus(props: FocusProps): FocusResult {
   return {
     focusProps: {
       onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
-      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : null
+      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
     }
   };
 }

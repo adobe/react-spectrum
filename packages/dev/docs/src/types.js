@@ -35,6 +35,7 @@ const DOC_LINKS = {
   FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
   'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
   'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
@@ -61,6 +62,10 @@ export function Type({type}) {
     case 'unknown':
     case 'never':
       return <Keyword {...type} />;
+    case 'this':
+      return <Keyword {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -87,6 +92,8 @@ export function Type({type}) {
       return <IntersectionType {...type} />;
     case 'application':
       return <TypeApplication {...type} />;
+    case 'typeOperator':
+      return <TypeOperator {...type} />;
     case 'function':
       return <FunctionType {...type} />;
     case 'parameter':
@@ -121,10 +128,24 @@ export function Type({type}) {
     }
     case 'conditional':
       return <ConditionalType {...type} />;
+    case 'indexedAccess':
+      return <IndexedAccess {...type} />;
+    case 'keyof':
+      return <Keyof {...type} />;
+    case 'template':
+      return <TemplateLiteral {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function TypeOperator({operator, value}) {
+  return <span><span className="token hljs-literal">{operator}</span>{' '}<Type type={value} /></span>;
+}
+
+function IndexedAccess({objectType, indexType}) {
+  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
 function StringLiteral({value}) {
@@ -137,6 +158,14 @@ function NumberLiteral({value}) {
 
 function BooleanLiteral({value}) {
   return <span className="token hljs-literal">{'' + value}</span>;
+}
+
+function Symbol() {
+  return <span className="token hljs-literal">symbol</span>;
+}
+
+function Keyof({keyof}) {
+  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
 }
 
 function Keyword({type}) {
@@ -398,7 +427,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, hideType}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -524,24 +553,9 @@ function ObjectType({properties, exact}) {
         let optional = property.optional;
         let value = property.value;
 
-        // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'method') {
-          return (
-            <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-function">{k}</span>
-              <span className="token punctuation">(</span>
-              <JoinList elements={value.parameters} joiner=", " />
-              <span className="token punctuation">)</span>
-              <span className="token punctuation">{': '}</span>
-              <Type type={value.return} />
-              {i < arr.length - 1 ? ',' : ''}
-            </div>
-          );
-        }
-
         let punc = optional ? '?: ' : ': ';
         return (
-          <div key={property.key} style={{paddingLeft: '1.5em'}}>
+          <div key={property.key ?? i} style={{paddingLeft: '1.5em'}}>
             {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
             {property.indexType && <span className="token punctuation">{': '}</span>}
@@ -589,6 +603,28 @@ function ConditionalType({checkType, extendsType, trueType, falseType}) {
       <Type type={trueType} />
       <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
       <Type type={falseType} />
+    </>
+  );
+}
+
+function TemplateLiteral({elements}) {
+  return (
+    <>
+      <span className="token hljs-string">{'`'}</span>
+      {elements.map((element, i) => {
+        if (element.type === 'string' && element.value) {
+          return <span className="token hljs-string" key={i}>{element.value}</span>;
+        }
+
+        return (
+          <React.Fragment key={i}>
+            <span className="token punctuation">{'${'}</span>
+            <Type type={element} />
+            <span className="token punctuation">{'}'}</span>
+          </React.Fragment>
+        );
+      })}
+      <span className="token hljs-string">{'`'}</span>
     </>
   );
 }

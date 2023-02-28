@@ -150,6 +150,7 @@ export function useSpinButton(
         initialStepDelay
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onIncrement, maxValue, value]
   );
 
@@ -167,6 +168,7 @@ export function useSpinButton(
         initialStepDelay
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onDecrement, minValue, value]
   );
 

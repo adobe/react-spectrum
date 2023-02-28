@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-icon-listgripper-width: var(--spectrum-global-dimension-size-75);
+  --spectrum-icon-listgripper-width: var(--spectrum-global-dimension-size-65);
   --spectrum-icon-listgripper-height: var(--spectrum-global-dimension-size-150);
 }
 

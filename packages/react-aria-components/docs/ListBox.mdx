@@ -32,7 +32,10 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ListBox']} />
+  componentNames={['ListBox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/listbox/'}
+  ]} />
 
 ## Example
 
@@ -53,70 +56,106 @@ import {ListBox, Item} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-[role=listbox] {
+.react-aria-ListBox {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
   max-height: inherit;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   min-width: var(--button-width);
   max-width: 250px;
   max-height: 300px;
   box-sizing: border-box;
-}
 
-[role=option] {
-  margin: 2px;
-  padding: 4px 8px 4px 8px;
-  border-radius: 6px;
-  outline: none;
-  cursor: default;
-  color: var(--spectrum-global-color-gray-800);
-  font-size: 1.072rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-
-  &[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px slateblue;
+  & section:not(:first-child) {
+    margin-top: 12px;
   }
 
-  &[aria-selected=true] {
-    background: slateblue;
-    color: white;
+  & section header {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0 8px;
+  }
+
+  & .react-aria-Item {
+    margin: 2px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px slateblue, inset 0 0 0 4px white;
+      box-shadow: inset 0 0 0 2px var(--highlight-background);
+    }
+
+    &[aria-selected=true] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+
+      &[data-focus-visible] {
+        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+      }
+    }
+
+    &[aria-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    & [slot=label] {
+      font-weight: bold;
+    }
+
+    & [slot=description] {
+      font-size: small;
     }
   }
-
-  &[aria-disabled] {
-    opacity: 0.4;
-  }
-
-  & [slot=label] {
-    font-weight: bold;
-  }
-
-  & [slot=description] {
-    font-size: small;
-  }
 }
 
-[role=group]:not(:first-child) {
-  margin-top: 12px;
-}
+@media (forced-colors: active) {
+  .react-aria-ListBox {
+    forced-color-adjust: none;
 
-[role=group] header {
-  font-size: 16px;
-  font-weight: bold;
-  padding: 0 8px;
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+    --separator-color: ButtonBorder;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+  }
 }
 ```
 
 </details>
+
+## Features
+
+A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is
+not possible to style consistently cross browser. `ListBox` helps you build accessible
+listbox components that can be styled as needed.
+
+* **Item selection** – Single or multiple selection, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Keyboard navigation** – List items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Touch friendly** – Selection behavior adapts depending on the device. For example, selection occurs on mouse down but on touch up, which is consistent with native conventions.
+* **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+Note: `ListBox` only handles the list itself. For a dropdown, see [Select](Select.html).
 
 ## Anatomy
 
@@ -151,7 +190,7 @@ A `<Section>` defines the child items, and optional title for a section within a
 
 ### Item
 
-An `<Item>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for autocomplete in the Select.
+An `<Item>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the ListBox.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
@@ -162,30 +201,30 @@ An `<Item>` defines a single option within a `<ListBox>`. If the `children` are 
 
 ## Styling
 
-All React Aria components accept the `className` and `style` DOM attributes for styling. These can be used to implement styling with custom CSS classes, inline styles, utility CSS classes (e.g. Tailwind), CSS-in-JS libraries (e.g. Styled Components), etc.
-
-```jsx
-<ListBox className="listbox">
-  {/* ... */}
-</ListBox>
-```
-
-Many components also use the ARIA `role` attribute, which can also be used in CSS selectors to target elements of a certain type without the need for custom class names. These are documented below.
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
 
 ```css
-[role=listbox] {
+.react-aria-ListBox {
   /* ... */
 }
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ListBox className="my-listbox">
+  {/* ... */}
+</ListBox>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
 
 ```css
-.item[aria-selected=true] {
+.react-aria-Item[aria-selected=true] {
   /* ... */
 }
 
-.item[data-focused] {
+.react-aria-Item[data-focused] {
   /* ... */
 }
 ```
@@ -215,17 +254,17 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `[role=listbox]` CSS selector, or by adding a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
 
 ### Section
 
-A `Section` can be targeted with the `[role=group]` CSS selector, or by adding a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. The section title can be targeted with the `header` selector. The `title` prop also allows JSX elements and not just strings, which can enable custom formatting. However, keep in mind that interactive elements within a listbox are not allowed. See [sections](#sections) for examples.
 
 ### Item
 
-An `Item` can be targeted with the `[role=option]` CSS selector, or by adding a custom `className`. It supports the following states:
+An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
-<StateTable properties={docs.exports.ItemStates.properties} />
+<StateTable properties={docs.exports.ItemRenderProps.properties} />
 
 Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
 
@@ -235,7 +274,7 @@ Note that items may not contain interactive children such as buttons, as screen 
 
 If you will use a ListBox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `ListBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as descibed [above](#styling).
+This example wraps `ListBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
 function MyListBox({children, ...props}) {
@@ -247,7 +286,7 @@ function MyListBox({children, ...props}) {
 }
 
 function MyItem(props) {
-  return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+  return <Item {...props} className={({isFocusVisible, isSelected}) => `my-item ${isFocusVisible ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
 <MyListBox aria-label="Ice cream flavor" selectionMode="single">
@@ -258,19 +297,76 @@ function MyItem(props) {
 </MyListBox>
 ```
 
-## Usage
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-The following examples show how to use the `ListBox` API.
+```css
+.my-listbox {
+  max-height: inherit;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  border-radius: 6px;
+  background: var(--page-background);
+  outline: none;
+  min-width: var(--button-width);
+  max-width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+}
+
+.my-item {
+  --highlight: #e70073;
+
+  margin: 2px;
+  padding: 4px 8px 4px 8px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--spectrum-global-color-gray-800);
+  font-size: 1.072rem;
+
+  &.selected {
+    background: var(--highlight);
+    color: white;
+  }
+
+  &.focused {
+    box-shadow: 0 0 0 2px var(--page-background), 0 0 0 4px var(--highlight);
+  }
+}
+
+@media (forced-colors: active) {
+  .my-listbox {
+    forced-color-adjust: none;
+    border-color: ButtonBorder;
+    background: Canvas;
+  }
+
+  .my-item {
+    color: ButtonText;
+    --highlight: Highlight;
+
+    &.selected {
+      color: HighlightText;
+    }
+  }
+}
+```
+
+</details>
+
+## Usage
 
 ### Dynamic collections
 
 `ListBox` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
-The example above shows static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
-As seen below, an iterable list of options is passed to the ListBox using the `items` prop. Each item accepts a `key` prop, which
+As seen below, an iterable list of options is passed to the ListBox using the `items` prop. Each item accepts an `id` prop, which
 is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
-as shown in the example below, then this is used automatically and a `key` prop is not required.
+as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
 function Example() {
@@ -297,7 +393,7 @@ function Example() {
 ### Selection
 
 ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
-Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
@@ -322,7 +418,7 @@ function Example() {
 
 ### Selection behavior
 
-By default, `useListBox` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
+By default, `ListBox` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection.
 
 When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
 
@@ -341,7 +437,7 @@ These selection behaviors are defined in [Aria Practices](https://w3c.github.io/
 
 ### Sections
 
-ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
+ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` prop.
 
 #### Static items
 
@@ -471,7 +567,7 @@ function AsyncLoadingExample() {
 ### Disabled items
 
 `ListBox` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
+corresponds with the `id` prop passed to the `Item` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 ```tsx example

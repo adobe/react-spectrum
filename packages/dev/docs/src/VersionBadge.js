@@ -36,6 +36,6 @@ export function VersionBadge(props) {
   }
 
   return (
-    <span className={clsx(badgeStyles['spectrum-Badge'], badgeStyles[sizeClass], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
+    <span style={props.style} className={clsx(badgeStyles['spectrum-Badge'], badgeStyles[sizeClass], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
   );
 }

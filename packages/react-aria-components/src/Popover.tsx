@@ -1,104 +1,125 @@
-import {DismissButton, FocusScope, mergeProps, OverlayContainer, useModal, useOverlay, useOverlayPosition} from 'react-aria';
-import {OverlayTriggerState} from 'react-stately';
-import {PositionProps} from '@react-types/overlays';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, RefObject, useContext} from 'react';
-import {useContextProps, WithRef} from './utils';
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-interface PopoverProps extends Omit<PositionProps, 'isOpen'>, HTMLAttributes<HTMLElement> {
+import {AriaPopoverProps, DismissButton, Overlay, usePopover} from 'react-aria';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {OverlayArrowContext} from './OverlayArrow';
+import {OverlayTriggerState} from 'react-stately';
+import {PlacementAxis, PositionProps} from '@react-types/overlays';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject} from 'react';
+
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
+   * 
+   * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc., 
+   * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<HTMLElement>,
+  triggerRef?: RefObject<Element>
+}
+
+export interface PopoverRenderProps {
   /**
-   * Whether the popover is non-modal, i.e. elements outside the popover may be
-   * interacted with by assistive technologies.
+   * The placement of the tooltip relative to the trigger.
+   * @selector [data-placement="left | right | top | bottom"]
    */
-  isNonModal?: boolean,
-
-  children?: ReactElement
+  placement: PlacementAxis,
+  /**
+   * Whether the popover is currently entering. Use this to apply animations.
+   * @selector [data-entering]
+   */
+  isEntering: boolean,
+  /**
+   * Whether the popover is currently exiting. Use this to apply animations.
+   * @selector [data-exiting]
+   */
+  isExiting: boolean
 }
 
-interface PopoverContextValue extends WithRef<PopoverProps, HTMLElement> {
+interface PopoverContextValue extends PopoverProps {
   state?: OverlayTriggerState,
-  preserveChildren?: boolean,
-  restoreFocus?: boolean
+  preserveChildren?: boolean
 }
 
-export const PopoverContext = createContext<PopoverContextValue>(null);
+export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, restoreFocus = true, state} = useContext(PopoverContext) || {};
+  let {preserveChildren, state} = props as PopoverContextValue;
+  let isExiting = useExitAnimation(ref, state.isOpen);
 
-  if (state && !state.isOpen) {
-    return preserveChildren ? props.children : null;
+  if (state && !state.isOpen && !isExiting) {
+    return preserveChildren ? props.children as ReactElement : null;
   }
 
   return (
-    <OverlayContainer>
-      <Overlay
-        {...props}
-        ref={ref}
-        restoreFocus={restoreFocus}
-        state={state} />
-    </OverlayContainer>
+    <PopoverInner 
+      {...props}
+      triggerRef={props.triggerRef}
+      state={state}
+      popoverRef={ref}
+      isExiting={isExiting} />
   );
 }
 
+/**
+ * A popover is an overlay element positioned relative to a trigger.
+ */
 const _Popover = forwardRef(Popover);
 export {_Popover as Popover};
 
-function usePopover({
-  triggerRef,
-  placement = 'top',
-  offset = 5,
-  isNonModal
-}: PopoverProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>) {
-  let {overlayProps} = useOverlay(
-    {
-      isOpen: state.isOpen,
-      onClose: state.close,
-      shouldCloseOnBlur: true,
-      isDismissable: true
-    },
-    ref
-  );
-
-  let {overlayProps: positionProps} = useOverlayPosition({
-    targetRef: triggerRef,
-    overlayRef: ref,
-    placement,
-    offset,
-    isOpen: state.isOpen
-  });
-
-  let {modalProps} = useModal({
-    isDisabled: isNonModal || !state.isOpen
-  });
-
-  // TODO: useFocusScope
-
-  return {
-    popoverProps: mergeProps(overlayProps, positionProps, modalProps)
-  };
+interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
+  state: OverlayTriggerState,
+  isExiting: boolean
 }
 
-const Overlay = forwardRef(({children, restoreFocus, className, style, state, ...props}: PopoverContextValue, ref: RefObject<HTMLElement>) => {
-  let {popoverProps} = usePopover(props, state, ref);
+function PopoverInner({children, state, isExiting, ...props}: PopoverInnerProps) {
+  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+    ...props,
+    offset: props.offset ?? 8
+  }, state);
 
-  style = {...style, ...popoverProps.style};
+  let ref = props.popoverRef as RefObject<HTMLDivElement>;
+  let isEntering = useEnterAnimation(ref, !!placement);
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-Popover',
+    values: {
+      placement,
+      isEntering,
+      isExiting
+    }
+  });
+
+  let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <FocusScope restoreFocus={restoreFocus}>
+    <Overlay>
+      {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...popoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
-        className={className}
-        style={style}>
-        <DismissButton onDismiss={state.close} />
-        {children}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot}
+        style={style}
+        data-placement={placement}
+        data-entering={isEntering || undefined}
+        data-exiting={isExiting || undefined}>
+        {!props.isNonModal && <DismissButton onDismiss={state.close} />}
+        <OverlayArrowContext.Provider value={{arrowProps, placement}}>
+          {children}
+        </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
       </div>
-    </FocusScope>
+    </Overlay>
   );
-});
+}

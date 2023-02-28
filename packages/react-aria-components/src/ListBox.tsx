@@ -1,29 +1,47 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaListBoxOptions, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {AriaListBoxProps} from '@react-types/listbox';
-import {DOMProps, Provider, RenderProps, StyleProps, useContextProps, useRenderProps, WithRef} from './utils';
+import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ItemStates, useCachedChildren, useCollection} from './Collection';
 import {ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {useListBox, useListBoxSection, useOption} from 'react-aria';
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, DOMProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior
 }
 
-interface ListBoxContextValue<T> extends WithRef<Omit<AriaListBoxProps<T>, 'children'>, HTMLDivElement> {
+interface ListBoxContextValue<T> extends ListBoxProps<T> {
   state?: ListState<T> & OverlayTriggerState
 }
 
-export const ListBoxContext = createContext<ListBoxContextValue<any>>(null);
-const InternalListBoxContext = createContext<ListState<unknown>>(null);
+interface InternalListBoxContextValue {
+  state: ListState<unknown>,
+  shouldFocusOnHover: boolean
+}
+
+export const ListBoxContext = createContext<ContextValue<ListBoxContextValue<any>, HTMLDivElement>>(null);
+const InternalListBoxContext = createContext<InternalListBoxContextValue>(null);
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let {state} = useContext(ListBoxContext) || {};
   [props, ref] = useContextProps(props, ref, ListBoxContext);
+  let state = (props as ListBoxContextValue<T>).state;
 
   if (state) {
     return state.isOpen ? <ListBoxInner state={state} props={props} listBoxRef={ref} /> : null;
@@ -44,12 +62,15 @@ function ListBoxPortal({props, listBoxRef}) {
   );
 }
 
+/**
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ */
 const _ListBox = forwardRef(ListBox);
 export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {
   state: ListState<T>,
-  props: ListBoxProps<T>,
+  props: ListBoxProps<T> & AriaListBoxOptions<T>,
   listBoxRef: RefObject<HTMLDivElement>
 }
 
@@ -74,13 +95,15 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
 
   return (
     <div
+      {...filterDOMProps(props)}
       {...listBoxProps}
       ref={listBoxRef}
+      slot={props.slot}
       style={props.style}
-      className={props.className}>
+      className={props.className ?? 'react-aria-ListBox'}>
       <Provider
         values={[
-          [InternalListBoxContext, state],
+          [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover}],
           [SeparatorContext, {elementType: 'li'}]
         ]}>
         {children}
@@ -93,7 +116,7 @@ interface ListBoxSectionProps<T> extends StyleProps {
   section: Node<T>
 }
 
-function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) {
+function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
   let {headingProps, groupProps} = useListBoxSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -112,8 +135,9 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
 
   return (
     <section 
+      {...filterDOMProps(otherProps)}
       {...groupProps}
-      className={className || section.props?.className}
+      className={className || section.props?.className || 'react-aria-Section'}
       style={style || section.props?.style}>
       {section.rendered &&
         <header {...headingProps}>
@@ -125,35 +149,49 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   );
 }
 
-interface OptionProps<T> extends RenderProps<ItemStates> {
+interface OptionProps<T> {
   item: Node<T>
 }
 
-function Option<T>({item, className, style, children}: OptionProps<T>) {
+function Option<T>({item}: OptionProps<T>) {
   let ref = useRef();
-  let state = useContext(InternalListBoxContext);
+  let {state, shouldFocusOnHover} = useContext(InternalListBoxContext);
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
     state,
     ref
   );
 
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: shouldFocusOnHover || (!states.allowsSelection && !states.hasAction)
+  });
+
+  if (shouldFocusOnHover) {
+    hoverProps = {};
+    isHovered = states.isFocused;
+  }
+
+  let props: ItemProps<T> = item.props;
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
-    className: className || item.props.className,
-    style: style || item.props.style,
-    children: children || item.rendered,
+    ...props,
+    children: item.rendered,
+    defaultClassName: 'react-aria-Item',
     values: {
       ...states,
-      isFocusVisible: focusVisible
+      isHovered,
+      isFocusVisible: focusVisible,
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
 
   return (
     <div
-      {...optionProps}
+      {...mergeProps(optionProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={focusVisible || undefined}
       data-pressed={states.isPressed || undefined}>

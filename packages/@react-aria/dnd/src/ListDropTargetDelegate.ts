@@ -12,7 +12,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
     if (this.collection.size === 0) {
-      return;
+      return {type: 'root'};
     }
 
     let rect = this.ref.current.getBoundingClientRect();

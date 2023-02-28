@@ -31,7 +31,7 @@ export {useScrollWheel} from './useScrollWheel';
 export {useLongPress} from './useLongPress';
 
 export type {FocusProps, FocusResult} from './useFocus';
-export type {FocusVisibleHandler, FocusVisibleResult, Modality} from './useFocusVisible';
+export type {FocusVisibleHandler, FocusVisibleProps, FocusVisibleResult, Modality} from './useFocusVisible';
 export type {FocusWithinProps, FocusWithinResult} from './useFocusWithin';
 export type {HoverProps, HoverResult} from './useHover';
 export type {InteractOutsideProps} from './useInteractOutside';
