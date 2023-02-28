@@ -35,7 +35,6 @@ export default function InsertionIndicator(props: InsertionIndicatorProps) {
       aria-hidden={dropIndicatorProps['aria-hidden']}>
       <div
         role="gridcell"
-        aria-selected="false"
         className={
           classNames(
             styles,
