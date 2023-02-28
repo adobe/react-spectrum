@@ -1091,19 +1091,21 @@ function DragButton() {
   let {dragButtonProps, dragButtonRef, isFocusVisibleWithin} = useTableRowContext();
   let {visuallyHiddenProps} = useVisuallyHidden();
   return (
-    <div
-      {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
-      className={
+    <FocusRing focusRingClass={classNames(stylesOverrides, 'focus-ring')}>
+      <div
+        {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
+        className={
         classNames(
           stylesOverrides,
           'spectrum-Table-row-draghandle-button'
         )
       }
-      style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
-      ref={dragButtonRef}
-      draggable="true">
-      <ListGripper UNSAFE_className={classNames(stylesOverrides)} />
-    </div>
+        style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
+        ref={dragButtonRef}
+        draggable="true">
+        <ListGripper UNSAFE_className={classNames(stylesOverrides)} />
+      </div>
+    </FocusRing>
   );
 }
 
