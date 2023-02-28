@@ -230,7 +230,7 @@ function ReorderExample(props) {
   );
 }
 
-export function DragOntoRowExample(props) {
+function DragOntoRowExample(props) {
   let {
     tableViewProps = {},
     dragHookOptions = {},
@@ -366,7 +366,7 @@ let itemColumns = [
   {name: 'Name', key: 'name'}
 ];
 
-export function DragBetweenTablesExample(props) {
+function DragBetweenTablesExample(props) {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
   onDragStart = chain(action('dragStart'), onDragStart);
@@ -487,7 +487,7 @@ export function DragBetweenTablesExample(props) {
   );
 }
 
-export function DragBetweenTablesRootOnlyExample(props) {
+function DragBetweenTablesRootOnlyExample(props) {
   let {
     tableViewProps = {},
     dragHookOptions = {},
