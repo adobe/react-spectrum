@@ -294,6 +294,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     if (reusableView.viewType === 'rowgroup') {
       return (
         <TableRowGroup key={reusableView.key} style={style}>
+          {isTableDroppable &&
+            <RootDropIndicator key="root" />
+          }
           {renderChildren(children)}
         </TableRowGroup>
       );
@@ -676,9 +679,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
             onScrollStart={state.startScrolling}
             onScrollEnd={state.endScrolling}
             onScroll={onScroll}>
-            {isTableDroppable &&
-              <RootDropIndicator key="root" />
-            }
             {state.visibleViews[1]}
             <div
               className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
