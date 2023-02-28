@@ -21,6 +21,7 @@ governing permissions and limitations under the License.
   --spectrum-table-row-border-color-selected: var(--spectrum-global-color-blue-500);
   --spectrum-table-cell-border-color-selected: var(--spectrum-global-color-blue-500);
   --spectrum-table-row-focus-indicator-color: var(--spectrum-selectlist-option-focus-indicator-color);
+  --spectrum-table-section-header-background-color: var(--spectrum-global-color-gray-200);
 }
 
 .spectrum-Table-headWrapper {
@@ -30,6 +31,11 @@ governing permissions and limitations under the License.
   /* forced-color-adjust: none, so that border-inline-start-color and
   border-inline-end-color remain transparent with forced-colors: active. */
   forced-color-adjust: none;
+}
+
+.spectrum-Table-sectionCell {
+  color: var(--spectrum-alias-text-color);
+  background-color: var(--spectrum-table-section-header-background-color);
 }
 
 .spectrum-Table-headCell {

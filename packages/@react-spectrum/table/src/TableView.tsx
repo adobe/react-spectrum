@@ -30,7 +30,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, useVirtualizerItem, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -267,7 +267,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-        // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
+      // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
       let header = children.find(c => c.viewType === 'header');
       let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
       return (
@@ -1133,18 +1133,71 @@ function TableCell({cell}) {
   );
 }
 
-function TableSection({children, style, header, headerStyle, key, reusableView}) {
+function TableSection({children, style, header, headerStyle, reusableView}) {
   let {state} = useTableContext();
-  let {gridSectionProps, gridRowProps, gridRowHeaderProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
-  // TODO: add useVirtualizer item to the header div (add wrapper for it?) Will probably need it so the header div adjusts itself accordingly
+  let {rowGroupProps, rowProps, cellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
+  let headerRowRef = useRef();
 
+  useVirtualizerItem({
+    reusableView: header,
+    ref: headerRowRef
+  });
 
+  // TODO height of the table section should match the table column headers according to XD (already handled via headerHeight provided to TableLayout when not overflow: wrap)
+  // Mimic the same structure as the header row
+  // Perhaps I could split this up into TableSection/TableSectionRow similarly to how TableHeader/TableHeaderRow does it
   return (
-    <div style={style} key={key} {...gridSectionProps}>
-      <div style={headerStyle} key={header.key} {...gridRowProps}>
-        <span {...gridRowHeaderProps}>
-          {reusableView.content.rendered}
-        </span>
+    <div
+      {...rowGroupProps}
+      style={style}>
+      <div
+        {...rowProps}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-sectionRow'
+          )
+        }
+        style={headerStyle}>
+        <div
+          role="presentation"
+          ref={headerRowRef}
+          style={headerStyle}
+          className={
+            classNames(
+              styles,
+              'spectrum-Table-cellWrapper',
+              classNames(
+                stylesOverrides,
+                {
+                  'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize
+                }
+              )
+            )
+          }>
+          <div
+            {...cellProps}
+            className={
+              classNames(
+                styles,
+                'spectrum-Table-sectionCell',
+                classNames(
+                  stylesOverrides,
+                  'react-spectrum-Table-cell'
+                )
+              )
+            }>
+            <div
+              className={
+                classNames(
+                  styles,
+                  'spectrum-Table-sectionCellContents'
+                )
+              }>
+              {reusableView.content.rendered}
+            </div>
+          </div>
+        </div>
       </div>
       {children}
     </div>

@@ -31,7 +31,7 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
   let {state} = useContext(ListViewContext);
   let {direction} = useLocale();
   let item = sectionView.content;
-  let {gridSectionProps, gridRowProps, gridRowHeaderProps} = useGridListSection({node: item, isVirtualized: true}, state);
+  let {rowGroupProps, rowProps, cellProps} = useGridListSection({node: item, isVirtualized: true}, state);
   let headerRowRef = useRef();
 
   useVirtualizerItem({
@@ -49,38 +49,36 @@ export function ListViewSection<T>(props: ListViewSectionProps<T>) {
   // Would need to add some stuff to thelayoutNode of a item like the header for sections
 
   return (
-    <>
+    <div
+      {...rowGroupProps}
+      style={layoutInfoToStyle(sectionView.layoutInfo, direction)}
+      className={
+        classNames(
+          listStyles,
+          'react-spectrum-ListViewSection',
+          {
+            'react-spectrum-ListViewSection--firstRow': item.index === 0
+          }
+        )
+      }>
       <div
-        {...gridSectionProps}
-        style={layoutInfoToStyle(sectionView.layoutInfo, direction)}
-        className={
-          classNames(
-            listStyles,
-            'react-spectrum-ListViewSection',
-            {
-              'react-spectrum-ListViewSection--firstRow': item.index === 0
-            }
-          )
-        }>
+        role="presentation"
+        ref={headerRowRef}
+        style={layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo)}>
         <div
-          role="presentation"
-          ref={headerRowRef}
-          style={layoutInfoToStyle(header.layoutInfo, direction, sectionView.layoutInfo)}>
-          <div
-            {...gridRowProps}
-            className={
-              classNames(
-                listStyles,
-                'react-spectrum-ListViewSection-header'
-              )
-            }>
-            <span {...gridRowHeaderProps}>
-              {item.rendered}
-            </span>
-          </div>
+          {...rowProps}
+          className={
+            classNames(
+              listStyles,
+              'react-spectrum-ListViewSection-header'
+            )
+          }>
+          <span {...cellProps}>
+            {item.rendered}
+          </span>
         </div>
-        {children}
       </div>
-    </>
+      {children}
+    </div>
   );
 }

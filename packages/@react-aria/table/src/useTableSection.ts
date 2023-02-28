@@ -19,16 +19,16 @@ export interface AriaTableSectionProps {
   /** An object representing the table section. Contains all the relevant information that makes up the section. */
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean
 }
 
 export interface TableSectionAria {
-  /** Props for the list section's wrapping element. */
-  gridSectionProps: DOMAttributes,
-  /** Props for the list row element representing the section header. */
-  gridRowProps: DOMAttributes,
-  /** Props for the row header within the section row. */
-  gridRowHeaderProps: DOMAttributes
+  /** Props for the table section's row group element. */
+  rowGroupProps: DOMAttributes,
+  /** Props for the table section's grid row element. */
+  rowProps: DOMAttributes,
+  /** Props for the table section's grid cell element. */
+  cellProps: DOMAttributes
 }
 
 /**
@@ -49,15 +49,15 @@ export function useTableSection<T>(props: AriaTableSectionProps, state: TableSta
   }
 
   return {
-    gridSectionProps: {
+    rowGroupProps: {
       role: 'rowgroup',
       'aria-labelledby': headerId
     },
-    gridRowProps: {
+    rowProps: {
       role: 'row',
       'aria-rowindex': rowIndex
     },
-    gridRowHeaderProps: {
+    cellProps: {
       id: headerId,
       role: 'rowheader',
       'aria-colspan': state.collection.columnCount,

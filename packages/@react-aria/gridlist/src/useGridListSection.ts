@@ -22,12 +22,12 @@ export interface AriaGridListSectionOptions {
 }
 
 export interface GridListSectionAria {
-  /** Props for the list section's wrapping element. */
-  gridSectionProps: DOMAttributes,
-  /** Props for the list row element representing the section header. */
-  gridRowProps: DOMAttributes,
-  /** Props for the row header within the section row. */
-  gridRowHeaderProps: DOMAttributes
+  /** Props for the list section's row group element. */
+  rowGroupProps: DOMAttributes,
+  /** Props for the list section's grid row element. */
+  rowProps: DOMAttributes,
+  /** Props for the list section's grid cell element. */
+  cellProps: DOMAttributes
 }
 
 /**
@@ -47,15 +47,15 @@ export function useGridListSection<T>(props: AriaGridListSectionOptions, state: 
 
   // TODO: for some reason VO announces section 2 for section 1's first row when using control + option + arrow keys to navigate...
   return {
-    gridSectionProps: {
+    rowGroupProps: {
       role: 'rowgroup',
       'aria-labelledby': headerId
     },
-    gridRowProps: {
+    rowProps: {
       role: 'row',
       'aria-rowindex': rowIndex
     },
-    gridRowHeaderProps: {
+    cellProps: {
       id: headerId,
       role: 'rowheader',
       'aria-label': node.textValue || undefined
