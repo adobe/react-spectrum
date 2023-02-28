@@ -336,6 +336,7 @@ export class BaseCollection<T> extends BaseNode<T> implements ICollection<Node<T
 }
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
+  /** The contents of the collection. */
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
@@ -469,9 +470,14 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
 }
 
 export const CollectionContext = createContext<CachedChildrenOptions<unknown>>(null);
+export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
 
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   [props] = useContextProps(props, null, CollectionContext);
-  // @ts-ignore
-  return useCachedChildren(props);
+  let renderer = typeof props.children === 'function' ? props.children : null;
+  return (
+    <CollectionRendererContext.Provider value={renderer}>
+      {useCachedChildren(props)}
+    </CollectionRendererContext.Provider>
+  );
 }

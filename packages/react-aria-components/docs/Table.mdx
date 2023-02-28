@@ -462,7 +462,7 @@ A `TableHeader` can be targeted with the `.react-aria-TableHeader` CSS selector,
 
 ### Column
 
-An `Column` can be targeted with the `.react-aria-Column` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `Column` can be targeted with the `.react-aria-Column` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.ColumnRenderProps.properties} />
 
@@ -472,13 +472,13 @@ A `TableBody` can be targeted with the `.react-aria-TableBody` CSS selector, or 
 
 ### Row
 
-An `Row` can be targeted with the `.react-aria-Row` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `Row` can be targeted with the `.react-aria-Row` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.RowRenderProps.properties} />
 
 ### Cell
 
-An `Cell` can be targeted with the `.react-aria-Cell` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `Cell` can be targeted with the `.react-aria-Cell` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.CellRenderProps.properties} />
 
@@ -710,7 +710,13 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 
 ```tsx example
 // Using the same table as above
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+<PokemonTable disabledKeys={[3]} />
+```
+
+By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
+
+```tsx example
+<PokemonTable disabledKeys={[3]} disabledBehavior="all" />
 ```
 
 ### Selection behavior

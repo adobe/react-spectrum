@@ -1,7 +1,8 @@
-import {BaseCollection, CollectionContext, CollectionProps, ElementNode, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ElementNode, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
 import {CheckboxContext} from './Checkbox';
 import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
@@ -164,9 +165,15 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 const InternalTableContext = createContext<TableState<unknown>>(null);
 
 export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
-  /** How multiple selection should behave in the collection. */
+  /**
+   * How multiple selection should behave in the collection.
+   * @default "toggle"
+   */
   selectionBehavior?: SelectionBehavior,
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  /**
+   * Whether `disabledKeys` applies to all interactions, or only selection.
+   * @default "selection"
+   */
   disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
@@ -227,12 +234,14 @@ export function Table<T extends object>(props: TableProps<T>) {
         <table {...gridProps} ref={ref} className={props.className ?? 'react-aria-Table'} style={props.style}>
           <TableRowGroup
             type="thead"
+            {...filterDOMProps(collection.head.props)}
             className={collection.head.props.className ?? 'react-aria-TableHeader'}
             style={collection.head.props.style}>
             {headerRows}
           </TableRowGroup>
           <TableRowGroup
             type="tbody"
+            {...filterDOMProps(collection.body.props)}
             className={collection.body.props.className ?? 'react-aria-TableBody'}
             style={collection.body.props.style}>
             {bodyRows}
@@ -264,8 +273,6 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext);
 }
 
-const TableHeaderContext = createContext(null);
-
 export interface TableHeaderProps<T> {
   /** A list of table columns. */
   columns?: T[],
@@ -282,11 +289,12 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
     items: props.columns
   });
 
+  let renderer = typeof props.children === 'function' ? props.children : null;
   return (
-    <TableHeaderContext.Provider value={props.columns ? props.children : null}>
+    <CollectionRendererContext.Provider value={renderer}>
       {/* @ts-ignore */}
       <tableheader multiple={props}>{children}</tableheader>
-    </TableHeaderContext.Provider>
+    </CollectionRendererContext.Provider>
   );
 }
 
@@ -331,7 +339,7 @@ export interface ColumnProps<T> extends RenderProps<ColumnRenderProps> {
  * A column within a `<Table>`.
  */
 export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
-  let render = useContext(TableHeaderContext);
+  let render = useContext(CollectionRendererContext);
   let childColumns = typeof render === 'function' ? render : props.children;
   let children = useCachedChildren({
     children: (props.title || props.childColumns) ? childColumns : null,
@@ -339,7 +347,7 @@ export function Column<T extends object>(props: ColumnProps<T>): JSX.Element {
   });
 
   // @ts-ignore
-  return useMemo(() => <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>, [props, children]);
+  return <column multiple={{...props, rendered: props.title ?? props.children}}>{children}</column>;
 }
 
 export interface TableBodyProps<T> extends CollectionProps<T> {}
@@ -358,7 +366,9 @@ export interface RowRenderProps extends ItemRenderProps {}
 
 export interface RowProps<T> extends RenderProps<RowRenderProps> {
   id?: Key,
+  /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
+  /** The cells within the row. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string
@@ -368,7 +378,6 @@ export interface RowProps<T> extends RenderProps<RowRenderProps> {
  * A row within a `<Table>`.
  */
 export function Row<T extends object>(props: RowProps<T>) {
-  // TODO: function child based on columns??
   let children = useCachedChildren({
     children: props.children,
     items: props.columns,
@@ -419,13 +428,13 @@ export interface CellProps extends RenderProps<CellRenderProps> {
  */
 export function Cell(props: CellProps): JSX.Element {
   // @ts-ignore
-  return useMemo(() => <cell multiple={{...props, rendered: props.children}} />, [props]);
+  return <cell multiple={{...props, rendered: props.children}} />;
 }
 
-function TableRowGroup({type: Element, className, style, children}) {
+function TableRowGroup({type: Element, children, ...otherProps}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element {...rowGroupProps} style={style} className={className}>
+    <Element {...otherProps} {...rowGroupProps}>
       {children}
     </Element>
   );
