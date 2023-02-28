@@ -51,7 +51,7 @@ export const DragOntoRow: TableStory = {
   storyName: 'drop onto row/folder',
   parameters: {
     description: {
-      content: 'Allows dropping on items and folders. Dropping on a item is a no op (action fires still). Dropping external items is also a no op'
+      data: 'Allows dropping on items and folders. Dropping on a item is a no op (action fires still). Dropping external items is also a no op'
     }
   }
 };
@@ -62,14 +62,20 @@ export const DropOntoRoot: TableStory = {
       <RootDropExampleUtilHandlers tableViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
     </Flex>
   ),
-  storyName: 'drop onto root'
+  storyName: 'drop onto root',
+  parameters: {
+    description: {data: 'Allows one way dragging from first table to root of second list. Copy and link operations shouldnt remove items from the first list'}
+  }
 };
 
 export const DropBetweenRows: TableStory = {
   render: (args) => (
     <InsertExampleUtilHandlers tableViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
   ),
-  storyName: 'drop between rows'
+  storyName: 'drop between rows',
+  parameters: {
+    description: {data: 'Allows one way dragging from first table to between items of second list. Copy and link operations shouldnt remove items from the first list'}
+  }
 };
 
 export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
@@ -78,7 +84,10 @@ export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
       <FinderDropUtilHandlers tableViewProps={args} />
     </Flex>
   ),
-  storyName: 'allows directories and files from finder'
+  storyName: 'allows directories and files from finder',
+  parameters: {
+    description: {data: 'The first table should allow only directory drops (e.g. folders from finder). The second table should allow all drag type drops (directory/files from finder, any drag items).'}
+  }
 };
 
 export const ComplexDragBetweenTables: TableStory = {
@@ -92,7 +101,10 @@ export const ComplexDragBetweenTables: TableStory = {
         onDragStart: action('dragStartList2')
       }} />
   ),
-  storyName: 'complex drag between tables'
+  storyName: 'complex drag between tables',
+  parameters: {
+    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
+  }
 };
 
 export const UsingGetDropOperations: TableStory = {
@@ -110,14 +122,20 @@ export const UsingGetDropOperations: TableStory = {
         getAllowedDropOperations: () => ['move', 'copy', 'link']
       }} />
   ),
-  storyName: 'using getDropOperations to determine default drop operation'
+  storyName: 'using getDropOperations to determine default drop operation',
+  parameters: {
+    description: {data: 'Dragging from the first to the second table should automatically set a link operation and all other drop operations should be disabled. Dragging from the second to first table should support copy and link operations, with copy being the default.'}
+  }
 };
 
 export const OverrideUtilHandlers: TableStory = {
   render: (args) => (
     <DragBetweenListsOverride {...args} />
   ),
-  storyName: 'util handlers overridden by onDrop and getDropOperations'
+  storyName: 'util handlers overridden by onDrop and getDropOperations',
+  parameters: {
+    description: {data: 'The first table should be draggable, the second table should only be root droppable. No actions for onRootDrop, onReorder, onItemDrop, or onInsert should appear in the storybook actions panel.'}
+  }
 };
 
 let onSelectionChange = action('onSelectionChange');
@@ -582,7 +600,7 @@ export function DragBetweenListsComplex(props) {
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
-  // List 1 should allow on item drops and external drops, but disallow reordering/internal drops
+  // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
@@ -647,7 +665,7 @@ export function DragBetweenListsComplex(props) {
     ...firstListDnDOptions
   });
 
-  // List 2 should allow reordering, on folder drops, and on root drops
+  // table 2 should allow reordering, on folder drops, and on root drops
   let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
@@ -749,7 +767,7 @@ export function DragBetweenListsComplex(props) {
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView in drag between list example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList1} {...tableViewProps}>
+        <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList1} {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -764,7 +782,7 @@ export function DragBetweenListsComplex(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView in drag between list example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList2} {...tableViewProps}>
+        <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList2} {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
