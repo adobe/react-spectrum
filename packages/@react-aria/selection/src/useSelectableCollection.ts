@@ -356,14 +356,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+    if (!isVirtualized && manager.isFocused && manager.focusedKey && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
         scrollIntoViewport(element, {containingElement: ref.current});
       }
     }
-  }, [isVirtualized, scrollRef, manager.focusedKey, ref]);
+  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
     onKeyDown,
