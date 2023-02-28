@@ -29,7 +29,6 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T>, ref
     rowProps: {
       ...rowProps,
       'aria-labelledby': getRowLabelledBy(state, node.key)
-      // TODO: aria-disabled?
     },
     ...states
   };
