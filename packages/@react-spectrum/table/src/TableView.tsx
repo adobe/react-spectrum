@@ -470,10 +470,17 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     focusedKey = dropState.target.key;
   }
 
+  let mergedProps = mergeProps(
+    isTableDroppable && droppableCollection?.collectionProps,
+    gridProps,
+    focusProps,
+    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
+  );
+
   return (
     <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, shouldShowCheckboxes}}>
       <TableVirtualizer
-        {...mergeProps(isTableDroppable && droppableCollection?.collectionProps, gridProps, focusProps)}
+        {...mergedProps}
         {...styleProps}
         className={
           classNames(
@@ -504,7 +511,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         headerRef={headerRef}
         bodyRef={bodyRef}
         isFocusVisible={isFocusVisible}
-        isTableDroppable={isTableDroppable}
+        isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
         isRootDropTarget={isRootDropTarget} />
       {DragPreview && isTableDraggable &&
         <DragPreview ref={preview}>
@@ -522,7 +529,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 }
 
 // This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isTableDroppable, isRootDropTarget, ...otherProps}) {
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps}) {
   let {direction} = useLocale();
   let loadingState = collection.body.props.loadingState;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
@@ -670,7 +677,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 )
               )
             }
-            tabIndex={-1}
+            tabIndex={isVirtualDragging ? null : -1}
             style={{flex: 1}}
             innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
             ref={bodyRef}
