@@ -12,7 +12,6 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
-import {TableState} from '@react-stately/table';
 import {useId} from '@react-aria/utils';
 
 export interface AriaTableSectionProps {
@@ -34,10 +33,9 @@ export interface TableSectionAria {
 /**
  * Provides the behavior and accessibility implementation for a section in a table.
  * @param props - Props for the section.
- * @param state - State of the table, as returned by `useTableState`.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableSection<T>(props: AriaTableSectionProps, state: TableState<T>): TableSectionAria {
+export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAria {
   let {node, isVirtualized} = props;
   // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
   // prob map from section key to id?
@@ -60,7 +58,7 @@ export function useTableSection<T>(props: AriaTableSectionProps, state: TableSta
     cellProps: {
       id: headerId,
       role: 'rowheader',
-      'aria-colspan': state.collection.columnCount,
+      'aria-colspan': node.colspan,
       'aria-label': node.textValue || undefined
     }
   };

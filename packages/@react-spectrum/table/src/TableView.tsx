@@ -953,7 +953,17 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
+  // TODO: quick hack to get rid of rowgroup if there are sections. Test this by having a table w/o sections that loads sections on load/external trigger
+  // and see that the rowgroup role appears/disappears. Consider just not rendering the div at all? Is it weird that a wrapping div could appear/disappear
+  let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
+
+  // TODO: move logic into hook?
+  if (state.collection.sections) {
+    console.log('is section')
+    rowGroupProps.role = 'presentation';
+  }
+  console.log('rowgroup props', rowGroupProps.role, otherProps);
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -1134,8 +1144,8 @@ function TableCell({cell}) {
 }
 
 function TableSection({children, style, header, headerStyle, reusableView}) {
-  let {state} = useTableContext();
-  let {rowGroupProps, rowProps, cellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
+  // TODO: double check that we don't need the context for state anymore (check that col span updates properly if new columns are added)
+  let {rowGroupProps, rowProps, cellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
   let headerRowRef = useRef();
 
   useVirtualizerItem({
