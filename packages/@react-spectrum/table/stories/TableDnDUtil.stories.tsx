@@ -59,22 +59,22 @@ export const DragOntoRow: TableStory = {
 export const DropOntoRoot: TableStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <RootDropExampleUtilHandlers tableViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+      <RootDropExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
     </Flex>
   ),
   storyName: 'drop onto root',
   parameters: {
-    description: {data: 'Allows one way dragging from first table to root of second list. Copy and link operations shouldnt remove items from the first list'}
+    description: {data: 'Allows one way dragging from first table to root of second table. Copy and link operations shouldnt remove items from the first table'}
   }
 };
 
 export const DropBetweenRows: TableStory = {
   render: (args) => (
-    <InsertExampleUtilHandlers tableViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+    <InsertExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
   ),
   storyName: 'drop between rows',
   parameters: {
-    description: {data: 'Allows one way dragging from first table to between items of second list. Copy and link operations shouldnt remove items from the first list'}
+    description: {data: 'Allows one way dragging from first table to between items of second table. Copy and link operations shouldnt remove items from the first table'}
   }
 };
 
@@ -92,32 +92,32 @@ export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
 
 export const ComplexDragBetweenTables: TableStory = {
   render: (args) => (
-    <DragBetweenListsComplex
+    <DragBetweenTablesComplex
       tableViewProps={args}
-      firstListDnDOptions={{
-        onDragStart: action('dragStartList1')
+      firstTableDnDOptions={{
+        onDragStart: action('dragStartTable1')
       }}
-      secondListDnDOptions={{
-        onDragStart: action('dragStartList2')
+      secondTableDnDOptions={{
+        onDragStart: action('dragStartTable2')
       }} />
   ),
   storyName: 'complex drag between tables',
   parameters: {
-    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the list. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
+    description: {data: 'The first table should allow dragging and drops into its folder, but disallow reorder operations. External root drops should be placed at the end of the list. The second table should allow all operations and root drops should be placed at the top of the table. Move and copy operations are allowed. The invalid drag item should be able to be dropped in either table if accompanied by other valid drag items.'}
   }
 };
 
 export const UsingGetDropOperations: TableStory = {
   render: (args) => (
-    <DragBetweenListsComplex
+    <DragBetweenTablesComplex
       tableViewProps={args}
-      firstListDnDOptions={{
-        onDragStart: action('dragStartList1'),
+      firstTableDnDOptions={{
+        onDragStart: action('dragStartTable1'),
         getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['link']
       }}
-      secondListDnDOptions={{
-        onDragStart: action('dragStartList2'),
+      secondTableDnDOptions={{
+        onDragStart: action('dragStartTable2'),
         getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['move', 'copy', 'link']
       }} />
@@ -130,7 +130,7 @@ export const UsingGetDropOperations: TableStory = {
 
 export const OverrideUtilHandlers: TableStory = {
   render: (args) => (
-    <DragBetweenListsOverride {...args} />
+    <DragBetweenTablesOverride {...args} />
   ),
   storyName: 'util handlers overridden by onDrop and getDropOperations',
   parameters: {
@@ -348,7 +348,7 @@ function ItemDropExampleUtilHandlers(props) {
 }
 
 function RootDropExampleUtilHandlers(props) {
-  let {tableViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
     getKey: (item) => item.identifier
@@ -379,17 +379,17 @@ function RootDropExampleUtilHandlers(props) {
       }
     },
     acceptedDragTypes,
-    ...firstListDnDOptions
+    ...firstTableDnDOptions
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
     onRootDrop: async (e) => {
-      action('onRootDropList1')(e);
+      action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.append(...processedItems);
     },
     acceptedDragTypes,
-    ...secondListDnDOptions
+    ...secondTableDnDOptions
   });
 
   return (
@@ -429,7 +429,7 @@ function RootDropExampleUtilHandlers(props) {
 }
 
 function InsertExampleUtilHandlers(props) {
-  let {tableViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
     getKey: (item) => item.identifier
@@ -460,7 +460,7 @@ function InsertExampleUtilHandlers(props) {
       }
     },
     acceptedDragTypes,
-    ...firstListDnDOptions
+    ...firstTableDnDOptions
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
@@ -469,7 +469,7 @@ function InsertExampleUtilHandlers(props) {
         items,
         target
       } = e;
-      action('onInsertList2')(e);
+      action('onInsertTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
       if (target.dropPosition === 'before') {
@@ -479,7 +479,7 @@ function InsertExampleUtilHandlers(props) {
       }
     },
     acceptedDragTypes,
-    ...secondListDnDOptions
+    ...secondTableDnDOptions
   });
 
   return (
@@ -519,7 +519,7 @@ function InsertExampleUtilHandlers(props) {
 }
 
 function FinderDropUtilHandlers(props) {
-  let {tableViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+  let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
     getKey: (item) => item.identifier
@@ -532,23 +532,23 @@ function FinderDropUtilHandlers(props) {
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     onInsert: async (e) => {
-      action('onInsertList1')(e);
+      action('onInsertTable1')(e);
     },
     onItemDrop: async (e) => {
-      action('onItemDropList1')(e);
+      action('onItemDropTable1')(e);
     },
-    ...firstListDnDOptions
+    ...firstTableDnDOptions
   });
 
   let {dragAndDropHooks: table2Hooks} = useDragAndDrop({
     onInsert: async (e) => {
-      action('onInsertList2')(e);
+      action('onInsertTable2')(e);
     },
     onItemDrop: async (e) => {
-      action('onItemDropList2')(e);
+      action('onItemDropTable2')(e);
     },
     acceptedDragTypes: 'all',
-    ...secondListDnDOptions
+    ...secondTableDnDOptions
   });
 
   return (
@@ -587,8 +587,8 @@ function FinderDropUtilHandlers(props) {
   );
 }
 
-export function DragBetweenListsComplex(props) {
-  let {tableViewProps, firstListDnDOptions, secondListDnDOptions} = props;
+function DragBetweenTablesComplex(props) {
+  let {tableViewProps, firstTableDnDOptions, secondTableDnDOptions} = props;
   let list1 = useListData({
     initialItems: folderList1,
     getKey: (item) => item.identifier
@@ -601,7 +601,7 @@ export function DragBetweenListsComplex(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
 
   // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
-  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
+  let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
       return {
@@ -614,7 +614,7 @@ export function DragBetweenListsComplex(props) {
         items,
         target
       } = e;
-      action('onInsertList1')(e);
+      action('onInsertTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
       if (target.dropPosition === 'before') {
@@ -625,7 +625,7 @@ export function DragBetweenListsComplex(props) {
 
     },
     onRootDrop: async (e) => {
-      action('onRootDropList1')(e);
+      action('onRootDropTable1')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list1.append(...processedItems);
     },
@@ -636,7 +636,7 @@ export function DragBetweenListsComplex(props) {
         isInternal,
         dropOperation
       } = e;
-      action('onItemDropList1')(e);
+      action('onItemDropTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list1.getItem(target.key);
       list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -655,18 +655,18 @@ export function DragBetweenListsComplex(props) {
         isInternal,
         keys
       } = e;
-      action('onDragEndList1')(e);
+      action('onDragEndTable1')(e);
       if (dropOperation === 'move' && !isInternal) {
         list1.remove(...keys);
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).childNodes,
-    ...firstListDnDOptions
+    ...firstTableDnDOptions
   });
 
   // table 2 should allow reordering, on folder drops, and on root drops
-  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
+  let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list2.getItem(key);
       let dragItem = {};
@@ -683,7 +683,7 @@ export function DragBetweenListsComplex(props) {
         items,
         target
       } = e;
-      action('onInsertList2')(e);
+      action('onInsertTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
 
       if (target.dropPosition === 'before') {
@@ -698,7 +698,7 @@ export function DragBetweenListsComplex(props) {
         target,
         dropOperation
       } = e;
-      action('onReorderList2')(e);
+      action('onReorderTable2')(e);
 
       let itemsToCopy = [];
       if (dropOperation === 'copy') {
@@ -724,7 +724,7 @@ export function DragBetweenListsComplex(props) {
       }
     },
     onRootDrop: async (e) => {
-      action('onRootDropList2')(e);
+      action('onRootDropTable2')(e);
       let processedItems = await itemProcessor(e.items, acceptedDragTypes);
       list2.prepend(...processedItems);
     },
@@ -735,7 +735,7 @@ export function DragBetweenListsComplex(props) {
         isInternal,
         dropOperation
       } = e;
-      action('onItemDropList2')(e);
+      action('onItemDropTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
       let targetItem = list2.getItem(target.key);
       list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
@@ -752,7 +752,7 @@ export function DragBetweenListsComplex(props) {
         isInternal,
         keys
       } = e;
-      action('onDragEndList2')(e);
+      action('onDragEndTable2')(e);
       if (dropOperation === 'move' && !isInternal) {
         let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
         list2.remove(...keysToRemove);
@@ -760,14 +760,14 @@ export function DragBetweenListsComplex(props) {
     },
     getAllowedDropOperations: () => ['move', 'copy'],
     shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
-    ...secondListDnDOptions
+    ...secondTableDnDOptions
   });
 
   return (
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList1} {...tableViewProps}>
+        <TableView aria-label="First TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -782,7 +782,7 @@ export function DragBetweenListsComplex(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList2} {...tableViewProps}>
+        <TableView aria-label="Second TableView in drag between table example" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...tableViewProps}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -799,7 +799,7 @@ export function DragBetweenListsComplex(props) {
   );
 }
 
-function DragBetweenListsOverride(props) {
+function DragBetweenTablesOverride(props) {
   let list1 = useListData({
     initialItems: [
       {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -822,10 +822,10 @@ function DragBetweenListsOverride(props) {
     getKey: (item) => item.identifier
   });
 
-  let {dragAndDropHooks: dragAndDropHooksList1} = useDragAndDrop({
+  let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
       let item = list1.getItem(key);
-      let dragType = `list-1-adobe-${item.type}`;
+      let dragType = `table-1-adobe-${item.type}`;
       return {
         [`${dragType}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -839,9 +839,9 @@ function DragBetweenListsOverride(props) {
     }
   });
 
-  let {dragAndDropHooks: dragAndDropHooksList2} = useDragAndDrop({
+  let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
     getDropOperation: (target, types) => {
-      if (target.type !== 'root' || !(types.has('list-1-adobe-file') || types.has('text/plain'))) {
+      if (target.type !== 'root' || !(types.has('table-1-adobe-file') || types.has('text/plain'))) {
         return 'cancel';
       }
 
@@ -860,7 +860,7 @@ function DragBetweenListsOverride(props) {
             text = await item.getText('text/plain');
             itemsToAdd = text.split('\n').map(val => JSON.parse(val));
           } else {
-            text = await item.getText('list-1-adobe-file');
+            text = await item.getText('table-1-adobe-file');
             itemsToAdd.push(JSON.parse(text));
           }
         }
@@ -883,7 +883,7 @@ function DragBetweenListsOverride(props) {
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList1} {...props}>
+        <TableView aria-label="TableView that accepts directory drops only" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable1} {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -898,7 +898,7 @@ function DragBetweenListsOverride(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksList2} {...props}>
+        <TableView aria-label="TableView that accepts all drag types" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksTable2} {...props}>
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
