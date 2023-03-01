@@ -399,7 +399,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     setIsResizing(false);
     propsOnResizeEnd?.(widths);
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
-  // console.log('table layout and state', layout, state)
+
   return (
     <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
@@ -954,16 +954,14 @@ function TableSelectAllCell({column}) {
 
 function TableRowGroup({children, ...otherProps}) {
   // TODO: quick hack to get rid of rowgroup if there are sections. Test this by having a table w/o sections that loads sections on load/external trigger
-  // and see that the rowgroup role appears/disappears. Consider just not rendering the div at all? Is it weird that a wrapping div could appear/disappear
+  // and see that the rowgroup role appears/disappears. Consider just not rendering the div at all and just rendering a fragment? Is it weird that a wrapping div could appear/disappear though
   let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
 
-  // TODO: move logic into hook?
+  // TODO: move logic into hook? Feels kinda weird to have useTableGroup do that, maybe
   if (state.collection.sections) {
-    console.log('is section')
     rowGroupProps.role = 'presentation';
   }
-  console.log('rowgroup props', rowGroupProps.role, otherProps);
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -1144,10 +1142,9 @@ function TableCell({cell}) {
 }
 
 function TableSection({children, style, header, headerStyle, reusableView}) {
-  // TODO: double check that we don't need the context for state anymore (check that col span updates properly if new columns are added)
+  let {state} = useTableContext();
   let {rowGroupProps, rowProps, cellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
   let headerRowRef = useRef();
-
   useVirtualizerItem({
     reusableView: header,
     ref: headerRowRef
@@ -1165,7 +1162,10 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
         className={
           classNames(
             styles,
-            'spectrum-Table-sectionRow'
+            'spectrum-Table-sectionRow',
+            {
+              'is-next-selected': state.selectionManager.isSelected(reusableView.content.nextKey)
+            }
           )
         }
         style={headerStyle}>

@@ -148,6 +148,7 @@ tbody.spectrum-Table-body {
   }
 }
 
+.spectrum-Table-sectionRow,
 .spectrum-Table-row {
   box-sizing: border-box;
 
