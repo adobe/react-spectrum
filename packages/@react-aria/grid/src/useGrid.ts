@@ -93,7 +93,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
   let {collectionProps} = useSelectableCollection({
     ref,
-    selectionManager: state.selectionManager,
+    selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
     scrollRef
@@ -103,7 +103,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
-    selectionManager: state.selectionManager,
+    selectionManager: manager,
     hasItemActions: !!(onRowAction || onCellAction)
   });
 
@@ -138,7 +138,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     {
       role: 'grid',
       id,
-      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+      'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
     state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
     descriptionProps

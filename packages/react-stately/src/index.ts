@@ -30,7 +30,7 @@ export type {TabListProps, TabListState} from '@react-stately/tabs';
 export type {ToggleProps, ToggleState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
-export type {ItemProps, SectionProps} from '@react-types/shared';
+export type {ItemProps, SectionProps, Selection} from '@react-types/shared';
 
 export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,13 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-export {useMenuTrigger} from './useMenuTrigger';
-export {useMenu} from './useMenu';
-export {useMenuItem} from './useMenuItem';
-export {useMenuSection} from './useMenuSection';
+import {testSSR} from '@react-spectrum/test-utils';
 
-export type {AriaMenuProps} from '@react-types/menu';
-export type {AriaMenuTriggerProps, MenuTriggerAria} from './useMenuTrigger';
-export type {AriaMenuOptions, MenuAria} from './useMenu';
-export type {AriaMenuItemProps, MenuItemAria} from './useMenuItem';
-export type {AriaMenuSectionProps, MenuSectionAria} from './useMenuSection';
+describe('useLandmark SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {useLandmark} from '../';
+
+      function Main(props) {
+        let ref = React.useRef();
+        let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
+        return <main ref={ref} {...landmarkProps}>{props.children}</main>;
+      }
+
+      <Main />
+    `);
+  });
+});
