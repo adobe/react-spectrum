@@ -1129,6 +1129,7 @@ function Resizer(props) {
       <VisuallyHidden>
         <input
           ref={ref}
+          className="aria-table-resizer-input"
           {...mergeProps(inputProps, focusProps)} />
       </VisuallyHidden>
     </div>
@@ -1161,6 +1162,10 @@ function Resizer(props) {
 .aria-table-resizer.focus.resizing {
   border-color: orange;
   background-color: transparent;
+}
+
+.aria-table-resizer-input {
+  margin: 0px;
 }
 ```
 
