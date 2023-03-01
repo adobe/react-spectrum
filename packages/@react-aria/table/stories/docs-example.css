@@ -74,6 +74,10 @@
       border-color: orange;
       background-color: transparent;
     }
+
+    input {
+      margin: 0px;
+    }
   }
 
   .aria-table-row {
