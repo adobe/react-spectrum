@@ -340,5 +340,5 @@ let SearchAutocompleteInput = React.forwardRef(_SearchAutocompleteInput) as <T>(
 /**
  * A SearchAutocomplete is a searchfield that supports a dynamic list of suggestions.
  */
-let _SearchAutocomplete = forwardRef(SearchAutocomplete);
+let _SearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 export {_SearchAutocomplete as SearchAutocomplete};
