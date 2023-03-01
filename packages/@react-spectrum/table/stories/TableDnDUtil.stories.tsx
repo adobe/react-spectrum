@@ -661,7 +661,7 @@ function DragBetweenTablesComplex(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list1.getItem(target.key)?.childNodes,
     ...firstTableDnDOptions
   });
 
@@ -759,7 +759,7 @@ function DragBetweenTablesComplex(props) {
       }
     },
     getAllowedDropOperations: () => ['move', 'copy'],
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes,
     ...secondTableDnDOptions
   });
 
@@ -874,7 +874,7 @@ function DragBetweenTablesOverride(props) {
     onReorder: () => action('onReorder'),
     onRootDrop: () => action('onRootDrop'),
     onItemDrop: () => action('onItemDrop'),
-    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key).childNodes,
+    shouldAcceptItemDrop: (target) => !!list2.getItem(target.key)?.childNodes,
     acceptedDragTypes: 'all'
   });
 
