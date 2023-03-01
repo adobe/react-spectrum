@@ -30,6 +30,9 @@ export default {
 } as ComponentMeta<typeof TableView>;
 
 export const DragOutOfTable: TableStory = {
+  args: {
+    disabledKeys: ['Foo 2']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center" gap="size-200">
       <Droppable />
@@ -42,6 +45,9 @@ export const DragOutOfTable: TableStory = {
 };
 
 export const DragWithinTable: TableStory = {
+  args: {
+    disabledKeys: ['Foo 2']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <ReorderExample tableViewProps={args} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
@@ -51,6 +57,9 @@ export const DragWithinTable: TableStory = {
 };
 
 export const DragOntoRow: TableStory = {
+  args: {
+    disabledKeys: ['1']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <DragOntoRowExample tableViewProps={args} />
@@ -65,6 +74,9 @@ export const DragOntoRow: TableStory = {
 };
 
 export const DragBetweenTables: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <DragBetweenTablesExample {...args} />
@@ -74,6 +86,9 @@ export const DragBetweenTables: TableStory = {
 };
 
 export const DragBetweenTablesRootOnly: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <DragBetweenTablesRootOnlyExample tableViewProps={args} />
@@ -83,6 +98,9 @@ export const DragBetweenTablesRootOnly: TableStory = {
 };
 
 export const DraggableRowsCopyLink: TableStory = {
+  args: {
+    disabledKeys: ['Foo 2']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <Droppable />
@@ -322,7 +340,7 @@ function DragOntoRowExample(props) {
   });
 
   return (
-    <TableView aria-label="Drag onto table row example" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="Drag onto table row example" selectionMode="multiple" disabledKeys={disabledKeys} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>

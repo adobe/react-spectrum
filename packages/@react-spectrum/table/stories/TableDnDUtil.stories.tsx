@@ -28,6 +28,9 @@ export default {
 } as ComponentMeta<typeof TableView>;
 
 export const DragOutOfTable: TableStory = {
+  args: {
+    disabledKeys: ['2']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <Droppable />
@@ -38,6 +41,9 @@ export const DragOutOfTable: TableStory = {
 };
 
 export const DragWithinTable: TableStory = {
+  args: {
+    disabledKeys: ['2']
+  },
   render: (args) => (
     <ReorderExampleUtilHandlers tableViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
   ),
@@ -45,6 +51,9 @@ export const DragWithinTable: TableStory = {
 };
 
 export const DragOntoRow: TableStory = {
+  args: {
+    disabledKeys: ['2']
+  },
   render: (args) => (
     <ItemDropExampleUtilHandlers tableViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
   ),
@@ -57,6 +66,9 @@ export const DragOntoRow: TableStory = {
 };
 
 export const DropOntoRoot: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <RootDropExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
@@ -69,6 +81,9 @@ export const DropOntoRoot: TableStory = {
 };
 
 export const DropBetweenRows: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <InsertExampleUtilHandlers tableViewProps={args} firstTableDnDOptions={{onDragStart: action('dragStart')}} />
   ),
@@ -79,6 +94,9 @@ export const DropBetweenRows: TableStory = {
 };
 
 export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
       <FinderDropUtilHandlers tableViewProps={args} />
@@ -91,6 +109,9 @@ export const AllowsDirectoriesAndFilesFromFinder: TableStory = {
 };
 
 export const ComplexDragBetweenTables: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <DragBetweenTablesComplex
       tableViewProps={args}
@@ -108,6 +129,9 @@ export const ComplexDragBetweenTables: TableStory = {
 };
 
 export const UsingGetDropOperations: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <DragBetweenTablesComplex
       tableViewProps={args}
@@ -129,6 +153,9 @@ export const UsingGetDropOperations: TableStory = {
 };
 
 export const OverrideUtilHandlers: TableStory = {
+  args: {
+    disabledKeys: ['2', '8']
+  },
   render: (args) => (
     <DragBetweenTablesOverride {...args} />
   ),
