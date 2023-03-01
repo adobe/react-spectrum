@@ -1295,7 +1295,7 @@ function TableDragCell({cell}) {
             )
           )
         }>
-        {isTableDraggable && <DragButton />}
+        {isTableDraggable && !isDisabled && <DragButton />}
       </div>
     </FocusRing>
   );
