@@ -1102,9 +1102,9 @@ function Button(props) {
 
 As described above, we need to implement an element that the user can drag/interact with to resize a column. Here we'll use the <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />
 hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](useSlider.html).
-Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can use the arrow keys to trigger the same
-resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Similarly, touch screen readers can swipe up and down to
-resize the column and double tap to exit resizing.
+Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can begin resizing the column by pressing <Keyboard>Enter</Keyboard>.
+Once resizing is activated, they can use the arrow keys to trigger the same resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Touch screen reader users can swipe
+left or right to focus the column's resizer input and swipe up and down to resize the column.
 
 ```tsx example export=true render=false
 import {useTableColumnResize} from '@react-aria/table';
