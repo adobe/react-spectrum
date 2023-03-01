@@ -461,7 +461,7 @@ function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row key={item.foo} textValue={item.foo}>
+              <Row key={item.id} textValue={item.name}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -476,7 +476,7 @@ function DragBetweenTablesExample(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row key={item.foo} textValue={item.foo}>
+              <Row key={item.id} textValue={item.name}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -615,7 +615,7 @@ function DragBetweenTablesRootOnlyExample(props) {
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
-              <Row key={item.foo} textValue={item.foo}>
+              <Row key={item.id} textValue={item.name}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
@@ -630,7 +630,7 @@ function DragBetweenTablesRootOnlyExample(props) {
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
-              <Row key={item.foo} textValue={item.foo}>
+              <Row key={item.id} textValue={item.name}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>
             )}
