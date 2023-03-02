@@ -208,7 +208,7 @@ let folderList2 = [
 ];
 
 let columns = [
-    {name: 'Identifier', key: 'identifier'},
+    {name: 'ID', key: 'identifier'},
     {name: 'Name', key: 'name'},
     {name: 'Type', key: 'type'}
 ];
@@ -234,7 +234,7 @@ function DragExampleUtilHandlers(props) {
   });
 
   return (
-    <TableView aria-label="TableView with dnd util handlers" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="TableView with dnd util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
@@ -302,7 +302,7 @@ function ReorderExampleUtilHandlers(props) {
   });
 
   return (
-    <TableView aria-label="Reorderable TableView with util handlers" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="Reorderable TableView with util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
@@ -359,7 +359,7 @@ function ItemDropExampleUtilHandlers(props) {
   });
 
   return (
-    <TableView aria-label="Row droppable TableView from dnd hook util handlers" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="Row droppable TableView from dnd hook util handlers" selectionMode="multiple" width={400} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>

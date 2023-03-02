@@ -68,7 +68,7 @@ export const DragOntoRow: TableStory = {
   storyName: 'Drag onto row',
   parameters: {
     description: {
-      content: 'Drag item types onto folder types.'
+      data: 'Drag item types onto folder types.'
     }
   }
 };
@@ -116,20 +116,25 @@ export const DraggableRowsCopyLink: TableStory = {
 let onSelectionChange = action('onSelectionChange');
 
 let columns = [
-  {name: 'Foo', key: 'foo'},
-  {name: 'Bar', key: 'bar'},
-  {name: 'Baz', key: 'baz'}
+  {name: 'First name', key: 'first_name'},
+  {name: 'Last name', key: 'last_name'},
+  {name: 'Email', key: 'email'},
+  {name: 'Department', key: 'department'},
+  {name: 'Job Title', key: 'job_title'},
+  {name: 'IP Address', key: 'ip_address'}
 ];
 
 let items = [
-  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
-  {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {id: '01GTHGVC66CF6D8TKQ3BP5C9WW', first_name: 'Vin', last_name: 'Charlet', email: 'vcharlet0@123-reg.co.uk', ip_address: '18.45.175.130', department: 'Services', job_title: 'Analog Circuit Design manager'},
+  {id: '01GTHGVC692GWCH1H6JKBHHTQM', first_name: 'Lexy', last_name: 'Maddison', email: 'lmaddison1@xinhuanet.com', ip_address: '238.210.151.48', department: 'Research and Development', job_title: 'Analog Circuit Design manager'},
+  {id: '01GTHGVC6D39GXCYPG6EJWWHSR', first_name: 'Robbi', last_name: 'Persence', email: 'rpersence2@hud.gov', ip_address: '130.2.120.99', department: 'Business Development', job_title: 'Analog Circuit Design manager'},
+  {id: '01GTHGVC6FA7YWQMA4ZQ8J960S', first_name: 'Dodie', last_name: 'Hurworth', email: 'dhurworth3@webs.com', ip_address: '235.183.154.184', department: 'Training', job_title: 'Account Coordinator'},
+  {id: '01GTHGVC6JNTZBS7ZWPRZ0SZTX', first_name: 'Audrye', last_name: 'Hember', email: 'ahember4@blogtalkradio.com', ip_address: '136.25.192.37', department: 'Legal', job_title: 'Operator'},
+  {id: '01GTHGVC6NZNMFHRVA520WGB1T', first_name: 'Beau', last_name: 'Oller', email: 'boller5@nytimes.com', ip_address: '93.111.22.12', department: 'Business Development', job_title: 'Speech Pathologist'},
+  {id: '01GTHGVC6Q57RWW1HG4VZ7Q1BX', first_name: 'Roarke', last_name: 'Gration', email: 'rgration6@purevolume.com', ip_address: '234.221.23.241', department: 'Product Management', job_title: 'Electrical Engineer'},
+  {id: '01GTHGVC6TB22HTSB1HZV203J7', first_name: 'Cathy', last_name: 'Lishman', email: 'clishman7@constantcontact.com', ip_address: '181.158.213.202', department: 'Research and Development', job_title: 'Assistant Professor'},
+  {id: '01GTHGVC6WRFN7SEVPD9NY853H', first_name: 'Enrika', last_name: 'Soitoux', email: 'esoitoux8@google.com.hk', ip_address: '51.244.20.173', department: 'Support', job_title: 'Teacher'},
+  {id: '01GTHGVC6Y1MYD9TFVMN94V6QX', first_name: 'Aloise', last_name: 'Tuxsell', email: 'atuxsell9@jigsy.com', ip_address: '253.46.84.168', department: 'Training', job_title: 'Financial Advisor'}
 ];
 
 let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
@@ -137,9 +142,9 @@ let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
 function DragExample(props?) {
   let {tableViewProps, dragHookOptions} = props;
   let getItems = (keys) => [...keys].map(key => {
-    let item = items.find(item => item.foo === key);
+    let item = items.find(item => item.id === key);
     return {
-      'text/plain': item.bar
+      'text/plain': `${item.first_name} ${item.last_name}`
     };
   });
 
@@ -153,13 +158,13 @@ function DragExample(props?) {
   });
 
   return (
-    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
         {item => (
-          <Row key={item.foo} textValue={item.foo}>
+          <Row key={item.id} textValue={`${item.first_name} ${item.last_name}`}>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -172,7 +177,7 @@ function ReorderExample(props) {
   let {onDrop, onDragStart, onDragEnd, tableViewProps} = props;
   let list = useListData({
     initialItems: items,
-    getKey: item => item.foo
+    getKey: item => item.id
   });
 
   // Use a random drag type so the items can only be reordered within this table and not dragged elsewhere.
@@ -233,13 +238,13 @@ function ReorderExample(props) {
   });
 
   return (
-    <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={300} height={200} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+    <TableView aria-label="Reorderable TableView" selectionMode="multiple" width={400} height={300} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
-          <Row key={item.foo} textValue={item.foo}>
+          <Row key={item.id} textValue={`${item.first_name} ${item.last_name}`}>
             {key => <Cell>{item[key]}</Cell>}
           </Row>
         )}
@@ -260,10 +265,10 @@ function DragOntoRowExample(props) {
   let getAllowedDropOperationsAction = action('getAllowedDropOperations');
 
   let columns = [
-    {name: 'ID', key: 'id'},
-    {name: 'Type', key: 'type'},
-    {name: 'Text', key: 'textValue'},
-    {name: 'Child Nodes', key: 'childNodes'}
+    {name: 'ID', key: 'id', width: 50},
+    {name: 'Type', key: 'type', width: 100},
+    {name: 'Name', key: 'textValue', width: 200},
+    {name: 'Child Items', key: 'childNodes', width: 250}
   ];
 
   let list = useListData({
@@ -275,7 +280,7 @@ function DragOntoRowExample(props) {
       {id: '4', type: 'item', textValue: 'Four'},
       {id: '5', type: 'item', textValue: 'Five'},
       {id: '6', type: 'item', textValue: 'Six'},
-      {id: '7', type: 'folder', textValue: 'Folder disabled', childNodes: []},
+      {id: '7', type: 'folder', textValue: 'Folder (disabled)', childNodes: []},
       {id: '8', type: 'folder', textValue: 'Folder 2', childNodes: []}
     ]
   });
@@ -342,7 +347,7 @@ function DragOntoRowExample(props) {
   return (
     <TableView aria-label="Drag onto table row example" selectionMode="multiple" disabledKeys={disabledKeys} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
-        {column => <Column>{column.name}</Column>}
+        {column => <Column minWidth={column.width}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={list.items}>
         {item => (
@@ -473,9 +478,9 @@ function DragBetweenTablesExample(props) {
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooks} {...props}>
+        <TableView aria-label="First TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooks} {...props}>
           <TableHeader columns={itemColumns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column minWidth={100}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
@@ -488,9 +493,9 @@ function DragBetweenTablesExample(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooks} {...props}>
+        <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooks} {...props}>
           <TableHeader columns={itemColumns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column minWidth={100}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
@@ -627,9 +632,9 @@ function DragBetweenTablesRootOnlyExample(props) {
     <>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 1</Text>
-        <TableView aria-label="First TableView" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksFirst} {...tableViewProps}>
+        <TableView aria-label="First TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksFirst} {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column minWidth={100}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list1.items}>
             {(item: any) => (
@@ -642,9 +647,9 @@ function DragBetweenTablesRootOnlyExample(props) {
       </Flex>
       <Flex direction="column" margin="size-100">
         <Text alignSelf="center">Table 2</Text>
-        <TableView aria-label="Second TableView" selectionMode="multiple" width={300} dragAndDropHooks={dragAndDropHooksSecond} {...tableViewProps}>
+        <TableView aria-label="Second TableView" selectionMode="multiple" width={400} dragAndDropHooks={dragAndDropHooksSecond} {...tableViewProps}>
           <TableHeader columns={itemColumns}>
-            {column => <Column>{column.name}</Column>}
+            {column => <Column minWidth={100}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={list2.items}>
             {(item: any) => (
