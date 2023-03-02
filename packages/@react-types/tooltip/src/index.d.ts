@@ -38,7 +38,7 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
   trigger?: 'focus'
 }
 
-export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
+export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {
   children: [ReactElement, ReactElement],
 
   /**
