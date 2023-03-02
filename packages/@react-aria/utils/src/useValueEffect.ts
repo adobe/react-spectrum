@@ -46,7 +46,8 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
     // is also needed in order to cause a rerender.
     setValue(newValue.value);
     valueRef.current = newValue.value;
-  }, []);
+    // this list of dependencies is stable, setState and refs never change after first render.
+  }, [setValue, valueRef, effect]);
 
   useLayoutEffect(() => {
     // If there is an effect currently running, continue to the next yield.
@@ -59,7 +60,9 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
   let queue = useCallback(fn => {
     effect.current = fn(valueRef.current);
     nextIter();
-  }, [nextIter]);
+    // this list of dependencies is stable, setState and refs never change after first render.
+    // in addition, nextIter is stable as outlined above
+  }, [nextIter, effect, valueRef]);
 
   return [value, queue];
 }
