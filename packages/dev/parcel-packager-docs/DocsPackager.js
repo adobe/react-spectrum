@@ -117,6 +117,7 @@ module.exports = new Packager({
             params[p.name] = v;
           });
           paramStack.push(params);
+          // so we don't replace the type parameters in the extended interface if they don't use this application's generics
           application = null;
           hasParams = true;
         } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
