@@ -94,6 +94,17 @@ then
   mv build-stats.txt ../../
   mv build ../../$verdaccio_path
 
+  # install packages in webpack 4 test app
+  cd ../../examples/rsp-webpack-4
+  yarn install
+  yarn jest
+
+  # Build Webpack 4 test app and move to dist folder. Store the size of the build in a text file.
+  yarn build | tee build-stats.txt
+  du -ka dist/ | tee -a webpack-4-build-stats.txt
+  mv webpack-4-build-stats.txt ../../$verdaccio_path/publish-stats
+  mv dist ../../$verdaccio_path/webpack-4
+
   # install packages in NextJS test app
   cd ../../examples/rsp-next-ts
   yarn install

@@ -51,13 +51,14 @@ import {Text} from '@react-spectrum/text';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 
 <Badge variant="positive">
-  <CheckmarkCircle />
+  <CheckmarkCircle aria-label="Done" />
   <Text>Icon + Label</Text>
 </Badge>
 ```
 
 ### Accessibility
-If a visible label isn't specified, an `aria-label` must be provided for accessibility.
+If a visible label isn't specified, an `aria-label` must be provided to the icon for accessibility.
+
 
 ### Internationalization
 
