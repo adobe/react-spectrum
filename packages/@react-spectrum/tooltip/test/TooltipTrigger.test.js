@@ -618,7 +618,6 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
   });
-
   describe('multiple tooltips', () => {
     it('can only show one tooltip at a time', () => {
       let helpfulText = 'Helpful information.';
