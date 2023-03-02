@@ -192,6 +192,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.overflowMode, scale, density, columnLayout]
   );
+
+  // Use a proxy so that a new object is created for each render so that alternate instances aren't affected by mutation.
+  // This can be thought of as equivalent to `{…tableLayout, tableState: state}`, but works with classes as well.
   let layout = useMemo(() => {
     let proxy = new Proxy(tableLayout, {
       get(target, prop, receiver) {

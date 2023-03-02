@@ -13,6 +13,7 @@ import { ColorScheme } from "@react-types/provider";
 import { useState } from "react";
 import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";
+import { ToastContainer } from "@react-spectrum/toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState<ColorScheme>("light");
@@ -46,6 +47,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </View>
         </Grid>
+        <ToastContainer />
       </Provider>
     </SSRProvider>
   );
