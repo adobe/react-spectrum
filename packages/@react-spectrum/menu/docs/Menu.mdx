@@ -19,7 +19,6 @@ import {ActionButton} from '@react-spectrum/button'
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
-import {Flex} from '@react-spectrum/layout';
 import Paste from '@spectrum-icons/workflow/Paste';
 ```
 
@@ -100,7 +99,7 @@ Menu also supports the `onAction` callback when `selectionMode` is `none` (defau
 
 ```tsx example
 function Example() {
-  let [action, setAction] = React.useState('');
+  let [action, setAction] = React.useState(null);
 
   return (
     <>
@@ -126,8 +125,10 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['middle']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['middle']));
 
   return (
     <>
@@ -151,7 +152,7 @@ Set `selectionMode` prop to `multiple` to allow more than one selection.
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['Sidebar', 'Console']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['Sidebar', 'Console']));
 
   return (
     <>
@@ -177,8 +178,10 @@ Menu supports sections in order to group options. Sections can be used by wrappi
 ### Static Items
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['bold', 'left']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['bold', 'left']));
 
   return (
     <MenuTrigger>
@@ -206,8 +209,10 @@ function Example() {
 Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set([1,3]));
+  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
   let openWindows = [
     {
       name: 'Left Panel',
