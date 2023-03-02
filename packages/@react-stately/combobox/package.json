@@ -22,6 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-stately/collections": "^3.6.0",
     "@react-stately/list": "^3.7.0",
     "@react-stately/menu": "^3.5.0",
     "@react-stately/select": "^3.4.0",

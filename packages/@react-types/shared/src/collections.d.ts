@@ -148,7 +148,10 @@ export interface Collection<T> extends Iterable<T> {
   getFirstKey(): Key | null,
 
   /** Get the last key in the collection. */
-  getLastKey(): Key | null
+  getLastKey(): Key | null,
+
+  /** Iterate over the child items of the given key. */
+  getChildren?(key: Key): Iterable<T>
 }
 
 export interface Node<T> {
@@ -162,7 +165,10 @@ export interface Node<T> {
   level: number,
   /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,
-  /** The loaded children of this node. */
+  /**
+   * The loaded children of this node.
+   * @deprecated Use `collection.getChildren(node.key)` instead.
+   */
   childNodes: Iterable<Node<T>>,
   /** The rendered contents of this node (e.g. JSX). */
   rendered: ReactNode,

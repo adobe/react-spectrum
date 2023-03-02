@@ -1,4 +1,4 @@
-import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ElementNode, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
 import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
 import {CheckboxContext} from './Checkbox';
 import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
@@ -10,56 +10,18 @@ import {Provider, RenderProps, SlotProps, StyleProps, useRenderProps} from './ut
 import React, {createContext, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {TableState, useTableState} from 'react-stately';
 
-// Special node that allows overriding nextKey, prevKey, and level (in buildHeaderRows).
-class ColumnNode<T> extends ElementNode<T> {
-  _nextKey: Key;
-  _prevKey: Key;
-  _level: number;
-
-  get nextKey() {
-    return this._nextKey ?? super.nextKey;
-  }
-
-  set nextKey(k) {
-    this._nextKey = k;
-  }
-
-  get prevKey() {
-    return this._prevKey ?? super.prevKey;
-  }
-
-  set prevKey(k) {
-    this._prevKey = k;
-  }
-
-  get level() {
-    return this._level ?? super.level;
-  }
-
-  set level(l) {
-    this._level = l;
-  }
-}
-
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
   rowHeaderColumnKeys: Set<Key> = new Set();
-  head: ElementNode<T> = new ElementNode('tableheader', this);
-  body: ElementNode<T> = new ElementNode('tablebody', this);
+  head: NodeValue<T> = new NodeValue('tableheader', -1);
+  body: NodeValue<T> = new NodeValue('tablebody', -2);
   columnsDirty = true;
 
-  createElement(type) {
-    if (type === 'column') {
-      return new ColumnNode(type, this);
-    }
+  addNode(node: NodeValue<T>) {
+    super.addNode(node);
 
-    return super.createElement(type);
-  }
-
-  queueUpdate(node: ElementNode<T>) {
     this.columnsDirty ||= node.type === 'column';
-
     if (node.type === 'tableheader') {
       this.head = node;
     }
@@ -67,20 +29,23 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     if (node.type === 'tablebody') {
       this.body = node;
     }
-
-    super.queueUpdate(node);
   }
 
-  updateColumns() {
+  commit(firstKey: Key, lastKey: Key) {
+    this.updateColumns();
+    super.commit(firstKey, lastKey);
+  }
+
+  private updateColumns() {
     if (!this.columnsDirty) {
       return;
     }
 
-    this.rowHeaderColumnKeys.clear();
+    this.rowHeaderColumnKeys = new Set();
     this.columns = [];
 
     let columnKeyMap = new Map();
-    let visit = (node: ElementNode<T>) => {
+    let visit = (node: Node<T>) => {
       switch (node.type) {
         case 'column':
           columnKeyMap.set(node.key, node);
@@ -94,20 +59,17 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           }
           break;
       }
-      for (let child of node.childNodes) {
+      for (let child of this.getChildren(node.key)) {
         visit(child);
       }
     };
 
-    let node = this.firstChild;
-    while (node) {
+    for (let node of this.getChildren(this.head.key)) {
       visit(node);
-      node = node.nextSibling;
     }
 
     this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
     this.columnsDirty = false;
-
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0) {
       throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
     }
@@ -118,23 +80,23 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   get rows() {
-    return [...this.body.childNodes];
+    return [...this.getChildren(this.body.key)];
   }
 
   *[Symbol.iterator]() {
-    yield* this.body.childNodes;
+    yield* this.getChildren(this.body.key);
   }
 
   get size() {
-    return [...this.body.childNodes].length;
+    return [...this.getChildren(this.body.key)].length;
   }
 
   getFirstKey() {
-    return [...this.body.childNodes][0]?.key;
+    return [...this.getChildren(this.body.key)][0]?.key;
   }
 
   getLastKey() {
-    let rows = [...this.body.childNodes];
+    let rows = [...this.getChildren(this.body.key)];
     return rows[rows.length - 1]?.key;
   }
 
@@ -159,6 +121,28 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     }
 
     return key;
+  }
+
+  getChildren(key: Key): Iterable<Node<T>> {
+    if (!this.getItem(key)) {
+      for (let row of this.headerRows) {
+        if (row.key === key) {
+          return row.childNodes;
+        }
+      }
+    }
+
+    return super.getChildren(key);
+  }
+
+  clone() {
+    let collection = super.clone();
+    collection.headerRows = this.headerRows;
+    collection.columns = this.columns;
+    collection.rowHeaderColumnKeys = this.rowHeaderColumnKeys;
+    collection.head = this.head;
+    collection.body = this.body;
+    return collection;
   }
 }
 
@@ -186,8 +170,8 @@ export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, Co
  * and optionally supports row selection and sorting.
  */
 export function Table<T extends object>(props: TableProps<T>) {
-  let {portal, collection} = useCollection(props, TableCollection) as {portal: React.ReactPortal, collection: TableCollection<T>};
-  collection.updateColumns();
+  let initialCollection = useMemo(() => new TableCollection<T>(), []);
+  let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
     ...props,
     collection,
@@ -447,7 +431,7 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
   let cells = useCachedChildren({
-    items: item.childNodes,
+    items: state.collection.getChildren(item.key),
     children: (item) => {
       switch (item.type) {
         case 'column':
@@ -549,7 +533,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   });
 
   let cells = useCachedChildren({
-    items: item.childNodes,
+    items: state.collection.getChildren(item.key),
     children: (item: Node<T>) => {
       switch (item.type) {
         case 'cell':

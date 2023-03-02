@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
@@ -274,12 +275,11 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
   }
 
   getFirstKey() {
-    return [...this.body.childNodes][0]?.key;
+    return getFirstItem(this.body.childNodes)?.key;
   }
 
   getLastKey() {
-    let rows = [...this.body.childNodes];
-    return rows[rows.length - 1]?.key;
+    return getLastItem(this.body.childNodes)?.key;
   }
 
   getItem(key: Key) {

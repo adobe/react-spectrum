@@ -12,6 +12,7 @@
 
 import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -357,14 +358,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 }
 
 function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
-  return new ListCollection(filterNodes(collection, inputValue, filter));
+  return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
-function filterNodes<T>(nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
+function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
-      let filtered = filterNodes(node.childNodes, inputValue, filter);
+      let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
       if ([...filtered].length > 0) {
         filteredNode.push({...node, childNodes: filtered});
       }

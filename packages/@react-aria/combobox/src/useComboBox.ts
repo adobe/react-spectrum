@@ -19,7 +19,7 @@ import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-typ
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
-import {getItemCount} from '@react-stately/collections';
+import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
@@ -252,7 +252,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let announcement = stringFormatter.format('focusAnnouncement', {
         isGroupChange: section && sectionKey !== lastSection.current,
         groupTitle: sectionTitle,
-        groupCount: section ? [...section.childNodes].length : 0,
+        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
         isSelected
       });

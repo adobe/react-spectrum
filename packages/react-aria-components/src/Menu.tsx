@@ -115,13 +115,14 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
+  let state = useContext(InternalMenuContext);
   let {headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
 
   let children = useCachedChildren({
-    items: section.childNodes,
+    items: state.collection.getChildren(section.key),
     children: item => {
       if (item.type !== 'item') {
         throw new Error('Only items are allowed within a section');
@@ -132,7 +133,7 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   });
 
   return (
-    <section 
+    <section
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
