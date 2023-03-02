@@ -49,8 +49,25 @@ export function clearToastQueue() {
   globalToastQueue = null;
 }
 
-let toastProviders = new Set();
+
+let store = new Set();
+let toastProviders = {
+  add: (ref) => {
+    store.add(ref);
+    emitChange();
+  },
+  delete: (ref) => {
+    store.delete(ref);
+    emitChange();
+  },
+  values: () => store.values()
+};
 let subscriptions = new Set<() => void>();
+function emitChange() {
+  for (let fn of subscriptions) {
+    fn();
+  }
+}
 function subscribe(fn: () => void) {
   subscriptions.add(fn);
   return () => subscriptions.delete(fn);
@@ -70,7 +87,8 @@ function useActiveToastContainer() {
  */
 export function ToastContainer(props: SpectrumToastContainerProps): ReactElement {
   // Track all toast provider instances in a set.
-  // Only the first one will actually render.
+  // All will render null at first. Once they have been registered, all will re-render
+  // and the last one will become the active toast provider, the rest will still return null.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
   let ref = useRef();
@@ -87,13 +105,10 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
         toast.animation = null;
       }
 
-      // Remove this toast provider, and call subscriptions.
+      // Remove this toast provider.
       // This will cause all other instances to re-render,
       // and the first one to become the new active toast provider.
       toastProviders.delete(ref);
-      for (let fn of subscriptions) {
-        fn();
-      }
     };
   }, []);
 
