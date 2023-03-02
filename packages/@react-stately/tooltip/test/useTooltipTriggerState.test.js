@@ -73,8 +73,8 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = 100;
   
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}>
-          Helpful information
+        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} tooltip="Helpful information">
+          Trigger
         </TooltipTrigger>
       );
       fireEvent.mouseDown(document.body);
@@ -107,8 +107,8 @@ describe('useTooltipTriggerState', function () {
       let delay = 350;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay}>
-          Helpful information
+        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay} tooltip="Helpful information">
+          Trigger
         </TooltipTrigger>
       );
       fireEvent.mouseDown(document.body);
@@ -144,8 +144,8 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = -50;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}>
-          Helpful information
+        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}  tooltip="Helpful information">
+          Trigger
         </TooltipTrigger>
       );
       fireEvent.mouseDown(document.body);
@@ -172,8 +172,8 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = 0;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}>
-          Helpful information
+        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}  tooltip="Helpful information">
+          Trigger
         </TooltipTrigger>
       );
       fireEvent.mouseDown(document.body);
