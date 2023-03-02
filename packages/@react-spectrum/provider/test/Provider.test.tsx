@@ -17,7 +17,8 @@ import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+// eslint-disable-next-line rulesdir/useLayoutEffectRule
+import React, {useLayoutEffect, useRef} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
@@ -171,7 +172,7 @@ describe('Provider', () => {
             large: {'spectrum--large': 'spectrum--large'}
           }}
           data-testid="testid2">
-          <Button>Hello!</Button>
+          <Button variant="accent">Hello!</Button>
         </Provider>
       </Provider>
     );
@@ -255,13 +256,14 @@ describe('Provider', () => {
       function Component(props) {
         let {matchedBreakpoints} = useBreakpoint();
         let {onBreakpointChange, ...otherProps} = props;
-        let prevBreakpoint = useRef();
+        let prevBreakpoint = useRef(null);
+        let breakpoint = matchedBreakpoints[0];
         useLayoutEffect(() => {
-          if (!Object.is(prevBreakpoint.current, matchedBreakpoints[0])) {
-            onBreakpointChange(matchedBreakpoints[0]);
+          if (!Object.is(prevBreakpoint.current, breakpoint)) {
+            onBreakpointChange(breakpoint);
           }
-          prevBreakpoint.current = matchedBreakpoints[0];
-        }, [onBreakpointChange, matchedBreakpoints[0]]);
+          prevBreakpoint.current = breakpoint;
+        }, [onBreakpointChange, breakpoint]);
         return <button {...otherProps}>push me</button>;
       }
 
