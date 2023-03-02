@@ -272,16 +272,26 @@ export class TableLayout<T> extends ListLayout<T> {
     let layoutInfo = new LayoutInfo('rowgroup', 'body', rect);
 
     let startY = y;
-    let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
+    // Note: since this.collection.body.childNodes might have rows or sections, we can't shortcut the estimate for
+    // y for children after the valid rectangle (we have to iterate through childNodes to figure out if some thing is a section)
+    // hence why I got rid of skipped.
+    // TODO: technically the old buildBody would get the correct body height when it built the children, but it wouldn't update the proper
+    // final height on the table body div until a rerender of the tableview was triggered...
     for (let node of this.collection.body.childNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
+      let headingHeight = (this.headingHeight ?? this.estimatedHeadingHeight);
+      let estimatedY;
+      if (node.type === 'item') {
+        estimatedY = y + rowHeight;
+      } else if (node.type === 'section') {
+        estimatedY = y + headingHeight + rowHeight * [...node.childNodes].length;
+      }
 
-      // Skip rows before the valid rectangle unless they are already cached.
-      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
-        y += rowHeight;
-        skipped++;
+      // Skip children before/after the valid rectangle unless they are already cached.
+      if ((estimatedY < this.validRect.y || estimatedY > this.validRect.maxX) && !this.isValid(node, y)) {
+        y = estimatedY;
         continue;
       }
 
@@ -290,12 +300,6 @@ export class TableLayout<T> extends ListLayout<T> {
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
-
-      if (y > this.validRect.maxY) {
-        // Estimate the remaining height for rows that we don't need to layout right now.
-        y += (this.collection.size - (skipped + children.length)) * rowHeight;
-        break;
-      }
     }
 
     if (this.isLoading) {
@@ -323,7 +327,6 @@ export class TableLayout<T> extends ListLayout<T> {
     rect.height = y - startY;
 
     this.layoutInfos.set('body', layoutInfo);
-
     return {
       layoutInfo,
       children,
@@ -415,7 +418,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let res: LayoutInfo[] = [];
 
     this.buildPersistedIndices();
-    // console.log('this.rootNodes', this.rootNodes)
     for (let node of this.rootNodes) {
       res.push(node.layoutInfo);
       this.addVisibleLayoutInfos(res, node, rect);
@@ -538,7 +540,7 @@ export class TableLayout<T> extends ListLayout<T> {
         // Add persisted rows before the visible rows.
         let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
         let persistIndex = 0;
-        console.log('first and last row in section', node.layoutInfo.key, firstVisibleRow, lastVisibleRow)
+
         while (
           persistedRowIndices &&
           persistIndex < persistedRowIndices.length &&
@@ -546,7 +548,6 @@ export class TableLayout<T> extends ListLayout<T> {
         ) {
           let idx = persistedRowIndices[persistIndex];
           if (idx < node.children.length) {
-            console.log('pushing persisted before', idx, node.children[idx]);
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
@@ -559,7 +560,6 @@ export class TableLayout<T> extends ListLayout<T> {
             persistIndex++;
           }
 
-          console.log('adding row index in section', i, node.children[i]);
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
@@ -568,7 +568,6 @@ export class TableLayout<T> extends ListLayout<T> {
         while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
           let idx = persistedRowIndices[persistIndex++];
           if (idx < node.children.length) {
-            console.log('pushing persisted after', idx, node.children[idx]);
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }

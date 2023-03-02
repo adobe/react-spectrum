@@ -838,6 +838,7 @@ export class Virtualizer<T extends object, V, W> {
 
     let buildTree = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]): W[] => views.map(view => {
       let children = viewsByParentKey.get(view.layoutInfo.key);
+      console.log('calling render wrapper')
       return this.delegate.renderWrapper(
         parent,
         view,
@@ -952,6 +953,7 @@ export class Virtualizer<T extends object, V, W> {
 
     // @ts-ignore
     let changed = this.layout.updateItemSize(key, size);
+    console.log('changed', changed);
     if (changed) {
       this.relayout();
     }

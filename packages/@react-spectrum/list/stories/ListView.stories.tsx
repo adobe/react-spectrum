@@ -129,12 +129,19 @@ let withSection = [
   {name: 'Animals', children: [
     {name: 'Aardvark'},
     {name: 'Kangaroo'},
-    {name: 'Snake'}
+    {name: 'Snake'},
+    {name: 'Badger'},
+    {name: 'Red Panda'},
+    {name: 'Capybara'}
   ]},
   {name: 'People', children: [
     {name: 'Danni'},
     {name: 'Devon'},
-    {name: 'Ross'}
+    {name: 'Ross'},
+    {name: 'Daniel'},
+    {name: 'Rob'},
+    {name: 'Reid'},
+    {name: 'Kyle'}
   ]}
 ];
 
