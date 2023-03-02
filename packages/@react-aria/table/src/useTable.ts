@@ -11,6 +11,7 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
+import {getChildNodes} from '@react-stately/collections';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
@@ -78,7 +79,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
       let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
       if (rowHeaderColumnKeys) {
         let text = [];
-        for (let cell of added.childNodes) {
+        for (let cell of getChildNodes(added, state.collection)) {
           let column = state.collection.columns[cell.index];
           if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
             text.push(cell.textValue);

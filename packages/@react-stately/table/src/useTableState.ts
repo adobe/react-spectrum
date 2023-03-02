@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useMemo, useState} from 'react';
@@ -39,7 +39,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T> extends CollectionStateBase<T, ITableCollection<T>>, MultipleSelectionStateProps, Sortable {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean
 }
@@ -64,7 +64,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [props.children, props.showSelectionCheckboxes, selectionMode]);
 
-  let collection = useCollection<T, TableCollection<T>>(
+  let collection = useCollection<T, ITableCollection<T>>(
     props,
     (nodes, prev) => new TableCollection(nodes, prev, context),
     context
