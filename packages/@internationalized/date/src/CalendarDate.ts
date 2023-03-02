@@ -42,6 +42,7 @@ export class CalendarDate {
   // This prevents TypeScript from allowing other types with the same fields to match.
   // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
   // If that behavior is desired, use the AnyCalendarDate interface instead.
+  // @ts-ignore
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
@@ -124,6 +125,7 @@ export class CalendarDate {
 /** A Time represents a clock time without any date components. */
 export class Time {
   // This prevents TypeScript from allowing other types with the same fields to match.
+  // @ts-ignore
   #type;
   /** The hour, numbered from 0 to 23. */
   public readonly hour: number;
@@ -189,6 +191,7 @@ export class Time {
 /** A CalendarDateTime represents a date and time without a time zone, in a specific calendar system. */
 export class CalendarDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
+  // @ts-ignore
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
@@ -296,6 +299,7 @@ export class CalendarDateTime {
 /** A ZonedDateTime represents a date and time in a specific time zone and calendar system. */
 export class ZonedDateTime {
   // This prevents TypeScript from allowing other types with the same fields to match.
+  // @ts-ignore
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
   public readonly calendar: Calendar;
