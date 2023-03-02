@@ -267,9 +267,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-      // TODO: Looks like I need to add the header for the section as a part of the visibleLayoutiNfos to get it to show up in children?
       let header = children.find(c => c.viewType === 'header');
       let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
+
       return (
         <TableSection
           reusableView={reusableView}
@@ -399,7 +399,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     setIsResizing(false);
     propsOnResizeEnd?.(widths);
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
-
+  console.log('collection', state.collection)
   return (
     <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer

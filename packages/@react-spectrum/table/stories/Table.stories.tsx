@@ -122,9 +122,39 @@ export default {
 
 export type TableStory = ComponentStoryObj<typeof TableView>;
 
-export const StaticWithSections: TableStory = {
+export const Static = {
   args: {
     'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  storyName: 'static no sections'
+};
+
+export const StaticWithSections: TableStory = {
+  args: {
+    'aria-label': 'TableView with static contents and sections',
     width: 300,
     height: 200
   },
@@ -152,7 +182,7 @@ export const StaticWithSections: TableStory = {
 
 export const StaticWithMixed: TableStory = {
   args: {
-    'aria-label': 'TableView with static contents',
+    'aria-label': 'TableView with static contents, mixed sections and non-sectioned items',
     width: 300,
     height: 200
   },
@@ -165,14 +195,32 @@ export const StaticWithMixed: TableStory = {
         <Row>
           <Cell>A</Cell>
         </Row>
-        <Section title="Section1">
+        <Section title="Section 1">
           <Row>
             <Cell>One</Cell>
           </Row>
-        </Section>
-        <Section title="Section2">
           <Row>
-            <Cell>two</Cell>
+            <Cell>Two</Cell>
+          </Row>
+          <Row>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>Four</Cell>
+          </Row>
+          <Row>
+            <Cell>Five</Cell>
+          </Row>
+        </Section>
+        <Section title="Section 2">
+          <Row>
+            <Cell>Six</Cell>
+          </Row>
+          <Row>
+            <Cell>Seven</Cell>
+          </Row>
+          <Row>
+            <Cell>Eight</Cell>
           </Row>
         </Section>
         <Row>
@@ -182,27 +230,6 @@ export const StaticWithMixed: TableStory = {
     </TableView>
   ),
   storyName: 'static with sections and non section rows'
-};
-
-export const Static = {
-  args: {
-    'aria-label': 'TableView with static contents',
-    width: 300,
-    height: 200
-  },
-  render: (args) => (
-    <TableView {...args}>
-      <TableHeader>
-        <Column key="foo">Foo</Column>
-      </TableHeader>
-      <TableBody>
-        <Row>
-          <Cell>One</Cell>
-        </Row>
-      </TableBody>
-    </TableView>
-  ),
-  storyName: 'static no sections'
 };
 
 let columns = [
@@ -224,16 +251,22 @@ let items = [
 
 let itemsWithSections = [
   {id: 0, title: 'section1', children: [
-    {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'}
+    {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+    {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
   ]},
   {id: 1, title: 'section2', children: [
-    {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+    {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+    {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+    {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
   ]}
 ];
 
 export const Dynamic: TableStory = {
   args: {
-    'aria-label': 'TableView with static contents',
+    'aria-label': 'TableView with dynamic contents',
     width: 300,
     height: 200
   },
@@ -256,7 +289,7 @@ export const Dynamic: TableStory = {
 
 export const DynamicSections: TableStory = {
   args: {
-    'aria-label': 'TableView with static contents',
+    'aria-label': 'TableView with dynamic contents and sections',
     width: 300,
     height: 200
   },
@@ -280,6 +313,8 @@ export const DynamicSections: TableStory = {
   ),
   storyName: 'dynamic with sections'
 };
+
+// TODO: make story with dynamic mixed sections and non section items
 
 let itemsWithFalsyId = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},

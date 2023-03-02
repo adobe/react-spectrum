@@ -438,37 +438,29 @@ export class TableLayout<T> extends ListLayout<T> {
         break;
       }
       case 'rowgroup': {
-        // TODO test what gets rendered if you have super long sections and most of it is out of view. Will it render all
-        // the nodes within the section? Does it deem the section as a whole as visible? If it behaves like listlayout then
-        // the section is always rendered but only the rows that are actually are in view are rendered. The section header should
-        // always be rendered though
+        // Note: this.persistedIndicies is structured as follow:
+        // parentKey: [array of child indicies that should be preserved] (aka the row/section index values, cells won't be included here)
+        // this could be "body": [array of child indicies that should be preserved aka the focused row index]
+        // this happens per level of parent so if we focus a cell in a row we will also have:
+        // "row1" (key of row containing foucused children): [array of cell indicies] (includes checkbox (0), rowheader (1 or w/e), and actualy focused cell index)
 
-        // TODO this is the body, would a section be similar? multiple row groups inside the row group?
-        // Maybe this is what we should do for section as well?
-        // TODO: does the section information stored here have a y value that takes into account the space
-        // taken by the section header
-        let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
-        let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
-        // console.log('first visible, row, children, topleft', firstVisibleRow, node.children, rect.topLeft)
 
-        // TODO: might need to update handling for sections? Should we persist sections? At the moment I think
-        // buildPersistedIndices will persist the section...
+        // Note: the top level "rowgroup" (aka TableBody) can have rows and sections. Sections don't have to be differentiated here
+        // since we can regard them as a tall row at this level
+        let firstVisibleChild = this.binarySearch(node.children, rect.topLeft, 'y');
+        let lastVisibleChild = this.binarySearch(node.children, rect.bottomRight, 'y');
 
-        // Add persisted rows before the visible rows.
-        // TODO: if persisted row exists in a section, should we also add the section to the
-        // visibleLayoutInfos or just the row? I'm worried about losing the section context for the persisted row
-        let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
+        // Add persisted row/section before the first visible row/section.
+        // Note: We don't need to do any updates to this logic for sections since persistedChildren here will only consist of section less rows and sections since we are at the "body" parent key level
+        let persistedChildren = this.persistedIndices.get(node.layoutInfo.key);
         let persistIndex = 0;
-        // TODO: I think we need to not do this section of code if we have sections?
-        // persistedRowIndicies refers to the index of preserved rows and thus node.children[idx]
-        // doesn't mesh up here. I think what we need to do here is wrap it in a if statement so it
-        // doesn't happen if the immediate children of the table are sections
+
         while (
-          persistedRowIndices &&
-          persistIndex < persistedRowIndices.length &&
-          persistedRowIndices[persistIndex] < firstVisibleRow
+          persistedChildren &&
+          persistIndex < persistedChildren.length &&
+          persistedChildren[persistIndex] < firstVisibleChild
         ) {
-          let idx = persistedRowIndices[persistIndex];
+          let idx = persistedChildren[persistIndex];
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
@@ -476,35 +468,27 @@ export class TableLayout<T> extends ListLayout<T> {
           persistIndex++;
         }
 
-        for (let i = firstVisibleRow; i <= lastVisibleRow; i++) {
-          // Skip persisted rows that overlap with visible cells.
-          while (persistedRowIndices && persistIndex < persistedRowIndices.length && persistedRowIndices[persistIndex] < i) {
+        for (let i = firstVisibleChild; i <= lastVisibleChild; i++) {
+          // Skip persisted rows/sections that overlap with visible cells.
+          while (persistedChildren && persistIndex < persistedChildren.length && persistedChildren[persistIndex] < i) {
             persistIndex++;
           }
-          // let layoutInfo = node.children[i].layoutInfo.copy();
 
-          // console.log('pushing layoutinfo in body', node.children[i], node.children[i].layoutInfo)
-          // if (layoutInfo.type === 'section') {
-          //   let sectionWithHeader = {...layoutInfo, header: node.children[i].header};
-          //   res.push(sectionWithHeader);
-          // } else {
-          //   res.push(node.children[i].layoutInfo);
-          // }
-
-          // TODO: maybe I push the section header to the res? Maybe rename the type so it is sectionheader?
-          // Maybe do that in the section portion of this switch statement
           res.push(node.children[i].layoutInfo);
-          if (node.children[i].header) {
-            res.push(node.children[i].header);
-          }
+
+          // todo: do I need this? Perhaps I just handle this in the section part of the code
+          // if (node.children[i].header) {
+          //   res.push(node.children[i].header);
+          // }
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
 
         // Add persisted rows after the visible rows.
-        while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
-          let idx = persistedRowIndices[persistIndex++];
+        while (persistedChildren && persistIndex < persistedChildren.length) {
+          let idx = persistedChildren[persistIndex++];
           if (idx < node.children.length) {
             res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
         }
         break;
@@ -544,21 +528,17 @@ export class TableLayout<T> extends ListLayout<T> {
         break;
       }
       case 'section': {
-        // TODO: update this. What do we need to persist?
-        // console.log('section visible layout, node, res ,rect', node, res, rect)
+        // Add the section header to the visible layout infos since we always need to render it for labelling.
+        res.push(node.header);
+
+        // Note: the first/last row index calculated here is with respect to the section, not the index of the row in the collection itself
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
-
-
-        // TODO: I think we need to update the presisted row index stuff so that we
-        // check if the persisted row is within the current section. If so, we go ahead and
-        // add it to the visibleLayoutInfos. Double check what values persistedIndicies is in.
-        // If it is the row's literal index in the collection then we can't use it since the
-        // section's length is not equivalent to the collection's length
 
         // Add persisted rows before the visible rows.
         let persistedRowIndices = this.persistedIndices.get(node.layoutInfo.key);
         let persistIndex = 0;
+        console.log('first and last row in section', node.layoutInfo.key, firstVisibleRow, lastVisibleRow)
         while (
           persistedRowIndices &&
           persistIndex < persistedRowIndices.length &&
@@ -566,6 +546,7 @@ export class TableLayout<T> extends ListLayout<T> {
         ) {
           let idx = persistedRowIndices[persistIndex];
           if (idx < node.children.length) {
+            console.log('pushing persisted before', idx, node.children[idx]);
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
@@ -578,6 +559,7 @@ export class TableLayout<T> extends ListLayout<T> {
             persistIndex++;
           }
 
+          console.log('adding row index in section', i, node.children[i]);
           res.push(node.children[i].layoutInfo);
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
@@ -586,7 +568,9 @@ export class TableLayout<T> extends ListLayout<T> {
         while (persistedRowIndices && persistIndex < persistedRowIndices.length) {
           let idx = persistedRowIndices[persistIndex++];
           if (idx < node.children.length) {
+            console.log('pushing persisted after', idx, node.children[idx]);
             res.push(node.children[idx].layoutInfo);
+            this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
         }
 
@@ -617,6 +601,9 @@ export class TableLayout<T> extends ListLayout<T> {
     return Math.max(0, Math.min(items.length - 1, low));
   }
 
+  // Note: builds a Map of persisted indicies. Mapping is parentKey: [array of immediate child indicies to preserve]
+  // e.g. "body": [array of row/section indicies to persist] or "row key": [array of cells in the row to persist]
+  // or "section" : [array of row indicies in the section to persist]
   buildPersistedIndices() {
     if (this.virtualizer.persistedKeys === this.lastPersistedKeys) {
       return;
@@ -640,8 +627,13 @@ export class TableLayout<T> extends ListLayout<T> {
         }
 
         let index = collectionNode.index;
+        let parentNode = this.collection.getItem(collectionNode.parentKey);
         if (layoutInfo.parentKey === 'body') {
           index -= this.collection.headerRows.length;
+        } else if (parentNode && parentNode.type === 'section') {
+          // Adjust the index of the row inside a section so it represents the row's position with respect to the
+          // section rather than the row's index with respect to the entire collection
+          index -= parentNode.index + 1;
         }
 
         if (!indices.includes(index)) {
