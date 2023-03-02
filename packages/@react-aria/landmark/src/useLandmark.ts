@@ -439,14 +439,14 @@ class LandmarkManager implements LandmarkManagerApi {
 export function createLandmarkController(): LandmarkController {
   // Get the current landmark manager and create a controller using it.
   let instance: LandmarkManagerApi | null = getLandmarkManager();
-  let controller: LandmarkController | null = instance?.createLandmarkController();
+  let controller = instance?.createLandmarkController();
 
   let unsubscribe = subscribe(() => {
     // If the landmark manager changes, dispose the old
     // controller and create a new one.
     controller?.dispose();
     instance = getLandmarkManager();
-    controller = instance.createLandmarkController();
+    controller = instance?.createLandmarkController();
   });
 
   // Return a wrapper that proxies requests to the current controller instance.
@@ -466,7 +466,7 @@ export function createLandmarkController(): LandmarkController {
     dispose() {
       controller?.dispose();
       unsubscribe();
-      controller = null;
+      controller = undefined;
       instance = null;
     }
   };
@@ -497,7 +497,9 @@ export function useLandmark(props: AriaLandmarkProps, ref: RefObject<FocusableEl
   }, [setIsLandmarkFocused]);
 
   useLayoutEffect(() => {
-    return manager.registerLandmark({ref, label, role, focus: focus || defaultFocus, blur});
+    if (manager) {
+      return manager.registerLandmark({ref, label, role, focus: focus || defaultFocus, blur});
+    }
   }, [manager, label, ref, role, focus, defaultFocus, blur]);
 
   useEffect(() => {
