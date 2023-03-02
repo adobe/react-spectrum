@@ -358,7 +358,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
     let modality = getInteractionModality();
-    if (!isVirtualized && manager.isFocused && manager.focusedKey && scrollRef?.current) {
+    if (!isVirtualized && manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
