@@ -15,6 +15,7 @@ import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
@@ -74,8 +75,11 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // over the lifetime of the component.
   let ref = useRef();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     toastProviders.add(ref);
+  }, [toastProviders, ref]);
+
+  useEffect(() => {
     return () => {
       // When this toast provider unmounts, reset all animations so that
       // when the new toast provider renders, it is seamless.
