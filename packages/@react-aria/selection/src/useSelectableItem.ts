@@ -67,6 +67,8 @@ export interface SelectableItemStates {
   isPressed: boolean,
   /** Whether the item is currently selected. */
   isSelected: boolean,
+  /** Whether the item is currently focused. */
+  isFocused: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
@@ -312,6 +314,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     ),
     isPressed,
     isSelected: manager.isSelected(key),
+    isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
     hasAction
