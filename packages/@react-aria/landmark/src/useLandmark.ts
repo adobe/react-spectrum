@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
 import {MutableRefObject, useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useSyncExternalStore} from 'use-sync-external-store/shim';
+import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
 
@@ -85,7 +85,11 @@ function subscribe(fn: () => void) {
   return () => document.removeEventListener('react-aria-landmark-manager-change', fn);
 }
 
-function getLandmarkManager(): LandmarkManagerApi {
+function getLandmarkManager(): LandmarkManagerApi | null {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
   // Reuse an existing instance if it has the same or greater version.
   let instance = document[landmarkSymbol];
   if (instance && instance.version >= LANDMARK_API_VERSION) {
@@ -100,8 +104,8 @@ function getLandmarkManager(): LandmarkManagerApi {
 }
 
 // Subscribes a React component to the current landmark manager instance.
-function useLandmarkManager(): LandmarkManagerApi {
-  return useSyncExternalStore(subscribe, getLandmarkManager);
+function useLandmarkManager(): LandmarkManagerApi | null {
+  return useSyncExternalStore(subscribe, getLandmarkManager, getLandmarkManager);
 }
 
 class LandmarkManager implements LandmarkManagerApi {
