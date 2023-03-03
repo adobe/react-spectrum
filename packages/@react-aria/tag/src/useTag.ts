@@ -28,7 +28,7 @@ export interface TagAria {
   /** Props for the tag cell element. */
   gridCellProps: DOMAttributes,
   /** Props for the tag row element. */
-  gridRowProps: DOMAttributes,
+  rowProps: DOMAttributes,
   /** Props for the tag clear button. */
   clearButtonProps: AriaButtonProps
 }
@@ -78,7 +78,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
     labelProps: {
       id: labelId
     },
-    gridRowProps: {
+    rowProps: {
       ...rowProps,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: allowsRemoving ? onKeyDown : null

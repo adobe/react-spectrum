@@ -41,7 +41,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
   let ref = useRef();
-  let {clearButtonProps, labelProps, gridCellProps, gridRowProps} = useTag({
+  let {clearButtonProps, labelProps, gridCellProps, rowProps} = useTag({
     ...props,
     isFocused,
     allowsRemoving,
@@ -51,7 +51,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 
   return (
     <div
-      {...mergeProps(gridRowProps, hoverProps, focusProps)}
+      {...mergeProps(rowProps, hoverProps, focusProps)}
       className={classNames(
           styles,
           'spectrum-Tags-item',
