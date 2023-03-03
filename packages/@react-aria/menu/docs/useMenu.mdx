@@ -117,6 +117,7 @@ The `Popover` and `Button` components used in this example are independent, and 
 The code is available below, and documentation is available on the corresponding pages.
 
 ```tsx example export=true render=false
+import type {MenuTriggerProps} from '@react-stately/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useMenuTrigger} from '@react-aria/menu';
 import {Item} from '@react-stately/collections';
@@ -124,13 +125,17 @@ import {Item} from '@react-stately/collections';
 // Reuse the Popover, and Button from your component library. See below for details.
 import {Popover, Button} from 'your-component-library';
 
-function MenuButton(props) {
+interface MenuButtonProps<T> extends AriaMenuProps<T>, MenuTriggerProps {
+  label?: string
+}
+
+function MenuButton<T extends object>(props: MenuButtonProps<T>) {
   // Create state based on the incoming props
   let state = useMenuTriggerState(props);
 
   // Get props for the button and menu elements
-  let ref = React.useRef();
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+  let ref = React.useRef(null);
+  let {menuTriggerProps, menuProps} = useMenuTrigger<T>({}, state, ref);
 
   return (
     <>
@@ -160,15 +165,16 @@ It is built using the <TypeLink links={menuDocs.links} type={menuDocs.exports.us
 For each item in the collection in state, we render either a `MenuItem` or `MenuSection` (defined [below](#sections)) according to the item's `type` property.
 
 ```tsx example export=true render=false
+import type {AriaMenuProps} from '@react-aria/menu';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu(props) {
+function Menu<T extends object>(props: AriaMenuProps<T>) {
   // Create menu state based on the incoming props
   let state = useTreeState(props);
 
   // Get props for the menu element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {menuProps} = useMenu(props, state, ref);
 
   return (
@@ -201,7 +207,7 @@ import {useMenuItem} from '@react-aria/menu';
 
 function MenuItem({item, state}) {
   // Get props for the menu item element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {menuItemProps, isFocused, isSelected, isDisabled} = useMenuItem({key: item.key}, state, ref);
 
   return (
@@ -245,11 +251,17 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let popoverRef = React.useRef(null);
   let {popoverProps, underlayProps} = usePopover({
     ...props,
     popoverRef
@@ -341,8 +353,10 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['sidebar', 'console']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['sidebar', 'console']));
 
   return (
     <>
@@ -371,7 +385,7 @@ semantics are correct.
 import {useMenuSection} from '@react-aria/menu';
 import {useSeparator} from '@react-aria/separator';
 
-function MenuSection({section, state, onAction}) {
+function MenuSection({section, state}) {
   let {itemProps, headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -415,8 +429,7 @@ function MenuSection({section, state, onAction}) {
           <MenuItem
             key={node.key}
             item={node}
-            state={state}
-            onAction={onAction} />
+            state={state} />
         )}
       </ul>
     </li>
@@ -450,8 +463,10 @@ The above example shows sections with static items. Sections can also be populat
 Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set([1,3]));
+  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
   let openWindows = [
     {
       name: 'Left Panel',
@@ -512,7 +527,7 @@ to apply the props, but you may want to use a more robust approach (e.g. context
 ///- begin collapse -///
 function MenuButton(props) {
   let state = useMenuTriggerState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   return (
@@ -537,7 +552,7 @@ function MenuButton(props) {
 
 function Menu(props) {
   let state = useTreeState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {menuProps} = useMenu(props, state, ref);
 
   return (
@@ -559,7 +574,7 @@ function Menu(props) {
 ///- end collapse -///
 function MenuItem({item, state}) {
   // Get props for the menu item element and child elements
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     menuItemProps,
     labelProps,
