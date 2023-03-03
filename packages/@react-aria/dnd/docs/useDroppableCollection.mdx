@@ -74,7 +74,7 @@ import {ListKeyboardDelegate} from '@react-aria/selection';
 function ListBox(props) {
   // Setup listbox as normal. See the useListBox docs for more details.
   let state = useListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxProps} = useListBox(props, state, ref);
 
   ///- begin highlight -///
@@ -113,8 +113,8 @@ function ListBox(props) {
 
 function Option({ item, state, dropState }) {
   // Setup listbox option as normal. See useListBox docs for details.
-  let ref = React.useRef();
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let ref = React.useRef(null);
+  let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   ///- begin highlight -///
@@ -216,7 +216,7 @@ function Draggable({children}) {
     }
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton({...dragButtonProps, elementType: 'div'}, ref);
 
   return (
@@ -259,7 +259,7 @@ To add support for dropping between items, first implement the `DropIndicator` c
 import {useDropIndicator} from '@react-aria/dnd';
 
 function DropIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
   if (isHidden) {
     return null;
@@ -277,53 +277,8 @@ function DropIndicator(props) {
 
 Now that the `DropIndicator` component is implemented, we can render an instance between each item in the list. This uses the `before` drop position by default, except for after the last item in the list.
 
-```tsx example render=false
-///- begin collapse -///
-function ListBox(props) {
-  // See useListBox docs for more details.
-  let state = useListState(props);
-  let ref = React.useRef();
-  let { listBoxProps } = useListBox(props, state, ref);
-
-  let dropState = useDroppableCollectionState({
-    ...props,
-    collection: state.collection,
-    selectionManager: state.selectionManager
-  });
-
-  let {collectionProps} = useDroppableCollection({
-    ...props,
-    keyboardDelegate: new ListKeyboardDelegate(state.collection, state.disabledKeys, ref),
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref)
-  }, dropState, ref);
-
-  return (
-    <ul
-      {...mergeProps(listBoxProps, collectionProps)}
-      ref={ref}>
-      {[...state.collection].map((item) => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state}
-          dropState={dropState}
-        />
-      ))}
-    </ul>
-  );
-}
-///- end collapse -///
-
+```tsx
 function Option({ item, state, dropState }) {
-  ///- begin collapse -///
-  let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
-  let { isFocusVisible, focusProps } = useFocusRing();
-
-  let {dropProps, isDropTarget} = useDroppableItem({
-    target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, ref);
-  ///- end collapse -///
   // ...
 
   return (
@@ -429,7 +384,7 @@ The `onRootDrop` event is triggered when the user drops on the collection. This 
 function ListBox(props) {
   ///- begin collapse -///
   let state = useListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let { listBoxProps } = useListBox(props, state, ref);
 
   let dropState = useDroppableCollectionState({
@@ -474,8 +429,8 @@ function ListBox(props) {
 }
 ///- begin collapse -///
 function Option({ item, state, dropState }) {
-  let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let ref = React.useRef(null);
+  let { optionProps } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
 
   let {dropProps, isDropTarget} = useDroppableItem({
@@ -541,7 +496,7 @@ import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
 function ReorderableListBox(props) {
   // See useListBox docs for more details.
   let state = useListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let { listBoxProps } = useListBox({
     ...props,
     ///- begin highlight -///
@@ -603,8 +558,8 @@ function ReorderableListBox(props) {
 
 function ReorderableOption({ item, state, dragState, dropState }) {
   ///- begin collapse -///
-  let ref = React.useRef();
-  let { optionProps, isSelected, isDisabled } = useOption({key: item.key}, state, ref);
+  let ref = React.useRef(null);
+  let { optionProps } = useOption({key: item.key}, state, ref);
   let { isFocusVisible, focusProps } = useFocusRing();
 
   let {dropProps, isDropTarget} = useDroppableItem({

@@ -47,18 +47,19 @@ See the [drag and drop introduction](dnd.html) to learn more.
 This example shows how to make a simple drop target that accepts plain text data. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While a drag is hovered over it, a blue outline is rendered by applying an additional CSS class.
 
 ```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
 import {useDrop} from '@react-aria/dnd';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     async onDrop(e) {
       let items = await Promise.all(
         e.items
           .filter(item => item.kind === 'text' && item.types.has('text/plain'))
-          .map(item => item.getText('text/plain'))
+          .map((item: TextDropItem) => item.getText('text/plain'))
       );
       setDropped(items.join('\n'));
     }
@@ -156,12 +157,12 @@ The example below finds the first available item that includes a custom app-spec
 ```tsx example
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     /*- begin highlight -*/
     async onDrop(e) {
-      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type'));
+      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type')) as TextDropItem;
       if (item) {
         setDropped(await item.getText('my-app-custom-type'));
       }
@@ -191,14 +192,16 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx example
+import type {FileDropItem} from '@react-aria/dnd';
+
 function DropTarget() {
   let [file, setFile] = React.useState(null);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     /*- begin highlight -*/
     async onDrop(e) {
-      let item = e.items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'));
+      let item = e.items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
       }
@@ -223,18 +226,19 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example renders the file names within a dropped directory in a grid.
 
 ```tsx example
+import type {DirectoryDropItem} from '@react-aria/dnd';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 
 function DropTarget() {
   let [files, setFiles] = React.useState(null);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     /*- begin highlight -*/
     async onDrop(e) {
       // Find the first dropped item that is a directory.
-      let dir = e.items.find(item => item.kind === 'directory');
+      let dir = e.items.find(item => item.kind === 'directory') as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
         let files = [];
@@ -250,7 +254,7 @@ function DropTarget() {
     /*- end highlight -*/
   });
 
-  let contents = 'Drop directory here';
+  let contents = <>Drop directory here</>;
   if (files) {
     contents = (
       <ul>
@@ -336,7 +340,7 @@ In the below example, the drop target only supports dropping PNG images. If a PN
 ```tsx example
 function DropTarget() {
   let [file, setFile] = React.useState(null);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     /*- begin highlight -*/
@@ -345,7 +349,7 @@ function DropTarget() {
     },
     /*- end highlight -*/
     async onDrop(e) {
-      let item = e.items.find(item => item.kind === 'file' && item.type === 'image/png');
+      let item = e.items.find(item => item.kind === 'file' && item.type === 'image/png') as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
       }
@@ -369,11 +373,11 @@ The `onDrop` event also includes the `dropOperation`. This can be used to perfor
 
 ```tsx
 function DropTarget(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     async onDrop(e) {
-      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-file'));
+      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-file')) as TextDropItem;
       if (!item) {
         return;
       }
@@ -413,7 +417,7 @@ This example logs all events that occur within the drop target:
 function DropTarget() {
   let [events, setEvents] = React.useState([]);
   let onEvent = e => setEvents(events => [JSON.stringify(e), ...events]);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     onDropEnter: onEvent,
