@@ -168,7 +168,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }
   let value = Math.floor(state.getColumnWidth(item.key));
   let modality = useInteractionModality();
-  let description = triggerRef?.current != null && (modality === 'keyboard' || modality === 'virtual') && !isResizing.current ? stringFormatter.format('resizerDescription') : undefined;
+  let description = triggerRef?.current == null && (modality === 'keyboard' || modality === 'virtual') && !isResizing.current ? stringFormatter.format('resizerDescription') : undefined;
   let descriptionProps = useDescription(description);
   let ariaProps = {
     'aria-label': props.label,
