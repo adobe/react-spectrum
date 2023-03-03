@@ -96,3 +96,7 @@ website:
 website-production:
 	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+
+check-examples:
+	node scripts/extractExamples.mjs
+	yarn tsc --project dist/docs-examples/tsconfig.json

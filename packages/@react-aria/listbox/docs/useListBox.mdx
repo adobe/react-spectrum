@@ -124,18 +124,19 @@ For each item in the collection in state, either an `Option` or `ListBoxSection`
 is rendered according to the item's `type` property.
 
 ```tsx example export=true
+import type {AriaListBoxProps} from '@react-aria/listbox';
 import {useListBox, useOption} from '@react-aria/listbox';
 import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
 import {useFocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 
-function ListBox(props) {
+function ListBox<T extends object>(props: AriaListBoxProps<T>) {
   // Create state based on the incoming props
   let state = useListState(props);
 
   // Get props for the listbox element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
@@ -165,7 +166,7 @@ function ListBox(props) {
 
 function Option({item, state}) {
   // Get props for the option element
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard
@@ -235,8 +236,10 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['cheese']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['cheese']));
 
   return (
     <>
@@ -370,6 +373,8 @@ The above example shows sections with static items. Sections can also be populat
 Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from 'react-stately';
+
 function Example() {
   let options = [
     {name: 'Australian', children: [
@@ -383,7 +388,7 @@ function Example() {
       {id: 8, name: 'Skunk'}
     ]}
   ];
-  let [selected, setSelected] = React.useState(new Set());
+  let [selected, setSelected] = React.useState<Selection>(new Set());
 
   return (
     <ListBox
@@ -391,8 +396,7 @@ function Example() {
       items={options}
       selectedKeys={selected}
       selectionMode="single"
-      onSelectionChange={setSelected}
-      width="size-2400">
+      onSelectionChange={setSelected}>
       {item => (
         <Section key={item.name} items={item.children} title={item.name}>
           {item => <Item>{item.name}</Item>}
@@ -428,7 +432,7 @@ to apply the props, but you may want to use a more robust approach (e.g. context
 ///- begin collapse -///
 function ListBox(props) {
   let state = useListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
@@ -456,8 +460,8 @@ function ListBox(props) {
 }
 ///- end collapse -///
 function Option({item, state}) {
-  let ref = React.useRef();
-  let {optionProps, labelProps, descriptionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+  let ref = React.useRef(null);
+  let {optionProps, labelProps, descriptionProps, isSelected} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   // Pull out the two expected children. We will clone them
@@ -507,9 +511,13 @@ state to the user, or support features like infinite scroll to load more data.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Pokemon {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
-    async load({signal, filterText}) {
+  let list = useAsyncList<Pokemon>({
+    async load({signal}) {
       let res = await fetch(
         `https://pokeapi.co/api/v2/pokemon`,
         {signal}
