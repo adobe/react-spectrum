@@ -126,7 +126,7 @@ function CheckboxGroup(props) {
 function Checkbox(props) {
   let {children} = props;
   let state = React.useContext(CheckboxGroupContext);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckboxGroupItem(props, state, ref);
 
   let isDisabled = state.isDisabled || props.isDisabled;
