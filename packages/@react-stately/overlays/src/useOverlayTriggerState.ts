@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {useCallback} from 'react';
 import {OverlayTriggerProps} from '@react-types/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useCallback} from "react";
 
 export interface OverlayTriggerState {
   /** Whether the overlay is currently open. */
@@ -36,15 +36,15 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
 
   const open = useCallback(() => {
     setOpen(true);
-  }, [setOpen])
+  }, [setOpen]);
 
   const close = useCallback(() => {
     setOpen(false);
-  }, [setOpen])
+  }, [setOpen]);
 
   const toggle = useCallback(() => {
     setOpen(!isOpen);
-  }, [setOpen, isOpen])
+  }, [setOpen, isOpen]);
 
   return {
     isOpen,
