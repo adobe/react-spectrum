@@ -18,7 +18,7 @@ export const GroupContext = createContext<ContextValue<HTMLAttributes<HTMLElemen
 function Group(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
   return (
-    <div {...props} ref={ref}>
+    <div className="react-aria-Group" {...props} ref={ref}>
       {props.children}
     </div>
   );

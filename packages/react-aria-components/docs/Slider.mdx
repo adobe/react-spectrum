@@ -76,7 +76,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     grid-area: output;
   }
 
-  & .react-aria-SliderTrack {
+  .react-aria-SliderTrack {
     grid-area: track;
     position: relative;
 
@@ -89,9 +89,9 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     }
   }
 
-  & .react-aria-SliderThumb {
-    width: 20px;
-    height: 20px;
+  .react-aria-SliderThumb {
+    width: 1.429rem;
+    height: 1.429rem;
     border-radius: 50%;
     background: var(--thumb-color);
     border: 2px solid var(--spectrum-alias-background-color-default);
@@ -109,7 +109,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     flex-direction: column;
     width: 300px;
 
-    & .react-aria-SliderTrack {
+    .react-aria-SliderTrack {
       height: 30px;
       width: 100%;
 
@@ -121,7 +121,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       }
     }
 
-    & .react-aria-SliderThumb {
+    .react-aria-SliderThumb {
       top: 50%;
     }
   }
@@ -135,7 +135,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       display: none;
     }
 
-    & .react-aria-SliderTrack {
+    .react-aria-SliderTrack {
       width: 30px;
       height: 100%;
 
@@ -147,13 +147,13 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       }
     }
 
-    & .react-aria-SliderThumb {
+    .react-aria-SliderThumb {
       left: 50%;
     }
   }
 
   &[data-disabled] {
-    & .react-aria-SliderTrack {
+    .react-aria-SliderTrack {
       opacity: 0.4;
     }
   }

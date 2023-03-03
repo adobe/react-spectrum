@@ -63,6 +63,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
   --button-background: var(--spectrum-global-color-gray-50);
   --button-backgound-pressed: var(--spectrum-global-color-gray-100);
   --button-border: var(--spectrum-global-color-gray-400);
+  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
   --text-color-invalid: var(--spectrum-global-color-red-600);
@@ -71,6 +72,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
   --invalid-color: var(--spectrum-global-color-static-red-600);
 
   width: fit-content;
+  max-width: 100%;
   color: var(--text-color);
 
   & header {
@@ -85,16 +87,18 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       font-size: 1.375rem;
     }
 
-    & button {
+    .react-aria-Button {
       background: var(--button-background);
       border: 1px solid var(--button-border);
+      color: var(--text-color);
       box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
       border-radius: 4px;
       appearance: none;
       vertical-align: middle;
       font-size: 1rem;
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
       text-align: center;
       margin: 0;
       outline: none;
@@ -107,6 +111,11 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       &[data-pressed] {
         background: var(--button-backgound-pressed);
       }
+
+      &:disabled {
+        border-color: var(--button-border-disabled);
+        color: var(--text-color-disabled);
+      }
     }
   }
 
@@ -114,7 +123,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     margin: 0 -4px;
   }
 
-  & .react-aria-CalendarCell {
+  .react-aria-CalendarCell {
     width: 2rem;
     line-height: 2rem;
     text-align: center;
@@ -142,7 +151,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     }
 
     &[data-disabled] {
-      color: var(--text-color-disabled); 
+      color: var(--text-color-disabled);
     }
 
     &[data-unavailable] {
@@ -156,7 +165,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     }
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--text-color-invalid);
   }
@@ -169,6 +178,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     --highlight-background: Highlight;
     --highlight-foreground: HighlightText;
     --button-border: ButtonBorder;
+    --button-border-disabled: GrayText;
     --button-background: ButtonFace;
     --button-backgound-pressed: ButtonFace;
     --text-color: ButtonText;
@@ -357,7 +367,7 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
     <Heading />
     <Button slot="next">▶</Button>
   </header>
-  <div style={{display: 'flex', gap: 30}}>
+  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
     <CalendarGrid>
       {date => <CalendarCell date={date} />}
     </CalendarGrid>

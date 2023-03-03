@@ -78,19 +78,19 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 .react-aria-DatePicker {
   --text-color-invalid: var(--spectrum-global-color-red-600);
 
-  & [role=group] {
+  .react-aria-Group {
     display: flex;
     width: fit-content;
     align-items: center;
   }
 
-  & button {
+  .react-aria-Button {
     background: slateblue;
     color: white;
     border-radius: 4px;
     border: none;
     appearance: none;
-    margin-left: -27px;
+    margin-left: -1.929rem;
     width: 1.429rem;
     height: 1.429rem;
     padding: 0;
@@ -105,11 +105,11 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--text-color-invalid);
   }
@@ -132,7 +132,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   background: var(--field-background);
   width: fit-content;
   min-width: 150px;
-  
+
   &:focus-within {
     border-color: var(--highlight-background);
     box-shadow: 0 0 0 1px var(--highlight-background);
@@ -172,20 +172,11 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   }
 }
 
-.react-aria-Popover {
-  overflow: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  padding: 1.25rem;
-}
-
 .react-aria-Calendar {
   --highlight-background: slateblue;
   --highlight-foreground: white;
   --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-background-pressed: var(--spectrum-global-color-gray-100);
   --button-border: var(--spectrum-global-color-gray-400);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
@@ -194,6 +185,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   --unavailable-color: var(--spectrum-global-color-red-600);
   --invalid-color: var(--spectrum-global-color-static-red-600);
 
+  width: fit-content;
   color: var(--text-color);
 
   & header {
@@ -208,16 +200,18 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       font-size: 1.375rem;
     }
 
-    & button {
+    .react-aria-Button {
       background: var(--button-background);
       border: 1px solid var(--button-border);
+      color: var(--text-color);
       box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
       border-radius: 4px;
       appearance: none;
       vertical-align: middle;
       font-size: 1rem;
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
       text-align: center;
       margin: 0;
       outline: none;
@@ -228,7 +222,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       }
 
       &[data-pressed] {
-        background: var(--button-backgound-pressed);
+        background: var(--button-background-pressed);
       }
     }
   }
@@ -237,7 +231,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     margin: 0 -4px;
   }
 
-  & .react-aria-CalendarCell {
+  .react-aria-CalendarCell {
     width: 2rem;
     line-height: 2rem;
     text-align: center;
@@ -265,7 +259,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
 
     &[data-disabled] {
-      color: var(--text-color-disabled); 
+      color: var(--text-color-disabled);
     }
 
     &[data-unavailable] {
@@ -279,9 +273,46 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--text-color-invalid);
+  }
+}
+
+.react-aria-Popover {
+  overflow: auto;
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  padding: 1.25rem;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -289,7 +320,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   .react-aria-DatePicker {
     --text-color-invalid: LinkText;
 
-    & button {
+    .react-aria-Button {
       forced-color-adjust: none;
 
       --focus-ring-color: Highlight;
@@ -582,7 +613,7 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `[role=group]` selector, or by adding a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by adding a custom `className`.
 
 ### DateInput
 

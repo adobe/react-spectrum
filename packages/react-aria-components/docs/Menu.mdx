@@ -64,6 +64,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 .react-aria-Button {
   background: var(--spectrum-global-color-gray-50);
   border: 1px solid var(--spectrum-global-color-gray-400);
+  color: var(--spectrum-alias-text-color);
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
@@ -71,7 +72,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 4px 12px;
+  padding: 0.286rem 0.857rem;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -88,8 +89,6 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 .react-aria-Menu {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --separator-color: var(--spectrum-global-color-gray-500);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
@@ -98,32 +97,29 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   overflow: auto;
   padding: 2px;
   margin: 0;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
   min-width: 150px;
   box-sizing: border-box;
+  outline: none;
 
-  & section:not(:first-child) {
+  .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  & section header {
-    font-size: 16px;
+  .react-aria-Section header {
+    font-size: 1.143rem;
     font-weight: bold;
-    padding: 0 8px;
+    padding: 0 0.714rem;
   }
 
-  & [role=separator] {
+  [role=separator] {
     height: 1px;
     background: var(--separator-color);
     margin: 2px 4px;
   }
 
-  & .react-aria-Item {
+  .react-aria-Item {
     margin: 2px;
-    padding: 4px 8px 4px 8px;
+    padding: 0.286rem 0.571rem;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -145,12 +141,12 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       color: var(--text-color-disabled);
     }
 
-    & [slot=label] {
+    [slot=label] {
       font-weight: bold;
       grid-area: label;
     }
 
-    & [slot=description] {
+    [slot=description] {
       font-size: small;
       grid-area: desc;
     }
@@ -182,17 +178,60 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   }
 }
 
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (forced-colors: active) {
   .react-aria-Menu {
     forced-color-adjust: none;
 
     --highlight-background: Highlight;
     --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
     --separator-color: ButtonBorder;
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
+  }
+
+  .react-aria-Popover {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
   }
 }
 ```
@@ -446,7 +485,7 @@ function MyItem(props) {
 ```css
 .my-item {
   margin: 2px;
-  padding: 4px 8px 4px 8px;
+  padding: 0.286rem 0.571rem;
   border-radius: 6px;
   outline: none;
   cursor: default;

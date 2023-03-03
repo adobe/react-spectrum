@@ -67,12 +67,12 @@ import {TextField, Label, Input} from 'react-aria-components';
   width: fit-content;
 
   & input {
-    padding: 4px;
+    padding: 0.286rem;
     margin: 0;
     border: 1px solid var(--field-border);
     border-radius: 6px;
     background: var(--field-background);
-    font-size: 16px;
+    font-size: 1.143rem;
     color: var(--text-color);
 
     &[aria-invalid] {
@@ -91,11 +91,11 @@ import {TextField, Label, Input} from 'react-aria-components';
     }
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--invalid-color);
   }

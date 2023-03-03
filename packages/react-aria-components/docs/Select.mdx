@@ -76,7 +76,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
   --focus-ring-color: slateblue;
 
-  & button {
+  .react-aria-Button {
     color: var(--text-color);
     background: var(--spectrum-global-color-gray-50);
     border: 1px solid var(--border-color);
@@ -85,7 +85,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     appearance: none;
     vertical-align: middle;
     font-size: 1.072rem;
-    padding: 4px 4px 4px 8px;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     margin: 0;
     outline: none;
     display: flex;
@@ -107,7 +107,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     }
   }
 
-  & .react-aria-SelectValue {
+  .react-aria-SelectValue {
     &[data-placeholder] {
       font-style: italic;
       color: var(--spectrum-global-color-gray-700);
@@ -129,11 +129,11 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     font-size: 0.857rem;
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--spectrum-global-color-red-600);
   }
@@ -150,28 +150,21 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   max-height: inherit;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
   outline: none;
-  min-width: var(--button-width);
-  max-width: 250px;
-  box-sizing: border-box;
 
-  & section:not(:first-child) {
+  .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  & section header {
-    font-size: 16px;
+  .react-aria-Section header {
+    font-size: 1.143rem;
     font-weight: bold;
-    padding: 0 8px 0 22px;
+    padding: 0 0.571rem 0 1.571rem;
   }
 
-  & .react-aria-Item {
+  .react-aria-Item {
     margin: 2px;
-    padding: 4px 8px 4px 22px;
+    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -204,13 +197,55 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       color: var(--text-color-disabled);
     }
 
-    & [slot=label] {
+    [slot=label] {
       font-weight: bold;
     }
 
-    & [slot=description] {
+    [slot=description] {
       font-size: small;
     }
+  }
+}
+
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  min-width: var(--button-width);
+  max-width: 250px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 

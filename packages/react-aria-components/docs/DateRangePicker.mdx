@@ -91,11 +91,15 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 
   color: var(--text-color);
 
-  & [role=group] {
+  .react-aria-Group {
     display: flex;
     align-items: center;
     width: fit-content;
     min-width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
     padding: 2px 2px 2px 8px;
     border: 1px solid var(--field-border);
     border-radius: 6px;
@@ -107,16 +111,16 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     }
   }
 
-  & [slot=start] + span {
+  [slot=start] + span {
     padding: 0 4px;
   }
 
-  & [slot=end] {
+  [slot=end] {
     margin-right: 2rem;
     flex: 1;
   }
 
-  & button {
+  .react-aria-Button {
     background: slateblue;
     color: white;
     border-radius: 4px;
@@ -130,18 +134,21 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     font-size: 0.857rem;
     outline: none;
     box-sizing: content-box;
+    flex-shrink: 0;
     border: 2px solid var(--page-background);
+    position: sticky;
+    right: 0;
 
     &[data-focus-visible] {
       box-shadow: 0 0 0 2px slateblue;
     }
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--text-color-invalid);
   }
@@ -183,20 +190,11 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   }
 }
 
-.react-aria-Popover {
-  overflow: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  padding: 1.25rem;
-}
-
 .react-aria-RangeCalendar {
   --highlight-background: slateblue;
   --highlight-foreground: white;
   --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-background-pressed: var(--spectrum-global-color-gray-100);
   --button-border: var(--spectrum-global-color-gray-400);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
@@ -220,16 +218,18 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       font-size: 1.375rem;
     }
 
-    & button {
+    .react-aria-Button {
       background: var(--button-background);
       border: 1px solid var(--button-border);
+      color: var(--text-color);
       box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
       border-radius: 4px;
       appearance: none;
       vertical-align: middle;
       font-size: 1rem;
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
       text-align: center;
       margin: 0;
       outline: none;
@@ -254,7 +254,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     }
   }
 
-  & .react-aria-CalendarCell {
+  .react-aria-CalendarCell {
     width: 2.286rem;
     line-height: 2.286rem;
     text-align: center;
@@ -295,7 +295,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     }
 
     &[data-disabled] {
-      color: var(--text-color-disabled); 
+      color: var(--text-color-disabled);
     }
 
     &[data-unavailable] {
@@ -312,6 +312,43 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   & [slot=errorMessage] {
     font-size: 12px;
     color: var(--text-color-invalid);
+  }
+}
+
+.react-aria-Popover {
+  overflow: auto;
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  padding: 1.25rem;
+
+  &[data-placement=top] {
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    --origin: translateY(-8px);
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -606,7 +643,7 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `[role=group]` selector, or by adding a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by adding a custom `className`.
 
 ### DateInput
 

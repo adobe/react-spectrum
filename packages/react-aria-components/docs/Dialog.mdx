@@ -88,7 +88,10 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 .react-aria-ModalOverlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  height: var(--visual-viewport-height);
+  width: 100vw;
   background: rgba(0 0 0 / .5);
   display: flex;
   align-items: center;
@@ -141,6 +144,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   background: var(--spectrum-global-color-gray-50);
   border: 1px solid var(--spectrum-global-color-gray-400);
   border-radius: 4px;
+  color: var(--spectrum-alias-text-color);
   appearance: none;
   vertical-align: middle;
   font-size: 1.2rem;
@@ -171,7 +175,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
   & label {
     display: inline-block;
-    width: 75px;
+    width: 5.357rem;
+  }
+
+  & input {
+    font-size: 16px;
   }
 }
 ```

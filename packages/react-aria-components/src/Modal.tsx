@@ -12,7 +12,7 @@
 
 import {AriaModalOverlayProps, Overlay, useModalOverlay} from 'react-aria';
 import {DOMAttributes} from '@react-types/shared';
-import {mergeRefs, useObjectRef} from '@react-aria/utils';
+import {mergeRefs, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
@@ -61,7 +61,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  
+
   return (
     <ModalOverlay
       isDismissable={isDismissable}
@@ -130,12 +130,19 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
       isExiting: props.isExiting
     }
   });
-  
+
+  let viewport = useViewportSize();
+  let style = {
+    ...renderProps.style,
+    '--visual-viewport-height': viewport.height + 'px'
+  };
+
   return (
     <Overlay>
       <div
         {...underlayProps}
         {...renderProps}
+        style={style}
         ref={props.overlayRef}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
@@ -167,7 +174,7 @@ function ModalContent(props: ModalContentProps) {
   });
 
   return (
-    <div 
+    <div
       {...modalProps}
       {...renderProps}
       ref={ref}

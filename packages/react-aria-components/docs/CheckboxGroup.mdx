@@ -75,13 +75,13 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 .react-aria-CheckboxGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.571rem;
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--spectrum-global-color-red-600);
   }
@@ -99,13 +99,13 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  gap: 0.571rem;
+  font-size: 1.143rem;
   color: var(--label-color);
 
-  & .checkbox {
-    width: 16px;
-    height: 16px;
+  .checkbox {
+    width: 1.143rem;
+    height: 1.143rem;
     border: 2px solid var(--deselected-color);
     border-radius: 4px;
     transition: all 200ms;
@@ -115,8 +115,8 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
   }
 
   & svg {
-    width: 14px;
-    height: 14px;
+    width: 1rem;
+    height: 1rem;
     fill: none;
     stroke: var(--checkmark-color);
     stroke-width: 3px;
@@ -131,7 +131,7 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 
   &[data-selected],
   &[data-indeterminate] {
-    & .checkbox {
+    .checkbox {
       border-color: var(--selected-color);
       background: var(--selected-color);
     }
@@ -147,7 +147,7 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
   }
 
   &[data-validation-state=invalid] {
-    & .checkbox {
+    .checkbox {
       border-color: var(--invalid-color);
     }
 
@@ -157,7 +157,7 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 
     &[data-selected],
     &[data-indeterminate] {
-      & .checkbox {
+      .checkbox {
         background: var(--invalid-color);
       }
 

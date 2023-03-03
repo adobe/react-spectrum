@@ -75,7 +75,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     font-size: 1.072rem;
     border: 1px solid var(--spectrum-global-color-gray-400);
     border-radius: 6px;
-    padding: 4px 2rem 4px 8px;
+    padding: 0.286rem 2rem 0.286rem 0.571rem;
     vertical-align: middle;
 
     &[aria-invalid] {
@@ -89,7 +89,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     }
   }
 
-  & button {
+  .react-aria-Button {
     background: slateblue;
     color: white;
     border-radius: 4px;
@@ -104,11 +104,11 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
     outline: none;
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--spectrum-global-color-red-600);
   }
@@ -132,19 +132,19 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
   width: var(--combobox-width);
   box-sizing: border-box;
 
-  & section:not(:first-child) {
+  .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  & section header {
-    font-size: 16px;
+  .react-aria-Section header {
+    font-size: 1.143rem;
     font-weight: bold;
-    padding: 0 8px 0 22px;
+    padding: 0 0.571rem 0 1.571rem;
   }
 
-  & .react-aria-Item {
+  .react-aria-Item {
     margin: 2px;
-    padding: 4px 8px 4px 22px;
+    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -177,11 +177,11 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       color: var(--text-color-disabled);
     }
 
-    & [slot=label] {
+    [slot=label] {
       font-weight: bold;
     }
 
-    & [slot=description] {
+    [slot=description] {
       font-size: small;
     }
   }

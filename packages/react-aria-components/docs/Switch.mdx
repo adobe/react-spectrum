@@ -65,24 +65,24 @@ import {Switch} from 'react-aria-components';
 
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  gap: 0.571rem;
+  font-size: 1.143rem;
   color: var(--label-color);
 
-  & .indicator {
-    width: 28px;
-    height: 16px;
+  .indicator {
+    width: 2rem;
+    height: 1.143rem;
     border: 2px solid var(--deselected-color);
     background: var(--track-color);
-    border-radius: 16px;
+    border-radius: 1.143rem;
     transition: all 200ms;
 
     &:before {
       content: '';
       display: block;
-      margin: 2px;
-      width: 12px;
-      height: 12px;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
       background: var(--indicator-color);
       border-radius: 16px;
       transition: all 200ms;
@@ -98,7 +98,7 @@ import {Switch} from 'react-aria-components';
   }
 
   &[data-selected] {
-    & .indicator {
+    .indicator {
       border-color: var(--selected-color);
       background: var(--selected-color);
 
@@ -109,7 +109,7 @@ import {Switch} from 'react-aria-components';
     }
 
     &[data-pressed] {
-      & .indicator {
+      .indicator {
         border-color: var(--selected-color-pressed);
         background: var(--selected-color-pressed);
       }

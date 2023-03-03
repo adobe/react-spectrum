@@ -90,14 +90,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-  padding: 4px;
+  padding: 0.286rem;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--background-color);
   outline: none;
   border-spacing: 0;
 
-  & .react-aria-TableHeader {
+  .react-aria-TableHeader {
     &:after {
       content: '';
       display: table-row;
@@ -110,7 +110,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  & .react-aria-Column {
+  .react-aria-Column {
     &[colspan] {
       text-align: center;
     }
@@ -124,7 +124,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  & .react-aria-Row {
+  .react-aria-Row {
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -143,18 +143,18 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
 
     &[aria-selected=true] {
-      & .react-aria-Cell {
+      .react-aria-Cell {
         background: var(--highlight-background);
         color: var(--highlight-foreground);
       }
 
       &[data-focus-visible],
-      & .react-aria-Cell[data-focus-visible] {
+      .react-aria-Cell[data-focus-visible] {
         outline-color: var(--highlight-foreground);
         outline-offset: -4px;
       }
 
-      & .react-aria-Button {
+      .react-aria-Button {
         color: var(--highlight-foreground);
         --focus-ring-color: var(--highlight-foreground);
         --hover-highlight: rgb(255 255 255 / 0.1);
@@ -162,7 +162,11 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       }
     }
 
-    & .react-aria-Checkbox {
+    &[aria-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    .react-aria-Checkbox {
       --selected-color: white;
       --selected-color-pressed: #ddd;
       --checkmark-color: slateblue;
@@ -170,8 +174,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  & .react-aria-Cell,
-  & .react-aria-Column {
+  .react-aria-Cell,
+  .react-aria-Column {
     padding: 4px 8px;
     text-align: left;
     outline: none;
@@ -182,7 +186,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  & .react-aria-Cell {
+  .react-aria-Cell {
     &:first-child {
       border-radius: 6px 0 0 6px;
     }
@@ -194,12 +198,12 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    & .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell {
+    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    & .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell {
+    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
@@ -214,8 +218,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   --checkmark-color: white;
   --focus-ring-color: slateblue;
 
-  width: 14px;
-  height: 14px;
+  width: 1rem;
+  height: 1rem;
   border: 2px solid var(--deselected-color);
   border-radius: 4px;
   transition: all 200ms;
@@ -224,8 +228,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   justify-content: center;
 
   & svg {
-    width: 12px;
-    height: 12px;
+    width: 0.857rem;
+    height: 0.857rem;
     fill: none;
     stroke: var(--checkmark-color);
     stroke-width: 3px;
@@ -540,14 +544,12 @@ function MyCheckbox() {
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
+        <svg viewBox="0 0 18 18">
+          {isIndeterminate
+            ? <rect x={1} y={7.5} width={15} height={3} />
+            : <polyline points="1 9 7 14 15 4" />
+          }
+        </svg>
       )}
     </Checkbox>
   );

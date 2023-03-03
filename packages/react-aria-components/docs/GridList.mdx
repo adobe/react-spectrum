@@ -88,13 +88,12 @@ import {GridList, Item, Button} from 'react-aria-components';
   border-radius: 6px;
   background: var(--background-color);
   outline: none;
-  min-width: var(--button-width);
   max-width: 250px;
   max-height: 300px;
   box-sizing: border-box;
 
   & .react-aria-Item {
-    padding: 4px 8px 4px 8px;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -133,7 +132,7 @@ import {GridList, Item, Button} from 'react-aria-components';
     & [role=gridcell] {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.571rem;
       min-height: 28px;
     }
 
@@ -166,8 +165,8 @@ import {GridList, Item, Button} from 'react-aria-components';
   --checkmark-color: slateblue;
   --focus-ring-color: slateblue;
 
-  width: 14px;
-  height: 14px;
+  width: 1rem;
+  height: 1rem;
   border: 2px solid var(--deselected-color);
   border-radius: 4px;
   transition: all 200ms;
@@ -176,8 +175,8 @@ import {GridList, Item, Button} from 'react-aria-components';
   justify-content: center;
 
   & svg {
-    width: 12px;
-    height: 12px;
+    width: 0.857rem;
+    height: 0.857rem;
     fill: none;
     stroke: var(--checkmark-color);
     stroke-width: 3px;
@@ -228,8 +227,9 @@ import {GridList, Item, Button} from 'react-aria-components';
   line-height: 1.2em;
   margin: 0;
   outline: none;
-  padding: 4px 6px;
+  padding: 0.286rem 0.429rem;
   transition: background 200ms;
+  color: var(--spectrum-alias-text-color);
   --focus-ring-color: slateblue;
   --hover-highlight: var(--spectrum-alias-highlight-hover);
   --active-highlight: var(--spectrum-alias-highlight-active);

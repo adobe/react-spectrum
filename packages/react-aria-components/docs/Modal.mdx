@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/overlays';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/listbox/docs/anatomy.svg';
+import Anatomy from '/packages/@react-aria/overlays/docs/modal-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -74,7 +74,10 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 ```css
 .react-aria-ModalOverlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--visual-viewport-height);
   background: rgba(0 0 0 / .5);
   display: flex;
   align-items: center;
@@ -140,6 +143,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   background: var(--spectrum-global-color-gray-50);
   border: 1px solid var(--spectrum-global-color-gray-400);
   border-radius: 4px;
+  color: var(--spectrum-alias-text-color);
   appearance: none;
   vertical-align: middle;
   font-size: 1.2rem;
@@ -170,7 +174,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
   & label {
     display: inline-block;
-    width: 75px;
+    width: 5.357rem;
+  }
+
+  & input {
+    font-size: 16px;
   }
 }
 ```
@@ -192,6 +200,8 @@ building fully accessible custom dialogs from scratch is very difficult and erro
 Note: `Modal` only provides the overlay itself. It should be combined with [Dialog](Dialog.html) to create fully accessible modal dialogs. Other overlays such as menus may also be placed in a modal overlay.
 
 ## Anatomy
+
+<Anatomy />
 
 A modal consists of an overlay container element, and an underlay. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
 
@@ -252,6 +262,15 @@ A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overr
 ### ModalOverlay
 
 By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` and place a `Modal` inside.
+
+The `--visual-viewport-height` CSS custom property will be set on the `ModalOverlay`, which you can use to set the height to account for the virtual keyboard on mobile.
+
+```css render=false
+.react-aria-ModalOverlay {
+  position: fixed;
+  height: var(--visual-viewport-height);
+}
+```
 
 This example also shows how to use a `Modal` to render other types of overlays such as a tray or drawer, as well as support for custom entry and exit animations.
 

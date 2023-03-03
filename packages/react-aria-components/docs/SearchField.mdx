@@ -76,12 +76,12 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
   & input {
     grid-area: input;
-    padding: 4px 24px 4px 4px;
+    padding: 0.286rem 1.714rem 0.286rem 0.286rem;
     margin: 0;
     border: 1px solid var(--field-border);
     border-radius: 6px;
     background: var(--field-background);
-    font-size: 16px;
+    font-size: 1.143rem;
 
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
@@ -100,12 +100,12 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     }
   }
 
-  & [slot=description] {
+  [slot=description] {
     grid-area: help;
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     grid-area: help;
     font-size: 12px;
     color: var(--invalid-color);
@@ -113,10 +113,14 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 
   & button {
     grid-area: button;
-    width: 16px;
-    height: 16px;
-    border-radius: 16px;
-    margin-left: -20px;
+    width: 1.143rem;
+    height: 1.143rem;
+    border-radius: 1.143rem;
+    margin-left: -1.429rem;
+    font-size: 0.857rem;
+    line-height: 0.857rem;
+    vertical-align: middle;
+    text-align: center;
     background: gray;
     color: white;
     border: none;

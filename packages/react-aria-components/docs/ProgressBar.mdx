@@ -61,7 +61,7 @@ import {ProgressBar, Label} from 'react-aria-components';
   --bar-color: var(--spectrum-global-color-gray-400);
   --circle-color: var(--bar-color);
   --fill-color: slateblue;
-  
+
   display: grid;
   grid-template-areas: "label value"
                        "bar bar";
@@ -69,11 +69,11 @@ import {ProgressBar, Label} from 'react-aria-components';
   gap: 4px;
   width: 250px;
 
-  & .value {
+  .value {
     grid-area: value;
   }
 
-  & .bar {
+  .bar {
     grid-area: bar;
     background: var(--bar-color);
     height: 10px;
@@ -82,13 +82,13 @@ import {ProgressBar, Label} from 'react-aria-components';
     will-change: transform;
   }
 
-  & .fill {
+  .fill {
     background: var(--fill-color);
     height: 100%;
   }
 
   &:not([aria-valuenow]) {
-    & .fill {
+    .fill {
       width: 120px;
       border-radius: inherit;
       animation: indeterminate 1.5s infinite ease-in-out;
@@ -113,7 +113,7 @@ import {ProgressBar, Label} from 'react-aria-components';
     --circle-color: ButtonBorder;
     --fill-color: Highlight;
 
-    & .bar {
+    .bar {
       border: 1px solid ButtonBorder;
       box-sizing: border-box;
     }

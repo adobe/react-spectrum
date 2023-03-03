@@ -88,19 +88,19 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  gap: 0.571rem;
+  font-size: 1.143rem;
   color: var(--label-color);
 
   &:before {
     content: '';
     display: block;
-    width: 18px;
-    height: 18px;
+    width: 1.286rem;
+    height: 1.286rem;
     box-sizing: border-box;
-    border: 2px solid var(--deselected-color);
+    border: 0.143rem solid var(--deselected-color);
     background: var(--background-color);
-    border-radius: 18px;
+    border-radius: 1.286rem;
     transition: all 200ms;
   }
 
@@ -111,7 +111,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   &[data-selected] {
     &:before {
       border-color: var(--selected-color);
-      border-width: 6px;
+      border-width: 0.429rem;
     }
 
     &[data-pressed]:before {

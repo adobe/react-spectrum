@@ -71,24 +71,23 @@ import {ListBox, Item} from 'react-aria-components';
   border-radius: 6px;
   background: var(--background-color);
   outline: none;
-  min-width: var(--button-width);
   max-width: 250px;
   max-height: 300px;
   box-sizing: border-box;
 
-  & section:not(:first-child) {
+  .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
 
-  & section header {
-    font-size: 16px;
+  .react-aria-Section header {
+    font-size: 1.143rem;
     font-weight: bold;
-    padding: 0 8px;
+    padding: 0 0.714rem;
   }
 
-  & .react-aria-Item {
+  .react-aria-Item {
     margin: 2px;
-    padding: 4px 8px 4px 8px;
+    padding: 0.286rem 0.571rem;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -115,11 +114,11 @@ import {ListBox, Item} from 'react-aria-components';
       color: var(--text-color-disabled);
     }
 
-    & [slot=label] {
+    [slot=label] {
       font-weight: bold;
     }
 
-    & [slot=description] {
+    [slot=description] {
       font-size: small;
     }
   }
@@ -309,7 +308,6 @@ function MyItem(props) {
   border-radius: 6px;
   background: var(--page-background);
   outline: none;
-  min-width: var(--button-width);
   max-width: 250px;
   max-height: 300px;
   box-sizing: border-box;
@@ -319,7 +317,7 @@ function MyItem(props) {
   --highlight: #e70073;
 
   margin: 2px;
-  padding: 4px 8px 4px 8px;
+  padding: 0.286rem 0.571rem;
   border-radius: 6px;
   outline: none;
   cursor: default;

@@ -70,22 +70,24 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
 
   margin-bottom: 8px;
 
-  & [role=group] {
+  .react-aria-Group {
     display: flex;
     width: fit-content;
     border-radius: 4px;
   }
 
-  & button {
+  .react-aria-Button {
     background: var(--field-background);
     border: 1px solid var(--field-border);
     border-radius: 4px;
+    color: var(--text-color);
     appearance: none;
     vertical-align: middle;
     font-size: 1.4rem;
     width: 2.3rem;
     text-align: center;
     margin: 0;
+    padding: 0;
     outline: none;
 
     &[slot=decrement] {
@@ -105,19 +107,22 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
 
     &:disabled {
       border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
     }
   }
 
   & input {
     background: var(--field-background);
     border: 1px solid var(--field-border);
+    border-radius: 0;
     color: var(--text-color);
     margin: 0 -1px;
     z-index: 1;
     font-size: 1rem;
-    padding: 6px 8px;
+    padding: 0.429rem 0.571rem;
     outline: none;
     width: 6rem;
+    flex: 1;
 
     &:disabled {
       border-color: var(--field-border-disabled);
@@ -131,11 +136,11 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
     }
   }
 
-  & [slot=description] {
+  [slot=description] {
     font-size: 12px;
   }
 
-  & [slot=errorMessage] {
+  [slot=errorMessage] {
     font-size: 12px;
     color: var(--invalid-color);
   }
@@ -288,7 +293,7 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `[role=group]` selector, or by adding a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by adding a custom `className`.
 
 ### Input
 
