@@ -11,8 +11,8 @@
  */
 
 import {useCallback} from 'react';
-import {OverlayTriggerProps} from '@react-types/overlays';
 import {useControlledState} from '@react-stately/utils';
+import {OverlayTriggerProps} from '@react-types/overlays';
 
 export interface OverlayTriggerState {
   /** Whether the overlay is currently open. */
