@@ -119,7 +119,7 @@ function RangeCalendar(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(props, state, ref);
 
   return (
@@ -192,7 +192,7 @@ Finally, the `CalendarCell` component renders an individual cell in a calendar. 
 import {useCalendarCell} from '@react-aria/calendar';
 
 function CalendarCell({state, date}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     cellProps,
     buttonProps,
@@ -279,7 +279,7 @@ The `Button` component is used in the above example to navigate between months. 
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -408,7 +408,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -418,7 +417,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
 
   return <RangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
