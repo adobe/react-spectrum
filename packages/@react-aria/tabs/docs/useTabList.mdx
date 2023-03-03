@@ -95,10 +95,10 @@ import {useTabListState} from '@react-stately/tabs';
 
 function Tabs(props) {
   let state = useTabListState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {tabListProps} = useTabList(props, state, ref);
   return (
-    <div class={`tabs ${props.orientation || ''}`}>
+    <div className={`tabs ${props.orientation || ''}`}>
       <div {...tabListProps} ref={ref}>
         {[...state.collection].map((item) => (
           <Tab key={item.key} item={item} state={state} orientation={props.orientation} />
@@ -111,8 +111,8 @@ function Tabs(props) {
 
 function Tab({item, state, orientation}) {
   let {key, rendered} = item;
-  let ref = React.useRef();
-  let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
+  let ref = React.useRef(null);
+  let {tabProps} = useTab({key}, state, ref);
   return (
     <div {...tabProps} ref={ref}>
       {rendered}
@@ -121,7 +121,7 @@ function Tab({item, state, orientation}) {
 }
 
 function TabPanel({state, ...props}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {tabPanelProps} = useTabPanel(props, state, ref);
   return (
     <div {...tabPanelProps} ref={ref}>
