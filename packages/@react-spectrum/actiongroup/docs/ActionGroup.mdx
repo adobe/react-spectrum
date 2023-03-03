@@ -18,7 +18,6 @@ import packageData from '@react-spectrum/actiongroup/package.json';
 ```jsx import
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import Brush from '@spectrum-icons/workflow/Brush';
-import Edit from '@spectrum-icons/workflow/Edit';
 import RegionSelect from '@spectrum-icons/workflow/RegionSelect';
 import Select from '@spectrum-icons/workflow/Select';
 import {Flex} from '@react-spectrum/layout';
@@ -59,7 +58,7 @@ keywords: [toolbar, actiongroup, collections]
 
 ```tsx example
 function Example() {
-  let [action, setAction] = React.useState();
+  let [action, setAction] = React.useState(null);
 
   return (
     <>
@@ -172,8 +171,10 @@ See the `react-stately` [Selection docs](../react-stately/selection.html#selecte
 The `selectedKeys` prop can be used to make the selected state controlled.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['list']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
 
   return (
     <>
@@ -191,7 +192,7 @@ function Example() {
 Set `selectionMode` prop to `multiple` to allow more than one selection.
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['list']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['list']));
 
   return (
     <>
@@ -213,7 +214,7 @@ The `key` prop from the selected item will be passed into the callback.
 To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
 ```tsx example
 function Example() {
-  let [actionKey, setActionKey] = React.useState('');
+  let [actionKey, setActionKey] = React.useState<React.Key>('');
   return (
     <>
       <ActionGroup onAction={setActionKey}>

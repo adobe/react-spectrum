@@ -101,7 +101,7 @@ export function TimeField(props) {
     locale
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, fieldProps} = useTimeField(props, state, ref);
 
   return (
@@ -121,7 +121,7 @@ export function TimeField(props) {
 
 // Note: this component is the same as in the useDateField docs.
 function DateSegment({segment, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
@@ -255,7 +255,6 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 `useTimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `useTimeField` allows editing the time components while keeping the date fixed.
 
 ```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
 import {useDateFormatter} from '@react-aria/i18n';
 
 function Example() {
@@ -265,7 +264,7 @@ function Example() {
   return (
     <>
       <TimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date and time: {formatter.format(date.toDate())}</p>
     </>
   );
 }
