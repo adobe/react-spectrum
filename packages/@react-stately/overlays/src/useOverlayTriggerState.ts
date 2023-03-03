@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {useCallback} from 'react';
 
 export interface OverlayTriggerState {
   /** Whether the overlay is currently open. */
