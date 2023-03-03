@@ -355,16 +355,6 @@ describe('Tabs', function () {
     let mockCalls = [
       function () {
         return {
-          left: 0
-        };
-      },
-      function () {
-        return {
-          right: 0
-        };
-      },
-      function () {
-        return {
           left: 0,
           right: 100
         };
@@ -657,16 +647,6 @@ describe('Tabs', function () {
   it('disabled tabs cannot be selected via collapse picker', function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
-      function () {
-        return {
-          left: 0
-        };
-      },
-      function () {
-        return {
-          right: 0
-        };
-      },
       function () {
         return {
           left: 0,
