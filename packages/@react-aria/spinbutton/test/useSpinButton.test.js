@@ -22,6 +22,14 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');
@@ -147,5 +155,20 @@ describe('useSpinButton', function () {
     expect(announce).toHaveBeenCalledWith('−3 items', 'assertive');
     expect(el).toHaveAttribute('aria-valuenow', '-3');
     expect(el).toHaveAttribute('aria-valuetext', '−3 items');
+  });
+
+  it('should substitute a minus sign for parentheses signifying a negative textValue formatted using currencySign: "accounting"', function () {
+    let res = render(<Example value={-50} textValue="($50.00)" />);
+    let el = res.getByTestId('test');
+    expect(el).toHaveAttribute('aria-valuenow', '-50');
+    expect(el).toHaveAttribute('aria-valuetext', '−$50.00');
+    act(() => {el.focus();});
+
+    res.rerender(<Example value={-51} textValue="($51.00)" />);
+    act(() => {jest.runAllTimers();});
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith('−$51.00', 'assertive');
+    expect(el).toHaveAttribute('aria-valuenow', '-51');
+    expect(el).toHaveAttribute('aria-valuetext', '−$51.00');
   });
 });

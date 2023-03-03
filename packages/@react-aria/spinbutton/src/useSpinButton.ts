@@ -128,7 +128,15 @@ export function useSpinButton(
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  textValue =
+    textValue === '' ?
+    stringFormatter.format('Empty') :
+    (textValue || `${value}`)
+    .trim()
+    .replace('-', '\u2212')
+    // Replace negative value formatted using currencySign: 'accounting'
+    // with a value that can be announced using a minus sign.
+    .replace(/^\((.+)\)$/, '\u2212$1');
 
   useEffect(() => {
     if (isFocused.current) {
