@@ -399,7 +399,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     setIsResizing(false);
     propsOnResizeEnd?.(widths);
   }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
-  console.log('collection, layout', state.collection, layout)
+
   return (
     <TableContext.Provider value={{state, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
       <TableVirtualizer
@@ -1143,7 +1143,7 @@ function TableCell({cell}) {
 
 function TableSection({children, style, header, headerStyle, reusableView}) {
   let {state} = useTableContext();
-  let {rowGroupProps, rowProps, cellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
+  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
   let headerRowRef = useRef();
   useVirtualizerItem({
     reusableView: header,
@@ -1186,7 +1186,7 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
             )
           }>
           <div
-            {...cellProps}
+            {...gridCellProps}
             className={
               classNames(
                 styles,

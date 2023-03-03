@@ -27,7 +27,7 @@ export interface TableSectionAria {
   /** Props for the table section's grid row element. */
   rowProps: DOMAttributes,
   /** Props for the table section's grid cell element. */
-  cellProps: DOMAttributes
+  gridCellProps: DOMAttributes
 }
 
 /**
@@ -55,7 +55,7 @@ export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAr
       role: 'row',
       'aria-rowindex': rowIndex
     },
-    cellProps: {
+    gridCellProps: {
       id: headerId,
       role: 'rowheader',
       'aria-colspan': node.colspan,

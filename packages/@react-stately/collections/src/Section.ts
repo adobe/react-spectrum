@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+// TODO: make this generic if it will even still be a thing with the collection builder updates
+// We don't want table deps in stately/collection
+import {CollectionBuilderContext} from '@react-stately/table';
 import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
 import {SectionProps} from '@react-types/shared';
@@ -18,9 +21,8 @@ function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-li
   return null;
 }
 
-Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T>): Generator<PartialNode<T>> {
+Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
   let {children, title, items} = props;
-  // console.log('in section')
   yield {
     type: 'section',
     props: props,
@@ -50,6 +52,18 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
         });
 
         yield* items;
+      }
+    },
+    shouldInvalidate(newContext: CollectionBuilderContext<T>) {
+      // TODO: maybe I should create a new TableSection since this context is specific to table
+      if (newContext) {
+        // Invalidate section if the columns changed.
+        let shouldInvalidate = newContext.columns.length !== context.columns.length ||
+        newContext.columns.some((c, i) => c.key !== context.columns[i].key) ||
+        newContext.showSelectionCheckboxes !== context.showSelectionCheckboxes ||
+        newContext.selectionMode !== context.selectionMode;
+
+        return shouldInvalidate;
       }
     }
   };
