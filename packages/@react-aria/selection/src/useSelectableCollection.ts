@@ -14,6 +14,7 @@ import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '
 import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -356,14 +357,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
-    if (!isVirtualized && manager.focusedKey && scrollRef?.current) {
+    let modality = getInteractionModality();
+    if (!isVirtualized && manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
       let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
       if (element) {
         scrollIntoView(scrollRef.current, element);
-        scrollIntoViewport(element, {containingElement: ref.current});
+        if (modality === 'keyboard') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
-  }, [isVirtualized, scrollRef, manager.focusedKey, ref]);
+  }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
     onKeyDown,

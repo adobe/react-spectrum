@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/accordion",
-  "version": "3.0.0-alpha.17",
+  "version": "3.0.0-alpha.18",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/accordion": "3.0.0-alpha.15",
+    "@react-aria/accordion": "3.0.0-alpha.16",
     "@react-aria/focus": "^3.11.0",
     "@react-aria/i18n": "^3.7.0",
     "@react-aria/interactions": "^3.14.0",

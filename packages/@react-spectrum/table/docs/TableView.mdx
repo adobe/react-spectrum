@@ -308,6 +308,13 @@ See the docs for more information.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
 function AsyncTable() {
   let columns = [
     {name: 'Name', key: 'name'},
@@ -316,7 +323,7 @@ function AsyncTable() {
     {name: 'Birth Year', key: 'birth_year'}
   ];
 
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -402,6 +409,8 @@ be passed into the callback when the row is pressed, allowing you to update stat
 Here is how you would control selection for the above example.
 
 ```tsx example export=true
+import type {Selection} from '@adobe/react-spectrum';
+
 function PokemonTable(props) {
   let columns = [
     {name: 'Name', uid: 'name'},
@@ -416,7 +425,7 @@ function PokemonTable(props) {
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
 
   return (
     <TableView aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
@@ -510,12 +519,19 @@ This example performs client side sorting by passing a `sort` function to the [u
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
-import { useCollator } from '@react-aria/i18n';
+import {useCollator} from '@adobe/react-spectrum';
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
 
 function AsyncSortTable() {
   let collator = useCollator({numeric: true});
 
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal}) {
       let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
       let json = await res.json();
@@ -988,7 +1004,14 @@ Nested columns can also be defined dynamically using the function syntax and the
 The following example is the same as the example above, but defined dynamically.
 
 ```tsx example
-let columns = [
+interface ColumnDefinition {
+  name: string,
+  key: string,
+  children?: ColumnDefinition[],
+  isRowHeader?: boolean
+}
+
+let columns: ColumnDefinition[] = [
   {name: 'Name', key: 'name', children: [
     {name: 'First Name', key: 'first', isRowHeader: true},
     {name: 'Last Name', key: 'last', isRowHeader: true}
