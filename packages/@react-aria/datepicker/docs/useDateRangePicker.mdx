@@ -93,7 +93,7 @@ import {DateField, Popover, Dialog, RangeCalendar, Button} from 'your-component-
 
 function DateRangePicker(props) {
   let state = useDateRangePickerState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, groupProps, startFieldProps, endFieldProps, buttonProps, dialogProps, calendarProps} = useDateRangePicker(props, state, ref);
 
   return (
@@ -135,7 +135,7 @@ The `Button` component is used in the above example to trigger the calendar popo
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -163,7 +163,7 @@ function DateField(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, fieldProps} = useDateField(props, state, ref);
 
   return (
@@ -179,7 +179,7 @@ function DateField(props) {
 }
 
 function DateSegment({segment, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
@@ -256,11 +256,17 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let popoverRef = React.useRef(null);
   let {popoverProps, underlayProps} = usePopover({
     ...props,
     popoverRef
@@ -296,10 +302,16 @@ The `Dialog` component is rendered within the `Popover` component. It is built u
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaDialogProps} from '@react-aria/dialog';
 import {useDialog} from '@react-aria/dialog';
 
-function Dialog({title, children, ...props}) {
-  let ref = React.useRef();
+interface DialogProps extends AriaDialogProps {
+  title?: React.ReactNode,
+  children: React.ReactNode
+}
+
+function Dialog({title, children, ...props}: DialogProps) {
+  let ref = React.useRef(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
@@ -327,7 +339,7 @@ The `RangeCalendar` component implements the month grid shown within the `DateRa
 ```tsx example export=true render=false
 import {useRangeCalendarState} from '@react-stately/calendar';
 import {useRangeCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
-import {createCalendar, startOfWeek, getWeeksInMonth} from '@internationalized/date';
+import {createCalendar, getWeeksInMonth} from '@internationalized/date';
 
 function RangeCalendar(props) {
   let {locale} = useLocale();
@@ -337,7 +349,7 @@ function RangeCalendar(props) {
     createCalendar
   });
 
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(props, state, ref);
 
   return (
@@ -387,7 +399,7 @@ function CalendarGrid({state, ...props}) {
 }
 
 function CalendarCell({state, date}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     cellProps,
     buttonProps,
@@ -668,7 +680,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -678,7 +689,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
   let [value, setValue] = React.useState(null);
   let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);

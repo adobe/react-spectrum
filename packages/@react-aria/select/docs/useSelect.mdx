@@ -140,7 +140,7 @@ function Select(props) {
   let state = useSelectState(props);
 
   // Get props for child elements from useSelect
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     labelProps,
     triggerProps,
@@ -208,11 +208,17 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let popoverRef = React.useRef(null);
   let {popoverProps, underlayProps} = usePopover({
     ...props,
     popoverRef
@@ -226,7 +232,7 @@ function Popover({children, state, ...props}) {
         ref={popoverRef}
         style={{
           ...popoverProps.style,
-          background: 'lightgray',
+          background: 'var(--page-background)',
           border: '1px solid gray'
         }}>
         <DismissButton onDismiss={state.close} />
@@ -253,7 +259,7 @@ They can also be shared with other components like a [ComboBox](useComboBox.html
 import {useListBox, useOption} from '@react-aria/listbox';
 
 function ListBox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxRef = ref, state} = props;
   let {listBoxProps} = useListBox(props, state, listBoxRef);
 
@@ -280,7 +286,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;
