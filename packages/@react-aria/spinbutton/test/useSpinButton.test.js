@@ -22,14 +22,6 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');
@@ -165,7 +157,6 @@ describe('useSpinButton', function () {
     act(() => {el.focus();});
 
     res.rerender(<Example value={-51} textValue="($51.00)" />);
-    act(() => {jest.runAllTimers();});
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('−$51.00', 'assertive');
     expect(el).toHaveAttribute('aria-valuenow', '-51');
