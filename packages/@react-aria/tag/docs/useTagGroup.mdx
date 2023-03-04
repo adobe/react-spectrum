@@ -69,6 +69,10 @@ onto the appropriate element:
   <InterfaceType properties={docs.links[docs.exports.useTag.return.id].properties} />
 </TypeContext.Provider>
 
+In order to be correctly identified to assistive technologies and enable proper keyboard navigation, the tag group should use `gridProps` on its outer container.
+
+Each individual tag should use `rowProps` on its outer container, and use `gridCellProps` on an inner container.
+
 ## Example
 
 ```tsx example export=true
@@ -86,16 +90,16 @@ function TagGroup(props) {
 
   let state = useTagGroupState(props);
   let {
-    tagGroupProps,
+    gridProps,
     labelProps,
     descriptionProps,
     errorMessageProps
   } = useTagGroup(props, state, ref);
 
   return (
-    <div {...tagGroupProps} ref={ref} className="tag-group">
+    <div ref={ref} className="tag-group">
       <div {...labelProps}>{label}</div>
-      <div className="tags">
+      <div {...gridProps}>
         {[...state.collection].map((item) => (
           <Tag
             {...item.props}
@@ -130,7 +134,7 @@ function Tag(props) {
     within: true
   });
 
-  let { clearButtonProps, labelProps, tagProps, tagRowProps } = useTag(
+  let { clearButtonProps, labelProps, gridCellProps, rowProps } = useTag(
     { ...props, isFocused, item, allowsRemoving, onRemove },
     state,
     ref
@@ -139,11 +143,10 @@ function Tag(props) {
   return (
     <span
       ref={ref}
-      {...tagRowProps}
+      {...rowProps}
       {...focusProps}
-      className="tag-item"
     >
-      <span {...tagProps} {...labelProps}>{item.rendered}</span>
+      <span {...gridCellProps} {...labelProps}>{item.rendered}</span>
       {allowsRemoving && 
         <Button {...clearButtonProps}>❎</Button>}
     </span>
@@ -172,12 +175,12 @@ function Tag(props) {
   margin: 5px 0;
 }
 
-.tags {
+.tag-group [role="grid"] {
   display: flex;
   flex-wrap: wrap;
 }
 
-.tag-item {
+.tag-group [role="row"] {
   display: flex;
   align-items: center;
   border: 1px solid gray;
@@ -186,11 +189,11 @@ function Tag(props) {
   margin: 2px;
 }
 
-.tag-item span {
+.tag-group [role="gridcell"] {
   margin: 0 5px;
 }
 
-.tag-item button {
+.tag-group [role="row"] button {
   background: none;
   border: none;
 }
