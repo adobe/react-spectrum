@@ -130,15 +130,10 @@ export function useSpinButton(
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
   textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
 
-  const animationFrameId = useRef<number>(null);
   useEffect(() => {
     if (isFocused.current) {
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-        animationFrameId.current = null;
-        clearAnnouncer('assertive');
-      }
-      animationFrameId.current = requestAnimationFrame(() => announce(textValue, 'assertive'));
+      clearAnnouncer('assertive');
+      announce(textValue, 'assertive');
     }
   }, [textValue]);
 

@@ -22,14 +22,6 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');
@@ -124,14 +116,12 @@ describe('useSpinButton', function () {
     act(() => {el.focus();});
 
     res.rerender(<Example value={3} />);
-    act(() => {jest.runAllTimers();});
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('3', 'assertive');
 
     act(() => {el.blur();});
 
     res.rerender(<Example value={4} />);
-    act(() => {jest.runAllTimers();});
     expect(announce).toHaveBeenCalledTimes(1);
   });
 
@@ -141,7 +131,6 @@ describe('useSpinButton', function () {
     act(() => {el.focus();});
 
     res.rerender(<Example value={3} textValue="3 items" />);
-    act(() => {jest.runAllTimers();});
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('3 items', 'assertive');
   });
@@ -154,7 +143,6 @@ describe('useSpinButton', function () {
     act(() => {el.focus();});
 
     res.rerender(<Example value={-3} textValue="-3 items" />);
-    act(() => {jest.runAllTimers();});
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('−3 items', 'assertive');
     expect(el).toHaveAttribute('aria-valuenow', '-3');
