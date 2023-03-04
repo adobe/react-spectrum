@@ -83,3 +83,6 @@ export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
+
+export type {DateValue, DateRange, TimeValue} from 'react-aria';
+export type {Selection} from 'react-stately';

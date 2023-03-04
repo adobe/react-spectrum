@@ -15,11 +15,14 @@ import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Co
 import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {ListState, useListState} from 'react-stately';
-import {Node} from '@react-types/shared';
+import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior
+}
 
 export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLUListElement>>(null);
 const InternalGridListContext = createContext<ListState<unknown>>(null);
@@ -92,6 +95,7 @@ function GridListItem({item}) {
   let props: ItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {

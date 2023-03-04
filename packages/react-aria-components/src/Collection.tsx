@@ -676,7 +676,9 @@ export interface ItemRenderProps {
   selectionBehavior: SelectionBehavior
 }
 
-export interface ItemProps<T> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {}
+export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
+  id?: Key
+}
 
 export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   // HACK: the `multiple` prop is special in that React will pass it through as a property rather
@@ -688,7 +690,11 @@ export function Item<T extends object>(props: ItemProps<T>): JSX.Element {
   return <item multiple={{...props, rendered: props.children}} />;
 }
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {}
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children'>, DOMProps {
+  id?: Key,
+  /** Static child items or a function to render children. */
+  children?: ReactNode | ((item: T) => ReactElement)
+}
 
 export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
   let children = useCachedChildren(props);

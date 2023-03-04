@@ -274,7 +274,9 @@ If you will use a Popover in multiple places in your app, you can wrap all of th
 This example wraps `Popover` and all of its children together into a single component. Since the `Dialog` is built in, this means it can't be used for components like Select, Menu, and ComboBox. Exclude the dialog if your popover will be reused in these components.
 
 ```tsx example export=true
-function MyPopover({children, ...props}) {
+import type {PopoverProps} from 'react-aria-components';
+
+function MyPopover({children, ...props}: PopoverProps) {
   return (
     <Popover {...props}>
       <OverlayArrow>

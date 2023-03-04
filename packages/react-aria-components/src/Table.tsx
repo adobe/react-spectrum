@@ -7,7 +7,7 @@ import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
 import {Provider, RenderProps, SlotProps, StyleProps, useRenderProps} from './utils';
-import React, {createContext, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {createContext, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {TableState, useTableState} from 'react-stately';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -165,11 +165,7 @@ export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, Co
   onCellAction?: (key: Key) => void
 }
 
-/**
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
- */
-export function Table<T extends object>(props: TableProps<T>) {
+function Table<T extends object>(props: TableProps<T>) {
   let initialCollection = useMemo(() => new TableCollection<T>(), []);
   let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
@@ -239,6 +235,13 @@ export function Table<T extends object>(props: TableProps<T>) {
   );
 }
 
+/**
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
+ */
+const _Table = forwardRef(Table);
+export {_Table as Table};
+
 export interface TableOptionsContextValue {
   /** The type of selection that is allowed in the collection. */
   selectionMode: SelectionMode,
@@ -305,7 +308,7 @@ export interface ColumnRenderProps {
   sortDirection: SortDirection | null
 }
 
-export interface ColumnProps<T> extends RenderProps<ColumnRenderProps> {
+export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
   id?: Key,
   /** Rendered contents of the column if `children` contains child columns. */
   title?: ReactNode,

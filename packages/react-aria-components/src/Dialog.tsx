@@ -23,7 +23,12 @@ export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
+interface DialogRenderProps {
+  close: () => void
+}
+
 export interface DialogProps extends AriaDialogProps, DOMProps, SlotProps {
+  children: ReactNode | ((opts: DialogRenderProps) => ReactNode),
   onClose?: () => void
 }
 

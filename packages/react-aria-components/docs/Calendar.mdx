@@ -382,9 +382,14 @@ If you will use a Calendar in multiple places in your app, you can wrap all of t
 This example also shows how to use the `errorMessage` slot to render help text in case of a validation error ([see below for details](#error-message)).
 
 ```tsx example export=true
+import type {CalendarProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyCalendar({errorMessage, ...props}) {
+interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
+  errorMessage?: string
+}
+
+function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarProps<T>) {
   return (
     <Calendar {...props}>
       <header>
@@ -468,7 +473,7 @@ The below example displays a `Calendar` in the Hindi language, using the Indian 
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [date, setDate] = React.useState(null);
+  let [date, setDate] = React.useState<DateValue>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyCalendar aria-label="Date" value={date} onChange={setDate} />

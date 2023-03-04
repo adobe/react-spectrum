@@ -183,6 +183,7 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
   let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {

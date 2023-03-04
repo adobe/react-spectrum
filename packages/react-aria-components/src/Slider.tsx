@@ -19,7 +19,7 @@ import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-export interface SliderProps extends AriaSliderProps, RenderProps<SliderState>, SlotProps {
+export interface SliderProps<T = number | number[]> extends AriaSliderProps<T>, RenderProps<SliderState>, SlotProps {
   /**
    * The display format of the value label.
    */
@@ -49,7 +49,7 @@ export interface SliderRenderProps {
   isDisabled: boolean
 }
 
-function Slider(props: SliderProps, ref: ForwardedRef<HTMLDivElement>) {
+function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);

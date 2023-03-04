@@ -462,9 +462,17 @@ If you will use a ComboBox in multiple places in your app, you can wrap all of t
 This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
+import type {ComboBoxProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyComboBox({label, description, errorMessage, children, ...props}) {
+interface MyComboBoxProps<T extends object> extends ComboBoxProps<T> {
+  label?: string,
+  description?: string | null,
+  errorMessage?: string | null,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MyComboBox<T extends object>({label, description, errorMessage, children, ...props}: MyComboBoxProps<T>) {
   return (
     <ComboBox {...props}>
       <Label>{label}</Label>
@@ -483,7 +491,7 @@ function MyComboBox({label, description, errorMessage, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -565,7 +573,7 @@ function Example() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
-  let [majorId, setMajorId] = React.useState();
+  let [majorId, setMajorId] = React.useState<React.Key | null>(null);
 
   return (
     <>
@@ -791,7 +799,7 @@ function ControlledComboBox() {
   let onInputChange = (value) => {
     setFieldState(prevState => ({
       inputValue: value,
-      selectedKey: value === '' ? null : prevState.selectedKey,
+      selectedKey: value === '' ? '' : prevState.selectedKey,
       items: optionList.filter(item => startsWith(item.name, value))
     }));
   };
@@ -875,8 +883,12 @@ of a ComboBox supporting those features.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://swapi.py4e.com/api/people/?search=${filterText}`,
@@ -908,7 +920,7 @@ The `description` slot can be used to associate additional help text with a Comb
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },
