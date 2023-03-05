@@ -55,7 +55,7 @@ describe('useTooltipTriggerState', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
@@ -96,10 +96,14 @@ describe('useTooltipTriggerState', function () {
       fireEvent.mouseLeave(button);
       fireEvent.mouseMove(button);
 
+      // run half of the way through the timer and confirm that it is still open
+      act(() => jest.advanceTimersByTime(closeDelay / 2));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+
       // run the rest of the way through the timer and confirm that it has closed
       // Note that closeDelay is less than the default close time of 500ms
       act(() => jest.advanceTimersByTime(closeDelay / 2));
-      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
     it('closes with a custom close delay more than the default', () => {
@@ -136,7 +140,7 @@ describe('useTooltipTriggerState', function () {
 
       // run the rest of the way through the timer and confirm that it has closed
       // Note that closeDelay is more than the default close time of 500ms
-      act(() => jest.advanceTimersByTime(closeDelay / 2));
+      act(() => jest.advanceTimersByTime(closeDelay - TOOLTIP_COOLDOWN));
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
     });
 
