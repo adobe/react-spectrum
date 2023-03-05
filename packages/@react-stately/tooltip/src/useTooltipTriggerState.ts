@@ -101,7 +101,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
         delete tooltips[id];
         globalCooldownTimeout = null;
         globalWarmedUp = false;
-      }, closeDelay);
+      }, Math.max(TOOLTIP_COOLDOWN, closeDelay));
     }
   };
 
