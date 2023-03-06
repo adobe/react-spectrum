@@ -87,10 +87,11 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let {styleProps} = useStyleProps(props);
 
   let {size, borderWidth, arrowRef} = useArrowSize();
+  const borderRadius = usePopoverBorderRadius(ref);
   let borderDiagonal = borderWidth * ROOT_2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
-  let arrowTotalCrossPadding = 4;
+  let arrowTotalCrossPadding = borderRadius * 2;
 
   let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
     ...props,
@@ -146,6 +147,19 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     </div>
   );
 });
+
+function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement>) {
+  let [borderRadius, setBorderRadius] = useState(0);
+  useLayoutEffect(() => {
+    if (popoverRef.current) {
+      let spectrumBorderRadius = window.getComputedStyle(popoverRef.current).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
+    }
+  }, [popoverRef]);
+  return borderRadius;
+}
 
 function useArrowSize() {
   let [size, setSize] = useState(20);

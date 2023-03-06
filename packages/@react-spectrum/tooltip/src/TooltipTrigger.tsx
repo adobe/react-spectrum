@@ -12,9 +12,10 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
@@ -42,7 +43,17 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   }, state, tooltipTriggerRef);
 
-  let arrowTotalCrossPadding = 8;
+  let [borderRadius, setBorderRadius] = useState(0);
+  useLayoutEffect(() => {
+    if (overlayRef.current) {
+      let spectrumBorderRadius = window.getComputedStyle(overlayRef.current).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
+    }
+  }, [overlayRef]);
+
+  let arrowTotalCrossPadding = borderRadius * 2;
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
