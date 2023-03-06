@@ -62,7 +62,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
-  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
+  let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {
@@ -156,6 +156,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         errorMessageProps={errorMessageProps}
         showErrorIcon
         ref={domRef}
+        elementType="span"
         UNSAFE_className={
           classNames(
             styles,
@@ -166,10 +167,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          ref={containerRef}>
+          ref={containerRef}
+          className={classNames(styles, 'spectrum-Tags-container')}>
           <div
             ref={tagsRef}
-            {...tagGroupProps}
+            {...gridProps}
             className={classNames(styles, 'spectrum-Tags')}>
             {visibleTags.map(item => (
               <Tag
@@ -189,7 +191,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
                 role="group"
                 id={actionsId}
                 aria-label={stringFormatter.format('actions')}
-                aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+                aria-labelledby={`${gridProps.id} ${actionsId}`}
                 className={classNames(styles, 'spectrum-Tags-actions')}>
                 {tagState.showCollapseButton &&
                   <ActionButton

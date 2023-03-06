@@ -27,12 +27,18 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
   delay?: number,
 
   /**
+   * The delay time for the tooltip to close. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   * @default 500
+   */
+  closeDelay?: number,
+
+  /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
    */
   trigger?: 'focus'
 }
 
-export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
+export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {
   children: [ReactElement, ReactElement],
 
   /**

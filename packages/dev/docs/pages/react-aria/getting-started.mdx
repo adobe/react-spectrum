@@ -36,7 +36,7 @@ yarn add react-aria
 ```
 
 If you prefer, you can also use our hooks from individually versioned packages. This allows you to only
-install the hooks you use, or more granularly manage their versions. The individual packages are published 
+install the hooks you use, or more granularly manage their versions. The individual packages are published
 under the [@react-aria](https://www.npmjs.com/org/react-aria) scope on npm. For example:
 
 ```
@@ -75,7 +75,7 @@ This example shows a very simple button component built with the [useButton](use
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
 
   return (
@@ -119,7 +119,7 @@ import {useCheckbox} from '@react-aria/checkbox';
 
 function Checkbox(props) {
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckbox(props, state, ref);
 
   return (

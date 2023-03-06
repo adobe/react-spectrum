@@ -69,7 +69,7 @@ This example shows a basic link using a native `<a>` element.
 import {useLink} from '@react-aria/link';
 
 function Link(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {linkProps} = useLink(props, ref);
 
   return (
@@ -100,7 +100,7 @@ touch screen support.
 
 ```tsx example
 function Link(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {linkProps, isPressed} = useLink({...props, elementType: 'span'}, ref);
 
   return (
@@ -129,7 +129,7 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 
 ```tsx example
 function Link(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {linkProps} = useLink(props, ref);
 
   return (
