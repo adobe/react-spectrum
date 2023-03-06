@@ -26,9 +26,9 @@ export interface TagAria {
   /** Props for the tag visible label (if any). */
   labelProps: DOMAttributes,
   /** Props for the tag cell element. */
-  tagProps: DOMAttributes,
+  gridCellProps: DOMAttributes,
   /** Props for the tag row element. */
-  tagRowProps: DOMAttributes,
+  rowProps: DOMAttributes,
   /** Props for the tag clear button. */
   clearButtonProps: AriaButtonProps
 }
@@ -78,12 +78,12 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
     labelProps: {
       id: labelId
     },
-    tagRowProps: {
+    rowProps: {
       ...rowProps,
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: allowsRemoving ? onKeyDown : null
     },
-    tagProps: mergeProps(domProps, gridCellProps, {
+    gridCellProps: mergeProps(domProps, gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label']
     })
