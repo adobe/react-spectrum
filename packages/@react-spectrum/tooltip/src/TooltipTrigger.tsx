@@ -52,8 +52,13 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
       }
     }
   }, [overlayRef]);
-
-  let arrowTotalCrossPadding = borderRadius * 2;
+  let arrowRef = useRef(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [arrowRef]);
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
@@ -64,7 +69,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     isOpen: state.isOpen,
     shouldFlip: props.shouldFlip,
     containerPadding: props.containerPadding,
-    arrowCrossSize: 8 + arrowTotalCrossPadding
+    arrowCrossSize: arrowWidth + borderRadius * 2
   });
 
   return (
@@ -79,6 +84,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           ref: overlayRef,
           UNSAFE_style: overlayProps.style,
           arrowProps,
+          arrowRef: arrowRef,
           ...tooltipProps
         }}>
         <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
