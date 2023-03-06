@@ -11,6 +11,7 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
+import {getChildNodes} from '@react-stately/collections';
 import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
@@ -48,14 +49,15 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layout]);
   let id = useId(props.id);
   gridIds.set(state, id);
 
@@ -78,7 +80,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
       let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
       if (rowHeaderColumnKeys) {
         let text = [];
-        for (let cell of added.childNodes) {
+        for (let cell of getChildNodes(added, state.collection)) {
           let column = state.collection.columns[cell.index];
           if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
             text.push(cell.textValue);

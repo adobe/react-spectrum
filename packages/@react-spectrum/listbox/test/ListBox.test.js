@@ -110,7 +110,7 @@ describe('ListBox', function () {
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).not.toHaveAttribute('aria-selected');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
     }

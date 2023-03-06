@@ -62,6 +62,11 @@ export interface CollectionBase<T> {
   disabledKeys?: Iterable<Key>
 }
 
+export interface CollectionStateBase<T, C extends Collection<Node<T>> = Collection<Node<T>>> extends Partial<CollectionBase<T>> {
+  /** A pre-constructed collection to use instead of building one from items and children. */
+  collection?: C
+}
+
 export interface Expandable {
   /** The currently expanded keys in the collection (controlled). */
   expandedKeys?: Iterable<Key>,
@@ -143,7 +148,10 @@ export interface Collection<T> extends Iterable<T> {
   getFirstKey(): Key | null,
 
   /** Get the last key in the collection. */
-  getLastKey(): Key | null
+  getLastKey(): Key | null,
+
+  /** Iterate over the child items of the given key. */
+  getChildren?(key: Key): Iterable<T>
 }
 
 export interface Node<T> {
@@ -157,7 +165,10 @@ export interface Node<T> {
   level: number,
   /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,
-  /** The loaded children of this node. */
+  /**
+   * The loaded children of this node.
+   * @deprecated Use `collection.getChildren(node.key)` instead.
+   */
   childNodes: Iterable<Node<T>>,
   /** The rendered contents of this node (e.g. JSX). */
   rendered: ReactNode,
