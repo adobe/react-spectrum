@@ -966,7 +966,7 @@ describe('NumberField', function () {
     textField.setSelectionRange(1, 2);
     userEvent.type(textField, '{backspace}');
     expect(announce).toHaveBeenCalledTimes(2);
-    expect(announce).toHaveBeenLastCalledWith('−,00 $', 'assertive');
+    expect(announce).toHaveBeenLastCalledWith('−0,00 $', 'assertive');
     textField.setSelectionRange(1, 1);
     typeText(textField, '1');
     expect(announce).toHaveBeenCalledTimes(3);

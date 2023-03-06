@@ -105,10 +105,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   // Replace negative textValue formatted using currencySign: 'accounting'
   // with a textValue that can be announced using a minus sign.
-  let textValue =
-    intlOptions.style = 'currency' && intlOptions.currencySign === 'accounting' ?
-    inputValue.replace(/^\((.+)\)$/, '\u2212$1') :
-    inputValue;
+  let textValueFormatter = useNumberFormatter({...formatOptions, currencySign: undefined});
+  let textValue = useMemo(() => isNaN(numberValue) ? '' : textValueFormatter.format(numberValue), [textValueFormatter, numberValue]);
 
   let {
     spinButtonProps,
