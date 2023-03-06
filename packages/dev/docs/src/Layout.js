@@ -37,6 +37,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const ENABLE_PAGE_TYPES = false;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -296,6 +297,9 @@ function Nav({currentPageName, pages}) {
     let cat = p.category;
     if (cat) {
       let type = p.type || 'other';
+      if (!ENABLE_PAGE_TYPES && p.type !== 'component') {
+        type = 'other';
+      }
       let pages = pagesByType[type];
       if (!pages) {
         pages = {};
@@ -363,7 +367,7 @@ function Nav({currentPageName, pages}) {
   };
 
   let sections = [];
-  if (currentPageName.startsWith('react-aria')) {
+  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
     let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
     sections.push({pages: {Introduction, Concepts}});
     sections.push({
@@ -395,6 +399,14 @@ function Nav({currentPageName, pages}) {
     sections.push({
       pages: pagesByType.other
     });
+
+    if (pagesByType.component) {
+      sections.push({
+        title: 'Components',
+        pages: pagesByType.component,
+        isActive: isActive(pagesByType.component)
+      });
+    }
   }
 
   return (
@@ -423,7 +435,7 @@ function Nav({currentPageName, pages}) {
             <>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
             </>
           );
@@ -432,7 +444,10 @@ function Nav({currentPageName, pages}) {
         if (section.title) {
           return (
             <details open={section.isActive}>
-              <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> {section.title}</summary>
+              <summary style={{fontWeight: 'bold'}}>
+                <ChevronRight size="S" /> {section.title}
+                {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
+              </summary>
               {contents}
             </details>
           );

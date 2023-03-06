@@ -555,6 +555,14 @@ details[open] > summary svg {
   transform: rotate(90deg);
 }
 
+.nav summary {
+  margin-left: -12px !important;
+}
+
+.nav details:last-child {
+  margin-bottom: 60px;
+}
+
 .headingAnchor {
   transition: all 125ms ease-in-out;
   margin-left: 4px;
