@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, TagKeyboardDelegate, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
@@ -28,7 +28,7 @@ import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTagGroupState} from '@react-stately/tag';
 
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps, SpectrumLabelableProps, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -62,7 +62,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   ), [direction, isCollapsed, state.collection, tagState.visibleTagCount]) as TagKeyboardDelegate<T>;
   // Remove onAction from props so it doesn't make it into useGridList.
   delete props.onAction;
-  let {tagGroupProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
+  let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
 
   let updateVisibleTagCount = useCallback(() => {
@@ -70,7 +70,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
         let currDomRef: HTMLDivElement | null = domRef.current;
-        let currContainerRef: HTMLDivElement | null = containerRef.current; 
+        let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
         if (!currDomRef || !currContainerRef || !currTagsRef) {
           return;
@@ -119,7 +119,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           maxHeight
         };
       };
-    
+
       setTagState(function *() {
         // Update to show all items.
         yield {visibleTagCount: state.collection.size, showCollapseButton: true, maxHeight: undefined};
@@ -162,6 +162,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         errorMessageProps={errorMessageProps}
         showErrorIcon
         ref={domRef}
+        elementType="span"
         UNSAFE_className={
           classNames(
             styles,
@@ -173,10 +174,11 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         }>
         <div
           style={maxRows != null && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
-          ref={containerRef}>
+          ref={containerRef}
+          className={classNames(styles, 'spectrum-Tags-container')}>
           <div
             ref={tagsRef}
-            {...tagGroupProps}
+            {...gridProps}
             className={classNames(styles, 'spectrum-Tags')}>
             {visibleTags.map(item => (
               <Tag
@@ -196,7 +198,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
                 role="group"
                 id={actionsId}
                 aria-label={stringFormatter.format('actions')}
-                aria-labelledby={`${tagGroupProps.id} ${actionsId}`}
+                aria-labelledby={`${gridProps.id} ${actionsId}`}
                 className={classNames(styles, 'spectrum-Tags-actions')}>
                 {tagState.showCollapseButton &&
                   <ActionButton

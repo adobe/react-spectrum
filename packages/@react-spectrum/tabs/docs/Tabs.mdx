@@ -21,7 +21,7 @@ import {Button} from '@react-spectrum/button';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Flex} from '@react-spectrum/layout';
-import {Heading, Text} from '@react-spectrum/text';
+import {Text} from '@react-spectrum/text';
 import {Item, Tabs, TabList, TabPanels} from '@react-spectrum/tabs';
 ```
 
@@ -80,21 +80,22 @@ function Example() {
     {id: 2, name: 'Monarchy and Republic', children: 'Senatus Populusque Romanus.'},
     {id: 3, name: 'Empire', children: 'Alea jacta est.'}
   ];
-  let [tabId, setTabId] = React.useState(1);
+  type Tab = typeof tabs[0];
+  let [tabId, setTabId] = React.useState<React.Key>(1);
 
   return (
     <>
       <p>Current tab id: {tabId}</p>
       <Tabs aria-label="History of Ancient Rome" items={tabs} onSelectionChange={setTabId}>
         <TabList>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.name}
             </Item>
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.children}
             </Item>
@@ -147,6 +148,8 @@ function Example () {
     {name: 'Tab 2', children: 'Tab Body 2'},
     {name: 'Tab 3', children: 'Tab Body 3'}
   ]);
+  type Tab = typeof tabs[0];
+
   let addTab = () => {
     let newTabs = [...tabs];
     newTabs.push({
@@ -166,10 +169,10 @@ function Example () {
   };
 
   return (
-    <Tabs {...props} aria-label="Tab example" items={tabs}>
+    <Tabs aria-label="Tab example" items={tabs}>
       <Flex>
         <TabList flex="1 1 auto" minWidth="0px">
-          {(item) => (
+          {(item: Tab) => (
             <Item key={item.name}>
               {item.name}
             </Item>
@@ -187,7 +190,7 @@ function Example () {
         </div>
       </Flex>
       <TabPanels>
-        {(item) => (
+        {(item: Tab) => (
           <Item key={item.name}>
             {item.children}
           </Item>
@@ -214,21 +217,22 @@ function Example() {
     {id: 2, name: 'Mouse Settings', children: 'No mouse detected.'},
     {id: 3, name: 'Gamepad Settings', children: 'No gamepad detected'}
   ];
-  let [tab, setTab] = React.useState(2);
+  type Tab = typeof tabs[0];
+  let [tab, setTab] = React.useState<React.Key>(2);
 
   return (
     <Flex gap="size-150" wrap>
       <span id="label-2">Settings (uncontrolled)</span>
       <Tabs aria-labelledby="label-2" items={tabs} defaultSelectedKey={2} marginBottom="size-400">
         <TabList>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.name}
             </Item>
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.children}
             </Item>
@@ -238,14 +242,14 @@ function Example() {
       <span id="label-3">Settings (controlled)</span>
       <Tabs aria-labelledby="label-3" items={tabs} selectedKey={tab} onSelectionChange={setTab}>
         <TabList>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.name}
             </Item>
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: Tab) => (
             <Item>
               {item.children}
             </Item>
@@ -269,21 +273,22 @@ function Example() {
     {name: 'Jurassic', children: 'The Jurassic ranges from 200 million years to 145 million years ago.'},
     {name: 'Cretaceous', children: 'The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.'}
   ];
-  let [timePeriod, setTimePeriod] = React.useState('Triassic');
+  type Tab = typeof tabs[0];
+  let [timePeriod, setTimePeriod] = React.useState<React.Key>('Triassic');
 
   return (
     <>
       <p>Selected time period: {timePeriod}</p>
       <Tabs aria-label="Mesozoic time periods" items={tabs} selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
         <TabList>
-          {item => (
+          {(item: Tab) => (
             <Item key={item.name}>
               {item.name}
             </Item>
           )}
         </TabList>
         <TabPanels>
-          {item => (
+          {(item: Tab) => (
             <Item key={item.name}>
               {item.children}
             </Item>
@@ -307,18 +312,19 @@ function Example() {
     {name: 'Jurassic', children: 'The Jurassic ranges from 200 million years to 145 million years ago.'},
     {name: 'Cretaceous', children: 'The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 years ago.'}
   ];
+  type Tab = typeof tabs[0];
 
   return (
     <Tabs aria-label="Mesozoic time periods" items={tabs} keyboardActivation="manual">
       <TabList>
-        {item => (
+        {(item: Tab) => (
           <Item key={item.name}>
             {item.name}
           </Item>
         )}
       </TabList>
       <TabPanels>
-        {item => (
+        {(item: Tab) => (
           <Item key={item.name}>
             {item.children}
           </Item>
