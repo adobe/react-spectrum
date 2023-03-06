@@ -15,7 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, Section, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
+import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableSection, TableView} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
@@ -164,16 +164,16 @@ export const StaticWithSections: TableStory = {
         <Column key="foo">Foo</Column>
       </TableHeader>
       <TableBody>
-        <Section title="Section1">
+        <TableSection title="Section1">
           <Row>
             <Cell>One</Cell>
           </Row>
-        </Section>
-        <Section title="Section2">
+        </TableSection>
+        <TableSection title="Section2">
           <Row>
             <Cell>two</Cell>
           </Row>
-        </Section>
+        </TableSection>
       </TableBody>
     </TableView>
   ),
@@ -195,7 +195,7 @@ export const StaticWithMixed: TableStory = {
         <Row>
           <Cell>A</Cell>
         </Row>
-        <Section title="Section 1">
+        <TableSection title="Section 1">
           <Row>
             <Cell>One</Cell>
           </Row>
@@ -211,8 +211,8 @@ export const StaticWithMixed: TableStory = {
           <Row>
             <Cell>Five</Cell>
           </Row>
-        </Section>
-        <Section title="Section 2">
+        </TableSection>
+        <TableSection title="Section 2">
           <Row>
             <Cell>Six</Cell>
           </Row>
@@ -222,7 +222,7 @@ export const StaticWithMixed: TableStory = {
           <Row>
             <Cell>Eight</Cell>
           </Row>
-        </Section>
+        </TableSection>
         <Row>
           <Cell>B</Cell>
         </Row>
@@ -300,13 +300,13 @@ export const DynamicSections: TableStory = {
       </TableHeader>
       <TableBody items={itemsWithSections}>
         {item => (
-          <Section key={item.id} items={item.children} title={item.title}>
+          <TableSection key={item.id} items={item.children} title={item.title}>
             {item =>
               (<Row key={item.foo}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>)
             }
-          </Section>
+          </TableSection>
         )}
       </TableBody>
     </TableView>

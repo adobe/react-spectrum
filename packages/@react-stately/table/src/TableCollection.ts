@@ -208,15 +208,10 @@ export class TableCollection<T> extends GridCollection<T> {
           }
           break;
         case 'section':
-          // TODO: add colspan by doing a node spread? Actually maybe have gridcollection handle that
-
-          // TODO: Add section to row? or maybe make another array to track sections?
+          // Push section node to rows since the section header is considered a row.
           // TODO may have to add the section to the rowHeaderColumnKeys so that we can label the row by the section?
           // Or maybe we can do a look up instead in getRowLabelledBy that finds the parent section
           rows.push(node);
-          // TODO if I also push the section nodes into a "sections" array for tracking, I could then use that information
-          // in the tablelayout to skip the table body rowgroup stuff in favor of processing the sections for visible layout info
-          // console.log('section blah', node);
           break;
         case 'item':
           rows.push(node);

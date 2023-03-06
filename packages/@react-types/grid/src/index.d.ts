@@ -18,7 +18,7 @@ export interface GridCollection<T> extends Collection<Node<T>> {
   columnCount: number,
   /** A list of rows in the grid. */
   rows: GridNode<T>[],
-  /** A list of sections in the grid. TODO: determine if I really need this, can just do a filter on the rows for type='section' */
+  /** A list of sections in the grid. */
   sections: GridNode<T>[]
 }
 

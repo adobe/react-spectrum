@@ -276,9 +276,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     // Note: since this.collection.body.childNodes might have rows or sections, we can't shortcut the estimate for
     // y for children after the valid rectangle (we have to iterate through childNodes to figure out if some thing is a section)
-    // hence why I got rid of skipped.
-    // TODO: technically the old buildBody would get the correct body height when it built the children, but it wouldn't update the proper
-    // final height on the table body div until a rerender of the tableview was triggered...
     for (let node of this.collection.body.childNodes) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
       let headingHeight = (this.headingHeight ?? this.estimatedHeadingHeight);
@@ -346,10 +343,6 @@ export class TableLayout<T> extends ListLayout<T> {
       case 'cell':
         return this.buildCell(node, x, y);
       case 'section':
-        // TODO: write table specific buildSection, base it off buildRow?
-        // Might be good to just leverage the existing buildSection though, just need to
-        // modify it in such a way that the header info makes it through to TableView.
-
         return this.buildSection(node, x, y);
       default:
         throw new Error('Unknown node type ' + node.type);
@@ -444,7 +437,7 @@ export class TableLayout<T> extends ListLayout<T> {
         // parentKey: [array of child indicies that should be preserved] (aka the row/section index values, cells won't be included here)
         // this could be "body": [array of child indicies that should be preserved aka the focused row index]
         // this happens per level of parent so if we focus a cell in a row we will also have:
-        // "row1" (key of row containing foucused children): [array of cell indicies] (includes checkbox (0), rowheader (1 or w/e), and actualy focused cell index)
+        // "row1" (key of row containing foucused children): [array of cell indicies] (includes checkbox (0), rowheader (1 and w/e extra row headers the user specified), and focused cell index)
 
 
         // Note: the top level "rowgroup" (aka TableBody) can have rows and sections. Sections don't have to be differentiated here
@@ -477,11 +470,6 @@ export class TableLayout<T> extends ListLayout<T> {
           }
 
           res.push(node.children[i].layoutInfo);
-
-          // todo: do I need this? Perhaps I just handle this in the section part of the code
-          // if (node.children[i].header) {
-          //   res.push(node.children[i].header);
-          // }
           this.addVisibleLayoutInfos(res, node.children[i], rect);
         }
 

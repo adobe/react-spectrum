@@ -19,9 +19,7 @@ function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disabl
 }
 
 TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
-
   let {children, items} = props;
-  // console.log('in table body')
   yield {
     type: 'body',
     hasChildNodes: true,
@@ -33,41 +31,17 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         }
 
         for (let item of items) {
-
-          // TODO use the render function passed to TableBody to get the actual collection element aka Section/Row?
-          // right now I could instead look for title in the item to determine if the item is a Section, but is that
-          // going to be a hard requirement (it is an optional prop to Section)? Maybe create a TableSection component that has title as required?
+          // TODO: is a title a hard requirement for a TableSection? Or can it title-less? Ask Spectrum
+          // I could instead look for title in the item to determine if the item is a Section, if it is going to be a hard requirement and update the types for TableSection accordingly
           let element = children(item);
-          // if (item.title) {
-          if (element.type === 'section' || (typeof element.type !== 'string' && element.type.name === 'Section')) {
-            // This yield is the partialNode in CollectionBuilder and is then compared to the full node generated from the Section collection element
-            // TODO: what info do I need exactly in this yield?
-            // I think I might only need type, value, and renderer? The Section collection element should handle the rest?
-            // This type needs to match the type returned by the respective collection element, the renderer is the function provided to TableBody that will
-            // yield Section or Item, and value is the
-            // i.e this needs to match the Section element type from stately
+          if (element.type === 'section' || (typeof element.type !== 'string' && element.type.name === 'TableSection')) {
+            // This yield is the partialNode in CollectionBuilder and is then compared to the full node generated from the TableSection collection element
+            // The type needs to match the type returned by the respective collection element, the renderer is the function provided to TableBody that will
+            // yield Section or Item, and value is the value propagated to the full node
             yield {
               type: 'section',
               value: item,
               renderer: children
-              // // todo: right now item comes from the user defined `items` passed to TableBody, so that means
-              // // we only get item = {id: 0, title: 'section1', children: [...]}. Is children going to be a guarenteed field?
-              // hasChildNodes: true,
-              // rendered: item.title,
-              // // TODO is there a way to dive into the actualy Section context?
-              // props: item.props,
-              // // TODO do I need the below?
-              // *childNodes() {
-              //   // TODO item.children is assuming that the items provided to the TableBody are structured like
-              //   // item = {id: 0, title: 'section1', children: [...]}. maybe use the
-              //   for (let row of item.children) {
-              //     yield {
-              //       type: 'item',
-              //       value: row
-              //       // TODO: how do I get the rendere
-              //     };
-              //   }
-              // }
             };
           } else {
             yield {
@@ -81,10 +55,7 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         let items: PartialNode<T>[] = [];
         React.Children.forEach(children, item => {
           let type;
-          // TODO: we don't get access to any information to differentiate between row and section here
-          // we can either just drop the defined type here and collection builder won't do its recursive type check and thus won't throw an erro
-          // alternatively, do a similar check as above to get the collection element type
-          if (item.type === 'section' || (typeof item.type !== 'string' && item.type.name === 'Section')) {
+          if (item.type === 'section' || (typeof item.type !== 'string' && item.type.name === 'TableSection')) {
             type = 'section';
           } else {
             type = 'item';

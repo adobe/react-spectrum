@@ -141,8 +141,7 @@ export class CollectionBuilder<T extends object> {
           if (node.value) {
             this.cache.set(node.value, node);
           }
-          // TODO: partialNode comes from TableBody childNodes generator, node is the full node generated from Section/Row/etc
-          // console.log('partialNode', partialNode, node)
+
           // The partial node may have specified a type for the child in order to specify a constraint.
           // Verify that the full node that was built recursively matches this type.
           if (partialNode.type && node.type !== partialNode.type) {
