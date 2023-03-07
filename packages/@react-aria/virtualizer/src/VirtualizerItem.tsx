@@ -57,6 +57,8 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
 
   let style: CSSProperties = {
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
+    // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
+    display: layoutInfo.isSticky ? 'inline-block' : undefined,
     overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
     top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
     [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
@@ -65,7 +67,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
     width: layoutInfo.rect.width,
-    height: layoutInfo.rect.height,
+    height: layoutInfo.isSticky ? '100%' : layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
