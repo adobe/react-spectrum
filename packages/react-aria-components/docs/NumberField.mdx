@@ -112,7 +112,7 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
     }
   }
 
-  & input {
+  .react-aria-Input {
     background: var(--field-background);
     border: 1px solid var(--field-border);
     border-radius: 0;
@@ -131,8 +131,8 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
   }
 
   &:focus-within {
-    & input,
-    & button {
+    .react-aria-Input,
+    .react-aria-Button {
       border-color: var(--focus-ring-color);
     }
   }
@@ -294,15 +294,15 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Group
 
-A `Group` can be targeted with the `.react-aria-Group` selector, or by adding a custom `className`.
+A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`.
 
 ### Input
 
-An `Input` can be targeted with the `input` CSS selector, or by adding a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
 
 ### Button
 
-A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. Within a `NumberField`, there are two slots, which can be targeted with the `[slot=increment]` and `[slot=decrement]` CSS selectors. Buttons support the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. Within a `NumberField`, there are two slots, which can be targeted with the `[slot=increment]` and `[slot=decrement]` CSS selectors. Buttons support the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 

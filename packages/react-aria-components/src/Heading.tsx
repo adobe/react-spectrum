@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, useContextProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import React, {createContext, ElementType, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface HeadingProps extends HTMLAttributes<HTMLElement> {
   level?: number
@@ -21,11 +21,11 @@ export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadi
 
 function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   [props, ref] = useContextProps(props, ref, HeadingContext);
-  let {children, level = 3, ...domProps} = props;
-  let Element = `h${level}`;
+  let {children, level = 3, className, ...domProps} = props;
+  let Element = `h${level}` as ElementType;
 
   return (
-    <Element {...domProps}>
+    <Element {...domProps} className={className ?? 'react-aria-Heading'}>
       {children}
     </Element>
   );

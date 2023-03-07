@@ -17,7 +17,7 @@ export const InputContext = createContext<ContextValue<InputHTMLAttributes<HTMLI
 
 function Input(props: InputHTMLAttributes<HTMLInputElement>, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
-  return <input {...props} ref={ref} />;
+  return <input {...props} ref={ref} className={props.className ?? 'react-aria-Input'} />;
 }
 
 const _Input = forwardRef(Input);

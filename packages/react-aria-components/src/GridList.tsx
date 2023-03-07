@@ -48,7 +48,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   });
 
   return (
-    <ul 
+    <ul
       {...filterDOMProps(props)}
       {...gridProps}
       ref={ref}
@@ -88,7 +88,7 @@ function GridListItem({item}) {
     {key: item.key},
     state
   );
-  
+
   let props: ItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
     ...props,
@@ -112,6 +112,7 @@ function GridListItem({item}) {
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}>
+      {/* TODO: hard to style this element... */}
       <div {...gridCellProps}>
         <Provider
           values={[

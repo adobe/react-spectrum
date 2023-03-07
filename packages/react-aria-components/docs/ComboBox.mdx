@@ -71,7 +71,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 
 ```css
 .react-aria-ComboBox {
-  & input {
+  .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
     border: 1px solid var(--spectrum-global-color-gray-400);
@@ -413,11 +413,11 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Input
 
-An `Input` within a ComboBox can be targeted with the `input` CSS selector, or by adding a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
+An `Input` within a ComboBox can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports standard CSS pseudo classes such as `:focus` for states. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes#user_action_pseudo-classes) for details.
 
 ### Button
 
-A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 

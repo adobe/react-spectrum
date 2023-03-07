@@ -75,7 +75,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
   align-items: center;
   width: fit-content;
 
-  & input {
+  .react-aria-Input {
     grid-area: input;
     padding: 0.286rem 1.714rem 0.286rem 0.286rem;
     margin: 0;
@@ -112,7 +112,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     color: var(--invalid-color);
   }
 
-  & button {
+  .react-aria-Button {
     grid-area: button;
     width: 1.143rem;
     height: 1.143rem;
@@ -151,7 +151,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     --focus-ring-color: Highlight;
     --invalid-color: LinkText;
 
-    & button {
+    .react-aria-Button {
       &:disabled {
         opacity: 1;
       }
@@ -309,11 +309,11 @@ A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overr
 
 ### Input
 
-An `Input` can be targeted with the `input` CSS selector, or by adding a custom `className`.
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`.
 
 ### Button
 
-A [Button](Button.html) can be targeted with the `button` CSS selector, or by adding a custom `className`. It supports the following states:
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
