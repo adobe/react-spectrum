@@ -41,9 +41,28 @@ export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key) 
   return `${gridId}-${normalizeKey(rowKey)}-${normalizeKey(columnKey)}`;
 }
 
+export function getSectionId<T>(state: TableState<T>, rowKey: Key) {
+  let gridId = gridIds.get(state);
+  if (!gridId) {
+    throw new Error('Unknown grid');
+  }
+
+  return `${gridId}-${normalizeKey(rowKey)}`;
+}
+
 export function getRowLabelledBy<T>(state: TableState<T>, rowKey: Key): string {
-  // A row is labelled by it's row headers.
-  return [...state.collection.rowHeaderColumnKeys].map(columnKey =>
+  // A row is labelled by it's row headers and section if available.
+  // TODO: maybe only do it for the first and last row? Or do we need this? Maybe it is sufficient that the user
+  // will navigate via ctrl + option + arrow keys and passes the section row
+  let acc = [];
+  let collection = state.collection;
+  let row = collection.getItem(rowKey);
+  let rowParent = collection.getItem(row.parentKey);
+  if (rowParent != null && rowParent.type === 'section') {
+    acc.push(getSectionId(state, rowParent.key));
+  }
+
+  return acc.concat([...collection.rowHeaderColumnKeys].map(columnKey =>
     getCellId(state, rowKey, columnKey)
-  ).join(' ');
+  )).join(' ');
 }

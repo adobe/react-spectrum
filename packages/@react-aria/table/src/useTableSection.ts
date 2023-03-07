@@ -11,8 +11,9 @@
  */
 
 import {DOMAttributes} from '@react-types/shared';
+import {getSectionId} from './utils';
 import {GridNode} from '@react-types/grid';
-import {useId} from '@react-aria/utils';
+import {TableState} from '@react-stately/table';
 
 export interface AriaTableSectionProps {
   /** An object representing the table section. Contains all the relevant information that makes up the section. */
@@ -35,11 +36,11 @@ export interface TableSectionAria {
  * @param props - Props for the section.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAria {
+export function useTableSection<T>(props: AriaTableSectionProps, state: TableState<T>): TableSectionAria {
   let {node, isVirtualized} = props;
   // TODO: may need to register this headerId in the weakmap if we need to also associate the first/last row in the section with the section
   // prob map from section key to id?
-  let headerId = useId();
+  let headerId = getSectionId(state, node.key);
   let rowIndex;
 
   if (isVirtualized) {
