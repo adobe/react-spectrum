@@ -35,7 +35,10 @@ after_version: 1.0.0
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Slider']} />
+  componentNames={['Slider']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
 
 ## Example
 
@@ -338,10 +341,10 @@ The `SliderThumb` component can be targeted with the `.react-aria-SliderThumb` C
 
 If you will use a Slider in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values.
+This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values. When multiple thumbs are rendered, each `SliderThumb` should have an `aria-label`, which is provided via the `thumbLabels` prop in this example.
 
 ```tsx example export=true
-function MySlider({label, ...props}) {
+function MySlider({label, thumbLabels, ...props}) {
   return (
     <Slider {...props}>
       <Label>{label}</Label>
@@ -350,14 +353,14 @@ function MySlider({label, ...props}) {
       </SliderOutput>
       <SliderTrack>
         {state => state.values.map((_, i) => (
-          <SliderThumb key={i} index={i} />
+          <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
         ))}
       </SliderTrack>
     </Slider>
   );
 }
 
-<MySlider label="Range" defaultValue={[30, 60]} />
+<MySlider label="Range" defaultValue={[30, 60]} thumbLabels={['start', 'end']} />
 ```
 
 ## Usage
@@ -405,6 +408,7 @@ function Example() {
     <>
       <MySlider
         label="Range"
+        thumbLabels={['start', 'end']}
         value={value}
         onChange={setValue} />
       <p>Current value: {value.join(' – ')}</p>

@@ -105,6 +105,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     border: 1px solid var(--field-border);
     border-radius: 6px;
     background: var(--field-background);
+    white-space: nowrap;
 
     &:focus-within {
       border-color: var(--highlight-background);
@@ -210,7 +211,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   & header {
     display: flex;
     align-items: center;
-    margin-bottom: .5rem;
+    margin: 0 4px .5rem 4px;
 
     & h2 {
       flex: 1;
@@ -247,7 +248,6 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   }
 
   & table {
-    margin: 0 -4px;
     border-collapse: collapse;
 
     & td {
@@ -366,7 +366,9 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     --highlight-foreground: HighlightText;
     --highlight-background-invalid: LinkText;
 
-    & button {
+    .react-aria-Button {
+      forced-color-adjust: none;
+
       --focus-ring-color: Highlight;
       background: ButtonFace;
       color: ButtonText;
@@ -379,14 +381,14 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     }
   }
 
-  .react-aria-Calendar {
+  .react-aria-RangeCalendar {
     forced-color-adjust: none;
 
     --highlight-background: Highlight;
     --highlight-foreground: HighlightText;
     --button-border: ButtonBorder;
+    --button-border-disabled: GrayText;
     --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
     --text-color-invalid: LinkText;
@@ -417,7 +419,7 @@ Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more detail
 
 <Anatomy />
 
-A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
+A date range picker consists of a label, and group containing two [date fields](DateField.html) and a button. Clicking the button opens a popup containing a [range calendar](RangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date range.
 
 `DateRangePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 

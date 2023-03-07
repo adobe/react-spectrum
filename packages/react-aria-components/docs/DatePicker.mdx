@@ -133,6 +133,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   background: var(--field-background);
   width: fit-content;
   min-width: 150px;
+  white-space: nowrap;
 
   &:focus-within {
     border-color: var(--highlight-background);
@@ -192,7 +193,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   & header {
     display: flex;
     align-items: center;
-    margin-bottom: .5rem;
+    margin: 0 4px .5rem 4px;
 
     & h2 {
       flex: 1;
@@ -226,10 +227,6 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
         background: var(--button-background-pressed);
       }
     }
-  }
-
-  & table {
-    margin: 0 -4px;
   }
 
   .react-aria-CalendarCell {
@@ -387,7 +384,7 @@ Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more detail
 
 <Anatomy />
 
-A date picker consists of a label, and group containing a [date field](useDateField.html) and a button. Clicking the button opens a popup containing a [calendar](useCalendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
+A date picker consists of a label, and group containing a [date field](DateField.html) and a button. Clicking the button opens a popup containing a [calendar](Calendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
 
 `DatePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 

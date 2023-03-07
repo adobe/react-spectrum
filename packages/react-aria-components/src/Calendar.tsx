@@ -77,12 +77,24 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
             }
           }]
         ]}>
+        {/* Add a screen reader only description of the entire visible range rather than
+          * a separate heading above each month grid. This is placed first in the DOM order
+          * so that it is the first thing a touch screen reader user encounters.
+          * In addition, VoiceOver on iOS does not announce the aria-label of the grid
+          * elements, so the aria-label of the Calendar is included here as well. */}
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
         </VisuallyHidden>
         {renderProps.children}
+        {/* For touch screen readers, add a visually hidden next button after the month grid
+          * so it's easy to navigate after reaching the end without going all the way
+          * back to the start of the month. */}
         <VisuallyHidden>
-          <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
+          <button
+            aria-label={nextButtonProps['aria-label']}
+            disabled={nextButtonProps.isDisabled}
+            onClick={() => state.focusNextPage()}
+            tabIndex={-1} />
         </VisuallyHidden>
       </Provider>
     </div>
@@ -134,12 +146,24 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
             }
           }]
         ]}>
+        {/* Add a screen reader only description of the entire visible range rather than
+          * a separate heading above each month grid. This is placed first in the DOM order
+          * so that it is the first thing a touch screen reader user encounters.
+          * In addition, VoiceOver on iOS does not announce the aria-label of the grid
+          * elements, so the aria-label of the Calendar is included here as well. */}
         <VisuallyHidden>
           <h2>{calendarProps['aria-label']}</h2>
         </VisuallyHidden>
         {renderProps.children}
+        {/* For touch screen readers, add a visually hidden next button after the month grid
+          * so it's easy to navigate after reaching the end without going all the way
+          * back to the start of the month. */}
         <VisuallyHidden>
-          <button aria-label={nextButtonProps['aria-label']} onClick={() => state.focusNextPage()} />
+          <button
+            aria-label={nextButtonProps['aria-label']}
+            disabled={nextButtonProps.isDisabled}
+            onClick={() => state.focusNextPage()}
+            tabIndex={-1} />
         </VisuallyHidden>
       </Provider>
     </div>
@@ -217,7 +241,7 @@ export interface CalendarCellRenderProps {
    *
    * Note that because they are focusable, unavailable dates must meet a 4.5:1 color contrast ratio,
    * [as defined by WCAG](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
-   * 
+   *
    * @selector [data-unavailable]
    */
   isUnavailable: boolean,
@@ -258,6 +282,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
         className={props.className ?? 'react-aria-CalendarGrid'}>
         <thead {...headerProps}>
           <tr>
+            {/* TODO: we might want to allow people to customize this? */}
             {weekDays.map((day, index) => <th key={index}>{day}</th>)}
           </tr>
         </thead>

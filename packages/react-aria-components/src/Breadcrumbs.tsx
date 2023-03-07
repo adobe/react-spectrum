@@ -37,6 +37,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
       slot={props.slot}
       style={props.style}
       className={props.className ?? 'react-aria-Breadcrumbs'}>
+      {/* TODO: cannot style this element directly */}
       <ol>
         {[...collection].map((node, i) => (
           <BreadcrumbItem
@@ -70,7 +71,7 @@ function BreadcrumbItem({node, isCurrent, isDisabled}) {
       {...filterDOMProps(node.props)}
       style={node.props.style}
       className={node.props.className ?? 'react-aria-Item'}>
-      <Provider 
+      <Provider
         values={[
           [LinkContext, linkProps],
           [HeadingContext, headingProps]
