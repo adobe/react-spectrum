@@ -19,7 +19,7 @@ import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-typ
 import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
-import {getItemCount} from '@react-stately/collections';
+import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
@@ -27,7 +27,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
@@ -252,7 +252,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let announcement = stringFormatter.format('focusAnnouncement', {
         isGroupChange: section && sectionKey !== lastSection.current,
         groupTitle: sectionTitle,
-        groupCount: section ? [...section.childNodes].length : 0,
+        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
         isSelected
       });

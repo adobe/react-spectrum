@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {getChildNodes} from '@react-stately/collections';
 import {MenuItem} from './MenuItem';
 import {Node} from '@react-types/shared';
 import React, {Fragment, Key} from 'react';
@@ -68,7 +69,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               'spectrum-Menu'
             )
           }>
-          {[...item.childNodes].map(node => {
+          {[...getChildNodes(item, state.collection)].map(node => {
             let item = (
               <MenuItem
                 key={node.key}

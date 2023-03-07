@@ -52,8 +52,11 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   orientation?: Orientation,
   /** Whether the Thumb is disabled. */
   isDisabled?: boolean,
-  /** Index of the thumb for accessing purposes. */
-  index: number
+  /** 
+   * Index of the thumb within the slider.
+   * @default 0
+   */
+  index?: number
 }
 
 export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}

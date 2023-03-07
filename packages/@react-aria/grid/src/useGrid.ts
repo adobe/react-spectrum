@@ -81,14 +81,15 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     focusMode
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, focusMode]);
 
   let {collectionProps} = useSelectableCollection({
     ref,
