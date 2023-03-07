@@ -124,8 +124,7 @@ export class TableLayout<T> extends ListLayout<T> {
     for (let column of this.collection.columns) {
       // The selection cell and any other sticky columns always need to be visible.
       // In addition, row headers need to be in the DOM for accessibility labeling.
-      // TODO: how to support multiple sticky columns?
-      if (column.props.isDragButtonCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+      if (column.props.isDragButtonCell || column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
         this.stickyColumnIndices.push(column.index);
       }
     }
@@ -258,8 +257,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    // TODO: how to support multiple sticky columns?
-    layoutInfo.isSticky = !this.disableSticky && node.props?.isDragButtonCell;
+    layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -389,8 +387,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    // TODO: how to support multiple sticky cells?
-    layoutInfo.isSticky = !this.disableSticky && node.props?.isDragButtonCell;
+    layoutInfo.isSticky = !this.disableSticky && (node.props?.isDragButtonCell || node.props?.isSelectionCell);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
