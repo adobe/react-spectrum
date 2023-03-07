@@ -551,7 +551,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
             {state.visibleViews[0]}
           </div>
           <ScrollView
-            role="presentation"
+            role="rowgroup"
             className={
               classNames(
                 styles,
@@ -937,7 +937,7 @@ function TableRowGroup({children, ...otherProps}) {
   let {rowGroupProps} = useTableRowGroup();
 
   return (
-    <div {...rowGroupProps} {...otherProps}>
+    <div {...rowGroupProps} {...otherProps} role="presentation">
       {children}
     </div>
   );

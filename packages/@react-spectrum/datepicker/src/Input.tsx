@@ -124,7 +124,7 @@ function Input(props, ref) {
   return (
     <div role="presentation" {...mergeProps(fieldProps, focusProps)} className={textfieldClass} style={style}>
       <div role="presentation" className={inputClass}>
-        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} ref={mergeRefs(ref, inputRef)}>
+        <div role="presentation" className={classNames(datepickerStyles, 'react-spectrum-Datepicker-inputContents')} tabIndex={-1} ref={mergeRefs(ref, inputRef)}>
           {children}
         </div>
       </div>
