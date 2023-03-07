@@ -187,10 +187,6 @@
   height: inherit;
 }
 
-.react-spectrum-Table-checkboxCell--isDraggable {
-  padding-inline-start: var(--spectrum-global-dimension-size-65);
-}
-
 .react-spectrum-Table-row--dropTarget {
   border: 1px var(--spectrum-table-dropindicator-border-color);
   box-shadow: inset 2px 0 0 0 var(--spectrum-table-dropindicator-border-color),
