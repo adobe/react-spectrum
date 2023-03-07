@@ -19,17 +19,13 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
 ```jsx import
-import {ActionButton} from '@react-spectrum/button';
-import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ActionMenu} from '@react-spectrum/menu';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '@react-spectrum/list';
-import {Link} from '@react-spectrum/link';
 ```
 
 ---
@@ -84,11 +80,7 @@ const items = [
 ];
 
 <ListView items={items} selectionMode="multiple" maxWidth="size-6000" height="250px" aria-label="Dynamic ListView items example">
-  {(item) => (
-    <Item key={item.key}>
-      {item.name}
-    </Item>
-  )}
+  {(item) => <Item>{item.name}</Item>}
 </ListView>
 ```
 
@@ -110,9 +102,12 @@ See the docs for more information.
 ```tsx example
 import {useAsyncList} from '@adobe/react-spectrum';
 
-function AsyncList() {
+interface Character {
+  name: string
+}
 
-  let list = useAsyncList({
+function AsyncList() {
+  let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -256,7 +251,9 @@ be passed into the callback when the row is pressed, allowing you to update stat
 Here is how you would control selection for the above example.
 
 ```tsx example export=true
-function PokemonList(props) {
+import type {SpectrumListViewProps} from '@react-spectrum/list';
+
+function PokemonList<T>(props: Omit<SpectrumListViewProps<T>, 'children'>) {
   let rows = [
     {id: 1, name: 'Charizard'},
     {id: 2, name: 'Blastoise'},
@@ -267,7 +264,7 @@ function PokemonList(props) {
   let [selectedKeys, setSelectedKeys] = React.useState(props.defaultSelectedKeys || new Set([2]));
 
   return (
-    <ListView items={rows} maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <ListView maxWidth="size-6000" aria-label="ListView with controlled selection" selectionMode="multiple" {...props} items={rows} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
       {(item) => (
         <Item>
           {item.name}
@@ -377,10 +374,22 @@ The example below demonstrates how to create a draggable ListView and a droppabl
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {DragAndDropOptions, TextDropItem} from '@react-spectrum/dnd';
+import type {ListData} from '@adobe/react-spectrum';
 import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@adobe/react-spectrum';
 
-function DraggableListView(props) {
+interface Item {
+  name: string,
+  type?: string,
+  childNodes?: Item[]
+}
+
+interface DndListViewProps extends DragAndDropOptions {
+  list: ListData<Item>
+}
+
+function DraggableListView(props: DndListViewProps) {
   let {list, ...otherProps} = props;
   /*- begin highlight -*/
   let {dragAndDropHooks} = useDragAndDrop({
@@ -427,7 +436,7 @@ function DraggableListView(props) {
   );
 }
 
-function DroppableListView(props) {
+function DroppableListView(props: DndListViewProps) {
   let {list, ...otherProps} = props;
   /*- begin highlight -*/
   let {dragAndDropHooks} = useDragAndDrop({
@@ -440,7 +449,7 @@ function DroppableListView(props) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
       );
 
       if (target.dropPosition === 'before') {
@@ -454,7 +463,7 @@ function DroppableListView(props) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type')))
       );
       list.append(...processedItems);
     },
@@ -522,7 +531,7 @@ The example below replicates the previous example but demonstrates how to handle
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-function DraggableListViewFolder(props) {
+function DraggableListViewFolder(props: DndListViewProps) {
   let {list, ...otherProps} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     // Only allow move operations when dropping items from this list
@@ -567,7 +576,7 @@ function DraggableListViewFolder(props) {
   );
 }
 
-function DroppableListViewFolder(props) {
+function DroppableListViewFolder(props: DndListViewProps) {
   let {list, ...otherProps} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     /*- begin highlight -*/
@@ -583,7 +592,7 @@ function DroppableListViewFolder(props) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
 
       if (target.dropPosition === 'before') {
@@ -597,7 +606,7 @@ function DroppableListViewFolder(props) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
       list.append(...processedItems);
     },
@@ -609,7 +618,7 @@ function DroppableListViewFolder(props) {
       } = e;
 
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-folder-drop')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-folder-drop')))
       );
 
       let targetItem = list.getItem(target.key);
@@ -708,11 +717,7 @@ function ReorderableList() {
     acceptedDragTypes: ['custom-app-type-reorder'],
     /*- begin highlight -*/
     onReorder: async (e) => {
-      let {
-        keys,
-        target,
-        dropOperation
-      } = e;
+      let {keys, target} = e;
 
       if (target.dropPosition === 'before') {
         list.moveBefore(target.key, [...keys]);
@@ -756,7 +761,7 @@ the ability to drop into a folder. Each list is internally reorderable.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-function BidirectionalDnDListView(props) {
+function BidirectionalDnDListView(props: DndListViewProps) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     acceptedDragTypes: ['custom-app-type-bidirectional'],
@@ -778,7 +783,7 @@ function BidirectionalDnDListView(props) {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items.map(async (item) => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
       );
       if (target.dropPosition === 'before') {
         list.insertBefore(target.key, ...processedItems);
@@ -803,7 +808,7 @@ function BidirectionalDnDListView(props) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items.map(async item => JSON.parse(await (item as TextDropItem).getText('custom-app-type-bidirectional')))
       );
       list.append(...processedItems);
     },
@@ -886,7 +891,7 @@ The example below demonstrates how to use `getDropOperation` to specify the defa
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-function DraggableListViewDefaultCopy(props) {
+function DraggableListViewDefaultCopy(props: DndListViewProps) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
@@ -926,7 +931,7 @@ function DraggableListViewDefaultCopy(props) {
   );
 }
 
-function DroppableListViewDefaultCopy(props) {
+function DroppableListViewDefaultCopy(props: DndListViewProps) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     acceptedDragTypes: ['custom-app-type-copy-default'],
@@ -942,8 +947,8 @@ function DroppableListViewDefaultCopy(props) {
       /*- begin highlight -*/
       // Create random id to allow for multiple copies of the same item
       let processedItems = await Promise.all(
-        items.map(async item => (
-          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/
@@ -961,8 +966,8 @@ function DroppableListViewDefaultCopy(props) {
       /*- begin highlight -*/
       // Create random id to allow for multiple copies of the same item
       let processedItems = await Promise.all(
-        items.map(async item => (
-          {...JSON.parse(await item.getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
+        items.map(async (item) => (
+          {...JSON.parse(await (item as TextDropItem).getText('custom-app-type-copy-default')), id: Math.random().toString(36).slice(2)}
         ))
       );
       /*- end highlight -*/

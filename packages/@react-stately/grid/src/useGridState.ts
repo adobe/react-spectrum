@@ -1,3 +1,4 @@
+import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, useEffect, useMemo, useRef} from 'react';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
@@ -34,11 +35,11 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     if (focusMode === 'cell' && key != null) {
       let item = collection.getItem(key);
       if (item?.type === 'item') {
-        let children = [...item.childNodes];
+        let children = getChildNodes(item, collection);
         if (child === 'last') {
-          key = children[children.length - 1]?.key;
+          key = getLastItem(children)?.key;
         } else {
-          key = children[0]?.key;
+          key = getFirstItem(children)?.key;
         }
       }
     }
@@ -88,7 +89,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         }
       }
       if (newRow) {
-        const childNodes = newRow.hasChildNodes ? [...newRow.childNodes] : [];
+        const childNodes = newRow.hasChildNodes ? [...getChildNodes(newRow, collection)] : [];
         const keyToFocus =
           newRow.hasChildNodes &&
           parentNode !== node &&

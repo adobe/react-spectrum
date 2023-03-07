@@ -144,7 +144,7 @@ function List(props) {
 }
 
 function ListItem({ item, state }) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {rowProps, gridCellProps, isPressed} = useGridListItem(
     {node: item},
     state,
@@ -346,7 +346,7 @@ The `Button` component is used in the above example to show how rows can contain
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -478,7 +478,7 @@ be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Ke
 This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: 24 }}>
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
   <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
   <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 </div>
