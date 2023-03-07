@@ -22,7 +22,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/table": "^3.8.0",
     "@react-types/shared": "^3.17.0",
     "@swc/helpers": "^0.4.14"
   },
