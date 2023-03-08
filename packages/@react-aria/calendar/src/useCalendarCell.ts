@@ -302,7 +302,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     calendar: date.calendar.identifier
   });
 
-  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).filter(part => part.type === 'day')[0].value, [cellDateFormatter, nativeDate]);
+  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).find(part => part.type === 'day').value, [cellDateFormatter, nativeDate]);
 
   return {
     cellProps: {
