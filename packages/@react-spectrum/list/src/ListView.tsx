@@ -11,7 +11,7 @@
  */
 
 import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
-import {AsyncLoadable, DOMRef, LoadingState, Node, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, DOMRef, LoadingState, Node, SectionProps, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
@@ -27,7 +27,7 @@ import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ListViewSection} from './ListViewSection';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useContext, useMemo, useRef, useState} from 'react';
+import React, {Key, ReactElement, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
@@ -61,6 +61,11 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListView.
    */
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+}
+
+export interface SpectrumListSectionProps<T> extends Omit<SectionProps<T>, 'aria-label'> {
+  /** Rendered contents of the ListView section, e.g. a header. */
+  title: ReactNode
 }
 
 interface ListViewContextValue<T> {
@@ -132,12 +137,18 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
   if (dropHooksProvided.current !== isListDroppable) {
     console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
+
   let domRef = useDOMRef(ref);
   let state = useListState({
     ...props,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
   let {collection, selectionManager} = state;
+
+  if (collection.sections.length > 0 && collection.rows.find(node => node.parentKey == null)) {
+    console.warn('Detected rows without a parent section. If a ListView has sections, all rows within a ListView must belong to a section.');
+  }
+
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
 

@@ -19,7 +19,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
-import {Item, ListView, Section} from '../';
+import {Item, ListSection, ListView} from '../';
 import {ItemDropTarget} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
@@ -190,27 +190,27 @@ storiesOf('ListView', module)
   ))
   .add('with sections', args => (
     <ListView width="250px" aria-label="default ListView" {...args}>
-      <Section key="section1" title="Section One">
+      <ListSection key="section1" title="Section One">
         <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
         <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
         <Item textValue="Adobe XD">Adobe XD</Item>
-      </Section>
-      <Section key="section2" title="Section Two">
+      </ListSection>
+      <ListSection key="section2" title="Section Two">
         <Item textValue="1">1</Item>
         <Item textValue="2">2</Item>
         <Item textValue="3">3</Item>
-      </Section>
+      </ListSection>
     </ListView>
   ))
   .add('with sections and non section items', args => (
     <ListView width="250px" aria-label="default ListView" {...args}>
       <Item textValue="Foo">Foo</Item>
       <Item textValue="Bar">Bar</Item>
-      <Section key="section1" title="Section One">
+      <ListSection key="section1" title="Section One">
         <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
         <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
         <Item textValue="Adobe XD">Adobe XD</Item>
-      </Section>
+      </ListSection>
       <Item textValue="Yah">Yah</Item>
       <Item textValue="Nah">Nah</Item>
     </ListView>
@@ -262,7 +262,7 @@ storiesOf('ListView', module)
   .add('dynamic sections', args => (
     <ListView aria-label="Dynamic items" items={withSection} width="300px" height="250px" {...args}>
       {(item: any) => (
-        <Section key={item.name} items={item.children} title={item.name}>
+        <ListSection key={item.name} items={item.children} title={item.name}>
           {(item: any) => (
             <Item key={item.name} textValue={item.name}>
               <Text>
@@ -280,7 +280,7 @@ storiesOf('ListView', module)
               </ActionGroup>
             </Item>
           )}
-        </Section>
+        </ListSection>
         )}
     </ListView>
   ))
@@ -2492,7 +2492,7 @@ function DragBetweenListsOverride(props) {
 //         dragAndDropHooks={dragAndDropHooksList1}>
 //         {(item: any) => {
 //           return (
-//             <Section key={item.value.identifier} items={item.children} title={item.value.name}>
+//             <ListSection key={item.value.identifier} items={item.children} title={item.value.name}>
 //               {(item: any) => (
 //                 <Item textValue={item.value.name} key={item.value.identifier}>
 //                   <Text>{item.value.name}</Text>
@@ -2504,7 +2504,7 @@ function DragBetweenListsOverride(props) {
 //                   }
 //                 </Item>
 //               )}
-//             </Section>
+//             </ListSection>
 //           );
 //         }}
 //       </ListView>
@@ -2519,7 +2519,7 @@ function DragBetweenListsOverride(props) {
 //         {...props}>
 //         {(item: any) => {
 //           return (
-//             <Section key={item.value.identifier} items={item.children} title={item.value.name}>
+//             <ListSection key={item.value.identifier} items={item.children} title={item.value.name}>
 //               {(item: any) => (
 //                 <Item textValue={item.value.name} key={item.value.identifier}>
 //                   <Text>{item.value.name}</Text>
@@ -2531,7 +2531,7 @@ function DragBetweenListsOverride(props) {
 //                   }
 //                 </Item>
 //               )}
-//             </Section>
+//             </ListSection>
 //           );
 //         }}
 //       </ListView>

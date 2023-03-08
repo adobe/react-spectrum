@@ -18,17 +18,26 @@ export class ListCollection<T> implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
   private lastKey: Key;
+  sections: Node<T>[];
+  rows: Node<T>[];
 
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
+    this.sections = [];
+    this.rows = [];
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.childNodes && node.type === 'section') {
-        for (let child of node.childNodes) {
-          visit(child);
+      if (node.type === 'section') {
+        this.sections.push(node);
+        if (node.childNodes) {
+          for (let child of node.childNodes) {
+            visit(child);
+          }
         }
+      } else if (node.type === 'item') {
+        this.rows.push(node);
       }
     };
 

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {FocusStrategy, Node} from '@react-types/shared';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -356,7 +356,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   };
 }
 
-function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
+function filterCollection<T extends object>(collection: ListCollection<T>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
   return new ListCollection(filterNodes(collection, inputValue, filter));
 }
 

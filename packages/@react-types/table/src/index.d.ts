@@ -130,10 +130,10 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
 
 export interface TableSectionProps<T> extends SectionProps<T> {
   /** Rendered contents of the section or row child items. */
-  children: RowElement | RowElement[] | RowRenderer<T>,
+  children: RowElement | RowElement[] | RowRenderer<T>
 }
 
-export interface SpectrumTableSectionProps<T> extends TableSectionProps<T> {
+export interface SpectrumTableSectionProps<T> extends Omit<TableSectionProps<T>, 'aria-label'> {
   /** Rendered contents of the table section, e.g. a header. */
   title: ReactNode
 }

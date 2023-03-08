@@ -964,7 +964,7 @@ function TableRowGroup({children, ...otherProps}) {
 
     let tableBodyNodes = [...state.collection.body.childNodes];
     if (tableBodyNodes.find(node => node.type !== 'section')) {
-      console.warn('Detected rows without a parent section. If a TableView has sections, all rows within a Table must belong to a section.');
+      console.warn('Detected rows without a parent section. If a TableView has sections, all rows within a TableView must belong to a section.');
     }
   }
 

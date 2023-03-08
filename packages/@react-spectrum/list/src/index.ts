@@ -11,5 +11,12 @@
  */
 
 export {ListView} from './ListView';
-export {Item, Section} from '@react-stately/collections';
-export type {SpectrumListViewProps} from './ListView';
+import {Section} from '@react-stately/collections';
+import {SpectrumListSectionProps} from './ListView';
+
+// Override TS for Section to require title prop.
+const SpectrumListViewSection = Section as <T>(props: SpectrumListSectionProps<T>) => JSX.Element;
+export {SpectrumListViewSection as ListSection};
+
+export {Item} from '@react-stately/collections';
+export type {SpectrumListViewProps, SpectrumListSectionProps} from './ListView';

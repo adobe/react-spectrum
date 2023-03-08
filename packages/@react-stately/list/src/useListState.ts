@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Node} from '@react-types/shared';
+import {CollectionBase, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo, useRef} from 'react';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
@@ -25,7 +25,7 @@ export interface ListProps<T> extends CollectionBase<T>, MultipleSelectionStateP
 
 export interface ListState<T> {
   /** A collection of items in the list. */
-  collection: Collection<Node<T>>,
+  collection: ListCollection<T>,
 
   /** A set of items that are disabled. */
   disabledKeys: Set<Key>,

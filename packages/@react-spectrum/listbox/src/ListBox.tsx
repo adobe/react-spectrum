@@ -21,6 +21,10 @@ function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<H
   let state = useListState(props);
   let layout = useListBoxLayout(state);
   let domRef = useDOMRef(ref);
+  let {collection} = state;
+  if (collection.sections.length > 0 && collection.rows.find(node => node.parentKey == null)) {
+    console.warn('Detected rows without a parent section. If a ListView has sections, all rows within a ListView must belong to a section.');
+  }
 
   return (
     <ListBoxBase

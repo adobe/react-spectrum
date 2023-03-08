@@ -16,6 +16,7 @@ export {TableView} from './TableView';
 import {Column, TableSection} from '@react-stately/table';
 import {SpectrumColumnProps, SpectrumTableSectionProps} from '@react-types/table';
 
+// Override TS for TableSection to require title prop.
 const SpectrumTableSection = TableSection as <T>(props: SpectrumTableSectionProps<T>) => JSX.Element;
 export {SpectrumTableSection as TableSection};
 
@@ -30,4 +31,4 @@ export {
   Cell
 } from '@react-stately/table';
 
-export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
+export type {SpectrumTableProps, SpectrumColumnProps, SpectrumTableSectionProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-types/table';
