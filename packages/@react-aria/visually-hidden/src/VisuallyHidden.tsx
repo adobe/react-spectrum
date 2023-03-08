@@ -34,7 +34,7 @@ const styles: CSSProperties = {
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
   height: 1,
-  margin: '0 -1px -1px 0',
+  margin: -1,
   overflow: 'hidden',
   padding: 0,
   position: 'absolute',
