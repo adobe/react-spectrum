@@ -11,6 +11,7 @@
  */
 
 import {ColumnSize, TableCollection} from '@react-types/table';
+import {getChildNodes} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
@@ -181,7 +182,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let height = 0;
     let columns: LayoutNode[] = [];
-    for (let cell of headerRow.childNodes) {
+    for (let cell of getChildNodes(headerRow, this.collection)) {
       let layoutNode = this.buildChild(cell, x, y);
       layoutNode.layoutInfo.parentKey = row.key;
       x = layoutNode.layoutInfo.rect.maxX;
@@ -275,7 +276,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let skipped = 0;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let node of this.collection.body.childNodes) {
+    for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
 
       // Skip rows before the valid rectangle unless they are already cached.
@@ -353,7 +354,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let children: LayoutNode[] = [];
     let height = 0;
-    for (let child of node.childNodes) {
+    for (let child of getChildNodes(node, this.collection)) {
       if (x > this.validRect.maxX) {
         // Adjust existing cached layoutInfo to ensure that it is out of view.
         // This can happen due to column resizing.
