@@ -11,6 +11,7 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {Key} from 'react';
 import {LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Node, Orientation} from '@react-types/shared';
@@ -255,7 +256,8 @@ export class GridLayout<T> extends BaseLayout<T> {
       return null;
     }
 
-    return this.collection.rows[indexRowBelow]?.childNodes[0].key || null;
+    let row = this.collection.rows[indexRowBelow];
+    return getFirstItem(getChildNodes(row, this.collection))?.key;
   }
 
   getKeyAbove(key: Key) {
@@ -269,6 +271,7 @@ export class GridLayout<T> extends BaseLayout<T> {
       return null;
     }
 
-    return this.collection.rows[indexRowAbove]?.childNodes[0].key || null;
+    let row = this.collection.rows[indexRowAbove];
+    return getFirstItem(getChildNodes(row, this.collection))?.key;
   }
 }
