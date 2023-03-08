@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, SectionProps, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -128,13 +128,14 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   loadingState?: LoadingState
 }
 
-export interface TableSectionProps<T> {
-  /** Rendered contents of the table section, e.g. a header. */
-  title: ReactNode,
+export interface TableSectionProps<T> extends SectionProps<T> {
   /** Rendered contents of the section or row child items. */
   children: RowElement | RowElement[] | RowRenderer<T>,
-  /** Item objects in the section. */
-  items?: Iterable<T>
+}
+
+export interface SpectrumTableSectionProps<T> extends TableSectionProps<T> {
+  /** Rendered contents of the table section, e.g. a header. */
+  title: ReactNode
 }
 
 export interface RowProps {

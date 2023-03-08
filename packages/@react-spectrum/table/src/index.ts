@@ -13,8 +13,11 @@
 /// <reference types="css-module-types" />
 
 export {TableView} from './TableView';
-import {Column} from '@react-stately/table';
-import {SpectrumColumnProps} from '@react-types/table';
+import {Column, TableSection} from '@react-stately/table';
+import {SpectrumColumnProps, SpectrumTableSectionProps} from '@react-types/table';
+
+const SpectrumTableSection = TableSection as <T>(props: SpectrumTableSectionProps<T>) => JSX.Element;
+export {SpectrumTableSection as TableSection};
 
 // Override TS for Column to support spectrum specific props.
 const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
@@ -23,7 +26,6 @@ export {SpectrumColumn as Column};
 export {
   TableHeader,
   TableBody,
-  TableSection,
   Row,
   Cell
 } from '@react-stately/table';
