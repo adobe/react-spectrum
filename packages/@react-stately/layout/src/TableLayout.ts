@@ -287,7 +287,7 @@ export class TableLayout<T> extends ListLayout<T> {
       }
 
       // Skip children before/after the valid rectangle unless they are already cached.
-      if ((estimatedY < this.validRect.y || estimatedY > this.validRect.maxX) && !this.isValid(node, y)) {
+      if ((estimatedY < this.validRect.y || y > this.validRect.maxX) && !this.isValid(node, y)) {
         y = estimatedY;
         continue;
       }

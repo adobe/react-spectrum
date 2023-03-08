@@ -57,7 +57,7 @@ export function getRowLabelledBy<T>(state: TableState<T>, rowKey: Key): string {
   let acc = [];
   let collection = state.collection;
   let row = collection.getItem(rowKey);
-  let rowParent = collection.getItem(row.parentKey);
+  let rowParent = collection.getItem(row?.parentKey);
   if (rowParent != null && rowParent.type === 'section') {
     acc.push(getSectionId(state, rowParent.key));
   }
