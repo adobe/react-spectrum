@@ -13,7 +13,7 @@
 import {CollectionBuilderContext} from '@react-stately/table';
 import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
-import {SectionProps as TableSectionProps} from '@react-types/shared';
+import {TableSectionProps} from '@react-types/table';
 
 function TableSection<T>(props: TableSectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

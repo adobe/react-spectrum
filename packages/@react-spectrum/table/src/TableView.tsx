@@ -958,9 +958,14 @@ function TableRowGroup({children, ...otherProps}) {
   let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
 
-  // TODO: move logic into hook? Feels kinda weird to have useTableGroup do that, maybe
-  if (state.collection.sections) {
+  if (state.collection.sections.length > 0) {
+    // TODO: move logic into hook? Feels kinda weird to have useTableGroup do that, maybe
     rowGroupProps.role = 'presentation';
+
+    let tableBodyNodes = [...state.collection.body.childNodes];
+    if (tableBodyNodes.find(node => node.type !== 'section')) {
+      console.warn('Detected rows without a parent section. If a TableView has sections, all rows within a Table must belong to a section.');
+    }
   }
 
   return (

@@ -128,6 +128,15 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   loadingState?: LoadingState
 }
 
+export interface TableSectionProps<T> {
+  /** Rendered contents of the table section, e.g. a header. */
+  title: ReactNode,
+  /** Rendered contents of the section or row child items. */
+  children: RowElement | RowElement[] | RowRenderer<T>,
+  /** Item objects in the section. */
+  items?: Iterable<T>
+}
+
 export interface RowProps {
   // treeble case? Unsupported props for now
   // /** A list of child item objects used when dynamically rendering row children. */
@@ -139,6 +148,9 @@ export interface RowProps {
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string // ???
 }
+
+export type RowElement = ReactElement<RowProps>;
+export type RowRenderer<T> = (item: T) => RowElement;
 
 export interface CellProps {
   /** The contents of the cell. */
