@@ -77,9 +77,9 @@ import {today, getLocalTimeZone} from '@internationalized/date';
 By default, the formatting depends on the type of value provided. Above, a [CalendarDate](../internationalized/date/CalendarDate.html) is provided, so only the date is displayed. To display a time, pass a [Time](../internationalized/date/Time.html) object. You can also provide a [CalendarDateTime](../internationalized/date/CalendarDateTime.html) or [ZonedDateTime](../internationalized/date/ZonedDateTime.html) to display a date with a time.
 
 ```tsx example
-import {now} from '@internationalized/date';
+import {now, getLocalTimeZone} from '@internationalized/date';
 
-<LabeledValue label="Page load time" value={now()} />
+<LabeledValue label="Page load time" value={now(getLocalTimeZone())} />
 ```
 
 An object with `start` and `end` properties may also be provided to format a date or time range.

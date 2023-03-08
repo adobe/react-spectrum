@@ -95,7 +95,7 @@ import {useFocusRing} from '@react-aria/focus';
 
 function Switch(props) {
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useSwitch(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
