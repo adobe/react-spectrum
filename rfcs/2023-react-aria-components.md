@@ -8,7 +8,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. -->
 
 - Start Date: 2023-02-13
-- RFC PR: (leave this empty, to be filled in later)
+- RFC PR: https://github.com/adobe/react-spectrum/pull/4171
 - Authors: Devon Govett
 
 # React Aria Components
