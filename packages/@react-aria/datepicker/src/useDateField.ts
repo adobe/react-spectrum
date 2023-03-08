@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDatePickerProps, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
@@ -24,7 +24,7 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
-export interface AriaDateFieldProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
+export interface AriaDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {}
 
 export interface DateFieldAria {
    /** Props for the field's visible label element, if any. */
