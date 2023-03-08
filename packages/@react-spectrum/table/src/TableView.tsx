@@ -1148,7 +1148,7 @@ function TableCell({cell}) {
 
 function TableSection({children, style, header, headerStyle, reusableView}) {
   let {state} = useTableContext();
-  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content}, state);
+  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
   let headerRowRef = useRef();
   useVirtualizerItem({
     reusableView: header,
