@@ -39,7 +39,6 @@ export interface SpinbuttonAria {
 export function useSpinButton(
   props: SpinButtonProps
 ): SpinbuttonAria {
-  const _async = useRef<number>();
   let {
     value,
     textValue,
@@ -57,13 +56,12 @@ export function useSpinButton(
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
+  const _async = useRef<number>();
   const clearAsync = useCallback(() => clearTimeout(_async.current), [_async]);
-
   // only run on unmount
   useEffect(() => {
     return () => clearAsync();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clearAsync]);
 
   let onKeyDown = useCallback((e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
