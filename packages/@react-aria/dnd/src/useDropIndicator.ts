@@ -65,7 +65,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
     if (target.dropPosition === 'before') {
       let keyBefore = collection.getKeyBefore(target.key);
       // TODO: move logic to TableView
-      if (!keyBefore.toString().startsWith('headerrow-')) {
+      if (keyBefore && !keyBefore.toString().startsWith('headerrow-')) {
         before = keyBefore;
       }
     } else {
