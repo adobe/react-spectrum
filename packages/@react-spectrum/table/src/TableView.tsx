@@ -269,6 +269,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     if (reusableView.viewType === 'section') {
       let header = children.find(c => c.viewType === 'header');
       let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
+      // Support sticky section header cell
+      headerStyle.overflow = 'visible';
 
       return (
         <TableSection
@@ -1147,7 +1149,7 @@ function TableCell({cell}) {
 }
 
 function TableSection({children, style, header, headerStyle, reusableView}) {
-  let {state} = useTableContext();
+  let {state, layout} = useTableContext();
   let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
   let headerRowRef = useRef();
   useVirtualizerItem({
@@ -1158,6 +1160,7 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
   // TODO height of the table section should match the table column headers according to XD (already handled via headerHeight provided to TableLayout when not overflow: wrap)
   // Mimic the same structure as the header row
   // Perhaps I could split this up into TableSection/TableSectionRow similarly to how TableHeader/TableHeaderRow does it
+  // Def try to split it up since we want the section header cellwrapper to match the visible rect but the section row should we the total width of the table contents
   return (
     <div
       {...rowGroupProps}
@@ -1173,11 +1176,11 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
             }
           )
         }
-        style={headerStyle}>
+        style={{...headerStyle, position: 'absolute'}}>
         <div
           role="presentation"
           ref={headerRowRef}
-          style={headerStyle}
+          style={{...headerStyle, width: layout.virtualizer.visibleRect.width}}
           className={
             classNames(
               styles,
