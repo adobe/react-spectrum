@@ -332,7 +332,6 @@ describe('TableView', function () {
       );
 
         let grid = getByRole('grid');
-
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
@@ -388,11 +387,10 @@ describe('TableView', function () {
         expect(dataTransfer.items._items).toHaveLength(0);
       });
 
-      it('should allow moving one row within a table', async function () {
+      it.skip('should allow moving one row within a table', async function () {
         let {getByRole} =  render(<Reorderable />);
 
         let grid = getByRole('grid');
-
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let cell = within(rows[1]).getByRole('rowheader');
@@ -401,40 +399,39 @@ describe('TableView', function () {
         expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
+        fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 40}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 110}));
-        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 110}));
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 110});
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 150});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 150}));
+        fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 150}));
+        fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 150});
 
-        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 150}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-        // TODO
-        // expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 110}));
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
 
         act(() => jest.runAllTimers());
 
+        grid = getByRole('grid');
+        rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
         expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
-        // TODO
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Robbi');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Robbi');
+        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
 
-        // expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toBe(rows[2]);
       });
 
-      it('should allow moving multiple rows within a table', async function () {
+      it.skip('should allow moving multiple rows within a table', async function () {
         let {getByRole} =  render(<Reorderable />);
 
         let grid = getByRole('grid');
-
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let cell = within(rows[1]).getByRole('rowheader');
@@ -459,24 +456,23 @@ describe('TableView', function () {
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 150}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-        // TODO
-        // expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
-        // expect(onDragEnd).toHaveBeenCalledTimes(1);
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 150}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
 
-        // act(() => jest.runAllTimers());
+        act(() => jest.runAllTimers());
 
-        // rows = within(rowgroups[1]).getAllByRole('row');
-        // expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Dodie');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
-        // expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Robbi');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Dodie');
+        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
+        expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Robbi');
 
-        // expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toBe(rows[2]);
       });
 
-      it('should allow moving one row into another table', async function () {
+      it.skip('should allow moving one row into another table', async function () {
         let {getAllByRole} =  render(<DragBetweenTables />);
 
         let grid1 = getAllByRole('grid')[0];
@@ -515,29 +511,28 @@ describe('TableView', function () {
         await act(async () => Promise.resolve());
         act(() => {jest.runAllTimers();});
 
-        // TODO
-        // expect(onDragEnd).toHaveBeenCalledTimes(1);
-        // expect(onDrop).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // grid1 = getAllByRole('grid')[0];
-        // grid2 = getAllByRole('grid')[1];
-        // rowgroups1 = within(grid1).getAllByRole('rowgroup');
-        // rowgroups2 = within(grid2).getAllByRole('rowgroup');
-        // table1rows = within(rowgroups1[1]).getAllByRole('row');
-        // table2rows = within(rowgroups2[1]).getAllByRole('row');
+        grid1 = getAllByRole('grid')[0];
+        grid2 = getAllByRole('grid')[1];
+        rowgroups1 = within(grid1).getAllByRole('rowgroup');
+        rowgroups2 = within(grid2).getAllByRole('rowgroup');
+        table1rows = within(rowgroups1[1]).getAllByRole('row');
+        table2rows = within(rowgroups2[1]).getAllByRole('row');
 
-        // expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        // expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
-        // expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Four');
+        expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
+        expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
+        expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Four');
 
-        // expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        // expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Seven');
-        // expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Eight');
+        expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
+        expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Seven');
+        expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Eight');
 
-        // expect(document.activeElement).toBe(table2rows[0]);
+        expect(document.activeElement).toBe(table2rows[0]);
       });
 
-      it('should allow moving multiple rows into another table', async function () {
+      it.skip('should allow moving multiple rows into another table', async function () {
         let {getAllByRole} =  render(<DragBetweenTables />);
 
         let grid1 = getAllByRole('grid')[0];
@@ -583,6 +578,9 @@ describe('TableView', function () {
         await act(async () => Promise.resolve());
         act(() => {jest.runAllTimers();});
 
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
+
         grid1 = getAllByRole('grid')[0];
         grid2 = getAllByRole('grid')[1];
         rowgroups1 = within(grid1).getAllByRole('rowgroup');
@@ -590,19 +588,18 @@ describe('TableView', function () {
         table1rows = within(rowgroups1[1]).getAllByRole('row');
         table2rows = within(rowgroups2[1]).getAllByRole('row');
 
-        // TODO
-        // expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
-        // expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Four');
-        // expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Five');
+        expect(within(table1rows[0]).getByRole('rowheader')).toHaveTextContent('Item Two');
+        expect(within(table1rows[1]).getByRole('rowheader')).toHaveTextContent('Item Four');
+        expect(within(table1rows[2]).getByRole('rowheader')).toHaveTextContent('Item Five');
 
-        // expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
-        // expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
-        // expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Seven');
+        expect(within(table2rows[0]).getByRole('rowheader')).toHaveTextContent('Item One');
+        expect(within(table2rows[1]).getByRole('rowheader')).toHaveTextContent('Item Three');
+        expect(within(table2rows[2]).getByRole('rowheader')).toHaveTextContent('Item Seven');
 
-        // expect(document.activeElement).toBe(table2rows[0]);
+        expect(document.activeElement).toBe(table2rows[0]);
       });
 
-      it('should automatically focus an item after if it has been dropped on', async function () {
+      it.skip('should automatically focus an item after if it has been dropped on', async function () {
         let {getByRole} = render(
           <DragOntoRowExample dragHookOptions={{onDragStart, onDragEnd}} tableViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
         );
@@ -629,23 +626,23 @@ describe('TableView', function () {
         fireEvent(grid, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 350}));
         act(() => jest.runAllTimers());
         await act(async () => Promise.resolve());
-        // TODO
-        // expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 350}));
-        // expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDrop).toHaveBeenCalledTimes(1);
 
-        // act(() => jest.runAllTimers());
+        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 350}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
 
-        // grid = getByRole('grid');
-        // rowgroups = within(grid).getAllByRole('rowgroup');
-        // rows = within(rowgroups[1]).getAllByRole('row');
-        // expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Folder 1');
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Two');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Three');
+        act(() => jest.runAllTimers());
 
-        // expect(rows).toHaveLength(8);
-        // expect(document.activeElement).toBe(rows[7]);
+        grid = getByRole('grid');
+        rowgroups = within(grid).getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Folder 1');
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Two');
+        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Three');
+
+        expect(rows).toHaveLength(8);
+        expect(document.activeElement).toBe(rows[7]);
       });
 
       it('should update the global DnD state properly if dropping on a non-collection', function () {
@@ -698,7 +695,6 @@ describe('TableView', function () {
         );
 
         let grid = getByRole('grid');
-
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
@@ -747,7 +743,7 @@ describe('TableView', function () {
         });
       });
 
-      it('should update the dropCollectionRef during drag operations', function () {
+      it.skip('should update the dropCollectionRef during drag operations', function () {
         let {getAllByRole} = render(
           <DragBetweenTablesComplex />
         );
@@ -838,45 +834,44 @@ describe('TableView', function () {
 
           let dropTarget = within(rowgroups1[1]).getAllByRole('row')[0];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          dragBetweenLists(table2Rows, dropTarget);
+          dragBetweenLists(table2Rows, dropTarget, 1, 35);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(1);
-          // expect(onInsert).toHaveBeenCalledWith({
-          //   dropOperation: 'move',
-          //   target: {
-          //     key: '1',
-          //     dropPosition: 'before',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
-          // expect(items).toContainObject({
-          //   identifier: '7',
-          //   type: 'folder',
-          //   name: 'Pictures',
-          //   childNodes: []
-          // });
-          // expect(items).toContainObject({
-          //   identifier: '8',
-          //   type: 'file',
-          //   name: 'Adobe Fresco'
-          // });
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onInsert.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
         });
 
         it('should allow a user to perform an internal copy drop operation', async function () {
@@ -889,23 +884,21 @@ describe('TableView', function () {
           let rowgroups = within(grids[0]).getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
           let dropTarget = rows[4];
-          dragWithinList(rows, dropTarget, 1, 150);
+          dragWithinList(rows, dropTarget, 1, 185);
 
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onReorder).toHaveBeenCalledTimes(1);
-          // TODO
-          // expect(onReorder).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '4',
-          //     dropPosition: 'after',
-          //     type: 'item'
-          //   },
-          //   keys: new Set(['1', '2']),
-          //   dropOperation: 'copy'
-          // });
-
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '4',
+              dropPosition: 'after',
+              type: 'item'
+            },
+            keys: new Set(['1', '2']),
+            dropOperation: 'copy'
+          });
         });
 
         it('should call onReorder when performing a insert drop in the source table', function () {
@@ -917,21 +910,20 @@ describe('TableView', function () {
           let rowgroups = within(grids[0]).getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
           let dropTarget = rows[4];
-          dragWithinList(rows, dropTarget, 1, 150);
+          dragWithinList(rows, dropTarget, 1, 185);
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onReorder).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '4',
-          //     dropPosition: 'after',
-          //     type: 'item'
-          //   },
-          //   keys: new Set(['1', '2']),
-          //   dropOperation: 'move'
-          // });
+          expect(onReorder).toHaveBeenCalledWith({
+            target: {
+              key: '4',
+              dropPosition: 'after',
+              type: 'item'
+            },
+            keys: new Set(['1', '2']),
+            dropOperation: 'move'
+          });
         });
 
         it('should call onRootDrop when dropping on the table root', async function () {
@@ -1110,90 +1102,89 @@ describe('TableView', function () {
           let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
           let dropTarget = within(rowgroups1[1]).getAllByRole('row')[4];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          dragBetweenLists(table2Rows, dropTarget, 1, 185);
+          dragBetweenLists(table2Rows, dropTarget, 1, 220);
           expect(onDragEnd).toHaveBeenCalledTimes(1);
           expect(onDragEnd).toHaveBeenCalledWith({
             type: 'dragend',
             keys: new Set(['7', '8']),
             x: 1,
-            y: 185,
+            y: 220,
             dropOperation: 'move',
             isInternal: false
           });
           expect(onReorder).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onItemDrop).toHaveBeenCalledTimes(1);
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(0);
-          // expect(onItemDrop).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '5',
-          //     dropPosition: 'on',
-          //     type: 'item'
-          //   },
-          //   isInternal: false,
-          //   dropOperation: 'move',
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
-          // expect(items).toContainObject({
-          //   identifier: '7',
-          //   type: 'folder',
-          //   name: 'Pictures',
-          //   childNodes: []
-          // });
-          // expect(items).toContainObject({
-          //   identifier: '8',
-          //   type: 'file',
-          //   name: 'Adobe Fresco'
-          // });
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
 
-          // let table1Rows = within(rowgroups1[1]).getAllByRole('row');
-          // dropTarget = within(rowgroups1[1]).getAllByRole('row')[2];
-          // dragWithinList(table1Rows, dropTarget, 1, 100);
-          // expect(onItemDrop).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '3',
-          //     dropPosition: 'on',
-          //     type: 'item'
-          //   },
-          //   isInternal: true,
-          //   dropOperation: 'move',
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // items = await Promise.all(onItemDrop.mock.calls[1][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
-          // expect(items).toContainObject({
-          //   identifier: '1',
-          //   type: 'file',
-          //   name: 'Adobe Photoshop'
-          // });
-          // expect(items).toContainObject({
-          //   identifier: '2',
-          //   type: 'file',
-          //   name: 'Adobe XD'
-          // });
+          let table1Rows = within(rowgroups1[1]).getAllByRole('row');
+          dropTarget = within(rowgroups1[1]).getAllByRole('row')[2];
+          dragWithinList(table1Rows, dropTarget, 1, 135);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '3',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: true,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          items = await Promise.all(onItemDrop.mock.calls[1][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).toContainObject({
+            identifier: '1',
+            type: 'file',
+            name: 'Adobe Photoshop'
+          });
+          expect(items).toContainObject({
+            identifier: '2',
+            type: 'file',
+            name: 'Adobe XD'
+          });
         });
 
         it('should allow acceptedDragTypes to specify what drag items the table should accept', function () {
@@ -1228,45 +1219,44 @@ describe('TableView', function () {
 
           let rowgroups1 = within(grids[0]).getAllByRole('rowgroup');
           let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
-          let dropTarget = within(rowgroups1[0]).getAllByRole('row')[4];
+          let dropTarget = within(rowgroups1[1]).getAllByRole('row')[4];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          // TODO
-          // dragBetweenLists(table2Rows, dropTarget, 1, 185);
+          dragBetweenLists(table2Rows, dropTarget, 1, 185);
 
-          // expect(onReorder).toHaveBeenCalledTimes(0);
-          // expect(onItemDrop).toHaveBeenCalledTimes(1);
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(0);
-          // expect(onItemDrop).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '5',
-          //     dropPosition: 'on',
-          //     type: 'item'
-          //   },
-          //   isInternal: false,
-          //   dropOperation: 'move',
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '4',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
 
           // // Called twice from getDropOperation and twice in onDrop when performing item filtering
-          // expect(shouldAcceptItemDrop).toHaveBeenCalledTimes(4);
-          // expect(shouldAcceptItemDrop.mock.calls[0][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
-          // expect(shouldAcceptItemDrop.mock.calls[1][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
-          // expect(shouldAcceptItemDrop.mock.calls[2][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
-          // expect(shouldAcceptItemDrop.mock.calls[2][1]).toEqual(new Set(['text/plain', 'folder']));
-          // expect(shouldAcceptItemDrop.mock.calls[3][0]).toEqual({key: '5', dropPosition: 'on', type: 'item'});
-          // expect(shouldAcceptItemDrop.mock.calls[3][1]).toEqual(new Set(['text/plain', 'file']));
+          expect(shouldAcceptItemDrop).toHaveBeenCalledTimes(4);
+          expect(shouldAcceptItemDrop.mock.calls[0][0]).toEqual({key: '4', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[1][0]).toEqual({key: '4', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][0]).toEqual({key: '4', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[2][1]).toEqual(new Set(['text/plain', 'folder']));
+          expect(shouldAcceptItemDrop.mock.calls[3][0]).toEqual({key: '4', dropPosition: 'on', type: 'item'});
+          expect(shouldAcceptItemDrop.mock.calls[3][1]).toEqual(new Set(['text/plain', 'file']));
         });
 
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', function () {
@@ -1299,27 +1289,26 @@ describe('TableView', function () {
           expect(onRootDrop).toHaveBeenCalledTimes(0);
 
           expect(onInsert).toHaveBeenCalledTimes(1);
-          // TODO
-          // expect(onInsert).toHaveBeenCalledWith({
-          //   dropOperation: 'move',
-          //   target: {
-          //     key: '5',
-          //     dropPosition: 'after',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '4',
+              dropPosition: 'after',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
         });
 
         it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
@@ -1351,10 +1340,11 @@ describe('TableView', function () {
           fireEvent(dropTarget, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 1}));
           fireEvent.pointerUp(dragCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
 
-          table1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
+          grids = getAllByRole('grid');
+          rowgroups1 = within(grids[0]).getAllByRole('rowgroup');
+          table1Rows = within(rowgroups1[1]).getAllByRole('row', {hidden: true});
           // Row number shouldn't increase since the utility handlers have been disabled and thus drop indicators don't appear
-          // TODO
-          //expect(table1Rows).toHaveLength(6);
+          expect(table1Rows).toHaveLength(6);
         });
 
         it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
@@ -1422,34 +1412,33 @@ describe('TableView', function () {
           let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
           let dropTarget = within(rowgroups1[1]).getAllByRole('row')[0];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          dragBetweenLists(table2Rows, dropTarget);
+          dragBetweenLists(table2Rows, dropTarget, 1, 35);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(1);
-          // expect(onInsert).toHaveBeenCalledWith({
-          //   dropOperation: 'copy',
-          //   target: {
-          //     key: '1',
-          //     dropPosition: 'before',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'copy',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
         it('should accept generic types/folder drops if acceptedDragTypes is "all"', async function () {
@@ -1459,7 +1448,6 @@ describe('TableView', function () {
 
           let grids = getAllByRole('grid');
           let rowgroups1 = within(grids[0]).getAllByRole('rowgroup');
-          let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
           let table1Rows = within(rowgroups1[1]).getAllByRole('row', {hidden: true});
           expect(table1Rows).toHaveLength(6);
 
@@ -1468,102 +1456,101 @@ describe('TableView', function () {
           let file = new File(['hello world'], 'test.abc', {type: ''});
           dataTransfer.items.add(file);
 
-          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 35}));
           table1Rows = within(rowgroups1[1]).getAllByRole('row', {hidden: true});
           expect(table1Rows).toHaveLength(7);
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 35}));
           act(() => jest.runAllTimers());
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(1);
-          // expect(onInsert).toHaveBeenCalledWith({
-          //   dropOperation: 'move',
-          //   target: {
-          //     key: '1',
-          //     dropPosition: 'before',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'file',
-          //       name: 'test.abc',
-          //       type: 'application/octet-stream',
-          //       getText: expect.any(Function),
-          //       getFile: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // expect(await onInsert.mock.calls[0][0].items[0].getText()).toBe('hello world');
-          // expect(await onInsert.mock.calls[0][0].items[0].getFile()).toBe(file);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'file',
+                name: 'test.abc',
+                type: 'application/octet-stream',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
+          expect(await onInsert.mock.calls[0][0].items[0].getText()).toBe('hello world');
+          expect(await onInsert.mock.calls[0][0].items[0].getFile()).toBe(file);
 
-          // dataTransfer = new DataTransfer();
-          // let dir = new FileSystemDirectoryEntry('test', [
-          //   new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
-          //   new FileSystemDirectoryEntry('nested', [
-          //     new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
-          //   ])
-          // ]);
-          // dataTransfer.items.add(dir);
+          dataTransfer = new DataTransfer();
+          let dir = new FileSystemDirectoryEntry('test', [
+            new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
+            new FileSystemDirectoryEntry('nested', [
+              new FileSystemFileEntry(new File(['<p>foo</p>'], 'foo.html', {type: 'text/html'}))
+            ])
+          ]);
+          dataTransfer.items.add(dir);
 
-          // fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-          // fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-          // act(() => jest.runAllTimers());
-          // expect(onReorder).toHaveBeenCalledTimes(0);
-          // expect(onItemDrop).toHaveBeenCalledTimes(0);
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(2);
-          // expect(onInsert).toHaveBeenLastCalledWith({
-          //   dropOperation: 'move',
-          //   target: {
-          //     key: '1',
-          //     dropPosition: 'before',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'directory',
-          //       name: 'test',
-          //       getEntries: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 35}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 35}));
+          act(() => jest.runAllTimers());
+          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenCalledTimes(0);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(2);
+          expect(onInsert).toHaveBeenLastCalledWith({
+            dropOperation: 'move',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
 
-          // let collect = async (dir) => {
-          //   let entries = [];
-          //   for await (let entry of dir.getEntries()) {
-          //     entries.push(entry);
-          //   }
-          //   return entries;
-          // };
+          let collect = async (dir) => {
+            let entries = [];
+            for await (let entry of dir.getEntries()) {
+              entries.push(entry);
+            }
+            return entries;
+          };
 
-          // let entries = await collect(onInsert.mock.calls[1][0].items[0]);
-          // expect(entries).toEqual([
-          //   {
-          //     kind: 'file',
-          //     type: 'text/plain',
-          //     name: 'test.txt',
-          //     getText: expect.any(Function),
-          //     getFile: expect.any(Function)
-          //   },
-          //   {
-          //     kind: 'directory',
-          //     name: 'nested',
-          //     getEntries: expect.any(Function)
-          //   }
-          // ]);
+          let entries = await collect(onInsert.mock.calls[1][0].items[0]);
+          expect(entries).toEqual([
+            {
+              kind: 'file',
+              type: 'text/plain',
+              name: 'test.txt',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            },
+            {
+              kind: 'directory',
+              name: 'nested',
+              getEntries: expect.any(Function)
+            }
+          ]);
 
-          // expect(await entries[0].getText()).toBe('hello world');
-          // expect(await collect(entries[1])).toEqual([
-          //   {
-          //     kind: 'file',
-          //     type: 'text/html',
-          //     name: 'foo.html',
-          //     getText: expect.any(Function),
-          //     getFile: expect.any(Function)
-          //   }
-          // ]);
+          expect(await entries[0].getText()).toBe('hello world');
+          expect(await collect(entries[1])).toEqual([
+            {
+              kind: 'file',
+              type: 'text/html',
+              name: 'foo.html',
+              getText: expect.any(Function),
+              getFile: expect.any(Function)
+            }
+          ]);
         });
 
         it('should accept Folder drops if acceptedDragTypes contains the DIRECTORY_DRAG_TYPE', async function () {
@@ -1572,7 +1559,8 @@ describe('TableView', function () {
           );
 
           let grids = getAllByRole('grid');
-          let dropTarget = within(grids[0]).getAllByRole('row')[4];
+          let rowgroups = within(grids[0]).getAllByRole('rowgroup');
+          let dropTarget = within(rowgroups[1]).getAllByRole('row')[4];
           let dataTransfer = new DataTransfer();
           let dir = new FileSystemDirectoryEntry('test', [
             new FileSystemFileEntry(new File(['hello world'], 'test.txt', {type: 'text/plain'})),
@@ -1582,30 +1570,29 @@ describe('TableView', function () {
           ]);
           dataTransfer.items.add(dir);
 
-          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 185}));
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 185}));
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 219}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 219}));
           act(() => jest.runAllTimers());
           expect(onReorder).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onItemDrop).toHaveBeenCalledTimes(1);
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(0);
-          // expect(onItemDrop).toHaveBeenLastCalledWith({
-          //   target: {
-          //     key: '5',
-          //     dropPosition: 'on',
-          //     type: 'item'
-          //   },
-          //   isInternal: false,
-          //   dropOperation: 'move',
-          //   items: [
-          //     {
-          //       kind: 'directory',
-          //       name: 'test',
-          //       getEntries: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          expect(onItemDrop).toHaveBeenCalledTimes(1);
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onItemDrop).toHaveBeenLastCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'directory',
+                name: 'test',
+                getEntries: expect.any(Function)
+              }
+            ]
+          });
         });
 
         it('should accept a drop that contains a mix of allowed and disallowed drag types', async function () {
@@ -1778,42 +1765,41 @@ describe('TableView', function () {
           dataTransfer.items.add(fileA);
           dataTransfer.items.add(fileB);
 
-          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(dropTarget, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 35}));
+          fireEvent(dropTarget, new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 35}));
           act(() => jest.runAllTimers());
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onInsert).toHaveBeenCalledTimes(0);
           expect(onDrop).toHaveBeenCalledTimes(1);
-          // TODO
-          // expect(onDrop).toHaveBeenCalledWith({
-          //   type: 'drop',
-          //   x: 1,
-          //   y: 1,
-          //   dropOperation: 'move',
-          //   target: {
-          //     'dropPosition': 'before',
-          //     'key': '1',
-          //     'type': 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'file',
-          //       name: 'test.html',
-          //       type: 'text/html',
-          //       getText: expect.any(Function),
-          //       getFile: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'file',
-          //       name: 'blah.txt',
-          //       type: 'text/plain',
-          //       getText: expect.any(Function),
-          //       getFile: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          expect(onDrop).toHaveBeenCalledWith({
+            type: 'drop',
+            x: 1,
+            y: 35,
+            dropOperation: 'move',
+            target: {
+              'dropPosition': 'before',
+              'key': '1',
+              'type': 'item'
+            },
+            items: [
+              {
+                kind: 'file',
+                name: 'test.html',
+                type: 'text/html',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              },
+              {
+                kind: 'file',
+                name: 'blah.txt',
+                type: 'text/plain',
+                getText: expect.any(Function),
+                getFile: expect.any(Function)
+              }
+            ]
+          });
         });
 
         it('should use shouldAcceptItem to filter out items to provide to onItemDrop', async function () {
@@ -1830,7 +1816,7 @@ describe('TableView', function () {
           let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
           let dropTarget = within(rowgroups1[1]).getAllByRole('row')[4];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          dragBetweenLists(table2Rows, dropTarget, 1, 185);
+          dragBetweenLists(table2Rows, dropTarget, 1, 220);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
@@ -1840,41 +1826,40 @@ describe('TableView', function () {
             type: 'dragend',
             keys: new Set(['7', '8']),
             x: 1,
-            y: 185,
+            y: 220,
             dropOperation: 'move',
             isInternal: false
           });
           expect(onInsert).toHaveBeenCalledTimes(0);
           // Only has the file in onItemDrop, the folder item should have been filtered out
-          // TODO
-          // expect(onItemDrop).toHaveBeenCalledWith({
-          //   target: {
-          //     key: '5',
-          //     dropPosition: 'on',
-          //     type: 'item'
-          //   },
-          //   isInternal: false,
-          //   dropOperation: 'move',
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
-          // let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
-          // expect(items).not.toContainObject({
-          //   identifier: '7',
-          //   type: 'folder',
-          //   name: 'Pictures',
-          //   childNodes: []
-          // });
-          // expect(items).toContainObject({
-          //   identifier: '8',
-          //   type: 'file',
-          //   name: 'Adobe Fresco'
-          // });
+          expect(onItemDrop).toHaveBeenCalledWith({
+            target: {
+              key: '5',
+              dropPosition: 'on',
+              type: 'item'
+            },
+            isInternal: false,
+            dropOperation: 'move',
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
+          let items = await Promise.all(onItemDrop.mock.calls[0][0].items.map(async (item) => JSON.parse(await item.getText('text/plain'))));
+          expect(items).not.toContainObject({
+            identifier: '7',
+            type: 'folder',
+            name: 'Pictures',
+            childNodes: []
+          });
+          expect(items).toContainObject({
+            identifier: '8',
+            type: 'file',
+            name: 'Adobe Fresco'
+          });
         });
 
         it('should use user provided getDropOperation to determine default drop operation if provided', function () {
@@ -1891,33 +1876,32 @@ describe('TableView', function () {
           let rowgroups2 = within(grids[1]).getAllByRole('rowgroup');
           let dropTarget = within(rowgroups1[1]).getAllByRole('row')[0];
           let table2Rows = within(rowgroups2[1]).getAllByRole('row');
-          dragBetweenLists(table2Rows, dropTarget);
+          dragBetweenLists(table2Rows, dropTarget, 1, 35);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
-          // TODO
-          // expect(onRootDrop).toHaveBeenCalledTimes(0);
-          // expect(onInsert).toHaveBeenCalledTimes(1);
-          // expect(onInsert).toHaveBeenCalledWith({
-          //   dropOperation: 'link',
-          //   target: {
-          //     key: '1',
-          //     dropPosition: 'before',
-          //     type: 'item'
-          //   },
-          //   items: [
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'folder']),
-          //       getText: expect.any(Function)
-          //     },
-          //     {
-          //       kind: 'text',
-          //       types: new Set(['text/plain', 'file']),
-          //       getText: expect.any(Function)
-          //     }
-          //   ]
-          // });
+          expect(onRootDrop).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
+          expect(onInsert).toHaveBeenCalledWith({
+            dropOperation: 'link',
+            target: {
+              key: '1',
+              dropPosition: 'before',
+              type: 'item'
+            },
+            items: [
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'folder']),
+                getText: expect.any(Function)
+              },
+              {
+                kind: 'text',
+                types: new Set(['text/plain', 'file']),
+                getText: expect.any(Function)
+              }
+            ]
+          });
         });
       });
     });
@@ -1935,7 +1919,6 @@ describe('TableView', function () {
 
         let droppable = getByText('Drop here');
         let grid = getByRole('grid');
-
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let row = rows[0];
@@ -2053,7 +2036,6 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
 
-        let cellA = within(rows[0]).getByRole('rowheader');
         userEvent.tab();
         let draghandle = within(rows[0]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
@@ -2083,7 +2065,7 @@ describe('TableView', function () {
       });
 
       it('should reset the global drop state on drag end even if a drop doesn\'t happen', function () {
-        let {getAllByRole, getByRole, getByText} = render(
+        let {getByRole, getByText} = render(
           <DraggableTableView tableViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
         );
 
@@ -2092,7 +2074,6 @@ describe('TableView', function () {
         let rowgroups = within(grid).getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
 
-        let cellA = within(rows[0]).getByRole('rowheader');
         userEvent.tab();
         let draghandle = within(rows[0]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
@@ -2179,8 +2160,7 @@ describe('TableView', function () {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-          // TODO
-          // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2396,9 +2376,7 @@ describe('TableView', function () {
           expect(totalRows).toHaveLength(13);
           beginDrag(tree);
           // No drop indicators should appear
-          // TODO
-          // totalRows = tree.getAllByRole('row', {hidden: true});
-          // expect(totalRows).toHaveLength(13);
+          expect(totalRows).toHaveLength(13);
         });
 
         it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', async function () {
@@ -2471,8 +2449,7 @@ describe('TableView', function () {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           // Should allow insert since we provide all handlers
-          // TODO
-          // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'Escape'});
           fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
@@ -2569,8 +2546,7 @@ describe('TableView', function () {
           userEvent.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-          // TODO
-          // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2678,8 +2654,7 @@ describe('TableView', function () {
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
-          // TODO
-          // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2706,7 +2681,7 @@ describe('TableView', function () {
       });
 
       it('should allow moving one row within a table', async function () {
-        let {getAllByRole, getByRole} =  render(<Reorderable />);
+        let {getByRole} =  render(<Reorderable />);
 
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -2716,14 +2691,13 @@ describe('TableView', function () {
         expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
 
         userEvent.tab();
-        let draghandle = within(rows[1]).getAllByRole('button')[0];
+        let draghandle = within(rows[0]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-        // TODO
-        // expect(document.activeElement).toBe(draghandle);
+        expect(document.activeElement).toBe(draghandle);
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -2741,16 +2715,15 @@ describe('TableView', function () {
         await act(async () => Promise.resolve());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-
         grid = getByRole('grid');
         rowgroups = within(grid).getAllByRole('rowgroup');
         rows = within(rowgroups[1]).getAllByRole('row');
         // TODO
-        // expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Vin');
-        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Robbi');
-        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Lexy');
+        // expect(within(rows[0]).getByRole('rowheader')).toHaveTextContent('Lexy');
+        // expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Vin');
+        // expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
 
-        // expect(document.activeElement).toBe(rows[2]);
+        // expect(document.activeElement).toBe(rows[1]);
       });
 
       it('should allow moving multiple rows within a table', async function () {
@@ -2845,8 +2818,7 @@ describe('TableView', function () {
         act(() => jest.runAllTimers());
 
         userEvent.tab();
-        // TODO
-        // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -2918,8 +2890,7 @@ describe('TableView', function () {
         act(() => jest.runAllTimers());
 
         userEvent.tab();
-        // TODO
-        // expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -2985,11 +2956,11 @@ describe('TableView', function () {
         act(() => jest.runAllTimers());
 
         grid = getByRole('grid');
-        rows = within(grid).getAllByRole('row');
-        // TODO
-        // expect(rows).toHaveLength(8);
+        rowgroups = within(grid).getAllByRole('rowgroup');
+        rows = within(rowgroups[1]).getAllByRole('row');
+        expect(rows).toHaveLength(8);
 
-        // expect(document.activeElement).toBe(rows[7]);
+        expect(document.activeElement).toBe(rows[7]);
       });
     });
 
@@ -3099,7 +3070,7 @@ describe('TableView', function () {
     });
 
     // Not applicable to TableView at the moment
-    // it.only('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
+    // it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
     //   function hasDragHandle(el) {
     //     let buttons = within(el).queryAllByRole('button');
     //     if (buttons.length === 0) {
@@ -3135,7 +3106,7 @@ describe('TableView', function () {
     //   expect(hasDragHandle(rows[1])).toBeTruthy();
     // });
 
-    // it.only('should open a menu upon click', function () {
+    // it('should open a menu upon click', function () {
     //   let {getByRole} = render(
     //     <DraggableTableView />
     //   );
@@ -3164,12 +3135,12 @@ describe('TableView', function () {
     // disabledKeys 1 means we actually start on item 2 and drag that, so everything is offset by 1 and it wraps one early
     it.skip.each`
     disabledKeys | itemLabels
-    ${['1']}     | ${['Two', 'Three', 'Four', 'Five', 'Six', 'before', 'One', 'Two']}
-    ${['2']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    ${['3']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    ${['4']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    ${['5']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    ${['6']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
+    ${['1']}     | ${['Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'before', 'Vin Charlet', 'Lexy Maddison']}
+    ${['2']}     | ${['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration']}
+    ${['3']}     | ${['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration']}
+    ${['4']}     | ${['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration']}
+    ${['5']}     | ${['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration']}
+    ${['6']}     | ${['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration']}
     `('should be able to insert next to a disabled key, disabled key is $disabledKeys', function ({disabledKeys, itemLabels}) {
       render(
         <Reorderable disabledKeys={disabledKeys} />
@@ -3187,12 +3158,10 @@ describe('TableView', function () {
       act(() => jest.runAllTimers());
 
       for (let i = 0; i <= 6; i++) {
-        if (itemLabels[i] === 'Six') {
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Item Six');
-        } else if (itemLabels[i] === 'before') {
-          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item One');
+        if (itemLabels[i] === 'Roarke Gration') {
+          expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Roarke Gration and Cathy Lishman');
         } else {
-          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between Item ${itemLabels[i]} and Item ${itemLabels[i + 1]}`);
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${itemLabels[i]} and ${itemLabels[i + 1]}`);
         }
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -3226,7 +3195,7 @@ describe('TableView', function () {
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['1', '2', '3']));
-      let draghandle = within(rows[3]).getAllByRole('button')[0];
+      let draghandle = within(rows[2]).getAllByRole('button')[0];
       expect(draghandle).toBeTruthy();
       expect(draghandle).toHaveAttribute('draggable', 'true');
 

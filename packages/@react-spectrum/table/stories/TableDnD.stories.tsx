@@ -108,3 +108,5 @@ export const DraggableRowsCopyLink: TableStory = {
     description: {data: 'Allows copy, link, and cancel operations. Copy should be the default operation, and link should be the operation when the CTRL key is held while dragging.'}
   }
 };
+
+let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');

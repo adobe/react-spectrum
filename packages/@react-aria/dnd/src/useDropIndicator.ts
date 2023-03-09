@@ -61,9 +61,16 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before = target.dropPosition === 'before'
-      ? collection.getKeyBefore(target.key)
-      : target.key;
+    let before = null;
+    if (target.dropPosition === 'before') {
+      let keyBefore = collection.getKeyBefore(target.key);
+      // TODO: move logic to TableView
+      if (!keyBefore.toString().startsWith('headerrow-')) {
+        before = keyBefore;
+      }
+    } else {
+      before = target.key;
+    }
     let after = target.dropPosition === 'after'
       ? collection.getKeyAfter(target.key)
       : target.key;
