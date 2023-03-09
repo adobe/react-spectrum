@@ -181,6 +181,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
+    // TODO: doesn't work if there are items without a section parent and items in sections
+    // Refactor ListCollection indexing to solve for this case?
     let parentSection = state.collection.getItem(node.parentKey);
     let offset = parentSection ? parentSection.index + 1 : 0;
     rowProps['aria-rowindex'] = node.index + 1 + offset;

@@ -18,6 +18,7 @@ export {useGridCell} from './useGridCell';
 export {useGridSelectionCheckbox} from './useGridSelectionCheckbox';
 export {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 export {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
+export {useGridSectionAnnouncement} from './useGridSectionAnnouncement';
 
 export type {GridProps, GridAria} from './useGrid';
 export type {GridCellAria, GridCellProps} from './useGridCell';
