@@ -329,6 +329,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
       let layoutNode = this.buildChild(child, x, y);
       y = layoutNode.layoutInfo.rect.maxY;
+      width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
 
       if (y > this.validRect.maxY) {
@@ -339,6 +340,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     }
 
     rect.height = y - startY;
+    rect.width = width;
+    headerRect.width = width;
 
     let layoutNode = {
       header,

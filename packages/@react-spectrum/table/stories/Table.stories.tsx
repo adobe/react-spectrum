@@ -249,6 +249,14 @@ let items = [
   {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let columnsWithSections = [
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'},
+  {name: 'Test', key: 'test'},
+  {name: 'Yay', key: 'yay'}
+];
+
 let itemsWithSections = [
   {id: 0, title: 'section1', children: [
     {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
@@ -295,7 +303,7 @@ export const DynamicSections: TableStory = {
   },
   render: (args) => (
     <TableView {...args}>
-      <TableHeader columns={columns}>
+      <TableHeader columns={columnsWithSections}>
         {column => <Column>{column.name}</Column>}
       </TableHeader>
       <TableBody items={itemsWithSections}>
