@@ -1212,7 +1212,11 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
           target={{key: item.key, type: 'item', dropPosition: 'before'}} />
       }
       {isTableDroppable && !dropIndicator?.isHidden &&
-        <div role="button" {...visuallyHiddenProps} {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
+        <div role="row" {...visuallyHiddenProps}>
+          <div role="gridcell">
+            <div role="button" {...dropIndicator?.dropIndicatorProps} ref={dropIndicatorRef} />
+          </div>
+        </div>
       }
       <div
         {...mergeProps(props, dropProps)}
