@@ -1157,10 +1157,6 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
     ref: headerRowRef
   });
 
-  // TODO height of the table section should match the table column headers according to XD (already handled via headerHeight provided to TableLayout when not overflow: wrap)
-  // Mimic the same structure as the header row
-  // Perhaps I could split this up into TableSection/TableSectionRow similarly to how TableHeader/TableHeaderRow does it
-  // Def try to split it up since we want the section header cellwrapper to match the visible rect but the section row should we the total width of the table contents
   return (
     <div
       {...rowGroupProps}
@@ -1176,11 +1172,12 @@ function TableSection({children, style, header, headerStyle, reusableView}) {
             }
           )
         }
-        style={{...headerStyle, position: 'absolute'}}>
+        style={headerStyle}>
         <div
           role="presentation"
           ref={headerRowRef}
-          style={{...headerStyle, width: layout.virtualizer.visibleRect.width}}
+          // Section header should be sticky and shouldn't span the whole row width
+          style={{...headerStyle, width: layout.virtualizer.visibleRect.width, position: 'sticky'}}
           className={
             classNames(
               styles,

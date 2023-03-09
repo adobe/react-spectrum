@@ -306,7 +306,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let header = new LayoutInfo('header', node.key + ':header', headerRect);
     header.estimatedSize = isEstimated;
     header.parentKey = node.key;
-    header.isSticky = true;
 
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
