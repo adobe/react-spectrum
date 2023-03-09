@@ -39,7 +39,7 @@ export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeF
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-export {useListState, useSingleSelectListState} from '@react-stately/list';
+export {ListCollection, useListState, useSingleSelectListState} from '@react-stately/list';
 export {useMenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';
 export {useOverlayTriggerState} from '@react-stately/overlays';
