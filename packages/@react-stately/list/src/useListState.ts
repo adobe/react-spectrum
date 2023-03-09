@@ -16,7 +16,7 @@ import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useCollection} from '@react-stately/collections';
 
-export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
+export interface ListProps<T> extends CollectionStateBase<T, ListCollection<T>>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */

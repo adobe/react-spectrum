@@ -11,11 +11,11 @@
  */
 
 import {CollectionStateBase} from '@react-types/shared';
-import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {ListCollection, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {TabListProps} from '@react-types/tabs';
 import {useRef} from 'react';
 
-export interface TabListStateOptions<T> extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T> {}
+export interface TabListStateOptions<T> extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T, ListCollection<T>> {}
 
 export interface TabListState<T> extends SingleSelectListState<T> {
   /** Whether the tab list is disabled. */

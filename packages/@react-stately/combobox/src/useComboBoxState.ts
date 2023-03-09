@@ -36,7 +36,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T> {
+export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T, ListCollection<T>> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
@@ -357,7 +357,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   };
 }
 
-function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
+function filterCollection<T extends object>(collection: ListCollection<T>, inputValue: string, filter: FilterFn): ListCollection<T> {
   return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
