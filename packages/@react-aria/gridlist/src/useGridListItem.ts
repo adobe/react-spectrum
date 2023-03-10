@@ -181,11 +181,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   if (isVirtualized) {
-    // TODO: doesn't work if there are items without a section parent and items in sections
-    // Refactor ListCollection indexing to solve for this case?
-    let parentSection = state.collection.getItem(node.parentKey);
-    let offset = parentSection ? parentSection.index + 1 : 0;
-    rowProps['aria-rowindex'] = node.index + 1 + offset;
+    let {collection} = state;
+    // TODO: refactor ListCollection to store an absolute index of a node's position?
+    // May need to refactor this if we refactor the index info of a node to truely represent the index of the node within its parent
+    rowProps['aria-rowindex'] = collection.sections.length > 0 ? [...collection.getKeys()].findIndex((key) => key === node.key) + 1 : node.index;
   }
 
   let gridCellProps = {

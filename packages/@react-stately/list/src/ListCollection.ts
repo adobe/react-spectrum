@@ -26,10 +26,11 @@ export class ListCollection<T> implements Collection<Node<T>> {
     this.sections = [];
     this.rows = [];
 
+    let sectionIndex = 0;
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
-
       if (node.type === 'section') {
+        node.index = sectionIndex++;
         this.sections.push(node);
         if (node.childNodes) {
           for (let child of node.childNodes) {
