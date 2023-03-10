@@ -260,7 +260,7 @@ storiesOf('ListView', module)
     )
   )
   .add('dynamic sections', args => (
-    <ListView aria-label="Dynamic items" items={withSection} width="300px" height="250px" {...args}>
+    <ListView aria-label="Dynamic items" disabledKeys={['Kangaroo']} items={withSection} width="300px" height="250px" {...args}>
       {(item: any) => (
         <ListSection key={item.name} items={item.children} title={item.name}>
           {(item: any) => (
