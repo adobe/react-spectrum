@@ -56,7 +56,7 @@
   --spectrum-listview-item-draghandle-border-color-key-focus: var(--spectrum-listview-item-border-color-key-focus);
 }
 
-/* Common styles */
+/* Common shared ListView styles */
 .react-spectrum-ListView {
   position: relative;
   overflow: auto;
@@ -68,15 +68,12 @@
   outline: 0;
   user-select: none;
 
-  .react-spectrum-ListView-row {
-    outline: none;
-  }
-
   &:focus-ring {
     border-color: var(--spectrum-listview-border-color-key-focus);
     box-shadow: inset 0 0 0 1px var(--spectrum-listview-border-color-key-focus);
   }
 
+  /* TODO: move to top level since all this stuff is specific to emphasized ListView */
   &.react-spectrum-ListView--emphasized {
     &.react-spectrum-ListView--dropTarget {
       .react-spectrum-ListViewItem:not(.is-selected) {
@@ -197,9 +194,7 @@
   }
 }
 
-
-/* TODO get rid of default and just have not:has sections */
-/* Move common stuff up and out */
+/* Specfic style overrides for ListView without sections */
 .react-spectrum-ListView:not(.react-spectrum-ListView--hasSections) {
   box-sizing: border-box;
   border-color: var(--spectrum-listview-border-color);
@@ -224,11 +219,9 @@
 
 }
 
-
-/* TODO figure out what is common to both experiences and move above */
+/* Specfic style overrides for ListView with sections */
 .react-spectrum-ListView.react-spectrum-ListView--hasSections {
   border: none;
-
   &.react-spectrum-ListView--emphasized {
     .react-spectrum-ListViewItem:not(.is-selected) {
       &:after {
@@ -299,6 +292,7 @@
 }
 
 .react-spectrum-ListView-row {
+  outline: none;
   cursor: default;
   /* Not sticky because listview is a single column. If we want to make sticky, will need a cell wrapper like TableView for display: inline-block */
   &:focus-ring {
@@ -316,10 +310,24 @@
       forced-color-adjust: none;
     }
   }
+
+  &:has(.react-spectrum-ListViewItem--firstRow) {
+    &:focus-ring {
+      &:before {
+        border-start-start-radius: var(--spectrum-listview-item-border-radius);
+      }
+    }
+  }
+
+  &:has(.react-spectrum-ListViewItem--lastRow) {
+    &:focus-ring {
+      &:before {
+        border-end-start-radius: var(--spectrum-listview-item-border-radius);
+      }
+    }
+  }
 }
 
-/* TODO: need quiet styling for sections */
-/* TODO: move the common stuff into the top most section */
 .react-spectrum-ListView.react-spectrum-ListView--quiet {
   background-color: var(--spectrum-listview-quiet-background-color);
   border-width: 0;
