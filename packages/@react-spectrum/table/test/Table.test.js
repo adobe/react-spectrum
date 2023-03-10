@@ -1751,13 +1751,12 @@ describe('TableView', function () {
         // Ensure we have the correct sticky cells in the right order.
         let row = cell.closest('[role=row]');
         let cells = within(row).getAllByRole(role => role === 'gridcell' || role === 'rowheader');
-        // TODO: Fix handling of sticky cells
-        expect(cells).toHaveLength(17);
-        // expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
-        expect(cells[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
-        expect(cells[1]).toHaveAttribute('aria-colindex', '6'); // persisted
-        expect(cells[1]).toBe(cell);
-        expect(cells[2]).toHaveAttribute('aria-colindex', '14'); // first visible
+        expect(cells).toHaveLength(18);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(cells[1]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[2]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[2]).toBe(cell);
+        expect(cells[3]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
