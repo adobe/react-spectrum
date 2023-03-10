@@ -730,6 +730,21 @@ describe('ListBox', function () {
     expect(option).toHaveAttribute('data-name', 'Foo');
   });
 
+  it('item id should not get overridden by custom id', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item id={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option.id).not.toEqual('Foo');
+  });
+
   describe('async loading', function () {
     it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
