@@ -772,7 +772,7 @@ describe('TableView', function () {
         fireEvent(internalFolder, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
         dndState = globalDndState;
         // TODO
-        //expect(dndState.dropCollectionRef.current).toBe(grid);
+        // expect(dndState.dropCollectionRef.current).toBe(grid);
 
         // Leaving a valid drop target should clear the dropCollectionRef
         fireEvent(internalFolder, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 100}));
@@ -3181,7 +3181,7 @@ describe('TableView', function () {
     });
 
     it('should only count the selected keys that exist in the collection when dragging and dropping', async function () {
-      let {getAllByRole, getByRole} = render(
+      let {getByRole} = render(
         <DragOntoRowExample dragHookOptions={{onDragStart, onDragEnd}} tableViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
 
