@@ -271,8 +271,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
                   'react-spectrum-ListView--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible,
                   'react-spectrum-ListView--hasAnyChildren': hasAnyChildren,
                   'react-spectrum-ListView--wrap': overflowMode === 'wrap',
-                  'react-spectrum-ListView--hasSections': collection.sections.length > 0,
-                  'react-spectrum-ListView--default': collection.sections.length === 0
+                  'react-spectrum-ListView--hasSections': collection.sections.length > 0
                 },
                 styleProps.className
               )
