@@ -19,11 +19,15 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Item, Menu, MenuTrigger, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/text';
+import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Dialog} from "@react-spectrum/dialog";
+import {Title} from "@storybook/components";
+import {Content, Footer, Header} from "@react-spectrum/view";
+import {Link} from "@react-spectrum/link";
 
 let iconMap = {
   AlignCenter,
@@ -564,6 +568,31 @@ storiesOf('MenuTrigger', module)
   )
   .add('controlled isOpen',
     () => <ControlledOpeningMenuTrigger />
+  )
+  .add(
+    'menu sub dialog',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Item key="1">One</Item>
+        <MenuDialogTrigger isUnavailable>
+          <Item key="foo">Two</Item>
+          <Dialog>
+            <Heading>hello</Heading>
+            <Content>Is it me you're looking for?</Content>
+          </Dialog>
+        </MenuDialogTrigger>
+        <Item key="3">Three</Item>
+        <MenuDialogTrigger isUnavailable>
+          <Item key="bar">Four</Item>
+          <Dialog>
+            <Heading>hello</Heading>
+            <Content>Is it me you're looking for?</Content>
+            <Footer><Link>Learn more</Link></Footer>
+          </Dialog>
+        </MenuDialogTrigger>
+        <Item key="5">Five</Item>
+      </Menu>
+    )
   );
 
 let customMenuItem = (item) => {

@@ -18,6 +18,7 @@ import {menuData} from './useMenu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
+import {focusSafely} from "@react-aria/focus";
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -188,6 +189,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
+        // focus immediately so that a focus scope opened on hover has the correct restore node
+        let isFocused = key === state.selectionManager.focusedKey;
+        if (isFocused && state.selectionManager.isFocused && document.activeElement !== ref.current) {
+          console.log('we focused on hover', key)
+          focusSafely(ref.current);
+        }
       }
     }
   });

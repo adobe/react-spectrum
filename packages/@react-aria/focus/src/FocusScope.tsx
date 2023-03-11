@@ -596,14 +596,17 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
         e.preventDefault();
         e.stopPropagation();
         if (nextElement) {
+          console.log('keyboard next element')
           focusElement(nextElement, true);
         } else {
            // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
            // then move focus to the body.
            // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
           if (!isElementInAnyScope(nodeToRestore)) {
+            console.log('keyboard next element blur')
             focusedElement.blur();
           } else {
+            console.log('keyboard next element')
             focusElement(nodeToRestore, true);
           }
         }
@@ -639,6 +642,8 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.nodeToRestore && document.body.contains(treeNode.nodeToRestore)) {
+                console.log('restoring focus', restoreFocus)
+                console.log(treeNode.nodeToRestore.outerHTML);
                 focusElement(treeNode.nodeToRestore);
                 return;
               }
@@ -650,6 +655,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus: boolean, 
             treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
               if (treeNode.scopeRef && focusScopeTree.getTreeNode(treeNode.scopeRef)) {
+                console.log('restoring focus')
                 focusFirstInScope(treeNode.scopeRef.current, true);
                 return;
               }

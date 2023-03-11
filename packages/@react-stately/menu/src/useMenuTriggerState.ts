@@ -31,19 +31,27 @@ export interface MenuTriggerState extends OverlayTriggerState {
  * and controls which item will receive focus when it opens.
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
+  let {disableClosing} = props;
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
     focusStrategy,
     ...overlayTriggerState,
+    close() {
+      if (!disableClosing) {
+        overlayTriggerState.close();
+      }
+    },
     open(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.open();
     },
     toggle(focusStrategy: FocusStrategy = null) {
-      setFocusStrategy(focusStrategy);
-      overlayTriggerState.toggle();
+      if (overlayTriggerState.isOpen && !disableClosing || !overlayTriggerState.isOpen) {
+        setFocusStrategy(focusStrategy);
+        overlayTriggerState.toggle();
+      }
     }
   };
 }

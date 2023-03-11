@@ -11,11 +11,15 @@
  */
 
 import {act, DEFAULT_LONG_PRESS_TIME, fireEvent, installPointerEvent, render, triggerLongPress, triggerPress, triggerTouch, within} from '@react-spectrum/test-utils';
-import {Button} from '@react-spectrum/button';
-import {Item, Menu, MenuTrigger, Section} from '../';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {Item, Menu, MenuDialogTrigger, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {action} from '@storybook/addon-actions';
+import {Dialog} from '@react-spectrum/dialog';
+import {Heading} from '@react-spectrum/text';
+import {Content} from '@react-spectrum/view';
 
 let triggerText = 'Menu Button';
 
@@ -931,4 +935,83 @@ describe('MenuTrigger', function () {
     });
   });
 
+  describe('sub dialogs', function () {
+    let tree;
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+      }
+      tree = null;
+    });
+
+    describe('unavailable item', function () {
+      let renderTree = () => {
+        tree = render(
+          <Provider theme={theme}>
+            <MenuTrigger>
+              <ActionButton>Menu</ActionButton>
+              <Menu onAction={action('onAction')}>
+                <Item key="1">One</Item>
+                <MenuDialogTrigger isUnavailable>
+                  <Item key="foo">Two</Item>
+                  <Dialog>
+                    <Heading>hello</Heading>
+                    <Content>Is it me you're looking for?</Content>
+                  </Dialog>
+                </MenuDialogTrigger>
+                <Item key="3">Three</Item>
+                <Item key="5">Five</Item>
+              </Menu>
+            </MenuTrigger>
+          </Provider>
+        );
+      };
+      let openMenu = () => {
+        let triggerButton = tree.getByRole('button');
+        triggerPress(triggerButton);
+        act(() => {jest.runAllTimers();});
+
+        return tree.getByRole('menu');
+      };
+
+      it('adds the expected spectrum icon', function () {
+        renderTree();
+        let menu = openMenu();
+        let unavailableItem = within(menu).getAllByRole('menuitem')[1];
+        expect(unavailableItem).toBeVisible();
+
+        let icon = within(unavailableItem).getByRole('img', {hidden: true});
+        expect(icon).toHaveAttribute('aria-hidden', 'true');
+      });
+
+      it('can open a sub dialog with hover', function () {
+        renderTree();
+        let menu = openMenu();
+        let unavailableItem = within(menu).getAllByRole('menuitem')[1];
+        expect(unavailableItem).toBeVisible();
+        // expect(unavailableItem).toBeHaveAttribute('aria-haspopup', 'dialog');
+
+        fireEvent.mouseEnter(unavailableItem);
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+      });
+
+      it('can open a sub dialog with keyboard', function () {
+        renderTree();
+        let menu = openMenu();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        let unavailableItem = within(menu).getAllByRole('menuitem')[1];
+        expect(document.activeElement).toBe(unavailableItem);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+
+        let dialog = tree.getByRole('dialog');
+        expect(dialog).toBeVisible();
+      });
+    });
+  });
 });
