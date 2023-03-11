@@ -175,6 +175,10 @@ class BaseNode<T> {
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
+    if (referenceNode == null) {
+      return this.appendChild(newNode);
+    }
+
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
     }
@@ -320,6 +324,7 @@ export class ElementNode<T> extends BaseNode<T> {
     if (key in this.node) {
       let node = this.ownerDocument.getMutableNode(this);
       node[key] = value;
+      this.ownerDocument.queueUpdate(this);
     }
   }
 
@@ -519,7 +524,6 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       collection.addNode(element.node);
-      this.mutatedNodes.add(element);
 
       for (let child of element) {
         this.addNode(child);
@@ -566,9 +570,12 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   // node is used in subclasses.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   queueUpdate(node: ElementNode<T>) {
-    for (let fn of this.subscriptions) {
-      fn();
-    }
+    // Ensure all updates are done before triggering subscriptions.
+    queueMicrotask(() => {
+      for (let fn of this.subscriptions) {
+        fn();
+      }
+    });
   }
 
   subscribe(fn: () => void) {

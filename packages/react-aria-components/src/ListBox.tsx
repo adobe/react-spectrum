@@ -371,7 +371,7 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
       {...renderProps}
       // eslint-disable-next-line
       role="option"
-      ref={ref as RefObject<HTMLLIElement>}
+      ref={ref as RefObject<HTMLDivElement>}
       data-drop-target={isDropTarget || undefined} />
   );
 }
