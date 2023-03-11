@@ -65,6 +65,8 @@ import {ListBox, Item} from 'react-aria-components';
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
+  display: flex;
+  flex-direction: column;
   max-height: inherit;
   overflow: auto;
   padding: 2px;
@@ -72,9 +74,16 @@ import {ListBox, Item} from 'react-aria-components';
   border-radius: 6px;
   background: var(--background-color);
   outline: none;
-  max-width: 250px;
+  width: 250px;
   max-height: 300px;
+  min-height: 100px;
   box-sizing: border-box;
+
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
 
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
@@ -580,7 +589,17 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 </ListBox>
 ```
 
-### Drag and drop
+### Empty state
+
+Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.
+
+```tsx example
+<ListBox aria-label="Search results" renderEmptyState={() => 'No results found.'}>
+  {[]}
+</ListBox>
+```
+
+## Drag and drop
 
 ```tsx example
 import {useListData} from 'react-stately';

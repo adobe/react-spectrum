@@ -95,6 +95,12 @@ import {GridList, Item, Button} from 'react-aria-components';
   min-height: 100px;
   box-sizing: border-box;
 
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+
   .react-aria-Item {
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     border-radius: 6px;
@@ -608,6 +614,16 @@ function AsyncList() {
 }
 ```
 
+### Empty state
+
+Use the `renderEmptyState` prop to customize what the `GridList` will display if there are no items.
+
+```tsx example
+<GridList aria-label="Search results" renderEmptyState={() => 'No results found.'}>
+  {[]}
+</GridList>
+```
+
 ## Drag and drop
 
 GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items.
@@ -701,7 +717,6 @@ function Example() {
   margin-bottom: -2px;
   outline: none;
   background: transparent;
-  list-style: none;
 
   &:last-child {
     margin-bottom: 0;
@@ -841,7 +856,7 @@ function DraggableGridList() {
 
   return (
     <MyGridList aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <MyItem id={id}><item.style>{item.name}</item.style></MyItem>}
+      {([id, item]) => <MyItem id={id} textValue={item.name}><item.style>{item.name}</item.style></MyItem>}
     </MyGridList>
   );
 }
@@ -901,9 +916,9 @@ Dropping between items can be enabled using the `onInsert` event. GridList rende
 function Example() {
   let list = useListData({
     initialItems: [
-      {id: 1, name: 'Cat'},
-      {id: 2, name: 'Dog'},
-      {id: 3, name: 'Kangaroo'}
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
     ]
   });
 
@@ -935,32 +950,6 @@ function Example() {
 }
 ```
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.my-drop-indicator {
-  width: 100%;
-  margin-left: 0;
-  height: 2px;
-  margin-bottom: -2px;
-  outline: none;
-  background: transparent;
-  list-style: none;
-
-  &:last-child {
-    margin-bottom: 0;
-    margin-top: -2px;
-  }
-
-  &[data-drop-target] {
-    background: #e70073;
-  }
-}
-```
-
-</details>
-
 A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
 
 ```tsx example
@@ -972,9 +961,9 @@ function Example() {
   ///- begin collapse -///
   let list = useListData({
     initialItems: [
-      {id: 1, name: 'Cat'},
-      {id: 2, name: 'Dog'},
-      {id: 3, name: 'Kangaroo'}
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
     ]
   });
   ///- end collapse -///
@@ -1025,7 +1014,6 @@ function Example() {
   margin-bottom: -2px;
   outline: none;
   background: transparent;
-  list-style: none;
 
   &:last-child {
     margin-bottom: 0;
@@ -1062,9 +1050,8 @@ function Example() {
 
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-      {/* see above */}
       <DraggableGridList />
-      <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks}>
+      <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
         {item => <Item>{item.name}</Item>}
       </MyGridList>
     </div>
@@ -1116,7 +1103,7 @@ function DroppableGridList() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {({name, style: Tag = 'span'}) => <MyItem><Tag>{name}</Tag></MyItem>}
     </MyGridList>
   );
@@ -1156,7 +1143,7 @@ function Example() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
       {item => (
         <MyItem>
           <div className="image-item">
@@ -1232,7 +1219,7 @@ function Example() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={files} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList aria-label="Draggable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
       {item => (
         <MyItem id={item.name}>
           <div className="dir-item">
@@ -1427,7 +1414,7 @@ function Example() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
       {item => (
         <MyItem>
           <div className="image-item">

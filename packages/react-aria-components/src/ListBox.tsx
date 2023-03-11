@@ -29,14 +29,21 @@ export interface ListBoxRenderProps {
    * Whether the listbox root is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget?: boolean
+  isDropTarget: boolean,
+  /**
+   * Whether the list has no items and should display its empty state.
+   * @selector [data-empty]
+   */
+  isEmpty: boolean
 }
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  /** Provides content to display when there are no items in the list. */
+  renderEmptyState?: () => JSX.Element
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {
@@ -169,9 +176,22 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     style: props.style,
     defaultClassName: 'react-aria-ListBox',
     values: {
-      isDropTarget: isRootDropTarget
+      isDropTarget: isRootDropTarget,
+      isEmpty: state.collection.size === 0
     }
   });
+
+  let emptyState;
+  if (state.collection.size === 0 && props.renderEmptyState) {
+    emptyState = (
+      <div
+        // eslint-disable-next-line
+        role="option"
+        style={{display: 'contents'}}>
+        {props.renderEmptyState()}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -180,7 +200,8 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       {...renderProps}
       ref={listBoxRef}
       slot={props.slot}
-      data-drop-target={isRootDropTarget || undefined}>
+      data-drop-target={isRootDropTarget || undefined}
+      data-empty={state.collection.size === 0 || undefined}>
       <Provider
         values={[
           [InternalListBoxContext, {state, shouldFocusOnHover: props.shouldFocusOnHover, dragAndDropHooks, dragState, dropState}],
@@ -189,6 +210,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         ]}>
         {children}
       </Provider>
+      {emptyState}
       {dragPreview}
     </div>
   );
@@ -344,7 +366,7 @@ function ListBoxDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLE
   });
 
   return (
-    <li
+    <div
       {...dropIndicatorProps}
       {...renderProps}
       // eslint-disable-next-line
