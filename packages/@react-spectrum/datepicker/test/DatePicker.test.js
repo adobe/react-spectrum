@@ -703,13 +703,13 @@ describe('DatePicker', function () {
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       let buttonId = button.getAttribute('id');
-      expect(button).toHaveAttribute('aria-labelledby', `${label.id} ${buttonId}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${buttonId} ${label.id}`);
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${label.id} ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} ${label.id}`);
       }
     });
 
@@ -729,12 +729,12 @@ describe('DatePicker', function () {
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       let buttonId = button.getAttribute('id');
-      expect(button).toHaveAttribute('aria-labelledby', `${comboboxId} ${buttonId}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${buttonId} ${comboboxId}`);
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment.getAttribute('aria-label').startsWith('Birth date ')).toBe(true);
+        expect(segment.getAttribute('aria-label').endsWith(' Birth date')).toBe(true);
         expect(segment).not.toHaveAttribute('aria-labelledby');
       }
     });
@@ -754,13 +754,13 @@ describe('DatePicker', function () {
       expect(button).toHaveAttribute('aria-label', 'Calendar');
       expect(button).toHaveAttribute('id');
       let buttonId = button.getAttribute('id');
-      expect(button).toHaveAttribute('aria-labelledby', `foo ${buttonId}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${buttonId} foo`);
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `foo ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} foo`);
       }
     });
 
