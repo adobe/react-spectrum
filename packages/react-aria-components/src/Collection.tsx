@@ -13,6 +13,7 @@ import {CollectionBase, Collection as ICollection, Node, SelectionBehavior, Sele
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps, useContextProps} from './utils';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useMemo} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -308,7 +309,6 @@ export class ElementNode<T> extends BaseNode<T> {
       }
       node.key = value.id;
     }
-    this.ownerDocument.queueUpdate(this);
   }
 
   get style() {
@@ -324,7 +324,6 @@ export class ElementNode<T> extends BaseNode<T> {
     if (key in this.node) {
       let node = this.ownerDocument.getMutableNode(this);
       node[key] = value;
-      this.ownerDocument.queueUpdate(this);
     }
   }
 
@@ -508,6 +507,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       this.mutatedNodes.add(element);
       element.node = node;
     }
+    this.dirtyNodes.add(element);
     return node;
   }
 
@@ -530,7 +530,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       }
     }
 
-    this.queueUpdate(element);
+    this.dirtyNodes.add(element);
   }
 
   removeNode(node: ElementNode<T>) {
@@ -540,7 +540,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
 
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
-    this.queueUpdate(node);
+    this.dirtyNodes.add(node);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -567,15 +567,10 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     return this.collection;
   }
 
-  // node is used in subclasses.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  queueUpdate(node: ElementNode<T>) {
-    // Ensure all updates are done before triggering subscriptions.
-    queueMicrotask(() => {
-      for (let fn of this.subscriptions) {
-        fn();
-      }
-    });
+  queueUpdate() {
+    for (let fn of this.subscriptions) {
+      fn();
+    }
   }
 
   subscribe(fn: () => void) {
@@ -642,6 +637,13 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   let children = useCachedChildren(props);
   let portal = createPortal(children, document as unknown as Element);
+
+  useLayoutEffect(() => {
+    if (document.dirtyNodes.size > 0) {
+      document.queueUpdate();
+    }
+  });
+
   return {portal, collection};
 }
 

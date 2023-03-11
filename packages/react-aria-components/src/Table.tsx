@@ -756,12 +756,15 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let ref = useRef();
-  let {state} = useContext(InternalTableContext);
+  let {state, dragState} = useContext(InternalTableContext);
 
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed} = useTableCell({node: cell}, state, ref);
+  let {gridCellProps, isPressed} = useTableCell({
+    node: cell,
+    shouldSelectOnPressUp: !!dragState
+  }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
   let props: CellProps = cell.props;

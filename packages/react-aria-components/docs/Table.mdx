@@ -1964,9 +1964,23 @@ function DndTable(props) {
         list.insertAfter(e.target.key, ...processedItems);
       }
     },
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
     onDragEnd(e) {
-      // Remove the items from the source list on drop if they were moved.
-      if (e.dropOperation === 'move') {
+      // Remove the items from the source list on drop
+      // if they were moved to a different list.
+      if (e.dropOperation === 'move' && !e.isInternal) {
         list.remove(...e.keys);
       }
     }
@@ -1976,6 +1990,8 @@ function DndTable(props) {
     <Table
       aria-label="Droppable table"
       selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
@@ -1984,7 +2000,7 @@ function DndTable(props) {
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
       </TableHeader>
-      <TableBody items={list.items}>
+      <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
         {item => (
           <Row>
             <Cell><Button slot="drag">≡</Button></Cell>
