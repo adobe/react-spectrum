@@ -155,4 +155,9 @@ export class GridCollection<T> implements IGridCollection<T> {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }
+
+  getChildren(key: Key): Iterable<GridNode<T>> {
+    let node = this.keyMap.get(key);
+    return node?.childNodes || [];
+  }
 }
