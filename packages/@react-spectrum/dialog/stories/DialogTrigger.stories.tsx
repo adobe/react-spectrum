@@ -26,6 +26,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -362,7 +363,56 @@ storiesOf('DialogTrigger', module)
   .add(
     'adjustable dialog',
     () => <AdjustableDialog />
-  );
+  )
+  .add('tooltip wrapped', () => {
+    function CustomDialog({close}) {
+      return (
+        <Dialog>
+          <Content>
+            Dialog content
+          </Content>
+          <ButtonGroup>
+            <Button variant="cta" onPress={close}>Close</Button>
+          </ButtonGroup>
+        </Dialog>
+      );
+    }
+    return (
+      <Flex direction="row" gap={10}>
+        <span>hello</span>
+        <DialogTrigger>
+          <ActionButton>DT only</ActionButton>
+          {close => <CustomDialog close={close} />}
+        </DialogTrigger>
+
+        <TooltipTrigger>
+          <ActionButton>TT only</ActionButton>
+          <Tooltip>This is a tooltip</Tooltip>
+        </TooltipTrigger>
+
+        <TooltipTrigger>
+          <ActionButton isDisabled>TT only</ActionButton>
+          <Tooltip>This is a tooltip</Tooltip>
+        </TooltipTrigger>
+
+        <DialogTrigger>
+          <TooltipTrigger>
+            <ActionButton>DT + TT</ActionButton>
+            <Tooltip>This is a tooltip</Tooltip>
+          </TooltipTrigger>
+          {close => <CustomDialog close={close} />}
+        </DialogTrigger>
+
+        <DialogTrigger>
+          <TooltipTrigger>
+            <ActionButton isDisabled>DT + TT</ActionButton>
+            <Tooltip>This is a tooltip</Tooltip>
+          </TooltipTrigger>
+          {close => <CustomDialog close={close} />}
+        </DialogTrigger>
+      </Flex>
+    );
+  });
 
 function render({width = 'auto', ...props}) {
   return (

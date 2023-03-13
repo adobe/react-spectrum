@@ -12,6 +12,7 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
+import {PressResponder} from '@react-aria/interactions';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
@@ -37,7 +38,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let tooltipTriggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {triggerProps, tooltipProps} = useTooltipTrigger({
+  let {triggerProps: {onPressStart, ...triggerProps}, tooltipProps} = useTooltipTrigger({
     isDisabled,
     trigger: triggerAction
   }, state, tooltipTriggerRef);
@@ -57,7 +58,12 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     <FocusableProvider
       {...triggerProps}
       ref={tooltipTriggerRef}>
-      {trigger}
+      <PressResponder
+        ref={tooltipTriggerRef}
+        onPressStart={onPressStart}
+      >
+        {trigger}
+      </PressResponder>
       <TooltipContext.Provider
         value={{
           state,
@@ -77,7 +83,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
 // Support TooltipTrigger inside components using CollectionBuilder.
 TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps) {
-  // Replaced the use of React.Childern.toArray because it mutates the key prop.
+  // Replaced the use of React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
   React.Children.forEach(props.children, child => {
     if (React.isValidElement(child)) {

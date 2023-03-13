@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
-import {getInteractionModality, HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
+import {getInteractionModality, HoverProps, isFocusVisible, PressProps} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
@@ -129,8 +129,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     onHoverEnd
   });
 
-  let {pressProps} = usePress({onPressStart});
-
   let {focusableProps} = useFocusable({
     isDisabled,
     onFocus,
@@ -140,7 +138,8 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   return {
     triggerProps: {
       'aria-describedby': state.isOpen ? tooltipId : undefined,
-      ...mergeProps(focusableProps, hoverProps, pressProps)
+      ...mergeProps(focusableProps, hoverProps),
+      onPressStart
     },
     tooltipProps: {
       id: tooltipId

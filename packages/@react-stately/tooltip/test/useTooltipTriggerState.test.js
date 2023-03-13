@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
-import {mergeProps, useTooltip, useTooltipTrigger} from 'react-aria';
+import {mergeProps, usePress, useTooltip, useTooltipTrigger} from 'react-aria';
 import React from 'react';
 import {useTooltipTriggerState} from '../src';
 
@@ -33,11 +33,12 @@ function TooltipTrigger(props) {
   let state = useTooltipTriggerState(props);
   let ref = React.useRef();
 
-  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+  let {triggerProps: {onPressStart, ...triggerProps}, tooltipProps} = useTooltipTrigger(props, state, ref);
+  let {pressProps} = usePress({onPressStart});
 
   return (
     <span>
-      <button aria-label="trigger" ref={ref} {...triggerProps}>
+      <button aria-label="trigger" ref={ref} {...mergeProps(triggerProps, pressProps)}>
         {props.children}
       </button>
       {state.isOpen &&
@@ -71,7 +72,7 @@ describe('useTooltipTriggerState', function () {
   describe('custom close delay', () => {
     it('closes with a custom close delay less than the default', () => {
       let closeDelay = 100;
-  
+
       let {getByRole, queryByRole, getByLabelText} = render(
         <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} tooltip="Helpful information">
           Trigger

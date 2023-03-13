@@ -11,32 +11,35 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {useInteractionModality} from '@react-aria/interactions';
+import {useInteractionModality, usePress} from '@react-aria/interactions';
 import {useTooltip, useTooltipTrigger} from '../';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
+
+function Test({delay}) {
+  useInteractionModality();
+
+  const state = useTooltipTriggerState({delay});
+  const {triggerProps: {onPressStart, ...triggerProps}, tooltipProps} = useTooltipTrigger({}, state);
+  const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
+  let {pressProps} = usePress({onPressStart});
+
+  return (
+    <div>
+      <button type="button" {...mergeProps(triggerProps, pressProps)}>Trigger</button>
+      {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
+    </div>
+  );
+}
 
 describe('useTooltip', function () {
   afterEach(() => {
     jest.useRealTimers();
   });
+
   it('opens tooltip on hover after delay', function () {
     jest.useFakeTimers();
-
-    function Test() {
-      useInteractionModality();
-
-      const state = useTooltipTriggerState();
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
 
     const {container, queryByRole} = render(<Test />);
 
@@ -50,22 +53,8 @@ describe('useTooltip', function () {
     expect(queryByRole('tooltip')).not.toBeNull();
   });
   it('opens tooltip immediately on hover with `delay: 0`', function () {
-    function Test() {
-      useInteractionModality();
 
-      const state = useTooltipTriggerState({delay: 0});
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
-
-    const {container, queryByRole} = render(<Test />);
+    const {container, queryByRole} = render(<Test delay={0} />);
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
@@ -78,22 +67,7 @@ describe('useTooltip', function () {
   it('hides tooltip when hover leaves the trigger', function () {
     jest.useFakeTimers();
 
-    function Test() {
-      useInteractionModality();
-
-      const state = useTooltipTriggerState({delay: 0});
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
-
-    const {container, queryByRole} = render(<Test />);
+    const {container, queryByRole} = render(<Test delay={0} />);
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
@@ -110,22 +84,7 @@ describe('useTooltip', function () {
   it('keeps tooltip open when it gets hovered', function () {
     jest.useFakeTimers();
 
-    function Test() {
-      useInteractionModality();
-
-      const state = useTooltipTriggerState({delay: 0});
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
-
-    const {container, getByRole} = render(<Test />);
+    const {container, getByRole} = render(<Test delay={0} />);
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
@@ -144,22 +103,7 @@ describe('useTooltip', function () {
   it('hides tooltip when hover leaves', function () {
     jest.useFakeTimers();
 
-    function Test() {
-      useInteractionModality();
-
-      const state = useTooltipTriggerState({delay: 0});
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
-
-    const {container, queryByRole} = render(<Test />);
+    const {container, queryByRole} = render(<Test delay={0} />);
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
@@ -179,22 +123,7 @@ describe('useTooltip', function () {
   it('keeps tooltip open when hover returns to trigger from the tooltip', function () {
     jest.useFakeTimers();
 
-    function Test() {
-      useInteractionModality();
-
-      const state = useTooltipTriggerState({delay: 0});
-      const {triggerProps, tooltipProps} = useTooltipTrigger({}, state);
-      const {tooltipProps: finalTooltipProps} = useTooltip(tooltipProps, state);
-
-      return (
-        <div>
-          <button type="button" {...triggerProps}>Trigger</button>
-          {state.isOpen && <span {...finalTooltipProps}>Tooltip</span>}
-        </div>
-      );
-    }
-
-    const {container, getByRole} = render(<Test />);
+    const {container, getByRole} = render(<Test delay={0} />);
 
     // trigger pointer modality
     fireEvent.mouseMove(container);
