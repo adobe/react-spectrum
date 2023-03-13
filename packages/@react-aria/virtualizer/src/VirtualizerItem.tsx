@@ -67,7 +67,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
     width: layoutInfo.rect.width,
-    height: layoutInfo.isSticky ? '100%' : layoutInfo.rect.height,
+    height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
