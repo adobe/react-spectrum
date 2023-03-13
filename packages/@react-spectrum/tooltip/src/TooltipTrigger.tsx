@@ -60,8 +60,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
       ref={tooltipTriggerRef}>
       <PressResponder
         ref={tooltipTriggerRef}
-        onPressStart={onPressStart}
-      >
+        onPressStart={onPressStart}>
         {trigger}
       </PressResponder>
       <TooltipContext.Provider
