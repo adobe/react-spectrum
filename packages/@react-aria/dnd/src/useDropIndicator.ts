@@ -23,7 +23,11 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget
+  target: DropTarget,
+  /** Provide a custom handler for getting the key before the target. Useful for when you may want to ignore specific node types, i.e. headers or sections. */
+  getKeyBefore?: (key: Key) => Key,
+  /** Provide a custom handler for getting the key after the target. Useful for when you may want to ignore specific node types, i.e. headers or sections. */
+  getKeyAfter?: (key: Key) => Key
 }
 
 export interface DropIndicatorAria {
@@ -42,7 +46,11 @@ export interface DropIndicatorAria {
  * Handles drop interactions for a target within a droppable collection.
  */
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
-  let {target} = props;
+  let {
+    target,
+    getKeyBefore = (key) => state.collection.getKeyBefore(key),
+    getKeyAfter = (key) => state.collection.getKeyAfter(key)
+  } = props;
   let {collection} = state;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -61,18 +69,11 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before = null;
-    if (target.dropPosition === 'before') {
-      let keyBefore = collection.getKeyBefore(target.key);
-      // TODO: move logic to TableView
-      if (keyBefore && !keyBefore.toString().startsWith('headerrow-')) {
-        before = keyBefore;
-      }
-    } else {
-      before = target.key;
-    }
+    let before = target.dropPosition === 'before'
+      ? getKeyBefore(target.key)
+      : target.key;
     let after = target.dropPosition === 'after'
-      ? collection.getKeyAfter(target.key)
+      ? getKeyAfter(target.key)
       : target.key;
 
     if (before && after) {
