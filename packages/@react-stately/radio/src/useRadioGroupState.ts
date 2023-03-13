@@ -29,6 +29,12 @@ export interface RadioGroupState {
   /** Whether the radio group is read only. */
   readonly isReadOnly: boolean,
 
+  /** Whether the radio group is required. */
+  readonly isRequired: boolean,
+
+  /** Whether the radio group is valid or invalid. */
+  readonly validationState: ValidationState | null,
+
   /** The currently selected value. */
   readonly selectedValue: string | null,
 
@@ -39,10 +45,7 @@ export interface RadioGroupState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void,
-
-  /** The current validation state of the radio group. */
-  validationState: ValidationState
+  setLastFocusedValue(value: string): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -72,6 +75,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     setLastFocusedValue,
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
-    validationState: props.validationState
+    isRequired: props.isRequired || false,
+    validationState: props.validationState || null
   };
 }

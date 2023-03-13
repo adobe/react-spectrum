@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, scrollIntoViewport, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -172,7 +172,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     // again to trigger onPressStart. Cancel presses immediately when the pointer exits.
     shouldCancelOnPointerExit: 'anchorDate' in state && !!state.anchorDate,
     preventFocusOnPress: true,
-    isDisabled: !isSelectable,
+    isDisabled: !isSelectable || state.isReadOnly,
     onPressStart(e) {
       if (state.isReadOnly) {
         state.setFocusedDate(date);
@@ -288,10 +288,10 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
-      // Only scroll the direct scroll parent, not the whole page, so
-      // we don't scroll to the bottom when opening date picker popover.
+      // If in a overlay, scrollIntoViewport will only cause scrolling
+      // up to the overlay scroll body to prevent overlay shifting
       if (getInteractionModality() !== 'pointer') {
-        scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
   }, [isFocused, ref]);
@@ -302,7 +302,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     calendar: date.calendar.identifier
   });
 
-  let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
+  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).find(part => part.type === 'day').value, [cellDateFormatter, nativeDate]);
 
   return {
     cellProps: {

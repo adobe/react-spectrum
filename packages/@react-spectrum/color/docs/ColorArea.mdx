@@ -106,7 +106,7 @@ import {ColorArea} from '@react-spectrum/color';
 import {Flex} from '@react-spectrum/layout';
 import {Label} from '@react-spectrum/label';
 
-<Flex gap="size-300" wrap alignItems="flex-end">
+<Flex gap="size-300" wrap alignItems="end">
   <ColorArea
     aria-label="Background color"
     defaultValue="hsl(0, 100%, 50%)"
@@ -230,10 +230,10 @@ import {View} from '@react-spectrum/view';
 
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-  let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
+  let [, saturationChannel, lightnessChannel] = color.getColorChannels();
   return (
     <fieldset style={{border: 0}}>
-      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <legend>HSLA Example</legend>
       <Flex
         direction="column">
         <View
@@ -258,7 +258,7 @@ function Example() {
             size="size-2400" />
         </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
-        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+        <p>Current value: {color.toString('hsla')}</p>
       </Flex>
     </fieldset>
   );
@@ -278,10 +278,10 @@ import {View} from '@react-spectrum/view';
 
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
-  let [hueChannel, saturationChannel, brightnessChannel] = color.getColorChannels();
+  let [, saturationChannel, brightnessChannel] = color.getColorChannels();
   return (
     <fieldset style={{border: 0}}>
-      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <legend>HSBA Example</legend>
       <Flex
         direction="column">
         <View
@@ -306,7 +306,7 @@ function Example() {
             size="size-2400" />
         </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
-        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+        <p>Current value: {color.toString('hsba')}</p>
       </Flex>
     </fieldset>
   );

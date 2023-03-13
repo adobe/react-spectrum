@@ -56,14 +56,17 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   let updateOverflow = useCallback(() => {
-    let computeVisibleItems = (visibleItems: number) => {
+    let computeVisibleItems = (visibleItems: number): number => {
       // Refs can be null at runtime.
       let currListRef: HTMLUListElement | null = listRef.current;
       if (!currListRef) {
-        return;
+        return visibleItems;
       }
 
       let listItems = Array.from(currListRef.children) as HTMLLIElement[];
+      if (listItems.length <= 0) {
+        return visibleItems;
+      }
       let containerWidth = currListRef.offsetWidth;
       let isShowingMenu = childArray.length > visibleItems;
       let calculatedWidth = 0;
@@ -71,12 +74,12 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       let maxVisibleItems = MAX_VISIBLE_ITEMS;
 
       if (showRoot) {
-        calculatedWidth += listItems.shift().offsetWidth;
+        calculatedWidth += (listItems.shift() as HTMLLIElement).offsetWidth;
         newVisibleItems++;
       }
 
       if (isShowingMenu) {
-        calculatedWidth += listItems.shift().offsetWidth;
+        calculatedWidth += (listItems.shift() as HTMLLIElement).offsetWidth;
         maxVisibleItems--;
       }
 
@@ -91,7 +94,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       } else {
         if (listItems.length > 0) {
           // Ensure the last breadcrumb isn't truncated when we measure it.
-          let last = listItems.pop();
+          let last = (listItems.pop() as HTMLLIElement);
           last.style.overflow = 'visible';
 
           calculatedWidth += last.offsetWidth;
@@ -165,7 +168,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     let breadcrumbs = [...childArray];
     let endItems = visibleItems;
     if (showRoot && visibleItems > 1) {
-      contents.unshift(breadcrumbs.shift());
+      let rootItem = breadcrumbs.shift();
+      if (rootItem) {
+        contents.unshift(rootItem);
+      }
       endItems--;
     }
     contents.push(...breadcrumbs.slice(-endItems));

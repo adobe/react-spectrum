@@ -109,8 +109,8 @@ const THUMB_SIZE = 20;
 function ColorSlider(props) {
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef();
-  let inputRef = React.useRef();
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
 
   // Default label to the channel name in the current locale
   let label = props.label || state.value.getChannelName(props.channel, locale);
@@ -186,9 +186,9 @@ by passing an `aria-label` prop to `useColorSlider`.
 function ColorSlider(props) {
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef();
-  let inputRef = React.useRef();
-  let {groupProps, trackProps, thumbProps, inputProps} = useColorSlider({
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+  let {trackProps, thumbProps, inputProps} = useColorSlider({
     ...props,
     orientation: 'vertical',
     trackRef,
@@ -199,7 +199,6 @@ function ColorSlider(props) {
 
   return (
     <div
-      {...groupProps}
       style={{
         height: 200
       }}>

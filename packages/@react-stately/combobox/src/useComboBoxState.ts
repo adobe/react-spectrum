@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, FocusStrategy, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
 import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
@@ -35,7 +36,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 
 type FilterFn = (textValue: string, inputValue: string) => boolean;
 
-export interface ComboBoxStateOptions<T> extends ComboBoxProps<T> {
+export interface ComboBoxStateOptions<T> extends Omit<ComboBoxProps<T>, 'children'>, CollectionStateBase<T> {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: FilterFn,
   /** Whether the combo box allows the menu to be open when the collection is empty. */
@@ -75,7 +76,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // (scenario: user clicks on already selected option)
     if (key === selectedKey) {
       resetInputValue();
-      triggerState.close();
+      closeMenu();
     }
   };
 
@@ -93,6 +94,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       ? collection
       : filterCollection(collection, inputValue, defaultFilter)
   ), [collection, inputValue, defaultFilter, props.items]);
+  let [lastCollection, setLastCollection] = useState(filteredCollection);
 
   // Track what action is attempting to open the menu
   let menuOpenTrigger = useRef('focus' as MenuTriggerAction);
@@ -136,8 +138,25 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       menuOpenTrigger.current = trigger;
     }
 
-    triggerState.toggle(focusStrategy);
+    toggleMenu(focusStrategy);
   };
+
+  // If menu is going to close, save the current collection so we can freeze the displayed collection when the
+  // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
+  let toggleMenu = useCallback((focusStrategy) => {
+    if (triggerState.isOpen) {
+      setLastCollection(filteredCollection);
+    }
+
+    triggerState.toggle(focusStrategy);
+  }, [triggerState, filteredCollection]);
+
+  let closeMenu = useCallback(() => {
+    if (triggerState.isOpen) {
+      setLastCollection(filteredCollection);
+      triggerState.close();
+    }
+  }, [triggerState, filteredCollection]);
 
   let lastValue = useRef(inputValue);
   let resetInputValue = () => {
@@ -172,7 +191,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       triggerState.isOpen &&
       filteredCollection.size === 0
     ) {
-      triggerState.close();
+      closeMenu();
     }
 
     // Close when an item is selected.
@@ -180,7 +199,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       selectedKey != null &&
       selectedKey !== lastSelectedKey.current
     ) {
-      triggerState.close();
+      closeMenu();
     }
 
     // Clear focused key when input value changes and display filtered collection again.
@@ -248,7 +267,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   let commitCustomValue = () => {
     lastSelectedKey.current = null;
     setSelectedKey(null);
-    triggerState.close();
+    closeMenu();
   };
 
   let commitSelection = () => {
@@ -259,11 +278,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       // Stop menu from reopening from useEffect
       let itemText = collection.getItem(selectedKey)?.textValue ?? '';
       lastValue.current = itemText;
-      triggerState.close();
+      closeMenu();
     } else {
       // If only a single aspect of combobox is controlled, reset input value and close menu for the user
       resetInputValue();
-      triggerState.close();
+      closeMenu();
     }
   };
 
@@ -291,7 +310,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     } else {
       commitSelection();
     }
-    triggerState.close();
+    closeMenu();
   };
 
   let setFocused = (isFocused: boolean) => {
@@ -306,6 +325,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setFocusedState(isFocused);
   };
 
+  let displayedCollection = useMemo(() => {
+    if (triggerState.isOpen) {
+      if (showAllItems) {
+        return originalCollection;
+      } else {
+        return filteredCollection;
+      }
+    } else {
+      return lastCollection;
+    }
+  }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
+
   return {
     ...triggerState,
     toggle,
@@ -318,7 +349,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     isFocused,
     setFocused,
     selectedItem,
-    collection: showAllItems ? originalCollection : filteredCollection,
+    collection: displayedCollection,
     inputValue,
     setInputValue,
     commit,
@@ -327,14 +358,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 }
 
 function filterCollection<T extends object>(collection: Collection<Node<T>>, inputValue: string, filter: FilterFn): Collection<Node<T>> {
-  return new ListCollection(filterNodes(collection, inputValue, filter));
+  return new ListCollection(filterNodes(collection, collection, inputValue, filter));
 }
 
-function filterNodes<T>(nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
+function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>>, inputValue: string, filter: FilterFn): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
-      let filtered = filterNodes(node.childNodes, inputValue, filter);
+      let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
       if ([...filtered].length > 0) {
         filteredNode.push({...node, childNodes: filtered});
       }

@@ -45,6 +45,7 @@ The <TypeLink links={docs.links} type={docs.exports.useClipboard} /> hook provid
 This example shows a simple focusable element which supports copying a string when focused, and another element which supports pasting plain text.
 
 ```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
 import {useClipboard} from '@react-aria/dnd';
 
 function Copyable() {
@@ -73,7 +74,7 @@ function Pasteable() {
           .filter((item) =>
             item.kind === 'text' && item.types.has('text/plain')
           )
-          .map((item) => item.getText('text/plain'))
+          .map((item: TextDropItem) => item.getText('text/plain'))
       );
       setPasted(pasted.join('\n'));
     }
@@ -137,8 +138,6 @@ In addition to providing items in multiple formats, you can also return multiple
 This example copies two items, each of which contains representations as plain text, HTML, and a custom app-specific data format. Pasting on the target will use the custom data format to render formatted items. If you paste in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
 
 ```tsx example
-import {useClipboard} from '@react-aria/dnd';
-
 function Copyable() {
   let {clipboardProps} = useClipboard({
     getItems() {
@@ -178,7 +177,7 @@ function Pasteable() {
       let pasted = await Promise.all(
         items
           .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
-          .map(async item => {
+          .map(async (item: TextDropItem) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
@@ -271,7 +270,7 @@ function Pasteable() {
       let pasted = await Promise.all(
         items
           .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
-          .map(async item => {
+          .map(async (item: TextDropItem) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
@@ -316,11 +315,13 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx example
+import type {FileDropItem} from '@react-aria/dnd';
+
 function Pasteable() {
   let [file, setFile] = React.useState(null);
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
-      let item = items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png'));
+      let item = items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
       }
@@ -344,6 +345,7 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example renders the file names within a dropped directory in a grid.
 
 ```tsx example
+import type {DirectoryDropItem} from '@react-aria/dnd';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 
@@ -352,7 +354,7 @@ function Pasteable() {
   let {clipboardProps} = useClipboard({
     async onPaste(items) {
       // Find the first dropped item that is a directory.
-      let dir = items.find(item => item.kind === 'directory');
+      let dir = items.find(item => item.kind === 'directory') as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
         let files = [];
@@ -367,7 +369,7 @@ function Pasteable() {
     }
   });
 
-  let contents = 'Paste directory here';
+  let contents = <>Paste directory here</>;
   if (files) {
     contents = (
       <ul>

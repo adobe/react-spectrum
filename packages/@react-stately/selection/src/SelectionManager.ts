@@ -21,6 +21,7 @@ import {
   SelectionBehavior,
   SelectionMode
 } from '@react-types/shared';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
@@ -102,7 +103,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Sets the focused key.
    */
-  setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
+  setFocusedKey(key: Key | null, childFocusStrategy?: FocusStrategy) {
     if (key == null || this.collection.getItem(key)) {
       this.state.setFocusedKey(key, childFocusStrategy);
     }
@@ -385,7 +386,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
           // Add child keys. If cell selection is allowed, then include item children too.
           if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-            addKeys([...item.childNodes][0].key);
+            addKeys(getFirstItem(getChildNodes(item, this.collection)).key);
           }
         }
 
