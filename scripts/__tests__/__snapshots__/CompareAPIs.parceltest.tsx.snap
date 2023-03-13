@@ -409,6 +409,7 @@ it changed:
 -getKeyAfter: (Key) => Key | null
 -getFirstKey: () => Key | null
 -getLastKey: () => Key | null
+-getChildren: (Key) => Iterable<T>
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps

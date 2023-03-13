@@ -1730,6 +1730,44 @@ collection of unique keyed items.",
             "typeParameters": Array [],
           },
         },
+        "getChildren": Object {
+          "default": null,
+          "description": "Iterate over the child items of the given key.",
+          "name": "getChildren",
+          "type": "method",
+          "value": Object {
+            "parameters": Array [
+              Object {
+                "description": null,
+                "name": "key",
+                "rest": false,
+                "type": "parameter",
+                "value": Object {
+                  "name": "Key",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": Object {
+              "base": Object {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+                "name": "Iterable",
+                "type": "identifier",
+              },
+              "description": null,
+              "type": "application",
+              "typeParameters": Array [
+                Object {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "function",
+            "typeParameters": Array [],
+          },
+        },
         "getFirstKey": Object {
           "default": null,
           "description": "Get the first key in the collection.",
