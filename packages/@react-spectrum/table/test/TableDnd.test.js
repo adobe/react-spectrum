@@ -109,7 +109,7 @@ describe('TableView', function () {
 
     function Reorderable(props) {
       return (
-        <ReorderExample disabledKeys={['1']} onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
+        <ReorderExample disabledKeys={['a']} onDrop={onDrop} onDragStart={onDragStart} onDragEnd={onDragEnd} {...props} />
       );
     }
 
@@ -345,28 +345,6 @@ describe('TableView', function () {
         expect(onDragStart).toHaveBeenCalledTimes(0);
       });
 
-      // Not applicable to TableView at the moment
-      // it('should allow drag operations on a disabled row with disabledBehavior="selection"', function () {
-      //   let {getByRole} = render(
-      //     <DraggableTableView tableViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
-      // );
-
-      //   let grid = getByRole('grid');
-
-      //   let rowgroups = within(grid).getAllByRole('rowgroup');
-      //   let rows = within(rowgroups[1]).getAllByRole('row');
-      //   let row = rows[0];
-      //   let cell = within(row).getByRole('rowheader');
-      //   expect(cell).toHaveTextContent('Vin');
-      //   expect(row).toHaveAttribute('draggable', 'true');
-
-      //   let dataTransfer = new DataTransfer();
-      //   fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-      //   fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-      //   expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'Vin Charlet')]);
-      //   expect(onDragStart).toHaveBeenCalledTimes(1);
-      // });
-
       it('should not allow dragging when not selected when it conflicts with onAction', function () {
         let onAction = jest.fn();
         let {getByRole} = render(
@@ -388,7 +366,7 @@ describe('TableView', function () {
       });
 
       it.skip('should allow moving one row within a table', async function () {
-        let {getByRole} =  render(<Reorderable />);
+        let {getByRole} =  render(<Reorderable disabledKeys={[]} />);
 
         let grid = getByRole('grid');
         let rowgroups = within(grid).getAllByRole('rowgroup');
@@ -399,12 +377,12 @@ describe('TableView', function () {
         expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Robbi');
 
         let dataTransfer = new DataTransfer();
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
+        fireEvent.pointerDown(rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 40}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
-        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 200});
-        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 200}));
+        fireEvent.pointerMove(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 40});
+        fireEvent(cell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 40}));
         fireEvent(grid, new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 200}));
         fireEvent.pointerUp(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 200});
 
@@ -413,7 +391,7 @@ describe('TableView', function () {
         await act(async () => Promise.resolve());
         expect(onDrop).toHaveBeenCalledTimes(1);
 
-        fireEvent(cell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 200}));
+        fireEvent(rows[0], new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 200}));
         expect(onDragEnd).toHaveBeenCalledTimes(1);
 
         act(() => jest.runAllTimers());
@@ -3069,69 +3047,6 @@ describe('TableView', function () {
       expect(hasDragHandle(rows[1])).toBeTruthy();
     });
 
-    // Not applicable to TableView at the moment
-    // it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
-    //   function hasDragHandle(el) {
-    //     let buttons = within(el).queryAllByRole('button');
-    //     if (buttons.length === 0) {
-    //       return false;
-    //     }
-    //     return buttons[0].getAttribute('draggable');
-    //   }
-
-    //   let {getByRole} = render(
-    //     <DraggableTableView tableViewProps={{disabledKeys: ['a'], disabledBehavior: 'selection'}} />
-    // );
-
-    //   let grid = getByRole('grid');
-    //   let rowgroups = within(grid).getAllByRole('rowgroup');
-    //   let rows = within(rowgroups[1]).getAllByRole('row');
-
-    //   userEvent.tab();
-    //   expect(hasDragHandle(rows[0])).toBeTruthy();
-    //   moveFocus('ArrowDown');
-    //   expect(hasDragHandle(rows[1])).toBeTruthy();
-
-    //   fireEvent.pointerDown(rows[0], {button: 0, pointerId: 1});
-    //   expect(hasDragHandle(rows[0])).toBeTruthy();
-    //   fireEvent.pointerUp(rows[0], {button: 0, pointerId: 1});
-
-    //   fireEvent.pointerDown(rows[1], {button: 0, pointerId: 1});
-    //   expect(hasDragHandle(rows[1])).toBeTruthy();
-    //   fireEvent.pointerUp(rows[1], {button: 0, pointerId: 1});
-
-    //   fireEvent.pointerEnter(rows[0]);
-    //   expect(hasDragHandle(rows[0])).toBeTruthy();
-    //   fireEvent.pointerEnter(rows[1]);
-    //   expect(hasDragHandle(rows[1])).toBeTruthy();
-    // });
-
-    // it('should open a menu upon click', function () {
-    //   let {getByRole} = render(
-    //     <DraggableTableView />
-    //   );
-
-    //   let grid = getByRole('grid');
-    //   let rowgroups = within(grid).getAllByRole('rowgroup');
-    //   let rows = within(rowgroups[1]).getAllByRole('row');
-    //   let row = rows[0];
-    //   expect(row).toHaveAttribute('aria-selected', 'false');
-    //   expect(row).toHaveAttribute('draggable', 'true');
-
-    //   let menuButton = within(row).getAllByRole('button')[1];
-    //   expect(menuButton).toHaveAttribute('aria-expanded', 'false');
-
-    //   userEvent.click(menuButton, {pointerType: 'mouse'});
-    //   act(() => {jest.runAllTimers();});
-
-    //   let menu = getByRole('menu');
-    //   expect(menu).toBeTruthy();
-    //   expect(menuButton).toHaveAttribute('aria-expanded', 'true');
-    //   expect(row).toHaveAttribute('aria-selected', 'false');
-    //   expect(onDragStart).toHaveBeenCalledTimes(0);
-    //   expect(onSelectionChange).toHaveBeenCalledTimes(0);
-    // });
-
     // disabledKeys a means we actually start on item 2 and drag that, so everything is offset by 1 and it wraps one early
     let labels = ['Vin Charlet', 'Lexy Maddison', 'Robbi Persence', 'Dodie Hurworth', 'Audrye Hember', 'Beau Oller', 'Roarke Gration', 'Cathy Lishman', 'Enrika Soitoux', 'Aloise Tuxsell', 'before'];
     it.each`
@@ -3273,7 +3188,7 @@ describe('TableView', function () {
       fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
-    it.skip('should automatically focus the newly added dropped item', async function () {
+    it('should automatically focus the newly added dropped item', async function () {
       let {getAllByRole} = render(
         <DragBetweenTablesRootOnlyExample dragHookOptions={{onDragStart, onDragEnd}} tableViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
@@ -3283,25 +3198,24 @@ describe('TableView', function () {
       let firstListRowGroups = within(grids[0]).getAllByRole('rowgroup');
       let secondListRowGroups = within(grids[1]).getAllByRole('rowgroup');
       let firstListRows = within(firstListRowGroups[1]).getAllByRole('row');
-      let draggedCell = within(firstListRows[0]).getByRole('rowheader');
       let secondListRows = within(secondListRowGroups[1]).getAllByRole('row');
       expect(firstListRows).toHaveLength(6);
       expect(secondListRows).toHaveLength(6);
 
       let dataTransfer = new DataTransfer();
-      fireEvent.pointerDown(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
-      fireEvent(draggedCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 40}));
+      fireEvent.pointerDown(firstListRows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 40});
+      fireEvent(firstListRows[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 40}));
 
       act(() => jest.runAllTimers());
       expect(onDragStart).toHaveBeenCalledTimes(1);
-      fireEvent.pointerMove(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 40});
-      fireEvent(draggedCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 40}));
+      fireEvent.pointerMove(firstListRows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 40});
+      fireEvent(firstListRows[0], new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 40}));
       fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 40}));
       fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 40}));
-      fireEvent.pointerUp(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 40});
-      fireEvent(draggedCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 40}));
+      fireEvent.pointerUp(firstListRows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 40});
+      fireEvent(firstListRows[0], new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 40}));
 
-      await waitFor(() => expect(within(grids[1]).getAllByRole('row')).toHaveLength(7), {interval: 10});
+      await waitFor(() => expect(within(within(grids[1]).getAllByRole('rowgroup')[1]).getAllByRole('row')).toHaveLength(7), {interval: 10});
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledTimes(1);
 
@@ -3311,8 +3225,8 @@ describe('TableView', function () {
       secondListRowGroups = within(grids[1]).getAllByRole('rowgroup');
       firstListRows = within(firstListRowGroups[1]).getAllByRole('row');
       secondListRows = within(secondListRowGroups[1]).getAllByRole('row');
-      expect(firstListRows).toHaveLength(6);
-      expect(secondListRows).toHaveLength(7);
+      expect(firstListRows.map(row => row.textContent)).toHaveLength(5);
+      expect(secondListRows.map(row => row.textContent)).toHaveLength(7);
 
       // The newly added row in the second table should be the active element
       expect(secondListRows[6]).toBe(document.activeElement);
@@ -3326,22 +3240,21 @@ describe('TableView', function () {
         }
       }
 
-      draggedCell = firstListRows[3];
       dataTransfer = new DataTransfer();
-      fireEvent.pointerDown(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
-      fireEvent(draggedCell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      fireEvent.pointerDown(firstListRows[3], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+      fireEvent(firstListRows[3], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
 
       act(() => jest.runAllTimers());
       expect(onDragStart).toHaveBeenCalledTimes(2);
-      fireEvent.pointerMove(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
-      fireEvent(draggedCell, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent.pointerMove(firstListRows[3], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent(firstListRows[3], new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(grids[1], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 2}));
-      fireEvent.pointerUp(draggedCell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
+      fireEvent.pointerUp(firstListRows[3], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 1, clientY: 1});
       fireEvent(grids[1], new DragEvent('drop', {dataTransfer, clientX: 1, clientY: 1}));
-      fireEvent(draggedCell, new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
+      fireEvent(firstListRows[3], new DragEvent('dragend', {dataTransfer, clientX: 1, clientY: 1}));
 
       act(() => jest.advanceTimersByTime(0));
-      await waitFor(() => expect(within(grids[1]).getAllByRole('row')).toHaveLength(8), {interval: 10});
+      await waitFor(() => expect(within(within(grids[1]).getAllByRole('rowgroup')[1]).getAllByRole('row')).toHaveLength(8), {interval: 10});
       expect(onDrop).toHaveBeenCalledTimes(2);
       expect(onDragEnd).toHaveBeenCalledTimes(2);
 
@@ -3349,8 +3262,8 @@ describe('TableView', function () {
       grids = getAllByRole('grid');
       firstListRowGroups = within(grids[0]).getAllByRole('rowgroup');
       secondListRowGroups = within(grids[1]).getAllByRole('rowgroup');
-      firstListRows = within(firstListRowGroups).getAllByRole('row');
-      secondListRows = within(secondListRowGroups).getAllByRole('row');
+      firstListRows = within(firstListRowGroups[1]).getAllByRole('row');
+      secondListRows = within(secondListRowGroups[1]).getAllByRole('row');
       expect(firstListRows).toHaveLength(4);
       expect(secondListRows).toHaveLength(8);
 
