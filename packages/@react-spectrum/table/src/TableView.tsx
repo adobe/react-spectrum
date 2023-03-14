@@ -319,8 +319,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           style={style}
           hasActions={onAction}
           isTableDroppable={isTableDroppable}
-          isTableDraggable={isTableDraggable}
-          isRootDropTarget={isRootDropTarget}>
+          isTableDraggable={isTableDraggable}>
           {renderChildren(children)}
         </TableRow>
       );
