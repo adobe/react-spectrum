@@ -25,6 +25,9 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-key-focus);
     color: var(--spectrum-tag-text-color-key-focus);
     border-color: var(--spectrum-tag-border-color-key-focus);
+    &:after {
+      box-shadow: 0 0 0 var(--spectrum-focus-ring-border-size) var(--spectrum-tag-border-color-key-focus);
+    }
   }
 
   &.is-selected {
@@ -36,8 +39,11 @@ governing permissions and limitations under the License.
     }
 
     &.focus-ring {
-      box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-selected-key-focus);
+      box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-selected-key-focus);
       border-color: var(--spectrum-tag-text-color-selected-key-focus);
+      &:after {
+        box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-selected-key-focus);
+      }
     }
     &.is-invalid {
       border-color: var(--spectrum-tag-border-color-error-selected);
@@ -47,8 +53,11 @@ governing permissions and limitations under the License.
         color: var(--spectrum-tag-text-color-error-selected);
       }
       &.focus-ring {
-        box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+        box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-key-focus);
         border-color: var(--spectrum-tag-border-color-error-selected);
+        &:after {
+          box-shadow: 0 0 0 calc(2 * var(--spectrum-focus-ring-border-size)) var(--spectrum-tag-border-color-key-focus);
+        }
       }
       &:hover {
         border-color: var(--spectrum-tag-border-color-selected);
@@ -71,7 +80,8 @@ governing permissions and limitations under the License.
     }
 
     .spectrum-Tags-itemIcon,
-    .spectrum-Tags-itemClearButton {
+    .spectrum-Tags-itemClearButton,
+    .spectrum-Tag-removeButton {
       color: var(--spectrum-tag-border-color-error);
     }
 
@@ -106,7 +116,8 @@ governing permissions and limitations under the License.
       }
     }
 
-    .spectrum-Tags-itemClearButton {
+    .spectrum-Tags-itemClearButton,
+    .spectrum-Tag-removeButton {
       &.is-focused {
          color: var(--spectrum-tag-icon-color-error-hover);
        }
@@ -131,7 +142,8 @@ governing permissions and limitations under the License.
     &.is-focused {
        color: var(--spectrum-tag-removable-text-color-selected-key-focus);
     }
-    .spectrum-Tags-itemClearButton {
+    .spectrum-Tags-itemClearButton,
+    .spectrum-Tag-removeButton {
       color: var(--spectrum-tag-removable-button-icon-color-selected);
       &:hover {
          background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
@@ -140,7 +152,8 @@ governing permissions and limitations under the License.
     }
   }
 
-  .spectrum-Tags-itemClearButton {
+  .spectrum-Tags-itemClearButton,
+  .spectrum-Tag-removeButton {
     &.is-focused {
        border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
        border-radius: var(--spectrum-alias-border-radius-regular);
