@@ -196,16 +196,8 @@
 
   /* forced-color-adjust: none, so that box-shadow style will render */
   forced-color-adjust: none;
-
-  /** Needed to style spectrum-Table-cellWrapper */
-  > * {
-    background-color: var(--spectrum-table-droptarget-background-color) !important;
-  }
 }
 
-.react-spectrum-Table-row--rootDropTarget {
-  /** Needed to style spectrum-Table-cellWrapper */
-  > * {
-    background-color: var(--spectrum-table-droptarget-background-color) !important;
-  }
+.react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
+  background-color: var(--spectrum-table-droptarget-background-color);
 }

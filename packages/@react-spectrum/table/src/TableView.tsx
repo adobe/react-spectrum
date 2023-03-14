@@ -30,7 +30,7 @@ import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, Dropp
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
-import InsertionIndicator from './InsertionIndicator';
+import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -41,7 +41,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
-import RootDropIndicator from './RootDropIndicator';
+import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
@@ -267,7 +267,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     });
     droppableCollection = dragAndDropHooks.useDroppableCollection({
       keyboardDelegate: layout,
-      // TODO: remove body from layout so drops go to rows
       dropTargetDelegate: layout
     }, dropState, domRef);
 
@@ -338,6 +337,12 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
         </TableHeaderRow>
       );
     }
+    let isDropTarget: boolean;
+    if (isTableDroppable) {
+      isDropTarget = 
+        dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key}) ||
+        dropState.isDropTarget({type: 'root'});
+    }
 
     return (
       <VirtualizerItem
@@ -351,7 +356,8 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
             classNames(
               stylesOverrides,
               {
-                'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize
+                'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize,
+                'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget
               }
             )
           )
@@ -1003,7 +1009,7 @@ function ResizableTableColumnHeader(props) {
 
 function TableSelectAllCell({column}) {
   let ref = useRef();
-  let {state, isTableDraggable} = useTableContext();
+  let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -1025,13 +1031,7 @@ function TableSelectAllCell({column}) {
             'spectrum-Table-checkboxCell',
             {
               'is-hovered': isHovered
-            },
-            classNames(
-              stylesOverrides,
-              {
-                'react-spectrum-Table-checkboxCell--isDraggable': isTableDraggable
-              }
-            )
+            }
           )
         }>
         {
@@ -1102,11 +1102,11 @@ function DragButton() {
       <div
         {...dragButtonProps as React.HTMLAttributes<HTMLElement>}
         className={
-        classNames(
-          stylesOverrides,
-          'spectrum-Table-row-draghandle-button'
-        )
-      }
+          classNames(
+            stylesOverrides,
+            'spectrum-Table-row-draghandle-button'
+          )
+        }
         style={!isFocusVisibleWithin ? {...visuallyHiddenProps.style} : {}}
         ref={dragButtonRef}
         draggable="true">
@@ -1240,8 +1240,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
             },
             classNames(
               stylesOverrides,
-              {'react-spectrum-Table-row--dropTarget': isDropTarget},
-              {'react-spectrum-Table-row--rootDropTarget': isRootDropTarget}
+              {'react-spectrum-Table-row--dropTarget': isDropTarget}
             )
           )
         }>
@@ -1307,7 +1306,7 @@ function TableDragCell({cell}) {
 
 function TableCheckboxCell({cell}) {
   let ref = useRef();
-  let {state, isTableDraggable} = useTableContext();
+  let {state} = useTableContext();
   let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
@@ -1331,10 +1330,7 @@ function TableCheckboxCell({cell}) {
             },
             classNames(
               stylesOverrides,
-              'react-spectrum-Table-cell',
-              {
-                'react-spectrum-Table-checkboxCell--isDraggable': isTableDraggable
-              }
+              'react-spectrum-Table-cell'
             )
           )
         }>

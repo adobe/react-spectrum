@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export default function RootDropIndicator() {
+export function RootDropIndicator() {
   let {dropState, dragAndDropHooks, state} = useTableContext();
   let ref = useRef();
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({

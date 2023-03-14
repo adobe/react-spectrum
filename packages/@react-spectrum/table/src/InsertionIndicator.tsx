@@ -10,7 +10,7 @@ interface InsertionIndicatorProps {
   rowProps: any
 }
 
-export default function InsertionIndicator(props: InsertionIndicatorProps) {
+export function InsertionIndicator(props: InsertionIndicatorProps) {
   let {dropState, dragAndDropHooks, state} = useTableContext();
   const {target, rowProps} = props;
 
