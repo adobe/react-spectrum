@@ -255,12 +255,10 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         state.selectionManager.setFocusedKey(target.key);
         state.selectionManager.setFocused(true);
         setInteractionModality('keyboard');
-      } else if (!state.selectionManager.isSelected(focusedKey)) {
-        setInteractionModality('keyboard');
-      }
-
-      if (target.type === 'item' && target.dropPosition !== 'on') {
+      } else if (target.type === 'item' && target.dropPosition !== 'on') {
         state.selectionManager.setFocusedKey(focusedKey);
+        setInteractionModality('keyboard');
+      } else if (!state.selectionManager.isSelected(focusedKey)) {
         setInteractionModality('keyboard');
       }
 
