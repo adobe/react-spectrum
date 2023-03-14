@@ -1,13 +1,13 @@
 import {classNames} from '@react-spectrum/utils';
-import {ItemDropTarget} from '@react-types/shared';
-import React, {useCallback, useRef} from 'react';
+import {FocusableElement, ItemDropTarget} from '@react-types/shared';
+import React, {DOMAttributes, HTMLAttributes, useCallback, useRef} from 'react';
 import styles from './table.css';
 import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 interface InsertionIndicatorProps {
   target: ItemDropTarget,
-  rowProps: any
+  rowProps: HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>
 }
 
 export function InsertionIndicator(props: InsertionIndicatorProps) {
@@ -36,7 +36,7 @@ export function InsertionIndicator(props: InsertionIndicatorProps) {
     <div
       style={{
         position: 'absolute',
-        top: rowProps.style.top + (target.dropPosition === 'after' ? rowProps.style.height : 0),
+        top: rowProps.style.top as number + (target.dropPosition === 'after' ? rowProps.style.height as number : 0),
         width: rowProps.style.width
       }}
       role="row"

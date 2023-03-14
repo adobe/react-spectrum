@@ -23,7 +23,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
-import {DOMRef, DropTarget, FocusableRef} from '@react-types/shared';
+import {DOMRef, DropTarget, FocusableElement, FocusableRef} from '@react-types/shared';
 import {DragAndDropHooks} from '@react-spectrum/dnd';
 import {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
@@ -38,7 +38,7 @@ import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, Virtualize
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {Resizer} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
@@ -1198,7 +1198,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
-  );
+  ) as HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>;
 
   let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
