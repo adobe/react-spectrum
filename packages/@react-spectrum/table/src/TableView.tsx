@@ -1130,7 +1130,7 @@ export function useTableRowContext() {
   return useContext(TableRowContext);
 }
 
-function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, isRootDropTarget, ...otherProps}) {
+function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, ...otherProps}) {
   let ref = useRef();
   let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
   let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
