@@ -425,8 +425,8 @@ function MyGridList({children, ...props}) {
 function MyItem({children, ...props}) {
   return (
     <Item textValue={children} {...props}>
-      {({selectionMode, selectionBehavior, isDraggable}) => <>
-        {isDraggable && <Button slot="drag">≡</Button>}
+      {({selectionMode, selectionBehavior, allowsDragging}) => <>
+        {allowsDragging && <Button slot="drag">≡</Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
         {children}
       </>}
@@ -630,6 +630,8 @@ GridList supports drag and drop interactions when the `dragAndDropHooks` prop is
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items.
 
+Draggable items must include a focusable drag handle using a `<Button slot="drag">`. This enables keyboard and screen reader users to initiate drag and drop. The `MyItem` component defined in the [reusable wrappers](#reusable-wrappers) section above includes this automatically when the list allows dragging.
+
 See the [drag and drop introduction](dnd.html) to learn more.
 
 ### Reorderable
@@ -666,7 +668,7 @@ function Example() {
 
   return (
     <MyGridList
-      aria-label="Draggable list"
+      aria-label="Reorderable list"
       selectionMode="multiple"
       items={list.items}
       ///- begin highlight -///
@@ -710,22 +712,8 @@ function Example() {
   }
 }
 
-.react-aria-DropIndicator {
-  width: 100%;
-  margin-left: 0;
-  height: 2px;
-  margin-bottom: -2px;
-  outline: none;
-  background: transparent;
-
-  &:last-child {
-    margin-bottom: 0;
-    margin-top: -2px;
-  }
-
-  &[data-drop-target] {
-    background: var(--highlight-background);
-  }
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
 }
 ```
 
@@ -742,20 +730,8 @@ import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
 function Example() {
-  ///- begin collapse -///
-  let list = useListData({
-    initialItems: [
-      {id: 1, name: 'Adobe Photoshop'},
-      {id: 2, name: 'Adobe XD'},
-      {id: 3, name: 'Adobe Dreamweaver'},
-      {id: 4, name: 'Adobe InDesign'},
-      {id: 5, name: 'Adobe Connect'}
-    ]
-  });
-  ///- end collapse -///
-  // ...
-
   let {dragAndDropHooks} = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
     onReorder(e) {
@@ -766,7 +742,6 @@ function Example() {
       }
     },
     ///- end collapse -///
-    // ...
     ///- begin highlight -///
     renderDragPreview(items) {
       return (
@@ -779,11 +754,24 @@ function Example() {
     ///- end highlight -///
   });
 
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
   return (
-    <MyGridList aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList aria-label="Reorderable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );
+  ///- end collapse -///
+  // ...
 }
 ```
 
@@ -868,6 +856,50 @@ function DraggableGridList() {
 </div>
 ```
 
+### Dropping on the collection
+
+Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+function Example() {
+  let [items, setItems] = React.useState([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(e.items.map(async (item, i) => {
+        let name = await item.getText('text/plain');
+        return {id: i, name};
+      }));
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableGridList />
+      <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
+        {item => <Item>{item.name}</Item>}
+      </MyGridList>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList[data-drop-target] {
+  border-color: var(--highlight-background);
+  box-shadow: 0 0 0 1px var(--highlight-background);
+  background: rgb(from slateblue r g b / 15%);
+}
+```
+
+</details>
+
 ### Dropping on items
 
 Dropping on items can be enabled using the `onItemDrop` event. When a valid drag hovers over an item, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
@@ -950,6 +982,17 @@ function Example() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}
+```
+
+</details>
+
 A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
 
 ```tsx example
@@ -958,18 +1001,8 @@ import {DropIndicator} from 'react-aria-components';
 ///- end highlight -///
 
 function Example() {
-  ///- begin collapse -///
-  let list = useListData({
-    initialItems: [
-      {id: 1, name: 'Illustrator'},
-      {id: 2, name: 'Premiere'},
-      {id: 3, name: 'Acrobat'}
-    ]
-  });
-  ///- end collapse -///
-  // ...
-
   let { dragAndDropHooks } = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     async onInsert(e) {
       let items = await Promise.all(e.items.map(async item => {
@@ -984,12 +1017,24 @@ function Example() {
       }
     },
     ///- end collapse -///
-    // ...
     ///- begin highlight -///
     renderDropIndicator(target) {
-      return <DropIndicator target={target} className="my-drop-indicator" />;
+      return (
+        <DropIndicator
+          target={target}
+          className={({isDropTarget}) => `my-drop-indicator ${isDropTarget ? 'active' : ''}`} />
+      );
     }
     ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Illustrator'},
+      {id: 2, name: 'Premiere'},
+      {id: 3, name: 'Acrobat'}
+    ]
   });
 
   return (
@@ -1000,6 +1045,8 @@ function Example() {
       </MyGridList>
     </div>
   );
+  ///- end collapse -///
+  // ...
 }
 ```
 
@@ -1007,66 +1054,8 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.my-drop-indicator {
-  width: 100%;
-  margin-left: 0;
-  height: 2px;
-  margin-bottom: -2px;
-  outline: none;
-  background: transparent;
-
-  &:last-child {
-    margin-bottom: 0;
-    margin-top: -2px;
-  }
-
-  &[data-drop-target] {
-    background: #e70073;
-  }
-}
-```
-
-</details>
-
-### Dropping on the collection
-
-Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
-
-```tsx example
-function Example() {
-  let [items, setItems] = React.useState([]);
-
-  let { dragAndDropHooks } = useDragAndDrop({
-    /*- begin highlight -*/
-    async onRootDrop(e) {
-      let items = await Promise.all(e.items.map(async (item, i) => {
-        let name = await item.getText('text/plain');
-        return {id: i, name};
-      }));
-      setItems(items);
-    }
-    /*- end highlight -*/
-  });
-
-  return (
-    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-      <DraggableGridList />
-      <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
-        {item => <Item>{item.name}</Item>}
-      </MyGridList>
-    </div>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-GridList[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+.my-drop-indicator.active {
+  outline: 1px solid #e70073;
 }
 ```
 
@@ -1103,7 +1092,7 @@ function DroppableGridList() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
       {({name, style: Tag = 'span'}) => <MyItem><Tag>{name}</Tag></MyItem>}
     </MyGridList>
   );
@@ -1143,7 +1132,7 @@ function Example() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
       {item => (
         <MyItem>
           <div className="image-item">
@@ -1219,7 +1208,7 @@ function Example() {
   });
 
   return (
-    <MyGridList aria-label="Draggable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
+    <MyGridList aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
       {item => (
         <MyItem id={item.name}>
           <div className="dir-item">
@@ -1344,7 +1333,7 @@ function Example() {
     ]
   });
   ///- end collapse -///
-  /// ...
+  // ...
 
   let { dragAndDropHooks } = useDragAndDrop({
     ///- begin collapse -///
@@ -1399,7 +1388,6 @@ function Example() {
     /*- end highlight -*/
     acceptedDragTypes: ['image/png'],
     async onRootDrop(e) {
-      // ...
       ///- begin collapse -///
       let items = await Promise.all(
         e.items.map(async item => ({
@@ -1410,11 +1398,13 @@ function Example() {
       );
       setItems(items);
       ///- end collapse -///
+      // ...
     }
   });
 
+  ///- begin collapse -///
   return (
-    <MyGridList aria-label="Draggable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
+    <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
       {item => (
         <MyItem>
           <div className="image-item">
@@ -1425,6 +1415,8 @@ function Example() {
       )}
     </MyGridList>
   );
+  ///- end collapse -///
+  // See "Files" example above...
 }
 ```
 
@@ -1453,7 +1445,7 @@ let onItemDrop = async (e) => {
 
 ### Drag between lists
 
-This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. Items are always moved to avoid duplicate items being added to the same list.
+This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
 
 ```tsx example
 function DndGridList(props) {
@@ -1482,9 +1474,14 @@ function DndGridList(props) {
         };
       });
     },
-    // Accept drops from custom type
+
+    // Accept drops with the custom format.
     acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
     getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
         e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
@@ -1495,16 +1492,42 @@ function DndGridList(props) {
         list.insertAfter(e.target.key, ...processedItems);
       }
     },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+      );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
     onDragEnd(e) {
-      // Remove the items from the source list on drop if they were moved.
-      if (e.dropOperation === 'move') {
+      if (e.dropOperation === 'move' && !e.isInternal) {
         list.remove(...e.keys);
       }
     }
   });
 
   return (
-    <MyGridList aria-label="Draggable list" selectionMode="multiple" items={list.items} dragAndDropHooks={dragAndDropHooks}>
+    <MyGridList
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      items={list.items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );
@@ -1520,7 +1543,7 @@ function DndGridList(props) {
       { id: '5', type: 'folder', name: 'Utilities' },
       { id: '6', type: 'file', name: 'Adobe AfterEffects' }
     ]}
-    aria-label="First ListView in drag between list example"
+    aria-label="First GridList"
   />
   <DndGridList
     initialItems={[
@@ -1531,7 +1554,7 @@ function DndGridList(props) {
       { id: '11', type: 'file', name: 'Adobe Lightroom' },
       { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
     ]}
-    aria-label="Second ListView in drag between list example"
+    aria-label="Second GridList"
   />
 </div>
 ```

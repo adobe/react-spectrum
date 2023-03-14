@@ -526,10 +526,11 @@ The TableHeader and Row components can also be wrapped to automatically include 
 import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
 
 function MyTableHeader({columns, children}) {
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
     <TableHeader>
+      {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>}
       <Collection items={columns}>
         {children}
@@ -539,10 +540,11 @@ function MyTableHeader({columns, children}) {
 }
 
 function MyRow({id, columns, children}) {
-  let {selectionBehavior} = useTableOptions();
+  let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
     <Row id={id}>
+      {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
       {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
       <Collection items={columns}>
         {children}
@@ -606,7 +608,7 @@ In the example below, both the columns and the rows are provided to the table vi
 only the rows dynamic.
 
 ```tsx example export=true
-function ExampleTable(props) {
+function FileTable(props) {
   let columns = [
     {name: 'Name', key: 'name', isRowHeader: true},
     {name: 'Type', key: 'type'},
@@ -621,7 +623,7 @@ function ExampleTable(props) {
   ];
 
   return (
-    <Table aria-label="Example dynamic collection table" {...props}>
+    <Table aria-label="Files" {...props}>
       <MyTableHeader columns={columns}>
         {column => (
           <Column isRowHeader={column.isRowHeader}>
@@ -651,7 +653,7 @@ A user can click on a different row to change the selection, or click on the sam
 
 ```tsx example
 // Using the example above
-<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} />
+<FileTable selectionMode="single" defaultSelectedKeys={[2]} />
 ```
 
 ### Multiple selection
@@ -660,7 +662,7 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`.
 
 ```tsx example
 // Using the example above
-<ExampleTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+<FileTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
 ```
 
 ### Disallow empty selection
@@ -670,7 +672,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ```tsx example
 // Using the example above
-<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+<FileTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
 ```
 
 ### Controlled selection
@@ -680,40 +682,45 @@ be passed into the callback when the row is pressed, allowing you to update stat
 
 ```tsx example export=true
 function PokemonTable(props) {
-  let columns = [
-    {name: 'Name', uid: 'name', isRowHeader: true},
-    {name: 'Type', uid: 'type'},
-    {name: 'Level', uid: 'level'}
-  ];
-
-  let rows = [
+  let items = props.items || [
     {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
     {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
     {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set(props.defaultSelectedKeys || [2]));
+  ///- begin highlight -///
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set());
+  ///- end highlight -///
 
   return (
-    <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
-      <MyTableHeader columns={columns}>
-        {column => (
-          <Column key={column.uid} isRowHeader={column.isRowHeader}>
-            {column.name}
-          </Column>
-        )}
+    <Table
+      aria-label="Pokemon table"
+      {...props}
+      /*- begin highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      /*- end highlight -*/
+    >
+      <MyTableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Level</Column>
       </MyTableHeader>
-      <TableBody items={rows}>
+      <TableBody items={items} renderEmptyState={props.renderEmptyState}>
         {item => (
-          <MyRow columns={columns}>
-            {column => <Cell id={`${item.id}-${column.uid}`}>{item[column.uid]}</Cell>}
+          <MyRow>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.level}</Cell>
           </MyRow>
         )}
       </TableBody>
     </Table>
   );
 }
+
+<PokemonTable selectionMode="multiple" />
 ```
 
 ### Disabled rows
@@ -723,13 +730,13 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 
 ```tsx example
 // Using the same table as above
-<PokemonTable disabledKeys={[3]} />
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
 
 By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
 
 ```tsx example
-<PokemonTable disabledKeys={[3]} disabledBehavior="all" />
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} disabledBehavior="all" />
 ```
 
 ### Selection behavior
@@ -757,16 +764,14 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
     ///- begin highlight -///
     onRowAction={key => alert(`Opening item ${key}...`)}
     ///- end highlight -///
-    selectionMode="multiple"
-    defaultSelectedKeys={[]} />
+    selectionMode="multiple" />
   <PokemonTable
     aria-label="Pokemon table with row actions and replace selection behavior"
     ///- begin highlight -///
     onRowAction={key => alert(`Opening item ${key}...`)}
     selectionBehavior="replace"
     ///- end highlight -///
-    selectionMode="multiple"
-    defaultSelectedKeys={[]} />
+    selectionMode="multiple" />
 </div>
 ```
 
@@ -946,15 +951,17 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
 
 ## Drag and drop
 
-GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new items between existing rows, or reorder rows.
 
-React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A droppable collection is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an item, or between items.
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets. A table is treated as a single drop target, so that users can easily tab past it to get to the next drop target. Within a table, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a _drop position_, such as on an row, or between rows.
+
+Draggable rows must include a focusable drag handle using a `<Button slot="drag">`. This enables keyboard and screen reader users to initiate drag and drop. The `MyRow` component defined in the [reusable wrappers](#reusable-wrappers) section above includes this as an extra column automatically when the table allows dragging.
 
 See the [drag and drop introduction](dnd.html) to learn more.
 
 ### Reorderable
 
-This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+This example shows a basic table that allows users to reorder rows via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
 
 ```tsx example
 import {useListData} from 'react-stately';
@@ -1063,19 +1070,8 @@ import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
 
 function Example() {
-  ///- begin collapse -///
-  let list = useListData({
-    initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-    ]
-  });
-  ///- end collapse -///
-  // ...
-
   let {dragAndDropHooks} = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     getItems: (keys) => [...keys].map(key => ({
       'text/plain': list.getItem(key).name
@@ -1088,7 +1084,6 @@ function Example() {
       }
     },
     ///- end collapse -///
-    // ...
     ///- begin highlight -///
     renderDragPreview(items) {
       return (
@@ -1099,6 +1094,16 @@ function Example() {
       );
     }
     ///- end highlight -///
+  });
+
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
   });
 
   return (
@@ -1126,6 +1131,8 @@ function Example() {
       </TableBody>
     </Table>
   );
+  ///- end collapse -///
+  // ...
 }
 ```
 
@@ -1163,12 +1170,12 @@ This example provides representations of each item as plain text, HTML, and a cu
 
 ```tsx example export=true
 function DraggableTable() {
-  let items = new Map([
-    [1, {name: 'Charizard', type: 'Fire, Flying', level: '67'}],
-    [2, {name: 'Blastoise', type: 'Water', level: '56'}],
-    [3, {name: 'Venusaur', type: 'Grass, Poison', level: '83'}],
-    [4, {name: 'Pikachu', type: 'Electric', level: '100'}]
-  ]);
+  let items = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
 
   let { dragAndDropHooks } = useDragAndDrop({
     ///- begin collapse -///
@@ -1184,11 +1191,11 @@ function DraggableTable() {
     /*- begin highlight -*/
     getItems(keys) {
       return [...keys].map(key => {
-        let item = items.get(key);
+        let item = items.find(item => item.id === key);
         return {
           'text/plain': `${item.name} – ${item.type}`,
           'text/html': `<strong>${item.name}</strong> – <em>${item.type}</em>`,
-          'custom-app-type': JSON.stringify({id: key, ...item})
+          'pokemon': JSON.stringify(item)
         };
       });
     },
@@ -1196,29 +1203,10 @@ function DraggableTable() {
   });
 
   return (
-    <Table
-      aria-label="Files"
+    <PokemonTable
+      items={items}
       selectionMode="multiple"
-      dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader>
-        <Column></Column>
-        <Column><MyCheckbox /></Column>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Level</Column>
-      </TableHeader>
-      <TableBody items={items}>
-        {([id, item]) => (
-          <Row id={id}>
-            <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox /></Cell>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.level}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+      dragAndDropHooks={dragAndDropHooks} />
   );
 }
 
@@ -1228,6 +1216,50 @@ function DraggableTable() {
   <DroppableTable />
 </div>
 ```
+
+### Dropping on the collection
+
+Dropping on the Table as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the Table, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
+
+```tsx example
+function Example() {
+  let [items, setItems] = React.useState([]);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    /*- begin highlight -*/
+    async onRootDrop(e) {
+      let items = await Promise.all(e.items.map(async (item, i) => (
+        JSON.parse(await item.getText('pokemon'))
+      )));
+      setItems(items);
+    }
+    /*- end highlight -*/
+  });
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DraggableTable />
+      <PokemonTable
+        items={items}
+        dragAndDropHooks={dragAndDropHooks}
+        renderEmptyState={() => 'Drop items here'} />
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Table[data-drop-target] {
+  border-color: var(--highlight-background);
+  box-shadow: 0 0 0 1px var(--highlight-background);
+  background: rgb(from slateblue r g b / 15%);
+}
+```
+
+</details>
 
 ### Dropping on items
 
@@ -1247,32 +1279,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       {/* see above */}
       <DraggableTable />
-      <Table
-        aria-label="Droppable table"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Date Modified</Column>
-        </TableHeader>
-        <TableBody>
-          <Row id="favorites">
-            <Cell>Favorites</Cell>
-            <Cell>Folder</Cell>
-            <Cell>9/8/2022</Cell>
-          </Row>
-          <Row id="documents">
-            <Cell>Documents</Cell>
-            <Cell>Folder</Cell>
-            <Cell>2/3/2023</Cell>
-          </Row>
-          <Row id="pictures">
-            <Cell>Pictures</Cell>
-            <Cell>Folder</Cell>
-            <Cell>5/7/2022</Cell>
-          </Row>
-        </TableBody>
-      </Table>
+      <FileTable dragAndDropHooks={dragAndDropHooks} />
     </div>
   );
 }
@@ -1292,7 +1299,7 @@ function Example() {
 
 ### Dropping between items
 
-Dropping between items can be enabled using the `onInsert` event. GridList renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
+Dropping between items can be enabled using the `onInsert` event. Table renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
 
 ```tsx example
 function Example() {
@@ -1309,7 +1316,7 @@ function Example() {
     ///- begin highlight -///
     async onInsert(e) {
       let items = await Promise.all(e.items.map(async item => {
-        let {name, type, level} = JSON.parse(await item.getText('custom-app-type'));
+        let {name, type, level} = JSON.parse(await item.getText('pokemon'));
         return {id: Math.random(), name, type, level};
       }));
 
@@ -1325,28 +1332,22 @@ function Example() {
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableTable />
-      <Table
-        aria-label="Droppable table"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Level</Column>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.level}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
+      <PokemonTable items={list.items} dragAndDropHooks={dragAndDropHooks} />
     </div>
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}
+```
+
+</details>
 
 A custom drop indicator can also be rendered with the `renderDropIndicator` function. This lets you customize the DOM structure and CSS classes applied to the drop indicator.
 
@@ -1356,23 +1357,12 @@ import {DropIndicator} from 'react-aria-components';
 ///- end highlight -///
 
 function Example() {
-  ///- begin collapse -///
-  let list = useListData({
-    initialItems: [
-      {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', level: '65'},
-      {id: 2, name: 'Charmander', type: 'Fire', level: '89'},
-      {id: 3, name: 'Squirtle', type: 'Water', level: '77'},
-      {id: 4, name: 'Caterpie', type: 'Bug', level: '46'}
-    ]
-  });
-  ///- end collapse -///
-  // ...
-
   let { dragAndDropHooks } = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     async onInsert(e) {
       let items = await Promise.all(e.items.map(async item => {
-        let {name, type, level} = JSON.parse(await item.getText('custom-app-type'));
+        let {name, type, level} = JSON.parse(await item.getText('pokemon'));
         return {id: Math.random(), name, type, level};
       }));
 
@@ -1383,93 +1373,37 @@ function Example() {
       }
     },
     ///- end collapse -///
-    // ...
     ///- begin highlight -///
     renderDropIndicator(target) {
-      return <DropIndicator target={target} className="my-drop-indicator" />;
+      return (
+        <DropIndicator
+          target={target}
+          className={({isDropTarget}) => `my-drop-indicator ${isDropTarget ? 'active' : ''}`} />
+      );
     }
     ///- end highlight -///
   });
 
-  return (
-    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-      <DraggableTable />
-      <Table
-        aria-label="Droppable table"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Level</Column>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.level}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.my-drop-indicator[data-drop-target] {
-  outline: 1px solid #e70073;
-}
-```
-
-</details>
-
-### Dropping on the collection
-
-Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
-
-```tsx example
-function Example() {
-  let [items, setItems] = React.useState([]);
-
-  let { dragAndDropHooks } = useDragAndDrop({
-    /*- begin highlight -*/
-    async onRootDrop(e) {
-      let items = await Promise.all(e.items.map(async (item, i) => (
-        JSON.parse(await item.getText('custom-app-type'))
-      )));
-      setItems(items);
-    }
-    /*- end highlight -*/
+  ///- begin collapse -///
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Bulbasaur', type: 'Grass, Poison', level: '65'},
+      {id: 2, name: 'Charmander', type: 'Fire', level: '89'},
+      {id: 3, name: 'Squirtle', type: 'Water', level: '77'},
+      {id: 4, name: 'Caterpie', type: 'Bug', level: '46'}
+    ]
   });
 
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableTable />
-      <Table
-        aria-label="Droppable table"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Level</Column>
-        </TableHeader>
-        <TableBody items={items} renderEmptyState={() => 'Drop items here'}>
-          {item => (
-            <Row>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.level}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
+      <PokemonTable
+        items={list.items}
+        dragAndDropHooks={dragAndDropHooks} />
     </div>
   );
+  ///- end collapse -///
+  // ...
 }
 ```
 
@@ -1477,10 +1411,8 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Table[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+.my-drop-indicator.active {
+  outline: 1px solid #e70073;
 }
 ```
 
@@ -1488,7 +1420,7 @@ function Example() {
 
 ### Drop data
 
-`GridList` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+`Table` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
 
 * `text` – represents data inline as a string in one or more formats
 * `file` – references a file on the user's device
@@ -1506,10 +1438,10 @@ function DroppableTable() {
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
-    acceptedDragTypes: ['custom-app-type'],
+    acceptedDragTypes: ['pokemon'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item) => JSON.parse(await item.getText('pokemon')))
       );
       setItems(items);
     }
@@ -1517,24 +1449,10 @@ function DroppableTable() {
   });
 
   return (
-    <Table
-      aria-label="Droppable table"
-      dragAndDropHooks={dragAndDropHooks}>
-      <TableHeader>
-        <Column isRowHeader>Name</Column>
-        <Column>Type</Column>
-        <Column>Level</Column>
-      </TableHeader>
-      <TableBody items={items} renderEmptyState={() => 'Drop items here'}>
-        {item => (
-          <Row>
-            <Cell>{item.name}</Cell>
-            <Cell>{item.type}</Cell>
-            <Cell>{item.size}</Cell>
-          </Row>
-        )}
-      </TableBody>
-    </Table>
+    <PokemonTable
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}
+      renderEmptyState={() => 'Drop items here'} />
   );
 }
 
@@ -1609,6 +1527,7 @@ function Example() {
   height: 30px;
   width: 30px;
   object-fit: cover;
+  display: block;
 }
 ```
 
@@ -1694,14 +1613,15 @@ This example removes the dragged items from the UI when a move operation is comp
 function Example() {
   let list = useListData({
     initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+      {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+      {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+      {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+      {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
     ]
   });
 
   let { dragAndDropHooks } = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1716,12 +1636,11 @@ function Example() {
         let item = list.getItem(key);
         return {
           'text/plain': item.name,
-          'custom-app-type': JSON.stringify(item)
+          'pokemon': JSON.stringify(item)
         };
       });
     },
     ///- end collapse -///
-    // ...
     /*- begin highlight -*/
     onDragEnd(e) {
       if (e.dropOperation === 'move') {
@@ -1733,29 +1652,10 @@ function Example() {
 
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-      <Table
-        aria-label="Draggable table"
+      <PokemonTable
+        items={list.items}
         selectionMode="multiple"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column></Column>
-          <Column><MyCheckbox /></Column>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Date Modified</Column>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox /></Cell>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.date}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
+        dragAndDropHooks={dragAndDropHooks} />
       <DroppableTable />
     </div>
   );
@@ -1768,19 +1668,19 @@ The drag source can also control which drop operations are allowed for the data.
 
 ```tsx example
 function Example() {
+  // ...
   ///- begin collapse -///
   let list = useListData({
     initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+      {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+      {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+      {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+      {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
     ]
   });
   ///- end collapse -///
-  /// ...
-
   let { dragAndDropHooks } = useDragAndDrop({
+    // ...
     ///- begin collapse -///
     renderDragPreview(items) {
       return (
@@ -1795,12 +1695,11 @@ function Example() {
         let item = list.getItem(key);
         return {
           'text/plain': item.name,
-          'custom-app-type': JSON.stringify(item)
+          'pokemon': JSON.stringify(item)
         };
       });
     },
     ///- end collapse -///
-    // ...
     /*- begin highlight -*/
     getAllowedDropOperations: () => ['copy']
     /*- end highlight -*/
@@ -1808,29 +1707,10 @@ function Example() {
 
   return (
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-      <Table
-        aria-label="Draggable table"
+      <PokemonTable
+        items={list.items}
         selectionMode="multiple"
-        dragAndDropHooks={dragAndDropHooks}>
-        <TableHeader>
-          <Column></Column>
-          <Column><MyCheckbox /></Column>
-          <Column isRowHeader>Name</Column>
-          <Column>Type</Column>
-          <Column>Date Modified</Column>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox /></Cell>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.date}</Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
+        dragAndDropHooks={dragAndDropHooks} />
       <DroppableTable />
     </div>
   );
@@ -1853,7 +1733,6 @@ function Example() {
     /*- end highlight -*/
     acceptedDragTypes: ['image/png'],
     async onRootDrop(e) {
-      // ...
       ///- begin collapse -///
       let items = await Promise.all(
         e.items.map(async item => {
@@ -1869,9 +1748,11 @@ function Example() {
       );
       setItems(items);
       ///- end collapse -///
+      // ...
     }
   });
 
+  ///- begin collapse -///
   return (
     <Table
       aria-label="Droppable table"
@@ -1894,6 +1775,8 @@ function Example() {
       </TableBody>
     </Table>
   );
+  ///- end collapse -///
+  // See "Files" example above...
 }
 ```
 
@@ -1920,9 +1803,9 @@ let onItemDrop = async (e) => {
 };
 ```
 
-### Drag between lists
+### Drag between tables
 
-This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. Items are always moved to avoid duplicate items being added to the same list.
+This example puts together many of the concepts described above, allowing users to drag items between tables bidirectionally. It also supports reordering items within the same table. When a table is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
 
 ```tsx example
 function DndTable(props) {
@@ -1951,9 +1834,14 @@ function DndTable(props) {
         };
       });
     },
-    // Accept drops from custom type
+
+    // Accept drops with the custom format.
     acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
     getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
         e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
@@ -1964,12 +1852,16 @@ function DndTable(props) {
         list.insertAfter(e.target.key, ...processedItems);
       }
     },
+
+    // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
         e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
       );
       list.append(...processedItems);
     },
+
+    // Handle reordering items within the same list.
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -1977,9 +1869,10 @@ function DndTable(props) {
         list.moveAfter(e.target.key, e.keys);
       }
     },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
     onDragEnd(e) {
-      // Remove the items from the source list on drop
-      // if they were moved to a different list.
       if (e.dropOperation === 'move' && !e.isInternal) {
         list.remove(...e.keys);
       }
@@ -1988,7 +1881,7 @@ function DndTable(props) {
 
   return (
     <Table
-      aria-label="Droppable table"
+      aria-label={props['aria-label']}
       selectionMode="multiple"
       selectedKeys={list.selectedKeys}
       onSelectionChange={list.setSelectedKeys}
@@ -2025,7 +1918,7 @@ function DndTable(props) {
       { id: '5', type: 'folder', name: 'Utilities' },
       { id: '6', type: 'file', name: 'Adobe AfterEffects' }
     ]}
-    aria-label="First ListView in drag between list example"
+    aria-label="First Table"
   />
   <DndTable
     initialItems={[
@@ -2036,7 +1929,7 @@ function DndTable(props) {
       { id: '11', type: 'file', name: 'Adobe Lightroom' },
       { id: '12', type: 'file', name: 'Adobe Dreamweaver' }
     ]}
-    aria-label="Second ListView in drag between list example"
+    aria-label="Second Table"
   />
 </div>
 ```
