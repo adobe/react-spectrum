@@ -68,6 +68,7 @@ import {Breadcrumbs, Item, Link} from 'react-aria-components';
 
   .react-aria-Heading {
     margin: 0;
+    font-size: 1em;
   }
 
   .react-aria-Item:not(:last-child)::after {
@@ -220,7 +221,7 @@ The states, selectors, and render props for all components used in `Breadcrumbs`
 
 ### Item
 
-An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It is rendered as an `<li>` element, and should contain a `<Link>` or `<Heading>`. It may also include another element such as a separator icon.
+An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It is rendered as an `<li>` element, and should contain a `<Link>` or `<Heading>`. It may also include another element such as a [separator icon](#separator-icons).
 
 ### Link
 
@@ -274,7 +275,7 @@ import {Heading} from 'react-aria-components';
 
 ### Router links
 
-The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reacttraining.com/react-router/).
+The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reactrouter.com/en/main).
 
 ```tsx
 import {Link as RouterLink} from 'react-router-dom';
