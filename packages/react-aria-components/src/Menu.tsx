@@ -12,15 +12,15 @@
 
 
 import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
+import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {ButtonContext} from './Button';
-import {CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
 import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
@@ -59,6 +59,23 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
   let {portal, collection} = useCollection(props);
+
+  // Delay rendering the actual menu until we have the collection so that auto focus works properly.
+  return (
+    <>
+      {collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
+      {portal}
+    </>
+  );
+}
+
+interface MenuInnerProps<T> {
+  props: MenuProps<T>,
+  collection: BaseCollection<T>,
+  menuRef: RefObject<HTMLDivElement>
+}
+
+function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
   let state = useTreeState({
     ...props,
     collection,
@@ -83,24 +100,21 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   });
 
   return (
-    <>
-      <div
-        {...filterDOMProps(props)}
-        {...menuProps}
-        ref={ref}
-        slot={props.slot}
-        style={props.style}
-        className={props.className ?? 'react-aria-Menu'}>
-        <Provider
-          values={[
-            [InternalMenuContext, state],
-            [SeparatorContext, {elementType: 'div'}]
-          ]}>
-          {children}
-        </Provider>
-      </div>
-      {portal}
-    </>
+    <div
+      {...filterDOMProps(props)}
+      {...menuProps}
+      ref={ref}
+      slot={props.slot}
+      style={props.style}
+      className={props.className ?? 'react-aria-Menu'}>
+      <Provider
+        values={[
+          [InternalMenuContext, state],
+          [SeparatorContext, {elementType: 'div'}]
+        ]}>
+        {children}
+      </Provider>
+    </div>
   );
 }
 
