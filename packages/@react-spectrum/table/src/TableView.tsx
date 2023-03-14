@@ -340,7 +340,9 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     let isDropTarget: boolean;
     let isRootDroptarget: boolean;
     if (isTableDroppable) {
-      isDropTarget = dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
+      if (parent.content) {
+        isDropTarget =  dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
+      }
       isRootDroptarget = dropState.isDropTarget({type: 'root'});
     }
 
