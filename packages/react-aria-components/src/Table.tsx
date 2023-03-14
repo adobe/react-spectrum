@@ -200,13 +200,6 @@ export function Table<T extends object>(props: TableProps<T>) {
   let ref = useRef();
   let {gridProps} = useTable(props, state, ref);
 
-  let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
-  let ctx = useMemo(() => ({
-    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
-    selectionMode,
-    disallowEmptySelection
-  }), [selectionBehavior, selectionMode, disallowEmptySelection]);
-
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -269,6 +262,14 @@ export function Table<T extends object>(props: TableProps<T>) {
     }
   });
 
+  let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
+  let ctx = useMemo(() => ({
+    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
+    selectionMode,
+    disallowEmptySelection,
+    allowsDragging: isListDraggable
+  }), [selectionBehavior, selectionMode, disallowEmptySelection, isListDraggable]);
+
   return (
     <>
       <Provider
@@ -296,12 +297,14 @@ export function Table<T extends object>(props: TableProps<T>) {
 }
 
 export interface TableOptionsContextValue {
-  /** The type of selection that is allowed in the collection. */
+  /** The type of selection that is allowed in the table. */
   selectionMode: SelectionMode,
-  /** The selection behavior for the collection. If selectionMode is `"none"`, this will be `null`. */
+  /** The selection behavior for the table. If selectionMode is `"none"`, this will be `null`. */
   selectionBehavior: SelectionBehavior | null,
-  /** Whether the collection allows empty selection. */
-  disallowEmptySelection: boolean
+  /** Whether the table allows empty selection. */
+  disallowEmptySelection: boolean,
+  /** Whether the table allows rows to be dragged. */
+  allowsDragging: boolean
 }
 
 const TableOptionsContext = createContext<TableOptionsContextValue>(null);
@@ -667,7 +670,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   let dragButtonRef = useRef(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {
-      console.warn('Draggable items in a GridList must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
+      console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
     }
   // eslint-disable-next-line
   }, []);

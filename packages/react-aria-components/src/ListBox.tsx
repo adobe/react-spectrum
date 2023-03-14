@@ -301,7 +301,7 @@ function Option<T>({item}: OptionProps<T>) {
       isFocusVisible: focusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
-      isDraggable: !!dragState,
+      allowsDragging: !!dragState,
       isDragging,
       isDropTarget: droppableItem?.isDropTarget
     }

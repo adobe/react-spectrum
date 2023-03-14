@@ -546,7 +546,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode) {
+      if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
       }
     }
@@ -556,7 +556,9 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     if (this.mutatedNodes.size) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
-        collection.addNode(element.node);
+        if (element.parentNode) {
+          collection.addNode(element.node);
+        }
       }
 
       collection.commit(this.firstChild?.node.key, this.lastChild?.node.key);
@@ -684,11 +686,11 @@ export interface ItemRenderProps {
   /** The selection behavior for the collection. */
   selectionBehavior: SelectionBehavior,
   /**
-   * Whether the item is draggable.
+   * Whether the item allows dragging.
    * @note This property is only available in collection components that support drag and drop.
    * @selector [draggable]
    */
-  isDraggable?: boolean,
+  allowsDragging?: boolean,
   /**
    * Whether the item is currently being dragged.
    * @note This property is only available in collection components that support drag and drop.

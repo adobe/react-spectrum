@@ -255,7 +255,7 @@ function GridListItem({item}) {
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
-      isDraggable: !!dragState,
+      allowsDragging: !!dragState,
       isDragging,
       isDropTarget: dropIndicator?.isDropTarget
     }
@@ -377,10 +377,10 @@ function RootDropIndicator() {
   }
 
   return (
-    <tr role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
-      <td role="gridcell">
+    <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
+      <div role="gridcell">
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
