@@ -21,7 +21,10 @@ interface GridCollectionOptions {
 }
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
-const ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
+let ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
+while (ROW_HEADER_COLUMN_KEY === ROW_HEADER_COLUMN_KEY_DRAG) {
+  ROW_HEADER_COLUMN_KEY_DRAG = 'row-header-column-' + Math.random().toString(36).slice(2);
+}
 
 /** @private */
 export function buildHeaderRows<T>(keyMap: Map<Key, GridNode<T>>, columnNodes: GridNode<T>[]): GridNode<T>[] {
@@ -182,6 +185,26 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
 
+    // Add cell for selection checkboxes if needed.
+    if (opts?.showSelectionCheckboxes) {
+      let rowHeaderColumn: GridNode<T> = {
+        type: 'column',
+        key: ROW_HEADER_COLUMN_KEY,
+        value: null,
+        textValue: '',
+        level: 0,
+        index: 1,
+        hasChildNodes: false,
+        rendered: null,
+        childNodes: [],
+        props: {
+          isSelectionCell: true
+        }
+      };
+
+      columns.unshift(rowHeaderColumn);
+    }
+
     // Add cell for drag buttons if needed.
     if (opts?.showDragButtons) {
       let rowHeaderColumn: GridNode<T> = {
@@ -200,26 +223,6 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
       };
 
       columns.unshift(rowHeaderColumn);
-    }
-
-    // Add cell for selection checkboxes if needed.
-    if (opts?.showSelectionCheckboxes) {
-      let rowHeaderColumn: GridNode<T> = {
-        type: 'column',
-        key: ROW_HEADER_COLUMN_KEY,
-        value: null,
-        textValue: '',
-        level: 0,
-        index: 1,
-        hasChildNodes: false,
-        rendered: null,
-        childNodes: [],
-        props: {
-          isSelectionCell: true
-        }
-      };
-
-      columns.push(rowHeaderColumn);
     }
 
     let rows = [];

@@ -338,10 +338,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       );
     }
     let isDropTarget: boolean;
+    let isRootDroptarget: boolean;
     if (isTableDroppable) {
-      isDropTarget = 
-        dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key}) ||
-        dropState.isDropTarget({type: 'root'});
+      isDropTarget = dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
+      isRootDroptarget = dropState.isDropTarget({type: 'root'});
     }
 
     return (
@@ -357,7 +357,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
               stylesOverrides,
               {
                 'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize,
-                'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget
+                'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget || isRootDroptarget
               }
             )
           )
