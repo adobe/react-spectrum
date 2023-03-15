@@ -11,7 +11,7 @@
  */
 
 import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
@@ -87,7 +87,7 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
 /**
  * A slider allows a user to select one or more values within a range.
  */
-const _Slider = forwardRef(Slider);
+const _Slider = (forwardRef as forwardRefType)(Slider);
 export {_Slider as Slider};
 
 export interface SliderOutputProps extends RenderProps<SliderState> {}

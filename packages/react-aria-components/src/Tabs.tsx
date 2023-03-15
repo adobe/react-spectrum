@@ -13,7 +13,7 @@
 import {AriaLabelingProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
-import {ContextValue, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Node, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
 import {useObjectRef} from '@react-aria/utils';
@@ -180,7 +180,7 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-const _TabList = forwardRef(TabList);
+const _TabList = (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
 /**

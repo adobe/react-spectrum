@@ -12,7 +12,7 @@
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ButtonContext} from './Button';
 import {ComboBoxState, useComboBoxState} from 'react-stately';
-import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -126,5 +126,5 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-const _ComboBox = forwardRef(ComboBox);
+const _ComboBox = (forwardRef as forwardRefType)(ComboBox);
 export {_ComboBox as ComboBox};

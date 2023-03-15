@@ -12,7 +12,7 @@
 
 import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
@@ -115,7 +115,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-const _Select = forwardRef(Select);
+const _Select = (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
 export interface SelectValueRenderProps {

@@ -15,7 +15,7 @@ import {AriaMenuProps, useMenu, useMenuItem, useMenuSection, useMenuTrigger} fro
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
@@ -119,7 +119,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-const _Menu = forwardRef(Menu);
+const _Menu = (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {

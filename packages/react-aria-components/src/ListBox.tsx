@@ -12,7 +12,7 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {ListState, Node, OverlayTriggerState, SelectionBehavior, useListState} from 'react-stately';
@@ -63,7 +63,7 @@ function ListBoxPortal({props, listBoxRef}) {
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
-const _ListBox = forwardRef(ListBox);
+const _ListBox = (forwardRef as forwardRefType)(ListBox);
 export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {

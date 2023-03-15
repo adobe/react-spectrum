@@ -12,7 +12,7 @@
 import {AriaGridListProps, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
@@ -69,7 +69,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-const _GridList = forwardRef(GridList);
+const _GridList = (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
 function GridListItem({item}) {

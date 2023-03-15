@@ -1,4 +1,5 @@
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {buildHeaderRows} from '@react-stately/table';
 import {CheckboxContext} from './Checkbox';
 import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
@@ -6,8 +7,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
-import {Provider, RenderProps, SlotProps, StyleProps, useRenderProps} from './utils';
-import React, {createContext, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -145,6 +145,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 }
 
+export const TableContext = createContext<ContextValue<TableProps<any>, HTMLTableElement>>(null);
 const InternalTableContext = createContext<TableState<unknown>>(null);
 
 export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
@@ -164,7 +165,8 @@ export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, Co
   onCellAction?: (key: Key) => void
 }
 
-function Table<T extends object>(props: TableProps<T>) {
+function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTableElement>) {
+  [props, ref] = useContextProps(props, ref, TableContext);
   let initialCollection = useMemo(() => new TableCollection<T>(), []);
   let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
@@ -173,7 +175,6 @@ function Table<T extends object>(props: TableProps<T>) {
     children: null
   });
 
-  let ref = useRef();
   let {gridProps} = useTable(props, state, ref);
 
   let headerRows = useCachedChildren({
@@ -238,7 +239,7 @@ function Table<T extends object>(props: TableProps<T>) {
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-const _Table = forwardRef(Table);
+const _Table = (forwardRef as forwardRefType)(Table);
 export {_Table as Table};
 
 export interface TableOptionsContextValue {

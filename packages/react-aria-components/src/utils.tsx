@@ -15,11 +15,11 @@ import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} fr
 import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 // Override forwardRef types so generics work.
-declare module 'react' {
-  function forwardRef<T, P = {}>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
-  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-}
+declare function forwardRef<T, P = {}>(
+  render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+
+export type forwardRefType = typeof forwardRef;
 
 export const slotCallbackSymbol = Symbol('callback');
 
