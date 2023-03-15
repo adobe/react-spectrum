@@ -1,0 +1,436 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/tooltip/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Overlays
+keywords: [tooltip, aria]
+type: component
+after_version: 1.0.0
+---
+
+# Tooltip
+
+<PageDescription>{docs.exports.Tooltip.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Tooltip']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#tooltip'}
+  ]} />
+
+## Example
+
+```tsx example
+import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-components';
+
+<TooltipTrigger>
+  <Button>✏️</Button>
+  <Tooltip>
+    <OverlayArrow>
+      <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
+    </OverlayArrow>
+    Edit
+  </Tooltip>
+</TooltipTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tooltip {
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 4px;
+  background: slateblue;
+  color: white;
+  outline: none;
+  padding: 2px 8px;
+  max-width: 150px;
+
+  &[data-placement=top] {
+    margin-bottom: 8px;
+    --origin: translateY(4px);
+  }
+
+  &[data-placement=bottom] {
+    margin-top: 8px;
+    --origin: translateY(-4px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &[data-placement=right] {
+    margin-left: 8px;
+    --origin: translateX(-4px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  &[data-placement=left] {
+    margin-right: 8px;
+    --origin: translateX(4px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(-90deg);
+    }
+  }
+
+  & .react-aria-OverlayArrow svg {
+    display: block;
+    fill: slateblue;
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.react-aria-Button {
+  background: var(--spectrum-global-color-gray-50);
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  border-radius: 4px;
+  color: var(--spectrum-alias-text-color);
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px;
+  transition: border-color 200ms;
+
+  &[data-hovered] {
+    border-color: var(--spectrum-global-color-gray-500);
+  }
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--spectrum-global-color-gray-100);
+    border-color: var(--spectrum-global-color-gray-600);
+  }
+
+  &[data-focus-visible] {
+    border-color: slateblue;
+    box-shadow: 0 0 0 1px slateblue;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Tooltip {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+
+    & .react-aria-OverlayArrow svg {
+      fill: ButtonFace;
+      stroke: ButtonBorder;
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+The HTML `title` attribute can be used to create a tooltip, but it cannot be styled. Custom styled
+tooltips can be hard to build in an accessible way. `TooltipTrigger` and `Tooltip` help build
+fully accessible tooltips that can be styled as needed.
+
+* **Styleable** – States for entry and exit animations are included for easy styling, and an optional arrow element can be rendered.
+* **Accessible** – The trigger element is automatically associated with the tooltip via `aria-describedby`. Tooltips are displayed when an element receives focus.
+* **Hover behavior** – Tooltips display after a global delay on hover of the first tooltip, with no delay on subsequent tooltips to avoid unintended flickering. Emulated hover events on touch devices are ignored.
+* **Positioning** – The tooltip is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window.
+
+## Anatomy
+
+<Anatomy />
+
+A tooltip consists of two parts: the trigger element and the tooltip itself.
+Users may reveal the tooltip by hovering or focusing the trigger.
+
+### Accessibility
+
+Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them. When displayed, TooltipTrigger automatically associates the tooltip with the trigger element so that it is described by the tooltip content.
+
+**Note**: tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.
+
+## Props
+
+### TooltipTrigger
+
+<PropTable component={docs.exports.TooltipTrigger} links={docs.links} />
+
+### Tooltip
+
+<PropTable component={docs.exports.Tooltip} links={docs.links} />
+
+### OverlayArrow
+
+`OverlayArrow` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Tooltip {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Tooltip className="my-tooltip">
+  {/* ... */}
+</Tooltip>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+
+```css
+.react-aria-Tooltip[data-placement=left] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<OverlayArrow className={({placement}) => placement === 'left' || placement === 'right' ? 'rotate-90' : 'rotate-0'}>
+  {/* ... */}
+</OverlayArrow>
+```
+
+Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM.
+
+```css render=false
+.react-aria-Tooltip[data-entering] {
+  animation: slide 300ms;
+}
+
+.react-aria-Tooltip[data-exiting] {
+  animation: slide 300ms reverse;
+}
+
+@keyframes slide {
+  /* ... */
+}
+```
+
+The states, selectors, and render props for each component used in a `TooltipTrigger` are documented below.
+
+### TooltipTrigger
+
+The `TooltipTrigger` component does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<TooltipTrigger>`.
+
+```jsx
+<TooltipTrigger>
+  <div className="my-tooltip-trigger">
+    {/* ... */}
+  </div>
+</TooltipTrigger>
+```
+
+### Tooltip
+
+A `Tooltip` can be targeted with the `.react-aria-Tooltip` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TooltipRenderProps.properties} />
+
+### OverlayArrow
+
+A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.OverlayArrowRenderProps.properties} />
+
+## Reusable wrappers
+
+If you will use a Tooltip in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Tooltip` and all of its children together into a single component.
+
+```tsx example export=true
+function MyTooltip({children, ...props}) {
+  return (
+    <Tooltip {...props}>
+      <OverlayArrow>
+        <svg width={8} height={8}><path d="M0 0,L4 4,L8 0" /></svg>
+      </OverlayArrow>
+      {children}
+    </Tooltip>
+  );
+}
+
+<TooltipTrigger>
+  <Button>💾</Button>
+  <MyTooltip>Save</MyTooltip>
+</TooltipTrigger>
+```
+
+## Usage
+
+The following examples show how to use the `MyTooltip` component created in the above example.
+
+### Delay
+
+Tooltips appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay is called the "warmup period", and it is a global timer, shared by all tooltips. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
+
+```tsx example
+<div style={{display: 'flex', gap: 8}}>
+  <TooltipTrigger>
+    <Button>Hover me</Button>
+    <MyTooltip>I come up after a delay.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>Then hover me</Button>
+    <MyTooltip>If you did it quickly, I appear immediately.</MyTooltip>
+  </TooltipTrigger>
+</div>
+```
+
+The delay can be adjusted for hover using the `delay` prop.
+
+```tsx example
+<TooltipTrigger delay={0}>
+  <Button>💾</Button>
+  <MyTooltip>Save</MyTooltip>
+</TooltipTrigger>
+```
+
+### Trigger
+
+By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.
+
+```tsx example
+<TooltipTrigger trigger="focus">
+  <Button>💿</Button>
+  <MyTooltip>Burn CD</MyTooltip>
+</TooltipTrigger>
+```
+
+### Controlled open state
+
+The open state of the tooltip can be controlled via the `defaultOpen` and `isOpen` props.
+
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <TooltipTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button>📣</Button>
+        <MyTooltip>Notifications</MyTooltip>
+      </TooltipTrigger>
+      <p>Tooltip is {isOpen ? 'showing' : 'not showing'}</p>
+    </>
+  );
+}
+```
+
+### Placement
+
+The Tooltip's placement with respect to its trigger element can be adjusted using the `placement`
+prop. See the props table for a full list of available placement combinations.
+
+```tsx example
+<div style={{display: 'flex', gap: 8}}>
+  <TooltipTrigger>
+    <Button>⬅️</Button>
+    <MyTooltip placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>⬆️</Button>
+    <MyTooltip placement="top">This tooltip is above the button.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>⬇️</Button>
+    <MyTooltip placement="bottom">This tooltip is below the button.</MyTooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <Button>➡️</Button>
+    <MyTooltip placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyTooltip>
+  </TooltipTrigger>
+</div>
+```
+
+### Offset and cross offset
+
+The Tooltip's offset with respect to its trigger can be adjusted using the `offset` and
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+trigger whereas the `crossOffset` prop handles the spacing applied along the cross axis.
+
+Below is a tooltip offset by an additional 50px above the trigger.
+
+```tsx example
+<TooltipTrigger>
+  <Button>☝️</Button>
+  <MyTooltip offset={50}>This will shift up.</MyTooltip>
+</TooltipTrigger>
+```
+
+Below is a tooltip cross offset by an additional 100px to the right of the trigger.
+
+```tsx example
+<TooltipTrigger>
+  <Button>👉</Button>
+  <MyTooltip crossOffset={60} placement="bottom">This will shift over to the right.</MyTooltip>
+</TooltipTrigger>
+```
+
+### Disabled
+
+The `isDisabled` prop can be provided to a TooltipTrigger to disable the tooltip, without disabling the trigger it displays on.
+
+```tsx example
+<TooltipTrigger isDisabled>
+  <Button>🖨</Button>
+  <MyTooltip>Print</MyTooltip>
+</TooltipTrigger>
+```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTooltipTrigger](useTooltipTrigger.html) for more details.
