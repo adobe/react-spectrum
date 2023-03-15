@@ -15,9 +15,9 @@ import React, {ReactElement} from "react";
 import {SpectrumDialogClose} from "@react-types/dialog";
 import {MenuDialogContext, useMenuItemContext} from "./MenuItem";
 import {DialogContainer} from "@react-spectrum/dialog";
-import {Popover} from "@react-spectrum/overlays";
+import {Popover, Tray} from "@react-spectrum/overlays";
 import {useOverlayTriggerState} from "@react-stately/overlays";
-import {classNames, SlotProvider} from "@react-spectrum/utils";
+import {classNames, SlotProvider, useIsMobileDevice} from "@react-spectrum/utils";
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 
 
@@ -42,11 +42,21 @@ function MenuDialogTrigger<T>(props: ItemProps<T>): ReactElement {
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
   console.log('restore focus', state.isOpen ? true : false)
+
+  let isMobile = useIsMobileDevice();
   return (
     <>
       <MenuDialogContext.Provider value={{isUnavailable}}>{trigger}</MenuDialogContext.Provider>
       <SlotProvider slots={slots}>
-        <Popover restoreFocus={state.isOpen ? true : false} state={state} triggerRef={openRef} placement="end top" hideArrow offset={-10} safeTriangle>{content}</Popover>
+        {
+          isMobile ? (
+            <Tray state={state} safeTriangle>
+              {content}
+            </Tray>
+          ) : (
+            <Popover restoreFocus={state.isOpen ? true : false} state={state} triggerRef={openRef} placement="end top" hideArrow offset={-10} safeTriangle>{content}</Popover>
+          )
+        }
       </SlotProvider>
     </>
   );

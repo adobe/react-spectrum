@@ -13,12 +13,13 @@
 import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
-import {Key, RefObject} from 'react';
+import {Key, RefObject, useCallback} from 'react';
 import {menuData} from './useMenu';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 import {focusSafely} from "@react-aria/focus";
+import {useMenuDialogContext, useMenuItemContext} from "@react-spectrum/menu/src/MenuItem";
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -97,12 +98,24 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isVirtualized
   } = props;
 
+  let menuDialogContext = useMenuDialogContext();
+  let isMenuDialogTrigger = !!menuDialogContext;
+  let isUnavailable;
+  let {openKey, setOpenKey, hoveredItem, setHoveredItem, setOpenRef} = useMenuItemContext() ?? {};
+  if (isMenuDialogTrigger) {
+    isUnavailable = menuDialogContext.isUnavailable;
+  }
+
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
 
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
-  let onAction = props.onAction || data.onAction;
+  let onActionMenuDialogTrigger = useCallback(() => {
+    setOpenKey(key);
+    setOpenRef(ref);
+  }, []);
+  let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
@@ -141,13 +154,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
     switch (e.key) {
       case ' ':
-        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect !== false && onClose) {
+        if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isMenuDialogTrigger && closeOnSelect !== false && onClose) {
           onClose();
         }
         break;
       case 'Enter':
         // The Enter key should always close on select, except if overridden.
-        if (!isDisabled && closeOnSelect !== false && onClose) {
+        if (!isDisabled && closeOnSelect !== false && !isMenuDialogTrigger && onClose) {
           onClose();
         }
         break;
@@ -168,7 +181,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
+      if (!isMenuDialogTrigger && onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
         onClose();
       }
     }
