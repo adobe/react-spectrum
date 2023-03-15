@@ -12,9 +12,10 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
@@ -42,6 +43,23 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   }, state, tooltipTriggerRef);
 
+  let [borderRadius, setBorderRadius] = useState(0);
+  useLayoutEffect(() => {
+    if (overlayRef.current) {
+      let spectrumBorderRadius = window.getComputedStyle(overlayRef.current).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
+    }
+  }, [overlayRef]);
+  let arrowRef = useRef(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [arrowRef]);
+
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: tooltipTriggerRef,
@@ -50,7 +68,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     crossOffset,
     isOpen: state.isOpen,
     shouldFlip: props.shouldFlip,
-    containerPadding: props.containerPadding
+    containerPadding: props.containerPadding,
+    arrowCrossSize: arrowWidth + borderRadius * 2
   });
 
   return (
@@ -65,6 +84,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           ref: overlayRef,
           UNSAFE_style: overlayProps.style,
           arrowProps,
+          arrowRef: arrowRef,
           ...tooltipProps
         }}>
         <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>

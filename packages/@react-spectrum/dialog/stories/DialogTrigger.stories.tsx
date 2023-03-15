@@ -29,50 +29,92 @@ import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 storiesOf('DialogTrigger', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
+  .addParameters({
+    providerSwitcher: {status: 'notice'},
+    args: {
+      crossOffset: 0,
+      offset: 0,
+      containerPadding: 0,
+      placement: 'top',
+      shouldFlip: false,
+      isKeyboardDismissDisabled: false
+    },
+    argTypes: {
+      crossOffset: {
+        control: {
+          type: 'number'
+        }
+      },
+      offset: {
+        control: {
+          type: 'number'
+        }
+      },
+      placement: {
+        type: 'select',
+        defaultValue: 'top',
+        options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end', 'top', 'top left', 'top right', 'top start', 'top end', 'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom', 'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom']
+      },
+      buttonText: {
+        control: 'text',
+        defaultValue: 'Trigger'
+      },
+      shouldFlip: {
+        control: {type: 'boolean'}
+      },
+      isKeyboardDismissDisabled: {
+        control: {type: 'boolean'}
+      },
+      containerPadding: {
+        control: {
+          type: 'number'
+        }
+      }
+    }
+  })
   .add(
     'default',
-    () => render({})
+    (args) => render(args)
   )
   .add(
     'type: popover',
-    () => renderPopover({type: 'popover'})
+    (args) => renderPopover({type: 'popover', ...args})
   )
   .add(
     'type: modal',
-    () => render({type: 'modal'})
+    (args) => render({type: 'modal', ...args})
   )
   .add(
     'type: modal isDismissable',
-    () => render({type: 'modal', isDismissable: true})
+    (args) => render({type: 'modal', isDismissable: true, ...args})
   )
   .add(
     'type: fullscreen',
-    () => render({type: 'fullscreen'})
+    (args) => render({type: 'fullscreen', ...args})
   )
   .add(
     'type: fullscreenTakeover',
-    () => render({type: 'fullscreenTakeover'})
+    (args) => render({type: 'fullscreenTakeover', ...args})
   )
   .add(
     'type: tray',
-    () => renderPopover({type: 'tray'})
+    (args) => renderPopover({type: 'tray', ...args})
   )
   .add(
     'mobileType: fullscreen',
-    () => render({type: 'modal', mobileType: 'fullscreen'})
+    (args) => render({type: 'modal', mobileType: 'fullscreen', ...args})
   )
   .add(
     'mobileType: fullscreenTakeover',
-    () => render({type: 'modal', mobileType: 'fullscreenTakeover'})
+    (args) => render({type: 'modal', mobileType: 'fullscreenTakeover', ...args})
   )
   .add(
     'popover with mobileType: modal',
-    () => renderPopover({type: 'popover', mobileType: 'modal'})
+    (args) => renderPopover({type: 'popover', mobileType: 'modal', ...args})
   )
   .add(
     'popover with mobileType: tray',
-    () => renderPopover({type: 'popover', mobileType: 'tray'})
+    (args) => renderPopover({type: 'popover', mobileType: 'tray', ...args})
   )
   .add(
     'nested modals',
@@ -199,88 +241,8 @@ storiesOf('DialogTrigger', module)
     )
   )
   .add(
-    'placement="left", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false})
-  )
-  .add(
-    'placement="left top", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'left top', shouldFlip: false})
-  )
-  .add(
-    'placement="left bottom", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'left bottom', shouldFlip: false})
-  )
-  .add(
-    'placement="right", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'right', shouldFlip: false})
-  )
-  .add(
-    'placement="right top", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'right top', shouldFlip: false})
-  )
-  .add(
-    'placement="right bottom", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'right bottom', shouldFlip: false})
-  )
-  .add(
-    'placement="bottom", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'bottom', shouldFlip: false})
-  )
-  .add(
-    'placement="bottom left", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'bottom left', shouldFlip: false})
-  )
-  .add(
-    'placement="bottom right", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'bottom right', shouldFlip: false})
-  )
-  .add(
-    'placement="top", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'top', shouldFlip: false})
-  )
-  .add(
-    'placement="top left", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'top left', shouldFlip: false})
-  )
-  .add(
-    'placement="top right", shouldFlip="false"',
-    () => renderPopover({type: 'popover', placement: 'top right', shouldFlip: false})
-  )
-  .add(
-    'offset',
-    () => renderPopover({type: 'popover', offset: 50})
-  )
-  .add(
-    'crossOffset',
-    () => renderPopover({type: 'popover', crossOffset: 50})
-  )
-  .add(
-    'shouldFlip: true',
-    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, width: 'calc(100vh - 100px)'})
-  )
-  .add(
-    'shouldFlip: false',
-    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: false, width: 'calc(100vh - 100px)'})
-  )
-  .add(
-    'shouldFlip: true with offset',
-    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
-  )
-  .add(
-    'keyboard dismiss disabled: modal',
-    () => render({type: 'modal', isKeyboardDismissDisabled: true})
-  )
-  .add(
-    'keyboard dismiss disabled: popover',
-    () => renderPopover({type: 'popover', placement: 'bottom', isKeyboardDismissDisabled: true})
-  )
-  .add(
-    'keyboard dismiss disabled: tray',
-    () => renderPopover({type: 'tray', isKeyboardDismissDisabled: true})
-  )
-  .add(
-    'containerPadding',
-    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+    'shouldFlip with width',
+    (args) => renderPopover({type: 'popover', width: 'calc(100vh - 100px)', ...args})
   )
   .add(
     'Close function with button: popover',
@@ -305,11 +267,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'targetRef',
-    () => (<TriggerWithRef type="popover" />)
+    (args) => (<TriggerWithRef type="popover" {...args} />)
   )
   .add(
     'alert dialog',
-    () => renderAlert({})
+    (args) => renderAlert(args)
   )
   .add(
     'crossoffset examples',
@@ -317,28 +279,28 @@ storiesOf('DialogTrigger', module)
       <Flex gap="size-200" alignSelf="center">
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Top</span>
-          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: -50}, false)}</div>
-          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left top'}, false)}</div>
-          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: 50}, false)}</div>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: -50, buttonText: 'Trigger'}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left top', buttonText: 'Trigger'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left top', crossOffset: 50, buttonText: 'Trigger'}, false)}</div>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left</span>
-          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: -50}, false)}</div>
-          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left'}, false)}</div>
-          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: 50}, false)}</div>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: -50, buttonText: 'Trigger'}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left', buttonText: 'Trigger'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left', crossOffset: 50, buttonText: 'Trigger'}, false)}</div>
         </Flex>
         <Flex gap="size-200" direction="column" alignItems="start">
           <span>Left Bottom</span>
-          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: -50}, false)}</div>
-          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left bottom'}, false)}</div>
-          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: 50}, false)}</div>
+          <div><span>-50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: -50, buttonText: 'Trigger'}, false)}</div>
+          <div><span>0</span>{renderPopover({type: 'popover', placement: 'left bottom', buttonText: 'Trigger'}, false)}</div>
+          <div><span>50</span>{renderPopover({type: 'popover', placement: 'left bottom', crossOffset: 50, buttonText: 'Trigger'}, false)}</div>
         </Flex>
       </Flex>
     )
   )
   .add(
     'trigger visible through underlay',
-    () => renderTriggerNotCentered({})
+    (args) => renderTriggerNotCentered(args)
   )
   .add(
     '2 popovers',
@@ -386,11 +348,13 @@ storiesOf('DialogTrigger', module)
     )
   );
 
-function render({width = 'auto', ...props}) {
+function render(props) {
+  let {buttonText, width = 'auto', ...otherProps} = props;
+
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
+        <ActionButton>{buttonText}</ActionButton>
         {(close) => (
           <Dialog>
             <Heading id="foo">The Heading</Heading>
@@ -410,11 +374,13 @@ function render({width = 'auto', ...props}) {
 }
 
 function renderTriggerNotCentered(props) {
+  let {buttonText, ...otherProps} = props;
+
   return (
     <div style={{position: 'absolute', top: '100px', left: '100px'}}>
       <div>action button shouldn't get any events if the underlay is up and you try to click it through the underlay</div>
-      <DialogTrigger {...props} isDismissable onOpenChange={action('open change')}>
-        <ActionButton onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} isDismissable onOpenChange={action('open change')}>
+        <ActionButton onPressStart={action('onPressStart')} onPress={action('onPress')} onPressEnd={action('onPressEnd')}>{buttonText}</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
@@ -426,11 +392,13 @@ function renderTriggerNotCentered(props) {
   );
 }
 
-function renderPopover({width = 'auto', ...props}, withMargin = true) {
+function renderPopover(props, withMargin = true) {
+  let {buttonText, width = 'auto', ...otherProps} = props;
+
   return (
     <div style={{display: 'flex', width, margin: withMargin && '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
+        <ActionButton>{buttonText}</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
@@ -443,11 +411,12 @@ function renderPopover({width = 'auto', ...props}, withMargin = true) {
 }
 
 let TriggerWithRef = (props) => {
+  let {buttonText, ...otherProps} = props;
   let ref = React.useRef();
   return (
     <div style={{display: 'flex'}}>
-      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} targetRef={ref} onOpenChange={action('open change')}>
+        <ActionButton>{buttonText}</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
           <Header>The Header</Header>
@@ -461,11 +430,13 @@ let TriggerWithRef = (props) => {
 };
 
 
-function renderAlert({width = 'auto', ...props}) {
+function renderAlert(props) {
+  let {buttonText, width = 'auto', ...otherProps} = props;
+
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')}>
-        <ActionButton>Trigger</ActionButton>
+      <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
+        <ActionButton>{buttonText}</ActionButton>
         {(close) => (
           <AlertDialog title="Alert! Danger!" variant="error" primaryActionLabel="Accept" secondaryActionLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onPrimaryAction={chain(close, action('primary'))} onSecondaryAction={chain(close, action('secondary'))}>
             <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>

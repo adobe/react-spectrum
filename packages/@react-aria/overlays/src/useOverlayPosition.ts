@@ -20,6 +20,11 @@ import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
   /**
+   * Cross size of the overlay arrow in pixels.
+   * @default 0
+   */
+  arrowCrossSize?: number,
+  /**
    * Element that that serves as the positioning boundary.
    * @default document.body
    */
@@ -72,6 +77,7 @@ let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {
+    arrowCrossSize = 0,
     targetRef,
     overlayRef,
     scrollRef = overlayRef,
@@ -125,7 +131,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       boundaryElement,
       offset,
       crossOffset,
-      maxHeight
+      maxHeight,
+      arrowCrossSize
     });
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render

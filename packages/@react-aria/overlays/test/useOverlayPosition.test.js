@@ -18,7 +18,7 @@ function Example({triggerTop = 250, ...props}) {
   let targetRef = useRef();
   let containerRef = useRef();
   let overlayRef = useRef();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, ...props});
+  let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, arrowCrossSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
     <React.Fragment>
@@ -63,7 +63,7 @@ describe('useOverlayPosition', function () {
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 48px;
+      left: 94px;
     `);
   });
 
@@ -82,7 +82,7 @@ describe('useOverlayPosition', function () {
 
     expect(overlay).toHaveTextContent('placement: top');
     expect(arrow).toHaveStyle(`
-      left: 48px;
+      left: 94px;
     `);
   });
 
@@ -263,7 +263,7 @@ describe('useOverlayPosition with positioned container', () => {
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 48px;
+      left: 94px;
     `);
   });
 
@@ -285,7 +285,7 @@ describe('useOverlayPosition with positioned container', () => {
 
     expect(overlay).toHaveTextContent('placement: top');
     expect(arrow).toHaveStyle(`
-      left: 48px;
+      left: 94px;
     `);
   });
 });
