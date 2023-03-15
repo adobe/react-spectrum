@@ -74,116 +74,6 @@
   }
 
   /* TODO: move to top level since all this stuff is specific to emphasized ListView */
-  &.react-spectrum-ListView--emphasized {
-    &.react-spectrum-ListView--dropTarget {
-      .react-spectrum-ListViewItem:not(.is-selected) {
-        /* shift bottom border inwards so it doesn't overlap the root drop target */
-        &:after {
-          inset-inline-start: 1px;
-          inset-inline-end: 1px;
-        }
-      }
-    }
-
-    .react-spectrum-ListViewItem {
-      /* common pseudoelement for box shadows */
-      &:after {
-        content: '';
-        display: block;
-        position: absolute;
-        inset-inline-start: 0;
-        inset-inline-end: 0;
-        inset-block-end: 0;
-        inset-block-start: 0;
-        z-index: 3;
-        pointer-events: none;
-
-        /* forced-color-adjust: none, so that box-shadow style will render */
-        forced-color-adjust: none;
-      }
-
-      &.is-selected {
-        background-color: var(--spectrum-listview-item-background-color-selected);
-        &.is-hovered,
-        &.is-active {
-          background-color: var(--spectrum-listview-item-background-color-selected-hover);
-        }
-
-        &:focus-ring {
-          background-color: var(--spectrum-listview-item-background-color-selected-key-focus);
-        }
-
-        /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
-        &:after {
-          inset-block-start: -1px;
-          box-shadow:
-            inset 1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
-            inset -1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
-            inset 0 -1px 0 0 var(--spectrum-listview-item-border-color-selected),
-            inset 0 1px 0 0 var(--spectrum-listview-item-border-color-selected);
-        }
-      }
-
-      /* First item in the ListView should not have a border that extends outside of itself to the top, it doesn't need to share a border space. */
-      &.react-spectrum-ListViewItem--firstRow {
-        &.is-selected {
-          &:after {
-            inset-block-start: 0px;
-          }
-        }
-      }
-    }
-
-    &:not(.react-spectrum-ListView--quiet) {
-      &:not(.react-spectrum-ListView--loadingMore) {
-        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
-          &:after {
-            border-end-start-radius: var(--spectrum-listview-item-border-radius);
-            border-end-end-radius: var(--spectrum-listview-item-border-radius);
-          }
-        }
-      }
-
-      .react-spectrum-ListViewItem {
-        &.react-spectrum-ListViewItem--firstRow.is-selected {
-          &:after {
-            border-start-start-radius: var(--spectrum-listview-item-border-radius);
-            border-start-end-radius: var(--spectrum-listview-item-border-radius);
-          }
-        }
-      }
-
-      &.react-spectrum-ListView--isVerticalScrollbarVisible {
-        .react-spectrum-ListViewItem {
-          &.react-spectrum-ListViewItem--firstRow.is-selected {
-            &:after {
-              border-start-end-radius: 0;
-            }
-          }
-        }
-
-        &:not(.react-spectrum-ListView--loadingMore) {
-          .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
-            &:after {
-              border-end-end-radius: 0;
-            }
-          }
-        }
-      }
-
-      &.react-spectrum-ListView--isHorizontalScrollbarVisible {
-        &:not(.react-spectrum-ListView--loadingMore) {
-          .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
-            &:after {
-              border-end-start-radius: 0;
-              border-end-end-radius: 0;
-            }
-          }
-        }
-      }
-    }
-
-  }
 
   &.react-spectrum-ListView--wrap .react-spectrum-ListViewItem {
     & .react-spectrum-ListViewItem-content,
@@ -193,6 +83,118 @@
     }
   }
 }
+
+/* emphasized ListView styles */
+.react-spectrum-ListView--emphasized {
+  &.react-spectrum-ListView--dropTarget {
+    .react-spectrum-ListViewItem:not(.is-selected) {
+      /* shift bottom border inwards so it doesn't overlap the root drop target */
+      &:after {
+        inset-inline-start: 1px;
+        inset-inline-end: 1px;
+      }
+    }
+  }
+
+  .react-spectrum-ListViewItem {
+    /* common pseudoelement for box shadows */
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      inset-block-end: 0;
+      inset-block-start: 0;
+      z-index: 3;
+      pointer-events: none;
+
+      /* forced-color-adjust: none, so that box-shadow style will render */
+      forced-color-adjust: none;
+    }
+
+    &.is-selected {
+      background-color: var(--spectrum-listview-item-background-color-selected);
+      &.is-hovered,
+      &.is-active {
+        background-color: var(--spectrum-listview-item-background-color-selected-hover);
+      }
+
+      &:focus-ring {
+        background-color: var(--spectrum-listview-item-background-color-selected-key-focus);
+      }
+
+      /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
+      &:after {
+        inset-block-start: -1px;
+        box-shadow:
+          inset 1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+          inset -1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+          inset 0 -1px 0 0 var(--spectrum-listview-item-border-color-selected),
+          inset 0 1px 0 0 var(--spectrum-listview-item-border-color-selected);
+      }
+    }
+
+    /* First item in the ListView should not have a border that extends outside of itself to the top, it doesn't need to share a border space. */
+    &.react-spectrum-ListViewItem--firstRow {
+      &.is-selected {
+        &:after {
+          inset-block-start: 0px;
+        }
+      }
+    }
+  }
+
+  &:not(.react-spectrum-ListView--quiet) {
+    &:not(.react-spectrum-ListView--loadingMore) {
+      .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+        &:after {
+          border-end-start-radius: var(--spectrum-listview-item-border-radius);
+          border-end-end-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+    }
+
+    .react-spectrum-ListViewItem {
+      &.react-spectrum-ListViewItem--firstRow.is-selected {
+        &:after {
+          border-start-start-radius: var(--spectrum-listview-item-border-radius);
+          border-start-end-radius: var(--spectrum-listview-item-border-radius);
+        }
+      }
+    }
+
+    &.react-spectrum-ListView--isVerticalScrollbarVisible {
+      .react-spectrum-ListViewItem {
+        &.react-spectrum-ListViewItem--firstRow.is-selected {
+          &:after {
+            border-start-end-radius: 0;
+          }
+        }
+      }
+
+      &:not(.react-spectrum-ListView--loadingMore) {
+        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+          &:after {
+            border-end-end-radius: 0;
+          }
+        }
+      }
+    }
+
+    &.react-spectrum-ListView--isHorizontalScrollbarVisible {
+      &:not(.react-spectrum-ListView--loadingMore) {
+        .react-spectrum-ListViewItem--lastRow.react-spectrum-ListViewItem--isFlushBottom.is-selected {
+          &:after {
+            border-end-start-radius: 0;
+            border-end-end-radius: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
 
 /* Specfic style overrides for ListView without sections */
 .react-spectrum-ListView:not(.react-spectrum-ListView--hasSections) {
