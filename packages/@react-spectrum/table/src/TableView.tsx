@@ -169,6 +169,9 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
 }
 
+// TODO: type this + maybe just use a weak map
+const TableSectionContext = React.createContext(null)
+
 function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
@@ -326,6 +329,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
   type View = ReusableView<GridNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
+
     if (style.overflow === 'hidden') {
       style.overflow = 'visible'; // needed to support position: sticky
     }
@@ -349,6 +353,17 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           {renderChildren(children)}
         </TableHeader>
       );
+    }
+
+    if (reusableView.viewType === 'row' && reusableView.content.props.isSectionHeader) {
+      return (
+        <TableSectionRow
+          item={reusableView.content}
+          style={style}>
+          {renderChildren(children)}
+        </TableSectionRow>
+
+      )
     }
 
     if (reusableView.viewType === 'row') {
@@ -386,19 +401,20 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'section') {
-      let header = children.find(c => c.viewType === 'header');
-      let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
+      // TODO: now with the sectionheader in the collection row, can get rid of the header node and have this
+      // render all children below. The header row handling should be updated in the layout to always be persisted
+      // Should also add a if statement  that renders <TableSectionHeader> if the reusable view type is row + is sectionRow prop is true
+      // let header = children.find(c => c.viewType === 'header');
+      // let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
+      // Support sticky section header cell
+      // headerStyle.overflow = 'visible';
 
       return (
         <TableSection
           reusableView={reusableView}
           key={reusableView.key}
-          style={style}
-          header={header}
-          // Support sticky section header cell
-          // TODO: needed to do it this way cuz test complained about overflow being readonly for some reason, will do away with this in the refactor
-          headerStyle={{...headerStyle, overflow: 'visible'}}>
-          {renderChildren(children.filter(c => c.viewType !== 'header'))}
+          style={style}>
+          {renderChildren(children)}
         </TableSection>
       );
     }
@@ -439,6 +455,10 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
 
         if (item.props.isDragButtonCell) {
           return <TableDragCell cell={item} />;
+        }
+
+        if (item.props.isSectionCell) {
+          return <TableSectionCell cell={item} />;
         }
 
         return <TableCell cell={item} />;
@@ -1473,73 +1493,64 @@ function TableCell({cell}) {
   );
 }
 
-function TableSection({children, style, header, headerStyle, reusableView}) {
-  let {state, layout} = useTableContext();
+function TableSection({children, style, reusableView}) {
   let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
-  let headerRowRef = useRef();
-  useVirtualizerItem({
-    reusableView: header,
-    ref: headerRowRef
-  });
+  // TODO: update so it passes the other row and cell props via context
 
   return (
     <div
       {...rowGroupProps}
       style={style}>
+      {children}
+    </div>
+  );
+}
+
+function TableSectionRow({children, style, item}) {
+  // TODO: update this so it reflects the heading height, not the typical row height
+  let {state, layout} = useTableContext();
+  return (
+    <div
+      // {...rowProps}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-sectionRow',
+          {
+            'is-next-selected': state.selectionManager.isSelected(item.nextKey)
+          }
+        )
+      }
+      style={style}>
+      {children}
+    </div>
+  );
+}
+
+function TableSectionCell({cell}) {
+  return (
+    <div
+      // TODO need the gridcell props from the tablesection
+      // {...gridCellProps}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-sectionCell',
+          classNames(
+            stylesOverrides,
+            'react-spectrum-Table-cell'
+          )
+        )
+      }>
       <div
-        {...rowProps}
         className={
           classNames(
             styles,
-            'spectrum-Table-sectionRow',
-            {
-              'is-next-selected': state.selectionManager.isSelected(reusableView.content.nextKey)
-            }
+            'spectrum-Table-sectionCellContents'
           )
-        }
-        style={headerStyle}>
-        <div
-          role="presentation"
-          ref={headerRowRef}
-          // Section header should be sticky and shouldn't span the whole row width
-          style={{...headerStyle, width: layout.virtualizer.visibleRect.width, position: 'sticky'}}
-          className={
-            classNames(
-              styles,
-              'spectrum-Table-cellWrapper',
-              classNames(
-                stylesOverrides,
-                {
-                  'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize
-                }
-              )
-            )
-          }>
-          <div
-            {...gridCellProps}
-            className={
-              classNames(
-                styles,
-                'spectrum-Table-sectionCell',
-                classNames(
-                  stylesOverrides,
-                  'react-spectrum-Table-cell'
-                )
-              )
-            }>
-            <div
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Table-sectionCellContents'
-                )
-              }>
-              {reusableView.content.rendered}
-            </div>
-          </div>
-        </div>
+        }>
+        {cell.rendered}
       </div>
-      {children}
     </div>
   );
 }

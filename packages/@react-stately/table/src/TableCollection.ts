@@ -243,7 +243,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
           }
           break;
         case 'section':
-          // Push section node to rows since the section header is considered a row.
+          // Push section node to rows so that it gets added to the keymap via GridCollection
           rows.push(node);
           break;
         case 'item':
