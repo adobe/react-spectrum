@@ -31,10 +31,8 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         }
 
         for (let item of items) {
-          // TODO: is a title a hard requirement for a TableSection? Or can it title-less? Ask Spectrum
-          // I could instead look for title in the item to determine if the item is a Section, if it is going to be a hard requirement and update the types for TableSection accordingly
           let element = children(item);
-          if (element.type === 'section' || (typeof element.type !== 'string' && element.type.name === 'TableSection')) {
+          if (element.props?.title != null) {
             // This yield is the partialNode in CollectionBuilder and is then compared to the full node generated from the TableSection collection element
             // The type needs to match the type returned by the respective collection element, the renderer is the function provided to TableBody that will
             // yield Section or Item, and value is the value propagated to the full node
@@ -55,7 +53,7 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
         let items: PartialNode<T>[] = [];
         React.Children.forEach(children, item => {
           let type;
-          if (item.type === 'section' || (typeof item.type !== 'string' && item.type.name === 'TableSection')) {
+          if (item.props.title != null) {
             type = 'section';
           } else {
             type = 'item';
@@ -74,7 +72,7 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
 };
 
 /**
- * A TableBody is a container for the Row elements of a Table. Rows can be statically defined
+ * A TableBody is a container for the Row and Section elements of a Table. Rows and Sections can be statically defined
  * as children, or generated dynamically using a function based on the data passed to the `items` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
