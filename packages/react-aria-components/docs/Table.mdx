@@ -1,0 +1,918 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/table/docs/TableAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Collections
+keywords: [table, aria, grid]
+type: component
+after_version: 1.0.0
+---
+
+# Table
+
+<PageDescription>{docs.exports.Table.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Table']}
+   sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/grid/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-components';
+
+<Table aria-label="Files" selectionMode="multiple">
+  <TableHeader>
+    <Column><MyCheckbox /></Column>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell><MyCheckbox /></Cell>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox /></Cell>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox /></Cell>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+    <Row>
+      <Cell><MyCheckbox /></Cell>
+      <Cell>log.txt</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2016</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Table {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+
+  padding: 0.286rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+  border-spacing: 0;
+
+  .react-aria-TableHeader {
+    &:after {
+      content: '';
+      display: table-row;
+      height: 2px;
+    }
+
+    & tr:last-child .react-aria-Column {
+      border-bottom: 1px solid var(--border-color);
+      cursor: default;
+    }
+  }
+
+  .react-aria-Column {
+    &[colspan] {
+      text-align: center;
+    }
+
+    .sort-indicator {
+      padding: 0 2px;
+    }
+
+    &[aria-sort=none] .sort-indicator {
+      visibility: hidden;
+    }
+  }
+
+  .react-aria-Row {
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    transform: scale(1);
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--highlight-background);
+      outline-offset: -2px;
+    }
+
+    &[data-pressed] .react-aria-Cell {
+      background: var(--spectrum-global-color-gray-200);
+    }
+
+    &[aria-selected=true] {
+      .react-aria-Cell {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
+      }
+
+      &[data-focus-visible],
+      .react-aria-Cell[data-focus-visible] {
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
+      }
+
+      .react-aria-Button {
+        color: var(--highlight-foreground);
+        --focus-ring-color: var(--highlight-foreground);
+        --hover-highlight: rgb(255 255 255 / 0.1);
+        --active-highlight: rgb(255 255 255 / 0.2);
+      }
+    }
+
+    &[aria-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    .react-aria-Checkbox {
+      --selected-color: white;
+      --selected-color-pressed: #ddd;
+      --checkmark-color: slateblue;
+      --background-color: var(--highlight-background);
+    }
+  }
+
+  .react-aria-Cell,
+  .react-aria-Column {
+    padding: 4px 8px;
+    text-align: left;
+    outline: none;
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--highlight-background);
+      outline-offset: -2px;
+    }
+  }
+
+  .react-aria-Cell {
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+  }
+
+  /* join selected items if :has selector is supported */
+  @supports selector(:has(.foo)) {
+    .react-aria-Row[aria-selected=true]:has(+ [aria-selected=true]) .react-aria-Cell {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    .react-aria-Row[aria-selected=true] + [aria-selected=true] .react-aria-Cell {
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+  }
+}
+
+.react-aria-Checkbox {
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --checkmark-color: white;
+  --focus-ring-color: slateblue;
+
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--deselected-color);
+  border-radius: 4px;
+  transition: all 200ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & svg {
+    width: 0.857rem;
+    height: 0.857rem;
+    fill: none;
+    stroke: var(--checkmark-color);
+    stroke-width: 3px;
+    stroke-dasharray: 22px;
+    stroke-dashoffset: 66;
+    transition: all 200ms;
+  }
+
+  &[data-focus-visible] {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
+  }
+
+  &[data-pressed] {
+    border-color: var(--deselected-color-pressed);
+  }
+
+  &[data-selected],
+  &[data-indeterminate] {
+    border-color: var(--selected-color);
+    background: var(--selected-color);
+
+    &[data-pressed] {
+      border-color: var(--selected-color-pressed);
+      background: var(--selected-color-pressed);
+    }
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
+    }
+
+    & svg {
+      stroke-dashoffset: 44;
+    }
+  }
+
+  &[data-indeterminate] {
+    & svg {
+      stroke: none;
+      fill: var(--checkmark-color);
+    }
+  }
+
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+.react-aria-Button {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 1.2em;
+  margin: 0;
+  outline: none;
+  padding: 4px 6px;
+  transition: background 200ms;
+  --focus-ring-color: slateblue;
+  --hover-highlight: var(--spectrum-alias-highlight-hover);
+  --active-highlight: var(--spectrum-alias-highlight-active);
+
+  &[data-hovered] {
+    background: var(--hover-highlight);
+  }
+
+  &[data-pressed] {
+    background: var(--active-highlight);
+  }
+
+  &[data-focus-visible] {
+    box-shadow: 0 0 0 2px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Table {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --border-color: ButtonBorder;
+    --background-color: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+  }
+
+  .react-aria-Checkbox {
+    forced-color-adjust: none;
+
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --selected-color: ButtonFace;
+    --selected-color-pressed: ButtonFace;
+    --checkmark-color: ButtonText;
+    --spectrum-alias-background-color-default: Canvas;
+    --focus-ring-color: Highlight;
+
+    &[data-disabled] {
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+    }
+  }
+
+  .react-aria-Button {
+    forced-color-adjust: none;
+    --focus-ring-color: Highlight;
+  }
+}
+```
+
+</details>
+
+## Features
+
+A table can be built using the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table), [&lt;tr&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr),
+[&lt;td&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td), and other table specific HTML elements, but is very limited in functionality especially when it comes to user interactions.
+HTML tables are meant for static content, rather than tables with rich interactions like focusable elements within cells, keyboard navigation, row selection, sorting, etc.
+`Table` helps achieve accessible and interactive table components that can be styled as needed.
+
+* **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups.
+* **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
+* **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
+* **Async loading** – Support for loading and sorting items asynchronously, with infinite and virtualized scrolling.
+* **Keyboard navigation** – Table rows, cells, and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+
+A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
+If the table supports row selection, each row can optionally include a selection checkbox in the first column. Additionally, a "select all" checkbox is displayed as the first column header if the table supports multiple row selection.
+
+### Concepts
+
+`Table` makes use of the following concepts:
+
+* [Collections](../react-stately/Collections.html)
+* [Selection](../react-stately/Selection.html)
+
+## Props
+
+### Table
+
+<PropTable component={docs.exports.Table} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TableHeader
+
+<PropTable component={docs.exports.TableHeader} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Column
+
+<PropTable component={docs.exports.Column} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TableBody
+
+<PropTable component={docs.exports.TableBody} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Row
+
+<PropTable component={docs.exports.Row} links={docs.links} style={{marginBottom: '40px'}} />
+
+### Cell
+
+<PropTable component={docs.exports.Cell} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Table {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Table className="my-table">
+  {/* ... */}
+</Table>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+
+```css
+.react-aria-Row[aria-selected=true] {
+  /* ... */
+}
+
+.react-aria-Row[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Row className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</Row>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a sort indicator in sortable columns.
+
+```jsx
+<Column>
+  {({allowsSorting, sortDirection}) => (
+    <>
+      Column Title
+      {allowsSorting && <MySortIndicator direction={sortDirection} />}
+    </>
+  )}
+</Column>
+```
+
+The states and selectors for each component used in a `Table` are documented below.
+
+### Table
+
+A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`.
+
+### TableHeader
+
+A `TableHeader` can be targeted with the `.react-aria-TableHeader` CSS selector, or by overriding with a custom `className`.
+
+### Column
+
+A `Column` can be targeted with the `.react-aria-Column` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ColumnRenderProps.properties} />
+
+### TableBody
+
+A `TableBody` can be targeted with the `.react-aria-TableBody` CSS selector, or by overriding with a custom `className`.
+
+### Row
+
+A `Row` can be targeted with the `.react-aria-Row` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.RowRenderProps.properties} />
+
+### Cell
+
+A `Cell` can be targeted with the `.react-aria-Cell` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.CellRenderProps.properties} />
+
+## Reusable wrappers
+
+If you will use a Table in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+The following example includes a custom Column component with a sort indicator. It displays an upwards facing arrow when the column is sorted in the ascending direction, and a downward facing arrow otherwise.
+
+```tsx example export=true render=false
+function MyColumn(props) {
+  return (
+    <Column {...props}>
+      {({allowsSorting, sortDirection}) => <>
+        {props.children}
+        {allowsSorting && (
+          <span aria-hidden="true" className="sort-indicator">
+            {sortDirection === 'ascending' ? '▲' : '▼'}
+          </span>
+        )}
+      </>}
+    </Column>
+  );
+}
+```
+
+The TableHeader and Row components can also be wrapped to automatically include checkboxes for selection, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
+
+```tsx example export=true render=false
+import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
+
+function MyTableHeader({columns, children}) {
+  let {selectionBehavior, selectionMode} = useTableOptions();
+
+  return (
+    <TableHeader>
+      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </TableHeader>
+  );
+}
+
+function MyRow({id, columns, children}) {
+  let {selectionBehavior} = useTableOptions();
+
+  return (
+    <Row id={id}>
+      {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </Row>
+  );
+}
+
+function MyCheckbox() {
+  return (
+    <Checkbox slot="selection">
+      {({isIndeterminate}) => (
+        <svg viewBox="0 0 18 18" aria-hidden="true">
+          {isIndeterminate
+            ? <rect x={1} y={7.5} width={15} height={3} />
+            : <polyline points="1 9 7 14 15 4" />
+          }
+        </svg>
+      )}
+    </Checkbox>
+  );
+}
+```
+
+Now we can render a table with a default selection column built in.
+
+```tsx example
+<Table aria-label="Files" selectionMode="multiple">
+  <MyTableHeader>
+    <MyColumn isRowHeader>Name</MyColumn>
+    <MyColumn>Type</MyColumn>
+    <MyColumn>Date Modified</MyColumn>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Program Files</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>bootmgr</Cell>
+      <Cell>System file</Cell>
+      <Cell>11/20/2010</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+## Usage
+
+### Dynamic collections
+
+So far, our examples have shown static collections, where the data is hard coded.
+Dynamic collections, as shown below, can be used when the table data comes from an external data source such as an API, or updates over time.
+In the example below, both the columns and the rows are provided to the table via a render function. You can also make the columns static and
+only the rows dynamic.
+
+```tsx example export=true
+function ExampleTable(props) {
+  let columns = [
+    {name: 'Name', key: 'name', isRowHeader: true},
+    {name: 'Type', key: 'type'},
+    {name: 'Date Modified', key: 'date'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Example dynamic collection table" {...props}>
+      <MyTableHeader columns={columns}>
+        {column => (
+          <Column isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
+        )}
+      </MyTableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <MyRow columns={columns}>
+            {column => <Cell>{item[column.key]}</Cell>}
+          </MyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Single selection
+
+By default, `useTableState` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `key` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+```
+
+### Disallow empty selection
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<ExampleTable selectionMode="single" defaultSelectedKeys={[2]} disallowEmptySelection />
+```
+
+### Controlled selection
+
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+be passed into the callback when the row is pressed, allowing you to update state accordingly.
+
+```tsx example export=true
+function PokemonTable(props) {
+  let columns = [
+    {name: 'Name', uid: 'name', isRowHeader: true},
+    {name: 'Type', uid: 'type'},
+    {name: 'Level', uid: 'level'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+    {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+    {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+    {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+  ];
+
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set(props.defaultSelectedKeys || [2]));
+
+  return (
+    <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+      <MyTableHeader columns={columns}>
+        {column => (
+          <Column key={column.uid} isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
+        )}
+      </MyTableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <MyRow columns={columns}>
+            {column => <Cell id={`${item.id}-${column.uid}`}>{item[column.uid]}</Cell>}
+          </MyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Disabled rows
+
+You can disable specific rows by providing an array of keys to `useTableState` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the same table as above
+<PokemonTable disabledKeys={[3]} />
+```
+
+By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
+
+```tsx example
+<PokemonTable disabledKeys={[3]} disabledBehavior="all" />
+```
+
+### Selection behavior
+
+By default, `useTable` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+```tsx example
+<PokemonTable selectionMode="multiple" selectionBehavior="replace" />
+```
+
+### Row actions
+`useTable` supports row actions via the `onRowAction` prop, which is useful for functionality such as navigation. In the default `"toggle"` selection behavior, when nothing is selected, clicking or tapping the row triggers the row action.
+When at least one item is selected, the table is in selection mode, and clicking or tapping a row toggles the selection. Actions may also be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Keyboard>Space</Keyboard> key.
+
+This behavior is slightly different in the `"replace"` selection behavior, where single clicking selects the row and actions are performed via double click. On touch devices, the action becomes the primary tap interaction,
+and a long press enters into selection mode, which temporarily swaps the selection behavior to `"toggle"` to perform selection (you may wish to display checkboxes when this happens). Deselecting all items exits selection mode
+and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+```tsx example
+<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+  <PokemonTable
+    aria-label="Pokemon table with row actions and toggle selection behavior"
+    ///- begin highlight -///
+    onRowAction={key => alert(`Opening item ${key}...`)}
+    ///- end highlight -///
+    selectionMode="multiple"
+    defaultSelectedKeys={[]} />
+  <PokemonTable
+    aria-label="Pokemon table with row actions and replace selection behavior"
+    ///- begin highlight -///
+    onRowAction={key => alert(`Opening item ${key}...`)}
+    selectionBehavior="replace"
+    ///- end highlight -///
+    selectionMode="multiple"
+    defaultSelectedKeys={[]} />
+</div>
+```
+
+### Sorting
+
+Table supports sorting its data when a column header is pressed. To designate that a Column should support sorting, provide it with
+the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
+When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
+the `sortDescriptor` appropriately.
+
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+See the docs for more information on how to perform server side sorting.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncSortTable() {
+  let list = useAsyncList({
+    async load({signal}) {
+      let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.sort((a, b) => {
+          let first = a[sortDescriptor.column];
+          let second = b[sortDescriptor.column];
+          let cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Table aria-label="Example table with client side sorting" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableHeader>
+        <MyColumn id="name" isRowHeader allowsSorting>Name</MyColumn>
+        <MyColumn id="height" allowsSorting>Height</MyColumn>
+        <MyColumn id="mass" allowsSorting>Mass</MyColumn>
+        <MyColumn id="birth_year" allowsSorting>Birth Year</MyColumn>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row id={item.name}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.height}</Cell>
+            <Cell>{item.mass}</Cell>
+            <Cell>{item.birth_year}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### Nested columns
+
+Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
+attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
+appears in each row of the table body.
+
+This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
+accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
+be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
+Only leaf columns may be marked as row headers.
+
+```tsx example
+<Table aria-label="Example table with nested columns">
+  <TableHeader>
+    <Column title="Name">
+      <Column isRowHeader>First Name</Column>
+      <Column isRowHeader>Last Name</Column>
+    </Column>
+    <Column title="Information">
+      <Column>Age</Column>
+      <Column>Birthday</Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Sam</Cell>
+      <Cell>Smith</Cell>
+      <Cell>36</Cell>
+      <Cell>May 3</Cell>
+    </Row>
+    <Row>
+      <Cell>Julia</Cell>
+      <Cell>Jones</Cell>
+      <Cell>24</Cell>
+      <Cell>February 10</Cell>
+    </Row>
+    <Row>
+      <Cell>Peter</Cell>
+      <Cell>Parker</Cell>
+      <Cell>28</Cell>
+      <Cell>September 7</Cell>
+    </Row>
+    <Row>
+      <Cell>Bruce</Cell>
+      <Cell>Wayne</Cell>
+      <Cell>32</Cell>
+      <Cell>December 18</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Dynamic nested columns
+
+Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
+The following example is the same as the example above, but defined dynamically.
+
+```tsx example
+let columns = [
+  {name: 'Name', key: 'name', children: [
+    {name: 'First Name', key: 'first', isRowHeader: true},
+    {name: 'Last Name', key: 'last', isRowHeader: true}
+  ]},
+  {name: 'Information', key: 'info', children: [
+    {name: 'Age', key: 'age'},
+    {name: 'Birthday', key: 'birthday'}
+  ]}
+];
+
+let rows = [
+  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
+  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
+  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
+  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
+];
+
+<Table aria-label="Example table with dynamic nested columns">
+  <TableHeader columns={columns}>
+    {column => (
+      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
+        {column.name}
+      </Column>
+    )}
+  </TableHeader>
+  <TableBody items={rows}>
+    {item => (
+      <Row>
+        <Cell>{item.first}</Cell>
+        <Cell>{item.last}</Cell>
+        <Cell>{item.age}</Cell>
+        <Cell>{item.birthday}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</Table>
+```

@@ -8578,10 +8578,10 @@ dotenv@^8.0.0, dotenv@^8.2.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
-dprint-node@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.5.tgz#f658a1545ab86261df3eb2bb69274ff253ababeb"
-  integrity sha512-IQVkYK8KAwonHjEpQZ/YCxmLMhUBKMUKnh5L1glgPz/s9H3mRk6owWzecbuvBkHd1+40mfL7n5olpCgY884QEQ==
+dprint-node@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/dprint-node/-/dprint-node-1.0.7.tgz#f571eaf61affb3a696cff1bdde78a021875ba540"
+  integrity sha512-NTZOW9A7ipb0n7z7nC3wftvsbceircwVHSgzobJsEQa+7RnOMbhrfX5IflA6CtC4GA63DSAiHYXa4JKEy9F7cA==
   dependencies:
     detect-libc "^1.0.3"
 
