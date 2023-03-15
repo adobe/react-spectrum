@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, defaultSlot, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropHooks, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, useListState} from 'react-stately';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
 import {ListKeyboardDelegate} from '@react-aria/selection';
@@ -261,7 +261,7 @@ function GridListItem({item}) {
     }
   });
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <GridListDropIndicator target={target} />);
+  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
   let dragButtonRef = useRef(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {

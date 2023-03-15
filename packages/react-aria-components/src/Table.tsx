@@ -4,7 +4,7 @@ import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useRenderProps} from './utils';
-import {DragAndDropHooks, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, TableState, useTableState} from 'react-stately';
 import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -666,7 +666,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     }, dropState, dropIndicatorRef);
   }
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <TableDropIndicator target={target} />);
+  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
   let dragButtonRef = useRef(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {

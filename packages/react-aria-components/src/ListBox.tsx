@@ -14,7 +14,7 @@ import {AriaListBoxOptions, DraggableItemResult, DroppableCollectionResult, Drop
 import {AriaListBoxProps} from '@react-types/listbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DragAndDropHooks, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
+import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, OverlayTriggerState, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
@@ -307,7 +307,7 @@ function Option<T>({item}: OptionProps<T>) {
     }
   });
 
-  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <ListBoxDropIndicator target={target} />);
+  let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
 
   return (
     <>
