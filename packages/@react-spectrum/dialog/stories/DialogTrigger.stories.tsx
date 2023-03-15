@@ -25,8 +25,8 @@ import {Image} from '@react-spectrum/image';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
-import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {storiesOf} from '@storybook/react';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
