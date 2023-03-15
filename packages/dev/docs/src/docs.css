@@ -555,6 +555,14 @@ details[open] > summary svg {
   transform: rotate(90deg);
 }
 
+.nav summary {
+  margin-left: -12px !important;
+}
+
+.nav details:last-child {
+  margin-bottom: 60px;
+}
+
 .headingAnchor {
   transition: all 125ms ease-in-out;
   margin-left: 4px;
@@ -913,4 +921,10 @@ h2.sectionHeader {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
   }
+}
+
+.cardGroup[data-size=small] {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 800px;
 }
