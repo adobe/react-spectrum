@@ -409,7 +409,7 @@ An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overri
 
 If you will use a GridList in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag affordance when the item is draggable (see [below](#drag-and-drop)).
+This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
 import {Button, Checkbox} from 'react-aria-components';
@@ -426,6 +426,7 @@ function MyItem({children, ...props}) {
   return (
     <Item textValue={children} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
+        {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
         {children}
@@ -637,6 +638,8 @@ See the [drag and drop introduction](dnd.html) to learn more.
 ### Reorderable
 
 This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
 
 ```tsx example
 import {useListData} from 'react-stately';

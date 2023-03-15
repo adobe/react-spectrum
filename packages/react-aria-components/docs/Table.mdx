@@ -520,7 +520,7 @@ function MyColumn(props) {
 }
 ```
 
-The TableHeader and Row components can also be wrapped to automatically include checkboxes for selection, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
+The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
 import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
@@ -530,6 +530,7 @@ function MyTableHeader({columns, children}) {
 
   return (
     <TableHeader>
+      {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>}
       <Collection items={columns}>
@@ -962,6 +963,8 @@ See the [drag and drop introduction](dnd.html) to learn more.
 ### Reorderable
 
 This example shows a basic table that allows users to reorder rows via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
+
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
 
 ```tsx example
 import {useListData} from 'react-stately';

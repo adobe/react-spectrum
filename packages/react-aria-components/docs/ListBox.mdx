@@ -612,6 +612,8 @@ See the [drag and drop introduction](dnd.html) to learn more.
 
 This example shows a basic list that allows users to reorder items via drag and drop. This is enabled using the `onReorder` event handler, provided to the `useDragAndDrop` hook. The `getItems` function must also be implemented for items to become draggable. [See below](#drag-data) for more details.
 
+This uses [useListData](../react-stately/useListData.html) from React Stately to manage the item list. Note that `useListData` is a convenience hook, not a requirement. You can manage your state however you wish.
+
 ```tsx example
 import {useListData} from 'react-stately';
 import {useDragAndDrop} from 'react-aria-components';
