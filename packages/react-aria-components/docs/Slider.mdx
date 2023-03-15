@@ -396,7 +396,7 @@ function Example() {
   let [value, setValue] = React.useState(25);
   return (
     <>
-      <MySlider
+      <MySlider<number>
         label="Cookies to buy"
         value={value}
         onChange={setValue} />
@@ -413,7 +413,7 @@ function Example() {
   let [value, setValue] = React.useState([25, 75]);
   return (
     <>
-      <MySlider
+      <MySlider<number[]>
         label="Range"
         thumbLabels={['start', 'end']}
         value={value}
@@ -433,7 +433,7 @@ function Example() {
   let [value, setValue] = React.useState(25);
   return (
     <>
-      <MySlider
+      <MySlider<number>
         label="Cookies to buy"
         defaultValue={value}
         onChangeEnd={setValue} />
