@@ -150,13 +150,13 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
   );
 
-  let isFirstRowInParent = item.prevKey == null || item.prevKey === item.parentKey;
-  let isLastRowInParent = item.nextKey == null || state.collection.getItem(item.nextKey)?.type === 'section';
+  let isFirstRow = item.prevKey == null;
+  let isLastRow = item.nextKey == null;
   // Figure out if the ListView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected and we can get rid of the bottom border if it isn't selected to avoid border overlap
   // with bottom border
   let isFlushWithContainerBottom = false;
-  if (isLastRowInParent && item.nextKey == null && loadingState !== 'loadingMore') {
+  if (isLastRow && loadingState !== 'loadingMore') {
     if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
       isFlushWithContainerBottom = true;
     }
@@ -207,8 +207,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               'is-next-selected': state.selectionManager.isSelected(item.nextKey),
               'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
-              'react-spectrum-ListViewItem--firstRow': isFirstRowInParent,
-              'react-spectrum-ListViewItem--lastRow': isLastRowInParent,
+              'react-spectrum-ListViewItem--firstRow': isFirstRow,
+              'react-spectrum-ListViewItem--lastRow': isLastRow,
               'react-spectrum-ListViewItem--isFlushBottom': isFlushWithContainerBottom,
               'react-spectrum-ListViewItem--hasDescription': hasDescription
             }

@@ -190,8 +190,6 @@ storiesOf('ListBox', module)
           <Item>Two</Item>
           <Item>Three</Item>
         </Section>
-        <Item>Blah</Item>
-        <Item>yah</Item>
       </ListBox>
     )
   )

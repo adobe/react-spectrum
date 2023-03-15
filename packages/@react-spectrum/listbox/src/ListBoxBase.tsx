@@ -77,6 +77,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   }, state, ref);
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+
   // Sync loading state into the layout.
   layout.isLoading = props.isLoading;
 
