@@ -85,7 +85,6 @@ governing permissions and limitations under the License.
       /* If the user overrides the width of the field, propagate to the inner component */
       width: 100%;
       grid-area: field;
-      align-self: start;
     }
 
     &.spectrum-Field--alignEnd {
@@ -120,7 +119,6 @@ governing permissions and limitations under the License.
       .spectrum-Field-field {
         /* If the user overrides the width of the field, propagate to the inner component */
         width: 100%;
-        align-self: start;
       }
     }
 
