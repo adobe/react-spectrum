@@ -229,7 +229,12 @@ export const StaticWithMixed: TableStory = {
       </TableBody>
     </TableView>
   ),
-  storyName: 'static with sections and non section rows'
+  storyName: 'static with sections and non section rows',
+  parameters: {
+    description: {
+      data: 'This is a unsupported use case, make sure a console warning appears that lets the user know that they cant do this.'
+    }
+  }
 };
 
 let columns = [
@@ -297,7 +302,7 @@ export const Dynamic: TableStory = {
 
 export const DynamicSections: TableStory = {
   args: {
-    'aria-label': 'TableView with dynamic contents and sections',
+    'aria-label': 'TableView with dynamic sections',
     width: 300,
     height: 200
   },
@@ -321,8 +326,6 @@ export const DynamicSections: TableStory = {
   ),
   storyName: 'dynamic with sections'
 };
-
-// TODO: make story with dynamic mixed sections and non section items
 
 let itemsWithFalsyId = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},

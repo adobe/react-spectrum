@@ -231,8 +231,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
     }
 
     if (reusableView.viewType === 'header' && reusableView.layoutInfo.parentKey == null) {
-      // TODO add condition where this only render the table's top level header (aka check for header.parent = null)
-      // or rename the section header type to 'sectionHeader'
       return (
         <TableHeader
           key={reusableView.key}
@@ -955,13 +953,11 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
-  // TODO: quick hack to get rid of rowgroup if there are sections. Test this by having a table w/o sections that loads sections on load/external trigger
-  // and see that the rowgroup role appears/disappears. Consider just not rendering the div at all and just rendering a fragment? Is it weird that a wrapping div could appear/disappear though
   let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
 
   if (state.collection.sections.length > 0) {
-    // TODO: move logic into hook? Feels kinda weird to have useTableGroup do that, maybe
+    // TODO: move logic into useGridRowGroup hook? Kinda weird to have it there, maybe make a separate hook (useTableBody)?
     rowGroupProps.role = 'presentation';
 
     let tableBodyNodes = [...state.collection.body.childNodes];

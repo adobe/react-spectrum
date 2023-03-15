@@ -311,10 +311,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
-    // TODO: offset the startY of the first row item in the section by the header's height. Moving this line here
-    // also makes the section layout info encompass the header and the child rows instead of assuming the header will be placed outside
-    // the actual section div
-    // Maybe make GridListLayout so this is only done for TableView/ListView? At the moment this will affect ListBox
     y += header.rect.height;
     let skipped = 0;
     let children = [];
@@ -381,12 +377,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     if (typeof this.indentationForItem === 'function') {
       x += this.indentationForItem(this.collection, node.key) || 0;
     }
-
-    // TODO: adds padding between the end of a section and items after it
-    // if (node.parentKey == null && this.collection.getItem(node.prevKey)?.parentKey != null) {
-    //   // TODO: this is a static value which is unfortunate. Try making this in the styles?
-    //   y += 16;
-    // }
 
     let rect = new Rect(x, y, width - x, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);

@@ -277,7 +277,6 @@ export class TableLayout<T> extends ListLayout<T> {
     let children: LayoutNode[] = [];
     // Note: since this.collection.body.childNodes might have rows or sections, we can't shortcut the estimate for
     // y for children after the valid rectangle (we have to iterate through childNodes to figure out if some thing is a section)
-    // TODO: check what is in this.collection here, previously was this.collection.body
     for (let node of this.collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight) + 1;
       let headingHeight = (this.headingHeight ?? this.estimatedHeadingHeight);
