@@ -981,7 +981,7 @@ describe('MenuTrigger', function () {
         expect(unavailableItem).toBeVisible();
 
         let icon = within(unavailableItem).getByRole('img', {hidden: true});
-        expect(icon).toHaveAttribute('aria-hidden', 'true');
+        expect(icon).not.toHaveAttribute('aria-hidden');
       });
 
       it('can open a sub dialog with hover', function () {
