@@ -718,6 +718,7 @@
   &.react-spectrum-ListViewInsertionIndicator--dropTarget {
     background: var(--spectrum-listview-dropindicator-border-color);
     border-bottom: 2px solid var(--spectrum-listview-dropindicator-border-color);
+    z-index: 5;
 
     /* forced-color-adjust: none, so that background color
     will render border for insertion indicator. */

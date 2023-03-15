@@ -281,6 +281,9 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
             transitionDuration={isLoading ? 160 : 220}>
             {(type, item) => {
               if (type === 'item') {
+                let keyAfter = collection.getKeyAfter(item.key);
+                let itemAfter = collection.getItem(keyAfter);
+
                 return (
                   <>
                     {isListDroppable && collection.getKeyBefore(item.key) == null &&
@@ -296,7 +299,9 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
                       <InsertionIndicator
                         key={`${item.key}-after`}
                         target={{key: item.key, type: 'item', dropPosition: 'after'}}
-                        isPresentationOnly={collection.getKeyAfter(item.key) != null} />
+                        // Note: if there are sections, the after drop indicator shouldn't be presentational if the next item is a section since "after" that row isn't equivalent
+                        // to "before" the next actual row
+                        isPresentationOnly={collection.sections.length === 0 ? keyAfter != null : (keyAfter != null && itemAfter?.type !== 'section')} />
                     }
                   </>
                 );
