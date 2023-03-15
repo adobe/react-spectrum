@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderProps, mergeProps, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
-import {AriaSliderThumbProps} from '@react-types/slider';
+import {AriaSliderProps, AriaSliderThumbProps, mergeProps, Orientation, useFocusRing, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {DOMAttributes, Orientation} from '@react-types/shared';
+import {DOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {mergeRefs} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';

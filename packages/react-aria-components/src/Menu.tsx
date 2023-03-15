@@ -11,20 +11,18 @@
  */
 
 
-import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
+import {AriaMenuProps, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
-import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);

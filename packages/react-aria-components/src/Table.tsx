@@ -1,14 +1,13 @@
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
-import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
+import {buildHeaderRows} from '@react-stately/table';
 import {CheckboxContext} from './Checkbox';
-import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
+import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
 import {mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from 'react-aria';
 import {Provider, RenderProps, SlotProps, StyleProps, useRenderProps} from './utils';
 import React, {createContext, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
-import {TableState, useTableState} from 'react-stately';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];

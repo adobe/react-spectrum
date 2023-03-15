@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps} from '@react-types/select';
+import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
-import {HiddenSelect, useSelect} from 'react-aria';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';

@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
-import {AriaListBoxProps} from '@react-types/listbox';
+import {AriaListBoxOptions, AriaListBoxProps, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ListState, OverlayTriggerState, useListState} from 'react-stately';
-import {Node, SelectionBehavior} from '@react-types/shared';
+import {ListState, Node, OverlayTriggerState, SelectionBehavior, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';

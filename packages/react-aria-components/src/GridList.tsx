@@ -14,8 +14,7 @@ import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {ListState, useListState} from 'react-stately';
-import {Node, SelectionBehavior} from '@react-types/shared';
+import {ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
