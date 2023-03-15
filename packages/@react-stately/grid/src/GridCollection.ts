@@ -86,7 +86,14 @@ export class GridCollection<T> implements IGridCollection<T> {
     };
 
     let last: GridNode<T>;
+    let sectionIndex = 0;
+    let rowIndex = 0;
     opts.items.forEach((node, i) => {
+      // Reset row index if entering a new section
+      if (node.type === 'section') {
+        rowIndex = 0;
+      }
+
       let rowNode = {
         level: 0,
         key: 'row-' + i,
@@ -96,9 +103,9 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        colspan: node.type === 'section' ? this.columnCount : 1,
+        colspan: node.type === 'section' || node.props?.isSectionHeader ? this.columnCount : 1,
         ...node,
-        index: i
+        index: node.type === 'section' ? sectionIndex : rowIndex
       } as GridNode<T>;
 
       if (last) {
@@ -108,14 +115,20 @@ export class GridCollection<T> implements IGridCollection<T> {
         rowNode.prevKey = null;
       }
 
-      this.rows.push(rowNode);
       if (rowNode.type === 'section') {
         this.sections.push(rowNode);
+      } else {
+        this.rows.push(rowNode);
       }
 
       visit(rowNode);
 
       last = rowNode;
+      if (node.type === 'section') {
+        sectionIndex++;
+      } else {
+        rowIndex++;
+      }
     });
 
     if (last) {

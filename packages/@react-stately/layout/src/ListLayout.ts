@@ -300,7 +300,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     if (rectHeight == null) {
       rectHeight = DEFAULT_HEIGHT;
     }
-
+    // TODO replace this with something else now that Table has the section header row added as an actual row
+    // OR keep this logic and add a separate buildSection to TableLayout
     let headerRect = new Rect(0, y, width, rectHeight);
     // TODO rename this to section header to differentiate it from tableview header?
     let header = new LayoutInfo('header', node.key + ':header', headerRect);

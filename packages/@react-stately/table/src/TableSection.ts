@@ -28,6 +28,28 @@ TableSection.getCollectionNode = function* getCollectionNode<T>(props: TableSect
     rendered: title,
     'aria-label': props['aria-label'],
     *childNodes() {
+      yield {
+        type: 'item',
+        // TODO: needs a key for some reason, otherwise doesn't show up in the collection nodes
+        key: 'section_header',
+        hasChildNodes: true,
+        // TODO: is this the right way to render the section header cell?
+        *childNodes() {
+          yield {
+            type: 'cell',
+            // TODO: do I need this key and the props?
+            key: 'blah',
+            rendered: title,
+            props: {
+              isSectionCell: true
+            }
+          };
+        },
+        props: {
+          isSectionHeader: true
+        }
+      };
+
       if (typeof children === 'function') {
         if (!items) {
           throw new Error('props.children was a function but props.items is missing');

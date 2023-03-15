@@ -43,6 +43,7 @@ export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAr
   let rowIndex;
 
   if (isVirtualized) {
+    // TODO will need to update now that the node index is with respect to its parent
     rowIndex = node.index + 1;
   }
 
@@ -53,6 +54,7 @@ export function useTableSection<T>(props: AriaTableSectionProps): TableSectionAr
     },
     rowProps: {
       role: 'row',
+
       'aria-rowindex': rowIndex
     },
     gridCellProps: {

@@ -218,9 +218,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
           }
           break;
         case 'section':
-          // Push section node to rows since the section header is considered a row.
-          // TODO may have to add the section to the rowHeaderColumnKeys so that we can label the row by the section?
-          // Or maybe we can do a look up instead in getRowLabelledBy that finds the parent section
+          // Push section node to rows so that it gets added to the keymap via GridCollection
           rows.push(node);
           break;
         case 'item':

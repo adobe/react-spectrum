@@ -285,7 +285,8 @@ export class TableLayout<T> extends ListLayout<T> {
       if (node.type === 'item') {
         estimatedY = y + rowHeight;
       } else if (node.type === 'section') {
-        estimatedY = y + headingHeight + rowHeight * [...node.childNodes].length;
+        // Note: -1 because the childnodes include the section header row which we already calc here
+        estimatedY = y + headingHeight + rowHeight * ([...node.childNodes].length - 1);
       }
 
       // Skip children before/after the valid rectangle unless they are already cached.
@@ -357,6 +358,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let children: LayoutNode[] = [];
     let height = 0;
+
     for (let child of getChildNodes(node, this.collection)) {
       if (x > this.validRect.maxX) {
         // Adjust existing cached layoutInfo to ensure that it is out of view.
@@ -386,12 +388,82 @@ export class TableLayout<T> extends ListLayout<T> {
     };
   }
 
+  buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+    let width = this.virtualizer.visibleRect.width;
+    let rectHeight = this.headingHeight;
+    // TODO: do we need this anymore? The section header row isn't made here
+    // let isEstimated = false;
+
+    // // If no explicit height is available, use an estimated height.
+    // if (rectHeight == null) {
+    //   // If a previous version of this layout info exists, reuse its height.
+    //   // Mark as estimated if the size of the overall collection view changed,
+    //   // or the content of the item changed.
+    //   let previousLayoutNode = this.layoutNodes.get(node.key);
+    //   if (previousLayoutNode && previousLayoutNode.header) {
+    //     let curNode = this.collection.getItem(node.key);
+    //     let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
+    //     rectHeight = previousLayoutNode.header.rect.height;
+    //     isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutNode.header.estimatedSize;
+    //   } else {
+    //     rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
+    //     isEstimated = true;
+    //   }
+    // }
+
+    if (rectHeight == null) {
+      // TODO bring in the same default height var as ListLayout?
+      rectHeight = 48;
+    }
+
+    let rect = new Rect(0, y, width, 0);
+    let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+
+    let startY = y;
+    let skipped = 0;
+    let children = [];
+    for (let child of getChildNodes(node, this.collection)) {
+      let rowHeight = node.props.isSectionHeader ?  (this.headingHeight ?? this.estimatedHeadingHeight) : (this.rowHeight ?? this.estimatedRowHeight);
+
+      // Skip rows before the valid rectangle unless they are already cached.
+      if (y + rowHeight < this.validRect.y && !this.isValid(node, y)) {
+        y += rowHeight;
+        skipped++;
+        continue;
+      }
+
+      let layoutNode = this.buildChild(child, x, y);
+      y = layoutNode.layoutInfo.rect.maxY;
+      width = Math.max(width, layoutNode.layoutInfo.rect.width);
+      children.push(layoutNode);
+
+      if (y > this.validRect.maxY) {
+        // Estimate the remaining height for rows that we don't need to layout right now.
+        y += ([...getChildNodes(node, this.collection)].length - (children.length + skipped)) * rowHeight;
+        break;
+      }
+    }
+
+    rect.height = y - startY;
+    rect.width = width;
+
+    let layoutNode = {
+      layoutInfo,
+      children,
+      validRect: layoutInfo.rect.intersection(this.validRect)
+    };
+
+    return layoutNode;
+  }
+
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let width = this.getRenderedColumnWidth(node);
-    let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
+    let width = node.props?.isSectionCell ? this.virtualizer.visibleRect.width : this.getRenderedColumnWidth(node);
+    let explicitRowHeight = node.props?.isSectionCell ? this.headingHeight : this.rowHeight;
+    let estimatedRowHeight = node.props?.isSectionCell ? this.estimatedHeadingHeight : this.estimatedRowHeight;
+    let {height, isEstimated} = this.getEstimatedHeight(node, width, explicitRowHeight, estimatedRowHeight);
     let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = !this.disableSticky && node.props?.isSelectionCell;
+    layoutInfo.isSticky = !this.disableSticky && (node.props?.isSelectionCell || node.props?.isSectionCell);
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
     layoutInfo.estimatedSize = isEstimated;
 
@@ -520,8 +592,12 @@ export class TableLayout<T> extends ListLayout<T> {
         break;
       }
       case 'section': {
+        let sectionHeader = node.children[0];
         // Add the section header to the visible layout infos since we always need to render it for labelling.
-        res.push(node.header);
+        res.push(sectionHeader.layoutInfo);
+        for (let child of sectionHeader.children) {
+          res.push(child.layoutInfo);
+        }
 
         // Note: the first/last row index calculated here is with respect to the section, not the index of the row in the collection itself
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
@@ -537,7 +613,7 @@ export class TableLayout<T> extends ListLayout<T> {
           persistedRowIndices[persistIndex] < firstVisibleRow
         ) {
           let idx = persistedRowIndices[persistIndex];
-          if (idx < node.children.length) {
+          if (idx < node.children.length && idx !== 0) {
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
