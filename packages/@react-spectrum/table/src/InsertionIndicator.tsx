@@ -1,6 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusableElement, ItemDropTarget} from '@react-types/shared';
-import React, {DOMAttributes, HTMLAttributes, useCallback, useRef} from 'react';
+import React, {DOMAttributes, HTMLAttributes, useRef} from 'react';
 import styles from './table.css';
 import {useTableContext} from './TableView';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -11,19 +11,11 @@ interface InsertionIndicatorProps {
 }
 
 export function InsertionIndicator(props: InsertionIndicatorProps) {
-  let {dropState, dragAndDropHooks, state} = useTableContext();
+  let {dropState, dragAndDropHooks} = useTableContext();
   const {target, rowProps} = props;
 
-  let getKeyBefore = useCallback((key) => {
-    let keyBefore = state.collection.getKeyBefore(key);
-    if (state.collection.getItem(keyBefore)?.type === 'headerrow') {
-      return null;
-    }
-    return keyBefore;
-  }, [state.collection]);
-
   let ref = useRef();
-  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({...props, getKeyBefore}, dropState, ref);
+  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator(props, dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState.isDropTarget(target);

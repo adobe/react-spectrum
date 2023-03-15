@@ -23,11 +23,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget,
-  /** Provide a custom handler for getting the key before the target. Useful for when you may want to ignore specific node types, i.e. headers or sections. */
-  getKeyBefore?: (key: Key) => Key,
-  /** Provide a custom handler for getting the key after the target. Useful for when you may want to ignore specific node types, i.e. headers or sections. */
-  getKeyAfter?: (key: Key) => Key
+  target: DropTarget
 }
 
 export interface DropIndicatorAria {
@@ -46,11 +42,7 @@ export interface DropIndicatorAria {
  * Handles drop interactions for a target within a droppable collection.
  */
 export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>): DropIndicatorAria {
-  let {
-    target,
-    getKeyBefore = (key) => state.collection.getKeyBefore(key),
-    getKeyAfter = (key) => state.collection.getKeyAfter(key)
-  } = props;
+  let {target} = props;
   let {collection} = state;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -69,12 +61,19 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before = target.dropPosition === 'before'
-      ? getKeyBefore(target.key)
-      : target.key;
-    let after = target.dropPosition === 'after'
-      ? getKeyAfter(target.key)
-      : target.key;
+    let before: Key | null;
+    let after: Key | null;
+    if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
+      before = null;
+    } else {
+      before = target.dropPosition === 'before' ? collection.getKeyBefore(target.key) : target.key;
+    }
+
+    if (collection.getLastKey() === target.key && target.dropPosition === 'after') {
+      after = null;
+    } else {
+      after = target.dropPosition === 'after' ? collection.getKeyAfter(target.key) : target.key;
+    }
 
     if (before && after) {
       label = stringFormatter.format('insertBetween', {
