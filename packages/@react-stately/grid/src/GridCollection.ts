@@ -23,13 +23,11 @@ export class GridCollection<T> implements IGridCollection<T> {
   keyMap: Map<Key, GridNode<T>> = new Map();
   columnCount: number;
   rows: GridNode<T>[];
-  sections: GridNode<T>[];
 
   constructor(opts?: GridCollectionOptions<T>) {
     this.keyMap = new Map();
     this.columnCount = opts?.columnCount;
     this.rows = [];
-    this.sections = [];
 
     let visit = (node: GridNode<T>) => {
       // If the node is the same object as the previous node for the same key,
@@ -96,7 +94,6 @@ export class GridCollection<T> implements IGridCollection<T> {
         childNodes: [...node.childNodes],
         rendered: undefined,
         textValue: undefined,
-        colspan: node.type === 'section' ? this.columnCount : 1,
         ...node,
         index: i
       } as GridNode<T>;
@@ -109,10 +106,6 @@ export class GridCollection<T> implements IGridCollection<T> {
       }
 
       this.rows.push(rowNode);
-      if (rowNode.type === 'section') {
-        this.sections.push(rowNode);
-      }
-
       visit(rowNode);
 
       last = rowNode;

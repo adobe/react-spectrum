@@ -30,7 +30,7 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, useVirtualizerItem, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {Key, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -51,7 +51,6 @@ import {
   useTableHeaderRow,
   useTableRow,
   useTableRowGroup,
-  useTableSection,
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from '@react-aria/table';
@@ -230,7 +229,7 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
       );
     }
 
-    if (reusableView.viewType === 'header' && reusableView.layoutInfo.parentKey == null) {
+    if (reusableView.viewType === 'header') {
       return (
         <TableHeader
           key={reusableView.key}
@@ -261,24 +260,6 @@ function TableView<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<H
           item={reusableView.content}>
           {renderChildren(children)}
         </TableHeaderRow>
-      );
-    }
-
-    if (reusableView.viewType === 'section') {
-      let header = children.find(c => c.viewType === 'header');
-      let headerStyle = layoutInfoToStyle(header.layoutInfo, direction, reusableView.layoutInfo);
-      // Support sticky section header cell
-      headerStyle.overflow = 'visible';
-
-      return (
-        <TableSection
-          reusableView={reusableView}
-          key={reusableView.key}
-          style={style}
-          header={header}
-          headerStyle={headerStyle}>
-          {renderChildren(children.filter(c => c.viewType !== 'header'))}
-        </TableSection>
       );
     }
 
@@ -953,18 +934,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
-  let {state} = useTableContext();
   let {rowGroupProps} = useTableRowGroup();
-
-  if (state.collection.sections.length > 0) {
-    // TODO: move logic into useGridRowGroup hook? Kinda weird to have it there, maybe make a separate hook (useTableBody)?
-    rowGroupProps.role = 'presentation';
-
-    let tableBodyNodes = [...state.collection.body.childNodes];
-    if (tableBodyNodes.find(node => node.type !== 'section')) {
-      console.warn('Detected rows without a parent section. If a TableView has sections, all rows within a TableView must belong to a section.');
-    }
-  }
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -1141,77 +1111,6 @@ function TableCell({cell}) {
         </span>
       </div>
     </FocusRing>
-  );
-}
-
-function TableSection({children, style, header, headerStyle, reusableView}) {
-  let {state, layout} = useTableContext();
-  let {rowGroupProps, rowProps, gridCellProps} = useTableSection({isVirtualized: true, node: reusableView.content});
-  let headerRowRef = useRef();
-  useVirtualizerItem({
-    reusableView: header,
-    ref: headerRowRef
-  });
-
-  return (
-    <div
-      {...rowGroupProps}
-      style={style}>
-      <div
-        {...rowProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table-sectionRow',
-            {
-              'is-next-selected': state.selectionManager.isSelected(reusableView.content.nextKey)
-            }
-          )
-        }
-        style={headerStyle}>
-        <div
-          role="presentation"
-          ref={headerRowRef}
-          // Section header should be sticky and shouldn't span the whole row width
-          style={{...headerStyle, width: layout.virtualizer.visibleRect.width, position: 'sticky'}}
-          className={
-            classNames(
-              styles,
-              'spectrum-Table-cellWrapper',
-              classNames(
-                stylesOverrides,
-                {
-                  'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize
-                }
-              )
-            )
-          }>
-          <div
-            {...gridCellProps}
-            className={
-              classNames(
-                styles,
-                'spectrum-Table-sectionCell',
-                classNames(
-                  stylesOverrides,
-                  'react-spectrum-Table-cell'
-                )
-              )
-            }>
-            <div
-              className={
-                classNames(
-                  styles,
-                  'spectrum-Table-sectionCellContents'
-                )
-              }>
-              {reusableView.content.rendered}
-            </div>
-          </div>
-        </div>
-      </div>
-      {children}
-    </div>
   );
 }
 

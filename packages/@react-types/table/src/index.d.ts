@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, SectionProps, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -128,16 +128,6 @@ export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   loadingState?: LoadingState
 }
 
-export interface TableSectionProps<T> extends SectionProps<T> {
-  /** Rendered contents of the section or row child items. */
-  children: RowElement | RowElement[] | RowRenderer<T>
-}
-
-export interface SpectrumTableSectionProps<T> extends Omit<TableSectionProps<T>, 'aria-label'> {
-  /** Rendered contents of the table section, e.g. a header. */
-  title: ReactNode
-}
-
 export interface RowProps {
   // treeble case? Unsupported props for now
   // /** A list of child item objects used when dynamically rendering row children. */
@@ -149,9 +139,6 @@ export interface RowProps {
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string // ???
 }
-
-export type RowElement = ReactElement<RowProps>;
-export type RowRenderer<T> = (item: T) => RowElement;
 
 export interface CellProps {
   /** The contents of the cell. */

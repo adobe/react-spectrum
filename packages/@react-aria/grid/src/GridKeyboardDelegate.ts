@@ -53,10 +53,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return node.type === 'row' || node.type === 'item';
   }
 
-  protected isSection(node: Node<T>) {
-    return node.type === 'section';
-  }
-
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
     let key = fromKey != null
       ? this.collection.getKeyBefore(fromKey)
@@ -99,7 +95,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key, item => !this.isSection(item));
+    key = this.findNextKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -126,7 +122,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key, item => !this.isSection(item));
+    key = this.findPreviousKey(key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -230,7 +226,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the first row
-    key = this.findNextKey(null, item => this.isRow(item));
+    key = this.findNextKey();
 
     // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -260,7 +256,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the last row
-    key = this.findPreviousKey(null, item => this.isRow(item));
+    key = this.findPreviousKey();
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
     if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
@@ -374,7 +370,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         }
       }
 
-      key = this.findNextKey(key, item => !this.isSection(item));
+      key = this.findNextKey(key);
 
       // Wrap around when reaching the end of the collection
       if (key == null && !hasWrapped) {

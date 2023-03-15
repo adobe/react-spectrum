@@ -60,8 +60,6 @@ svg.spectrum-Table-sortedIcon {
   margin-bottom: -1px;
   z-index: 1;
 }
-
-.spectrum-Table-sectionCellContents,
 .spectrum-Table-headCellContents {
   display: inline-block;
   min-inline-size: 0;
@@ -70,7 +68,6 @@ svg.spectrum-Table-sortedIcon {
   text-overflow: ellipsis;
 }
 
-.spectrum-Table-sectionCell,
 .spectrum-Table-headCell {
   display: flex;
   box-sizing: border-box;

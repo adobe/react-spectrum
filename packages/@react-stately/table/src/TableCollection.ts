@@ -217,10 +217,6 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
             }
           }
           break;
-        case 'section':
-          // Push section node to rows since the section header is considered a row.
-          rows.push(node);
-          break;
         case 'item':
           rows.push(node);
           return; // do not go into childNodes
@@ -249,7 +245,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     this.rowHeaderColumnKeys = rowHeaderColumnKeys;
     this.body = body;
     this.headerRows = headerRows;
-    this._size = rows.length - headerRows.length;
+    this._size = [...body.childNodes].length;
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {

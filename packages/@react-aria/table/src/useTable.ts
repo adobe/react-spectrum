@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {getChildNodes} from '@react-stately/collections';
-import {GridAria, GridProps, useGrid, useGridSectionAnnouncement} from '@react-aria/grid';
+import {GridAria, GridProps, useGrid} from '@react-aria/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -117,8 +117,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   useUpdateEffect(() => {
     announce(sortDescription, 'assertive', 500);
   }, [sortDescription]);
-
-  useGridSectionAnnouncement(state);
 
   return {
     gridProps: mergeProps(
