@@ -1,0 +1,358 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/textfield/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+
+---
+category: Forms
+keywords: [textfield, textbox, input, label, aria]
+type: component
+after_version: 1.0.0
+---
+
+# TextField
+
+<PageDescription>{docs.exports.TextField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TextField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#textbox'}
+  ]} />
+
+## Example
+
+```tsx example
+import {TextField, Label, Input} from 'react-aria-components';
+
+<TextField>
+  <Label>First name</Label>
+  <Input />
+</TextField>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TextField {
+  --field-border: var(--spectrum-alias-border-color);
+  --field-border-disabled: var(--spectrum-alias-border-color-disabled);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+  --invalid-color: var(--spectrum-global-color-red-600);
+
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+
+  .react-aria-Input {
+    padding: 0.286rem;
+    margin: 0;
+    border: 1px solid var(--field-border);
+    border-radius: 6px;
+    background: var(--field-background);
+    font-size: 1.143rem;
+    color: var(--text-color);
+
+    &[aria-invalid] {
+      border-color: var(--invalid-color);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--focus-ring-color);
+      box-shadow: 0 0 0 1px var(--focus-ring-color);
+    }
+
+    &:disabled {
+      border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-TextField {
+    --field-border: ButtonBorder;
+    --field-border-disabled: GrayText;
+    --field-background: Field;
+    --text-color: FieldText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+    --invalid-color: LinkText;
+  }
+}
+```
+
+</details>
+
+## Features
+
+Text fields can be built with [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+or [&lt;textarea&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea)
+and [&lt;label&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label) elements,
+but you must manually ensure that they are semantically connected via ids for accessibility.
+`TextField` helps automate this, and handle other accessibility features while
+allowing for custom styling.
+
+* **Accessible** – Uses a native `<input>` element. Label, description, and error message elements are automatically associated with the field.
+* **Custom validation** – Required and invalid states are exposed to assistive technology via ARIA.
+
+## Anatomy
+
+<Anatomy />
+
+Text fields consist of an input element and a label. `TextField` automatically manages
+the relationship between the two elements using the `for` attribute on the `<label>` element
+and the `aria-labelledby` attribute on the `<input>` element.
+
+`TextField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
+### Composed components
+
+A `TextField` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an input element.">
+  <Label />
+</ExampleCard>
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input"
+  title="Input"
+  description="An input allows a user to enter a plain text value with a keyboard.">
+  <Input />
+</ExampleCard>
+
+</section>
+
+## Props
+
+### TextField
+
+<PropTable component={docs.exports.TextField} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Input
+
+An `<Input>` accepts all HTML attributes.
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-TextField {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<TextField className="my-textfield">
+  {/* ... */}
+</TextField>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+
+```css
+input[aria-invalid] {
+  /* ... */
+}
+
+input[aria-readonly] {
+  /* ... */
+}
+```
+
+The states, selectors, and render props for each component used in a `TextField` are documented below.
+
+### TextField
+
+A `TextField` can be targeted with the `.react-aria-TextField` CSS selector, or by overriding with a custom `className`.
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Input
+
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`.
+
+### Text
+
+The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+## Reusable wrappers
+
+If you will use a TextField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
+
+```tsx example export=true
+import {Text} from 'react-aria-components';
+
+function MyTextField({label, description, errorMessage, ...props}) {
+  return (
+    <TextField {...props}>
+      <Label>{label}</Label>
+      <Input />
+      {description && <Text slot="description">{description}</Text>}
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </TextField>
+  );
+}
+
+<MyTextField label="Name" />
+```
+
+## Usage
+
+The following examples show how to use the `MyTextField` component created in the above example.
+
+### Default value
+
+A TextField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<MyTextField
+  label="Email"
+  defaultValue="me@email.com" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState();
+
+  return (
+    <>
+      <MyTextField label="Your text" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### Description
+
+The `description` slot can be used to associate additional help text with a text field.
+
+```tsx example
+<MyTextField
+  label="Email"
+  description="Enter an email for us to contact you about your order." />
+```
+
+### Error message
+
+The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
+semantically mark the input element as invalid for assistive technologies.
+
+```tsx example
+<MyTextField
+  label="Email"
+  validationState="invalid"
+  errorMessage="Please enter a valid email address." />
+```
+
+### Disabled
+
+A TextField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MyTextField label="Email" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled`, the TextField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MyTextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Required
+
+A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
+
+```tsx example
+<MyTextField label="Email" isRequired />
+```
+
+### HTML forms
+
+TextField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MyTextField label="Email" name="email" type="email" />
+```
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `TextField`, such as `Label` or `Input`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyInput(props) {
+  return <Input {...props} className="my-input" />
+}
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTextField](useTextField.html) for more details.
