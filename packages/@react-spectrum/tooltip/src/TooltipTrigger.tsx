@@ -45,20 +45,20 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
 
   let [borderRadius, setBorderRadius] = useState(0);
   useLayoutEffect(() => {
-    if (overlayRef.current) {
+    if (overlayRef.current && state.isOpen) {
       let spectrumBorderRadius = window.getComputedStyle(overlayRef.current).borderRadius;
       if (spectrumBorderRadius !== '') {
         setBorderRadius(parseInt(spectrumBorderRadius, 10));
       }
     }
-  }, [overlayRef]);
+  }, [state.isOpen]);
   let arrowRef = useRef(null);
   let [arrowWidth, setArrowWidth] = useState(0);
   useLayoutEffect(() => {
-    if (arrowRef.current) {
+    if (arrowRef.current && state.isOpen) {
       setArrowWidth(arrowRef.current.getBoundingClientRect().width);
     }
-  }, [arrowRef]);
+  }, [state.isOpen]);
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',

@@ -340,16 +340,24 @@ export function calculatePositionInternal(
 
   let arrowPosition: Position = {};
 
-  const preferredArrowPosition = overlaySize[crossSize] / 2;
+  // All coords are transformed so that (0, 0) is at the top left of the overlay
+  // Prefer the arrow being in the center of the trigger/overlay anchor element
+  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - overlaySize[crossAxis];
 
-  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (arrowCrossSize / 2);
-  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (arrowCrossSize / 2);
-
+  // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowCrossSize / 2;
   const arrowMaxPosition = overlaySize[crossSize] - (arrowCrossSize / 2);
 
-  const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
+  if (preferredArrowPosition < arrowMinPosition || preferredArrowPosition > arrowMaxPosition) {
+    preferredArrowPosition = overlaySize[crossSize] / 2;
+  }
 
+  // Min/Max position limits for the arrow with respect to the trigger/overlay anchor element
+  const arrowOverlappingChildMinEdge = childOffset[crossAxis] - overlaySize[crossAxis] + (arrowCrossSize / 2);
+  const arrowOverlappingChildMaxEdge = childOffset[crossAxis] + childOffset[crossSize] - overlaySize[crossAxis] - (arrowCrossSize / 2);
+
+  // Clamp the arrow positioning so that it always is within the bounds of the anchor and the overlay
+  const arrowPositionOverlappingChild = clamp(preferredArrowPosition, arrowOverlappingChildMinEdge, arrowOverlappingChildMaxEdge);
   arrowPosition[crossAxis] = clamp(arrowPositionOverlappingChild, arrowMinPosition, arrowMaxPosition);
 
   return {
