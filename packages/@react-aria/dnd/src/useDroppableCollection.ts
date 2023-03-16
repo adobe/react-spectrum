@@ -376,11 +376,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           };
         }
 
-        // If the last drop position was 'before', then 'after' on the previous key is equivalent.
+        // If the last drop position was 'before', then 'after' on the previous key is equivalent if they have the same parent.
         // Switch to 'on' instead.
         if (target.dropPosition === 'before' && targetItem?.parentKey === nextItem?.parentKey) {
           dropPosition = 'on';
-        } else if (target.dropPosition === 'before' && targetItem && nextItem && targetItem?.parentKey !== nextItem?.parentKey) {
+        } else if (target.dropPosition === 'before' && nextItem && targetItem.parentKey !== nextItem.parentKey) {
           dropPosition = 'after';
         }
       }
@@ -575,6 +575,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
                     ? target.key
                     : keyboardDelegate.getFirstKey()
                 );
+                // Prioritize the same drop position that we started on, even if the next key is less than a whole page down
                 let dropPosition = target.type === 'item' ? target.dropPosition : 'after';
 
                 // If there is no next key, or we are starting on the last key, jump to the last possible position.

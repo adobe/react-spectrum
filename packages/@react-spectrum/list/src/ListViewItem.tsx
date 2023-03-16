@@ -95,7 +95,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    dropIndicator = dragAndDropHooks.useDropIndicator({target, keyboardDelegate: layout}, dropState, dropIndicatorRef);
   }
 
   let dragButtonRef = React.useRef();

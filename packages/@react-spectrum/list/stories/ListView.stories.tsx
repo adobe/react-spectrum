@@ -2307,15 +2307,15 @@ function DnDSections(props) {
     }
   });
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
-  /**
-    TODO: List of dnd bugs with sections.
-    1. Need to adapt the below handlers and stuff to work with sections/useTreeData.
-    2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
-    some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
-    At the moment, I cannot drop after the last element in a section, the next drop indicator is in the next section before its first item.
-    3. Mouse drag and drop is borked, maybe because of sections being recognized as drop target? Looks to be that the section and header is considered
-    an item, ideally we'd disallow those. Maybe somethingin getAllowedDropOperation or something we should automatically detect in ListDropTargetDelegate/drop hooks
-  **/
+
+
+  // TODO: List of dnd bugs with sections.
+  //  1. Need to adapt the below handlers and stuff to work with sections/useTreeData.
+  //  2. keyboard DnD navigation works for the most part, drop targets are preserved. However, there are
+  //  some things that will need to be updated, namely that we need to take into account the sections when adding insertion indicators
+  //  At the moment, I cannot drop after the last element in a section, the next drop indicator is in the next section before its first item.
+  //  3. Mouse drag and drop is borked, maybe because of sections being recognized as drop target? Looks to be that the section and header is considered
+  //  an item, ideally we'd disallow those. Maybe somethingin getAllowedDropOperation or something we should automatically detect in ListDropTargetDelegate/drop hooks
 
   // Scenarios to consider:
   // 1. What if root drop is enabled? We don't want to allow sections with items that don't belong to any sections, but we'd be relying
@@ -2358,22 +2358,24 @@ function DnDSections(props) {
       // list1.append(...processedItems);
     },
     onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
+      // TODO: update to fit tree data
+      // let {
+      //   items,
+      //   target,
+      //   isInternal,
+      //   dropOperation
+      // } = e;
       action('onItemDropList1')(e);
-      // TODO: make sure you can't drop on the actual section row
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(target.key);
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
-        list1.remove(...keysToRemove);
-      }
+      // // TODO: make sure you can't drop on the actual section row
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // let targetItem = list1.getItem(target.key);
+      // list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+
+      // if (isInternal && dropOperation === 'move') {
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list1.remove(...keysToRemove);
+      // }
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -2458,21 +2460,22 @@ function DnDSections(props) {
       // list2.prepend(...processedItems);
     },
     onItemDrop: async (e) => {
-      let {
-        items,
-        target,
-        isInternal,
-        dropOperation
-      } = e;
+      // TODO: update to fit tree data
+      // let {
+      //   items,
+      //   target,
+      //   isInternal,
+      //   dropOperation
+      // } = e;
       action('onItemDropList2')(e);
-      let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(target.key);
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      // let processedItems = await itemProcessor(items, acceptedDragTypes);
+      // let targetItem = list2.getItem(target.key);
+      // list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
 
-      if (isInternal && dropOperation === 'move') {
-        let keysToRemove = processedItems.map(item => item.identifier);
-        list2.remove(...keysToRemove);
-      }
+      // if (isInternal && dropOperation === 'move') {
+      //   let keysToRemove = processedItems.map(item => item.identifier);
+      //   list2.remove(...keysToRemove);
+      // }
     },
     acceptedDragTypes,
     onDragEnd: (e) => {
@@ -2493,7 +2496,7 @@ function DnDSections(props) {
       // Perhaps useDroppableCollection and useDroppableCOllectionState should handle this? Maybe the drop delegate should
       // not assign the type as a item for those nodes
       let item = list2.getItem(target.key);
-      return !!item && !(item.value.type === 'section' && target.dropPosition === 'on') && !!list2.getItem(target.key).value.childNodes
+      return !!item && !(item.value.type === 'section' && target.dropPosition === 'on') && !!list2.getItem(target.key).value.childNodes;
     },
     ...secondListDnDOptions
   });
