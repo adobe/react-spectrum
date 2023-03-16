@@ -42,10 +42,10 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow-color/-/react-spectrum-workflow-color-1.1.0.tgz#060e041c618fc74aecfbf9a716dfc0f125643522"
   integrity sha512-RKKomNbxzpGnM78YzUoCXHHIaEdAREM9tP+vJXynfHVjgSZYtzR1pnsfYJShDlj9C0dl8GGgjAE2ESRbQbdpFg==
 
-"@adobe/react-spectrum-workflow@2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.3.tgz#bb33e0d5789f60436992b7e90ac294284fbfb4e8"
-  integrity sha512-idHEptv5d+puofqO3tiv+cbYR/QV7gUWKHMrHFuJS6zDwRyi3u8GR9BInRbEYp7ZvrLMW8XnNl6lXFSf8ubDQA==
+"@adobe/react-spectrum-workflow@2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-2.3.4.tgz#eec7f2c2d855e72196cbb7572905413a5005c7d9"
+  integrity sha512-XPLzIBl58HdLF9WIPB7RDAvVXvCE3SjG+HaWQhW2P9MnxSz1DEA9O7mlTlYblJkMbfk10T/+RFaSupc1yoN+TA==
 
 "@adobe/spectrum-css-ccx-workflow-icons@1.0.2":
   version "1.0.2"
