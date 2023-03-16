@@ -593,7 +593,7 @@ function Example() {
         <Item id='tools'>Tools</Item>
         <Item id='console'>Console</Item>
       </MyMenuButton>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
   );
 }
