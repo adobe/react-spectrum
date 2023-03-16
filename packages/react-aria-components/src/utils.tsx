@@ -213,12 +213,13 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
       if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
+            element.removeEventListener('animationend', onAnimationEnd);
             onEnd();
           }
         };
 
         let element = ref.current;
-        element.addEventListener('animationend', onAnimationEnd, {once: true});
+        element.addEventListener('animationend', onAnimationEnd);
         return () => {
           element.removeEventListener('animationend', onAnimationEnd);
         };
