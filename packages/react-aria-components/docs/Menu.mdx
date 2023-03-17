@@ -456,7 +456,13 @@ If you will use a Menu in multiple places in your app, you can wrap all of the p
 This example wraps `MenuTrigger` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
-function MyMenuButton({label, children, ...props}) {
+import type {MenuProps, MenuTriggerProps, ItemProps} from 'react-aria-components';
+
+interface MyMenuButtonProps<T> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
+  label?: string
+}
+
+function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButtonProps<T>) {
   return (
     <MenuTrigger {...props}>
       <Button>{label}</Button>
@@ -469,7 +475,7 @@ function MyMenuButton({label, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''}`} />
 }
 
@@ -553,8 +559,10 @@ See the `react-stately` [Selection docs](../react-stately/selection.html#selecte
 #### Single
 
 ```tsx example
+import type {Selection} from 'react-aria-components';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['center']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['center']));
 
   return (
     <>
@@ -572,8 +580,10 @@ function Example() {
 #### Multiple
 
 ```tsx example
+import type {Selection} from 'react-aria-components';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['sidebar', 'console']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['sidebar', 'console']));
 
   return (
     <>
@@ -637,8 +647,10 @@ The above example shows sections with static items. Sections can also be populat
 Similarly to the props on Menu, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from 'react-aria-components';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set([1,3]));
+  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
   let openWindows = [
     {
       name: 'Left Panel',

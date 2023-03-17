@@ -9,12 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CalendarProps as BaseCalendarProps, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
-import {RangeCalendarProps as BaseRangeCalendarProps, DateValue} from '@react-types/calendar';
+import {CalendarProps as BaseCalendarProps, RangeCalendarProps as BaseRangeCalendarProps, DateValue, mergeProps, useCalendar, useCalendarCell, useCalendarGrid, useFocusRing, useHover, useLocale, useRangeCalendar, VisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
@@ -104,7 +103,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-const _Calendar = forwardRef(Calendar);
+const _Calendar = (forwardRef as forwardRefType)(Calendar);
 export {_Calendar as Calendar};
 
 function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
@@ -173,7 +172,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
 /**
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-const _RangeCalendar = forwardRef(RangeCalendar);
+const _RangeCalendar = (forwardRef as forwardRefType)(RangeCalendar);
 export {_RangeCalendar as RangeCalendar};
 
 export interface CalendarCellRenderProps {

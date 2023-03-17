@@ -10,18 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaPopoverProps, DismissButton, Overlay, usePopover} from 'react-aria';
+import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
-import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject} from 'react';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
-   * 
-   * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc., 
+   *
+   * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
   triggerRef?: RefObject<Element>
@@ -62,7 +61,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   }
 
   return (
-    <PopoverInner 
+    <PopoverInner
       {...props}
       triggerRef={props.triggerRef}
       state={state}

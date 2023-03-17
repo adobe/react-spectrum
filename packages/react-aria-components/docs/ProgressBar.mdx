@@ -242,7 +242,13 @@ If you will use a ProgressBar in multiple places in your app, you can wrap all o
 This example wraps `ProgressBar` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
 
 ```tsx example export=true
-function MyProgressBar({label, ...props}) {
+import type {ProgressBarProps} from 'react-aria-components';
+
+interface MyProgressBarProps extends ProgressBarProps {
+  label?: string
+}
+
+function MyProgressBar({label, ...props}: MyProgressBarProps) {
   return (
     <ProgressBar {...props}>
       {({percentage, valueText}) => <>

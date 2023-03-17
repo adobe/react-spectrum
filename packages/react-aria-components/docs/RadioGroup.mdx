@@ -290,7 +290,14 @@ If you will use a RadioGroup in multiple places in your app, you can wrap all of
 This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {RadioGroupProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
+
+interface MyRadioGroupProps extends RadioGroupProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
 
 function MyRadioGroup({
   label,
@@ -298,7 +305,7 @@ function MyRadioGroup({
   errorMessage,
   children,
   ...props
-}) {
+}: MyRadioGroupProps) {
   return (
     <RadioGroup {...props}>
       {label}

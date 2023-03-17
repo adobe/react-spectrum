@@ -317,9 +317,16 @@ If you will use a NumberField in multiple places in your app, you can wrap all o
 This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {NumberFieldProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyNumberField({label, description, errorMessage, ...props}) {
+interface MyNumberFieldProps extends NumberFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyNumberField({label, description, errorMessage, ...props}: MyNumberFieldProps) {
   return (
     <NumberField {...props}>
       <Label>{label}</Label>
@@ -513,11 +520,11 @@ The `description` slot can be used to associate additional help text with a numb
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
     <MyNumberField
-      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
       onChange={setValue}
       label="Positive numbers only"

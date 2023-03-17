@@ -404,9 +404,10 @@ If you will use a GridList in multiple places in your app, you can wrap all of t
 This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable.
 
 ```tsx example export=true
+import type {GridListProps, ItemProps} from 'react-aria-components';
 import {Checkbox} from 'react-aria-components';
 
-function MyGridList({children, ...props}) {
+function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
     <GridList {...props}>
       {children}
@@ -414,7 +415,7 @@ function MyGridList({children, ...props}) {
   );
 }
 
-function MyItem({children, ...props}) {
+function MyItem({children, ...props}: ItemProps) {
   return (
     <Item {...props}>
       {({selectionMode, selectionBehavior}) => <>
@@ -449,7 +450,12 @@ Dynamic collections, as shown below, can be used when the data comes from an ext
 In the example below, the rows are provided to the GridList via a render function.
 
 ```tsx example export=true
-function ExampleList(props) {
+interface ItemValue {
+  id: number,
+  name: string
+}
+
+function ExampleList(props: GridListProps<ItemValue>) {
   let rows = [
     {id: 1, name: 'Games'},
     {id: 2, name: 'Program Files'},
@@ -506,7 +512,9 @@ To programmatically control row selection, use the `selectedKeys` prop paired wi
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true
-function PokemonList(props) {
+import type {Selection} from 'react-aria-components';
+
+function PokemonList(props: GridListProps<ItemValue>) {
   let rows = [
     {id: 1, name: 'Charizard'},
     {id: 2, name: 'Blastoise'},
@@ -514,7 +522,7 @@ function PokemonList(props) {
     {id: 4, name: 'Pikachu'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
 
   return (
     <MyGridList aria-label="List with controlled selection" items={rows} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
@@ -562,7 +570,7 @@ be triggered via the <Keyboard>Enter</Keyboard> key, and selection using the <Ke
 This behavior is slightly different when `selectionBehavior="replace"`, where single clicking selects the row and actions are performed via double click. Touch and keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{ display: 'flex', 'flex-wrap': 'wrap', gap: 24 }}>
+<div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
   <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
   <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
 </div>
@@ -575,8 +583,12 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncList() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');

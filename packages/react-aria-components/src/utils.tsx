@@ -14,6 +14,13 @@ import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 
+// Override forwardRef types so generics work.
+declare function forwardRef<T, P = {}>(
+  render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+
+export type forwardRefType = typeof forwardRef;
+
 export const slotCallbackSymbol = Symbol('callback');
 
 interface SlottedValue<T> {

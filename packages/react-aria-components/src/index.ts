@@ -41,7 +41,7 @@ export {Select, SelectValue, SelectContext} from './Select';
 export {Separator, SeparatorContext} from './Separator';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
-export {Table, Row, Cell, Column, TableHeader, TableBody, useTableOptions} from './Table';
+export {Table, Row, Cell, Column, TableHeader, TableBody, TableContext, useTableOptions} from './Table';
 export {Tabs, TabList, TabPanels, TabPanel, Tab, TabsContext} from './Tabs';
 export {Text, TextContext} from './Text';
 export {TextField, TextFieldContext} from './TextField';
@@ -83,3 +83,6 @@ export type {TextFieldProps} from './TextField';
 export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
+
+export type {DateValue, DateRange, TimeValue} from 'react-aria';
+export type {Selection} from 'react-stately';

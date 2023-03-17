@@ -277,7 +277,9 @@ If you will use a ListBox in multiple places in your app, you can wrap all of th
 This example wraps `ListBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
-function MyListBox({children, ...props}) {
+import type {ListBoxProps, ItemProps} from 'react-aria-components';
+
+function MyListBox<T extends object>({children, ...props}: ListBoxProps<T>) {
   return (
     <ListBox {...props} className="my-listbox">
       {children}
@@ -285,7 +287,7 @@ function MyListBox({children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocusVisible, isSelected}) => `my-item ${isFocusVisible ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -396,8 +398,10 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
+import type {Selection} from 'react-aria-components';
+
 function Example() {
-  let [selected, setSelected] = React.useState(new Set(['cheese']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(['cheese']));
 
   return (
     <>
@@ -468,6 +472,8 @@ The above example shows sections with static items. Sections can also be populat
 Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
+import type {Selection} from 'react-aria-components';
+
 function Example() {
   let options = [
     {name: 'Australian', children: [
@@ -481,7 +487,7 @@ function Example() {
       {id: 8, name: 'Skunk'}
     ]}
   ];
-  let [selected, setSelected] = React.useState(new Set());
+  let [selected, setSelected] = React.useState<Selection>(new Set());
 
   return (
     <ListBox
@@ -489,8 +495,7 @@ function Example() {
       items={options}
       selectedKeys={selected}
       selectionMode="single"
-      onSelectionChange={setSelected}
-      width="size-2400">
+      onSelectionChange={setSelected}>
       {item => (
         <Section id={item.name} items={item.children} title={item.name}>
           {item => <Item>{item.name}</Item>}
@@ -540,8 +545,12 @@ state to the user, or support features like infinite scroll to load more data.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://pokeapi.co/api/v2/pokemon`,

@@ -543,9 +543,17 @@ If you will use a Select in multiple places in your app, you can wrap all of the
 This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
+import type {SelectProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MySelect({label, description, errorMessage, children, ...props}) {
+interface MySelectProps<T extends object> extends SelectProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MySelect<T extends object>({label, description, errorMessage, children, ...props}: MySelectProps<T>) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -564,7 +572,7 @@ function MySelect({label, description, errorMessage, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -771,7 +779,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState("Bison");
+  let [animal, setAnimal] = React.useState<React.Key>("Bison");
 
   return (
     <MySelect
@@ -794,8 +802,12 @@ state to the user, or support features like infinite scroll to load more data.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://pokeapi.co/api/v2/pokemon`,
@@ -810,7 +822,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <MySelect label="Pick a Pokemon" items={list.items} selectionMode="single">
+    <MySelect label="Pick a Pokemon" items={list.items}>
       {(item) => <Item id={item.name}>{item.name}</Item>}
     </MySelect>
   );
@@ -876,7 +888,7 @@ The `description` slot can be used to associate additional help text with a Sele
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },

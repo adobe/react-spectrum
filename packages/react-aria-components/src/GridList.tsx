@@ -12,14 +12,16 @@
 import {AriaGridListProps, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {CheckboxContext} from './Checkbox';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {ListState, useListState} from 'react-stately';
-import {Node} from '@react-types/shared';
+import {ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior
+}
 
 export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLUListElement>>(null);
 const InternalGridListContext = createContext<ListState<unknown>>(null);
@@ -67,7 +69,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-const _GridList = forwardRef(GridList);
+const _GridList = (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
 function GridListItem({item}) {
@@ -92,6 +94,7 @@ function GridListItem({item}) {
   let props: ItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {
