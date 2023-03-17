@@ -208,13 +208,13 @@ Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesD
 
 ```tsx example
 function Example() {
-  let [pointerType, setPointerType] = React.useState(null);
+  let [pointerType, setPointerType] = React.useState('');
 
   return (
     <>
       <Link
         onPressStart={e => setPointerType(e.pointerType)}
-        onPressEnd={e => setPointerType(null)}>
+        onPressEnd={() => setPointerType('')}>
         Press me
       </Link>
       <p>{pointerType ? `You are pressing the link with a ${pointerType}!` : 'Ready to be pressed.'}</p>

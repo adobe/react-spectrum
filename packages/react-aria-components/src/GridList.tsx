@@ -72,7 +72,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
 const _GridList = (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
-function GridListItem({item}) {
+function GridListItem({item}: {item: Node<object>}) {
   let state = useContext(InternalGridListContext)!;
   let ref = React.useRef<HTMLLIElement>(null);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(

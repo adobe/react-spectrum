@@ -116,7 +116,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-const _TimeField = forwardRef(TimeField);
+const _TimeField = (forwardRef as forwardRefType)(TimeField);
 export {_TimeField as TimeField};
 
 const InternalDateInputContext = createContext<DateFieldState| null>(null);

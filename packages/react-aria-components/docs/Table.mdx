@@ -599,7 +599,9 @@ In the example below, both the columns and the rows are provided to the table vi
 only the rows dynamic.
 
 ```tsx example export=true
-function ExampleTable(props) {
+import type {TableProps} from 'react-aria-components';
+
+function ExampleTable(props: TableProps) {
   let columns = [
     {name: 'Name', key: 'name', isRowHeader: true},
     {name: 'Type', key: 'type'},
@@ -672,7 +674,9 @@ To programmatically control row selection, use the `selectedKeys` prop paired wi
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true
-function PokemonTable(props) {
+import type {Selection} from 'react-aria-components';
+
+function PokemonTable(props: TableProps) {
   let columns = [
     {name: 'Name', uid: 'name', isRowHeader: true},
     {name: 'Type', uid: 'type'},
@@ -686,7 +690,7 @@ function PokemonTable(props) {
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set(props.defaultSelectedKeys || [2]));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(props.defaultSelectedKeys || [2]));
 
   return (
     <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>

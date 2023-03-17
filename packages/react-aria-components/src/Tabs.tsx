@@ -196,7 +196,7 @@ export function Tab(props: TabProps): JSX.Element {
   return Item(props);
 }
 
-function TabInner({item, state}) {
+function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
   let ref = React.useRef<HTMLDivElement>(null);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);

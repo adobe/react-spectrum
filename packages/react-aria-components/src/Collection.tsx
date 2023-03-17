@@ -13,9 +13,9 @@ import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
+import {mergeProps} from 'react-aria';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
-import { mergeProps } from '@react-aria/utils/dist/module';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -272,7 +272,7 @@ export class ElementNode<T> extends BaseNode<T> {
     this.ownerDocument.dirtyNodes.add(this);
   }
 
-  get level() {
+  get level(): number {
     if (this.parentNode instanceof ElementNode) {
       return this.parentNode.level + (this.node.type === 'item' ? 1 : 0);
     }
@@ -294,7 +294,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   // Special property that React passes through as an object rather than a string via setAttribute.
   // See below for details.
-  set multiple(value) {
+  set multiple(value: any) {
     let node = this.ownerDocument.getMutableNode(this);
     node.props = value;
     node.rendered = value.rendered;
@@ -319,8 +319,8 @@ export class ElementNode<T> extends BaseNode<T> {
 
   hasAttribute() {}
   setAttribute(key: string, value: string) {
-    if (key in this.node) {
-      let node = this.ownerDocument.getMutableNode(this);
+    let node = this.ownerDocument.getMutableNode(this);
+    if (key in node) {
       node[key] = value;
     }
   }
@@ -712,7 +712,7 @@ export const CollectionContext = createContext<CachedChildrenOptions<unknown> | 
 export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
 
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
-  let ctx = useContext(CollectionContext);
+  let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (

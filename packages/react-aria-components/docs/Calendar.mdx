@@ -470,7 +470,6 @@ Selected dates passed to `onChange` always use the same calendar system as the `
 The below example displays a `Calendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
-import type {DateValue} from 'react-aria-components';
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
@@ -504,7 +503,6 @@ This example includes multiple unavailable date ranges, e.g. dates when no appoi
 
 
 ```tsx example
-import type {DateValue} from 'react-aria-components';
 import {today, isWeekend} from '@internationalized/date';
 import {useLocale} from '@react-aria/i18n';
 
