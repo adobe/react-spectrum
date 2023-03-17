@@ -11,6 +11,7 @@
  */
 
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
@@ -36,6 +37,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const ENABLE_PAGE_TYPES = false;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -288,16 +290,29 @@ function Nav({currentPageName, pages}) {
   }
 
   // Key by category
-  let pageMap = {};
+  let pagesByType = {};
   let rootPages = [];
+  let pageCategories = new Set();
   pages.forEach(p => {
     let cat = p.category;
     if (cat) {
-      if (cat in pageMap) {
-        pageMap[cat].push(p);
-      } else {
-        pageMap[cat] = [p];
+      let type = p.type || 'other';
+      if (!ENABLE_PAGE_TYPES && p.type !== 'component') {
+        type = 'other';
       }
+      let pages = pagesByType[type];
+      if (!pages) {
+        pages = {};
+        pagesByType[type] = pages;
+      }
+
+      if (cat in pages) {
+        pages[cat].push(p);
+      } else {
+        pages[cat] = [p];
+      }
+
+      pageCategories.add(cat);
     } else {
       rootPages.push(p);
     }
@@ -306,10 +321,10 @@ function Nav({currentPageName, pages}) {
   // Order categories so specific ones come first, then all the others in sorted order.
   let categories = [];
   for (let category of CATEGORY_ORDER) {
-    if (pageMap[category]) {
+    if (pageCategories.has(category)) {
       categories.push(category);
     } else if (category === '...') {
-      for (let category of Object.keys(pageMap).sort()) {
+      for (let category of [...pageCategories].sort()) {
         if (!CATEGORY_ORDER.includes(category)) {
           categories.push(category);
         }
@@ -343,6 +358,57 @@ function Nav({currentPageName, pages}) {
     );
   }
 
+  let isActive = (pageMap) => {
+    for (let key in pageMap) {
+      if (pageMap[key].some(p => p.name === currentPageName)) {
+        return true;
+      }
+    }
+  };
+
+  let sections = [];
+  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
+    let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    sections.push({pages: {Introduction, Concepts}});
+    sections.push({
+      title: 'Components',
+      pages: pagesByType.component,
+      isActive: isActive(pagesByType.component)
+    });
+    sections.push({
+      title: 'Hooks',
+      pages: hooks,
+      isActive: isActive(hooks)
+    });
+    sections.push({
+      title: 'Patterns',
+      pages: pagesByType.pattern,
+      isActive: isActive(pagesByType.pattern)
+    });
+    sections.push({
+      title: 'Interactions',
+      pages: {Interactions, Focus},
+      isActive: isActive({Interactions, Focus})
+    });
+    sections.push({
+      title: 'Utilities',
+      pages: {Internationalization, 'Server Side Rendering': ssr, Utilities},
+      isActive: isActive({Internationalization, 'Server Side Rendering': ssr, Utilities})
+    });
+  } else {
+    sections.push({
+      pages: pagesByType.other
+    });
+
+    if (pagesByType.component) {
+      sections.push({
+        title: 'Components',
+        pages: pagesByType.component,
+        isActive: isActive(pagesByType.component)
+      });
+    }
+  }
+
   return (
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
@@ -362,20 +428,33 @@ function Nav({currentPageName, pages}) {
           </h2>
         </a>
       </header>
-      <ul className={sideNavStyles['spectrum-SideNav']}>
-        {rootPages.map(p => <SideNavItem {...p} />)}
-        {categories.map(key => {
-          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+      {sections.map(section => {
+        let contents = categories.filter(c => section.pages[c]?.length).map(key => {
+          const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <li key={headingId} className={sideNavStyles['spectrum-SideNav-item']}>
+            <>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem key={p.title} {...p} />)}
+                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
-            </li>
+            </>
           );
-        })}
-      </ul>
+        });
+
+        if (section.title) {
+          return (
+            <details open={section.isActive}>
+              <summary style={{fontWeight: 'bold'}}>
+                <ChevronRight size="S" /> {section.title}
+                {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
+              </summary>
+              {contents}
+            </details>
+          );
+        } else {
+          return <>{contents}</>;
+        }
+      })}
     </nav>
   );
 }

@@ -1,0 +1,390 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/overlays';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/dialog/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Overlays
+keywords: [dialog, popover, aria]
+type: component
+after_version: 1.0.0
+---
+
+# Dialog
+
+<PageDescription>{docs.exports.Dialog.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Dialog']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button>Sign up…</Button>
+  <Modal>
+    <Dialog>
+      {({close}) => (
+        <form>
+          <Heading>Sign up</Heading>
+          <TextField autoFocus>
+            <Label>First Name</Label>
+            <Input />
+          </TextField>
+          <TextField>
+            <Label>Last Name</Label>
+            <Input />
+          </TextField>
+          <Button onPress={close}>
+            Submit
+          </Button>
+        </form>
+      )}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Dialog {
+  outline: none;
+
+  .react-aria-Heading {
+    line-height: 1em;
+    margin-top: 0;
+  }
+
+  .react-aria-Button {
+    margin-top: 20px;
+    margin-right: 8px;
+  }
+}
+
+.react-aria-ModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: var(--visual-viewport-height);
+  width: 100vw;
+  background: rgba(0 0 0 / .5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &[data-entering] {
+    animation: fade 200ms;
+  }
+
+  &[data-exiting] {
+    animation: fade 150ms reverse ease-in;
+  }
+}
+
+.react-aria-Modal {
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  border: 1px solid var(--spectrum-global-color-gray-300);
+  outline: none;
+  padding: 30px;
+  max-width: 250px;
+
+  &[data-entering] {
+    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0.8);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+.react-aria-Button {
+  background: var(--spectrum-global-color-gray-50);
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  border-radius: 4px;
+  color: var(--spectrum-alias-text-color);
+  appearance: none;
+  vertical-align: middle;
+  font-family: system-ui;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px;
+  transition: border-color 200ms;
+
+  &[data-hovered] {
+    border-color: var(--spectrum-global-color-gray-500);
+  }
+
+  &[data-pressed] {
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+    background: var(--spectrum-global-color-gray-100);
+    border-color: var(--spectrum-global-color-gray-600);
+  }
+
+  &[data-focus-visible] {
+    border-color: slateblue;
+    box-shadow: 0 0 0 1px slateblue;
+  }
+}
+
+.react-aria-TextField {
+  margin-bottom: 8px;
+
+  .react-aria-Label {
+    display: inline-block;
+    width: 5.357rem;
+  }
+
+  .react-aria-Input {
+    font-size: 16px;
+  }
+}
+```
+
+</details>
+
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element
+can be used to build dialogs. However, it is not yet widely supported across browsers, and
+building fully accessible custom dialogs from scratch is very difficult and error prone.
+`Dialog` helps achieve accessible dialogs that can be styled as needed.
+
+* **Flexible** – Dialogs can be used within a [Modal](Modal.html) or [Popover](Popover.html) to create many types of overlay elements.
+* **Accessible** – Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA. The dialog is automatically labeled by a nested `<Heading>` element. Content outside the dialog is hidden from assistive technologies while it is open.
+* **Focus management** – Focus is moved into the dialog on mount, and restored to the trigger element on unmount. While open, focus is contained within the dialog, preventing the user from tabbing outside.
+
+## Anatomy
+
+<Anatomy />
+
+A dialog consists of a container element and an optional title. It can be placed within a [Modal](Modal.html) or [Popover](Popover.html), to create modal dialogs, popovers, and other types of overlays. A `DialogTrigger` can be used to open a dialog overlay in response to a user action, e.g. clicking a button.
+
+If a dialog does not have a visible heading element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
+
+## Props
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
+
+### Dialog
+
+<PropTable component={docs.exports.Dialog} links={docs.links} />
+
+### Heading
+
+A `<Heading>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Dialog {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Dialog className="my-dialog">
+  {/* ... */}
+</Dialog>
+```
+
+The selectors for each component used in a `Dialog` are documented below.
+
+### DialogTrigger
+
+The `DialogTrigger` component does not render any DOM elements (it only passes through its children) so it does not support styling. If you need a wrapper element, add one yourself inside the `<DialogTrigger>`.
+
+```jsx
+<DialogTrigger>
+  <div className="my-dialog-trigger">
+    {/* ... */}
+  </div>
+</DialogTrigger>
+```
+
+### Dialog
+
+A `Dialog` can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
+
+### Heading
+
+A `Heading` can be targeted with the `.react-aria-Heading` CSS selector, or by overriding with a custom `className`.
+
+## Usage
+
+A `Dialog` should be placed within an overlay component such as [Modal](Modal.html) or [Popover](Popover.html).
+
+### Popover
+
+A `Dialog` may be placed within a [Popover](Popover.html) to display it in context with a trigger element.
+
+```tsx example
+import {Popover, OverlayArrow} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button aria-label="Help">?⃝</Button>
+  <Popover>
+    <OverlayArrow>
+      <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+    </OverlayArrow>
+    <Dialog>
+      <Heading>Help</Heading>
+      <p>For help accessing your account, please contact support.</p>
+    </Dialog>
+  </Popover>
+</DialogTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Popover {
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  outline: none;
+  padding: 30px;
+  max-width: 250px;
+
+  & .react-aria-OverlayArrow svg {
+    display: block;
+    fill: var(--page-background);
+    stroke: var(--spectrum-global-color-gray-400);
+    stroke-width: 1px;
+  }
+
+  &[data-placement=top] {
+    margin-bottom: 6px;
+    --origin: translateY(8px);
+  }
+
+  &[data-placement=bottom] {
+    margin-top: 6px;
+    --origin: translateY(-8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &[data-placement=right] {
+    margin-left: 6px;
+    --origin: translateX(-8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(90deg);
+    }
+  }
+
+  &[data-placement=left] {
+    margin-right: 6px;
+    --origin: translateX(8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(-90deg);
+    }
+  }
+
+  &[data-entering] {
+    animation: slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: slide 200ms reverse ease-in;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+```
+
+</details>
+
+### Alert dialog
+
+Alert dialogs are a special type of dialog meant to present a prompt that the user must confirm before an action proceeds. An alert dialog may also behave differently with assistive technologies, such as playing a system alert sound when opening. Use the `role="alertdialog"` prop on the `<Dialog>` element to make an alert dialog.
+
+```tsx example
+<DialogTrigger>
+  <Button>Delete…</Button>
+  <Modal>
+    <Dialog role="alertdialog">
+      {({close}) => (
+        <>
+          <Heading>Delete file</Heading>
+          <p>This will permanently delete the selected file. Continue?</p>
+          <div>
+            <Button onPress={close}>Cancel</Button>
+            <Button onPress={close}>Delete</Button>
+          </div>
+        </>
+      )}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+## Advanced customization
+
+### Hooks
+
+If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDialog](useDialog.html) for more details.
