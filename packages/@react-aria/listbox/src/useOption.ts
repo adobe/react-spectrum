@@ -30,7 +30,10 @@ export interface OptionAria extends SelectableItemStates {
   descriptionProps: DOMAttributes,
 
   /** Whether the option is currently focused. */
-  isFocused: boolean
+  isFocused: boolean,
+
+  /** Whether the option is keyboard focused. */
+  isFocusVisible: boolean
 }
 
 export interface AriaOptionProps {
@@ -155,6 +158,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
       id: descriptionId
     },
     isFocused,
+    isFocusVisible: isFocused && isFocusVisible(),
     isSelected,
     isDisabled,
     isPressed,
