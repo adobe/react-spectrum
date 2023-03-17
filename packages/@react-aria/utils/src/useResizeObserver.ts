@@ -1,4 +1,4 @@
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
@@ -11,7 +11,6 @@ type useResizeObserverOptionsType<T> = {
 
 export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
-  let raf = useRef(null);
 
   useEffect(() => {
     let element = ref?.current;
@@ -25,28 +24,17 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
         window.removeEventListener('resize', onResize, false);
       };
     } else {
+
       const resizeObserverInstance = new window.ResizeObserver((entries) => {
-        if (raf.current) {
+        if (!entries.length) {
           return;
         }
-        // avoid Error - ResizeObserver loop limit exceeded
-        // it's ok to use a raf, ResizeObservers are already async and now we're just debouncing on frames
-        raf.current = window.requestAnimationFrame(() => {
-          raf.current = null;
-          if (!Array.isArray(entries) || !entries.length) {
-            return;
-          }
-          onResize();
-        });
-      });
 
+        onResize();
+      });
       resizeObserverInstance.observe(element);
 
       return () => {
-        if (raf.current) {
-          window.cancelAnimationFrame(raf.current);
-          raf.current = null;
-        }
         if (element) {
           resizeObserverInstance.unobserve(element);
         }
