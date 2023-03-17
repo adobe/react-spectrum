@@ -772,7 +772,7 @@ function ControlledComboBox() {
   // Store ComboBox input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
-    selectedKey: '',
+    selectedKey: '' as React.Key,
     inputValue: '',
     items: optionList
   });
