@@ -478,9 +478,6 @@ export class TableLayout<T> extends ListLayout<T> {
 
         // Add persisted/sticky cells before the visible cells.
         let persistedCellIndices = this.persistedIndices.get(node.layoutInfo.key) || this.stickyColumnIndices;
-        // if (persistedCellIndices.length === 1) {
-        //   console.log(node.layoutInfo.key);
-        // }
         while (stickyIndex < persistedCellIndices.length && persistedCellIndices[stickyIndex] < firstVisibleCell) {
           let idx = persistedCellIndices[stickyIndex];
           if (idx < node.children.length) {
