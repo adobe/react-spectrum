@@ -76,7 +76,7 @@ import {ProgressBar, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    background: var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -219,7 +219,8 @@ let c = 2 * r * Math.PI;
 <ProgressBar aria-label="Loading…" value={60}>
   {({percentage}) => <>
     <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r} stroke="var(--circle-color)" />
+      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
       <circle
         cx={center}
         cy={center}
