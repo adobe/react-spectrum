@@ -644,12 +644,17 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
     width: resizingColumnWidth,
     key: layout.resizingColumn
   }), [resizingColumnWidth, layout.resizingColumn]);
+  let mergedProps = mergeProps(
+    otherProps,
+    virtualizerProps,
+    isVirtualDragging && {tabIndex: null}
+  );
 
   return (
     <VirtualizerContext.Provider value={resizingColumn}>
       <FocusScope>
         <div
-          {...mergeProps(otherProps, virtualizerProps)}
+          {...mergedProps}
           ref={domRef}>
           <div
             role="presentation"
