@@ -72,7 +72,13 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
   } = props;
   let {height} = layout.getLayoutInfo(item.key).rect;
   let isDraggingMultiple = itemCount > 1;
-  let cells = [...item.childNodes].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
+  let cells;
+  let textValue = item.textValue;
+  if (textValue) {
+    cells = [{rendered: textValue, key: 'textValue'}];
+  } else {
+    cells = [...item.childNodes].filter(cell => rowHeaderColumnKeys.has(cell.column.key));
+  }
 
   return (
     <Flex
