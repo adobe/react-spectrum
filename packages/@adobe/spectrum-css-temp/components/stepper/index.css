@@ -32,7 +32,7 @@ governing permissions and limitations under the License.
   display: inline-grid;
   position: relative;
 
-  align-self: start;
+  block-size: max-content;
 
   inline-size: var(--spectrum-stepper-default-width-desktop);
   line-height: 0;
