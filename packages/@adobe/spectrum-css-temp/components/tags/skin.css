@@ -47,9 +47,9 @@ governing permissions and limitations under the License.
     }
     &.is-invalid {
       border-color: var(--spectrum-tag-border-color-error-selected);
-      .spectrum-Tags-itemIcon,
+      .spectrum-Tag-icon,
       .spectrum-Tags-itemLabel,
-      .spectrum-Tags-itemClearButton {
+      .spectrum-Tag-removeButton {
         color: var(--spectrum-tag-text-color-error-selected);
       }
       &.focus-ring {
@@ -79,8 +79,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-tag-border-color-key-focus);
     }
 
-    .spectrum-Tags-itemIcon,
-    .spectrum-Tags-itemClearButton,
+    .spectrum-Tag-icon,
     .spectrum-Tag-removeButton {
       color: var(--spectrum-tag-border-color-error);
     }
@@ -92,77 +91,74 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-tag-background-color-disabled);
     border-color: var(--spectrum-tag-border-color-disabled);
 
-    .spectrum-Avatar {
+    .spectrum-Tag-avatar {
       /* Duplicated so state is on the tag */
       opacity: var(--spectrum-avatar-small-opacity-disabled);
     }
   }
-}
 
-.spectrum-Tags-item--removable {
-  &:hover {
-    color: var(--spectrum-tag-removable-text-color-hover);
-  }
-
-  &:active {
-    color: var(--spectrum-tag-removable-text-color-down);
-  }
-
-  &.is-invalid {
+  &.is-removable {
     &:hover {
-      border-color: var(--spectrum-tag-removable-border-color-error-hover);
-      .spectrum-Tags-itemClearButton {
-        color: var(--spectrum-tag-removable-border-color-error-hover);
-      }
+      color: var(--spectrum-tag-removable-text-color-hover);
     }
-
-    .spectrum-Tags-itemClearButton,
-    .spectrum-Tag-removeButton {
-      &.is-focused {
-         color: var(--spectrum-tag-icon-color-error-hover);
-       }
-     }
 
     &:active {
-      border-color: var(--spectrum-tag-removable-border-color-error-down);
-      color: var(--spectrum-tag-removable-text-color-error-down);
+      color: var(--spectrum-tag-removable-text-color-down);
     }
-  }
-
-  &.is-focused {
-    color: var(--spectrum-tag-removable-text-color-key-focus);
 
     &.is-invalid {
-      color: var(--spectrum-tag-removable-text-color-error-key-focus);
-    }
-  }
-
-  &.is-selected {
-    color: var(--spectrum-tag-removable-text-color-selected);
-    &.is-focused {
-       color: var(--spectrum-tag-removable-text-color-selected-key-focus);
-    }
-    .spectrum-Tags-itemClearButton,
-    .spectrum-Tag-removeButton {
-      color: var(--spectrum-tag-removable-button-icon-color-selected);
       &:hover {
-         background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
-         color: var(--spectrum-tag-removable-button-icon-color-selected-hover);
+        border-color: var(--spectrum-tag-removable-border-color-error-hover);
+        .spectrum-Tag-removeButton {
+          color: var(--spectrum-tag-removable-border-color-error-hover);
+        }
+      }
+
+      .spectrum-Tag-removeButton {
+        &.is-focused {
+           color: var(--spectrum-tag-icon-color-error-hover);
+         }
+       }
+
+      &:active {
+        border-color: var(--spectrum-tag-removable-border-color-error-down);
+        color: var(--spectrum-tag-removable-text-color-error-down);
       }
     }
-  }
 
-  .spectrum-Tags-itemClearButton,
-  .spectrum-Tag-removeButton {
     &.is-focused {
-       border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
-       border-radius: var(--spectrum-alias-border-radius-regular);
-       background-color: var(--spectrum-tag-removable-button-background-color-key-focus);
-       color: var(--spectrum-tag-removable-button-icon-color-key-focus);
+      color: var(--spectrum-tag-removable-text-color-key-focus);
+
+      &.is-invalid {
+        color: var(--spectrum-tag-removable-text-color-error-key-focus);
+      }
     }
-    &:hover {
-      background-color: var(--spectrum-tag-removable-button-background-color-hover);
-      color: var(--spectrum-tag-removable-button-icon-color-hover);
+
+    &.is-selected {
+      color: var(--spectrum-tag-removable-text-color-selected);
+      &.is-focused {
+         color: var(--spectrum-tag-removable-text-color-selected-key-focus);
+      }
+      .spectrum-Tag-removeButton {
+        color: var(--spectrum-tag-removable-button-icon-color-selected);
+        &:hover {
+           background-color: var(--spectrum-tag-removable-button-background-color-selected-hover);
+           color: var(--spectrum-tag-removable-button-icon-color-selected-hover);
+        }
+      }
+    }
+
+    .spectrum-Tag-removeButton {
+      &.is-focused {
+         border: 2px solid var(--spectrum-tag-removable-border-color-key-focus);
+         border-radius: var(--spectrum-alias-border-radius-regular);
+         background-color: var(--spectrum-tag-removable-button-background-color-key-focus);
+         color: var(--spectrum-tag-removable-button-icon-color-key-focus);
+      }
+      &:hover {
+        background-color: var(--spectrum-tag-removable-button-background-color-hover);
+        color: var(--spectrum-tag-removable-button-icon-color-hover);
+      }
     }
   }
 }
