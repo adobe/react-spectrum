@@ -102,7 +102,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   getKeyAfter(key: Key) {
     let node = this.getItem(key);
     if (node?.type === 'column') {
-      return node.nextKey;
+      return node.nextKey ?? null;
     }
 
     return super.getKeyAfter(key);
@@ -111,15 +111,15 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   getKeyBefore(key: Key) {
     let node = this.getItem(key);
     if (node?.type === 'column') {
-      return node.prevKey;
+      return node.prevKey ?? null;
     }
 
-    key = super.getKeyBefore(key);
-    if (this.getItem(key)?.type === 'tablebody') {
+    let k = super.getKeyBefore(key);
+    if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
 
-    return key;
+    return k;
   }
 
   getChildren(key: Key): Iterable<Node<T>> {
@@ -146,7 +146,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 }
 
 export const TableContext = createContext<ContextValue<TableProps<any>, HTMLTableElement>>(null);
-const InternalTableContext = createContext<TableState<unknown>>(null);
+const InternalTableContext = createContext<TableState<unknown> | null>(null);
 
 export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {
   /**
@@ -172,7 +172,7 @@ function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTab
   let state = useTableState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   let {gridProps} = useTable(props, state, ref);
@@ -251,13 +251,13 @@ export interface TableOptionsContextValue {
   disallowEmptySelection: boolean
 }
 
-const TableOptionsContext = createContext<TableOptionsContextValue>(null);
+const TableOptionsContext = createContext<TableOptionsContextValue | null>(null);
 
 /**
  * Returns options from the parent `<Table>` component.
  */
 export function useTableOptions(): TableOptionsContextValue {
-  return useContext(TableOptionsContext);
+  return useContext(TableOptionsContext)!;
 }
 
 export interface TableHeaderProps<T> {
@@ -305,7 +305,7 @@ export interface ColumnRenderProps {
    * The current sort direction.
    * @selector [aria-sort="ascending | descending"]
    */
-  sortDirection: SortDirection | null
+  sortDirection?: SortDirection
 }
 
 export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
@@ -428,13 +428,13 @@ function TableRowGroup({type: Element, children, ...otherProps}) {
 }
 
 function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef();
-  let state = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableRowElement>(null);
+  let state = useContext(InternalTableContext)!;
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
   let cells = useCachedChildren({
-    items: state.collection.getChildren(item.key),
+    items: state.collection.getChildren!(item.key),
     children: (item) => {
       switch (item.type) {
         case 'column':
@@ -462,8 +462,8 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
-  let ref = useRef();
-  let state = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableHeaderCellElement>(null);
+  let state = useContext(InternalTableContext)!;
   let {columnHeaderProps} = useTableColumnHeader(
     {node: column},
     state,
@@ -482,8 +482,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       isFocusVisible,
       allowsSorting: column.props.allowsSorting,
       sortDirection: state.sortDescriptor?.column === column.key
-        ? state.sortDescriptor?.direction
-        : null
+        ? state.sortDescriptor.direction
+        : undefined
     }
   });
 
@@ -500,9 +500,9 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   );
 }
 
-function TableRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef();
-  let state = useContext(InternalTableContext);
+function TableRow({item}: {item: GridNode<unknown>}) {
+  let ref = useRef<HTMLTableRowElement>(null);
+  let state = useContext(InternalTableContext)!;
   let {rowProps, ...states} = useTableRow(
     {
       node: item
@@ -536,8 +536,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   });
 
   let cells = useCachedChildren({
-    items: state.collection.getChildren(item.key),
-    children: (item: Node<T>) => {
+    items: state.collection.getChildren!(item.key),
+    children: (item: Node<unknown>) => {
       switch (item.type) {
         case 'cell':
           return <TableCell cell={item} />;
@@ -571,8 +571,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
-  let ref = useRef();
-  let state = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableCellElement>(null);
+  let state = useContext(InternalTableContext)!;
 
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];

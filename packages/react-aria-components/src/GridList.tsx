@@ -24,7 +24,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
 }
 
 export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLUListElement>>(null);
-const InternalGridListContext = createContext<ListState<unknown>>(null);
+const InternalGridListContext = createContext<ListState<unknown> | null>(null);
 
 function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLUListElement>) {
   [props, ref] = useContextProps(props, ref, GridListContext);
@@ -32,7 +32,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   let state = useListState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   let {gridProps} = useGridList(props, state, ref);
@@ -73,8 +73,8 @@ const _GridList = (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
 function GridListItem({item}) {
-  let state = useContext(InternalGridListContext);
-  let ref = React.useRef();
+  let state = useContext(InternalGridListContext)!;
+  let ref = React.useRef<HTMLLIElement>(null);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {node: item},
     state,

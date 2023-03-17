@@ -73,7 +73,7 @@ export type {SSRProviderProps} from '@react-aria/ssr';
 export type {AriaSliderProps, AriaSliderThumbProps, AriaSliderThumbOptions, SliderAria, SliderThumbAria} from '@react-aria/slider';
 export type {AriaSwitchProps, SwitchAria} from '@react-aria/switch';
 export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
-export type {AriaTabListProps, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
+export type {AriaTabListProps, AriaTabListOptions, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';

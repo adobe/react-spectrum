@@ -24,7 +24,7 @@ export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLD
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,

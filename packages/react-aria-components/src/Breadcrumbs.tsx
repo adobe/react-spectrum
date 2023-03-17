@@ -60,9 +60,9 @@ export {_Breadcrumbs as Breadcrumbs};
 
 function BreadcrumbItem({node, isCurrent, isDisabled}) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
-  let headingProps: HTMLAttributes<HTMLHeadingElement> = isCurrent ? {'aria-current': 'page'} : undefined;
+  let headingProps: HTMLAttributes<HTMLHeadingElement> | null = isCurrent ? {'aria-current': 'page'} : null;
   let linkProps = {
-    'aria-current': isCurrent ? 'page' : undefined,
+    'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent
   };
 

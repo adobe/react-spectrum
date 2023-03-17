@@ -31,11 +31,11 @@ interface ListBoxContextValue<T> extends ListBoxProps<T> {
 
 interface InternalListBoxContextValue {
   state: ListState<unknown>,
-  shouldFocusOnHover: boolean
+  shouldFocusOnHover?: boolean
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxContextValue<any>, HTMLDivElement>>(null);
-const InternalListBoxContext = createContext<InternalListBoxContextValue>(null);
+const InternalListBoxContext = createContext<InternalListBoxContextValue | null>(null);
 
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
@@ -115,14 +115,14 @@ interface ListBoxSectionProps<T> extends StyleProps {
 }
 
 function ListBoxSection<T>({section, className, style, ...otherProps}: ListBoxSectionProps<T>) {
-  let {state} = useContext(InternalListBoxContext);
+  let {state} = useContext(InternalListBoxContext)!;
   let {headingProps, groupProps} = useListBoxSection({
     heading: section.rendered,
-    'aria-label': section['aria-label']
+    'aria-label': section['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
-    items: state.collection.getChildren(section.key),
+    items: state.collection.getChildren!(section.key),
     children: item => {
       if (item.type !== 'item') {
         throw new Error('Only items are allowed within a section');
@@ -153,8 +153,8 @@ interface OptionProps<T> {
 }
 
 function Option<T>({item}: OptionProps<T>) {
-  let ref = useRef();
-  let {state, shouldFocusOnHover} = useContext(InternalListBoxContext);
+  let ref = useRef<HTMLDivElement>(null);
+  let {state, shouldFocusOnHover} = useContext(InternalListBoxContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
     state,

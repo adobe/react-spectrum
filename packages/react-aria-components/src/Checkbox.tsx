@@ -87,7 +87,7 @@ export interface CheckboxRenderProps {
    * Whether the checkbox is valid or invalid.
    * @selector [data-validation-state="valid | invalid"]
    */
-  validationState: ValidationState,
+  validationState?: ValidationState,
   /**
    * Whether the checkbox is required.
    * @selector [data-required]
@@ -96,7 +96,7 @@ export interface CheckboxRenderProps {
 }
 
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
-const InternalCheckboxGroupContext = createContext<CheckboxGroupState>(null);
+const InternalCheckboxGroupContext = createContext<CheckboxGroupState | null>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);

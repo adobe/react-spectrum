@@ -11,10 +11,11 @@
  */
 import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {DOMProps, RenderProps, useContextProps} from './utils';
+import {DOMProps, RenderProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
-import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useMemo} from 'react';
+import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useContext, useMemo} from 'react';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
+import { mergeProps } from '@react-aria/utils/dist/module';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -38,12 +39,12 @@ type Mutable<T> = {
 export class NodeValue<T> implements Node<T> {
   readonly type: string;
   readonly key: Key;
-  readonly value: T;
+  readonly value: T | null = null;
   readonly level: number = 0;
   readonly hasChildNodes: boolean = false;
   readonly rendered: ReactNode = null;
-  readonly textValue: string | null = null;
-  readonly 'aria-label'?: string = null;
+  readonly textValue: string = '';
+  readonly 'aria-label'?: string = undefined;
   readonly index: number = 0;
   readonly parentKey: Key | null = null;
   readonly prevKey: Key | null = null;
@@ -85,11 +86,11 @@ export class NodeValue<T> implements Node<T> {
  * and queues an update with the owner document.
  */
 class BaseNode<T> {
-  private _firstChild: ElementNode<T> | null;
-  private _lastChild: ElementNode<T> | null;
-  private _previousSibling: ElementNode<T> | null;
-  private _nextSibling: ElementNode<T> | null;
-  private _parentNode: BaseNode<T> | null;
+  private _firstChild: ElementNode<T> | null = null;
+  private _lastChild: ElementNode<T> | null = null;
+  private _previousSibling: ElementNode<T> | null = null;
+  private _nextSibling: ElementNode<T> | null = null;
+  private _parentNode: BaseNode<T> | null = null;
   ownerDocument: Document<T, any>;
 
   constructor(ownerDocument: Document<T, any>) {
@@ -186,14 +187,14 @@ class BaseNode<T> {
 
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
-    } else {
+    } else if (referenceNode.previousSibling) {
       referenceNode.previousSibling.nextSibling = newNode;
     }
 
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
-    let node = referenceNode;
+    let node: ElementNode<T> | null = referenceNode;
     while (node) {
       node.index++;
       node = node.nextSibling;
@@ -232,7 +233,7 @@ class BaseNode<T> {
     child.parentNode = null;
     child.nextSibling = null;
     child.previousSibling = null;
-    child.index = null;
+    child.index = 0;
 
     this.ownerDocument.removeNode(child);
   }
@@ -255,7 +256,7 @@ const TYPE_MAP = {
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
   node: NodeValue<T>;
-  private _index: number;
+  private _index: number = 0;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
@@ -284,11 +285,11 @@ export class ElementNode<T> extends BaseNode<T> {
     node.index = this.index;
     node.level = this.level;
     node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
-    node.prevKey = this.previousSibling?.node.key;
-    node.nextKey = this.nextSibling?.node.key;
+    node.prevKey = this.previousSibling?.node.key ?? null;
+    node.nextKey = this.nextSibling?.node.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstChild?.node.key;
-    node.lastChildKey = this.lastChild?.node.key;
+    node.firstChildKey = this.firstChild?.node.key ?? null;
+    node.lastChildKey = this.lastChild?.node.key ?? null;
   }
 
   // Special property that React passes through as an object rather than a string via setAttribute.
@@ -347,10 +348,10 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 
   *[Symbol.iterator]() {
-    let node: Node<T> = this.keyMap.get(this.firstKey);
+    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
     while (node) {
       yield node;
-      node = this.keyMap.get(node.nextKey);
+      node = node.nextKey != null ? this.keyMap.get(node.nextKey) : undefined;
     }
   }
 
@@ -359,10 +360,10 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return {
       *[Symbol.iterator]() {
         let parent = keyMap.get(key);
-        let node = parent && keyMap.get(parent.firstChildKey);
+        let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
         while (node) {
-          yield node;
-          node = keyMap.get(node.nextKey);
+          yield node as Node<T>;
+          node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
         }
       }
     };
@@ -377,11 +378,11 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     if (node.prevKey != null) {
       node = this.keyMap.get(node.prevKey);
 
-      while (node.type !== 'item' && node.lastChildKey != null) {
+      while (node && node.type !== 'item' && node.lastChildKey != null) {
         node = this.keyMap.get(node.lastChildKey);
       }
 
-      return node.key;
+      return node?.key ?? null;
     }
 
     return node.parentKey;
@@ -408,6 +409,8 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
         return null;
       }
     }
+
+    return null;
   }
 
   getFirstKey() {
@@ -415,16 +418,16 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 
   getLastKey() {
-    let node = this.keyMap.get(this.lastKey);
+    let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
     while (node?.lastChildKey != null) {
       node = this.keyMap.get(node.lastChildKey);
     }
 
-    return node?.key;
+    return node?.key ?? null;
   }
 
-  getItem(key: Key): Node<T> {
-    return this.keyMap.get(key);
+  getItem(key: Key): Node<T> | null {
+    return this.keyMap.get(key) ?? null;
   }
 
   at(): Node<T> {
@@ -459,7 +462,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.delete(key);
   }
 
-  commit(firstKey: Key, lastKey: Key) {
+  commit(firstKey: Key | null, lastKey: Key | null) {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }
@@ -484,6 +487,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
   private subscriptions: Set<() => void> = new Set();
 
   constructor(collection: C) {
+    // @ts-ignore
     super(null);
     this.collection = collection;
     this.collectionMutated = true;
@@ -556,7 +560,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
         collection.addNode(element.node);
       }
 
-      collection.commit(this.firstChild?.node.key, this.lastChild?.node.key);
+      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null);
       this.mutatedNodes.clear();
     }
 
@@ -592,7 +596,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   let cache = useMemo(() => new WeakMap(), []);
   return useMemo(() => {
     if (items && typeof children === 'function') {
-      let res = [];
+      let res: ReactElement[] = [];
       for (let item of items) {
         let rendered = cache.get(item);
         if (!rendered) {
@@ -704,11 +708,12 @@ export function Section<T extends object>(props: SectionProps<T>): JSX.Element {
   return <section multiple={{...props, rendered: props.title}}>{children}</section>;
 }
 
-export const CollectionContext = createContext<CachedChildrenOptions<unknown>>(null);
+export const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 export const CollectionRendererContext = createContext<CollectionProps<unknown>['children']>(null);
 
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
-  [props] = useContextProps(props, null, CollectionContext);
+  let ctx = useContext(CollectionContext);
+  props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>
