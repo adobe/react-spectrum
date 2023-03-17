@@ -1068,16 +1068,16 @@ function TableDragHeaderCell({column}) {
       <div
         {...columnHeaderProps}
         ref={ref}
-        className={
-        classNames(
-          styles,
-          'spectrum-Table-headCell',
+        className={ 
           classNames(
-            stylesOverrides,
-            'react-spectrum-dragButtonHeadCell'
+            styles,
+            'spectrum-Table-headCell',
+            classNames(
+              stylesOverrides,
+              'react-spectrum-dragButtonHeadCell'
+            )
           )
-        )
-      }>
+        }>
         <VisuallyHidden>{stringFormatter.format('drag')}</VisuallyHidden>
       </div>
     </FocusRing>
