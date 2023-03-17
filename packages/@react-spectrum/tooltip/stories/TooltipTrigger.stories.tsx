@@ -278,7 +278,6 @@ export const CrossoffsetExamples: TooltipTriggerStory = {
           <ActionButton>Tooltip Trigger -10</ActionButton>
           <Tooltip>Tooltip message.</Tooltip>
         </TooltipTrigger>
-
       </Flex>
       <Flex gap="size-200" direction="column" alignItems="start">
         <span>Left Bottom</span>
