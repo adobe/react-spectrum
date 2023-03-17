@@ -222,6 +222,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     // If parent key was dragged, we want to use it instead (i.e. focus row instead of cell after dropping)
     if (globalDndState.draggingKeys.has(state.collection.getItem(focusedKey)?.parentKey)) {
       focusedKey = state.collection.getItem(focusedKey).parentKey;
+      state.selectionManager.setFocusedKey(focusedKey);
     }
 
     droppingState.current = {
@@ -254,9 +255,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
       if (target.type === 'item' && target.dropPosition === 'on' && state.collection.getItem(target.key) != null) {
         state.selectionManager.setFocusedKey(target.key);
         state.selectionManager.setFocused(true);
-        setInteractionModality('keyboard');
-      } else if (target.type === 'item' && target.dropPosition !== 'on') {
-        state.selectionManager.setFocusedKey(focusedKey);
         setInteractionModality('keyboard');
       } else if (!state.selectionManager.isSelected(focusedKey)) {
         setInteractionModality('keyboard');
