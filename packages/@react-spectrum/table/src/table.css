@@ -12,15 +12,13 @@
 
  .react-spectrum-Table {
   --spectrum-table-droptarget-background-color: var(--spectrum-alias-highlight-selected);
-  --spectrum-table-dropindicator-border-color: var(--spectrum-dropindicator-border-color);
+  --spectrum-table-dropindicator-border-color: var(--spectrum-dropzone-border-color-selected-hover);
   --spectrum-table-dropindicator-circle-border-color: var(--spectrum-dropindicator-circle-border-color);
 
   --spectrum-table-dropindicator-circle-size: var(--spectrum-dropindicator-circle-size);
   --spectrum-table-dropindicator-border-size: var(--spectrum-dropindicator-border-size);
 
   --spectrum-table-dropzone-border-color-selected-hover: var(--spectrum-dropzone-border-color-selected-hover);
-  --spectrum-table-item-badge-text-color: var(--spectrum-global-color-static-white);
-  --spectrum-table-item-badge-background-color: var(--spectrum-global-color-blue-400);
 
   --spectrum-table-item-draghandle-border-color-key-focus: var(--spectrum-table-item-border-color-key-focus);
  }
@@ -72,7 +70,10 @@
   width: var(--spectrum-global-dimension-size-2400);
   border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
   border-radius: var(--spectrum-alias-border-radius-regular);
-  background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+  background-color: var(--spectrum-table-background-color);
+
+  /* forced-color-adjust: none, so that background-color style will render */
+  forced-color-adjust: none;
 
   &::after {
     box-shadow: none;
@@ -92,7 +93,7 @@
       height: 100%;
       border: 1px solid var(--spectrum-dropzone-border-color-selected-hover);
       border-radius: var(--spectrum-alias-border-radius-regular);
-      background-color: var(--spectrum-table-background-color, var(--spectrum-global-color-gray-50));
+      background-color: var(--spectrum-table-background-color);
 
       /* forced-color-adjust: none, so that box-shadow style will render */
       forced-color-adjust: none;
@@ -115,6 +116,9 @@
   border-color: var(--spectrum-table-dropindicator-border-color);
   background-color: var(--spectrum-alias-highlight-selected);
   box-shadow: inset 0 0 0 1px var(--spectrum-table-cell-border-color-key-focus);
+
+  /* forced-color-adjust: none, so that box-shadow style will render */
+  forced-color-adjust: none;
 }
 
 .react-spectrum-Table-InsertionIndicator {
@@ -169,7 +173,7 @@
   padding: var(--spectrum-global-dimension-size-10);
   
   &:focus-ring {
-    box-shadow: inset 0 0 0 2px var(--spectrum-global-color-blue-400);
+    box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
     outline: none;
 
     /* forced-color-adjust: none, so that box-shadow style will render */
@@ -200,4 +204,17 @@
 
 .react-spectrum-Table-cellWrapper.react-spectrum-Table-cellWrapper--dropTarget {
   background-color: var(--spectrum-table-droptarget-background-color);
+}
+
+@media (forced-colors: active) {
+  .react-spectrum-Table,
+  .react-spectrum-Table-row {
+    --spectrum-table-droptarget-background-color: var(--spectrum-alias-global-color-transparent);
+    --spectrum-table-dropindicator-border-color: Highlight;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-table-dropindicator-circle-border-color: Highlight;
+    --spectrum-table-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-table-row-badge-text-color: HighlightText;
+    --spectrum-table-row-badge-background-color: Highlight;
+  }
 }

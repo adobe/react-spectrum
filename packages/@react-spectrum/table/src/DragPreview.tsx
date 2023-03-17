@@ -90,6 +90,7 @@ export function DragPreview(props: DragPreviewProps<unknown>) {
           'spectrum-Table-row',
           classNames(
             stylesOverrides,
+            'react-spectrum-Table-row',
             'react-spectrum-Table-row-dragPreview',
             {'react-spectrum-Table-row-dragPreview--multiple': isDraggingMultiple},
             `react-spectrum-Table-row-dragPreview--${density}`
