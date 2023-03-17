@@ -105,6 +105,15 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     &:disabled {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
+      & span[aria-hidden] {
+        background: var(--border-color-disabled);
+      }
+
+      .react-aria-SelectValue {
+        &[data-placeholder] {
+          color: var(--text-color-disabled);
+        }
+      }
     }
   }
 
