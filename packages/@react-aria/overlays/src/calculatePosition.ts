@@ -340,7 +340,7 @@ export function calculatePositionInternal(
 
   let arrowPosition: Position = {};
 
-  // All coords are transformed so that (0, 0) is at the top left of the overlay
+  // All values are transformed so that 0 is at the top/left of the overlay depending on the orientation
   // Prefer the arrow being in the center of the trigger/overlay anchor element
   let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - overlaySize[crossAxis];
 
@@ -349,6 +349,7 @@ export function calculatePositionInternal(
   const arrowMaxPosition = overlaySize[crossSize] - (arrowCrossSize / 2);
 
   if (preferredArrowPosition < arrowMinPosition || preferredArrowPosition > arrowMaxPosition) {
+    // Prefer the arrow being in the center of the overlay if placing it in the center of the button would mean it doesn't also overlap the overlay
     preferredArrowPosition = overlaySize[crossSize] / 2;
   }
 

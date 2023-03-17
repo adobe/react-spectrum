@@ -62,8 +62,9 @@ describe('useOverlayPosition', function () {
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
+    // Arrow should be placed in the center of the button aka trigger left + trigger width / 2 - overlay left.
     expect(arrow).toHaveStyle(`
-      left: 94px;
+      left: 48px;
     `);
   });
 
@@ -82,7 +83,7 @@ describe('useOverlayPosition', function () {
 
     expect(overlay).toHaveTextContent('placement: top');
     expect(arrow).toHaveStyle(`
-      left: 94px;
+      left: 48px;
     `);
   });
 
@@ -263,7 +264,7 @@ describe('useOverlayPosition with positioned container', () => {
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 94px;
+      left: 48px;
     `);
   });
 
@@ -285,7 +286,7 @@ describe('useOverlayPosition with positioned container', () => {
 
     expect(overlay).toHaveTextContent('placement: top');
     expect(arrow).toHaveStyle(`
-      left: 94px;
+      left: 48px;
     `);
   });
 });
