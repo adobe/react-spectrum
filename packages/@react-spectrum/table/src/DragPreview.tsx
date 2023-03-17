@@ -35,7 +35,6 @@ interface TableCellPreviewProps {
 
 export function TableCellPreview(props: TableCellPreviewProps) {
   let {cell} = props;
-  let {align} = cell.column.props;
 
   return (
     <div
@@ -45,12 +44,7 @@ export function TableCellPreview(props: TableCellPreviewProps) {
             'spectrum-Table-cell',
             classNames(
               stylesOverrides,
-              'react-spectrum-Table-cell',
-              {
-                'react-spectrum-Table-cell--alignStart': align === 'start',
-                'react-spectrum-Table-cell--alignCenter': align === 'center',
-                'react-spectrum-Table-cell--alignEnd': align === 'end'
-              }
+              'react-spectrum-Table-cell'
             )
           )
         }>
