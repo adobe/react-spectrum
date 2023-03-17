@@ -1,0 +1,605 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import i18nDocs from 'docs:@internationalized/date';
+import statelyDocs from 'docs:@react-stately/calendar';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '/packages/@react-aria/calendar/docs/calendar-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+
+---
+category: Date and Time
+keywords: [input, form, field, date, time]
+type: component
+after_version: 1.0.0
+---
+
+# Calendar
+
+<PageDescription>{docs.exports.Calendar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Calendar']} />
+
+## Example
+
+```tsx example
+import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+
+<Calendar aria-label="Appointment date">
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <CalendarGrid>
+    {date => <CalendarCell date={date} />}
+  </CalendarGrid>
+</Calendar>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Calendar {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --button-background: var(--spectrum-global-color-gray-50);
+  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
+  --button-border: var(--spectrum-global-color-gray-400);
+  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --pressed-color: var(--spectrum-global-color-gray-200);
+  --unavailable-color: var(--spectrum-global-color-red-600);
+  --invalid-color: var(--spectrum-global-color-static-red-600);
+
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-color);
+
+  & header {
+    display: flex;
+    align-items: center;
+    margin: 0 4px .5rem 4px;
+
+    .react-aria-Heading {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: 1.375rem;
+    }
+
+    .react-aria-Button {
+      background: var(--button-background);
+      border: 1px solid var(--button-border);
+      color: var(--text-color);
+      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+      border-radius: 4px;
+      appearance: none;
+      vertical-align: middle;
+      font-size: 1rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      text-align: center;
+      margin: 0;
+      outline: none;
+
+      &[data-focus-visible] {
+        border-color: var(--highlight-background);
+        box-shadow: 0 0 0 1px var(--highlight-background);
+      }
+
+      &[data-pressed] {
+        background: var(--button-backgound-pressed);
+      }
+
+      &:disabled {
+        border-color: var(--button-border-disabled);
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+
+  .react-aria-CalendarCell {
+    width: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    border-radius: 6px;
+    cursor: default;
+    outline: none;
+    border: 2px solid var(--spectrum-alias-background-color-default);
+    margin: -1px;
+
+    &[data-outside-month] {
+      display: none;
+    }
+
+    &[data-pressed] {
+      background: var(--pressed-color);
+    }
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px var(--highlight-background);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--unavailable-color);
+    }
+
+    &[aria-invalid] {
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
+    }
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--text-color-invalid);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Calendar {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --button-border: ButtonBorder;
+    --button-border-disabled: GrayText;
+    --button-background: ButtonFace;
+    --button-backgound-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --text-color-invalid: LinkText;
+    --unavailable-color: GrayText;
+    --invalid-color: LinkText;
+    --pressed-color: Canvas;
+    --spectrum-alias-background-color-default: Canvas;
+  }
+}
+```
+
+</details>
+
+## Features
+
+There is no standalone calendar element in HTML. `<input type="date">` is close, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `Calendar` helps achieve accessible and international calendar components that can be styled as needed.
+
+* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
+* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
+* **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `Calendar`.
+
+## Anatomy
+
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
+
+A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
+
+`Calendar` also supports an optional error message element, which can be used to provide more context about any validation errors. This is linked with the calendar via the `aria-describedby` attribute.
+
+Note that much of this anatomy is shared with [range calendars](RangeCalendar.html). If you have both, the styling and internal components such as `CalendarCell` can be shared.
+
+### Concepts
+
+`Calendar` makes use of the following concepts:
+
+* [@internationalized/date](../internationalized/date/index.html)
+
+### Composed components
+
+A `Calendar` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Props
+
+### Calendar
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />
+
+### Heading
+
+A `<Heading>` accepts all HTML attributes.
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `Calendar`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### CalendarGrid
+
+A `<CalendarGrid>` renders an individual month within a `<Calendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGrid} links={docs.links} />
+
+</details>
+
+### CalendarCell
+
+A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarCell} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Calendar {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<CalendarGrid className="my-calendar-grid">
+  {/* ... */}
+</CalendarGrid>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+
+```css
+.react-aria-CalendarCell[data-selected] {
+  /* ... */
+}
+
+.react-aria-CalendarCell[aria-invalid] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<CalendarCell className={({isSelected}) => isSelected ? 'bg-blue-600' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could add an additional element when a date is unavailable.
+
+```jsx
+<CalendarCell>
+  {({formattedDate, isUnavailable}) => (
+    <>
+      {isUnavailable && <UnavailableIcon />}
+      <span>{formattedDate}</span>
+    </>
+  )}
+</CalendarCell>
+```
+
+The states, selectors, and render props for each component used in a `Calendar` are documented below.
+
+### Calendar
+
+A `Calendar` can be targeted with the `.react-aria-Calendar` CSS selector, or by overriding with a custom `className`. It provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.CalendarState} /> object to its render props, which can be used to customize the `className`, `style`, or `children`.
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### CalendarGrid
+
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`.
+
+### CalendarCell
+
+A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
+
+### Text
+
+The error message element within a `Calendar` can be targeted with the `[slot=errorMessage]` CSS selector, or by adding a custom `className`.
+
+## Multi-month
+
+Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `Calendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
+
+```tsx example
+<Calendar aria-label="Appointment date" visibleDuration={{months: 2}}>
+  <header>
+    <Button slot="previous">◀</Button>
+    <Heading />
+    <Button slot="next">▶</Button>
+  </header>
+  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
+    <CalendarGrid>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+    <CalendarGrid offset={{months: 1}}>
+      {date => <CalendarCell date={date} />}
+    </CalendarGrid>
+  </div>
+</Calendar>
+```
+
+## Reusable wrappers
+
+If you will use a Calendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example also shows how to use the `errorMessage` slot to render help text in case of a validation error ([see below for details](#error-message)).
+
+```tsx example export=true
+import {Text} from 'react-aria-components';
+
+function MyCalendar({errorMessage, ...props}) {
+  return (
+    <Calendar {...props}>
+      <header>
+        <Button slot="previous">◀</Button>
+        <Heading />
+        <Button slot="next">▶</Button>
+      </header>
+      <CalendarGrid>
+        {date => <CalendarCell date={date} />}
+      </CalendarGrid>
+      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+    </Calendar>
+  );
+}
+
+<MyCalendar aria-label="Event date" />
+```
+
+## Usage
+
+The following examples show how to use the `MyCalendar` component created in the above example.
+
+### Value
+
+A `Calendar` has no selection by default. An initial, uncontrolled value can be provided to the `Calendar` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns.
+
+`Calendar` supports values with both date and time components, but only allows users to modify the date. By default, `Calendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+
+  return (
+    <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
+      <MyCalendar
+        aria-label="Date (uncontrolled)"
+        defaultValue={parseDate('2020-02-03')} />
+      <MyCalendar
+        aria-label="Date (controlled)"
+        value={value}
+        onChange={setValue} />
+    </div>
+  );
+}
+```
+
+### Events
+
+`Calendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('2022-07-04'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <MyCalendar aria-label="Event date" value={date} onChange={setDate} />
+      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+    </>
+  );
+}
+```
+
+### International calendars
+
+`Calendar` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `Calendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {I18nProvider} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(null);
+  return (
+    <I18nProvider locale="hi-IN-u-ca-indian">
+      <MyCalendar aria-label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </I18nProvider>
+  );
+}
+```
+
+### Validation
+
+By default, `Calendar` allows selecting any date. The `minValue` and `maxValue` props can also be used to prevent the user from selecting dates outside a certain range.
+
+This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
+```
+
+### Unavailable dates
+
+`Calendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+
+This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
+
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+
+  return <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
+}
+```
+
+### Controlling the focused date
+
+By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `Calendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
+
+This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+function Example() {
+  let defaultDate = new CalendarDate(2021, 7, 1);
+  let [focusedDate, setFocusedDate] = React.useState(defaultDate);
+
+  return (
+    <div style={{flexDirection: 'column', alignItems: 'start', gap: 20}}>
+      <button onClick={() => setFocusedDate(defaultDate)}>Reset focused date</button>
+      <MyCalendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
+    </div>
+  );
+}
+```
+
+### Disabled
+
+The `isDisabled` boolean prop makes the Calendar disabled. Cells cannot be focused or selected.
+
+```tsx example
+<MyCalendar aria-label="Event date" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the Calendar remains focusable.
+
+```tsx example
+<MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Error message
+
+`Calendar` tries to avoid allowing the user to select invalid dates in the first place (see [Validation](#validation) and [Unavailable dates](#unavailable-dates) above). However, if according to application logic a selected date is invalid, the `validationState` prop can be set to `"invalid"`. This alerts assistive technology users that the selection is invalid, and can be used for styling purposes as well. In addition, the `errorMessage` slot may be used to help the user fix the issue.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+
+function Example() {
+  let [date, setDate] = React.useState(today(getLocalTimeZone()));
+  let {locale} = useLocale();
+  let isInvalid = isWeekend(date, locale);
+
+  return (
+    <MyCalendar
+      aria-label="Appointment date"
+      value={date}
+      onChange={setDate}
+      validationState={isInvalid ? 'invalid' : 'valid'}
+      errorMessage={isInvalid ? 'We are closed on weekends' : null} />
+  );
+}
+```
+
+### Labeling
+
+An aria-label must be provided to the `Calendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a `Calendar`, a localized string should be passed to the `aria-label` prop. For languages that are read right-to-left (e.g. Hebrew and Arabic), keyboard navigation is automatically flipped. Ensure that your CSS accounts for this as well. Dates are automatically formatted using the current locale.
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `Calendar`, such as `CalendarGrid` or `CalendarCell`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyCalendarCell(props) {
+  return <CalendarCell {...props} className="my-item" />
+}
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useCalendar](useCalendar.html) for more details.

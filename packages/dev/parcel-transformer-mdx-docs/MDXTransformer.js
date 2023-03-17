@@ -17,6 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
+const lightningcss = require('lightningcss');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -129,19 +130,35 @@ module.exports = new Transformer({
           }
 
           if (node.lang === 'css') {
+            if (node.meta && node.meta.includes('render=false')) {
+              return responsiveCode(node);
+            }
+
+            let transformed = lightningcss.transform({
+              filename: asset.filePath,
+              code: Buffer.from(node.value),
+              minify: true,
+              drafts: {
+                nesting: true
+              },
+              targets: {
+                chrome: 95 << 16,
+                safari: 15 << 16
+              }
+            });
+            let css = transformed.code.toString();
             return [
               ...responsiveCode(node),
               {
                 type: 'mdxJsxFlowElement',
                 name: 'style',
-                children: [],
                 attributes: [
                   {
                     type: 'mdxJsxAttribute',
                     name: 'dangerouslySetInnerHTML',
                     value: {
                       type: 'mdxJsxAttributeValueExpression',
-                      value: JSON.stringify({__html: node.value}),
+                      value: JSON.stringify({__html: css}),
                       data: {
                         estree: {
                           type: 'Program',
@@ -158,7 +175,7 @@ module.exports = new Transformer({
                                 },
                                 value: {
                                   type: 'Literal',
-                                  value: node.value
+                                  value: css
                                 }
                               }]
                             }
@@ -167,7 +184,8 @@ module.exports = new Transformer({
                       }
                     }
                   }
-                ]
+                ],
+                children: []
               }
             ];
           }
@@ -183,6 +201,7 @@ module.exports = new Transformer({
     let title = '';
     let navigationTitle;
     let category = '';
+    let type = '';
     let keywords = [];
     let description = '';
     let date = '';
@@ -262,6 +281,7 @@ module.exports = new Transformer({
           author = yamlData.author || '';
           order = yamlData.order;
           hidden = yamlData.hidden;
+          type = yamlData.type || '';
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -423,6 +443,7 @@ module.exports = new Transformer({
     asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
+    asset.meta.type = type;
     asset.isBundleSplittable = false;
 
     // Generate the client bundle. We always need the client script,
@@ -636,12 +657,13 @@ function formatCode(node, code, printWidth = 80, force = false) {
     return node.value;
   }
 
-  let res = dprint.format('example.tsx', node.value, {
+  let res = dprint.format('example.' + node.lang, node.value, {
     quoteStyle: 'preferSingle',
     'jsx.quoteStyle': 'preferDouble',
     trailingCommas: 'never',
     lineWidth: printWidth,
-    'importDeclaration.spaceSurroundingNamedImports': false
+    'importDeclaration.spaceSurroundingNamedImports': false,
+    'importDeclaration.forceSingleLine': printWidth >= 80
   });
 
   return res.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, (str, contents) =>
