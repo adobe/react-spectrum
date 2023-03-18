@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {FormEventHandler, ReactElement} from 'react';
 
-export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'> {
+export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
   /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the Form elements are displayed with their quiet style. */

@@ -65,6 +65,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     mergeProps(props, {
       label: stringFormatter.format('columnResizer'),
       isDisabled: isEmpty,
+      shouldResizeOnFocus: true,
       onResizeStart: () => {
         if (getInteractionModality() === 'pointer') {
           if (layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key)) {

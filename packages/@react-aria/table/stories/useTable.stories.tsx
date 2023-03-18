@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize, SpectrumTableProps} from '@react-types/table';
+import {Table as DocsTable} from './example-docs';
 import {Meta, Story} from '@storybook/react';
 import React, {Key, useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
@@ -244,3 +245,73 @@ export const TableWithSomeResizingFRsControlled = {
   column width state.
   `}}
 };
+
+export const DocExample = {
+  args: {},
+  render: (args) => (
+    <DocsTable
+      aria-label="Table with always visible resizers"
+      onResizeStart={action('onResizeStart')}
+      onResize={action('onResize')}
+      onResizeEnd={action('onResizeEnd')}
+      {...args}>
+      <TableHeader columns={columns}>
+        {column => (
+          <Column allowsResizing key={column.uid}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  )
+};
+
+export const DocExampleControlled = {
+  args: {columns: columnsFR},
+  render: (args) => (
+    <ControlledDocsTable {...args} />
+  )
+};
+
+function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+  let {columns, ...otherProps} = props;
+  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
+    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
+    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
+    _setWidths(newVals);
+  }, [columns]);
+
+  // Needed to get past column caching so new sizes actually are rendered
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
+  return (
+    <DocsTable
+      aria-label="Table with selection"
+      selectionMode="multiple"
+      onResize={setWidths}
+      {...otherProps}>
+      <TableHeader columns={cols}>
+        {column => (
+          <Column allowsResizing key={column.uid} width={widths.get(column.uid)}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody items={defaultRows}>
+        {item => (
+          <Row>
+            {columnKey => <Cell>{item[columnKey]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </DocsTable>
+  );
+}
