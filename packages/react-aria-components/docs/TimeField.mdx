@@ -301,9 +301,16 @@ If you will use a TimeField in multiple places in your app, you can wrap all of 
 This example wraps `TimeField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {TimeFieldProps, TimeValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyTimeField({label, description, errorMessage, ...props}) {
+interface MyTimeFieldProps<T extends TimeValue> extends TimeFieldProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyTimeField<T extends TimeValue>({label, description, errorMessage, ...props}: MyTimeFieldProps<T>) {
   return (
     <TimeField {...props}>
       <Label>{label}</Label>
@@ -387,7 +394,6 @@ import {parseAbsoluteToLocal} from '@internationalized/date';
 `TimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `TimeField` allows editing the time components while keeping the date fixed.
 
 ```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
 import {useDateFormatter} from '@react-aria/i18n';
 
 function Example() {
@@ -397,7 +403,7 @@ function Example() {
   return (
     <>
       <MyTimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date and time: {formatter.format(date.toDate())}</p>
     </>
   );
 }

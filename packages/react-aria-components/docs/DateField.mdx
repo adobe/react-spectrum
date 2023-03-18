@@ -308,9 +308,16 @@ If you will use a DateField in multiple places in your app, you can wrap all of 
 This example wraps `DateField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {DateFieldProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyDateField({label, description, errorMessage, ...props}) {
+interface MyDateFieldProps<T extends DateValue> extends DateFieldProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyDateField<T extends DateValue>({label, description, errorMessage, ...props}: MyDateFieldProps<T>) {
   return (
     <DateField {...props}>
       <Label>{label}</Label>
@@ -464,7 +471,7 @@ The below example displays a `DateField` in the Hindi language, using the Indian
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [date, setDate] = React.useState(null);
+  let [date, setDate] = React.useState<DateValue>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDateField label="Date" value={date} onChange={setDate} />

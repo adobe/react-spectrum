@@ -11,20 +11,17 @@
  */
 
 
-import {AriaMenuProps, MenuTriggerProps as BaseMenuTriggerProps} from '@react-types/menu';
+import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardContext} from './Keyboard';
-import {Node} from '@react-types/shared';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 const InternalMenuContext = createContext<TreeState<unknown>>(null);
@@ -121,7 +118,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-const _Menu = forwardRef(Menu);
+const _Menu = (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
@@ -180,15 +177,16 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;
-  let focusVisible = states.isFocused && isFocusVisible();
+  let {isFocusVisible, focusProps} = useFocusRing();
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {
       ...states,
       isHovered: states.isFocused,
-      isFocusVisible: focusVisible,
+      isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
     }
@@ -196,12 +194,12 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
 
   return (
     <div
-      {...menuItemProps}
+      {...mergeProps(menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={focusVisible || undefined}
+      data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}>
       <Provider
         values={[

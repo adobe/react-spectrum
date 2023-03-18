@@ -699,9 +699,16 @@ If you will use a DateRangePicker in multiple places in your app, you can wrap a
 This example wraps `DateRangePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {DateRangePickerProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyDateRangePicker({label, description, errorMessage, ...props}) {
+interface MyDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyDateRangePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDateRangePickerProps<T>) {
   return (
     <DateRangePicker {...props}>
       <Label>{label}</Label>
@@ -892,10 +899,11 @@ Selected dates passed to `onChange` always use the same calendar system as the `
 The below example displays a `DateRangePicker` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
+import type {DateRange} from 'react-aria-components';
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [range, setRange] = React.useState(null);
+  let [range, setRange] = React.useState<DateRange>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDateRangePicker label="Date range" value={range} onChange={setRange} />
@@ -933,8 +941,8 @@ Note that by default, users may not select non-contiguous ranges, i.e. ranges th
 This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `validationState` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
 
 ```tsx example
+import type {DateRange} from 'react-aria-components';
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -944,9 +952,8 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-  let [value, setValue] = React.useState(null);
+  let [value, setValue] = React.useState<DateRange>(null);
   let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
 
   return (
@@ -969,6 +976,7 @@ This example prevents selecting weekends, but allows selecting ranges that span 
 
 ```tsx example
 import {isWeekend} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let {locale} = useLocale();

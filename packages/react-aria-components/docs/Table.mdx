@@ -494,7 +494,9 @@ If you will use a Table in multiple places in your app, you can wrap all of the 
 The following example includes a custom Column component with a sort indicator. It displays an upwards facing arrow when the column is sorted in the ascending direction, and a downward facing arrow otherwise.
 
 ```tsx example export=true render=false
-function MyColumn(props) {
+import type {ColumnProps} from 'react-aria-components';
+
+function MyColumn<T extends object>(props: ColumnProps<T>) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -513,9 +515,10 @@ function MyColumn(props) {
 The TableHeader and Row components can also be wrapped to automatically include checkboxes for selection, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
+import type {TableHeaderProps, RowProps} from 'react-aria-components';
 import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
 
-function MyTableHeader({columns, children}) {
+function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
 
   return (
@@ -528,7 +531,7 @@ function MyTableHeader({columns, children}) {
   );
 }
 
-function MyRow({id, columns, children}) {
+function MyRow<T extends object>({id, columns, children}: RowProps<T>) {
   let {selectionBehavior} = useTableOptions();
 
   return (
@@ -741,7 +744,7 @@ and a long press enters into selection mode, which temporarily swaps the selecti
 and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+<div style={{display: 'flex', flexWrap: 'wrap', gap: '24px'}}>
   <PokemonTable
     aria-label="Pokemon table with row actions and toggle selection behavior"
     ///- begin highlight -///
@@ -773,8 +776,15 @@ See the docs for more information on how to perform server side sorting.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
 function AsyncSortTable() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal}) {
       let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
       let json = await res.json();
@@ -878,7 +888,14 @@ Nested columns can also be defined dynamically using the function syntax and the
 The following example is the same as the example above, but defined dynamically.
 
 ```tsx example
-let columns = [
+interface ColumnDefinition {
+  name: string,
+  key: string,
+  children?: ColumnDefinition[],
+  isRowHeader?: boolean
+}
+
+let columns: ColumnDefinition[] = [
   {name: 'Name', key: 'name', children: [
     {name: 'First Name', key: 'first', isRowHeader: true},
     {name: 'Last Name', key: 'last', isRowHeader: true}

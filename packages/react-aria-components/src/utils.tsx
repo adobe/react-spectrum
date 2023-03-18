@@ -12,7 +12,14 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+
+// Override forwardRef types so generics work.
+declare function forwardRef<T, P = {}>(
+  render: (props: P, ref: React.Ref<T>) => React.ReactElement | null
+): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+
+export type forwardRefType = typeof forwardRef;
 
 export const slotCallbackSymbol = Symbol('callback');
 
@@ -206,12 +213,13 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
       if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
+            element.removeEventListener('animationend', onAnimationEnd);
             onEnd();
           }
         };
 
         let element = ref.current;
-        element.addEventListener('animationend', onAnimationEnd, {once: true});
+        element.addEventListener('animationend', onAnimationEnd);
         return () => {
           element.removeEventListener('animationend', onAnimationEnd);
         };
@@ -221,3 +229,5 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     }
   }, [ref, isActive, onEnd]);
 }
+
+export const HiddenContext = createContext<boolean>(false);

@@ -251,7 +251,7 @@ function Example() {
         <Item key="egg">Egg Salad</Item>
         <Item key="ham">Ham</Item>
       </ListBox>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
   );
 }
