@@ -183,7 +183,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   --background-color: var(--page-background);
   --border-color: var(--spectrum-global-color-gray-400);
 
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
   background: var(--background-color);
@@ -227,12 +227,6 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
     --separator-color: ButtonBorder;
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
-  }
-
-  .react-aria-Popover {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
   }
 }
 ```
@@ -593,7 +587,7 @@ function Example() {
         <Item id='tools'>Tools</Item>
         <Item id='console'>Console</Item>
       </MyMenuButton>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
   );
 }
