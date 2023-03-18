@@ -104,7 +104,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
           placement: 'bottom start',
           preserveChildren: true,
           isNonModal: true,
-          style: {'--combobox-width': menuWidth} as React.CSSProperties
+          style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}],
         [TextContext, {

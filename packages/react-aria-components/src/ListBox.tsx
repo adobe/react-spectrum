@@ -12,10 +12,9 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import {isFocusVisible} from '@react-aria/interactions';
-import {ListState, Node, OverlayTriggerState, SelectionBehavior, useListState} from 'react-stately';
+import {ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -26,7 +25,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {
-  state?: ListState<T> & OverlayTriggerState
+  state?: ListState<T>
 }
 
 interface InternalListBoxContextValue {
@@ -40,9 +39,10 @@ const InternalListBoxContext = createContext<InternalListBoxContextValue>(null);
 function ListBox<T>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
   let state = (props as ListBoxContextValue<T>).state;
+  let isHidden = useContext(HiddenContext);
 
   if (state) {
-    return state.isOpen ? <ListBoxInner state={state} props={props} listBoxRef={ref} /> : null;
+    return isHidden ? null : <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
 
   return <ListBoxPortal props={props} listBoxRef={ref} />;
@@ -171,7 +171,6 @@ function Option<T>({item}: OptionProps<T>) {
   }
 
   let props: ItemProps<T> = item.props;
-  let focusVisible = states.isFocused && isFocusVisible();
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -180,7 +179,6 @@ function Option<T>({item}: OptionProps<T>) {
     values: {
       ...states,
       isHovered,
-      isFocusVisible: focusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
     }
@@ -193,7 +191,7 @@ function Option<T>({item}: OptionProps<T>) {
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={focusVisible || undefined}
+      data-focus-visible={states.isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}>
       <Provider
         values={[
