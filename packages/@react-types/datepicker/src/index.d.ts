@@ -34,7 +34,7 @@ type MappedDateValue<T> =
   never;
 
 export type Granularity = 'day' | 'hour' | 'minute' | 'second';
-interface DatePickerBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
+interface DateFieldBase<T extends DateValue> extends InputBase, Validation, FocusableProps, LabelableProps, HelpTextProps, OverlayTriggerProps {
   /** The minimum allowed date that a user may select. */
   minValue?: DateValue,
   /** The maximum allowed date that a user may select. */
@@ -54,10 +54,15 @@ interface DatePickerBase<T extends DateValue> extends InputBase, Validation, Foc
   hideTimeZone?: boolean
 }
 
+interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
+export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T, MappedDateValue<T>> {}
+export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T> {}
+
+interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {}
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T, MappedDateValue<T>> {}
-export interface AriaDatePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DatePickerProps<T> {}
+export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T> {}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {
@@ -70,7 +75,7 @@ export interface DateRangePickerProps<T extends DateValue> extends DatePickerBas
 
 export interface AriaDateRangePickerProps<T extends DateValue> extends AriaDatePickerBaseProps<T>, DateRangePickerProps<T> {}
 
-interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBaseProps<T>, SpectrumLabelableProps, StyleProps {
+interface SpectrumDateFieldBase extends SpectrumLabelableProps, HelpTextProps, StyleProps {
   /**
    * Whether the date picker should be displayed with a quiet style.
    * @default false
@@ -80,7 +85,10 @@ interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBase
    * Whether to show the localized date format as help text below the field.
    * @default false
    */
-  showFormatHelpText?: boolean,
+  showFormatHelpText?: boolean
+}
+
+interface SpectrumDatePickerBase extends SpectrumDateFieldBase, SpectrumLabelableProps, StyleProps {
   /**
    * The maximum number of months to display at once in the calendar popover, if screen space permits.
    * @default 1
@@ -93,9 +101,9 @@ interface SpectrumDatePickerBase<T extends DateValue> extends AriaDatePickerBase
   shouldFlip?: boolean
 }
 
-export interface SpectrumDatePickerProps<T extends DateValue> extends DatePickerProps<T>, SpectrumDatePickerBase<T> {}
-export interface SpectrumDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, SpectrumDatePickerBase<T> {}
-export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<SpectrumDatePickerProps<T>, 'maxVisibleMonths'> {}
+export interface SpectrumDatePickerProps<T extends DateValue> extends AriaDatePickerProps<T>, SpectrumDatePickerBase {}
+export interface SpectrumDateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T>, SpectrumDatePickerBase {}
+export interface SpectrumDateFieldProps<T extends DateValue> extends AriaDateFieldProps<T>, SpectrumDateFieldBase {}
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
 type MappedTimeValue<T> =

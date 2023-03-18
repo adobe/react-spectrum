@@ -82,7 +82,7 @@ import {useColorFieldState} from '@react-stately/color';
 
 function ColorField(props) {
   let state = useColorFieldState(props);
-  let inputRef = React.useRef();
+  let inputRef = React.useRef(null);
   let {
     labelProps,
     inputProps

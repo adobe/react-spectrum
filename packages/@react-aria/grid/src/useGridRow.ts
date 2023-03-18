@@ -15,7 +15,7 @@ import {GridCollection} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {RefObject} from 'react';
-import {useSelectableItem} from '@react-aria/selection';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {
   /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
@@ -32,7 +32,7 @@ export interface GridRowProps<T> {
   onAction?: () => void
 }
 
-export interface GridRowAria {
+export interface GridRowAria extends SelectableItemStates {
   /** Props for the grid row element. */
   rowProps: DOMAttributes,
   /** Whether the row is currently in a pressed state. */
@@ -53,7 +53,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   } = props;
 
   let {actions: {onRowAction}} = gridMap.get(state);
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -68,6 +68,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
   let rowProps: DOMAttributes = {
     role: 'row',
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
+    'aria-disabled': states.isDisabled || undefined,
     ...itemProps
   };
 
@@ -77,6 +78,6 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
 
   return {
     rowProps,
-    isPressed
+    ...states
   };
 }

@@ -103,7 +103,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let optionProps = {
     role: 'option',
-    'aria-disabled': isDisabled,
+    'aria-disabled': isDisabled || undefined,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined
   };
 
