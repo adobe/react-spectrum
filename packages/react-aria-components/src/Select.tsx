@@ -89,7 +89,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           triggerRef: buttonRef,
           preserveChildren: true,
           placement: 'bottom start',
-          style: {'--button-width': buttonWidth} as React.CSSProperties
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}],
         [TextContext, {

@@ -118,20 +118,13 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 .react-aria-ListBox {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
   max-height: inherit;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  width: var(--combobox-width);
-  box-sizing: border-box;
+  outline: none;
 
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
@@ -186,6 +179,19 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       font-size: small;
     }
   }
+}
+
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
+  width: var(--trigger-width);
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
 }
 
 @media (forced-colors: active) {
@@ -425,11 +431,11 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM.
 
-The `--combobox-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
+The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
 
 ```css render=false
 .react-aria-Popover {
-  width: var(--combobox-width);
+  width: var(--trigger-width);
 }
 ```
 

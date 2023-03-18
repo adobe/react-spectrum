@@ -225,7 +225,7 @@ describe('ListBox', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let option = getAllByRole('option')[0];
-    
+
     expect(option).not.toHaveAttribute('data-focus-visible');
     expect(option).not.toHaveClass('focus');
 
@@ -234,7 +234,8 @@ describe('ListBox', () => {
     expect(option).toHaveAttribute('data-focus-visible', 'true');
     expect(option).toHaveClass('focus');
 
-    userEvent.type(option, '{ArrowDown}');
+    fireEvent.keyDown(option, {key: 'ArrowDown'});
+    fireEvent.keyUp(option, {key: 'ArrowDown'});
     expect(option).not.toHaveAttribute('data-focus-visible');
     expect(option).not.toHaveClass('focus');
   });

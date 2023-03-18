@@ -152,8 +152,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 .react-aria-ListBox {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
@@ -221,8 +219,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   --background-color: var(--page-background);
   --border-color: var(--spectrum-global-color-gray-400);
 
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  min-width: var(--button-width);
+  border: 1px solid var(--border-color);
+  min-width: var(--trigger-width);
   max-width: 250px;
   box-sizing: border-box;
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -506,7 +504,7 @@ A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, o
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
 
-The `--button-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
+The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
 ```css render=false
 .react-aria-Popover {
