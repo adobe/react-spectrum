@@ -22,9 +22,10 @@ declare function forwardRef<T, P = {}>(
 export type forwardRefType = typeof forwardRef;
 
 export const slotCallbackSymbol = Symbol('callback');
+export const defaultSlot = Symbol('default');
 
 interface SlottedValue<T> {
-  slots?: Record<string, T>,
+  slots?: Record<string | symbol, T>,
   [slotCallbackSymbol]?: (value: T) => void
 }
 
@@ -118,14 +119,15 @@ export interface SlotProps {
 export function useContextProps<T, U, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
   let ctx = useContext(context) || {};
   if ('slots' in ctx) {
-    if (!props.slot) {
+    if (!props.slot && !ctx.slots[defaultSlot]) {
       throw new Error('A slot prop is required');
     }
-    if (!ctx.slots[props.slot]) {
+    let slot = props.slot || defaultSlot;
+    if (!ctx.slots[slot]) {
       // @ts-ignore
       throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
     }
-    ctx = ctx.slots[props.slot];
+    ctx = ctx.slots[slot];
   }
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;

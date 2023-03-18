@@ -14,6 +14,7 @@ import {createPortal} from 'react-dom';
 import {DOMProps, RenderProps, useContextProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
 import React, {cloneElement, createContext, Key, ReactElement, ReactNode, ReactPortal, useCallback, useMemo} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -176,6 +177,10 @@ class BaseNode<T> {
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
+    if (referenceNode == null) {
+      return this.appendChild(newNode);
+    }
+
     if (newNode.parentNode) {
       newNode.parentNode.removeChild(newNode);
     }
@@ -305,7 +310,6 @@ export class ElementNode<T> extends BaseNode<T> {
       }
       node.key = value.id;
     }
-    this.ownerDocument.queueUpdate(this);
   }
 
   get style() {
@@ -504,6 +508,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
       this.mutatedNodes.add(element);
       element.node = node;
     }
+    this.dirtyNodes.add(element);
     return node;
   }
 
@@ -520,14 +525,13 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       collection.addNode(element.node);
-      this.mutatedNodes.add(element);
 
       for (let child of element) {
         this.addNode(child);
       }
     }
 
-    this.queueUpdate(element);
+    this.dirtyNodes.add(element);
   }
 
   removeNode(node: ElementNode<T>) {
@@ -537,13 +541,13 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
 
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
-    this.queueUpdate(node);
+    this.dirtyNodes.add(node);
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode) {
+      if (element instanceof ElementNode && element.parentNode) {
         element.updateNode();
       }
     }
@@ -553,7 +557,9 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     if (this.mutatedNodes.size) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
-        collection.addNode(element.node);
+        if (element.parentNode) {
+          collection.addNode(element.node);
+        }
       }
 
       collection.commit(this.firstChild?.node.key, this.lastChild?.node.key);
@@ -564,9 +570,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
     return this.collection;
   }
 
-  // node is used in subclasses.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  queueUpdate(node: ElementNode<T>) {
+  queueUpdate() {
     for (let fn of this.subscriptions) {
       fn();
     }
@@ -636,6 +640,13 @@ export function useCollection<T extends object, C extends BaseCollection<T>>(pro
   let collection = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   let children = useCachedChildren(props);
   let portal = createPortal(children, document as unknown as Element);
+
+  useLayoutEffect(() => {
+    if (document.dirtyNodes.size > 0) {
+      document.queueUpdate();
+    }
+  });
+
   return {portal, collection};
 }
 
@@ -674,7 +685,25 @@ export interface ItemRenderProps {
   /** The type of selection that is allowed in the collection. */
   selectionMode: SelectionMode,
   /** The selection behavior for the collection. */
-  selectionBehavior: SelectionBehavior
+  selectionBehavior: SelectionBehavior,
+  /**
+   * Whether the item allows dragging.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [draggable]
+   */
+  allowsDragging?: boolean,
+  /**
+   * Whether the item is currently being dragged.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [data-dragging]
+   */
+  isDragging?: boolean,
+  /**
+   * Whether the item is currently an active drop target.
+   * @note This property is only available in collection components that support drag and drop.
+   * @selector [data-drop-target]
+   */
+  isDropTarget?: boolean
 }
 
 export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps> {
