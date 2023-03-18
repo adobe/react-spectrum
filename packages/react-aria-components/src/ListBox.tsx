@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, DraggableItemResult, DroppableCollectionResult, DroppableItemResult, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
-import {AriaListBoxProps} from '@react-types/listbox';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DroppableCollectionResult, DroppableItemResult, ListKeyboardDelegate, mergeProps, useHover, useListBox, useListBoxSection, useOption} from 'react-aria';
 import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, OverlayTriggerState, useListState} from 'react-stately';
+import {DraggableCollectionState, DroppableCollectionState, ListState, Node, OverlayTriggerState, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import {ListKeyboardDelegate} from '@react-aria/selection';
-import {Node, SelectionBehavior} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -87,7 +84,7 @@ function ListBoxPortal({props, listBoxRef}) {
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
-const _ListBox = forwardRef(ListBox);
+const _ListBox = (forwardRef as forwardRefType)(ListBox);
 export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {
@@ -293,6 +290,7 @@ function Option<T>({item}: OptionProps<T>) {
   let isDragging = dragState && dragState.isDragging(item.key);
   let renderProps = useRenderProps({
     ...props,
+    id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Item',
     values: {

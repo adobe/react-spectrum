@@ -260,7 +260,9 @@ If you will use a Checkbox in multiple places in your app, you can wrap all of t
 This example wraps `Checkbox` and all of its children together into a single component. It also shows how to use render props to conditionally render a different indicator icon when the checkbox is in an indeterminate state.
 
 ```tsx example export=true
-function MyCheckbox({children, ...props}) {
+import type {CheckboxProps} from 'react-aria-components';
+
+function MyCheckbox({children, ...props}: CheckboxProps) {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => <>

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Node, Orientation} from '@react-types/shared';
-import {AriaTabListProps, AriaTabPanelProps, mergeProps, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
+import {AriaLabelingProps} from '@react-types/shared';
+import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
-import {ContextValue, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {Node, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
 import {useObjectRef} from '@react-aria/utils';
-import {useTabListState} from 'react-stately';
 
 export interface TabsProps extends RenderProps<TabsRenderProps>, SlotProps {
   /**
@@ -112,7 +112,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   return (
-    <div 
+    <div
       {...renderProps}
       ref={ref}
       slot={props.slot}
@@ -180,7 +180,7 @@ function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTM
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-const _TabList = forwardRef(TabList);
+const _TabList = (forwardRef as forwardRefType)(TabList);
 export {_TabList as TabList};
 
 /**
@@ -215,7 +215,7 @@ function TabInner({item, state}) {
   });
 
   return (
-    <div 
+    <div
       {...mergeProps(tabProps, focusProps, hoverProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined}
@@ -267,7 +267,7 @@ function SelectedTabPanel({item}: {item: Node<object>}) {
   });
 
   return (
-    <div 
+    <div
       {...mergeProps(tabPanelProps, focusProps, renderProps)}
       ref={ref}
       data-focus-visible={isFocusVisible || undefined} />

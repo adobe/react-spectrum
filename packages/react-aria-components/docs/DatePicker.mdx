@@ -664,9 +664,16 @@ If you will use a DatePicker in multiple places in your app, you can wrap all of
 This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
 
 ```tsx example export=true
+import type {DatePickerProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyDatePicker({label, description, errorMessage, ...props}) {
+interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
   return (
     <DatePicker {...props}>
       <Label>{label}</Label>
@@ -838,7 +845,7 @@ The below example displays a `DatePicker` in the Hindi language, using the India
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [date, setDate] = React.useState(null);
+  let [date, setDate] = React.useState<DateValue>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDatePicker label="Date" value={date} onChange={setDate} />
@@ -909,8 +916,8 @@ function Example() {
       value={date}
       onChange={setDate}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select a weekday'}
-      errorMessage={isInvalid ? 'We are closed on weekends' : null} />
+      description={isInvalid ? undefined : 'Select a weekday'}
+      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
   );
 }
 ```

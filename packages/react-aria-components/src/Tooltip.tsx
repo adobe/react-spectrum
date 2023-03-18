@@ -12,10 +12,9 @@
 
 import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 import {FocusableProvider} from '@react-aria/focus';
-import {mergeProps, OverlayContainer, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
+import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {mergeRefs, useObjectRef} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
-import {PlacementAxis, PositionProps} from '@react-types/overlays';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {RenderProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
@@ -61,7 +60,7 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   let state = useTooltipTriggerState(props);
   let ref = useRef();
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
-    
+
   return (
     <InternalTooltipContext.Provider value={{state, triggerRef: ref, tooltipProps}}>
       <FocusableProvider {...triggerProps} ref={ref}>
@@ -78,7 +77,7 @@ function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   if (!state.isOpen && !isExiting) {
     return null;
   }
-  
+
   return (
     <OverlayContainer>
       <TooltipInner {...props} tooltipRef={objectRef} isExiting={isExiting} />
@@ -115,12 +114,12 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: For
       isExiting: props.isExiting
     }
   });
-  
+
   props = mergeProps(props, overlayProps);
   let {tooltipProps} = useTooltip(props, state);
-    
+
   return (
-    <div 
+    <div
       {...mergeProps(triggerTooltipProps, tooltipProps)}
       ref={mergeRefs(overlayRef, props.tooltipRef)}
       {...renderProps}

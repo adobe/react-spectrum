@@ -23,7 +23,12 @@ export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
+interface DialogRenderProps {
+  close: () => void
+}
+
 export interface DialogProps extends AriaDialogProps, DOMProps, SlotProps {
+  children?: ReactNode | ((opts: DialogRenderProps) => ReactNode),
   onClose?: () => void
 }
 
@@ -34,7 +39,7 @@ export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement
  */
 export function DialogTrigger(props: DialogTriggerProps) {
   let state = useOverlayTriggerState(props);
-  
+
   let buttonRef = useRef();
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
 
@@ -55,14 +60,14 @@ export function DialogTrigger(props: DialogTriggerProps) {
 function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog(props, ref);
-  
+
   let children = props.children;
   if (typeof children === 'function') {
     children = children({
       close: props.onClose
     });
   }
-  
+
   return (
     <section
       {...filterDOMProps(props)}

@@ -25,7 +25,7 @@ try {
 } catch (err) {}
 fs.mkdirSync(distDir, {recursive: true});
 
-for (let file of glob.sync('packages/@react-{spectrum,aria,stately}/*/docs/*.mdx')) {
+for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/*.mdx')) {
   console.log(`Extracting ${file}...`);
   let contents = fs.readFileSync(file);
   let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);

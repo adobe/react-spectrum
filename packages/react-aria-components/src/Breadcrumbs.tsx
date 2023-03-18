@@ -11,7 +11,7 @@
  */
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {CollectionProps, useCollection} from './Collection';
-import {ContextValue, Provider, SlotProps, StyleProps, useContextProps} from './utils';
+import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
@@ -55,7 +55,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
 /**
  * Breadcrumbs display a heirarchy of links to the current page or resource in an application.
  */
-const _Breadcrumbs = forwardRef(Breadcrumbs);
+const _Breadcrumbs = (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
 function BreadcrumbItem({node, isCurrent, isDisabled}) {

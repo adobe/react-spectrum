@@ -1,16 +1,16 @@
-import {AriaLabelingProps, DisabledBehavior, DOMProps, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
+import {AriaLabelingProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection} from './Collection';
-import {buildHeaderRows} from '@react-stately/table/src/TableCollection';
+import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useRenderProps} from './utils';
+import {ContextValue, DOMProps, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, TableState, useTableState} from 'react-stately';
 import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import React, {createContext, ForwardedRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
@@ -155,6 +155,7 @@ interface InternalTableContextValue {
   dropState?: DroppableCollectionState
 }
 
+export const TableContext = createContext<ContextValue<TableProps<any>, HTMLTableElement>>(null);
 const InternalTableContext = createContext<InternalTableContextValue>(null);
 
 export interface TableRenderProps {
@@ -184,11 +185,8 @@ export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, Co
   dragAndDropHooks?: DragAndDropHooks
 }
 
-/**
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
- */
-export function Table<T extends object>(props: TableProps<T>) {
+function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTableElement>) {
+  [props, ref] = useContextProps(props, ref, TableContext);
   let initialCollection = useMemo(() => new TableCollection<T>(), []);
   let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
@@ -197,7 +195,6 @@ export function Table<T extends object>(props: TableProps<T>) {
     children: null
   });
 
-  let ref = useRef();
   let {gridProps} = useTable(props, state, ref);
 
   let {dragAndDropHooks} = props;
@@ -296,6 +293,13 @@ export function Table<T extends object>(props: TableProps<T>) {
   );
 }
 
+/**
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
+ */
+const _Table = (forwardRef as forwardRefType)(Table);
+export {_Table as Table};
+
 export interface TableOptionsContextValue {
   /** The type of selection that is allowed in the table. */
   selectionMode: SelectionMode,
@@ -364,7 +368,7 @@ export interface ColumnRenderProps {
   sortDirection: SortDirection | null
 }
 
-export interface ColumnProps<T> extends RenderProps<ColumnRenderProps> {
+export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
   id?: Key,
   /** Rendered contents of the column if `children` contains child columns. */
   title?: ReactNode,
