@@ -17,7 +17,7 @@ import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProp
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, OverlayTriggerState, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {isFocusVisible} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -40,7 +40,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children'>, 
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => ReactNode
 }
 
 interface ListBoxContextValue<T> extends ListBoxProps<T> {

@@ -685,7 +685,21 @@ To programmatically control row selection, use the `selectedKeys` prop paired wi
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true
-function PokemonTable(props) {
+import type {TableProps, Selection} from 'react-aria-components';
+
+interface Pokemon {
+  id: number,
+  name: string,
+  type: string,
+  level: string
+}
+
+interface PokemonTableProps extends TableProps<Pokemon> {
+  items?: Pokemon[],
+  renderEmptyState?: () => string
+}
+
+function PokemonTable(props: PokemonTableProps) {
   let items = props.items || [
     {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
     {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
@@ -694,7 +708,7 @@ function PokemonTable(props) {
   ];
 
   ///- begin highlight -///
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set());
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
   ///- end highlight -///
 
   return (
@@ -1242,13 +1256,15 @@ function DraggableTable() {
 Dropping on the Table as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the Table, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
 ```tsx example
+import type {TextDropItem} from 'react-aria-components';
+
 function Example() {
   let [items, setItems] = React.useState([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     async onRootDrop(e) {
-      let items = await Promise.all(e.items.map(async (item, i) => (
+      let items = await Promise.all(e.items.map(async (item: TextDropItem) => (
         JSON.parse(await item.getText('pokemon'))
       )));
       setItems(items);
@@ -1322,6 +1338,8 @@ function Example() {
 Dropping between items can be enabled using the `onInsert` event. Table renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
 
 ```tsx example
+import type {TextDropItem} from 'react-aria-components';
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -1335,7 +1353,7 @@ function Example() {
   let { dragAndDropHooks } = useDragAndDrop({
     ///- begin highlight -///
     async onInsert(e) {
-      let items = await Promise.all(e.items.map(async item => {
+      let items = await Promise.all(e.items.map(async (item: TextDropItem) => {
         let {name, type, level} = JSON.parse(await item.getText('pokemon'));
         return {id: Math.random(), name, type, level};
       }));
@@ -1381,7 +1399,7 @@ function Example() {
     // ...
     ///- begin collapse -///
     async onInsert(e) {
-      let items = await Promise.all(e.items.map(async item => {
+      let items = await Promise.all(e.items.map(async (item: TextDropItem) => {
         let {name, type, level} = JSON.parse(await item.getText('pokemon'));
         return {id: Math.random(), name, type, level};
       }));
@@ -1453,6 +1471,8 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.T
 The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
 ```tsx example export=true
+import type {TextDropItem} from 'react-aria-components';
+
 function DroppableTable() {
   let [items, setItems] = React.useState([]);
 
@@ -1461,7 +1481,7 @@ function DroppableTable() {
     acceptedDragTypes: ['pokemon'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('pokemon')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('pokemon')))
       );
       setItems(items);
     }
@@ -1490,6 +1510,8 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
 
 ```tsx example
+import type {FileDropItem} from 'react-aria-components';
+
 function Example() {
   let [items, setItems] = React.useState([]);
 
@@ -1498,7 +1520,7 @@ function Example() {
     acceptedDragTypes: ['image/jpeg', 'image/png'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async item => {
+        e.items.map(async (item: FileDropItem) => {
           let file = await item.getFile();
           return {
             id: Math.random(),
@@ -1559,13 +1581,14 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 
 The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
 
-This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `@react-aria/dnd` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
 
 ```tsx example
+import type {DirectoryDropItem} from 'react-aria-components';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 ///- begin highlight -///
-import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {DIRECTORY_DRAG_TYPE} from 'react-aria-components';
 ///- end highlight -///
 
 function Example() {
@@ -1577,7 +1600,7 @@ function Example() {
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
       let files = [];
-      for await (let entry of e.items[0].getEntries()) {
+      for await (let entry of (e.items[0] as DirectoryDropItem).getEntries()) {
         files.push({
           name: entry.name,
           kind: entry.kind,
@@ -1755,7 +1778,7 @@ function Example() {
     async onRootDrop(e) {
       ///- begin collapse -///
       let items = await Promise.all(
-        e.items.map(async item => {
+        e.items.map(async (item: FileDropItem) => {
           let file = await item.getFile();
           return {
             id: Math.random(),
@@ -1828,7 +1851,20 @@ let onItemDrop = async (e) => {
 This example puts together many of the concepts described above, allowing users to drag items between tables bidirectionally. It also supports reordering items within the same table. When a table is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
 
 ```tsx example
-function DndTable(props) {
+import type {TextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndTableProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndTable(props: DndTableProps) {
   let list = useListData({
     initialItems: props.initialItems
   });
@@ -1864,7 +1900,7 @@ function DndTable(props) {
     // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
       );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
@@ -1876,7 +1912,7 @@ function DndTable(props) {
     // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
       );
       list.append(...processedItems);
     },

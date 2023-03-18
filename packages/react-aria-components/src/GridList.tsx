@@ -17,7 +17,7 @@ import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRen
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -39,7 +39,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => ReactNode
 }
 
 interface InternalGridListContextValue {

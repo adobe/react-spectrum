@@ -3,7 +3,7 @@ import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererCo
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, DOMProps, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -166,7 +166,7 @@ export interface TableRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TableRenderProps>, SlotProps, DOMProps, AriaLabelingProps {
+export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
   /**
    * How multiple selection should behave in the collection.
    * @default "toggle"
@@ -407,7 +407,7 @@ export interface TableBodyRenderProps {
 
 export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: () => JSX.Element
+  renderEmptyState?: () => ReactNode
 }
 
 /**

@@ -812,7 +812,7 @@ function DraggableListBox() {
     /*- begin highlight -*/
     getItems(keys) {
       return [...keys].map(key => {
-        let item = items.get(key);
+        let item = items.get(key as string);
         return {
           'text/plain': item.name,
           'text/html': `<${item.style}>${item.name}</${item.style}>`,
@@ -825,7 +825,7 @@ function DraggableListBox() {
 
   return (
     <ListBox aria-label="Draggable list" selectionMode="multiple" items={items} dragAndDropHooks={dragAndDropHooks}>
-      {([id, item]) => <Item id={id} textValue={item.name}><item.style>{item.name}</item.style></Item>}
+      {([id, item]) => <Item id={id} textValue={item.name}>{React.createElement(item.style, null, item.name)}</Item>}
     </ListBox>
   );
 }
@@ -849,7 +849,7 @@ function Example() {
     /*- begin highlight -*/
     async onRootDrop(e) {
       let items = await Promise.all(e.items.map(async (item, i) => {
-        let name = await item.getText('text/plain');
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
         return {id: i, name};
       }));
       setItems(items);
@@ -926,6 +926,8 @@ function Example() {
 Dropping between items can be enabled using the `onInsert` event. ListBox renders a <TypeLink links={docs.links} type={docs.exports.DropIndicator} /> between items to indicate the insertion position, which can be styled using the `.react-aria-DropIndicator` selector. When it is active, it receives the `[data-drop-target]` state.
 
 ```tsx example
+import type {TextDropItem} from 'react-aria-components';
+
 function Example() {
   let list = useListData({
     initialItems: [
@@ -939,7 +941,7 @@ function Example() {
     ///- begin highlight -///
     async onInsert(e) {
       let items = await Promise.all(e.items.map(async item => {
-        let name = await item.getText('text/plain');
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
         return {id: Math.random(), name};
       }));
 
@@ -987,7 +989,7 @@ function Example() {
     ///- begin collapse -///
     async onInsert(e) {
       let items = await Promise.all(e.items.map(async item => {
-        let name = await item.getText('text/plain');
+        let name = item.kind === 'text' ? await item.getText('text/plain') : item.name;
         return {id: Math.random(), name};
       }));
 
@@ -1057,6 +1059,8 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.T
 The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
 ```tsx example export=true
+import type {TextDropItem} from 'react-aria-components';
+
 function DroppableListBox() {
   let [items, setItems] = React.useState([]);
 
@@ -1065,7 +1069,7 @@ function DroppableListBox() {
     acceptedDragTypes: ['custom-app-type'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
       );
       setItems(items);
     }
@@ -1093,6 +1097,8 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
 
 ```tsx example
+import type {FileDropItem} from 'react-aria-components';
+
 function Example() {
   let [items, setItems] = React.useState([]);
 
@@ -1101,7 +1107,7 @@ function Example() {
     acceptedDragTypes: ['image/jpeg', 'image/png'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async item => ({
+        e.items.map(async (item: FileDropItem) => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1159,13 +1165,14 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 
 The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.FileDropItem.id]} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DirectoryDropItem.id]} />, and you can access the contents of each file as discussed above.
 
-This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `@react-aria/dnd` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
+This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
 
 ```tsx example
+import type {DirectoryDropItem} from 'react-aria-components';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 ///- begin highlight -///
-import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {DIRECTORY_DRAG_TYPE} from 'react-aria-components';
 ///- end highlight -///
 
 function Example() {
@@ -1177,7 +1184,7 @@ function Example() {
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
       let files = [];
-      for await (let entry of e.items[0].getEntries()) {
+      for await (let entry of (e.items[0] as DirectoryDropItem).getEntries()) {
         files.push({
           name: entry.name,
           kind: entry.kind
@@ -1371,7 +1378,7 @@ function Example() {
     async onRootDrop(e) {
       ///- begin collapse -///
       let items = await Promise.all(
-        e.items.map(async item => ({
+        e.items.map(async (item: FileDropItem) => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1429,7 +1436,20 @@ let onItemDrop = async (e) => {
 This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. Items are always moved to avoid duplicate items being added to the same list.
 
 ```tsx example
-function DndListBox(props) {
+import type {TextDropItem} from 'react-aria-components';
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndListBoxProps {
+  initialItems: FileItem[],
+  'aria-label': string
+}
+
+function DndListBox(props: DndListBoxProps) {
   let list = useListData({
     initialItems: props.initialItems
   });
@@ -1465,7 +1485,7 @@ function DndListBox(props) {
     // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
       );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
@@ -1477,7 +1497,7 @@ function DndListBox(props) {
     // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item) => JSON.parse(await item.getText('custom-app-type')))
+        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
       );
       list.append(...processedItems);
     },
