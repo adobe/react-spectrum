@@ -49,7 +49,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     onChange
   );
 
-  let [anchorDate, setAnchorDateState] = useState(null);
+  let [anchorDate, setAnchorDateState] = useState(props.anchorDate || null);
   let alignment: 'center' | 'start' = 'center';
   if (value && value.start && value.end) {
     let start = alignCenter(toCalendarDate(value.start), visibleDuration, locale, minValue, maxValue);
@@ -107,7 +107,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     }
   };
 
-  let highlightedRange = anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
+  let highlightedRange = anchorDate && !props.anchorDate ? makeRange(anchorDate, calendar.focusedDate) : value && makeRange(value.start, value.end);
   let selectDate = (date: CalendarDate) => {
     if (props.isReadOnly) {
       return;
@@ -127,7 +127,7 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
         start: convertValue(range.start, value?.start),
         end: convertValue(range.end, value?.end)
       });
-      setAnchorDate(null);
+      setAnchorDate(props.anchorDate || null);
     }
   };
 
@@ -157,7 +157,9 @@ export function useRangeCalendarState(props: RangeCalendarStateOptions): RangeCa
     highlightedRange,
     validationState,
     selectFocusedDate() {
-      selectDate(calendar.focusedDate);
+      if (!props.anchorDate) {
+        selectDate(calendar.focusedDate);
+      }
     },
     selectDate,
     highlightDate(date) {
