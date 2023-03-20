@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
-import {Cell, Checkbox, Collection, Column, Row, Table, TableBody, TableHeader, useTableOptions} from '../';
+import {Button, Cell, Checkbox, Collection, Column, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -31,10 +31,11 @@ function MyColumn(props) {
 }
 
 function MyTableHeader({columns, children, ...otherProps}) {
-  let {selectionBehavior, selectionMode} = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
     <TableHeader {...otherProps}>
+      {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && (
         <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>
       )}
@@ -46,10 +47,15 @@ function MyTableHeader({columns, children, ...otherProps}) {
 }
 
 function MyRow({id, columns, children, ...otherProps}) {
-  let {selectionBehavior} = useTableOptions();
+  let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
     <Row id={id} {...otherProps}>
+      {allowsDragging && (
+        <Cell>
+          <Button slot="drag">≡</Button>
+        </Cell>
+      )}
       {selectionBehavior === 'toggle' && (
         <Cell>
           <MyCheckbox />
@@ -86,17 +92,17 @@ let TestTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, row
       <MyColumn {...columnProps}>Date Modified</MyColumn>
     </MyTableHeader>
     <TableBody {...tableBodyProps}>
-      <MyRow id="1" {...rowProps}>
+      <MyRow id="1" textValue="Games" {...rowProps}>
         <Cell {...cellProps}>Games</Cell>
         <Cell {...cellProps}>File folder</Cell>
         <Cell {...cellProps}>6/7/2020</Cell>
       </MyRow>
-      <MyRow id="2" {...rowProps}>
+      <MyRow id="2" textValue="Program Files" {...rowProps}>
         <Cell {...cellProps}>Program Files</Cell>
         <Cell {...cellProps}>File folder</Cell>
         <Cell {...cellProps}>4/7/2021</Cell>
       </MyRow>
-      <MyRow id="3" {...rowProps}>
+      <MyRow id="3" textValue="bootmgr" {...rowProps}>
         <Cell {...cellProps}>bootmgr</Cell>
         <Cell {...cellProps}>System file</Cell>
         <Cell {...cellProps}>11/20/2010</Cell>
@@ -104,6 +110,15 @@ let TestTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, row
     </TableBody>
   </Table>
 );
+
+let DraggableTable = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <TestTable tableProps={{dragAndDropHooks}} />;
+};
 
 let columns = [
   {name: 'Name', key: 'name', isRowHeader: true},
@@ -140,6 +155,10 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderTable();
     let table = getByRole('grid');
@@ -508,5 +527,126 @@ describe('Table', () => {
     fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(cells[0]);
+  });
+
+  it('should support empty state', () => {
+    let {getAllByRole, getByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Date Modified</Column>
+        </TableHeader>
+        <TableBody renderEmptyState={() => 'No results'}>
+          {[]}
+        </TableBody>
+      </Table>
+    );
+    let body = getAllByRole('rowgroup')[1];
+    expect(body).toHaveAttribute('data-empty', 'true');
+    let cell = getByRole('gridcell');
+    expect(cell).toHaveTextContent('No results');
+  });
+
+  describe('drag and drop', () => {
+    it('should support drag button slot', () => {
+      let {getAllByRole} = render(<DraggableTable />);
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('aria-label', 'Drag Games');
+    });
+
+    it('should render drop indicators', () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableTable onReorder={onReorder} />);
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Games');
+      expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
+      expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[3]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[3]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Program Files and bootmgr');
+      expect(rows[4]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[4]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[4]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after bootmgr');
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on rows', () => {
+      let onItemDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableTable />
+        <DraggableTable onItemDrop={onItemDrop} />
+      </>);
+
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let grids = getAllByRole('grid');
+      let rows = within(grids[1]).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on Games');
+      expect(rows[0].nextElementSibling).toHaveAttribute('data-drop-target', 'true');
+      expect(within(rows[1]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on Program Files');
+      expect(rows[1].nextElementSibling).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on bootmgr');
+      expect(rows[2].nextElementSibling).not.toHaveAttribute('data-drop-target');
+
+      expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onItemDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on the root', () => {
+      let onRootDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableTable />
+        <DraggableTable onRootDrop={onRootDrop} />
+      </>);
+
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let grids = getAllByRole('grid');
+      let rows = within(grids[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on');
+      expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
+      expect(grids[1]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
   });
 });

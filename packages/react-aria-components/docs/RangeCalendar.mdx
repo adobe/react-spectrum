@@ -402,9 +402,14 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 If you will use a RangeCalendar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
 ```tsx example export=true
+import type {RangeCalendarProps, DateValue} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MyRangeCalendar({errorMessage, ...props}) {
+interface MyRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T> {
+  errorMessage?: string
+}
+
+function MyRangeCalendar<T extends DateValue>({errorMessage, ...props}: MyRangeCalendarProps<T>) {
   return (
     <RangeCalendar {...props}>
       <header>
@@ -536,7 +541,6 @@ This example includes multiple unavailable date ranges, e.g. dates when a rental
 
 ```tsx example
 import {today} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let now = today(getLocalTimeZone());
@@ -546,7 +550,6 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let {locale} = useLocale();
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
 
   return <MyRangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
@@ -561,6 +564,7 @@ This example prevents selecting weekends, but allows selecting ranges that span 
 
 ```tsx example
 import {isWeekend} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
 
 function Example() {
   let {locale} = useLocale();

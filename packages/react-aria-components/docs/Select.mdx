@@ -152,8 +152,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 .react-aria-ListBox {
   --highlight-background: slateblue;
   --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
   --text-color: var(--spectrum-alias-text-color);
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
@@ -221,8 +219,8 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   --background-color: var(--page-background);
   --border-color: var(--spectrum-global-color-gray-400);
 
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  min-width: var(--button-width);
+  border: 1px solid var(--border-color);
+  min-width: var(--trigger-width);
   max-width: 250px;
   box-sizing: border-box;
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -506,7 +504,7 @@ A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, o
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
 
-The `--button-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
+The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
 ```css render=false
 .react-aria-Popover {
@@ -543,9 +541,17 @@ If you will use a Select in multiple places in your app, you can wrap all of the
 This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described [above](#styling).
 
 ```tsx example export=true
+import type {SelectProps, ItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MySelect({label, description, errorMessage, children, ...props}) {
+interface MySelectProps<T extends object> extends SelectProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MySelect<T extends object>({label, description, errorMessage, children, ...props}: MySelectProps<T>) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -564,7 +570,7 @@ function MySelect({label, description, errorMessage, children, ...props}) {
   );
 }
 
-function MyItem(props) {
+function MyItem(props: ItemProps) {
   return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -771,7 +777,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState("Bison");
+  let [animal, setAnimal] = React.useState<React.Key>("Bison");
 
   return (
     <MySelect
@@ -794,8 +800,12 @@ state to the user, or support features like infinite scroll to load more data.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, filterText}) {
       let res = await fetch(
         `https://pokeapi.co/api/v2/pokemon`,
@@ -810,7 +820,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <MySelect label="Pick a Pokemon" items={list.items} selectionMode="single">
+    <MySelect label="Pick a Pokemon" items={list.items}>
       {(item) => <Item id={item.name}>{item.name}</Item>}
     </MySelect>
   );
@@ -876,7 +886,7 @@ The `description` slot can be used to associate additional help text with a Sele
 
 ```tsx example
 function Example() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },

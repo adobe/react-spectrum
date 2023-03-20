@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import {PlacementAxis} from '@react-types/overlays';
+import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 
@@ -48,7 +48,7 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
       placement
     }
   });
-  
+
   return (
     <div
       {...mergeProps(arrowProps, props)}
