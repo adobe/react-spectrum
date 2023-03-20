@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, GridList, GridListContext, Item} from '../';
-import {fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {Button, Checkbox, GridList, GridListContext, Item, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -23,9 +23,28 @@ let TestGridList = ({listBoxProps, itemProps}) => (
   </GridList>
 );
 
+let DraggableGridList = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return (
+    <GridList aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
+      <Item id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</Item>
+      <Item id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</Item>
+      <Item id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</Item>
+    </GridList>
+  );
+};
+
 let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{listBoxProps, itemProps}} />);
 
 describe('GridList', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderGridList();
     let grid = getByRole('grid');
@@ -172,5 +191,118 @@ describe('GridList', () => {
     expect(row).toHaveClass('disabled');
 
     expect(within(row).getByRole('checkbox')).toBeDisabled();
+  });
+
+  it('should support empty state', () => {
+    render(
+      <GridList aria-label="Test" renderEmptyState={() => 'No results'}>
+        {[]}
+      </GridList>
+    );
+    // JSDOM seems to pretend to be WebKit so uses role="group" instead of role="grid".
+    let gridList = document.querySelector('.react-aria-GridList');
+    expect(gridList).toHaveAttribute('data-empty', 'true');
+  });
+
+  describe('drag and drop', () => {
+    it('should support drag button slot', () => {
+      let {getAllByRole} = render(<DraggableGridList />);
+      let button = getAllByRole('button')[0];
+      expect(button).toHaveAttribute('aria-label', 'Drag Cat');
+    });
+
+    it('should render drop indicators', () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} />);
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[3]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[3]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      expect(rows[4]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[4]).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[4]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on rows', () => {
+      let onItemDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableGridList />
+        <DraggableGridList onItemDrop={onItemDrop} />
+      </>);
+
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let grids = getAllByRole('grid');
+      let rows = within(grids[1]).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on Cat');
+      expect(rows[0].nextElementSibling).toHaveAttribute('data-drop-target', 'true');
+      expect(within(rows[1]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on Dog');
+      expect(rows[1].nextElementSibling).not.toHaveAttribute('data-drop-target');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on Kangaroo');
+      expect(rows[2].nextElementSibling).not.toHaveAttribute('data-drop-target');
+
+      expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onItemDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on the root', () => {
+      let onRootDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableGridList />
+        <DraggableGridList onRootDrop={onRootDrop} />
+      </>);
+
+      let button = getAllByRole('button')[0];
+      fireEvent.keyDown(button, {key: 'Enter'});
+      fireEvent.keyUp(button, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let grids = getAllByRole('grid');
+      let rows = within(grids[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Drop on');
+      expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
+      expect(grids[1]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
   });
 });

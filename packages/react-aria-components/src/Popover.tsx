@@ -11,10 +11,10 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, RefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
   /**
@@ -57,7 +57,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
-    return preserveChildren ? props.children as ReactElement : null;
+    return preserveChildren ? <HiddenContext.Provider value>{props.children}</HiddenContext.Provider> : null;
   }
 
   return (

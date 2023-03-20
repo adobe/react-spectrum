@@ -62,18 +62,21 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 ```css
 .react-aria-Popover {
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
+
+  border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--background-color);
   outline: none;
   padding: 30px;
   max-width: 250px;
 
   .react-aria-OverlayArrow svg {
     display: block;
-    fill: var(--page-background);
-    stroke: var(--spectrum-global-color-gray-400);
+    fill: var(--background-color);
+    stroke: var(--border-color);
     stroke-width: 1px;
   }
 
@@ -163,13 +166,8 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 @media (forced-colors: active) {
   .react-aria-Popover {
-    border-color: ButtonBorder;
-    background: Canvas;
-
-    .react-aria-OverlayArrow svg {
-      fill: Canvas;
-      stroke: ButtonBorder;
-    }
+    --background-color: Canvas;
+    --border-color: ButtonBorder;
   }
 }
 ```
