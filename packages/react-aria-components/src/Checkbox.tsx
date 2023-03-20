@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
-import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
+import {CheckboxGroupState, useCheckboxGroupState, useToggleState, ValidationState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
 import {TextContext} from './Text';
-import {ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
 export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children'>, RenderProps<CheckboxRenderProps>, SlotProps {}
@@ -120,7 +119,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   });
 
   return (
-    <div 
+    <div
       {...groupProps}
       {...renderProps}
       ref={ref}
@@ -206,7 +205,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   return (
-    <label 
+    <label
       {...mergeProps(pressProps, hoverProps, renderProps)}
       slot={props.slot}
       data-selected={isSelected || undefined}

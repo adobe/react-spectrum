@@ -129,7 +129,7 @@ describe('Menu', () => {
   it('should support focus ring', () => {
     let {getAllByRole} = renderMenu({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let menuitem = getAllByRole('menuitem')[0];
-    
+
     expect(menuitem).not.toHaveAttribute('data-focus-visible');
     expect(menuitem).not.toHaveClass('focus');
 
@@ -138,7 +138,8 @@ describe('Menu', () => {
     expect(menuitem).toHaveAttribute('data-focus-visible', 'true');
     expect(menuitem).toHaveClass('focus');
 
-    userEvent.type(menuitem, '{ArrowDown}');
+    fireEvent.keyDown(menuitem, {key: 'ArrowDown'});
+    fireEvent.keyUp(menuitem, {key: 'ArrowDown'});
     expect(menuitem).not.toHaveAttribute('data-focus-visible');
     expect(menuitem).not.toHaveClass('focus');
   });
