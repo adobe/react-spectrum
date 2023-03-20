@@ -69,10 +69,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     if (maxRows > 0) {
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
-        let currDomRef: HTMLDivElement | null = domRef.current;
         let currContainerRef: HTMLDivElement | null = containerRef.current;
         let currTagsRef: HTMLDivElement | null = tagsRef.current;
-        if (!currDomRef || !currContainerRef || !currTagsRef) {
+        if (!currContainerRef || !currTagsRef) {
           return;
         }
 
@@ -128,9 +127,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
         yield computeVisibleTagCount();
       });
     }
-  }, [maxRows, setTagState, domRef, direction, state.collection.size]);
+  }, [maxRows, setTagState, direction, state.collection.size]);
 
-  useResizeObserver({ref: domRef, onResize: updateVisibleTagCount});
+  useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updateVisibleTagCount, [children]);
 
