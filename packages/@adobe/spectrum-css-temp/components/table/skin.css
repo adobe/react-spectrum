@@ -180,7 +180,7 @@ tbody.spectrum-Table-body {
   /* Box shadow for bottom border for non-selected rows that aren't immediately above a selected row. Can't omit the bottom border for last row unlike listview
    * due to how table rows always reserve 1px for the bottom border (results in a white gap on hover otherwise).
    */
-  &:after {
+  &:not(tr):after {
     box-shadow: inset 0 -1px 0 0 var(--spectrum-table-cell-border-color);
     content: '';
     display: block;

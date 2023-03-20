@@ -366,7 +366,7 @@ function Example() {
         <Item key='tools'>Tools</Item>
         <Item key='console'>Console</Item>
       </MenuButton>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
   );
 }
