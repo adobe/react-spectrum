@@ -57,7 +57,7 @@ export interface LandmarkControllerOptions {
    * The element from which to start navigating.
    * @default document.activeElement
    */
-  from?: Element
+  from?: FocusableElement
 }
 
 /** A LandmarkController allows programmatic navigation of landmarks. */
@@ -241,13 +241,13 @@ class LandmarkManager implements LandmarkManagerApi {
    * Get the landmark that is the closest parent in the DOM.
    * Returns undefined if no parent is a landmark.
    */
-  private closestLandmark(element: Element) {
+  private closestLandmark(element: FocusableElement) {
     let landmarkMap = new Map(this.landmarks.map(l => [l.ref.current, l]));
     let currentElement = element;
-    while (currentElement && !landmarkMap.has(currentElement as FocusableElement) && currentElement !== document.body && currentElement.parentElement) {
+    while (currentElement && !landmarkMap.has(currentElement) && currentElement !== document.body && currentElement.parentElement) {
       currentElement = currentElement.parentElement;
     }
-    return landmarkMap.get(currentElement as FocusableElement);
+    return landmarkMap.get(currentElement);
   }
 
   /**
@@ -256,7 +256,7 @@ class LandmarkManager implements LandmarkManagerApi {
    * If not inside a landmark, will return first landmark.
    * Returns undefined if there are no landmarks.
    */
-  private getNextLandmark(element: Element, {backward}: {backward?: boolean }) {
+  private getNextLandmark(element: FocusableElement, {backward}: {backward?: boolean }) {
     let currentLandmark = this.closestLandmark(element);
     let nextLandmarkIndex = backward ? this.landmarks.length - 1 : 0;
     if (currentLandmark) {
@@ -333,7 +333,7 @@ class LandmarkManager implements LandmarkManagerApi {
     return false;
   }
 
-  private navigate(from: Element, backward: boolean) {
+  private navigate(from: FocusableElement, backward: boolean) {
     let nextLandmark = this.getNextLandmark(from, {
       backward
     });
@@ -400,16 +400,16 @@ class LandmarkManager implements LandmarkManagerApi {
     instance.setupIfNeeded();
     return {
       navigate(direction, opts) {
-        let element = opts?.from || document!.activeElement;
-        return instance!.navigate(element as Element, direction === 'backward');
+        let element = opts?.from || (document!.activeElement as FocusableElement);
+        return instance!.navigate(element, direction === 'backward');
       },
       focusNext(opts) {
-        let element = opts?.from || document!.activeElement;
-        return instance!.navigate(element as Element, false);
+        let element = opts?.from || (document!.activeElement as FocusableElement);
+        return instance!.navigate(element, false);
       },
       focusPrevious(opts) {
-        let element = opts?.from || document!.activeElement;
-        return instance!.navigate(element as Element, true);
+        let element = opts?.from || (document!.activeElement as FocusableElement);
+        return instance!.navigate(element, true);
       },
       focusMain() {
         return instance!.focusMain();
