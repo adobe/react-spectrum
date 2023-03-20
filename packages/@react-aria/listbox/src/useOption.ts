@@ -95,10 +95,10 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
-  let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data.shouldSelectOnPressUp;
-  let shouldFocusOnHover = props.shouldFocusOnHover ?? data.shouldFocusOnHover;
-  let shouldUseVirtualFocus = props.shouldUseVirtualFocus ?? data.shouldUseVirtualFocus;
-  let isVirtualized = props.isVirtualized ?? data.isVirtualized;
+  let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data?.shouldSelectOnPressUp;
+  let shouldFocusOnHover = props.shouldFocusOnHover ?? data?.shouldFocusOnHover;
+  let shouldUseVirtualFocus = props.shouldUseVirtualFocus ?? data?.shouldUseVirtualFocus;
+  let isVirtualized = props.isVirtualized ?? data?.isVirtualized;
 
   let labelId = useSlotId();
   let descriptionId = useSlotId();
@@ -119,7 +119,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   }
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
+    let index = Number(state.collection.getItem(key).index);
+    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
@@ -132,7 +133,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: data.onAction ? () => data.onAction(key) : undefined
+    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined
   });
 
   let {hoverProps} = useHover({

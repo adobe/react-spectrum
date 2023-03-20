@@ -34,6 +34,8 @@
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@react-aria/a",
+          "./packages/@react-aria/b",
+          "./packages/@react-aria/l",
           "./packages/@react-spectrum/a",
           "./packages/@react-spectrum/b",
           "./packages/@react-spectrum/color",
