@@ -167,7 +167,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     max = Number.MAX_SAFE_INTEGER;
   }
   let value = Math.floor(state.getColumnWidth(item.key));
-  let modality = useInteractionModality();
+  let modality: string = useInteractionModality();
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
