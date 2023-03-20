@@ -1196,8 +1196,7 @@ function ResizableTableRow({item, children, state}) {
   // Same as previous TableRow implementation...
   ///- begin collapse -///
   let ref = useRef();
-  let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps, isPressed} = useTableRow({
+  let {rowProps} = useTableRow({
     node: item
   }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
