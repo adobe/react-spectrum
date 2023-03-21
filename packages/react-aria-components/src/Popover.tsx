@@ -45,15 +45,16 @@ export interface PopoverRenderProps {
 }
 
 interface PopoverContextValue extends PopoverProps {
-  state?: OverlayTriggerState,
-  preserveChildren?: boolean
+  state: OverlayTriggerState,
+  preserveChildren?: boolean,
+  triggerRef: RefObject<Element>
 }
 
 export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, state} = props as PopoverContextValue;
+  let {preserveChildren, state, triggerRef} = props as PopoverContextValue;
   let isExiting = useExitAnimation(ref, state.isOpen);
 
   if (state && !state.isOpen && !isExiting) {
@@ -63,7 +64,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   return (
     <PopoverInner
       {...props}
-      triggerRef={props.triggerRef}
+      triggerRef={triggerRef}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />

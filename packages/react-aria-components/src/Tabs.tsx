@@ -14,7 +14,7 @@ import {AriaLabelingProps} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {CollectionProps, Item, useCollection} from './Collection';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {Node, useTabListState} from 'react-stately';
+import {Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, Key, useContext, useEffect, useState} from 'react';
 import {useObjectRef} from '@react-aria/utils';
 
@@ -95,13 +95,19 @@ export interface TabPanelRenderProps {
   isFocusVisible: boolean
 }
 
+interface InternalTabsContextValue {
+  state: TabListState<unknown> | null,
+  setState: React.Dispatch<React.SetStateAction<TabListState<unknown> | null>>,
+  orientation: Orientation
+}
+
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
-const InternalTabsContext = createContext(null);
+const InternalTabsContext = createContext<InternalTabsContextValue | null>(null);
 
 function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {orientation = 'horizontal'} = props;
-  let [state, setState] = useState(null);
+  let [state, setState] = useState<TabListState<unknown> | null>(null);
 
   let renderProps = useRenderProps({
     ...props,
@@ -131,19 +137,18 @@ const _Tabs = forwardRef(Tabs);
 export {_Tabs as Tabs};
 
 function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let {setState, orientation} = useContext(InternalTabsContext);
+  let {setState, orientation} = useContext(InternalTabsContext)!;
   let objectRef = useObjectRef(ref);
 
   let {portal, collection} = useCollection(props);
   let state = useTabListState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   let {tabListProps} = useTabList({
     ...props,
-    children: null,
     orientation
   }, state, objectRef);
 
@@ -191,9 +196,9 @@ export function Tab(props: TabProps): JSX.Element {
   return Item(props);
 }
 
-function TabInner({item, state}) {
+function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
   let {key} = item;
-  let ref = React.useRef();
+  let ref = React.useRef<HTMLDivElement>(null);
   let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
@@ -231,9 +236,11 @@ export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKey
  * The ids of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
-  const {state} = useContext(InternalTabsContext);
+  const {state} = useContext(InternalTabsContext)!;
   let {portal, collection} = useCollection(props);
-  const selectedItem = collection.getItem(state?.selectedKey);
+  const selectedItem = state?.selectedKey != null
+    ? collection.getItem(state!.selectedKey)
+    : null;
 
   return (
     <>
@@ -251,9 +258,9 @@ export function TabPanel(props: TabPanelProps): JSX.Element {
 }
 
 function SelectedTabPanel({item}: {item: Node<object>}) {
-  const {state} = useContext(InternalTabsContext);
-  let ref = React.useRef();
-  let {tabPanelProps} = useTabPanel(item.props, state, ref);
+  const {state} = useContext(InternalTabsContext)!;
+  let ref = React.useRef<HTMLDivElement>(null);
+  let {tabPanelProps} = useTabPanel(item.props, state!, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
 
   let renderProps = useRenderProps({

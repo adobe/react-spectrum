@@ -906,8 +906,8 @@ function Example() {
     <MySelect
       validationState={isValid ? 'valid' : 'invalid'}
       label="Favorite animal"
-      description={isValid ? 'Pick your favorite animal, you will be judged.' : null}
-      errorMessage={isValid ? null : animalId === 2
+      description={isValid ? 'Pick your favorite animal, you will be judged.' : undefined}
+      errorMessage={isValid ? undefined : animalId === 2
         ? 'The author of this example is a dog person.'
         : "Oh no it's a snake! Choose anything else."}
       items={options}

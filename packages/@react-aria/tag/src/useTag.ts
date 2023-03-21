@@ -73,7 +73,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
-      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null
+      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null,
+      excludeFromTabOrder: true
     },
     labelProps: {
       id: labelId
