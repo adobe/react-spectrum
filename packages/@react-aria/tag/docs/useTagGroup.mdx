@@ -134,7 +134,7 @@ function Tag(props) {
     within: true
   });
 
-  let { clearButtonProps, labelProps, gridCellProps, rowProps } = useTag(
+  let { rowProps, gridCellProps, labelProps, clearButtonProps } = useTag(
     { ...props, isFocused, item, allowsRemoving, onRemove },
     state,
     ref
@@ -284,8 +284,7 @@ The `description` prop can be used to associate additional help text with a tag 
 
 ### Error message
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
-semantically mark the tag group as invalid for assistive technologies.
+The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop.
 
 ```tsx example
 <TagGroup label="Categories" errorMessage="Invalid selection of categories." validationState="invalid">
