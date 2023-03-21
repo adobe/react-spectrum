@@ -98,7 +98,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
-  let isFocused = state.selectionManager.focusedKey === key;
 
   let data = menuData.get(state);
   let onClose = props.onClose || data.onClose;
@@ -116,7 +115,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let keyboardId = useSlotId();
 
   let ariaProps = {
-    'aria-disabled': isDisabled,
+    'aria-disabled': isDisabled || undefined,
     role,
     'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
@@ -174,7 +173,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   };
 
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isFocused} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
     ref,
