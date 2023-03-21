@@ -186,7 +186,7 @@ function computePosition(
   containerOffsetWithBoundary: Offset,
   isContainerPositioned: boolean,
   arrowCrossSize: number,
-  minOverlayArrowOffset: number | undefined
+  minOverlayArrowOffset: number
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
@@ -282,7 +282,7 @@ export function calculatePositionInternal(
   isContainerPositioned: boolean,
   userSetMaxHeight: number | undefined,
   arrowCrossSize: number,
-  minOverlayArrowOffset: number | undefined
+  minOverlayArrowOffset: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
@@ -349,7 +349,6 @@ export function calculatePositionInternal(
   // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowCrossSize / 2 + minOverlayArrowOffset;
   const arrowMaxPosition = overlaySize[crossSize] - (arrowCrossSize / 2) - minOverlayArrowOffset;
-
   if (preferredArrowPosition < arrowMinPosition || preferredArrowPosition > arrowMaxPosition) {
     // Prefer the arrow being in the center of the overlay if placing it in the center of the button would mean it doesn't also overlap the overlay
     preferredArrowPosition = overlaySize[crossSize] / 2;
@@ -390,7 +389,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     crossOffset,
     maxHeight,
     arrowCrossSize,
-    minOverlayArrowOffset
+    minOverlayArrowOffset = 0
   } = opts;
 
   let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
