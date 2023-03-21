@@ -16,7 +16,7 @@ import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, to
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
-export interface TimeFieldStateOptions extends TimePickerProps<TimeValue> {
+export interface TimeFieldStateOptions<T extends TimeValue = TimeValue> extends TimePickerProps<T> {
   /** The locale to display and edit the value according to. */
   locale: string
 }
@@ -26,7 +26,7 @@ export interface TimeFieldStateOptions extends TimePickerProps<TimeValue> {
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeFieldState(props: TimeFieldStateOptions): DateFieldState {
+export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFieldStateOptions<T>): DateFieldState {
   let {
     placeholderValue = new Time(),
     minValue,

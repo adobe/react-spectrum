@@ -427,7 +427,7 @@ export function renderHTMLfromMarkdown(description, opts) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -462,9 +462,9 @@ export function InterfaceType({description, properties: props, typeParameters, s
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
+              {!hideType && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>}
               {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={!hideType ? {'width': '40%'} : undefined}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -479,11 +479,13 @@ export function InterfaceType({description, properties: props, typeParameters, s
                     : null
                   }
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
-                  <code className={typographyStyles['spectrum-Code4']}>
-                    <Type type={prop.value} />
-                  </code>
-                </td>
+                {!hideType && 
+                  <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
+                    <code className={typographyStyles['spectrum-Code4']}>
+                      <Type type={prop.value} />
+                    </code>
+                  </td>
+                }
                 {showDefault &&
                   <td className={`${tableStyles['spectrum-Table-cell']} ${styles.tableCell} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
                     {prop.default

@@ -325,7 +325,7 @@ export class ZonedDateTime {
   public readonly millisecond: number;
   /** The IANA time zone identifier that this date and time is represented in. */
   public readonly timeZone: string;
-  /** The UTC offset for this time, in seconds. */
+  /** The UTC offset for this time, in milliseconds. */
   public readonly offset: number;
 
   constructor(year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
