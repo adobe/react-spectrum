@@ -118,6 +118,27 @@ storiesOf('Textfield', module)
     )}, false)
   );
 
+storiesOf('Languages/Textfield', module)
+  .addParameters({
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      express: false,
+      locales: ['en-US', 'ar-AE', 'fr-FR', 'de-DE'],
+      scales: ['large']
+    }
+  })
+  .add(
+    'diacritics',
+    () => (
+      <Flex gap="size-200" direction="row" wrap>
+        <TextField label="Label" value="value" />
+        <TextField label="رِفِتـــانٍ خانٍِ" value="رِفِتـــانٍ خانٍِ" />
+        <TextField label="Ç" value="Ç" />
+        <TextField label="Äpfel" value="Äpfel" />
+      </Flex>
+    )
+  );
+
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
 function render(props = {}, disabled = true) {
   return (
