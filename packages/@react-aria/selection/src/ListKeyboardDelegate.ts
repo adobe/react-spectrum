@@ -97,7 +97,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     while (item && item.offsetTop > pageY) {
       key = this.getKeyAbove(key);
-      item = this.getItem(key);
+      item = key == null ? null : this.getItem(key);
     }
 
     return key;
@@ -114,7 +114,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     while (item && item.offsetTop < pageY) {
       key = this.getKeyBelow(key);
-      item = this.getItem(key);
+      item = key == null ? null : this.getItem(key);
     }
 
     return key;
