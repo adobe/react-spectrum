@@ -22,15 +22,25 @@ import {TextContext} from './Text';
 
 export interface GridListRenderProps {
   /**
-   * Whether the grid list root is currently the active drop target.
-   * @selector [data-drop-target]
-   */
-  isDropTarget: boolean,
-  /**
    * Whether the list has no items and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the grid list is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the grid list is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the grid list is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps {
@@ -129,13 +139,16 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-GridList',
     values: {
       isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0
+      isEmpty: state.collection.size === 0,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -181,11 +194,13 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
     <div
       {...filterDOMProps(props)}
       {...renderProps}
-      {...mergeProps(gridProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+      {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
       ref={ref}
       slot={props.slot}
       data-drop-target={isRootDropTarget || undefined}
-      data-empty={state.collection.size === 0 || undefined}>
+      data-empty={state.collection.size === 0 || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
       <Provider
         values={[
           [InternalGridListContext, {state, dragAndDropHooks, dragState, dropState}],

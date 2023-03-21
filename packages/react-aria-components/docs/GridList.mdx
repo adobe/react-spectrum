@@ -101,6 +101,11 @@ import {GridList, Item, Button} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Item {
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     border-radius: 6px;
@@ -397,7 +402,9 @@ The states and selectors for each component used in a `GridList` are documented 
 
 ### GridList
 
-A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`.
+A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListRenderProps.properties} />
 
 ### Item
 

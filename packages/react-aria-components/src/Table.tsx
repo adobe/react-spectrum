@@ -160,7 +160,17 @@ const InternalTableContext = createContext<InternalTableContextValue | null>(nul
 
 export interface TableRenderProps {
   /**
-   * Whether the table root is currently the active drop target.
+   * Whether the table is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the table is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the table is currently the active drop target.
    * @selector [data-drop-target]
    */
   isDropTarget: boolean
@@ -253,12 +263,15 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
+  let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-Table',
     values: {
-      isDropTarget: isRootDropTarget
+      isDropTarget: isRootDropTarget,
+      isFocused,
+      isFocusVisible
     }
   });
 
@@ -280,10 +293,12 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
         <table
           {...filterDOMProps(props)}
           {...renderProps}
-          {...mergeProps(gridProps, droppableCollection?.collectionProps)}
+          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot}
-          data-drop-target={isRootDropTarget || undefined}>
+          data-drop-target={isRootDropTarget || undefined}
+          data-focused={isFocused || undefined}
+          data-focus-visible={isFocusVisible || undefined}>
           <TableHeaderRowGroup collection={collection} />
           <TableBodyRowGroup collection={collection} isDroppable={isListDroppable} />
         </table>

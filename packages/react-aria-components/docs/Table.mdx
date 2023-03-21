@@ -101,6 +101,11 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   min-height: 100px;
   align-self: start;
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-TableHeader {
     &:after {
       content: '';
@@ -469,7 +474,9 @@ The states and selectors for each component used in a `Table` are documented bel
 
 ### Table
 
-A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`.
+A `Table` can be targeted with the `.react-aria-Table` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TableRenderProps.properties} />
 
 ### TableHeader
 

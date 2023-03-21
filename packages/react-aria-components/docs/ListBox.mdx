@@ -86,6 +86,11 @@ import {ListBox, Item} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Section:not(:first-child) {
     margin-top: 12px;
   }
@@ -264,7 +269,9 @@ The states and selectors for each component used in a `ListBox` are documented b
 
 ### ListBox
 
-A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
+A `ListBox` can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxRenderProps.properties} />
 
 ### Section
 
