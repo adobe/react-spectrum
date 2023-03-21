@@ -15,6 +15,7 @@ import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContex
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {LinkContext} from './Link';
+import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, Omit<AriaBreadcrumbsProps, 'children'>, StyleProps, SlotProps {
@@ -58,11 +59,17 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
 const _Breadcrumbs = (forwardRef as forwardRefType)(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
 
-function BreadcrumbItem({node, isCurrent, isDisabled}) {
+interface BreadcrumbItemProps {
+  node: Node<object>,
+  isCurrent: boolean,
+  isDisabled?: boolean
+}
+
+function BreadcrumbItem({node, isCurrent, isDisabled}: BreadcrumbItemProps) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
-  let headingProps: HTMLAttributes<HTMLHeadingElement> = isCurrent ? {'aria-current': 'page'} : undefined;
+  let headingProps: HTMLAttributes<HTMLHeadingElement> | null = isCurrent ? {'aria-current': 'page'} : null;
   let linkProps = {
-    'aria-current': isCurrent ? 'page' : undefined,
+    'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent
   };
 

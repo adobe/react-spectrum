@@ -471,7 +471,7 @@ The below example displays a `DateField` in the Hindi language, using the Indian
 import {I18nProvider} from '@react-aria/i18n';
 
 function Example() {
-  let [date, setDate] = React.useState<DateValue>(null);
+  let [date, setDate] = React.useState<DateValue | null>(null);
   return (
     <I18nProvider locale="hi-IN-u-ca-indian">
       <MyDateField label="Date" value={date} onChange={setDate} />
@@ -517,8 +517,8 @@ function Example() {
       value={date}
       onChange={setDate}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select a weekday'}
-      errorMessage={isInvalid ? 'We are closed on weekends' : null} />
+      description={isInvalid ? undefined : 'Select a weekday'}
+      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
   );
 }
 ```

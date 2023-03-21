@@ -11,7 +11,7 @@
  */
 
 import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes} from '@react-types/shared';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
 import {Key, RefObject} from 'react';
@@ -312,6 +312,21 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileDr
 
 function getEntryFile(entry: FileSystemFileEntry): Promise<File> {
   return new Promise((resolve, reject) => entry.file(resolve, reject));
+}
+
+/** Returns whether a drop item contains text data. */
+export function isTextDropItem(dropItem: DropItem): dropItem is TextDropItem {
+  return dropItem.kind === 'text';
+}
+
+/** Returns whether a drop item is a file. */
+export function isFileDropItem(dropItem: DropItem): dropItem is FileDropItem {
+  return dropItem.kind === 'file';
+}
+
+/** Returns whether a drop item is a directory. */
+export function isDirectoryDropItem(dropItem: DropItem): dropItem is DirectoryDropItem {
+  return dropItem.kind === 'directory';
 }
 
 // Global DnD collection state tracker.

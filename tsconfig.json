@@ -61,7 +61,8 @@
           "./packages/@react-types/statuslight",
           "./packages/@react-types/text",
           "./packages/@react-types/view",
-          "./packages/@react-types/well"
+          "./packages/@react-types/well",
+          "./packages/react-aria-components"
         ]
       }
     ]

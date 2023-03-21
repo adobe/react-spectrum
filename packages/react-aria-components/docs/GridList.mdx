@@ -846,7 +846,7 @@ function DraggableGridList() {
     /*- begin highlight -*/
     getItems(keys) {
       return [...keys].map(key => {
-        let item = items.get(key as string);
+        let item = items.get(key as string)!;
         return {
           'text/plain': item.name,
           'text/html': `<${item.style}>${item.name}</${item.style}>`,
@@ -876,8 +876,13 @@ function DraggableGridList() {
 Dropping on the GridList as a whole can be enabled using the `onRootDrop` event. When a valid drag hovers over the GridList, it receives the `isDropTarget` state and can be styled using the `[data-drop-target]` CSS selector.
 
 ```tsx example
+interface Item {
+  id: number,
+  name: string
+}
+
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<Item[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
@@ -1091,17 +1096,25 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.T
 The example below uses the `acceptedDragTypes` prop to accept items that include a custom app-specific type, which is retrieved using the item's `getText` method. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
 ```tsx example export=true
-import type {TextDropItem} from 'react-aria-components';
+import {isTextDropItem} from 'react-aria-components';
+
+interface TextItem {
+  id: string,
+  name: string,
+  style: string
+}
 
 function DroppableGridList() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<TextItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: ['custom-app-type'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       setItems(items);
     }
@@ -1110,7 +1123,7 @@ function DroppableGridList() {
 
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {({name, style: Tag = 'span'}) => <MyItem><Tag>{name}</Tag></MyItem>}
+      {item => <MyItem>{React.createElement(item.style, null, item.name)}</MyItem>}
     </MyGridList>
   );
 }
@@ -1129,17 +1142,23 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL). When the list is empty, you can drop on the whole collection, and otherwise items can be inserted.
 
 ```tsx example
-import type {FileDropItem} from 'react-aria-components';
+import {isFileDropItem} from 'react-aria-components';
+
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
 
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<ImageItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: ['image/jpeg', 'image/png'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items.map(async (item: FileDropItem) => ({
+        e.items.filter(isFileDropItem).map(async item => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1200,23 +1219,28 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example accepts directory drops over the whole collection, and renders the contents as items in the list. `DIRECTORY_DRAG_TYPE` is imported from `react-aria-components` and included in the `acceptedDragTypes` prop to limit the accepted items to only directories.
 
 ```tsx example
-import type {DirectoryDropItem} from 'react-aria-components';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 ///- begin highlight -///
-import {DIRECTORY_DRAG_TYPE} from 'react-aria-components';
+import {DIRECTORY_DRAG_TYPE, isDirectoryDropItem} from 'react-aria-components';
 ///- end highlight -///
 
+interface DirItem {
+  name: string,
+  kind: string
+}
+
 function Example() {
-  let [files, setFiles] = React.useState([]);
+  let [files, setFiles] = React.useState<DirItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
+      let dir = e.items.find(isDirectoryDropItem)!;
       let files = [];
-      for await (let entry of (e.items[0] as DirectoryDropItem).getEntries()) {
+      for await (let entry of dir.getEntries()) {
         files.push({
           name: entry.name,
           kind: entry.kind
@@ -1399,8 +1423,15 @@ The `getDropOperation` function passed to `useDragAndDrop` can be used to provid
 In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
 
 ```tsx example
+///- begin collapse -///
+interface ImageItem {
+  id: number,
+  url: string,
+  name: string
+}
+///- end collapse -///
 function Example() {
-  let [items, setItems] = React.useState([]);
+  let [items, setItems] = React.useState<ImageItem[]>([]);
 
   let { dragAndDropHooks } = useDragAndDrop({
     /*- begin highlight -*/
@@ -1410,7 +1441,7 @@ function Example() {
     async onRootDrop(e) {
       ///- begin collapse -///
       let items = await Promise.all(
-        e.items.map(async (item: FileDropItem) => ({
+        e.items.filter(isFileDropItem).map(async item => ({
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name
@@ -1468,7 +1499,7 @@ let onItemDrop = async (e) => {
 This example puts together many of the concepts described above, allowing users to drag items between lists bidirectionally. It also supports reordering items within the same list. When a list is empty, it accepts drops on the whole collection. `getDropOperation` ensures that items are always moved rather than copied, which avoids duplicate items.
 
 ```tsx example
-import type {TextDropItem} from 'react-aria-components';
+import {isTextDropItem} from 'react-aria-components';
 
 interface FileItem {
   id: string,
@@ -1517,7 +1548,9 @@ function DndGridList(props: DndGridListProps) {
     // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
@@ -1529,7 +1562,9 @@ function DndGridList(props: DndGridListProps) {
     // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
-        e.items.map(async (item: TextDropItem) => JSON.parse(await item.getText('custom-app-type')))
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
       );
       list.append(...processedItems);
     },

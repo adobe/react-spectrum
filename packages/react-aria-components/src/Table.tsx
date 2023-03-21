@@ -3,10 +3,10 @@ import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererCo
 import {buildHeaderRows} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableState} from 'react-stately';
 import {DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
@@ -105,7 +105,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   getKeyAfter(key: Key) {
     let node = this.getItem(key);
     if (node?.type === 'column') {
-      return node.nextKey;
+      return node.nextKey ?? null;
     }
 
     return super.getKeyAfter(key);
@@ -114,15 +114,15 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   getKeyBefore(key: Key) {
     let node = this.getItem(key);
     if (node?.type === 'column') {
-      return node.prevKey;
+      return node.prevKey ?? null;
     }
 
-    key = super.getKeyBefore(key);
-    if (this.getItem(key)?.type === 'tablebody') {
+    let k = super.getKeyBefore(key);
+    if (k != null && this.getItem(k)?.type === 'tablebody') {
       return null;
     }
 
-    return key;
+    return k;
   }
 
   getChildren(key: Key): Iterable<Node<T>> {
@@ -155,8 +155,8 @@ interface InternalTableContextValue {
   dropState?: DroppableCollectionState
 }
 
-export const TableContext = createContext<ContextValue<TableProps<any>, HTMLTableElement>>(null);
-const InternalTableContext = createContext<InternalTableContextValue>(null);
+export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
+const InternalTableContext = createContext<InternalTableContextValue | null>(null);
 
 export interface TableRenderProps {
   /**
@@ -166,7 +166,9 @@ export interface TableRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  children?: ReactNode,
   /**
    * How multiple selection should behave in the collection.
    * @default "toggle"
@@ -185,14 +187,14 @@ export interface TableProps<T> extends Omit<SharedTableProps<T>, 'children'>, Co
   dragAndDropHooks?: DragAndDropHooks
 }
 
-function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTableElement>) {
+function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
-  let initialCollection = useMemo(() => new TableCollection<T>(), []);
+  let initialCollection = useMemo(() => new TableCollection<any>(), []);
   let {portal, collection} = useCollection(props, initialCollection);
   let state = useTableState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   let {gridProps} = useTable(props, state, ref);
@@ -210,28 +212,29 @@ function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTab
     console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
   }
 
-  let dragState: DraggableCollectionState;
-  let dropState: DroppableCollectionState;
-  let droppableCollection: DroppableCollectionResult;
-  let isRootDropTarget: boolean;
-  let dragPreview: JSX.Element;
-  let preview = useRef(null);
+  let dragState: DraggableCollectionState | undefined = undefined;
+  let dropState: DroppableCollectionState | undefined = undefined;
+  let droppableCollection: DroppableCollectionResult | undefined = undefined;
+  let isRootDropTarget = false;
+  let dragPreview: JSX.Element | null = null;
+  let preview = useRef<DragPreviewRenderer>(null);
 
-  if (isListDraggable) {
-    dragState = dragAndDropHooks.useDraggableCollectionState({
+  if (isListDraggable && dragAndDropHooks) {
+    dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
-      preview: dragAndDropHooks.renderDragPreview ? preview : null
+      preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
-    dragAndDropHooks.useDraggableCollection({}, dragState, ref);
+    dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
+    let DragPreview = dragAndDropHooks.DragPreview!;
     dragPreview = dragAndDropHooks.renderDragPreview
-      ? <dragAndDropHooks.DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</dragAndDropHooks.DragPreview>
+      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
       : null;
   }
 
-  if (isListDroppable) {
-    dropState = dragAndDropHooks.useDroppableCollectionState({
+  if (isListDroppable && dragAndDropHooks) {
+    dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
     });
@@ -242,7 +245,7 @@ function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTab
       ref
     );
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
-    droppableCollection = dragAndDropHooks.useDroppableCollection({
+    droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
       dropTargetDelegate
     }, dropState, ref);
@@ -297,7 +300,7 @@ function Table<T extends object>(props: TableProps<T>, ref: ForwardedRef<HTMLTab
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-const _Table = (forwardRef as forwardRefType)(Table);
+const _Table = forwardRef(Table);
 export {_Table as Table};
 
 export interface TableOptionsContextValue {
@@ -311,13 +314,13 @@ export interface TableOptionsContextValue {
   allowsDragging: boolean
 }
 
-const TableOptionsContext = createContext<TableOptionsContextValue>(null);
+const TableOptionsContext = createContext<TableOptionsContextValue | null>(null);
 
 /**
  * Returns options from the parent `<Table>` component.
  */
 export function useTableOptions(): TableOptionsContextValue {
-  return useContext(TableOptionsContext);
+  return useContext(TableOptionsContext)!;
 }
 
 export interface TableHeaderProps<T> {
@@ -365,7 +368,7 @@ export interface ColumnRenderProps {
    * The current sort direction.
    * @selector [aria-sort="ascending | descending"]
    */
-  sortDirection: SortDirection | null
+  sortDirection?: SortDirection
 }
 
 export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
@@ -563,13 +566,13 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
 }
 
 function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef();
-  let {state} = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableRowElement>(null);
+  let {state} = useContext(InternalTableContext)!;
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
   let cells = useCachedChildren({
-    items: state.collection.getChildren(item.key),
+    items: state.collection.getChildren!(item.key),
     children: (item) => {
       switch (item.type) {
         case 'column':
@@ -597,8 +600,8 @@ function TableHeaderRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
-  let ref = useRef();
-  let {state} = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableHeaderCellElement>(null);
+  let {state} = useContext(InternalTableContext)!;
   let {columnHeaderProps} = useTableColumnHeader(
     {node: column},
     state,
@@ -617,8 +620,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       isFocusVisible,
       allowsSorting: column.props.allowsSorting,
       sortDirection: state.sortDescriptor?.column === column.key
-        ? state.sortDescriptor?.direction
-        : null
+        ? state.sortDescriptor.direction
+        : undefined
     }
   });
 
@@ -636,8 +639,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
 }
 
 function TableRow<T>({item}: {item: GridNode<T>}) {
-  let ref = useRef();
-  let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableRowElement>(null);
+  let {state, dragAndDropHooks, dragState, dropState} = useContext(InternalTableContext)!;
   let {rowProps, ...states} = useTableRow(
     {
       node: item,
@@ -656,22 +659,22 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     state
   );
 
-  let draggableItem: DraggableItemResult;
-  if (dragState) {
-    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let draggableItem: DraggableItemResult | undefined = undefined;
+  if (dragState && dragAndDropHooks) {
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
   }
 
-  let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef(null);
+  let dropIndicator: DropIndicatorAria | undefined = undefined;
+  let dropIndicatorRef = useRef<HTMLDivElement>(null);
   let {visuallyHiddenProps} = useVisuallyHidden();
-  if (dropState) {
-    dropIndicator = dragAndDropHooks.useDropIndicator({
+  if (dropState && dragAndDropHooks) {
+    dropIndicator = dragAndDropHooks.useDropIndicator!({
       target: {type: 'item', key: item.key, dropPosition: 'on'}
     }, dropState, dropIndicatorRef);
   }
 
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator || (target => <DropIndicator target={target} />);
-  let dragButtonRef = useRef(null);
+  let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current) {
       console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
@@ -698,8 +701,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
   });
 
   let cells = useCachedChildren({
-    items: state.collection.getChildren(item.key),
-    children: (item: Node<T>) => {
+    items: state.collection.getChildren!(item.key),
+    children: (item: Node<unknown>) => {
       switch (item.type) {
         case 'cell':
           return <TableCell cell={item} />;
@@ -762,8 +765,8 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 }
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
-  let ref = useRef();
-  let {state, dragState} = useContext(InternalTableContext);
+  let ref = useRef<HTMLTableCellElement>(null);
+  let {state, dragState} = useContext(InternalTableContext)!;
 
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
@@ -801,11 +804,11 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
 
 function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext);
-  let buttonRef = useRef(null);
-  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks.useDropIndicator(
+  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let buttonRef = useRef<HTMLDivElement>(null);
+  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
-    dropState,
+    dropState!,
     buttonRef
   );
 
@@ -841,12 +844,12 @@ function TableDropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLEle
 }
 
 function RootDropIndicator() {
-  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext);
-  let ref = useRef();
-  let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({
+  let {state, dragAndDropHooks, dropState} = useContext(InternalTableContext)!;
+  let ref = useRef<HTMLDivElement>(null);
+  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
     target: {type: 'root'}
-  }, dropState, ref);
-  let isDropTarget = dropState.isDropTarget({type: 'root'});
+  }, dropState!, ref);
+  let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
