@@ -16,16 +16,15 @@ import {useMemo} from 'react';
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>) => C;
 
-export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionStateBase<T, C>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
+export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionStateBase<T, C>, factory: CollectionFactory<T, C>, context?: unknown): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let {children, items, collection} = props;
   let result = useMemo(() => {
     if (collection) {
-      return props.collection;
+      return collection;
     }
     let nodes = builder.build({children, items}, context);
     return factory(nodes);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [builder, children, items, collection, context, factory, ...invalidators]);
+  }, [builder, children, items, collection, context, factory]);
   return result;
 }

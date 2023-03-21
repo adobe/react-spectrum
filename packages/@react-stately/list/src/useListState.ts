@@ -49,7 +49,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
   let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
-  let collection = useCollection(props, factory, context, [filter]);
+  let collection = useCollection(props, factory, context);
 
   let selectionManager = useMemo(() =>
     new SelectionManager(collection, selectionState)
