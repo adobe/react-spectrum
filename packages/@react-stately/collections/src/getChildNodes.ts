@@ -11,6 +11,7 @@
  */
 
 import type {Collection, Node} from '@react-types/shared';
+import type {Key} from 'react';
 
 export function getChildNodes<T>(node: Node<T>, collection: Collection<Node<T>>): Iterable<Node<T>> {
   // New API: call collection.getChildren with the node key.
@@ -48,4 +49,37 @@ export function getLastItem<T>(iterable: Iterable<T>): T | undefined {
   }
 
   return lastItem;
+}
+
+export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>, b: Node<T>) {
+  // If the two nodes have the same parent, compare their indices.
+  if (a.parentKey === b.parentKey) {
+    return a.index - b.index;
+  }
+
+  // Otherwise, collect all of the ancestors from each node, and find the first one that doesn't match starting from the root.
+  let aAncestors = getAncestors(collection, a);
+  let bAncestors = getAncestors(collection, b);
+  let firstNonMatchingAncestor = aAncestors.slice(0, bAncestors.length).findIndex((a, i) => a !== bAncestors[i]);
+
+  if (firstNonMatchingAncestor !== -1) {
+    // Compare the indices of two children within the common ancestor.
+    a = aAncestors[firstNonMatchingAncestor];
+    b = bAncestors[firstNonMatchingAncestor];
+    return a.index - b.index;
+  }
+
+  // 🤷
+  return -1;
+}
+
+function getAncestors<T>(collection: Collection<Node<T>>, node: Node<T>): Node<T>[] {
+  let parents = [];
+
+  while (node?.parentKey != null) {
+    node = collection.getItem(node.parentKey);
+    parents.unshift(node);
+  }
+
+  return parents;
 }
