@@ -53,7 +53,11 @@ export interface AriaPositionProps extends PositionProps {
    * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.
    */
-  maxHeight?: number
+  maxHeight?: number,
+  /**
+   * The minimum distance the arrow's edge should be from the edge of the overlay element.
+   */
+  minOverlayArrowOffset?: number
 }
 
 export interface PositionAria {
@@ -90,7 +94,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     shouldUpdatePosition = true,
     isOpen = true,
     onClose,
-    maxHeight
+    maxHeight,
+    minOverlayArrowOffset
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -113,7 +118,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     crossOffset,
     isOpen,
     direction,
-    maxHeight
+    maxHeight,
+    minOverlayArrowOffset
   ];
 
   let updatePosition = useCallback(() => {
@@ -132,7 +138,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowCrossSize
+      arrowCrossSize,
+      minOverlayArrowOffset
     });
 
     // Modify overlay styles directly so positioning happens immediately without the need of a second render

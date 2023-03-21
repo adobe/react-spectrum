@@ -91,13 +91,12 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let borderDiagonal = borderWidth * ROOT_2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
-  let arrowTotalCrossPadding = borderRadius * 2;
-
   let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
     ...props,
     popoverRef: ref,
     maxHeight: null,
-    arrowCrossSize: hideArrow ? 0 : secondary + arrowTotalCrossPadding
+    arrowCrossSize: hideArrow ? 0 : secondary,
+    minOverlayArrowOffset: borderRadius
   }, state);
 
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
