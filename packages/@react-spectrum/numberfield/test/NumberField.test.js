@@ -882,7 +882,7 @@ describe('NumberField', function () {
     textField.setSelectionRange(2, 3);
     userEvent.type(textField, '{backspace}');
     expect(announce).toHaveBeenCalledTimes(2);
-    expect(announce).toHaveBeenLastCalledWith('−$.00', 'assertive');
+    expect(announce).toHaveBeenLastCalledWith('−$0.00', 'assertive');
     textField.setSelectionRange(2, 2);
     typeText(textField, '1');
     expect(announce).toHaveBeenCalledTimes(3);
@@ -902,7 +902,7 @@ describe('NumberField', function () {
     userEvent.type(textField, '{backspace}');
     expect(textField).toHaveAttribute('value', '($18.00');
     expect(announce).toHaveBeenCalledTimes(5);
-    expect(announce).toHaveBeenLastCalledWith('($18.00', 'assertive');
+    expect(announce).toHaveBeenLastCalledWith('$18.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '$18.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
@@ -914,9 +914,8 @@ describe('NumberField', function () {
     expect(announce).toHaveBeenLastCalledWith('Empty', 'assertive');
     typeText(textField, '($32)');
     expect(textField).toHaveAttribute('value', '($32)');
-    expect(announce).toHaveBeenCalledTimes(11);
-    console.log(announce.mock.calls[4]);
-    expect(announce).toHaveBeenLastCalledWith('−$32', 'assertive');
+    expect(announce).toHaveBeenCalledTimes(9);
+    expect(announce).toHaveBeenLastCalledWith('−$32.00', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '($32.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(4);
@@ -932,17 +931,15 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     userEvent.type(textField, '(10)');
     expect(textField).toHaveAttribute('value', '(10)');
-    expect(announce).toHaveBeenCalledTimes(4);
-    expect(announce).toHaveBeenLastCalledWith('−10', 'assertive');
-    expect(announce).toHaveBeenCalledTimes(4);
-    expect(announce).toHaveBeenLastCalledWith('−10', 'assertive');
+    expect(announce).toHaveBeenCalledTimes(3);
+    expect(announce).toHaveBeenLastCalledWith('؜−١٠٫٠٠ US$', 'assertive');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '(US$10.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith(-10);
   });
 
-  it.only.each`
+  it.each`
     Name
     ${'NumberField'}
   `('$Name can edit a currencySign accounting in a locale that does not use the parenthesis notation', () => {

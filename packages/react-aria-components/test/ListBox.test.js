@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Item, ListBox, ListBoxContext, Section, Text} from '../';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -23,9 +23,28 @@ let TestListBox = ({listBoxProps, itemProps}) => (
   </ListBox>
 );
 
+let DraggableListBox = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return (
+    <ListBox aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
+      <Item id="cat">Cat</Item>
+      <Item id="dog">Dog</Item>
+      <Item id="kangaroo">Kangaroo</Item>
+    </ListBox>
+  );
+};
+
 let renderListbox = (listBoxProps, itemProps) => render(<TestListBox {...{listBoxProps, itemProps}} />);
 
 describe('ListBox', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderListbox();
     let listbox = getByRole('listbox');
@@ -294,5 +313,114 @@ describe('ListBox', () => {
 
     expect(option).toHaveAttribute('aria-disabled', 'true');
     expect(option).toHaveClass('disabled');
+  });
+
+  it('should support empty state', () => {
+    let {getByRole} = render(
+      <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
+        {[]}
+      </ListBox>
+    );
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-empty', 'true');
+
+    let option = getByRole('option');
+    expect(option).toHaveTextContent('No results');
+  });
+
+  describe('drag and drop', () => {
+    it('should support draggable items', () => {
+      let {getAllByRole} = render(<DraggableListBox />);
+      let options = getAllByRole('option');
+      expect(options[0]).toHaveAttribute('draggable');
+    });
+
+    it('should render drop indicators', () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} />);
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let rows = getAllByRole('option');
+      expect(rows).toHaveLength(4);
+      expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[1]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[1]).not.toHaveAttribute('data-drop-target');
+      expect(rows[1]).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+      expect(rows[2]).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
+      expect(rows[3]).not.toHaveAttribute('data-drop-target');
+      expect(rows[3]).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[1]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on rows', () => {
+      let onItemDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableListBox />
+        <DraggableListBox onItemDrop={onItemDrop} />
+      </>);
+
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let listboxes = getAllByRole('listbox');
+      let rows = within(listboxes[1]).getAllByRole('option');
+      expect(rows).toHaveLength(3);
+      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[1]).not.toHaveAttribute('data-drop-target');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+
+      expect(document.activeElement).toBe(rows[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onItemDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping on the root', () => {
+      let onRootDrop = jest.fn();
+      let {getAllByRole} = render(<>
+        <DraggableListBox />
+        <DraggableListBox onRootDrop={onRootDrop} />
+      </>);
+
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      let listboxes = getAllByRole('listbox');
+      expect(document.activeElement).toBe(listboxes[1]);
+      expect(listboxes[1]).toHaveAttribute('data-drop-target', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
   });
 });
