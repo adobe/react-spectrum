@@ -31,7 +31,6 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {DraggableCollectionProps, DroppableCollectionProps} from '@react-types/shared';
 import {
   DraggableCollectionState,
@@ -41,6 +40,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {RenderProps} from './utils';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}

@@ -213,7 +213,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   }
 
   let dragState: DraggableCollectionState | undefined = undefined;
-  let dropState: DroppableCollectionState | undefined = undefined
+  let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
   let dragPreview: JSX.Element | null = null;
