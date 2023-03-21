@@ -48,7 +48,7 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {TooltipTrigger, Tooltip} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext} from './useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE} from 'react-aria';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria';
 
 export type {BreadcrumbsProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';

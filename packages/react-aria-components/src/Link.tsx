@@ -66,7 +66,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
     defaultClassName: 'react-aria-Link',
     values: {
       isCurrent: !!props['aria-current'],
-      isDisabled: props.isDisabled,
+      isDisabled: props.isDisabled || false,
       isPressed,
       isHovered,
       isFocused,
@@ -74,7 +74,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
     }
   });
 
-  let element: any = typeof renderProps.children === 'string' 
+  let element: any = typeof renderProps.children === 'string'
     ? <span>{renderProps.children}</span>
     : React.Children.only(renderProps.children);
 
@@ -85,7 +85,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
       children: element.props.children,
       'data-hovered': isHovered || undefined,
       'data-pressed': isPressed || undefined,
-      'data-focus-visible': isFocusVisible || undefined  
+      'data-focus-visible': isFocusVisible || undefined
     }, element.props)
   });
 }

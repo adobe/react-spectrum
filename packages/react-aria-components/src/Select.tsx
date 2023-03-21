@@ -31,7 +31,7 @@ interface SelectValueContext {
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
-const InternalSelectContext = createContext<SelectValueContext>(null);
+const InternalSelectContext = createContext<SelectValueContext | null>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
@@ -44,7 +44,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let state = useSelectState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   // Get props for child elements from useSelect
@@ -60,7 +60,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   } = useSelect({...props, label}, state, buttonRef);
 
   // Make menu width match input + button
-  let [buttonWidth, setButtonWidth] = useState(null);
+  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (buttonRef.current) {
       setButtonWidth(buttonRef.current.offsetWidth + 'px');
@@ -131,7 +131,7 @@ export interface SelectValueRenderProps {
 export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
 function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(InternalSelectContext);
+  let {state, valueProps} = useContext(InternalSelectContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: state.selectedItem?.rendered || 'Select an item',

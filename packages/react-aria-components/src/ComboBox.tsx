@@ -42,14 +42,14 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     defaultFilter: props.defaultFilter || contains,
     ...props,
     items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
-    children: null,
+    children: undefined,
     collection
   });
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-  let listBoxRef = useRef(null);
-  let popoverRef = useRef(null);
+  let listBoxRef = useRef<HTMLDivElement>(null);
+  let popoverRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     buttonProps,
@@ -69,7 +69,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
   state);
 
   // Make menu width match input + button
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (inputRef.current) {
       let buttonRect = buttonRef.current?.getBoundingClientRect();

@@ -46,7 +46,7 @@ export interface RadioGroupRenderProps {
    * The validation state of the radio group.
    * @selector [aria-invalid]
    */
-  validationState: ValidationState
+  validationState: ValidationState | null
 }
 
 export interface RadioRenderProps {
@@ -89,7 +89,7 @@ export interface RadioRenderProps {
     * Whether the radio is valid or invalid.
     * @selector [data-validation-state="valid | invalid"]
     */
-   validationState: ValidationState,
+   validationState: ValidationState | null,
    /**
     * Whether the checkbox is required.
     * @selector [data-required]
@@ -98,7 +98,7 @@ export interface RadioRenderProps {
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
-let InternalRadioContext = createContext<RadioGroupState>(null);
+let InternalRadioContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
@@ -141,7 +141,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
-  let state = React.useContext(InternalRadioContext);
+  let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio(props, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
