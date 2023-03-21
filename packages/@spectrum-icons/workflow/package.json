@@ -22,7 +22,7 @@
     "make-icons": "babel-node --extensions '.cjs,.js' --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
   },
   "dependencies": {
-    "@adobe/react-spectrum-workflow": "2.3.3",
+    "@adobe/react-spectrum-workflow": "2.3.4",
     "@react-spectrum/icon": "^3.7.0",
     "@swc/helpers": "^0.4.14"
   },

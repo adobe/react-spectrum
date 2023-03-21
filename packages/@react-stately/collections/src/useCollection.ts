@@ -10,18 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Node} from '@react-types/shared';
+import {Collection, CollectionBase, CollectionStateBase, Node} from '@react-types/shared';
 import {CollectionBuilder} from './CollectionBuilder';
 import {useMemo} from 'react';
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>) => C;
 
-export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionBase<T>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
+export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionStateBase<T, C>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let {children, items} = props;
+  let {children, items, collection} = props;
   let collection = useMemo(() => {
+    if (collection) {
+      return props.collection;
+    }
     let nodes = builder.build({children, items}, context);
     return factory(nodes);
-  }, [builder, children, items, context, factory, ...invalidators]);
+  }, [builder, children, items, collection, context, factory, ...invalidators]);
   return collection;
 }
