@@ -24,7 +24,7 @@ import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
-const InternalMenuContext = createContext<TreeState<unknown>>(null);
+const InternalMenuContext = createContext<TreeState<unknown> | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -33,7 +33,7 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
 export function MenuTrigger(props: MenuTriggerProps) {
   let state = useMenuTriggerState(props);
 
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({
     ...props,
     type: 'menu'
@@ -76,7 +76,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let state = useTreeState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
   let {menuProps} = useMenu(props, state, ref);
 
@@ -126,14 +126,14 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
-  let state = useContext(InternalMenuContext);
+  let state = useContext(InternalMenuContext)!;
   let {headingProps, groupProps} = useMenuSection({
     heading: section.rendered,
-    'aria-label': section['aria-label']
+    'aria-label': section['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
-    items: state.collection.getChildren(section.key),
+    items: state.collection.getChildren!(section.key),
     children: item => {
       if (item.type !== 'item') {
         throw new Error('Only items are allowed within a section');
@@ -172,8 +172,8 @@ interface MenuItemProps<T> {
 }
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
-  let state = useContext(InternalMenuContext);
-  let ref = useRef();
+  let state = useContext(InternalMenuContext)!;
+  let ref = useRef<HTMLDivElement>(null);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;

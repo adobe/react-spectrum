@@ -528,8 +528,8 @@ function Example() {
       value={value}
       onChange={setValue}
       label="Positive numbers only"
-      description={isValid ? 'Enter a positive number.' : null}
-      errorMessage={isValid ? null : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
+      description={isValid ? 'Enter a positive number.' : undefined}
+      errorMessage={isValid ? undefined : value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'} />
   );
 }
 ```

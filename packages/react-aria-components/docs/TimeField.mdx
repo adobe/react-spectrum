@@ -451,8 +451,8 @@ function Example() {
       value={time}
       onChange={setTime}
       validationState={isInvalid ? 'invalid' : 'valid'}
-      description={isInvalid ? null : 'Select a meeting time'}
-      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : null} />
+      description={isInvalid ? undefined : 'Select a meeting time'}
+      errorMessage={isInvalid ? 'Meetings start every 15 minutes.' : undefined} />
   );
 }
 ```

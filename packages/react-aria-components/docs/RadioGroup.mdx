@@ -397,8 +397,8 @@ function Example() {
       aria-label="Favorite pet"
       onChange={setSelected}
       validationState={isValid ? 'valid' : 'invalid'}
-      description={isValid ? 'Please select a pet.' : null}
-      errorMessage={isValid ? null :
+      description={isValid ? 'Please select a pet.' : undefined}
+      errorMessage={isValid ? undefined :
         selected === 'cats'
           ? 'No cats allowed.'
           : 'Please select dogs.'
