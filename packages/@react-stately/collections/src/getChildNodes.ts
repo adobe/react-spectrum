@@ -11,7 +11,6 @@
  */
 
 import type {Collection, Node} from '@react-types/shared';
-import type {Key} from 'react';
 
 export function getChildNodes<T>(node: Node<T>, collection: Collection<Node<T>>): Iterable<Node<T>> {
   // New API: call collection.getChildren with the node key.
