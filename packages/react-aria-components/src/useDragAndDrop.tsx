@@ -31,7 +31,6 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from 'react-aria';
-import {createContext, ForwardedRef, forwardRef, Key, RefObject, useContext, useMemo} from 'react';
 import {DraggableCollectionProps, DroppableCollectionProps} from '@react-types/shared';
 import {
   DraggableCollectionState,
@@ -41,6 +40,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {RenderProps} from './utils';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
@@ -83,7 +83,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
   renderDragPreview?: (items: DragItem[]) => JSX.Element,
   /**
    * A function that renders a drop indicator element between two items in a collection.
-   * This should render a `<DropIndicator>` element. If this function is not provided, a 
+   * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
@@ -113,8 +113,8 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
 
     let hooks = {} as DragHooks & DropHooks;
     if (isDraggable) {
-      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
-        return useDraggableCollectionState({...props, ...options});
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
+        return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
       };
       hooks.useDraggableCollection = useDraggableCollection;
       hooks.useDraggableItem = useDraggableItem;
@@ -144,7 +144,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
   };
 }
 
-export const DropIndicatorContext = createContext<DropIndicatorContextValue>(null);
+export const DropIndicatorContext = createContext<DropIndicatorContextValue | null>(null);
 
 export interface DropIndicatorRenderProps {
   /**
@@ -157,12 +157,12 @@ export interface DropIndicatorRenderProps {
 export interface DropIndicatorProps extends AriaDropIndicatorProps, RenderProps<DropIndicatorRenderProps> {}
 
 interface DropIndicatorContextValue {
-  render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => JSX.Element
+  render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }
 
 function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
-  let {render} = useContext(DropIndicatorContext);
-  return render(props, ref);
+  let {render} = useContext(DropIndicatorContext)!;
+  return <>{render(props, ref)}</>;
 }
 
 /**

@@ -778,7 +778,7 @@ function ControlledComboBox() {
   // Store ComboBox input value, selected option, open state, and items
   // in a state tracker
   let [fieldState, setFieldState] = React.useState({
-    selectedKey: '',
+    selectedKey: '' as React.Key,
     inputValue: '',
     items: optionList
   });
@@ -789,7 +789,7 @@ function ControlledComboBox() {
 
   // Specify how each of the ComboBox values should change when an
   // option is selected from the list box
-  let onSelectionChange = (key) => {
+  let onSelectionChange = (key: React.Key) => {
     setFieldState(prevState => {
       let selectedItem = prevState.items.find(option => option.id === key);
       return ({
@@ -802,7 +802,7 @@ function ControlledComboBox() {
 
   // Specify how each of the ComboBox values should change when the input
   // field is altered by the user
-  let onInputChange = (value) => {
+  let onInputChange = (value: string) => {
     setFieldState(prevState => ({
       inputValue: value,
       selectedKey: value === '' ? '' : prevState.selectedKey,
@@ -811,7 +811,7 @@ function ControlledComboBox() {
   };
 
   // Show entire list if user opens the menu manually
-  let onOpenChange = (isOpen, menuTrigger) => {
+  let onOpenChange = (isOpen: boolean, menuTrigger?: string) => {
     if (menuTrigger === 'manual' && isOpen) {
       setFieldState(prevState => ({
         inputValue: prevState.inputValue,

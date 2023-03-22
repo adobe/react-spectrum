@@ -38,8 +38,8 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<BaseRangeC
 
 export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>({});
 export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
-const InternalCalendarContext = createContext<CalendarState | RangeCalendarState>(null);
-const InternalCalendarGridContext = createContext<CalendarDate>(null);
+const InternalCalendarContext = createContext<CalendarState | RangeCalendarState | null>(null);
+const InternalCalendarGridContext = createContext<CalendarDate | null>(null);
 
 function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
@@ -257,7 +257,7 @@ export interface CalendarGridProps extends StyleProps {
 }
 
 function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
-  let state = useContext(InternalCalendarContext);
+  let state = useContext(InternalCalendarContext)!;
   let startDate = state.visibleRange.start;
   if (props.offset) {
     startDate = startDate.add(props.offset);
@@ -313,8 +313,8 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> 
 }
 
 function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
-  let state = useContext(InternalCalendarContext);
-  let currentMonth = useContext(InternalCalendarGridContext);
+  let state = useContext(InternalCalendarContext)!;
+  let currentMonth = useContext(InternalCalendarGridContext)!;
   let objectRef = useObjectRef(ref);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
