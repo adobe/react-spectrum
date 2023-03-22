@@ -44,8 +44,10 @@ keywords: [actionbar, selection, actions, collections, toolbar]
 
 ## Example
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
@@ -87,6 +89,8 @@ elements as children, each with a `key` prop. Alternatively, a function that ret
 docs for more details about this API. These `Item` elements are used to populate the buttons in the ActionBar, and follows the [ActionGroup content guidelines](./ActionGroup.html#content) for customization and labeling.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function Example() {
   let barItems = [
     {key: 'edit', label: 'Edit'},
@@ -94,7 +98,7 @@ function Example() {
     {key: 'delete', label: 'Delete'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} maxWidth="size-6000">
@@ -137,8 +141,10 @@ The following example clears row selection within the TableView when the clear b
 action is being taken on the selected rows when the buttons are pressed.
 
 ```tsx example
+import type {Selection} from '@adobe/react-spectrum';
+
 function ActionBarActions(props) {
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
   let rows = [
     {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
     {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
@@ -200,8 +206,10 @@ function ActionBarActions(props) {
 with the rest of the UI, directing a user’s focus to elsewhere in a view.
 
 ```tsx example
-function Example({isEmphasized}) {
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set(['photoshop']));
+import type {Selection} from '@adobe/react-spectrum';
+
+function Example({isEmphasized}: {isEmphasized?: boolean}) {
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['photoshop']));
 
   return (
     <ActionBarContainer height={300} width="size-5000">
