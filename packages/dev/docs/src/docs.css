@@ -365,6 +365,10 @@ footer li:last-child:after {
   margin-bottom: 0;
 }
 
+.propTable td[data-column="CSS Selector"] code {
+  white-space: nowrap;
+}
+
 .type-description {
   margin-top: 0;
 }
@@ -719,6 +723,10 @@ h2.sectionHeader {
   /* Hide the table of contents */
   main {
     margin-right: 0;
+  }
+
+  .propTable td[data-column="CSS Selector"] code {
+    white-space: normal;
   }
 }
 
