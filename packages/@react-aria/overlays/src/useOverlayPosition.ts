@@ -56,6 +56,7 @@ export interface AriaPositionProps extends PositionProps {
   maxHeight?: number,
   /**
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
+  * @default 0
    */
   minOverlayArrowOffset?: number
 }
@@ -95,7 +96,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     isOpen = true,
     onClose,
     maxHeight,
-    minOverlayArrowOffset
+    minOverlayArrowOffset = 0
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},

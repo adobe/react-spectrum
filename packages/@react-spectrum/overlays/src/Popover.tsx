@@ -73,8 +73,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-let ROOT_2 = Math.sqrt(2);
-
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
   let {
     children,
@@ -88,7 +86,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
 
   let {size, borderWidth, arrowRef} = useArrowSize();
   const borderRadius = usePopoverBorderRadius(ref);
-  let borderDiagonal = borderWidth * ROOT_2;
+  let borderDiagonal = borderWidth * Math.SQRT2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
   let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
@@ -184,16 +182,17 @@ function useArrowSize() {
 }
 
 function Arrow(props: ArrowProps) {
-  let halfBorderDiagonal = props.borderDiagonal / 2;
+  let {primary, secondary, isLandscape, arrowProps, borderDiagonal, arrowRef} = props;
+  let halfBorderDiagonal = borderDiagonal / 2;
 
   let primaryStart = 0;
-  let primaryEnd = props.primary - halfBorderDiagonal;
+  let primaryEnd = primary - halfBorderDiagonal;
 
   let secondaryStart = halfBorderDiagonal;
-  let secondaryMiddle = props.secondary / 2;
-  let secondaryEnd = props.secondary - halfBorderDiagonal;
+  let secondaryMiddle = secondary / 2;
+  let secondaryEnd = secondary - halfBorderDiagonal;
 
-  let pathData = props.isLandscape ? [
+  let pathData = isLandscape ? [
     'M', secondaryStart, primaryStart,
     'L', secondaryMiddle, primaryEnd,
     'L', secondaryEnd, primaryStart
@@ -202,16 +201,15 @@ function Arrow(props: ArrowProps) {
     'L', primaryEnd, secondaryMiddle,
     'L', primaryStart, secondaryEnd
   ];
-  let arrowProps = props.arrowProps;
 
   /* use ceil because the svg needs to always accommodate the path inside it */
   return (
     <svg
       xmlns="http://www.w3.org/svg/2000"
-      width={Math.ceil(props.isLandscape ? props.secondary : props.primary)}
-      height={Math.ceil(props.isLandscape ? props.primary : props.secondary)}
+      width={Math.ceil(isLandscape ? secondary : primary)}
+      height={Math.ceil(isLandscape ? primary : secondary)}
       className={classNames(styles, 'spectrum-Popover-tip')}
-      ref={props.arrowRef}
+      ref={arrowRef}
       {...arrowProps}>
       <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
     </svg>
