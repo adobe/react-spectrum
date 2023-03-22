@@ -56,7 +56,7 @@ export interface AriaPositionProps extends PositionProps {
   maxHeight?: number,
   /**
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
-  * @default 0
+   * @default 0
    */
   minOverlayArrowOffset?: number
 }
