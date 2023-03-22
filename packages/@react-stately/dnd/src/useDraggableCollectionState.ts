@@ -98,6 +98,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     preview,
     getAllowedDropOperations,
     startDrag(key, event) {
+      selectionManager.setFocused(false);
       setDragging(true);
       let keys = getKeys(key);
       draggingKeys.current = keys;
