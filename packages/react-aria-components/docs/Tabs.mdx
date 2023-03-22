@@ -303,8 +303,8 @@ When `Tabs` is used with dynamic items as described below, the key of each item 
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
-<Tabs defaultSelectedKey="keyboard">
-  <TabList aria-label="Input settings">
+<Tabs>
+  <TabList aria-label="Input settings" defaultSelectedKey="keyboard">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
     <Tab id="gamepad">Gamepad Settings</Tab>
@@ -323,13 +323,13 @@ Selection can be controlled using the `selectedKey` prop, paired with the `onSel
 
 ```tsx example
 function Example() {
-  let [timePeriod, setTimePeriod] = React.useState('triassic');
+  let [timePeriod, setTimePeriod] = React.useState<React.Key>('triassic');
 
   return (
     <>
       <p>Selected time period: {timePeriod}</p>
-      <Tabs selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
-        <TabList aria-label="Mesozoic time periods">
+      <Tabs>
+        <TabList aria-label="Mesozoic time periods" selectedKey={timePeriod} onSelectionChange={setTimePeriod}>
           <Tab id="triassic">Triassic</Tab>
           <Tab id="jurassic">Jurassic</Tab>
           <Tab id="cretaceous">Cretaceous</Tab>

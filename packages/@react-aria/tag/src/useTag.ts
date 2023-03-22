@@ -60,7 +60,7 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
   let onRemove = chain(props.onRemove, state.onRemove);
 
   let onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
       onRemove(item.key);
       e.preventDefault();
     }
@@ -73,7 +73,8 @@ export function useTag<T>(props: TagProps<T>, state: TagGroupState<T>, ref: RefO
       'aria-label': removeString,
       'aria-labelledby': `${buttonId} ${labelId}`,
       id: buttonId,
-      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null
+      onPress: () => allowsRemoving && onRemove ? onRemove(item.key) : null,
+      excludeFromTabOrder: true
     },
     labelProps: {
       id: labelId

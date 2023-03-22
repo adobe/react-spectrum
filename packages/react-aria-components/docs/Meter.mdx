@@ -194,7 +194,13 @@ If you will use a Meter in multiple places in your app, you can wrap all of the 
 This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
 
 ```tsx example export=true
-function MyMeter({label, ...props}) {
+import type {MeterProps} from 'react-aria-components';
+
+interface MyMeterProps extends MeterProps {
+  label?: string
+}
+
+function MyMeter({label, ...props}: MyMeterProps) {
   return (
     <Meter {...props}>
       {({percentage, valueText}) => <>
