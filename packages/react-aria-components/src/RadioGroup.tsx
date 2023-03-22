@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';
 import {mergeProps, useObjectRef} from '@react-aria/utils';
-import {Orientation, ValidationState} from '@react-types/shared';
-import {RadioGroupState, useRadioGroupState} from 'react-stately';
+import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
@@ -47,7 +46,7 @@ export interface RadioGroupRenderProps {
    * The validation state of the radio group.
    * @selector [aria-invalid]
    */
-  validationState: ValidationState
+  validationState: ValidationState | null
 }
 
 export interface RadioRenderProps {
@@ -90,16 +89,16 @@ export interface RadioRenderProps {
     * Whether the radio is valid or invalid.
     * @selector [data-validation-state="valid | invalid"]
     */
-   validationState: ValidationState,
+   validationState: ValidationState | null,
    /**
     * Whether the checkbox is required.
     * @selector [data-required]
     */
-   isRequired: boolean 
+   isRequired: boolean
 }
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
-let InternalRadioContext = createContext<RadioGroupState>(null);
+let InternalRadioContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
@@ -142,7 +141,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
-  let state = React.useContext(InternalRadioContext);
+  let state = React.useContext(InternalRadioContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio(props, state, domRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();

@@ -328,9 +328,16 @@ If you will use a SearchField in multiple places in your app, you can wrap all o
 This example wraps `SearchField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
 
 ```tsx example export=true
+import type {SearchFieldProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
-function MySearchField({label, description, errorMessage, ...props}) {
+interface MySearchFieldProps extends SearchFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string
+}
+
+function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
   return (
     <SearchField {...props}>
       <Label>{label}</Label>
@@ -365,7 +372,7 @@ The `value` prop can be used to make the value controlled. The `onChange` event 
 
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <>

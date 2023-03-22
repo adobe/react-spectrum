@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps, useSearchField} from 'react-aria';
+import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {InputContext} from './Input';
@@ -19,7 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
 
 export interface SearchFieldRenderProps {
   /**
@@ -33,7 +33,7 @@ export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, H
 
 function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
@@ -48,7 +48,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   return (
-    <div 
+    <div
       {...renderProps}
       ref={ref}
       slot={props.slot}
