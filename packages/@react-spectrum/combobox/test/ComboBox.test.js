@@ -1532,9 +1532,14 @@ describe('ComboBox', function () {
         userEvent.click(combobox);
         jest.runAllTimers();
       });
+
       act(() => {
         fireEvent.change(combobox, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+      });
+      expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
+
+      act(() => {
         combobox.blur();
         jest.runAllTimers();
       });
@@ -3600,7 +3605,7 @@ describe('ComboBox', function () {
 
   describe('mobile combobox', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
     });
 
     afterEach(() => {
@@ -3616,7 +3621,7 @@ describe('ComboBox', function () {
       expect(dialog).toHaveAttribute('aria-labelledby', input.getAttribute('aria-labelledby'));
 
       expect(input).toHaveAttribute('role', 'searchbox');
-      expect(input).toHaveAttribute('aria-expanded', 'true');
+      expect(input).not.toHaveAttribute('aria-expanded');
       expect(input).toHaveAttribute('aria-controls', listbox.id);
       expect(input).toHaveAttribute('aria-haspopup', 'listbox');
 

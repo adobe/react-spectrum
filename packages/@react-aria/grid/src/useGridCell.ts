@@ -12,11 +12,11 @@
 
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -121,6 +121,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
@@ -136,6 +137,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'rtl') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -143,6 +145,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : last(walker);
             if (focusable) {
               focusSafely(focusable);
+              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -161,6 +164,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
@@ -171,6 +175,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           if (focusMode === 'cell' && direction === 'ltr') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             focusable = direction === 'rtl'
@@ -178,6 +183,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
               : walker.firstChild() as FocusableElement;
             if (focusable) {
               focusSafely(focusable);
+              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -232,6 +238,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   if (isVirtualized) {
     gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
+  }
+
+  // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
+  // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
+  // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
+  // To avoid this, remove the tabIndex from the cell briefly on pointer down.
+  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null && gridCellProps.onPointerDown == null) {
+    gridCellProps.onPointerDown = (e) => {
+      let el = e.currentTarget;
+      let tabindex = el.getAttribute('tabindex');
+      el.removeAttribute('tabindex');
+      requestAnimationFrame(() => {
+        el.setAttribute('tabindex', tabindex);
+      });
+    };
   }
 
   return {

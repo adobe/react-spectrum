@@ -10,24 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, ItemProps, Node, StyleProps} from '@react-types/shared';
-import {Key, RefObject} from 'react';
+import {CollectionBase, ItemProps, Node} from '@react-types/shared';
+import {Key} from 'react';
 
 export interface TagGroupProps<T> extends Omit<CollectionBase<T>, 'disabledKeys'> {
   /** Whether the TagGroup allows removal of tags. */
   allowsRemoving?: boolean,
   /** Called when the user removes a tag.  */
-  onRemove?: (key: Key) => void
+  onRemove?: (key: Key) => void,
+  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  maxRows?: number
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps {}
-
-export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, StyleProps {}
-
 export interface TagProps<T> extends ItemProps<any> {
+  /** Whether the tag is focused. */
   isFocused: boolean,
+  /** Whether the tag is removable. */
   allowsRemoving?: boolean,
+  /** An object representing the tag. Contains all the relevant information that makes up the tag. */
   item: Node<T>,
-  onRemove?: (key: Key) => void,
-  tagRowRef: RefObject<HTMLElement>
+  /** Handler that is called when the user triggers the tag's remove button. */
+  onRemove?: (key: Key) => void
 }

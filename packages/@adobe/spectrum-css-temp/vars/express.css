@@ -152,7 +152,7 @@
   --spectrum-tooltip-dropshadow: drop-shadow(0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color));
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
 
-  --spectrum-tooltip-background-color: var(--spectrum-neutral-background-color-default);
+  --spectrum-alias-neutral-background-color: var(--spectrum-neutral-background-color-default);
 }
 
 .express.medium {

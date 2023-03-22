@@ -10,38 +10,99 @@
  * governing permissions and limitations under the License.
  */
 
+@import "../../../@adobe/spectrum-css-temp/components/commons/focus-ring.css";
+
 .react-spectrum-ToastContainer {
   position: fixed;
-  top: unset;
-  bottom: 0;
   inset-inline-start: 0;
   inset-inline-end: 0;
   z-index: 100050; /* above modals */
   display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
   pointer-events: none;
+  outline: none;
+
+  > :first-child {
+    @inherit %spectrum-FocusRing-ring;
+    --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
+    --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+    --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
+  }
+
+  &:focus-ring > :first-child {
+    @inherit %spectrum-FocusRing-active;
+  }
 
   .spectrum-Toast {
-    margin: 8px;
+    position: absolute;
+    margin: 16px;
     pointer-events: all;
   }
+
+  &[data-position=top] {
+    top: 0;
+    flex-direction: column;
+    --slide-from: translateY(-100%);
+    --slide-to: translateY(0);
+  }
+
+  &[data-position=bottom] {
+    bottom: 0;
+    flex-direction: column-reverse;
+    --slide-from: translateY(100%);
+    --slide-to: translateY(0);
+  }
+
+  &[data-placement=left] {
+    align-items: flex-start;
+    --slide-from: translateX(-100%);
+    --slide-to: translateX(0);
+
+    &:dir(rtl) {
+      --slide-from: translateX(100%);
+    }
+  }
+
+  &[data-placement=center] {
+    align-items: center;
+  }
+
+  &[data-placement=right] {
+    align-items: flex-end;
+    --slide-from: translateX(100%);
+    --slide-to: translateX(0);
+
+    &:dir(rtl) {
+      --slide-from: translateX(-100%);
+    }
+  }
 }
-.react-spectrum-ToastContainer--top {
-  top: 0;
-  flex-direction: column;
-  bottom: unset;
+
+.spectrum-Toast {
+  &[data-animation=entering] {
+    animation: slide-in 300ms;
+  }
+
+  &[data-animation=exiting] {
+    animation: fade-out 300ms forwards;
+  }
 }
-.react-spectrum-ToastContainer--bottom {
-  flex-direction: column-reverse;
-  bottom: 0;
+
+@keyframes slide-in {
+  from {
+    transform: var(--slide-from);
+  }
+
+  to {
+    transform: var(--slide-to);
+  }
 }
-.react-spectrum-ToastContainer--left {
-  align-items: flex-start;
-}
-.react-spectrum-ToastContainer--center {
-  align-items: center;
-}
-.react-spectrum-ToastContainer--right {
-  align-items: flex-end;
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }

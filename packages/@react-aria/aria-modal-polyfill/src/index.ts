@@ -28,13 +28,19 @@ export function watchModals(selector:string = 'body', {document = currentDocumen
    * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
    * hide based on the last one added.
    */
+  if (!document) {
+    return () => {};
+  }
   let target = document.querySelector(selector);
+  if (!target) {
+    return () => {};
+  }
   let config = {childList: true};
-  let modalContainers = [];
+  let modalContainers: Array<Element> = [];
   let undo: Revert | undefined;
 
   let observer = new MutationObserver((mutationRecord) => {
-    const liveAnnouncer: HTMLElement =  document.querySelector('[data-live-announcer="true"]');
+    const liveAnnouncer =  document.querySelector('[data-live-announcer="true"]');
     for (let mutation of mutationRecord) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
         let addNode: Element = (Array.from(mutation.addedNodes).find((node: any) => node.querySelector?.('[aria-modal="true"], [data-ismodal="true"]')) as HTMLElement);
@@ -42,17 +48,19 @@ export function watchModals(selector:string = 'body', {document = currentDocumen
           modalContainers.push(addNode);
           let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
           undo?.();
-          undo = hideOthers([modal, liveAnnouncer]);
+          let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
+          undo = hideOthers(others);
         }
       } else if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
         let removedNodes = Array.from(mutation.removedNodes);
         let nodeIndexRemove = modalContainers.findIndex(container => removedNodes.includes(container));
         if (nodeIndexRemove >= 0) {
-          undo();
+          undo?.();
           modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
           if (modalContainers.length > 0) {
-            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal="true"]');
-            undo = hideOthers([modal, liveAnnouncer]);
+            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
+            let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
+            undo = hideOthers(others);
           } else {
             undo = undefined;
           }

@@ -20,26 +20,23 @@ export interface TableColumnResizeStateProps<T> {
   /**
    * Current width of the table or table viewport that the columns
    * should be calculated against.
-   **/
+   */
   tableWidth: number,
   /** A function that is called to find the default width for a given column. */
   getDefaultWidth?: (node: GridNode<T>) => ColumnSize | null | undefined,
   /** A function that is called to find the default minWidth for a given column. */
-  getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined,
-  /** Callback that is invoked during the entirety of the resize event. */
-  onColumnResize?: (widths: Map<Key, ColumnSize>) => void,
-  /** Callback that is invoked when the resize event is started. */
-  onColumnResizeStart?: (key: Key) => void,
-  /** Callback that is invoked when the resize event is ended. */
-  onColumnResizeEnd?: (key: Key) => void
+  getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined
 }
-export interface TableColumnResizeState {
-  /** Trigger a resize and recalculation. */
-  onColumnResize: (key: Key, width: number) => void,
+export interface TableColumnResizeState<T> {
+  /**
+   * Called to update the state that a resize event has occurred.
+   * Returns the new widths for all columns based on the resized column.
+   */
+  updateResizedColumns: (key: Key, width: number) => Map<Key, ColumnSize>,
   /** Callback for when onColumnResize has started. */
-  onColumnResizeStart: (key: Key) => void,
+  startResize: (key: Key) => void,
   /** Callback for when onColumnResize has ended. */
-  onColumnResizeEnd: (key: Key) => void,
+  endResize: () => void,
   /** Gets the current width for the specified column. */
   getColumnWidth: (key: Key) => number,
   /** Gets the current minWidth for the specified column. */
@@ -47,16 +44,24 @@ export interface TableColumnResizeState {
   /** Gets the current maxWidth for the specified column. */
   getColumnMaxWidth: (key: Key) => number,
   /** Currently calculated widths for all columns. */
-  widths: Map<Key, number>
+  widths: Map<Key, number>,
+  /** Key of the currently resizing column. */
+  resizingColumn: Key | null,
+  /** A reference to the table state. */
+  tableState: TableState<T>
 }
 
-
-export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState {
+/**
+ * Provides column width state management for a table component with column resizing support. Handles building
+ * a map of column widths calculated from the table's width and any provided column width information from the collection.
+ * In addition, it tracks the currently resizing column and provides callbacks for updating the widths upon resize operations.
+ * @param props - Props for the table.
+ * @param state - State for the table, as returned by `useTableState`.
+ */
+export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<T>, state: TableState<T>): TableColumnResizeState<T> {
   let {
     getDefaultWidth,
     getDefaultMinWidth,
-    onColumnResizeStart: propsOnColumnResizeStart,
-    onColumnResizeEnd: propsOnColumnResizeEnd,
     tableWidth = 0
   } = props;
 
@@ -82,26 +87,23 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
       columnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)
   , [state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns, columnLayout]);
 
-  let onColumnResizeStart = useCallback((key: Key) => {
+  let startResize = useCallback((key: Key) => {
     setResizingColumn(key);
-    propsOnColumnResizeStart?.(key);
-  }, [propsOnColumnResizeStart, setResizingColumn]);
+  }, [setResizingColumn]);
 
-  let onColumnResize = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
+  let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
     let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, uncontrolledWidths, key, width);
 
     let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
     map.set(key, width);
     setUncontrolledWidths(map);
-
     return newSizes;
   }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
 
-  let onColumnResizeEnd = useCallback((key: Key) => {
+  let endResize = useCallback(() => {
     setResizingColumn(null);
-    propsOnColumnResizeEnd?.(key);
-  }, [propsOnColumnResizeEnd, setResizingColumn]);
+  }, [setResizingColumn]);
 
   let columnWidths = useMemo(() =>
       columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)
@@ -109,22 +111,24 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   return useMemo(() => ({
     resizingColumn,
-    onColumnResize,
-    onColumnResizeStart,
-    onColumnResizeEnd,
+    updateResizedColumns,
+    startResize,
+    endResize,
     getColumnWidth: (key: Key) =>
       columnLayout.getColumnWidth(key),
     getColumnMinWidth: (key: Key) =>
       columnLayout.getColumnMinWidth(key),
     getColumnMaxWidth: (key: Key) =>
       columnLayout.getColumnMaxWidth(key),
-    widths: columnWidths
+    widths: columnWidths,
+    tableState: state
   }), [
     columnLayout,
     resizingColumn,
-    onColumnResize,
-    onColumnResizeStart,
-    onColumnResizeEnd,
-    columnWidths
+    updateResizedColumns,
+    startResize,
+    endResize,
+    columnWidths,
+    state
   ]);
 }

@@ -11,6 +11,7 @@
  */
 
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
@@ -36,6 +37,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
+const ENABLE_PAGE_TYPES = false;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -69,6 +71,14 @@ const mdxComponents = {
         <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
+  ),
+  h4: ({children, ...props}) => (
+    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      {children}
+      <span className={docStyles['headingAnchor']}>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+      </span>
+    </h4>
   ),
   p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
@@ -129,7 +139,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         highlightCss.spectrum)}>
       <head>
         <title>{title}</title>
-        <meta charset="utf-8" />
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -176,8 +186,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
-        {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        {styles.map(s => <link key={s.url} rel="stylesheet" href={s.url} />)}
+        {scripts.map(s => <script key={s.url} type={s.type} src={s.url} defer />)}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -288,16 +298,29 @@ function Nav({currentPageName, pages}) {
   }
 
   // Key by category
-  let pageMap = {};
+  let pagesByType = {};
   let rootPages = [];
+  let pageCategories = new Set();
   pages.forEach(p => {
     let cat = p.category;
     if (cat) {
-      if (cat in pageMap) {
-        pageMap[cat].push(p);
-      } else {
-        pageMap[cat] = [p];
+      let type = p.type || 'other';
+      if (!ENABLE_PAGE_TYPES && p.type !== 'component') {
+        type = 'other';
       }
+      let pages = pagesByType[type];
+      if (!pages) {
+        pages = {};
+        pagesByType[type] = pages;
+      }
+
+      if (cat in pages) {
+        pages[cat].push(p);
+      } else {
+        pages[cat] = [p];
+      }
+
+      pageCategories.add(cat);
     } else {
       rootPages.push(p);
     }
@@ -306,10 +329,10 @@ function Nav({currentPageName, pages}) {
   // Order categories so specific ones come first, then all the others in sorted order.
   let categories = [];
   for (let category of CATEGORY_ORDER) {
-    if (pageMap[category]) {
+    if (pageCategories.has(category)) {
       categories.push(category);
     } else if (category === '...') {
-      for (let category of Object.keys(pageMap).sort()) {
+      for (let category of [...pageCategories].sort()) {
         if (!CATEGORY_ORDER.includes(category)) {
           categories.push(category);
         }
@@ -343,6 +366,57 @@ function Nav({currentPageName, pages}) {
     );
   }
 
+  let isActive = (pageMap) => {
+    for (let key in pageMap) {
+      if (pageMap[key].some(p => p.name === currentPageName)) {
+        return true;
+      }
+    }
+  };
+
+  let sections = [];
+  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
+    let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    sections.push({pages: {Introduction, Concepts}});
+    sections.push({
+      title: 'Components',
+      pages: pagesByType.component,
+      isActive: isActive(pagesByType.component)
+    });
+    sections.push({
+      title: 'Hooks',
+      pages: hooks,
+      isActive: isActive(hooks)
+    });
+    sections.push({
+      title: 'Patterns',
+      pages: pagesByType.pattern,
+      isActive: isActive(pagesByType.pattern)
+    });
+    sections.push({
+      title: 'Interactions',
+      pages: {Interactions, Focus},
+      isActive: isActive({Interactions, Focus})
+    });
+    sections.push({
+      title: 'Utilities',
+      pages: {Internationalization, 'Server Side Rendering': ssr, Utilities},
+      isActive: isActive({Internationalization, 'Server Side Rendering': ssr, Utilities})
+    });
+  } else {
+    sections.push({
+      pages: pagesByType.other
+    });
+
+    if (pagesByType.component) {
+      sections.push({
+        title: 'Components',
+        pages: pagesByType.component,
+        isActive: isActive(pagesByType.component)
+      });
+    }
+  }
+
   return (
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
@@ -362,20 +436,33 @@ function Nav({currentPageName, pages}) {
           </h2>
         </a>
       </header>
-      <ul className={sideNavStyles['spectrum-SideNav']}>
-        {rootPages.map(p => <SideNavItem {...p} />)}
-        {categories.map(key => {
-          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+      {sections.map(section => {
+        let contents = categories.filter(c => section.pages[c]?.length).map(key => {
+          const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <li className={sideNavStyles['spectrum-SideNav-item']}>
+            <>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
-            </li>
+            </>
           );
-        })}
-      </ul>
+        });
+
+        if (section.title) {
+          return (
+            <details open={section.isActive}>
+              <summary style={{fontWeight: 'bold'}}>
+                <ChevronRight size="S" /> {section.title}
+                {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
+              </summary>
+              {contents}
+            </details>
+          );
+        } else {
+          return <>{contents}</>;
+        }
+      })}
     </nav>
   );
 }

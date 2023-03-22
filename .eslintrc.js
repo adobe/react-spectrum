@@ -28,10 +28,10 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
-      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
-      'jsdoc/check-tag-names': ERROR,
+      'jsdoc/check-tag-names': [ERROR, {definedTags: ['selector', 'note']}],
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
@@ -51,7 +51,7 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
     rules: {
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
@@ -123,7 +123,6 @@ module.exports = {
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
     'eol-last': ERROR,
-    'arrow-body-style': [ERROR, 'as-needed'],
     'arrow-spacing': ERROR,
     'space-before-blocks': [ERROR, 'always'],
     'space-infix-ops': ERROR,
