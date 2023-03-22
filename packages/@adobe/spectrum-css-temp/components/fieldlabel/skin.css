@@ -16,10 +16,6 @@ governing permissions and limitations under the License.
 
   &.is-disabled {
     color: var(--spectrum-fieldlabel-text-color-disabled);
-
-    .spectrum-FieldLabel-requiredIcon {
-      color: var(--spectrum-fieldlabel-asterisk-color-disabled);
-    }
   }
 }
 .spectrum-FieldLabel-requiredIcon {
