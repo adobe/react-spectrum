@@ -65,3 +65,4 @@ export {useClipboard} from './useClipboard';
 export {DragPreview} from './DragPreview';
 export {ListDropTargetDelegate} from './ListDropTargetDelegate';
 export {isVirtualDragging} from './DragManager';
+export {isDirectoryDropItem, isFileDropItem, isTextDropItem} from './utils';
