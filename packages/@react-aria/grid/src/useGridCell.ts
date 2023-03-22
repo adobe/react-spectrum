@@ -240,6 +240,21 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
   }
 
+  // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
+  // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
+  // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
+  // To avoid this, remove the tabIndex from the cell briefly on pointer down.
+  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null && gridCellProps.onPointerDown == null) {
+    gridCellProps.onPointerDown = (e) => {
+      let el = e.currentTarget;
+      let tabindex = el.getAttribute('tabindex');
+      el.removeAttribute('tabindex');
+      requestAnimationFrame(() => {
+        el.setAttribute('tabindex', tabindex);
+      });
+    };
+  }
+
   return {
     gridCellProps,
     isPressed
