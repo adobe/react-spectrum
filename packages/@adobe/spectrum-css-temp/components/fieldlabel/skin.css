@@ -18,6 +18,3 @@ governing permissions and limitations under the License.
     color: var(--spectrum-fieldlabel-text-color-disabled);
   }
 }
-.spectrum-FieldLabel-requiredIcon {
-  color: var(--spectrum-fieldlabel-asterisk-color);
-}
