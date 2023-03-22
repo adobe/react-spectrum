@@ -172,7 +172,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           )
         }>
         <div
-          style={maxRows != null && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
+          style={maxRows != null && tagState.showCollapseButton && isCollapsed ? {maxHeight: tagState.maxHeight, overflow: 'hidden'} : undefined}
           ref={containerRef}
           className={classNames(styles, 'spectrum-Tags-container')}>
           <div
