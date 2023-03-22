@@ -59,7 +59,9 @@ export function useFocus<Target = FocusableElement>(props: FocusProps<Target>): 
   const onSyntheticFocus = useSyntheticBlurEvent<Target>(onBlur);
 
   const onFocus: FocusProps<Target>['onFocus'] = useCallback((e: FocusEvent<Target>) => {
-    if (e.target === e.currentTarget) {
+    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // focus handler already moved focus somewhere else.
+    if (e.target === e.currentTarget && document.activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);
       }
