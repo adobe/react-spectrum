@@ -67,6 +67,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
   /**
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
+   * @version alpha
    */
   dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
 }
