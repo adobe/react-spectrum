@@ -1,5 +1,5 @@
 {
   "actions": "Akce",
   "hideButtonLabel": "Zobrazit méně",
-  "showAllButtonLabel": "Zobrazit vše ({tagCount})"
+  "showAllButtonLabel": "Zobrazit vše ({tagCount, number})"
 }

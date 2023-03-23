@@ -26,7 +26,7 @@ governing permissions and limitations under the License.
   margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
 }
 
-.spectrum-Tags-item {
+.spectrum-Tag {
   @inherit: %spectrum-FocusRing;
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
@@ -109,7 +109,7 @@ governing permissions and limitations under the License.
     height: var(--spectrum-tag-height);
     font-size: var(--spectrum-tag-text-size);
     margin: var(--spectrum-tag-margin);
-    
+
     &.spectrum-Tags-actionButton {
       > span {
         padding-inline-start: var(--spectrum-tag-padding-x);
@@ -121,7 +121,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Tags-fieldWrapper.spectrum-Tags-fieldWrapper {
   width: unset;
-  
+
   &:not(.spectrum-Tags-fieldWrapper--positionSide) {
     display: grid;
   }
