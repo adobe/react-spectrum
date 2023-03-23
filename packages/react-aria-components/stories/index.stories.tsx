@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, Group, Heading, Input, Item, Keyboard, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, RangeCalendar, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text, TimeField, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import React from 'react';
@@ -483,7 +483,7 @@ export const TableExample = () => {
       {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
       {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
     ]
-  })
+  });
 
   return (
     <Table
@@ -525,15 +525,18 @@ export const TableExample = () => {
                       padding: 30
                     }}>
                     <Dialog>
-                      {({close}) => <>
+                      {({close}) => (<>
                         <Heading>Delete item</Heading>
                         <p>Are you sure?</p>
                         <Button onPress={close}>Cancel</Button>
-                        <Button onPress={() => {
-                          close();
-                          list.remove(item.id);
-                        }}>Delete</Button>
-                      </>}
+                        <Button
+                          onPress={() => {
+                            close();
+                            list.remove(item.id);
+                          }}>
+                          Delete
+                        </Button>
+                      </>)}
                     </Dialog>
                   </Modal>
                 </ModalOverlay>
@@ -583,22 +586,5 @@ function CustomTab(props) {
       style={({isSelected}) => ({
         borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
       })} />
-  );
-}
-
-function MyCheckbox(props) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate, isSelected}) => (<>
-        <div style={{border: '2px solid gray', width: 16, height: 16}}>
-          <svg viewBox="0 0 18 18" width={14} height={14} fill="none" stroke="black">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" strokeWidth={3} strokeDasharray={22} strokeDashoffset={isSelected ? 44 : 66} />
-            }
-          </svg>
-        </div>
-      </>)}
-    </Checkbox>
   );
 }
