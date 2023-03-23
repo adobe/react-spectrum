@@ -436,10 +436,10 @@ prop to `"invalid"` when no options are selected and removes it otherwise.
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState([]);
+  let [selected, setSelected] = React.useState<string[]>([]);
 
   return (
-    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : null}>
+    <MyCheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : undefined}>
       <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
       <MyCheckbox value="tomato">Tomato</MyCheckbox>
       <MyCheckbox value="onion">Onion</MyCheckbox>
@@ -460,13 +460,13 @@ indicates that the group is required, not any individual option. In addition, `v
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState([]);
+  let [selected, setSelected] = React.useState<string[]>([]);
 
   return (
     <MyCheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
-      <MyCheckbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : null}>Terms and conditions</MyCheckbox>
-      <MyCheckbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : null}>Privacy policy</MyCheckbox>
-      <MyCheckbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : null}>Cookie policy</MyCheckbox>
+      <MyCheckbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : undefined}>Terms and conditions</MyCheckbox>
+      <MyCheckbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : undefined}>Privacy policy</MyCheckbox>
+      <MyCheckbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : undefined}>Cookie policy</MyCheckbox>
     </MyCheckboxGroup>
   );
 }
@@ -487,8 +487,8 @@ function Example() {
       onChange={setChecked}
       value={checked}
       validationState={isValid ? 'valid' : 'invalid'}
-      description={isValid ? 'Select your pets.' : null}
-      errorMessage={isValid ? null : checked.includes('cats')
+      description={isValid ? 'Select your pets.' : undefined}
+      errorMessage={isValid ? undefined : checked.includes('cats')
         ? 'No cats allowed.'
         : 'Select only dogs and dragons.'}
     >

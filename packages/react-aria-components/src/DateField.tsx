@@ -39,7 +39,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     createCalendar
   });
 
-  let fieldRef = useRef();
+  let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useDateField({...props, label}, state, fieldRef);
 
@@ -83,7 +83,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
     locale
   });
 
-  let fieldRef = useRef();
+  let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useTimeField({...props, label}, state, fieldRef);
 
@@ -116,10 +116,10 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-const _TimeField = forwardRef(TimeField);
+const _TimeField = (forwardRef as forwardRefType)(TimeField);
 export {_TimeField as TimeField};
 
-const InternalDateInputContext = createContext<DateFieldState>(null);
+const InternalDateInputContext = createContext<DateFieldState| null>(null);
 
 export interface DateInputProps extends SlotProps, StyleProps {
   children: (segment: IDateSegment) => ReactElement
@@ -176,7 +176,7 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
 }
 
 function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
-  let state = useContext(InternalDateInputContext);
+  let state = useContext(InternalDateInputContext)!;
   let domRef = useObjectRef(ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let renderProps = useRenderProps({

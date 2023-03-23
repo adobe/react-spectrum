@@ -47,7 +47,7 @@ To handle focus events on descendants of an element, see [useFocusWithin](useFoc
 `useFocus` returns props that you should spread onto the target element:
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.links[docs.exports.useFocus.return.id].properties} />
+  <InterfaceType properties={docs.links[docs.exports.useFocus.return.base?.id ?? docs.exports.useFocus.return.id].properties} />
 </TypeContext.Provider>
 
 `useFocus` supports the following event handlers:

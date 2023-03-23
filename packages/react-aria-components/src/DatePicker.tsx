@@ -32,7 +32,7 @@ export const DateRangePickerContext = createContext<ContextValue<DateRangePicker
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
   let state = useDatePickerState(props);
-  let groupRef = useRef();
+  let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     groupProps,
@@ -52,7 +52,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     createCalendar
   });
 
-  let fieldRef = useRef();
+  let fieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: dateFieldProps} = useDateField({...fieldProps, label}, fieldState, fieldRef);
 
   let renderProps = useRenderProps({
@@ -94,7 +94,7 @@ export {_DatePicker as DatePicker};
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let state = useDateRangePickerState(props);
-  let groupRef = useRef();
+  let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
     groupProps,
@@ -115,7 +115,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     createCalendar
   });
 
-  let startFieldRef = useRef();
+  let startFieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: startDateFieldProps} = useDateField({...startFieldProps, label}, startFieldState, startFieldRef);
 
   let endFieldState = useDateFieldState({
@@ -124,7 +124,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     createCalendar
   });
 
-  let endFieldRef = useRef();
+  let endFieldRef = useRef<HTMLDivElement>(null);
   let {fieldProps: endDateFieldProps} = useDateField({...endFieldProps, label}, endFieldState, endFieldRef);
 
   let renderProps = useRenderProps({
