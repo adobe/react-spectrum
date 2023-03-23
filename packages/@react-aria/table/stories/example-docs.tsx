@@ -156,9 +156,9 @@ function Button(props) {
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
   let ref = useRef();
-  let {resizerProps, inputProps} = useTableColumnResize({
+  let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
-    label: 'Resizer',
+    'aria-label': 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd
@@ -168,7 +168,7 @@ function Resizer(props) {
   return (
     <div
       role="presentation"
-      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': layoutState.resizingColumn === column.key})}
+      className={classNames(ariaStyles, 'aria-table-resizer', {'focus': isFocusVisible, 'resizing': isResizing})}
       {...resizerProps}>
       <VisuallyHidden>
         <input

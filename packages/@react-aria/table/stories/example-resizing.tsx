@@ -130,7 +130,7 @@ function Resizer({column, layout, onResizeStart, onResize, onResizeEnd}) {
   let ref = useRef(null);
   let {resizerProps, inputProps} = useTableColumnResize({
     column,
-    label: 'Resizer',
+    'aria-label': 'Resizer',
     onResizeStart,
     onResize,
     onResizeEnd
