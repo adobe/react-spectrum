@@ -1792,7 +1792,7 @@ export const ResizingControlledHideHeader: TableStory = {
 };
 
 export const ColumnHeaderFocusRingTable = {
-  render: (args) => <LoadingTable />,
+  render: () => <LoadingTable />,
   storyName: 'column header focus after loading',
   parameters: {
     description: {
