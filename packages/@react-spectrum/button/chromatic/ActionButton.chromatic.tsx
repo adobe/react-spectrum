@@ -112,7 +112,7 @@ storiesOf('Button/ActionButton', module)
         </Flex>
       </View>
     )
-  )
+  );
 
 storiesOf('Languages/ActionButton', module)
   .addParameters({chromaticProvider: {locales: ['en-US', 'ja-JP']}})

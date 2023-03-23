@@ -18,7 +18,7 @@ import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
 storiesOf('TextArea', module)
-  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE', 'zh-TW']}})
+  .addParameters({chromaticProvider: {locales: ['en-US', 'ar-AE']}})
   .add(
     'Default',
     () => render()
@@ -129,7 +129,7 @@ storiesOf('Languages/TextArea', module)
   .add(
     'value: اختبار, isRequired: false, necessityIndicator: label',
     () => render({value: 'اختبار', isRequired: false, necessityIndicator: 'label'})
-  )
+  );
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter
 function render(props = {}, disabled = true) {
