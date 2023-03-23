@@ -33,7 +33,7 @@ export interface FocusResult<Target = FocusableElement> {
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus<Target = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
+export function useFocus<Target extends FocusableElement = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
   let {
     isDisabled,
     onFocus: onFocusProp,
