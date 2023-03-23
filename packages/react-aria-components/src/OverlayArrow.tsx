@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import {PlacementAxis} from '@react-types/overlays';
+import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 
@@ -20,7 +20,7 @@ interface OverlayArrowContextValue {
   placement: PlacementAxis
 }
 
-export const OverlayArrowContext = createContext<OverlayArrowContextValue>(null);
+export const OverlayArrowContext = createContext<OverlayArrowContextValue | null>(null);
 
 export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
 
@@ -33,7 +33,7 @@ export interface OverlayArrowRenderProps {
 }
 
 function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {arrowProps, placement} = useContext(OverlayArrowContext);
+  let {arrowProps, placement} = useContext(OverlayArrowContext)!;
   let style: CSSProperties = {
     ...arrowProps.style,
     position: 'absolute',
@@ -48,7 +48,7 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
       placement
     }
   });
-  
+
   return (
     <div
       {...mergeProps(arrowProps, props)}

@@ -344,7 +344,14 @@ If you will use a Slider in multiple places in your app, you can wrap all of the
 This example wraps `Slider` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `SliderTrack` and `SliderOutput` render props to render multiple slider thumbs, depending on the provided values. When multiple thumbs are rendered, each `SliderThumb` should have an `aria-label`, which is provided via the `thumbLabels` prop in this example.
 
 ```tsx example export=true
-function MySlider({label, thumbLabels, ...props}) {
+import type {SliderProps} from 'react-aria-components';
+
+interface MySliderProps<T> extends SliderProps<T> {
+  label?: string,
+  thumbLabels?: string[]
+}
+
+function MySlider<T extends number | number[]>({label, thumbLabels, ...props}: MySliderProps<T>) {
   return (
     <Slider {...props}>
       <Label>{label}</Label>
@@ -389,7 +396,7 @@ function Example() {
   let [value, setValue] = React.useState(25);
   return (
     <>
-      <MySlider
+      <MySlider<number>
         label="Cookies to buy"
         value={value}
         onChange={setValue} />
@@ -406,7 +413,7 @@ function Example() {
   let [value, setValue] = React.useState([25, 75]);
   return (
     <>
-      <MySlider
+      <MySlider<number[]>
         label="Range"
         thumbLabels={['start', 'end']}
         value={value}
@@ -426,7 +433,7 @@ function Example() {
   let [value, setValue] = React.useState(25);
   return (
     <>
-      <MySlider
+      <MySlider<number>
         label="Cookies to buy"
         defaultValue={value}
         onChangeEnd={setValue} />

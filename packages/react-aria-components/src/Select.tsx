@@ -10,15 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps} from '@react-types/select';
+import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
-import {HiddenSelect, useSelect} from 'react-aria';
+import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListBoxProps} from './ListBox';
 import {PopoverContext} from './Popover';
-import React from 'react';
+import React, {forwardRef} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 import {useCollection} from './Collection';
@@ -32,7 +31,7 @@ interface SelectValueContext {
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
-const InternalSelectContext = createContext<SelectValueContext>(null);
+const InternalSelectContext = createContext<SelectValueContext | null>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
@@ -45,7 +44,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let state = useSelectState({
     ...props,
     collection,
-    children: null
+    children: undefined
   });
 
   // Get props for child elements from useSelect
@@ -61,7 +60,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   } = useSelect({...props, label}, state, buttonRef);
 
   // Make menu width match input + button
-  let [buttonWidth, setButtonWidth] = useState(null);
+  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (buttonRef.current) {
       setButtonWidth(buttonRef.current.offsetWidth + 'px');
@@ -90,7 +89,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           triggerRef: buttonRef,
           preserveChildren: true,
           placement: 'bottom start',
-          style: {'--button-width': buttonWidth} as React.CSSProperties
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }],
         [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}],
         [TextContext, {
@@ -116,7 +115,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-const _Select = forwardRef(Select);
+const _Select = (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
 export interface SelectValueRenderProps {
@@ -132,7 +131,7 @@ export interface SelectValueRenderProps {
 export interface SelectValueProps extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps> {}
 
 function SelectValue(props: SelectValueProps, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(InternalSelectContext);
+  let {state, valueProps} = useContext(InternalSelectContext)!;
   let renderProps = useRenderProps({
     ...props,
     defaultChildren: state.selectedItem?.rendered || 'Select an item',
