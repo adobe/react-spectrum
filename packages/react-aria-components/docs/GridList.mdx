@@ -101,6 +101,11 @@ import {GridList, Item, Button} from 'react-aria-components';
     font-style: italic;
   }
 
+  &[data-focus-visible] {
+    border-color: var(--highlight-background);
+    box-shadow: 0 0 0 1px var(--highlight-background);
+  }
+
   .react-aria-Item {
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     border-radius: 6px;
@@ -397,7 +402,9 @@ The states and selectors for each component used in a `GridList` are documented 
 
 ### GridList
 
-A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`.
+A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListRenderProps.properties} />
 
 ### Item
 
@@ -424,8 +431,9 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
 }
 
 function MyItem({children, ...props}: ItemProps) {
+  let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <Item textValue={String(children)} {...props}>
+    <Item textValue={textValue} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
@@ -476,7 +484,7 @@ function ExampleList(props: GridListProps<ItemValue>) {
   return (
     <MyGridList aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           {item.name}
           <Button aria-label="Info" onPress={() => alert(`Info for ${item.name}...`)}>ⓘ</Button>
         </MyItem>
@@ -620,7 +628,7 @@ function AsyncList() {
       aria-label="Async loading ListView example"
       items={list.items}>
       {(item) => (
-        <MyItem key={item.name}>{item.name}</MyItem>
+        <MyItem id={item.name}>{item.name}</MyItem>
       )}
     </MyGridList>
   );
@@ -729,7 +737,13 @@ function Example() {
 
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
+
 ```
 
 </details>
@@ -798,7 +812,9 @@ function Example() {
   width: 150px;
   padding: 4px 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 4px;
   background: slateblue;
   color: white;
   border-radius: 4px;
@@ -1008,6 +1024,11 @@ function Example() {
 ```css
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
 ```
 
@@ -1076,6 +1097,11 @@ function Example() {
 ```css
 .my-drop-indicator.active {
   outline: 1px solid #e70073;
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
 ```
 
@@ -1123,7 +1149,7 @@ function DroppableGridList() {
 
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop items here"}>
-      {item => <MyItem>{React.createElement(item.style, null, item.name)}</MyItem>}
+      {item => <MyItem textValue={item.name}>{React.createElement(item.style, null, item.name)}</MyItem>}
     </MyGridList>
   );
 }
@@ -1172,7 +1198,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop images here"}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
@@ -1254,7 +1280,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={files} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop directory here"}>
       {item => (
-        <MyItem id={item.name}>
+        <MyItem id={item.name} textValue={item.name}>
           <div className="dir-item">
             {item.kind === 'directory' ? <Folder /> : <File />}
             <span>{item.name}</span>
@@ -1457,7 +1483,7 @@ function Example() {
   return (
     <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => "Drop PNGs here"}>
       {item => (
-        <MyItem>
+        <MyItem textValue={item.name}>
           <div className="image-item">
             <img src={item.url} />
             <span>{item.name}</span>
