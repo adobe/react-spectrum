@@ -304,8 +304,8 @@ It is built using the [useColorSlider](useColorSlider.html) hook, and can be sha
   function ColorSlider(props) {
     let {locale} = useLocale();
     let state = useColorSliderState({...props, locale});
-    let trackRef = React.useRef();
-    let inputRef = React.useRef();
+    let trackRef = React.useRef(null);
+    let inputRef = React.useRef(null);
 
     // Default label to the channel name in the current locale
     let label = props.label || state.value.getChannelName(props.channel, locale);

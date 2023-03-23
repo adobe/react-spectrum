@@ -172,7 +172,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     // again to trigger onPressStart. Cancel presses immediately when the pointer exits.
     shouldCancelOnPointerExit: 'anchorDate' in state && !!state.anchorDate,
     preventFocusOnPress: true,
-    isDisabled: !isSelectable,
+    isDisabled: !isSelectable || state.isReadOnly,
     onPressStart(e) {
       if (state.isReadOnly) {
         state.setFocusedDate(date);
@@ -302,7 +302,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     calendar: date.calendar.identifier
   });
 
-  let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
+  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).find(part => part.type === 'day').value, [cellDateFormatter, nativeDate]);
 
   return {
     cellProps: {

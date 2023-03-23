@@ -290,6 +290,16 @@ jobs:
           paths:
             - 'ts-diff.txt'
 
+  typecheck-docs:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: check-examples
+          command: make check-examples
+
   storybook:
     executor: rsp-large
     steps:
@@ -498,6 +508,9 @@ workflows:
           filters:
             branches:
               ignore: main
+      - typecheck-docs:
+          requires:
+            - install
       - storybook:
           requires:
             - install

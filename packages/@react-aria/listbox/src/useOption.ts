@@ -30,7 +30,10 @@ export interface OptionAria extends SelectableItemStates {
   descriptionProps: DOMAttributes,
 
   /** Whether the option is currently focused. */
-  isFocused: boolean
+  isFocused: boolean,
+
+  /** Whether the option is keyboard focused. */
+  isFocusVisible: boolean
 }
 
 export interface AriaOptionProps {
@@ -92,18 +95,17 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
-  let isFocused = state.selectionManager.focusedKey === key;
-  let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data.shouldSelectOnPressUp;
-  let shouldFocusOnHover = props.shouldFocusOnHover ?? data.shouldFocusOnHover;
-  let shouldUseVirtualFocus = props.shouldUseVirtualFocus ?? data.shouldUseVirtualFocus;
-  let isVirtualized = props.isVirtualized ?? data.isVirtualized;
+  let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data?.shouldSelectOnPressUp;
+  let shouldFocusOnHover = props.shouldFocusOnHover ?? data?.shouldFocusOnHover;
+  let shouldUseVirtualFocus = props.shouldUseVirtualFocus ?? data?.shouldUseVirtualFocus;
+  let isVirtualized = props.isVirtualized ?? data?.isVirtualized;
 
   let labelId = useSlotId();
   let descriptionId = useSlotId();
 
   let optionProps = {
     role: 'option',
-    'aria-disabled': isDisabled,
+    'aria-disabled': isDisabled || undefined,
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined
   };
 
@@ -117,11 +119,12 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   }
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
+    let index = Number(state.collection.getItem(key)?.index);
+    optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let {itemProps, isPressed, hasAction, allowsSelection} = useSelectableItem({
+  let {itemProps, isPressed, isFocused, hasAction, allowsSelection} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
     ref,
@@ -130,7 +133,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: data.onAction ? () => data.onAction(key) : undefined
+    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined
   });
 
   let {hoverProps} = useHover({
@@ -156,6 +159,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
       id: descriptionId
     },
     isFocused,
+    isFocusVisible: isFocused && isFocusVisible(),
     isSelected,
     isDisabled,
     isPressed,
