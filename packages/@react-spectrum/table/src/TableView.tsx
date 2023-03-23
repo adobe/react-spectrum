@@ -551,7 +551,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
             {state.visibleViews[0]}
           </div>
           <ScrollView
-            role="rowgroup"
+            role="presentation"
             className={
               classNames(
                 styles,
@@ -562,7 +562,6 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
                 }
               )
             }
-            tabIndex={-1}
             style={{flex: 1}}
             innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
             ref={bodyRef}
@@ -937,7 +936,7 @@ function TableRowGroup({children, ...otherProps}) {
   let {rowGroupProps} = useTableRowGroup();
 
   return (
-    <div {...rowGroupProps} {...otherProps} role="presentation">
+    <div {...rowGroupProps} {...otherProps}>
       {children}
     </div>
   );
