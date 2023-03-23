@@ -11,6 +11,7 @@
  */
 
 import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
@@ -146,7 +147,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let layoutInfo = this.getLayoutInfo(parentRowKey);
     let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
     let closestRow = this.collection.getItem(this._findClosest(layoutInfo.rect, rect)?.key);
-    return closestRow?.childNodes[0]?.key;
+    return getFirstItem(getChildNodes(closestRow, this.collection))?.key;
   }
 
   getKeyAbove(key: Key) {
@@ -155,7 +156,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let layoutInfo = this.getLayoutInfo(parentRowKey);
     let rect = new Rect(layoutInfo.rect.x, 0, layoutInfo.rect.width, layoutInfo.rect.y - 1);
     let closestRow = this.collection.getItem(this._findClosest(layoutInfo.rect, rect)?.key);
-    return closestRow?.childNodes[0]?.key;
+    return getFirstItem(getChildNodes(closestRow, this.collection))?.key;
   }
 
   getKeyRightOf(key: Key) {
@@ -167,7 +168,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       let item = this.collection.getItem(key);
       // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
       if (item.type === 'item') {
-        return item.childNodes[0].key;
+        return getFirstItem(getChildNodes(item, this.collection))?.key;
       }
       key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
     }
@@ -181,7 +182,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       let item = this.collection.getItem(key);
       // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
       if (item.type === 'item') {
-        return item.childNodes[0].key;
+        return getFirstItem(getChildNodes(item, this.collection))?.key;
       }
 
       key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
@@ -190,12 +191,12 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getFirstKey() {
     let firstRow = this.collection.getItem(this.collection.getFirstKey());
-    return firstRow.childNodes[0].key;
+    return getFirstItem(getChildNodes(firstRow, this.collection))?.key;
   }
 
   getLastKey() {
     let lastRow = this.collection.getItem(this.collection.getLastKey());
-    return lastRow.childNodes[0].key;
+    return getFirstItem(getChildNodes(lastRow, this.collection))?.key;
   }
 
   // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key
@@ -214,14 +215,14 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
       if (layoutInfo && layoutInfo.rect.y > pageY) {
         while (layoutInfo && layoutInfo.rect.y > pageY) {
-          let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
+          let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
           let keyAbove = this.collection.getItem(this.getKeyAbove(childKey))?.parentKey;
           layoutInfo = this.getLayoutInfo(keyAbove);
         }
       }
 
       if (layoutInfo) {
-        let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
+        let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
         return childKey;
       }
     }
@@ -243,14 +244,14 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       layoutInfo = this.getLayoutInfo(keyBelow);
       if (layoutInfo && layoutInfo.rect.y < pageY) {
         while (layoutInfo && layoutInfo.rect.y < pageY) {
-          let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
+          let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
           let keyBelow = this.collection.getItem(this.getKeyBelow(childKey))?.parentKey;
           layoutInfo = this.getLayoutInfo(keyBelow);
         }
       }
 
       if (layoutInfo) {
-        let childKey = this.collection.getItem(layoutInfo.key).childNodes[0].key;
+        let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
         return childKey;
       }
     }
@@ -274,7 +275,7 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       if (item.textValue) {
         let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
-          return [...item.childNodes][0].key;
+          return getFirstItem(getChildNodes(item, this.collection))?.key;
         }
       }
 

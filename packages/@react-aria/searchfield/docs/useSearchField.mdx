@@ -88,7 +88,7 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props) {
   let {label} = props;
   let state = useSearchFieldState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps} = useSearchField(props, state, ref);
 
   return (
@@ -117,7 +117,7 @@ import {Button} from 'your-component-library';
 function SearchField(props) {
   let {label} = props;
   let state = useSearchFieldState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
 
   return (
@@ -189,7 +189,7 @@ The `Button` component is used in the above example to clear the search field. I
 import {useButton} from '@react-aria/button';
 
 function Button(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {buttonProps} = useButton(props, ref);
   return <button {...buttonProps} ref={ref}>{props.children}</button>;
 }
@@ -217,7 +217,7 @@ The `value` prop can be used to make the value controlled. The `onChange` event 
 
 ```tsx example
 function Example() {
-  let [text, setText] = React.useState();
+  let [text, setText] = React.useState('');
 
   return (
     <>

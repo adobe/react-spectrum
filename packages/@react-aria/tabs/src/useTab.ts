@@ -23,7 +23,9 @@ export interface TabAria {
   /** Whether the tab is currently selected. */
   isSelected: boolean,
   /** Whether the tab is disabled. */
-  isDisabled: boolean
+  isDisabled: boolean,
+  /** Whether the tab is currently in a pressed state. */
+  isPressed: boolean
 }
 
 /**
@@ -41,7 +43,7 @@ export function useTab<T>(
   let isSelected = key === selectedKey;
 
   let isDisabled = propsDisabled || state.isDisabled || state.disabledKeys.has(key);
-  let {itemProps} = useSelectableItem({
+  let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
     key,
     ref,
@@ -63,7 +65,8 @@ export function useTab<T>(
       role: 'tab'
     },
     isSelected,
-    isDisabled
+    isDisabled,
+    isPressed
   };
 }
 

@@ -145,7 +145,7 @@ function Table(props) {
 
   return (
     <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse'}}>
-      <TableRowGroup type="thead" style={{borderBottom: '2px solid var(--spectrum-global-color-gray-800)'}}>
+      <TableRowGroup type="thead">
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
             {[...headerRow.childNodes].map(column =>
@@ -181,10 +181,12 @@ above `Table` component via the `type` prop.
 ```tsx example export=true render=false
 import {useTableRowGroup} from '@react-aria/table';
 
-function TableRowGroup({type: Element, style, children}) {
+function TableRowGroup({type: Element, children}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
-    <Element {...rowGroupProps} style={style}>
+    <Element
+      {...rowGroupProps}
+      style={Element === 'thead' ? {borderBottom: '2px solid var(--spectrum-global-color-gray-800)'} : null}>
       {children}
     </Element>
   );
@@ -414,7 +416,6 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function TableSelectAllCell({column, state}) {
   let ref = useRef();
-  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
 
@@ -423,7 +424,7 @@ function TableSelectAllCell({column, state}) {
       {...columnHeaderProps}
       ref={ref}>
       {state.selectionManager.selectionMode === 'single'
-        ? <VisuallyHidden>{inputProps['aria-label']}</VisuallyHidden>
+        ? <VisuallyHidden>{checkboxProps['aria-label']}</VisuallyHidden>
         : <Checkbox {...checkboxProps} />
       }
     </th>
@@ -485,7 +486,7 @@ import {useToggleState} from '@react-stately/toggle';
 import {useCheckbox} from '@react-aria/checkbox';
 
 function Checkbox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let state = useToggleState(props);
   let {inputProps} = useCheckbox(props, state, ref);
   return <input {...inputProps} ref={ref} />;
@@ -577,6 +578,8 @@ To programmatically control row selection, use the `selectedKeys` prop paired wi
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true
+import type {Selection} from 'react-stately';
+
 function PokemonTable(props) {
   let columns = [
     {name: 'Name', uid: 'name'},
@@ -591,7 +594,7 @@ function PokemonTable(props) {
     {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
   ];
 
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set([2]));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
 
   return (
     <Table aria-label="Table with controlled selection" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
@@ -643,7 +646,7 @@ and a long press enters into selection mode, which temporarily swaps the selecti
 and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
 
 ```tsx example
-<div style={{display: 'flex', 'flex-wrap': 'wrap', gap: '24px'}}>
+<div style={{display: 'flex', flexWrap: 'wrap', gap: '24px'}}>
   <PokemonTable aria-label="Pokemon table with row actions and toggle selection behavior" selectionMode="multiple" onRowAction={key => alert(`Opening item ${key}...`)} />
   <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
 </div>
@@ -662,8 +665,15 @@ See the docs for more information on how to perform server side sorting.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
 function AsyncSortTable() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal}) {
       let res = await fetch(`https://swapi.py4e.com/api/people/?search`, {signal});
       let json = await res.json();
@@ -764,7 +774,14 @@ Nested columns can also be defined dynamically using the function syntax and the
 The following example is the same as the example above, but defined dynamically.
 
 ```tsx example
-let columns = [
+interface ColumnDefinition {
+  name: string,
+  key: string,
+  children?: ColumnDefinition[],
+  isRowHeader?: boolean
+}
+
+let columns: ColumnDefinition[] = [
   {name: 'Name', key: 'name', children: [
     {name: 'First Name', key: 'first', isRowHeader: true},
     {name: 'Last Name', key: 'last', isRowHeader: true}

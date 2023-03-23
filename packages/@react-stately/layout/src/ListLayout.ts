@@ -11,6 +11,7 @@
  */
 
 import {Collection, DropTarget, DropTargetDelegate, KeyboardDelegate, Node} from '@react-types/shared';
+import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
@@ -312,7 +313,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     let startY = y;
     let skipped = 0;
     let children = [];
-    for (let child of node.childNodes) {
+    for (let child of getChildNodes(node, this.collection)) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
 
       // Skip rows before the valid rectangle unless they are already cached.
@@ -328,7 +329,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
 
       if (y > this.validRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += ([...node.childNodes].length - (children.length + skipped)) * rowHeight;
+        y += ([...getChildNodes(node, this.collection)].length - (children.length + skipped)) * rowHeight;
         break;
       }
     }
