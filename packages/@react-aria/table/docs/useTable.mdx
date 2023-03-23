@@ -840,35 +840,25 @@ omitting support for selection, sorting, and nested columns.
 
 As mentioned previously, we first need to call <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> to initialize the widths for our table's columns.
 We'll pass the state returned by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} /> along with any user defined `onResize` handlers
-to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />. The `widths` from this state are provided to each table element so
-the table cells in the body match their parent column's widths at all times.
+to our `ResizableTableColumnHeaders` so it can be used by <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />.
 
-The various style changes below are to make the table itself scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
+The various style changes below are to add a wrapper div so the table is scrollable when the row content overflows and to support table body/column widths greater than the 300px applied to the table itself.
 
 ```tsx example export=true render=false
-/*- begin highlight -*/
 import {useCallback} from 'react';
 import {useTableColumnResizeState} from '@react-stately/table';
-/*- end highlight -*/
 
 function ResizableColumnsTable(props) {
-  /*- begin highlight -*/
-  let {
-    onResizeStart,
-    onResize,
-    onResizeEnd
-  } = props;
-  /*- end highlight -*/
   let state = useTableState(props);
-
+  let scrollRef = useRef();
   let ref = useRef();
   let {collection} = state;
   let {gridProps} = useTable(
     {
       ...props,
       /*- begin highlight -*/
-      // The table itself is scrollable rather than just the body
-      scrollRef: ref
+      // The table wrapper is scrollable rather than just the body
+      scrollRef
       /*- end highlight -*/
     },
     state,
@@ -886,59 +876,46 @@ function ResizableColumnsTable(props) {
     tableWidth: 300,
     getDefaultMinWidth
   }, state);
-  let {widths} = layoutState;
   /*- end highlight -*/
+
   return (
-    <table
-      {...gridProps}
-      /*- begin highlight -*/
-      className="aria-table"
-      /*- end highlight -*/
-      ref={ref}>
-      <ResizableTableRowGroup
-        /*- begin highlight -*/
-        className="aria-table-rowGroupHeader"
-        /*- end highlight -*/
-        type="thead">
-        {collection.headerRows.map(headerRow => (
-          <ResizableTableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...headerRow.childNodes].map(column => (
-              <ResizableTableColumnHeader
-                key={column.key}
-                column={column}
-                state={state}
-                /*- begin highlight -*/
-                layoutState={layoutState}
-                onResizeStart={onResizeStart}
-                onResize={onResize}
-                onResizeEnd={onResizeEnd}
-                /*- end highlight -*/
-              />
-            ))}
-          </ResizableTableHeaderRow>
-        ))}
-      </ResizableTableRowGroup>
-      <ResizableTableRowGroup
-        /*- begin highlight -*/
-        className="aria-table-rowGroupBody"
-        /*- end highlight -*/
-        type="tbody">
-        {[...collection.body.childNodes].map(row => (
-          <ResizableTableRow key={row.key} item={row} state={state}>
-            {[...row.childNodes].map(cell => (
-              <ResizableTableCell
-                key={cell.key}
-                cell={cell}
-                state={state}
-                /*- begin highlight -*/
-                widths={widths}
-                /*- end highlight -*/
-              />
-            ))}
-          </ResizableTableRow>
-        ))}
-      </ResizableTableRowGroup>
-    </table>
+    /*- begin highlight -*/
+    <div className="aria-table-wrapper" ref={scrollRef}>
+    {/*- end highlight -*/}
+      <table
+        {...gridProps}
+        className="aria-table"
+        ref={ref}>
+        <TableRowGroup type="thead">
+          {collection.headerRows.map(headerRow => (
+            <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+              {[...headerRow.childNodes].map(column => (
+                <ResizableTableColumnHeader
+                  key={column.key}
+                  column={column}
+                  state={state}
+                  /*- begin highlight -*/
+                  layoutState={layoutState}
+                  onResizeStart={props.onResizeStart}
+                  onResize={props.onResize}
+                  onResizeEnd={props.onResizeEnd}
+                  /*- end highlight -*/
+                />
+              ))}
+            </TableHeaderRow>
+          ))}
+        </TableRowGroup>
+        <TableRowGroup type="tbody">
+          {[...collection.body.childNodes].map(row => (
+            <TableRow key={row.key} item={row} state={state}>
+              {[...row.childNodes].map(cell => (
+                <TableCell key={cell.key} cell={cell} state={state} />
+              ))}
+            </TableRow>
+          ))}
+        </TableRowGroup>
+      </table>
+    </div>
   );
 }
 ```
@@ -947,86 +924,26 @@ function ResizableColumnsTable(props) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-/*
- * Override the table's default display with "block" so that our defined column widths
- * are respected. Without this and other table element display overrides, the columns
- * can grow/shrink beyond their applied "width"
-*/
-.aria-table {
-  border-collapse: collapse;
+.aria-table-wrapper {
   width: 300px;
-  height: 200px;
-  display: block;
-  position: relative;
   overflow: auto;
 }
 
-
-.aria-table-rowGroupHeader {
-  border-bottom: 2px solid var(--spectrum-global-color-gray-800);
-  position: sticky;
-  top: 0;
-  background: var(--spectrum-gray-100);
+.aria-table {
+  border-collapse: collapse;
+  table-layout: fixed;
   width: fit-content;
-}
 
-.aria-table-rowGroupBody {
-  max-height: 200px;
+  & td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 ```
 </details>
 
 ### Resizable table header
-
-The `TableRowGroup` and `TableHeaderRow` only require minor style changes to accommodate the new `display` changes made in
-`ResizableColumnsTable`.
-
-```tsx example export=true render=false
-function ResizableTableRowGroup({type: Element, className, children}) {
-  let {rowGroupProps} = useTableRowGroup();
-  return (
-    <Element
-      /*- begin highlight -*/
-      className={`aria-table-rowGroup ${className}`}
-      /*- end highlight -*/
-      {...rowGroupProps}>
-      {children}
-    </Element>
-  );
-}
-```
-
-```tsx example export=true render=false
-function ResizableTableHeaderRow({item, state, children}) {
-  let ref = useRef();
-  let {rowProps} = useTableHeaderRow({node: item}, state, ref);
-
-  return (
-    <tr
-      {...rowProps}
-      /*- begin highlight -*/
-      className="aria-table-row"
-      /*- end highlight -*/
-      ref={ref}>
-      {children}
-    </tr>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.aria-table-rowGroup {
-  display: block;
-}
-
-.aria-table-row {
-  display: flex;
-}
-```
-</details>
 
 The `TableColumnHeader` is where we see the bulk of the changes required to support resizable columns. First of all, we need to accommodate a `Resizer` element in every resizable column that
 the user can drag or focus to perform a resize operation. Since the resizer will be a focusable element within the table header, we need to make the header title a focusable element as well so keyboard
@@ -1070,8 +987,6 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
   padding: 5px 10px;
   outline: none;
   cursor: default;
-  display: block;
-  flex: 0 0 auto;
   box-sizing: border-box;
   box-shadow: none;
   text-align: left;
@@ -1179,103 +1094,6 @@ function Resizer(props) {
 .aria-table-resizer.resizing {
   border-color: orange;
   background-color: transparent;
-}
-```
-
-</details>
-
-### Resizable table body
-
-Similar to `TableRowGroup` and `TableHeaderRow`, `TableRow` and `TableCell` only require minor style changes to
-accommodate the new `display` changes made in the `ResizableColumnsTable`. The changes to `TableRow` are made to extend the
-background of the row to the full width of its child cells. `TableCell` now receives its width from <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableColumnResizeState} />
-and handles text overflow.
-
-```tsx example export=true render=false
-function ResizableTableRow({item, children, state}) {
-  // Same as previous TableRow implementation...
-  ///- begin collapse -///
-  let ref = useRef();
-  let {rowProps} = useTableRow({
-    node: item
-  }, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  ///- end collapse -///
-  return (
-    <tr
-      /*- begin highlight -*/
-      className={`aria-table-row ${isFocusVisible ? 'focus' : ''}`}
-      style={{
-        background: item.index % 2 ? 'var(--spectrum-alias-highlight-hover)' : 'none'
-      }}
-      /*- end highlight -*/
-       {...mergeProps(rowProps, focusProps)}
-      ref={ref}
-   >
-      {children}
-    </tr>
-  );
-}
-```
-
-```tsx example export=true render=false
-function ResizableTableCell({cell, state, widths}) {
-  /*- begin highlight -*/
-  let column = cell.column;
-  /*- end highlight -*/
-  // Same as previous TableCell implementation...
-  ///- begin collapse -///
-  let ref = useRef();
-  let {gridCellProps} = useTableCell({node: cell}, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  ///- end collapse -///
-  return (
-    <td
-      {...mergeProps(gridCellProps, focusProps)}
-      /*- begin highlight -*/
-      className={`aria-table-cell ${isFocusVisible ? 'focus' : ''}`}
-      style={{
-        width: widths.get(column.key)
-      }}
-      /*- end highlight -*/
-      ref={ref}>
-      {cell.rendered}
-    </td>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.aria-table-row {
-  display: flex;
-  width: fit-content;
-  box-shadow: none;
-  outline: none;
-  background: none;
-}
-
-.aria-table-row.focus {
-  box-shadow: inset 0 0 0 2px orange;
-}
-
-.aria-table-cell {
-  padding: 5px 10px;
-  outline: none;
-  cursor: default;
-  display: block;
-  flex: 0 0 auto;
-  box-sizing: border-box;
-  box-shadow: none;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.aria-table-cell.focus {
-  box-shadow: inset 0 0 0 2px orange;
 }
 ```
 
