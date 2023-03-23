@@ -122,8 +122,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     gridProps: mergeProps(
       gridProps,
       descriptionProps,
-      // If table is empty, make sure the table is tabbable
-      state.collection.size === 0 && {tabIndex: 0},
       {
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')

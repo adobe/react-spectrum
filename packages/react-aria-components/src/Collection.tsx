@@ -265,7 +265,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new NodeValue(TYPE_MAP[type] || type, ++id);
+    this.node = new NodeValue(TYPE_MAP[type] || type, `react-aria-${++id}`);
   }
 
   get index() {
@@ -540,6 +540,7 @@ export class Document<T, C extends BaseCollection<T>> extends BaseNode<T> {
 
   removeNode(node: ElementNode<T>) {
     for (let child of node) {
+      child.parentNode = null;
       this.removeNode(child);
     }
 

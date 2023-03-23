@@ -497,19 +497,6 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-.resize-ew,
-.spectrum-Table-columnResizer--ewresize {
-  cursor: ew-resize !important;
-}
-.resize-e,
-.spectrum-Table-columnResizer--eresize {
-  cursor: e-resize !important;
-}
-.resize-w,
-.spectrum-Table-columnResizer--wresize {
-  cursor: w-resize !important;
-}
-
 @media (forced-colors: active) {
   .spectrum-Table-row {
     &:focus-ring {

@@ -32,6 +32,8 @@ governing permissions and limitations under the License.
   display: inline-grid;
   position: relative;
 
+  block-size: max-content;
+
   inline-size: var(--spectrum-stepper-default-width-desktop);
   line-height: 0;
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
