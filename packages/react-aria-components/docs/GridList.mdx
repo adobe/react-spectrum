@@ -737,7 +737,13 @@ function Example() {
 
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
+
 ```
 
 </details>
@@ -1018,6 +1024,11 @@ function Example() {
 ```css
 .react-aria-DropIndicator[data-drop-target] {
   outline: 1px solid var(--highlight-background);
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
 ```
 
@@ -1086,6 +1097,11 @@ function Example() {
 ```css
 .my-drop-indicator.active {
   outline: 1px solid #e70073;
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
 }
 ```
 
