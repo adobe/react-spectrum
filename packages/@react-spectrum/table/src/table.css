@@ -63,6 +63,19 @@
   height: 100%;
 }
 
+.resize-ew,
+.react-spectrum-Table-columnResizer--ewresize {
+  cursor: url('data-url:./cursors/Cur_MoveHorizontal_9_9.svg'), ew-resize !important;
+}
+.resize-e,
+.react-spectrum-Table-columnResizer--eresize {
+  cursor: url('data-url:./cursors/Cur_MoveToRight_9_9.svg'), e-resize !important;
+}
+.resize-w,
+.react-spectrum-Table-columnResizer--wresize {
+  cursor: url('data-url:./cursors/Cur_MoveToLeft_9_9.svg'), w-resize !important;
+}
+
 .react-spectrum-Table-row-dragPreview {
   --spectrum-table-row-badge-text-color: var(--spectrum-global-color-static-white);
   --spectrum-table-row-badge-background-color: var(--spectrum-global-color-blue-400);
@@ -171,7 +184,7 @@
 .spectrum-Table-row-draghandle-button {
   border-radius: var(--spectrum-alias-border-radius-regular);
   padding: var(--spectrum-global-dimension-size-10);
-  
+
   &:focus-ring {
     box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
     outline: none;
